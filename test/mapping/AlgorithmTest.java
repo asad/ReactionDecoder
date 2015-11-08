@@ -240,7 +240,7 @@ public class AlgorithmTest extends BaseTest {
     @Test
     public void GeneralBug() throws Exception {
         String reactionID = "reaction2";//"R05069";
-        ReactionMechanismTool testReactions = testReactions(reactionID, general_bug);
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
@@ -260,7 +260,7 @@ public class AlgorithmTest extends BaseTest {
     @Test
     public void R09907() throws Exception {
         String reactionID = "R09907";//"R05069";
-        ReactionMechanismTool testReactions = testReactions(reactionID, general_bug);
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()

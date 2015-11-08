@@ -1516,7 +1516,7 @@ public class MappingTest extends BaseTest {
     public void LinearToRingTest() throws Exception {
         setup();
         String reactionID = "LinearToRingTest";
-        ReactionMechanismTool testReactions = testReactions(reactionID, general_bug);
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
@@ -1607,7 +1607,7 @@ public class MappingTest extends BaseTest {
     public void aromaticity() throws Exception {
         setup();
         String reactionID = "aromaticity_check";
-        ReactionMechanismTool testReactions = testReactions(reactionID, general_bug);
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()

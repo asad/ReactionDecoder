@@ -75,7 +75,10 @@ public class BaseTest {
     final static String Rhea_RXN_DIR = "rxn/rhea/";
     final static String Brenda_RXN_DIR = "rxn/brenda/";
     final static String BUG_RXN_DIR = "rxn/bug/";
-    final static String general_bug = "rxn/bug/";
+    final static String OTHER_RXN = "rxn/other/";
+    final static String METRXN_RXN = "rxn/metrxn/";
+    final static String INFORCHEM_RXN = "rxn/infochem/";
+    final static String MACIE_RXN = "rxn/macie/";
 
     public IAtomContainer layout(IAtomContainer AtomContainer) {
         try {
