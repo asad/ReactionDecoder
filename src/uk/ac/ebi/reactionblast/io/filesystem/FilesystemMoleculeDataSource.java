@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -65,9 +65,7 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
             } else {
                 return transformation.transform(mol);
             }
-        } catch (CDKException c) {
-            return null;
-        } catch (FileNotFoundException e) {
+        } catch (CDKException | FileNotFoundException c) {
             return null;
         }
     }
@@ -95,11 +93,12 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
                         File molFile = new File(moleculeDir, filename);
                         currentIndex++;
                         try {
-                            FileReader reader = new FileReader(molFile);
-                            molReader.setReader(reader);
-                            IAtomContainer mol = molReader.read(new AtomContainer());
-                            mol.setID(filename.substring(0, filename.indexOf(".")));
-                            reader.close();
+                            IAtomContainer mol;
+                            try (FileReader reader = new FileReader(molFile)) {
+                                molReader.setReader(reader);
+                                mol = molReader.read(new AtomContainer());
+                                mol.setID(filename.substring(0, filename.indexOf('.')));
+                            }
                             if (transformation == null) {
                                 return mol;
                             } else {
@@ -108,12 +107,9 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                             return null;
-                        } catch (CDKException e) {
+                        } catch (CDKException | IOException e) {
                             e.printStackTrace();
                             return null;                        
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
                         }
                     }
 
@@ -142,5 +138,6 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
             e.printStackTrace();
         }
     }
+    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataSource.class.getName());
 
 }

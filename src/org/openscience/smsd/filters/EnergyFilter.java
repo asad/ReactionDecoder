@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.tools.BondEnergies;
 
@@ -153,4 +153,5 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
         }
         return energy;
     }
+    private static final Logger LOG = Logger.getLogger(EnergyFilter.class.getName());
 }

@@ -17,11 +17,11 @@
  */
 package uk.ac.ebi.centres.graph;
 
+import java.util.Collection;
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.ConnectionTable;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.Ligand;
-
-import java.util.Collection;
 
 /**
  * @author John May
@@ -52,4 +52,5 @@ public class ConnectionTableDigraph<A>
     public Collection<A> getConnected(A atom) {
         return table.getConnected(atom);
     }
+    private static final Logger LOG = Logger.getLogger(ConnectionTableDigraph.class.getName());
 }

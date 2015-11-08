@@ -160,4 +160,5 @@ class ChemicalFormatParser {
         r.setID(split[0]);
         return r;
     }
+    private static final Logger LOG = Logger.getLogger(ChemicalFormatParser.class.getName());
 }

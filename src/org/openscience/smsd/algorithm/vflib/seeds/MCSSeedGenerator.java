@@ -121,7 +121,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         boolean flagExchange = false;
 
         if (source instanceof IQueryAtomContainer) {
-            ac1 = (IQueryAtomContainer) source;
+            ac1 = source;
             ac2 = target;
         } else if (source.getAtomCount() < target.getAtomCount()) {
             ac1 = source;

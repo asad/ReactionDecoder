@@ -46,6 +46,7 @@
 package org.openscience.smsd.algorithm.vflib.substructure;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * This class keeps track of shared states
@@ -77,4 +78,5 @@ class SharedState {
         targetTerminalSet = new int[targetSize];
         Arrays.fill(targetTerminalSet, 0);
     }
+    private static final Logger LOG = Logger.getLogger(SharedState.class.getName());
 }

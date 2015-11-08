@@ -29,17 +29,17 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.ChemObject;
 import org.openscience.cdk.Mapping;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IChemObject;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IChemObject;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
 
@@ -113,8 +113,8 @@ public class AbstractReactionLabeller {
             IMapping mapping, Map<IAtom, IAtom> atomAtomMap) {
         IChemObject keyChemObj0 = mapping.getChemObject(0);
         IChemObject keyChemObj1 = mapping.getChemObject(1);
-        IChemObject co0 = (IChemObject) atomAtomMap.get(keyChemObj0);
-        IChemObject co1 = (IChemObject) atomAtomMap.get(keyChemObj1);
+        IChemObject co0 = atomAtomMap.get(keyChemObj0);
+        IChemObject co1 = atomAtomMap.get(keyChemObj1);
 
         // THIS IS STUPID : BLAME THE IDIOT WHO FAILED TO PUT SET METHODS IN
         // IMAPPING (OR IREACTION, FOR THAT MATTER)
@@ -234,4 +234,5 @@ public class AbstractReactionLabeller {
         canonReaction.setID(reaction.getID());
         return canonReaction;
     }
+    private static final Logger LOG = Logger.getLogger(AbstractReactionLabeller.class.getName());
 }

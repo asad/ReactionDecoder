@@ -47,6 +47,7 @@
 package org.openscience.smsd.algorithm.vflib.substructure;
 
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -520,4 +521,5 @@ final class State {
         }
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(State.class.getName());
 }

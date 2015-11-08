@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -319,7 +320,7 @@ public final class McGregor {
 //        //check possible mappings:
         boolean furtherMappingFlag;
         if (source instanceof IQueryAtomContainer) {
-            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible((IQueryAtomContainer) source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
+            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
         } else {
             furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
         }
@@ -913,4 +914,5 @@ public final class McGregor {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
+    private static final Logger LOG = Logger.getLogger(McGregor.class.getName());
 }

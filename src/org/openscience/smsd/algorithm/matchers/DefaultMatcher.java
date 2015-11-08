@@ -23,6 +23,7 @@
  */
 package org.openscience.smsd.algorithm.matchers;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -84,4 +85,5 @@ public class DefaultMatcher {
         }
         return isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2);
     }
+    private static final Logger LOG = Logger.getLogger(DefaultMatcher.class.getName());
 }

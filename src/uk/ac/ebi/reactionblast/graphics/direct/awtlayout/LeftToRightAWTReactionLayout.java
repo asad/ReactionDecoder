@@ -20,9 +20,8 @@
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Graphics2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
@@ -82,4 +81,5 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
         // TODO Auto-generated method stub
         return null;
     }
+    private static final Logger LOG = Logger.getLogger(LeftToRightAWTReactionLayout.class.getName());
 }

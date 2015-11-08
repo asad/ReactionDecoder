@@ -23,10 +23,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectArrowDrawer;
 
@@ -105,4 +104,5 @@ public class ArrowWheel {
             i++;
         }
     }
+    private static final Logger LOG = Logger.getLogger(ArrowWheel.class.getName());
 }

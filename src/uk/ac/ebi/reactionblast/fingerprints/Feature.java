@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.fingerprints;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 
 /**
@@ -121,4 +122,5 @@ public final class Feature implements IFeature,
     public void setValue(double weight) {
         this.weight = weight;
     }
+    private static final Logger LOG = Logger.getLogger(Feature.class.getName());
 }

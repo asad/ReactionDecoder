@@ -5,6 +5,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -535,7 +536,7 @@ public class CDKMCS {
 
             if (a1 == null) {
                 try {
-                    a1 = (IAtom) a.clone();
+                    a1 = a.clone();
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
@@ -548,7 +549,7 @@ public class CDKMCS {
 
             if (a2 == null) {
                 try {
-                    a2 = (IAtom) a.clone();
+                    a2 = a.clone();
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
@@ -990,12 +991,8 @@ public class CDKMCS {
             IQueryAtom queryAtom2 = (IQueryAtom) queryBond2.getConnectedAtom(centralQueryAtom);
             IAtom atom1 = bond1.getConnectedAtom(centralAtom);
             IAtom atom2 = bond2.getConnectedAtom(centralAtom);
-            if (queryAtom1.matches(atom1) && queryAtom2.matches(atom2)
-                    || queryAtom1.matches(atom2) && queryAtom2.matches(atom1)) {
-                return true;
-            } else {
-                return false;
-            }
+            return queryAtom1.matches(atom1) && queryAtom2.matches(atom2)
+                    || queryAtom1.matches(atom2) && queryAtom2.matches(atom1);
         } else {
             return centralAtom == null && centralQueryAtom == null;
         }
@@ -1181,4 +1178,5 @@ public class CDKMCS {
     private static void setIterationManager(IterationManager aIterationManager) {
         iterationManager = aIterationManager;
     }
+    private static final Logger LOG = Logger.getLogger(CDKMCS.class.getName());
 }

@@ -23,11 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-
 import signature.AbstractGraphSignature;
 import signature.AbstractVertexSignature;
 
@@ -164,5 +163,6 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         // TODO Auto-generated method stub
         return null;
     }
+    private static final Logger LOG = Logger.getLogger(SubgraphMoleculeSignature.class.getName());
 
 }

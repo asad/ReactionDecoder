@@ -24,10 +24,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.signature.MoleculeSignature;
-
 import signature.AbstractVertexSignature;
 
 /**
@@ -137,4 +136,5 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
         }
         return permutation;
     }
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeLabeller.class.getName());
 }

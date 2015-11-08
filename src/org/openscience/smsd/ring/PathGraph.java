@@ -51,9 +51,10 @@ package org.openscience.smsd.ring;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
 
 /**
  *
@@ -64,9 +65,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class PathGraph {
 
-    private List<PathEdge> edges;
-    private List<IAtom> atoms;
-    private IAtomContainer mol;
+    private final List<PathEdge> edges;
+    private final List<IAtom> atoms;
+    private final IAtomContainer mol;
 
     public PathGraph(IAtomContainer molecule) {
         edges = new ArrayList<PathEdge>();
@@ -159,4 +160,5 @@ public class PathGraph {
             atoms.add(molecule.getAtom(i));
         }
     }
+    private static final Logger LOG = Logger.getLogger(PathGraph.class.getName());
 }

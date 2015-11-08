@@ -80,4 +80,5 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
     public void getCanonicalPermutation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    private static final Logger LOG = Logger.getLogger(InChiMoleculeLabeller.class.getName());
 }

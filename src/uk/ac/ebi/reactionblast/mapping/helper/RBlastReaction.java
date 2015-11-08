@@ -18,17 +18,21 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockPair;
 import uk.ac.ebi.reactionblast.mapping.blocks.MappingGraph;
-import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
+import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 public class RBlastReaction {
@@ -245,4 +249,5 @@ public class RBlastReaction {
     public Map<IAtom, IStereoAndConformation> getAtomStereoReactantMap() {
         return Collections.unmodifiableMap(atomStereoReactantMap);
     }
+    private static final Logger LOG = Logger.getLogger(RBlastReaction.class.getName());
 }

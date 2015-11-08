@@ -51,7 +51,7 @@ public enum Planar
      * is pseudo-asymmetric and indicates the priority is only defined by opposite tetrahedral centres.
      */
     z(Type.PSEUDO_ASYMMETRIC);
-    private Type type;
+    private final Type type;
 
     private Planar(Type type) {
         this.type = type;

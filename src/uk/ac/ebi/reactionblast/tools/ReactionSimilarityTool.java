@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility;
@@ -601,4 +602,5 @@ public class ReactionSimilarityTool {
 
         return MI;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionSimilarityTool.class.getName());
 }

@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.container.helper;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -205,4 +206,5 @@ public class MolMapping extends Object implements Serializable {
     public String toString() {
         return "MolMapping{" + "mol1=" + mol1 + ", mol2=" + mol2 + ", indexI=" + indexI + ", indexJ=" + indexJ + ", indexStep=" + indexStep + ", keggMapping=" + keggMapping + ", rBLASTMapping=" + rBLASTMapping + ", matchedMol=" + matchedMol + ", matchedSMILES=" + matchedSMILES + '}';
     }
+    private static final Logger LOG = Logger.getLogger(MolMapping.class.getName());
 }

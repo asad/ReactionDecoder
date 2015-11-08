@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.fingerprints.tools;
 
 import java.util.BitSet;
+import java.util.logging.Logger;
 
 /**
  *
@@ -153,4 +154,5 @@ public final class Similarity {
         return 2 * _common_bit_count / (_bitset1_cardinality + _bitset2_cardinality);
 
     }
+    private static final Logger LOG = Logger.getLogger(Similarity.class.getName());
 }

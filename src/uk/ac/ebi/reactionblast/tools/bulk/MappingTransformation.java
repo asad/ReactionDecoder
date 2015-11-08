@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -50,4 +51,5 @@ private final static ILoggingTool logger
             return null;
         }
     }
+    private static final Logger LOG = Logger.getLogger(MappingTransformation.class.getName());
 }

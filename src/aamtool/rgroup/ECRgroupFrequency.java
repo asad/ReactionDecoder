@@ -53,7 +53,7 @@ public class ECRgroupFrequency {
                     List<File> l = new ArrayList<>();
                     l.addAll(Arrays.asList(files));
                     List<File> subList = l.subList(1, 100);
-                    files = (File[]) subList.toArray(new File[subList.size()]);
+                    files = subList.toArray(new File[subList.size()]);
                 }
                 for (File ec : files) {
                     String ecNumber = ec.getName();
@@ -334,5 +334,6 @@ public class ECRgroupFrequency {
 
         ECRgroupFrequency ecRgroupFrequency = new ECRgroupFrequency(args);
     }
+    private static final Logger LOG = Logger.getLogger(ECRgroupFrequency.class.getName());
 
 }

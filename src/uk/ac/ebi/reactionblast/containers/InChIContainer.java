@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -52,7 +53,7 @@ import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
  *
  *
  */
-public class InChIContainer implements IInChIContainer {
+public class InChIContainer implements IInChIContainer, Cloneable {
     /* Singleton Pattern Implementation */
 
     private static InChIContainer _instance = null;
@@ -211,6 +212,7 @@ public class InChIContainer implements IInChIContainer {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    private static final Logger LOG = Logger.getLogger(InChIContainer.class.getName());
 }
 //~ Formatted by Jindent --- http://www.jindent.com
 

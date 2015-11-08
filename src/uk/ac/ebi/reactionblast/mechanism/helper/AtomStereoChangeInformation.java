@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
@@ -110,4 +111,5 @@ public class AtomStereoChangeInformation implements Serializable {
         this.atomStereoR = atomStereoR;
         this.atomStereoP = atomStereoP;
     }
+    private static final Logger LOG = Logger.getLogger(AtomStereoChangeInformation.class.getName());
 }

@@ -17,6 +17,9 @@
  */
 package uk.ac.ebi.centres.cdk;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObject;
@@ -25,16 +28,13 @@ import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.MutableDescriptor;
 import uk.ac.ebi.centres.descriptor.General;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author John May
  */
 public class CDKManager implements DescriptorManager<IAtom> {
 
     private final IAtomContainer container;
-    private Map<IChemObject, MutableDescriptor> map = new HashMap<IChemObject, MutableDescriptor>();
+    private final Map<IChemObject, MutableDescriptor> map = new HashMap<IChemObject, MutableDescriptor>();
 
     public CDKManager(IAtomContainer container) {
         this.container = container;
@@ -61,7 +61,7 @@ public class CDKManager implements DescriptorManager<IAtom> {
 
     class ProxyMutator extends MutableDescriptor {
 
-        private IChemObject chemObject;
+        private final IChemObject chemObject;
 
         public ProxyMutator(IChemObject chemObject) {
             this.chemObject = chemObject;
@@ -83,4 +83,5 @@ public class CDKManager implements DescriptorManager<IAtom> {
     public void clear() {
         map.clear();
     }
+    private static final Logger LOG = Logger.getLogger(CDKManager.class.getName());
 }

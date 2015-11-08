@@ -19,12 +19,11 @@
 package uk.ac.ebi.reactionblast.signature;
 
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-
 import signature.AbstractVertexSignature;
 
 /**
@@ -176,4 +175,5 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         }
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(RBlastAtomSignature.class.getName());
 }

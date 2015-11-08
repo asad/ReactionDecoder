@@ -19,10 +19,23 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.openscience.cdk.RingSet;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IMapping;
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;

@@ -20,12 +20,13 @@ package uk.ac.ebi.reactionblast.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.openscience.cdk.Mapping;
+import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.Mapping;
 import org.openscience.cdk.Reaction;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IMapping;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
 
@@ -59,7 +60,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
         }
 
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            IAtomContainer acClone = (IAtomContainer) new AtomContainer(ac).clone();
+            IAtomContainer acClone = new AtomContainer(ac).clone();
             /*Set IDs as CDK clone doesn't*/
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 acClone.getAtom(i).setID(ac.getAtom(i).getID());
@@ -126,4 +127,5 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
 
         return r;
     }
+    private static final Logger LOG = Logger.getLogger(ExtReactionManipulatorTool.class.getName());
 }

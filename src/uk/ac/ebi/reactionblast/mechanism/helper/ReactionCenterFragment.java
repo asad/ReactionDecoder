@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 
 /**
@@ -74,4 +75,5 @@ public class ReactionCenterFragment implements Serializable {
     public String getSignature() {
         return signature;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionCenterFragment.class.getName());
 }

@@ -23,6 +23,7 @@
 package org.openscience.smsd.tools;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 /**
  * Class that handles execution time of the MCS search.
@@ -112,4 +113,5 @@ public class IterationManager implements Serializable {
     public int getIterationLimit() {
         return limit;
     }
+    private static final Logger LOG = Logger.getLogger(IterationManager.class.getName());
 }

@@ -24,7 +24,6 @@
 package org.openscience.smsd.interfaces;
 
 import java.util.List;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 
 /**

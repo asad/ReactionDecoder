@@ -657,4 +657,5 @@ public final class MCSThread implements Callable<MCSSolution> {
     void setProductCount(Integer productCount) {
         this.productCount = productCount;
     }
+    private static final Logger LOG = Logger.getLogger(MCSThread.class.getName());
 }

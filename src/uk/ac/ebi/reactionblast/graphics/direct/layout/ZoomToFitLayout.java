@@ -23,9 +23,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
@@ -43,7 +42,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  */
 public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
 
-    private DirectMoleculeDrawer drawer;
+    private final DirectMoleculeDrawer drawer;
 
     public ZoomToFitLayout(DirectMoleculeDrawer drawer) {
         this.drawer = drawer;
@@ -107,5 +106,6 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(ZoomToFitLayout.class.getName());
 
 }

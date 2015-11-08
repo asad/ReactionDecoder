@@ -18,12 +18,13 @@
  */
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
-import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IStereoElement;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.reactionblast.stereo.compare.StereoCenterAnalyser;
+import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
 
 /**
  * Analyse the stereo wedges around an atom, to determine if they are correct.
@@ -77,4 +78,5 @@ public class WedgeStereoAnalyser {
                 return WedgeStereoAnalysisResult.NONE;
         }
     }
+    private static final Logger LOG = Logger.getLogger(WedgeStereoAnalyser.class.getName());
 }

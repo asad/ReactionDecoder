@@ -27,16 +27,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.openscience.cdk.ChemModel;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.annotations.TestClass;
+import org.openscience.cdk.ChemModel;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.graph.ConnectivityChecker;
-import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
 import org.openscience.cdk.io.MDLReader;
 import org.openscience.cdk.io.MDLV3000Reader;
@@ -67,7 +65,7 @@ public class MDLFileReader {
 
         try {
             try (MDLV2000Reader reader2 = new MDLV2000Reader(inputStream, mode)) {
-                molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                molecule = reader2.read(new AtomContainer());
                 reader2.close();
             }
         } catch (CDKException e) {
@@ -75,7 +73,7 @@ public class MDLFileReader {
             if (string.contains("This file must be read with the MDLV3000Reader.")) {
                 try {
                     try (MDLV3000Reader reader2 = new MDLV3000Reader(inputStream, mode)) {
-                        molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                        molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     }
                 } catch (CDKException ex) {
@@ -85,7 +83,7 @@ public class MDLFileReader {
             } else if (string.contains("This file must be read with the MDLReader.")) {
                 try {
                     try (MDLV2000Reader reader2 = new MDLV2000Reader(inputStream, mode)) {
-                        molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                        molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     }
                 } catch (CDKException ex) {
@@ -131,7 +129,7 @@ public class MDLFileReader {
 
         try {
             try (MDLV2000Reader reader2 = new MDLV2000Reader(reader, mode)) {
-                molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                molecule = reader2.read(new AtomContainer());
                 reader2.close();
             }
         } catch (CDKException e) {
@@ -139,7 +137,7 @@ public class MDLFileReader {
             if (string.contains("This file must be read with the MDLV3000Reader.")) {
                 try (MDLV3000Reader reader2 = new MDLV3000Reader(reader, mode)) {
                     try {
-                        molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                        molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     } catch (CDKException ex) {
                         Logger.getLogger(MDLFileReader.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,7 +147,7 @@ public class MDLFileReader {
             } else if (string.contains("This file must be read with the MDLReader.")) {
                 try {
                     try (MDLReader reader2 = new MDLReader(reader, mode)) {
-                        molecule = (IAtomContainer) reader2.read(new AtomContainer());
+                        molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     }
                 } catch (CDKException ex) {
@@ -213,4 +211,5 @@ public class MDLFileReader {
         }
         return chemModel;
     }
+    private static final Logger LOG = Logger.getLogger(MDLFileReader.class.getName());
 }

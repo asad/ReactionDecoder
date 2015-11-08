@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping;
 
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -64,4 +65,5 @@ final class MappingThread implements Callable<Reactor> {
             throw ex;
         }
     }
+    private static final Logger LOG = Logger.getLogger(MappingThread.class.getName());
 }

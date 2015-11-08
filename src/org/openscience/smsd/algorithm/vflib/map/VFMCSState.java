@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -307,4 +308,5 @@ public class VFMCSState implements IState {
     private IAtom getTargetPathHead() {
         return targetPath.get(targetPath.size() - 1);
     }
+    private static final Logger LOG = Logger.getLogger(VFMCSState.class.getName());
 }

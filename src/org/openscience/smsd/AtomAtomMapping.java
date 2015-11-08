@@ -29,7 +29,12 @@ package org.openscience.smsd;
 
 import com.google.common.collect.HashBiMap;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
@@ -316,4 +321,5 @@ public final class AtomAtomMapping implements Serializable {
         SmilesGenerator aromatic = SmilesGenerator.unique().withAtomClasses();
         return aromatic.create(getCommonFragment());
     }
+    private static final Logger LOG = Logger.getLogger(AtomAtomMapping.class.getName());
 }

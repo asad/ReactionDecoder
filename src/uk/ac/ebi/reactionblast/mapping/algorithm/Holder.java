@@ -298,4 +298,5 @@ public final class Holder extends Debugger implements Cloneable, Serializable {
     public void setTheory(IMappingAlgorithm theory) {
         this.theory = theory;
     }
+    private static final Logger LOG = Logger.getLogger(Holder.class.getName());
 }

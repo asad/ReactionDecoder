@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Logger;
 
 public class BoundsPrinter {
 
@@ -31,5 +32,6 @@ public class BoundsPrinter {
                 b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY(),
                 b.getWidth(), b.getHeight(), b.getCenterX(), b.getCenterY());
     }
+    private static final Logger LOG = Logger.getLogger(BoundsPrinter.class.getName());
 
 }

@@ -27,10 +27,9 @@
 package uk.ac.ebi.reactionblast.tools.inchi;
 
 import java.util.List;
-
+import java.util.logging.Logger;
 import net.sf.jniinchi.INCHI_OPTION;
 import net.sf.jniinchi.INCHI_RET;
-
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.inchi.InChIGenerator;
 import org.openscience.cdk.inchi.InChIGeneratorFactory;
@@ -70,7 +69,7 @@ public class CDKInChI {
 
     private synchronized IAtomContainer convertRGroupsToMetals(IAtomContainer mol) {
         try {
-            IAtomContainer convertedMol = (IAtomContainer) mol.clone();
+            IAtomContainer convertedMol = mol.clone();
             for (IAtom atom : convertedMol.atoms()) {
                 if (isR(atom)) {
                     atom.setSymbol(R_Group_replacement_String);
@@ -183,4 +182,5 @@ public class CDKInChI {
     public synchronized String getAuxinfo() {
         return _genInchi.getAuxInfo();
     }
+    private static final Logger LOG = Logger.getLogger(CDKInChI.class.getName());
 }

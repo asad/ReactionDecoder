@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
 import java.util.SortedMap;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;

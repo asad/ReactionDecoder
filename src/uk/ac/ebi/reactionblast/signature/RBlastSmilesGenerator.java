@@ -20,19 +20,32 @@ package uk.ac.ebi.reactionblast.signature;
  * You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to
  * the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.config.IsotopeFactory;
+import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.BondTools;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.invariant.MorganNumbersTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomType;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -41,19 +54,8 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.ringsearch.RingPartitioner;
 import org.openscience.cdk.tools.manipulator.RingSetManipulator;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.Vector;
-import org.openscience.cdk.config.Isotopes;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
 /**
  * Generates SMILES strings {
@@ -474,7 +476,7 @@ public class RBlastSmilesGenerator {
                 IAtom two = null;
                 IAtom atomi = null;
                 for (int i = 0; i < atoms.size(); i++) {
-                    atomi = (IAtom) container.getAtom(i);
+                    atomi = container.getAtom(i);
                     if (atomi != parent && one == null) {
                         one = atomi;
                     } else if (atomi != parent && one != null) {
@@ -574,7 +576,7 @@ public class RBlastSmilesGenerator {
     private boolean isRingOpening(IAtom a1, List v) {
         for (BrokenBond bond : brokenBonds) {
             for (Object aV : v) {
-                if ((bond.getA1().equals(a1) && bond.getA2().equals((IAtom) aV)) || (bond.getA1().equals((IAtom) aV) && bond.getA2().equals(a1))) {
+                if ((bond.getA1().equals(a1) && bond.getA2().equals(aV)) || (bond.getA1().equals(aV) && bond.getA2().equals(a1))) {
                     return true;
                 }
             }
@@ -660,7 +662,7 @@ public class RBlastSmilesGenerator {
     private void addAtoms(List v, List result) {
         for (Object aV : v) {
             if (aV instanceof IAtom) {
-                result.add((IAtom) aV);
+                result.add(aV);
             } else {
                 addAtoms((List) aV, result);
             }
@@ -693,7 +695,7 @@ public class RBlastSmilesGenerator {
         // set all ISVISITED labels to FALSE
         Iterator atoms = atomContainer.atoms().iterator();
         while (atoms.hasNext()) {
-            ((IAtom) atoms.next()).setFlag(CDKConstants.VISITED, false);
+            ((IChemObject) atoms.next()).setFlag(CDKConstants.VISITED, false);
         }
 
         createDFSTree(a, tree, null, atomContainer, canonicalLabels);
@@ -915,7 +917,7 @@ public class RBlastSmilesGenerator {
                             }
                             Object[] ohere = hm.values().toArray();
                             for (int i = ohere.length - 1; i > -1; i--) {
-                                sorted[i] = ((IAtom) chiralNeighbours.get(((Integer) ohere[i]).intValue()));
+                                sorted[i] = ((IAtom) chiralNeighbours.get(((Number) ohere[i]).intValue()));
                             }
                         }
                         if (container.getBond(parent, atom).getStereo() == null
@@ -961,7 +963,7 @@ public class RBlastSmilesGenerator {
                             }
                             Object[] ohere = hm.values().toArray();
                             for (int i = ohere.length - 1; i > -1; i--) {
-                                sorted[i] = ((IAtom) chiralNeighbours.get(((Integer) ohere[i]).intValue()));
+                                sorted[i] = ((IAtom) chiralNeighbours.get(((Number) ohere[i]).intValue()));
                             }
                         }
                         if (container.getBond(parent, atom).getStereo() == null
@@ -1124,7 +1126,7 @@ public class RBlastSmilesGenerator {
                             }
                             Object[] ohere = hm.values().toArray();
                             for (int i = 0; i < ohere.length; i++) {
-                                sorted[i] = ((IAtom) chiralNeighbours.get(((Integer) ohere[i]).intValue()));
+                                sorted[i] = ((IAtom) chiralNeighbours.get(((Number) ohere[i]).intValue()));
                             }
                         }
                         if (container.getBond(parent, atom).getStereo() == IBond.Stereo.DOWN) {
@@ -1139,7 +1141,7 @@ public class RBlastSmilesGenerator {
                             }
                             Object[] ohere = hm.values().toArray();
                             for (int i = 0; i < ohere.length; i++) {
-                                sorted[i] = ((IAtom) chiralNeighbours.get(((Integer) ohere[i]).intValue()));
+                                sorted[i] = ((IAtom) chiralNeighbours.get(((Number) ohere[i]).intValue()));
                             }
                         }
                         if (container.getBond(parent, atom).getStereo() == null
@@ -1159,10 +1161,10 @@ public class RBlastSmilesGenerator {
                                 }
                             }
                             Object[] ohere = hm.values().toArray();
-                            sorted[sorted.length - 1] = ((IAtom) chiralNeighbours.get(((Integer) ohere[ohere.length - 1]).intValue()));
+                            sorted[sorted.length - 1] = ((IAtom) chiralNeighbours.get(((Number) ohere[ohere.length - 1]).intValue()));
                             if (ohere.length == 2) {
-                                sorted[sorted.length - 3] = ((IAtom) chiralNeighbours.get(((Integer) ohere[0]).intValue()));
-                                if (BondTools.giveAngleFromMiddle(atom, parent, ((IAtom) chiralNeighbours.get(((Integer) ohere[1]).intValue()))) < 0) {
+                                sorted[sorted.length - 3] = ((IAtom) chiralNeighbours.get(((Number) ohere[0]).intValue()));
+                                if (BondTools.giveAngleFromMiddle(atom, parent, ((IAtom) chiralNeighbours.get(((Number) ohere[1]).intValue()))) < 0) {
                                     IAtom dummy = sorted[sorted.length - 2];
                                     sorted[sorted.length - 2] = sorted[0];
                                     sorted[0] = dummy;
@@ -1170,8 +1172,8 @@ public class RBlastSmilesGenerator {
                             }
                             if (ohere.length == 3) {
                                 sorted[sorted.length - 3] = sorted[sorted.length - 2];
-                                sorted[sorted.length - 2] = ((IAtom) chiralNeighbours.get(((Integer) ohere[ohere.length - 2]).intValue()));
-                                sorted[sorted.length - 4] = ((IAtom) chiralNeighbours.get(((Integer) ohere[ohere.length - 3]).intValue()));
+                                sorted[sorted.length - 2] = ((IAtom) chiralNeighbours.get(((Number) ohere[ohere.length - 2]).intValue()));
+                                sorted[sorted.length - 4] = ((IAtom) chiralNeighbours.get(((Number) ohere[ohere.length - 3]).intValue()));
                             }
                         }
                     }
@@ -1263,7 +1265,7 @@ public class RBlastSmilesGenerator {
                                         for (int k = v.size() - 1; k > positionInVector + 1 + numberOfAtoms - 1; k--) {
                                             v.remove(k);
                                         }
-                                        for (int k = 1; k < ((List) onew[numberOfAtoms - 1]).size(); k++) {
+                                        for (int k = 1; k < ((Collection) onew[numberOfAtoms - 1]).size(); k++) {
                                             v.add(((List) onew[numberOfAtoms - 1]).get(k));
                                         }
                                         onew[numberOfAtoms - 1] = ((List) onew[numberOfAtoms - 1]).get(0);
@@ -1520,7 +1522,7 @@ public class RBlastSmilesGenerator {
      */
     private String generateChargeString(IAtom a) {
         int charge = a.getFormalCharge() == CDKConstants.UNSET ? 0 : a.getFormalCharge().intValue();
-        StringBuffer buffer = new StringBuffer(3);
+        StringBuilder buffer = new StringBuilder(3);
         if (charge > 0) {
             //Positive
             buffer.append('+');
@@ -1580,11 +1582,11 @@ public class RBlastSmilesGenerator {
         /**
          * The atoms which close the ring
          */
-        private IAtom a1, a2;
+        private final IAtom a1, a2;
         /**
          * The number of the marker
          */
-        private int marker;
+        private final int marker;
 
         /**
          * Construct a BrokenBond between <code>a1</code> and <code>a2</code>
@@ -1672,4 +1674,5 @@ public class RBlastSmilesGenerator {
     public void setUseAromaticityFlag(boolean useAromaticityFlag) {
         this.useAromaticityFlag = useAromaticityFlag;
     }
+    private static final Logger LOG = Logger.getLogger(RBlastSmilesGenerator.class.getName());
 }

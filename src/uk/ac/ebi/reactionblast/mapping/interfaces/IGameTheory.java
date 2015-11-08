@@ -21,8 +21,8 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
 import java.io.IOException;
 import java.util.Collection;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
-import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
+import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

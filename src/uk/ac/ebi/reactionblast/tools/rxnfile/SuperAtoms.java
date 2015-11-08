@@ -22,6 +22,7 @@
  */
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -122,4 +123,5 @@ public class SuperAtoms {
     public void setCrossingBond(IBond crossingBond) {
         this.crossingBond = crossingBond;
     }
+    private static final Logger LOG = Logger.getLogger(SuperAtoms.class.getName());
 }

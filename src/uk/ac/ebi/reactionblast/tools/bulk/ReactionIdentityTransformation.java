@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
@@ -39,4 +40,5 @@ public class ReactionIdentityTransformation implements ITransformation<IReaction
     public IReaction transform(IReaction reaction) {
         return reaction;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionIdentityTransformation.class.getName());
 }

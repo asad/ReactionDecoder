@@ -25,7 +25,7 @@ package org.openscience.smsd.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -108,4 +108,5 @@ public class LabelContainer {
     synchronized public int getSize() {
         return labelMap.size();
     }
+    private static final Logger LOG = Logger.getLogger(LabelContainer.class.getName());
 }

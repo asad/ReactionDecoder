@@ -17,13 +17,13 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import uk.ac.ebi.centres.ConnectionProvider;
-import uk.ac.ebi.centres.Ligand;
-import uk.ac.ebi.centres.MutableDescriptor;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.ConnectionProvider;
+import uk.ac.ebi.centres.Ligand;
+import uk.ac.ebi.centres.MutableDescriptor;
 
 /**
  * @author John May
@@ -60,4 +60,5 @@ public class TerminalLigand<A> extends NonterminalLigand<A> {
     public boolean isBranching() {
         return Boolean.FALSE;
     }
+    private static final Logger LOG = Logger.getLogger(TerminalLigand.class.getName());
 }

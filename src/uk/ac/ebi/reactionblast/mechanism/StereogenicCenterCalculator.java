@@ -19,7 +19,10 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -271,4 +274,5 @@ public final class StereogenicCenterCalculator implements Serializable {
 //        return false;
 //    }
 //
+    private static final Logger LOG = Logger.getLogger(StereogenicCenterCalculator.class.getName());
 }

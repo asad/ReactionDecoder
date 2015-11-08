@@ -19,7 +19,7 @@
 package uk.ac.ebi.reactionblast.stereo.compare;
 
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.cip.CIPTool;
 import org.openscience.cdk.geometry.cip.ILigand;
@@ -96,4 +96,5 @@ public class StereoCenterAnalyser {
         CIPTool.order(ligands);
         return CIPTool.checkIfAllLigandsAreDifferent(ligands);
     }
+    private static final Logger LOG = Logger.getLogger(StereoCenterAnalyser.class.getName());
 }

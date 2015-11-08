@@ -20,7 +20,7 @@ package uk.ac.ebi.reactionblast.containers;
 
 import java.io.Serializable;
 import java.util.BitSet;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction.Direction;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
@@ -126,4 +126,5 @@ public class ReactionInfoCollector implements Serializable {
     public synchronized String getSourceDbID() {
         return sourceDbID;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionInfoCollector.class.getName());
 }

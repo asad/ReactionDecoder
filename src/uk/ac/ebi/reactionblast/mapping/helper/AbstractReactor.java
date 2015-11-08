@@ -20,8 +20,8 @@ package uk.ac.ebi.reactionblast.mapping.helper;
 
 import java.io.IOException;
 import java.util.List;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 
 /**

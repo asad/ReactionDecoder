@@ -174,5 +174,6 @@ public class UnblancedReactionChecker {
         }
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
+    private static final Logger LOG = Logger.getLogger(UnblancedReactionChecker.class.getName());
 
 }

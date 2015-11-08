@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -93,4 +94,5 @@ public class PostFilter {
         }
         return newMap;
     }
+    private static final Logger LOG = Logger.getLogger(PostFilter.class.getName());
 }

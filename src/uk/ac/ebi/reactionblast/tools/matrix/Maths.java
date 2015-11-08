@@ -1,5 +1,7 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
+
 public class Maths {
 
     /**
@@ -23,4 +25,5 @@ public class Maths {
         }
         return r;
     }
+    private static final Logger LOG = Logger.getLogger(Maths.class.getName());
 }

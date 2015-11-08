@@ -20,7 +20,7 @@ package uk.ac.ebi.reactionblast.signature;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -141,5 +141,6 @@ public class SignatureMatcher {
         }
         return null;
     }
+    private static final Logger LOG = Logger.getLogger(SignatureMatcher.class.getName());
 
 }

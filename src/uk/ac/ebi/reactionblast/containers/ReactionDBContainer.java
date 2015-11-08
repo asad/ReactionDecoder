@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -137,4 +138,5 @@ public class ReactionDBContainer implements Serializable {
     synchronized public Set<Entry<String, ReactionInfoCollector>> entrySet() {
         return reactionsFingerprints.entrySet();
     }
+    private static final Logger LOG = Logger.getLogger(ReactionDBContainer.class.getName());
 }

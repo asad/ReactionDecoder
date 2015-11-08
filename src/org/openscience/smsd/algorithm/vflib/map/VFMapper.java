@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -237,4 +238,5 @@ public class VFMapper implements IMapper {
         }
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(VFMapper.class.getName());
 }

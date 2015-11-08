@@ -19,6 +19,7 @@
 package aamtool;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -62,5 +63,6 @@ final public class SimilarityResult {
     public Map<String, String> getSimilarityReactions() {
         return similarityReactions;
     }
+    private static final Logger LOG = Logger.getLogger(SimilarityResult.class.getName());
 
 }

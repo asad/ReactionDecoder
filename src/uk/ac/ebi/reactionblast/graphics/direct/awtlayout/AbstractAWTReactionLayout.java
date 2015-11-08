@@ -21,10 +21,8 @@
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.geom.Rectangle2D;
-
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;

@@ -222,8 +222,8 @@ public final class MCSPlus {
         for (Map<Integer, Integer> firstPassMappings : allMCSCopy) {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
-            mgit = new McGregor((IQueryAtomContainer) ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
-            mgit.startMcGregorIteration((IQueryAtomContainer) ac1, mgit.getMCSSize(), extendMapping);
+            mgit = new McGregor(ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mgit.startMcGregorIteration(ac1, mgit.getMCSSize(), extendMapping);
 //            System.out.println("\nStart McGregor search");
             //Start McGregor search
             cliques = mgit.getMappings();
@@ -313,4 +313,5 @@ public final class MCSPlus {
     public synchronized boolean isMatchAtomType() {
         return matchAtomType;
     }
+    private static final Logger LOG = Logger.getLogger(MCSPlus.class.getName());
 }

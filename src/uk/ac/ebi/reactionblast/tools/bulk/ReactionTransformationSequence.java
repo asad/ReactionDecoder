@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
@@ -34,7 +34,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  */
 public class ReactionTransformationSequence implements ITransformation<IReaction> {
 
-    private List<ITransformation<IReaction>> transformations;
+    private final List<ITransformation<IReaction>> transformations;
 
     public ReactionTransformationSequence() {
         transformations = new ArrayList<>();
@@ -57,4 +57,5 @@ public class ReactionTransformationSequence implements ITransformation<IReaction
         }
         return transformedReaction;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionTransformationSequence.class.getName());
 }

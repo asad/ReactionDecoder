@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.utility;
 
 import java.util.BitSet;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 
 /**
@@ -66,4 +67,10 @@ public class EBIBitSet extends BitSet {
        
        return append;
     }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+    private static final Logger LOG = Logger.getLogger(EBIBitSet.class.getName());
 }

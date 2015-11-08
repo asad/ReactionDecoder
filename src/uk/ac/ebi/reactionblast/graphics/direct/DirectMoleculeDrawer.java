@@ -27,9 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2f;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -93,7 +92,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
      */
     public Highlighter getFirstHighlighter() {
         Highlighter highlightDrawer;
-        if (highlightDrawers.size() == 0) {
+        if (highlightDrawers.isEmpty()) {
             if (params.useCircularHighlight) {
                 highlightDrawer = new OutlineHighlighter(params);
             } else {
@@ -248,4 +247,5 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
                 textBounds.getWidth(),
                 textBounds.getHeight());
     }
+    private static final Logger LOG = Logger.getLogger(DirectMoleculeDrawer.class.getName());
 }

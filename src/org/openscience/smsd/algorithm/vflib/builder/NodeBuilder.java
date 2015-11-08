@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.vflib.interfaces.IEdge;
@@ -58,10 +59,7 @@ public class NodeBuilder implements INode {
             return false;
         }
         final NodeBuilder other = (NodeBuilder) obj;
-        if (!Objects.equals(this.matcher, other.matcher)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.matcher, other.matcher);
     }
 
     @Override
@@ -130,4 +128,5 @@ public class NodeBuilder implements INode {
     public void addNeighbor(NodeBuilder node) {
         neighborsList.add(node);
     }
+    private static final Logger LOG = Logger.getLogger(NodeBuilder.class.getName());
 }

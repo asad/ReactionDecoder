@@ -19,10 +19,9 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.GeometryTools;
@@ -82,4 +81,5 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(SingleMoleculeLayout.class.getName());
 }

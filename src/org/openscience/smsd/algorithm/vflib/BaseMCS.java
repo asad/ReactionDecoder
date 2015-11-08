@@ -140,9 +140,9 @@ public class BaseMCS {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (source instanceof IQueryAtomContainer) {
-                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor(source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
                 //Start McGregor search
-                mgit.startMcGregorIteration((IQueryAtomContainer) source, mgit.getMCSSize(), extendMapping);
+                mgit.startMcGregorIteration(source, mgit.getMCSSize(), extendMapping);
             } else {
                 if (countR > countP) {
                     mgit = new McGregor(source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());

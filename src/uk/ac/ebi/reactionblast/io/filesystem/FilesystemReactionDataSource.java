@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
@@ -65,11 +65,8 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
             } else {
                 return transformation.transform(reaction);
             }
-        } catch (CDKException c) {
+        } catch (CDKException | FileNotFoundException c) {
             c.printStackTrace();
-            return null;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -97,21 +94,19 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
                         File rxnFile = new File(reactionDir, filename);
                         currentIndex++;
                         try {
-                            FileReader reader = new FileReader(rxnFile);
-                            rxnReader.setReader(reader);
-                            IReaction reaction = rxnReader.read(new Reaction());
-                            reaction.setID(filename.substring(0, filename.indexOf(".")));
-                            reader.close();
+                            IReaction reaction;
+                            try (FileReader reader = new FileReader(rxnFile)) {
+                                rxnReader.setReader(reader);
+                                reaction = rxnReader.read(new Reaction());
+                                reaction.setID(filename.substring(0, filename.indexOf('.')));
+                            }
                             return reaction;
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                             return null;
-                        } catch (CDKException e) {
+                        } catch (CDKException | IOException e) {
                             e.printStackTrace();
                             return null;                        
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return null;
                         }
                     }
 
@@ -140,5 +135,6 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
             e.printStackTrace();
         }
     }
+    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataSource.class.getName());
 
 }

@@ -23,9 +23,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
 import javax.vecmath.Point2f;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;

@@ -174,7 +174,7 @@ public final class IsomorphismMax extends Selector implements IResult {
     }
 
     private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
-        return (double) educt.getAtomCount() == mcsSize;
+        return educt.getAtomCount() == mcsSize;
     }
 
     private synchronized boolean isSubGraph(IAtomContainer educt, IAtomContainer product) {
@@ -208,4 +208,5 @@ public final class IsomorphismMax extends Selector implements IResult {
     public synchronized Holder getUpdatedHolder() {
         return updatedHolder;
     }
+    private static final Logger LOG = Logger.getLogger(IsomorphismMax.class.getName());
 }

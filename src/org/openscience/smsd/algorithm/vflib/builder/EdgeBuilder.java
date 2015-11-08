@@ -22,6 +22,7 @@
  */
 package org.openscience.smsd.algorithm.vflib.builder;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.vflib.interfaces.IEdge;
@@ -77,4 +78,5 @@ public class EdgeBuilder implements IEdge {
     public BondMatcher getBondMatcher() {
         return matcher;
     }
+    private static final Logger LOG = Logger.getLogger(EdgeBuilder.class.getName());
 }

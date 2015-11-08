@@ -23,7 +23,16 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -350,7 +359,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @param target
      */
     public VF2MCS(IQueryAtomContainer source, IAtomContainer target) {
-        super((IQueryAtomContainer) source, target, true, true, true);
+        super(source, target, true, true, true);
         boolean timeoutVF = searchVFMappings();
 
 //        System.out.println("time for VF search " + timeoutVF);
@@ -680,4 +689,5 @@ public final class VF2MCS extends BaseMCS implements IResults {
             m.remove(r);
         }
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(VF2MCS.class.getName());
 }

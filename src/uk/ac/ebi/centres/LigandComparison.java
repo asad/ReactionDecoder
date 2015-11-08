@@ -18,6 +18,8 @@
 
 package uk.ac.ebi.centres;
 
+import java.util.logging.Logger;
+
 /**
  * Simple holder for a ligand comparison. The comparison holds the value
  * produced in the comparison as well as the type of the comparison.
@@ -26,8 +28,8 @@ package uk.ac.ebi.centres;
  */
 public final class LigandComparison implements Comparison {
 
-    private Integer         order;
-    private Descriptor.Type type;
+    private final Integer         order;
+    private final Descriptor.Type type;
 
 
     /**
@@ -61,4 +63,5 @@ public final class LigandComparison implements Comparison {
     public Descriptor.Type getType() {
         return type;
     }
+    private static final Logger LOG = Logger.getLogger(LigandComparison.class.getName());
 }

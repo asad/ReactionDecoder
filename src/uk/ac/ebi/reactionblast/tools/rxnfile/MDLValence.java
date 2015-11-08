@@ -32,12 +32,12 @@
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-
-import java.util.Map;
 
 /**
  * Adds implicit hydrogens and specifies valency using the MDL valence model.
@@ -1275,4 +1275,5 @@ final class MDLValence {
         }
         return val;
     }
+    private static final Logger LOG = Logger.getLogger(MDLValence.class.getName());
 }

@@ -33,18 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageIO;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
@@ -193,7 +191,7 @@ public class Reader {
     public IAtomContainer readMDLMolecule(String name, String dir) throws FileNotFoundException, CDKException {
         String filepath = dir + name + ".mol";
         MDLV2000Reader reader = new MDLV2000Reader(new FileReader(filepath));
-        IAtomContainer AtomContainer = (IAtomContainer) reader.read(new AtomContainer());
+        IAtomContainer AtomContainer = reader.read(new AtomContainer());
         AtomContainer.setID(name);
         return AtomContainer;
     }
@@ -289,4 +287,5 @@ public class Reader {
         }
         ImageIO.write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
     }
+    private static final Logger LOG = Logger.getLogger(Reader.class.getName());
 }

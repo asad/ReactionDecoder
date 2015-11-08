@@ -22,6 +22,7 @@
  */
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -81,4 +82,5 @@ public class SuperBonds {
     public int getBondIndex() {
         return bondIndex;
     }
+    private static final Logger LOG = Logger.getLogger(SuperBonds.class.getName());
 }

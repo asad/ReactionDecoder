@@ -17,16 +17,16 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.LigandSorter;
 import uk.ac.ebi.centres.Priority;
 import uk.ac.ebi.centres.PriorityRule;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A simple insertion sort for ligands. The number of ligands is not likely to be very larger as such doing a merge sort
@@ -138,4 +138,5 @@ public class InsertionSorter<A> implements LigandSorter<A> {
         return groups;
 
     }
+    private static final Logger LOG = Logger.getLogger(InsertionSorter.class.getName());
 }

@@ -27,6 +27,7 @@ package org.openscience.smsd.algorithm.mcgregor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -340,7 +341,7 @@ public class QueryProcessor {
                 setBondNeighbors(indexI, indexJ, order);
                 if (cTab1Copy.get(atomIndex * 4 + 3).compareToIgnoreCase("X") == 0) {
                     step1(atomIndex, counter);
-                    McGregorChecks.changeCharBonds(indexJ, signs[counter], query.getBondCount(), (IQueryAtomContainer) query, cTab1Copy);
+                    McGregorChecks.changeCharBonds(indexJ, signs[counter], query.getBondCount(), query, cTab1Copy);
                     int cor_atom = searchCorrespondingAtom(newNeighborNumA, indexJ, 1, mapped_atoms);
                     McGregorChecks.changeCharBonds(cor_atom, signs[counter], target.getBondCount(), target, cTab2Copy);
                     counter++;
@@ -404,7 +405,7 @@ public class QueryProcessor {
                 setBondNeighbors(indexI, indexJ, order);
                 if (cTab1Copy.get(atomIndex * 4 + 2).compareToIgnoreCase("X") == 0) {
                     step3(atomIndex, counter);
-                    McGregorChecks.changeCharBonds(indexI, signs[counter], query.getBondCount(), (IQueryAtomContainer) query, cTab1Copy);
+                    McGregorChecks.changeCharBonds(indexI, signs[counter], query.getBondCount(), query, cTab1Copy);
                     int cor_atom = searchCorrespondingAtom(newNeighborNumA, indexI, 1, mapped_atoms);
                     McGregorChecks.changeCharBonds(cor_atom, signs[counter], target.getBondCount(), target, cTab2Copy);
                     counter++;
@@ -521,4 +522,5 @@ public class QueryProcessor {
     List<String> getCBondNeighborsA() {
         return Collections.unmodifiableList(this.cBondNeighborsA);
     }
+    private static final Logger LOG = Logger.getLogger(QueryProcessor.class.getName());
 }

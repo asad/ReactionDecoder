@@ -26,6 +26,7 @@
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -62,4 +63,5 @@ public class RandomNumber implements Serializable {
         rg.setSeed(seed);
         return rg.nextInt(n);
     }
+    private static final Logger LOG = Logger.getLogger(RandomNumber.class.getName());
 }

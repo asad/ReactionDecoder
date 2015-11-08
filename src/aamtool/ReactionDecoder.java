@@ -26,12 +26,17 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -45,11 +50,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.openscience.cdk.interfaces.IReaction;
 import org.w3c.dom.Document;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 
 /**
@@ -640,5 +640,6 @@ public class ReactionDecoder extends Annotator {
             printHelp(System.out, createAnnotateOptions);
         }
     }
+    private static final Logger LOG = Logger.getLogger(ReactionDecoder.class.getName());
 
 }

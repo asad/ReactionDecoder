@@ -130,4 +130,5 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
         atomContainer.setBonds(bonds);
     }
+    private static final Logger LOG = Logger.getLogger(SmilesMoleculeLabeller.class.getName());
 }

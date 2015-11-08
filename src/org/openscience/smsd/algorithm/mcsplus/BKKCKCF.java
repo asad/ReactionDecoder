@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -408,4 +409,5 @@ public final class BKKCKCF {
         //System.out.println("max_Cliques_Set: " + max_Cliques_Set.size());
         return Collections.unmodifiableCollection(max_Cliques_Set);
     }
+    private static final Logger LOG = Logger.getLogger(BKKCKCF.class.getName());
 }

@@ -376,10 +376,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         if ((this.fingerprintID == null) ? (other.fingerprintID != null) : !this.fingerprintID.equals(other.fingerprintID)) {
             return false;
         }
-        if (this.fingerprintSize != other.fingerprintSize) {
-            return false;
-        }
-        return true;
+        return this.fingerprintSize == other.fingerprintSize;
     }
     
     @Override
@@ -411,4 +408,5 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return p;
     }
+    private static final Logger LOG = Logger.getLogger(PatternFingerprinter.class.getName());
 }

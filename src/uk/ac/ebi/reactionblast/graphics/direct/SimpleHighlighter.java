@@ -27,9 +27,8 @@ import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -37,7 +36,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class SimpleHighlighter extends AbstractHighlightDrawer implements Highlighter {
     
     private Map<IAtom, Color> atomColorMap;
-    private Map<IBond, Color> bondColorMap;
+    private final Map<IBond, Color> bondColorMap;
     
     public SimpleHighlighter(Params params) {
         super(params);
@@ -186,5 +185,6 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         atomColorMap.clear();
         bondColorMap.clear();
     }
+    private static final Logger LOG = Logger.getLogger(SimpleHighlighter.class.getName());
 
 }

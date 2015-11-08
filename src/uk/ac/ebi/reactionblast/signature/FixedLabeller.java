@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
@@ -44,5 +45,6 @@ public class FixedLabeller implements ICanonicalMoleculeLabeller {
     public int[] getCanonicalPermutation(IAtomContainer container) {
         return labels;
     }
+    private static final Logger LOG = Logger.getLogger(FixedLabeller.class.getName());
 
 }

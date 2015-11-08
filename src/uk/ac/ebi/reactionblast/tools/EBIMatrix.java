@@ -1457,7 +1457,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         double row[] = new double[n];
         for (int j = 0; j < n; j++) {
             // extract the elements of the 1st row.
-            row[j] = ((Double) v.get(j)).doubleValue();
+            row[j] = ((Number) v.get(j)).doubleValue();
         }
         v.removeAll(v);
         v.add(row);  // Start storing rows instead of columns.
@@ -1842,5 +1842,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         }
         return this;
     }
+    private static final Logger LOG = Logger.getLogger(EBIMatrix.class.getName());
 
 }

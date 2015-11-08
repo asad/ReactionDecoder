@@ -53,7 +53,7 @@ public enum Tetrahedral
      * @see <a href="http://goldbook.iupac.org/P04921.html">pseudo-asymmetric carbon atom</a>
      */
     s(Type.PSEUDO_ASYMMETRIC);
-    private Type type;
+    private final Type type;
 
     private Tetrahedral(Type type) {
         this.type = type;

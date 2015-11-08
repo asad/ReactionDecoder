@@ -597,4 +597,5 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
         mcs.setChemFilters(true, true, true);
         return mcs.isSubgraph() && !mcs.isStereoMisMatch();
     }
+    private static final Logger LOG = Logger.getLogger(CDKReactionBuilder.class.getName());
 }

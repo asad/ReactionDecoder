@@ -34,19 +34,18 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.StringTokenizer;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemFile;
 import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.interfaces.IChemObject;
+import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IChemSequence;
 import org.openscience.cdk.interfaces.IMapping;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.io.DefaultChemObjectReader;
@@ -351,4 +350,5 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     public void close() throws IOException {
         input.close();
     }
+    private static final Logger LOG = Logger.getLogger(MDLRXNV2000Reader.class.getName());
 }

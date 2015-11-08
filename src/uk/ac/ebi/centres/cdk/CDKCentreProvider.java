@@ -17,6 +17,10 @@
  */
 package uk.ac.ebi.centres.cdk;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.graph.SpanningTree;
 import org.openscience.cdk.interfaces.IAtom;
@@ -30,10 +34,6 @@ import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.graph.ConnectionTableDigraph;
 import uk.ac.ebi.centres.ligand.PlanarCentre;
 import uk.ac.ebi.centres.ligand.TetrahedralCentre;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author John May
@@ -149,4 +149,5 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
         }
         return Boolean.FALSE;
     }
+    private static final Logger LOG = Logger.getLogger(CDKCentreProvider.class.getName());
 }

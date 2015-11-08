@@ -23,6 +23,7 @@
  */
 package org.openscience.smsd.helper;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
@@ -114,4 +115,5 @@ public class BondEnergy {
         }
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(BondEnergy.class.getName());
 }

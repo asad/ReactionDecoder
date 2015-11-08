@@ -160,4 +160,5 @@ public class ReactionFingerprinter implements Serializable {
         r.setID(rid);
         return r;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionFingerprinter.class.getName());
 }

@@ -1,5 +1,6 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -25,7 +26,7 @@ public class QRDecomposition implements java.io.Serializable {
      *
      * @serial internal array storage.
      */
-    private double[][] QR;
+    private final double[][] QR;
 
     /**
      * Row and column dimensions.
@@ -33,14 +34,14 @@ public class QRDecomposition implements java.io.Serializable {
      * @serial column dimension.
      * @serial row dimension.
      */
-    private int m, n;
+    private final int m, n;
 
     /**
      * Array for internal storage of diagonal of R.
      *
      * @serial diagonal of R.
      */
-    private double[] Rdiag;
+    private final double[] Rdiag;
 
     /* ------------------------
      Constructor
@@ -225,4 +226,5 @@ public class QRDecomposition implements java.io.Serializable {
         }
         return (new EBIMatrix(X, n, nx).getMatrix(0, n - 1, 0, nx - 1));
     }
+    private static final Logger LOG = Logger.getLogger(QRDecomposition.class.getName());
 }

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
@@ -337,4 +338,5 @@ public final class ChooseWinner extends Selector implements Serializable {
         }
 
     }
+    private static final Logger LOG = Logger.getLogger(ChooseWinner.class.getName());
 }

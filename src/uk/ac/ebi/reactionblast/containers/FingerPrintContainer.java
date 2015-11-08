@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Map;
@@ -235,4 +234,5 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    private static final Logger LOG = Logger.getLogger(FingerPrintContainer.class.getName());
 }

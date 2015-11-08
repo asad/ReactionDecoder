@@ -23,7 +23,11 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
@@ -246,9 +250,9 @@ public class VF2Sub implements IResults {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (source instanceof IQueryAtomContainer) {
-                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
+                mgit = new McGregor(source, target, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
                 //Start McGregor search
-                mgit.startMcGregorIteration((IQueryAtomContainer) source, mgit.getMCSSize(), extendMapping);
+                mgit.startMcGregorIteration(source, mgit.getMCSSize(), extendMapping);
             } else {
                 extendMapping.clear();
                 mgit = new McGregor(target, source, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);

@@ -1,5 +1,6 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -536,4 +537,5 @@ public class SingularValueDecomposition implements java.io.Serializable {
         }
         return r;
     }
+    private static final Logger LOG = Logger.getLogger(SingularValueDecomposition.class.getName());
 }

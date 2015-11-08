@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
-
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
@@ -389,4 +388,5 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         l.add(subgraphContainer);
         return l;
     }
+    private static final Logger LOG = Logger.getLogger(StereoFilter.class.getName());
 }

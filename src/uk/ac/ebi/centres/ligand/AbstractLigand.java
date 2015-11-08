@@ -18,17 +18,18 @@
 package uk.ac.ebi.centres.ligand;
 
 import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IChemObject;
+import org.openscience.cdk.interfaces.IElement;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
 import uk.ac.ebi.centres.descriptor.General;
 import uk.ac.ebi.centres.graph.Arc;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author John May
@@ -143,7 +144,7 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
     public String toString() {
         A atom = getAtom();
         if (atom instanceof IAtom) {
-            return ((IAtom) atom).getSymbol() + "" + ((IAtom) atom).getProperty("number");
+            return ((IElement) atom).getSymbol() + "" + ((IChemObject) atom).getProperty("number");
         }
         return "Non CDK Atom";
     }

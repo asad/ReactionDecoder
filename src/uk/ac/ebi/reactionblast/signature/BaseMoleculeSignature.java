@@ -18,8 +18,8 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
-
 import signature.AbstractGraphSignature;
 import signature.AbstractVertexSignature;
 
@@ -57,5 +57,6 @@ public class BaseMoleculeSignature extends AbstractGraphSignature {
     protected int getVertexCount() {
         return atomContainer.getAtomCount();
     }
+    private static final Logger LOG = Logger.getLogger(BaseMoleculeSignature.class.getName());
 
 }

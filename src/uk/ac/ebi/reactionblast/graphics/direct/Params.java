@@ -20,6 +20,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import java.util.logging.Logger;
 
 public class Params {
 
@@ -140,4 +141,5 @@ public class Params {
     public boolean shouldCrop = true;
     public double labelPanelHeight = 20;
     public double labelGap = 10;;
+    private static final Logger LOG = Logger.getLogger(Params.class.getName());
 }

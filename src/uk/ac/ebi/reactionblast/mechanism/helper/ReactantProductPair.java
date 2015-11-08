@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,10 +51,7 @@ public final class ReactantProductPair implements Serializable,
         if (!Objects.equals(this.query, other.query)) {
             return false;
         }
-        if (!Objects.equals(this.target, other.target)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.target, other.target);
     }
     private static final long serialVersionUID = 19876565735478L;
     private final String query;
@@ -102,4 +100,5 @@ public final class ReactantProductPair implements Serializable,
     public int compare(ReactantProductPair o1, ReactantProductPair o2) {
         return o1.compareTo(o2);
     }
+    private static final Logger LOG = Logger.getLogger(ReactantProductPair.class.getName());
 }

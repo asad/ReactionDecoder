@@ -17,9 +17,8 @@
  */
 package uk.ac.ebi.centres;
 
-import uk.ac.ebi.centres.graph.Arc;
-
 import java.util.List;
+import uk.ac.ebi.centres.graph.Arc;
 
 /**
  * @author John May

@@ -25,10 +25,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -598,5 +597,6 @@ public class ConvexHull implements Iterable<Point2d> {
     public Iterator<Point2d> iterator() {
         return Arrays.asList(hull).iterator();
     }
+    private static final Logger LOG = Logger.getLogger(ConvexHull.class.getName());
 
 }

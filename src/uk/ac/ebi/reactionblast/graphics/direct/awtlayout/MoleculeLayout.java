@@ -20,7 +20,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Graphics2D;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager;
@@ -73,5 +73,6 @@ public class MoleculeLayout extends AbstractAWTLayout<IAtomContainer> {
         
         return boundsTree;
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeLayout.class.getName());
 
 }

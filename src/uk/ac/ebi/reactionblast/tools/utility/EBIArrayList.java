@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.tools.utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  *
@@ -82,4 +83,10 @@ public class EBIArrayList<E> extends ArrayList<E> {
         }
         return mergedList;
     }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+    private static final Logger LOG = Logger.getLogger(EBIArrayList.class.getName());
 }

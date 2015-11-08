@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
@@ -231,4 +231,5 @@ public class BlockMapping {
                 + rbm
                 + pbm;
     }
+    private static final Logger LOG = Logger.getLogger(BlockMapping.class.getName());
 }

@@ -17,6 +17,12 @@
  */
 package uk.ac.ebi.centres.cdk;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -26,13 +32,6 @@ import org.openscience.cdk.silent.AtomContainer;
 import org.openscience.cdk.silent.ChemFile;
 import org.openscience.cdk.tools.manipulator.ChemFileManipulator;
 import org.openscience.cdk.tools.periodictable.PeriodicTable;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openscience.cdk.config.Isotopes;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
@@ -71,4 +70,5 @@ public class CMLLoader {
         }
         return new AtomContainer();
     }
+    private static final Logger LOG = Logger.getLogger(CMLLoader.class.getName());
 }

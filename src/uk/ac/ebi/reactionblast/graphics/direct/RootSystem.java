@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 
@@ -37,12 +37,12 @@ public class RootSystem {
     /**
      * The atom roots of the trees that make up the system.
      */
-    private List<IAtom> roots;
+    private final List<IAtom> roots;
     
     /**
      * All the other atoms in the system.
      */
-    private List<IAtom> leaves;
+    private final List<IAtom> leaves;
     
     public RootSystem() {
         this.roots = new ArrayList<>();
@@ -51,7 +51,6 @@ public class RootSystem {
     
     public void addRoot(IAtom root) {
         if (roots.contains(root)) {
-            return;
         } else {
             roots.add(root);
         }
@@ -64,7 +63,6 @@ public class RootSystem {
 
     public void addLeaf(IAtom leaf) {
         if (leaves.contains(leaf)) {
-            return;
         } else {
             leaves.add(leaf);
         }
@@ -107,5 +105,6 @@ public class RootSystem {
         printAtomList(leaves, sb);
         return sb.toString();
     }
+    private static final Logger LOG = Logger.getLogger(RootSystem.class.getName());
 
 }

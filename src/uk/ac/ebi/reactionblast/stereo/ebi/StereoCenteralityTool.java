@@ -25,12 +25,12 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.centres.cdk.CDKPerceptor;
 import uk.ac.ebi.centres.descriptor.Planar;
 import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.descriptor.Trigonal;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
+import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**

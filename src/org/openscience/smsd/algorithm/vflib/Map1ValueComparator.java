@@ -25,6 +25,7 @@ package org.openscience.smsd.algorithm.vflib;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.logging.Logger;
 
  /*
  * 
@@ -59,4 +60,5 @@ public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
         }
         //return size2 - size1;  assumes you want biggest to smallest;
     }
+    private static final Logger LOG = Logger.getLogger(Map1ValueComparator.class.getName());
 }

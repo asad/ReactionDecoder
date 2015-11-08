@@ -21,12 +21,15 @@ package uk.ac.ebi.reactionblast.mapping;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -224,4 +227,5 @@ public final class CallableAtomMappingTool implements Serializable {
     private void putSolution(IMappingAlgorithm choice, Reactor reactor) {
         this.solution.put(choice, reactor);
     }
+    private static final Logger LOG = Logger.getLogger(CallableAtomMappingTool.class.getName());
 }

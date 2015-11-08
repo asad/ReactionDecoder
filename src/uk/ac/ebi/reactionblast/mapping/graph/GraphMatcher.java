@@ -368,4 +368,5 @@ public final class GraphMatcher extends Debugger {
             return smsd.isSubgraph();
         }
     }
+    private static final Logger LOG = Logger.getLogger(GraphMatcher.class.getName());
 }

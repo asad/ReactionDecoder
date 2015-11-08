@@ -24,8 +24,22 @@
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.vecmath.Point2d;
+import javax.vecmath.Point3d;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.config.IsotopeFactory;
 import org.openscience.cdk.config.Isotopes;
@@ -42,6 +56,8 @@ import org.openscience.cdk.interfaces.IChemSequence;
 import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.ISingleElectron;
+import org.openscience.cdk.io.DefaultChemObjectReader;
+import org.openscience.cdk.io.IChemObjectReader;
 import org.openscience.cdk.io.formats.IResourceFormat;
 import org.openscience.cdk.io.formats.MDLV2000Format;
 import org.openscience.cdk.io.setting.BooleanIOSetting;
@@ -52,24 +68,6 @@ import org.openscience.cdk.stereo.StereoElementFactory;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.periodictable.PeriodicTable;
-
-import javax.vecmath.Point2d;
-import javax.vecmath.Point3d;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.openscience.cdk.io.DefaultChemObjectReader;
-import org.openscience.cdk.io.IChemObjectReader;
-
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
 
@@ -1416,13 +1414,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                         IIsotope major = Isotopes.getInstance().getMajorIsotope(element);
                         atom.setMassNumber(major.getMassNumber() + massDiff);
                     }
-                } catch (IOException exception) {
-                    handleError(
-                            "Could not parse mass difference field.",
-                            linecount, 35, 37,
-                            exception
-                    );
-                } catch (NumberFormatException exception) {
+                } catch (IOException | NumberFormatException exception) {
                     handleError(
                             "Could not parse mass difference field.",
                             linecount, 35, 37,
@@ -2194,5 +2186,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             return UNSPECIFIED;
         }
     }
+    private static final Logger LOG = Logger.getLogger(MDLV2000Reader.class.getName());
 
 }

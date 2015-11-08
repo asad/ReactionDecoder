@@ -21,10 +21,8 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.GeometryTools;
@@ -121,4 +119,5 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;
     }
+    private static final Logger LOG = Logger.getLogger(LinearMoleculeSetLayout.class.getName());
 }

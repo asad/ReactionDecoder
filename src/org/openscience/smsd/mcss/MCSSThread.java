@@ -18,20 +18,27 @@
  */
 package org.openscience.smsd.mcss;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.interfaces.Algorithm;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * 
@@ -304,4 +311,5 @@ final public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomConta
     public synchronized int getTaskNumber() {
         return taskNumber;
     }
+    private static final Logger LOG = Logger.getLogger(MCSSThread.class.getName());
 }

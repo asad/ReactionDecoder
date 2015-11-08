@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.tools.utility;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
@@ -219,4 +220,5 @@ public class EBIDoubleUtility {
 
         return flag;
     }
+    private static final Logger LOG = Logger.getLogger(EBIDoubleUtility.class.getName());
 }

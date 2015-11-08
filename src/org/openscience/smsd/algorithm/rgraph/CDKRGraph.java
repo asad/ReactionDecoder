@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.exception.CDKException;
 
@@ -655,4 +656,5 @@ public class CDKRGraph {
         CDKMCS.getIterationManager().increment();
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(CDKRGraph.class.getName());
 }

@@ -80,7 +80,7 @@ public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
                     }
                 }
             }
-            result += arr[0][i] * Math.pow(-1, (int) i) * determinant(temp);
+            result += arr[0][i] * Math.pow(-1, i) * determinant(temp);
         }
         return result;
     }

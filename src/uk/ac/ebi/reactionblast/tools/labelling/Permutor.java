@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * General permutation generator, that uses orderly generation by ranking and unranking. The basic idea is that all
@@ -206,5 +207,6 @@ public class Permutor {
         }
         return shiftedPermutation;
     }
+    private static final Logger LOG = Logger.getLogger(Permutor.class.getName());
 
 }

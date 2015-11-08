@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
@@ -215,4 +215,5 @@ public final class MCSPlusHandler implements IResults {
     public synchronized boolean isTimeout() {
         return timeout;
     }
+    private static final Logger LOG = Logger.getLogger(MCSPlusHandler.class.getName());
 }

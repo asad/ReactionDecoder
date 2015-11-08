@@ -18,14 +18,14 @@
 package uk.ac.ebi.centres.priority;
 
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.LigandComparison;
 import uk.ac.ebi.centres.LigandSorter;
 import uk.ac.ebi.centres.PriorityRule;
-
-import java.util.List;
 
 /**
  * A priority rule made up of other rules. Each sub-rule is used exhaustively on the digraph before the next one is
@@ -159,4 +159,5 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
         }
         return builder.toString();
     }
+    private static final Logger LOG = Logger.getLogger(CombinedRule.class.getName());
 }

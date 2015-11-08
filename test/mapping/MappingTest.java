@@ -19,8 +19,9 @@
 package mapping;
 
 import java.io.FileNotFoundException;
+import java.util.logging.Logger;
 import junit.framework.Assert;
-import static mapping.BaseTest.KEGG_RXN_DIR;
+import static mapping.TestUtility.KEGG_RXN_DIR;
 import org.junit.Before;
 import org.junit.Test;
 import org.openscience.cdk.interfaces.IAtom;
@@ -1866,5 +1867,6 @@ public class MappingTest extends BaseTest {
          */
         Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
+    private static final Logger LOG = Logger.getLogger(MappingTest.class.getName());
 
 }

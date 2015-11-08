@@ -24,6 +24,7 @@
 package org.openscience.smsd.algorithm.matchers;
 
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
@@ -151,4 +152,5 @@ public final class DefaultAtomMatcher implements AtomMatcher {
     public boolean isMatchRings() {
         return shouldMatchRings;
     }
+    private static final Logger LOG = Logger.getLogger(DefaultAtomMatcher.class.getName());
 }

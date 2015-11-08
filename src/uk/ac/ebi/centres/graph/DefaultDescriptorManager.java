@@ -17,12 +17,11 @@
  */
 package uk.ac.ebi.centres.graph;
 
-import uk.ac.ebi.centres.DescriptorManager;
-import uk.ac.ebi.centres.MutableDescriptor;
-
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.DescriptorManager;
+import uk.ac.ebi.centres.MutableDescriptor;
 import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
@@ -30,8 +29,8 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
 
-    private Map<A, MutableDescriptor> atomMap = new HashMap<A, MutableDescriptor>();
-    private Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<Map.Entry<A, A>, MutableDescriptor>();
+    private final Map<A, MutableDescriptor> atomMap = new HashMap<A, MutableDescriptor>();
+    private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<Map.Entry<A, A>, MutableDescriptor>();
 
     @Override
     public MutableDescriptor getDescriptor(A atom) {
@@ -78,4 +77,5 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
         atomMap.clear();
         bondMap.clear();
     }
+    private static final Logger LOG = Logger.getLogger(DefaultDescriptorManager.class.getName());
 }

@@ -48,7 +48,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  */
 public abstract class MDLReaderBase extends DefaultChemObjectReader {
 
-    private static ILoggingTool logger
+    private static final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MDLReaderBase.class);
     protected SuperAtomContainer superAtomContainer;
 

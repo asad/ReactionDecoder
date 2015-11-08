@@ -22,7 +22,10 @@
  */
 package org.openscience.smsd.algorithm.single;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
@@ -39,7 +42,7 @@ import org.openscience.smsd.interfaces.IResults;
  * This is a handler class for single atom mapping
  * ({@link org.openscience.cdk.smsd.algorithm.single.SingleMapping}).
  *
- *  
+ *
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
@@ -61,8 +64,8 @@ public class SingleMappingHandler implements IResults {
      */
     @TestMethod("setMCSAlgorithm")
     public SingleMappingHandler(
-            IAtomContainer source, 
-            IAtomContainer target, 
+            IAtomContainer source,
+            IAtomContainer target,
             boolean shouldMatchRings) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
@@ -78,7 +81,7 @@ public class SingleMappingHandler implements IResults {
      */
     @TestMethod("setMCSAlgorithm")
     public SingleMappingHandler(
-            IQueryAtomContainer source, 
+            IQueryAtomContainer source,
             IAtomContainer target) {
         allAtomMCS = new ArrayList<>();
         this.source = source;

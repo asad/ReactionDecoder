@@ -146,5 +146,6 @@ public final class AAMTest extends TestUtility {
         reaction.setID(reactionName);
         return reaction;
     }
+    private static final Logger LOG = Logger.getLogger(AAMTest.class.getName());
 
 }

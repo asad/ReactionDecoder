@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -92,5 +92,6 @@ public class AtomContainerPrinter {
         sb.append(edges.toString());
         return sb.toString();
     }
+    private static final Logger LOG = Logger.getLogger(AtomContainerPrinter.class.getName());
 
 }

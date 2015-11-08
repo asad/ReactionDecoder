@@ -53,6 +53,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
@@ -126,4 +127,5 @@ public class RingFilter {
             return 0;
         }
     }
+    private static final Logger LOG = Logger.getLogger(RingFilter.class.getName());
 }

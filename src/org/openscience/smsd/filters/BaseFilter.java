@@ -23,6 +23,7 @@
 package org.openscience.smsd.filters;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -92,4 +93,5 @@ public class BaseFilter {
     public synchronized IAtomContainer getTarget() {
         return mol2;
     }
+    private static final Logger LOG = Logger.getLogger(BaseFilter.class.getName());
 }

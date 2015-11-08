@@ -18,8 +18,8 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
@@ -88,5 +88,6 @@ public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
     public double getAxisPosition() {
         return (boundsTree.getHeight() / 2) + params.borderY;
     }
+    private static final Logger LOG = Logger.getLogger(LeftToRightReactionLayout.class.getName());
 
 }

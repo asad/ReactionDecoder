@@ -363,4 +363,5 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     public void setBondInSenSitiveMcGregor(double bondInSensitiveMcGregor) {
         this.bondInSensitiveMcGregor = bondInSensitiveMcGregor;
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Isomorphism.class.getName());
 }

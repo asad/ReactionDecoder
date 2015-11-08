@@ -26,6 +26,7 @@ package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 /**
  * This class generates compatibility graph between query and target molecule. It also marks edges in the compatibility
@@ -108,4 +109,5 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
     public int getSink() {
         return j;
     }
+    private static final Logger LOG = Logger.getLogger(Edge.class.getName());
 }

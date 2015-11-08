@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.blocks;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * The list of blocks in an atom container.
@@ -30,7 +31,7 @@ import java.util.List;
  */
 public class BlockList implements Comparable<BlockList> {
 
-    private List<Block> blocks;
+    private final List<Block> blocks;
     private String signatureString;
     private int totalSize;
 
@@ -177,4 +178,5 @@ public class BlockList implements Comparable<BlockList> {
     public String toString() {
         return blocks.toString();
     }
+    private static final Logger LOG = Logger.getLogger(BlockList.class.getName());
 }

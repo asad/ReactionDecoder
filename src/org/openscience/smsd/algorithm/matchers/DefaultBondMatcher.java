@@ -22,6 +22,7 @@
  */
 package org.openscience.smsd.algorithm.matchers;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IBond;
@@ -140,4 +141,5 @@ public final class DefaultBondMatcher implements BondMatcher {
     public boolean isShouldMatchRings() {
         return shouldMatchRings;
     }
+    private static final Logger LOG = Logger.getLogger(DefaultBondMatcher.class.getName());
 }

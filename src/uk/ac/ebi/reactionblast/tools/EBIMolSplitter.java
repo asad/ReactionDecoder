@@ -30,14 +30,14 @@ package uk.ac.ebi.reactionblast.tools;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.interfaces.IElectronContainer;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IElectronContainer;
 
 /**
  *
@@ -118,4 +118,5 @@ public class EBIMolSplitter {
         }
         return molecules;
     }
+    private static final Logger LOG = Logger.getLogger(EBIMolSplitter.class.getName());
 }

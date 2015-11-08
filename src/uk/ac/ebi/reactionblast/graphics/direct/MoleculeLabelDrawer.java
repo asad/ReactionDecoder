@@ -22,9 +22,8 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2f;
-
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
@@ -52,4 +51,5 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             g.drawString(label, p.x, p.y);
         }
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeLabelDrawer.class.getName());
 }

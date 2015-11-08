@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Simple utility class to generate a 'ramp' of colors between two values.
@@ -88,5 +89,6 @@ public class ColorRamp {
         }
 
     }
+    private static final Logger LOG = Logger.getLogger(ColorRamp.class.getName());
 
 }

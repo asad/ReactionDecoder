@@ -55,6 +55,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
@@ -261,4 +262,5 @@ final class GameTheoryRings extends BaseGameTheory {
     public synchronized int getDelta() {
         return delta;
     }
+    private static final Logger LOG = Logger.getLogger(GameTheoryRings.class.getName());
 }

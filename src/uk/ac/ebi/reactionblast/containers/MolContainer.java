@@ -185,11 +185,7 @@ public class MolContainer implements IMolContainer {
         if (_queryMol.getAtomCount() == 1 && _targetMol.getAtomCount() == 1) {
             IAtom a = _queryMol.atoms().iterator().next();
             IAtom b = _targetMol.atoms().iterator().next();
-            if (a.getSymbol().equalsIgnoreCase(b.getSymbol()) && a.getFormalCharge() == b.getFormalCharge()) {
-                return true;
-            } else {
-                return false;
-            }
+            return a.getSymbol().equalsIgnoreCase(b.getSymbol()) && a.getFormalCharge() == b.getFormalCharge();
         }
         return isSubgraphIdentical(_queryMol, _targetMol, removeHydrogen);
     }
@@ -267,4 +263,5 @@ public class MolContainer implements IMolContainer {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    private static final Logger LOG = Logger.getLogger(MolContainer.class.getName());
 }

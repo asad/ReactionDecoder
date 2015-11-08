@@ -1,5 +1,6 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -29,7 +30,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
      *
      * @serial matrix dimension.
      */
-    private int n;
+    private final int n;
     /**
      * Symmetry flag.
      *
@@ -41,13 +42,13 @@ public class EigenvalueDecomposition implements java.io.Serializable {
      *
      * @serial internal storage of eigenvalues.
      */
-    private double[] d, e;
+    private final double[] d, e;
     /**
      * Array for internal storage of eigenvectors.
      *
      * @serial internal storage of eigenvectors.
      */
-    private double[][] V;
+    private final double[][] V;
     /**
      * Array for internal storage of nonsymmetric Hessenberg form.
      *
@@ -892,4 +893,5 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         }
         return X;
     }
+    private static final Logger LOG = Logger.getLogger(EigenvalueDecomposition.class.getName());
 }

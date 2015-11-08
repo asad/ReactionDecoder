@@ -17,10 +17,9 @@
  */
 package uk.ac.ebi.centres;
 
-import uk.ac.ebi.centres.graph.Arc;
-
 import java.util.List;
 import java.util.Set;
+import uk.ac.ebi.centres.graph.Arc;
 
 /**
  * Defines a ligand which in the digraph is a side chain of a central atom. The ligand is a node in the {@link Digraph}.

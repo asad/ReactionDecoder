@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestMethod;
 
 /**
@@ -76,4 +76,5 @@ public class Sotter {
         }
         return result;
     }
+    private static final Logger LOG = Logger.getLogger(Sotter.class.getName());
 }

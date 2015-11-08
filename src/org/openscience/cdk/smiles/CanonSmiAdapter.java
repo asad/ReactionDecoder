@@ -16,16 +16,17 @@
  */
 package org.openscience.cdk.smiles;
 
+import java.io.IOException;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.GraphUtil;
+import org.openscience.cdk.graph.GraphUtil.EdgeToBondMap;
 import org.openscience.cdk.graph.invariant.Canon;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.ringsearch.RingSearch;
 import uk.ac.ebi.beam.Graph;
-import java.io.IOException;
-import org.openscience.cdk.graph.GraphUtil.EdgeToBondMap;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -138,4 +139,5 @@ public final class CanonSmiAdapter {
         }
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(CanonSmiAdapter.class.getName());
 }

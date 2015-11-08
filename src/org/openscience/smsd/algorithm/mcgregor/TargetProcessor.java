@@ -26,6 +26,7 @@ package org.openscience.smsd.algorithm.mcgregor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -403,4 +404,5 @@ public class TargetProcessor {
     List<String> getCBondNeighborsB() {
         return Collections.unmodifiableList(this.cBondNeighborsB);
     }
+    private static final Logger LOG = Logger.getLogger(TargetProcessor.class.getName());
 }

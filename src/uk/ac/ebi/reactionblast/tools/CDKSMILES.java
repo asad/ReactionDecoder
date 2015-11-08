@@ -27,10 +27,10 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
+import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.cdk.smiles.CanonSmiAdapter;
 
 /**
  *
@@ -129,4 +129,5 @@ public class CDKSMILES {
         }
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(CDKSMILES.class.getName());
 }

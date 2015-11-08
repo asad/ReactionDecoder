@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.stereo.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.geometry.cip.CIPTool;
 import org.openscience.cdk.geometry.cip.CIPTool.CIP_CHIRALITY;
 import org.openscience.cdk.interfaces.IAtom;
@@ -100,4 +100,5 @@ public class Chirality2DTool implements ChiralityTool {
             return IStereoAndConformation.NONE;
         }
     }
+    private static final Logger LOG = Logger.getLogger(Chirality2DTool.class.getName());
 }

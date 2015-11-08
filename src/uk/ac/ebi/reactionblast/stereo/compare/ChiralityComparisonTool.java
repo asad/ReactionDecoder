@@ -18,16 +18,15 @@
  */
 package uk.ac.ebi.reactionblast.stereo.compare;
 
-import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.interfaces.Algorithm;
-
+import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
+import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
 
 /**
  * Tool for comparing chiralities.
@@ -77,12 +76,9 @@ public class ChiralityComparisonTool {
     private static boolean has3DCoordinates(IAtomContainer atomContainerA) {
         // XXX - check all atoms?
         for (IAtom atom : atomContainerA.atoms()) {
-            if (atom.getPoint3d() == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return atom.getPoint3d() != null;
         }
         return false;
     }
+    private static final Logger LOG = Logger.getLogger(ChiralityComparisonTool.class.getName());
 }

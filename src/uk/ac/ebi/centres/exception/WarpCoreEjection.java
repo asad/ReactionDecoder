@@ -17,6 +17,8 @@
  */
 package uk.ac.ebi.centres.exception;
 
+import java.util.logging.Logger;
+
 /**
  * @author John May
  */
@@ -26,4 +28,5 @@ public class WarpCoreEjection extends RuntimeException {
     public WarpCoreEjection() {
         super("Boy, that escalated quickly. I mean, that really got out of hand fast! - combinatorial explosion immanent");
     }
+    private static final Logger LOG = Logger.getLogger(WarpCoreEjection.class.getName());
 }

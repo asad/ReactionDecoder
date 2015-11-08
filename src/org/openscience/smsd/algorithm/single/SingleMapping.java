@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -255,4 +256,5 @@ public class SingleMapping {
         }
         return result;
     }
+    private static final Logger LOG = Logger.getLogger(SingleMapping.class.getName());
 }

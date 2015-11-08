@@ -17,8 +17,6 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
-import uk.ac.ebi.centres.Descriptor;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +24,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.Descriptor;
 
 /**
  * Implementation of a descriptor list that allows descriptors to be added and ignored. The list maintains an integer
@@ -238,4 +238,5 @@ public final class DescriptorList implements Comparable<DescriptorList> {
         pairing = 0;
         descriptors.clear();
     }
+    private static final Logger LOG = Logger.getLogger(DescriptorList.class.getName());
 }

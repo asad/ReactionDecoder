@@ -41,6 +41,7 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
@@ -232,7 +233,7 @@ public class TestUtility {
 
         IReaction reaction = null;
         try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath))) {
-            reaction = (IReaction) reader.read(new Reaction());
+            reaction = reader.read(new Reaction());
             reaction.setID(name);
         } catch (Exception ex) {
             Logger.getLogger(BaseTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -260,8 +261,8 @@ public class TestUtility {
             }
             hydrogenFreeReaction.setProducts(products);
             for (IMapping mapping : reaction.mappings()) {
-                if (((IAtom) mapping.getChemObject(0)).getSymbol().equals("H")
-                        || ((IAtom) mapping.getChemObject(1)).getSymbol().equals("H")) {
+                if (((IElement) mapping.getChemObject(0)).getSymbol().equals("H")
+                        || ((IElement) mapping.getChemObject(1)).getSymbol().equals("H")) {
                     continue;
                 }
                 hydrogenFreeReaction.addMapping(mapping);
@@ -294,5 +295,6 @@ public class TestUtility {
             }
         }
     }
+    private static final Logger LOG = Logger.getLogger(TestUtility.class.getName());
 
 }

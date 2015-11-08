@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.fingerprints.tools;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 
 /**
@@ -95,4 +96,5 @@ public class FingerprintSubset implements Serializable {
             throw new CDKException("Null object used in set operation");
         }
     }
+    private static final Logger LOG = Logger.getLogger(FingerprintSubset.class.getName());
 }

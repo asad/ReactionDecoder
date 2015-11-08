@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.stereo.compare;
 
 import java.util.Map;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;

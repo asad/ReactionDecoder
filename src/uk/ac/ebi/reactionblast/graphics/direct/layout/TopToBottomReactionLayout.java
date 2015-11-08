@@ -18,8 +18,8 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
 
@@ -80,4 +80,5 @@ public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;
     }
+    private static final Logger LOG = Logger.getLogger(TopToBottomReactionLayout.class.getName());
 }

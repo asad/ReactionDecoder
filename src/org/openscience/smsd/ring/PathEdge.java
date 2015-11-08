@@ -51,6 +51,7 @@ package org.openscience.smsd.ring;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 
 /**
@@ -62,7 +63,7 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 public class PathEdge {
 
-    private List<IAtom> atoms;
+    private final List<IAtom> atoms;
 
     public PathEdge(List<IAtom> atoms) {
         this.atoms = atoms;
@@ -136,4 +137,5 @@ public class PathEdge {
 
         throw new RuntimeException("Couldn't splice - no intersection.");
     }
+    private static final Logger LOG = Logger.getLogger(PathEdge.class.getName());
 }

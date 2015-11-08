@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
@@ -49,4 +50,5 @@ public final class StandardizeReaction implements IStandardizer {
         IReaction standardizedReaction = rBuilder.standardize(reaction);
         return standardizedReaction;
     }
+    private static final Logger LOG = Logger.getLogger(StandardizeReaction.class.getName());
 }

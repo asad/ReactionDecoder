@@ -29,6 +29,7 @@
 package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.BitSet;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -146,4 +147,5 @@ public class CDKRNode {
     public synchronized void setrMap(CDKRMap rMap) {
         this.rMap = rMap;
     }
+    private static final Logger LOG = Logger.getLogger(CDKRNode.class.getName());
 }

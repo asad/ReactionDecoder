@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.Comparator;
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -51,5 +52,6 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
         }
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(AtomContainerComparatorBy2DCenter.class.getName());
     
 }

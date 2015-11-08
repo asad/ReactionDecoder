@@ -23,7 +23,11 @@
 package org.openscience.smsd;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -150,10 +154,10 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
             if (!firstAtomMCS.isEmpty()) {
 
-                rAtomCount = (double) this.getMCSList().iterator().next().getQuery().getAtomCount();
-                pAtomCount = (double) this.getMCSList().iterator().next().getTarget().getAtomCount();
+                rAtomCount = this.getMCSList().iterator().next().getQuery().getAtomCount();
+                pAtomCount = this.getMCSList().iterator().next().getTarget().getAtomCount();
 
-                double matchCount = (double) firstAtomMCS.getCount();
+                double matchCount = firstAtomMCS.getCount();
                 tanimotoAtom = (matchCount) / (rAtomCount + pAtomCount - matchCount);
                 BigDecimal tan = new BigDecimal(tanimotoAtom);
                 tan = tan.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
@@ -226,12 +230,12 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
             if (!firstAtomMCS.isEmpty()) {
 
-                sourceAtomCount = (double) this.getMCSList().iterator()
+                sourceAtomCount = this.getMCSList().iterator()
                         .next().getQuery().getAtomCount();
-                targetAtomCount = (double) this.getMCSList().iterator()
+                targetAtomCount = this.getMCSList().iterator()
                         .next().getTarget().getAtomCount();
 
-                double common = (double) firstAtomMCS.getCount();
+                double common = firstAtomMCS.getCount();
                 euclidean = Math.sqrt(sourceAtomCount + targetAtomCount - 2 * common);
                 BigDecimal dist = new BigDecimal(euclidean);
                 dist = dist.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);

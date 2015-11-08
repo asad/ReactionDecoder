@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
 
@@ -60,4 +61,5 @@ public class AtomicNumberRule<A>
         }
         return accessor.getAtomicNumber(o1.getAtom()) - accessor.getAtomicNumber(o2.getAtom());
     }
+    private static final Logger LOG = Logger.getLogger(AtomicNumberRule.class.getName());
 }

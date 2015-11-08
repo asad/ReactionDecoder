@@ -40,7 +40,12 @@ import org.openscience.cdk.Mapping;
 import org.openscience.cdk.aromaticity.Kekulization;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IMapping;
+import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
@@ -1240,4 +1245,5 @@ public final class BondChangeCalculator extends AbstractChangeCalculator impleme
     public int getTotalSmallestFragmentSize() {
         return totalSmallestFragmentSize;
     }
+    private static final Logger LOG = Logger.getLogger(BondChangeCalculator.class.getName());
 }

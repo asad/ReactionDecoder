@@ -18,12 +18,12 @@
 package uk.ac.ebi.centres.priority.descriptor;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.priority.AbstractPriorityRule;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
-
-import java.util.Map;
 
 /**
  * A configurable descriptor rule that allows ranking of ligands based on their descriptors. The type of descriptor can
@@ -97,4 +97,5 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
     public int compare(Ligand<A> o1, Ligand<A> o2) {
         return getRank(o1) - getRank(o2);
     }
+    private static final Logger LOG = Logger.getLogger(DescriptorRule.class.getName());
 }

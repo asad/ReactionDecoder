@@ -1,5 +1,6 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -24,13 +25,13 @@ public class CholeskyDecomposition implements java.io.Serializable {
      *
      * @serial internal array storage.
      */
-    private double[][] L;
+    private final double[][] L;
     /**
      * Row and column dimension (square matrix).
      *
      * @serial matrix dimension.
      */
-    private int n;
+    private final int n;
     /**
      * Symmetric and positive definite flag.
      *
@@ -201,4 +202,5 @@ public class CholeskyDecomposition implements java.io.Serializable {
 
         return new EBIMatrix(X, n, nx);
     }
+    private static final Logger LOG = Logger.getLogger(CholeskyDecomposition.class.getName());
 }

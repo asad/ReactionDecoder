@@ -290,4 +290,5 @@ public final class GameTheoryMatrix extends BaseGameTheory implements IGraphTheo
 //            }
 //        }
 //    }
+    private static final Logger LOG = Logger.getLogger(GameTheoryMatrix.class.getName());
 }

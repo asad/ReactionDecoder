@@ -270,4 +270,5 @@ public class BestMatchContainer extends BestMatch implements Serializable {
         IKey key = new Key(indexI, indexJ);
         return similarity.containsKey(key) == true ? similarity.get(key) : 0.0;
     }
+    private static final Logger LOG = Logger.getLogger(BestMatchContainer.class.getName());
 }

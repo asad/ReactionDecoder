@@ -19,7 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.util.List;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -140,4 +140,5 @@ public class DefinedMapping {
     public int getIndex() {
         return index;
     }
+    private static final Logger LOG = Logger.getLogger(DefinedMapping.class.getName());
 }

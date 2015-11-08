@@ -18,11 +18,12 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 
@@ -269,4 +270,5 @@ public class MappingHandler extends BasicDebugger {
 //        System.out.println("Mapping Counter " + counter);
         return counter;
     }
+    private static final Logger LOG = Logger.getLogger(MappingHandler.class.getName());
 }

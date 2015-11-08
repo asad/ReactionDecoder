@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
@@ -42,4 +43,5 @@ public class RBlastMoleculeSignatureLabellingAdaptor
                 = new RBlastMoleculeSignature(container);
         return molSig.getCanonicalLabels();
     }
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignatureLabellingAdaptor.class.getName());
 }

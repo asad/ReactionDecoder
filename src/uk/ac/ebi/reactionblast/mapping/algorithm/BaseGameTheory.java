@@ -21,25 +21,32 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.BitSet;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher;
-import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
-import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
-import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
-import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
-import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.interfaces.Algorithm;
 import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
+import uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher;
+import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
+import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
+import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
+import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -262,7 +269,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             double ACount = educt.getAtomCount();
             double BCount = product.getAtomCount();
 
-            mappingSize = (double) atomatomMapping.getAtomAtomMapping().getCount();
+            mappingSize = atomatomMapping.getAtomAtomMapping().getCount();
             if (DEBUG) {
                 System.out.println(substrateIndex + " KEY " + productIndex + ", MCS Mapping Size " + mappingSize);
             }
@@ -394,7 +401,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 double ACount = educt.getAtomCount();
                 double BCount = product.getAtomCount();
 
-                mappingSize = (double) bestAtomAtomMapping.getCount();
+                mappingSize = bestAtomAtomMapping.getCount();
 //                System.out.println("KEY " + key + ", MCS Mapping Size " + mappingSize);
                 graphSimilarity = mappingSize / (ACount + BCount - mappingSize);
 

@@ -20,6 +20,7 @@ package aamtool.rgroup;
 
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -77,4 +78,5 @@ class ReactionGroup implements Comparable<ReactionGroup>, Comparator<ReactionGro
     public void setRGroupPresent(boolean isRGroupPresent) {
         this.rGroupPresent = isRGroupPresent;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionGroup.class.getName());
 }

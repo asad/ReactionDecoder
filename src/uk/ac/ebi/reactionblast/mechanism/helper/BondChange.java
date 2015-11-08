@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -176,4 +177,5 @@ public class BondChange implements Serializable {
         }
         return result.toString();
     }
+    private static final Logger LOG = Logger.getLogger(BondChange.class.getName());
 }

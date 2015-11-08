@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -202,7 +203,6 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
             IAtom pAtom = (IAtom) m.getChemObject(1);
             if (withoutH && rAtom != null && pAtom != null && (rAtom.getSymbol().equalsIgnoreCase("H")
                     || pAtom.getSymbol().equalsIgnoreCase("H"))) {
-                continue;
             } else {
                 reactantAtomArray.add(rAtom);
                 productAtomArray.add(pAtom);
@@ -320,4 +320,5 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     public synchronized boolean isProductAtomPresent(IAtom atom) {
         return productAtomArray.contains(atom) == true;
     }
+    private static final Logger LOG = Logger.getLogger(AtomAtomMappingContainer.class.getName());
 }

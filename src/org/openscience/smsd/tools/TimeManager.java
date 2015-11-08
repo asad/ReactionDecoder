@@ -24,7 +24,7 @@ package org.openscience.smsd.tools;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -43,8 +43,8 @@ import org.openscience.cdk.annotations.TestMethod;
 @TestClass("org.openscience.cdk.smsd.tools.TimeManagerTest")
 public class TimeManager {
 
-    private double startTime;
-    private SimpleDateFormat dateFormat;
+    private final double startTime;
+    private final SimpleDateFormat dateFormat;
 
     /**
      * Constructor for storing execution time
@@ -105,4 +105,5 @@ public class TimeManager {
         return (currentTime - startTime);
 
     }
+    private static final Logger LOG = Logger.getLogger(TimeManager.class.getName());
 }

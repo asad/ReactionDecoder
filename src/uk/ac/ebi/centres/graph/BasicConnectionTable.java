@@ -17,20 +17,20 @@
  */
 package uk.ac.ebi.centres.graph;
 
-import uk.ac.ebi.centres.ConnectionTable;
-
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.ConnectionTable;
 
 /**
  * @author John May
  */
 public class BasicConnectionTable<A> implements ConnectionTable<A> {
 
-    private Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
-    private Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
+    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
+    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
 
     public void addConnection(A first, A second, int order) {
         addConnection(first, second, order, 0);
@@ -70,4 +70,5 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
     public Integer getAtomCount() {
         return connections.keySet().size();
     }
+    private static final Logger LOG = Logger.getLogger(BasicConnectionTable.class.getName());
 }

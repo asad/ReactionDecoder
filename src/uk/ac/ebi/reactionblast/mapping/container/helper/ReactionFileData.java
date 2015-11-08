@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -105,4 +106,5 @@ public class ReactionFileData extends Object implements Serializable {
         }
         return data;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionFileData.class.getName());
 }

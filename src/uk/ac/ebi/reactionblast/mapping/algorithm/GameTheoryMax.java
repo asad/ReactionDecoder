@@ -50,24 +50,22 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.IsomorphismMax;
-import uk.ac.ebi.reactionblast.mapping.graph.GraphMatching;
-import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
-import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
-import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
-import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
-//~--- classes ----------------------------------------------------------------
-
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.IsomorphismMax;import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
+import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
+import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
+import uk.ac.ebi.reactionblast.mapping.graph.GraphMatching;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
+import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
+import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 
 final class GameTheoryMax extends BaseGameTheory {
 
@@ -232,4 +230,5 @@ final class GameTheoryMax extends BaseGameTheory {
     public synchronized int getDelta() {
         return delta;
     }
+    private static final Logger LOG = Logger.getLogger(GameTheoryMax.class.getName());
 }

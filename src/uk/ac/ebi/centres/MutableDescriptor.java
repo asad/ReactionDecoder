@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.descriptor.General;
 
 /**
@@ -40,4 +41,5 @@ public class MutableDescriptor {
         }
         this.descriptor = descriptor;
     }
+    private static final Logger LOG = Logger.getLogger(MutableDescriptor.class.getName());
 }

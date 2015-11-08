@@ -17,11 +17,11 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import uk.ac.ebi.centres.ConnectionProvider;
-import uk.ac.ebi.centres.MutableDescriptor;
-
 import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.ConnectionProvider;
+import uk.ac.ebi.centres.MutableDescriptor;
 
 /**
  * @author John May
@@ -127,4 +127,5 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
     public Boolean isParent(A atom) {
         return parent.equals(atom);
     }
+    private static final Logger LOG = Logger.getLogger(NonterminalLigand.class.getName());
 }

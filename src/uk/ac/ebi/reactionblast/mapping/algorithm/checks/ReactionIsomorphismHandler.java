@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -252,4 +253,5 @@ public final class ReactionIsomorphismHandler implements Serializable {
     public synchronized void setMatrixHolder(Holder matrixHolder) {
         this.matrixHolder = matrixHolder;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionIsomorphismHandler.class.getName());
 }

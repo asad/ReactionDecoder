@@ -24,9 +24,9 @@ import uk.ac.ebi.centres.SignCalculator;
  */
 public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
 
-    private static int x = 0;
-    private static int y = 1;
-    private static int z = 2;
+    private static final int x = 0;
+    private static final int y = 1;
+    private static final int z = 2;
 
     public abstract double getX(A atom);
 
@@ -73,7 +73,7 @@ public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
                     }
                 }
             }
-            result += arr[0][i] * Math.pow(-1, (int) i) * determinant(temp);
+            result += arr[0][i] * Math.pow(-1, i) * determinant(temp);
         }
         return result;
     }

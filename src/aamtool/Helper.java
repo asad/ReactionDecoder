@@ -18,17 +18,18 @@
  */
 package aamtool;
 
+import static aamtool.Annotator.NEW_LINE;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
-import static aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
@@ -190,5 +191,6 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         return sb.toString();
     }
+    private static final Logger LOG = Logger.getLogger(Helper.class.getName());
 
 }

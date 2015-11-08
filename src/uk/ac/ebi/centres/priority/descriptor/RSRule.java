@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
@@ -35,4 +36,5 @@ public class RSRule<A> extends DescriptorRule<A> {
                 accessor,
                 Tetrahedral.S, Tetrahedral.R);
     }
+    private static final Logger LOG = Logger.getLogger(RSRule.class.getName());
 }

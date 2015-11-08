@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  *
@@ -268,4 +269,5 @@ public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMo
         }
         return Objects.equals(this.smirks, other.smirks);
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeMoleculePair.class.getName());
 }

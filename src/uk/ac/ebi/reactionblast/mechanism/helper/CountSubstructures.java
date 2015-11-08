@@ -66,4 +66,5 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
             return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
         }
     }
+    private static final Logger LOG = Logger.getLogger(CountSubstructures.class.getName());
 }

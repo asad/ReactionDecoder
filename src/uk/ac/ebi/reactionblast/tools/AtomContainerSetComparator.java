@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.tools;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
@@ -41,7 +42,7 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
     /**
      * Configure LoggingTool
      */
-    private ILoggingTool logger
+    private final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(AtomContainerSetComparator.class);
 
     /**
@@ -193,4 +194,5 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
         }
         return mw;
     }
+    private static final Logger LOG = Logger.getLogger(AtomContainerSetComparator.class.getName());
 }

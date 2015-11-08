@@ -29,17 +29,17 @@ import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
+import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.interfaces.IAtomMapping;
 import uk.ac.ebi.reactionblast.mapping.algorithm.BaseGameTheory;
+import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
+import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
-import org.openscience.smsd.interfaces.IAtomMapping;
-import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.AtomAtomMapping;
-import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
-import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

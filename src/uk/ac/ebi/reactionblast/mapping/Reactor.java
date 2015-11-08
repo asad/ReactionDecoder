@@ -62,25 +62,24 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator;
 import uk.ac.ebi.reactionblast.mapping.algorithm.CalculationProcess;
-import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.helper.AbstractReactor;
 import uk.ac.ebi.reactionblast.mapping.helper.MappingHandler;
+import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 
@@ -1226,4 +1225,5 @@ public final class Reactor extends AbstractReactor implements Serializable {
         });
         atomContainer.setBonds(bonds);
     }
+    private static final Logger LOG = Logger.getLogger(Reactor.class.getName());
 }

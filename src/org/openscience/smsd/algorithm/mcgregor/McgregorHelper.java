@@ -25,6 +25,7 @@ package org.openscience.smsd.algorithm.mcgregor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -207,4 +208,5 @@ public class McgregorHelper {
     int getsetNumB() {
         return setNumB;
     }
+    private static final Logger LOG = Logger.getLogger(McgregorHelper.class.getName());
 }

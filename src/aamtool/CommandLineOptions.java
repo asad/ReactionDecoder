@@ -18,6 +18,7 @@
  */
 package aamtool;
 
+import java.util.logging.Logger;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
@@ -35,22 +36,22 @@ public class CommandLineOptions {
         optionsAAM.addOption("h", "help", false, "Help page for command usage");
 
         optionsAAM.addOption(
-                OptionBuilder.hasArg().withDescription("Query Type (RXN/SMI)").withArgName("formatQ").create("Q"));
+                OptionBuilder.create("Q"));
 
         optionsAAM.addOption(
-                OptionBuilder.hasArg().withDescription("Query").withArgName("query").create("q"));
+                OptionBuilder.create("q"));
 
         optionsAAM.addOption(
-                OptionBuilder.hasArg().withDescription("Task (AAM)").withArgName("job").create("j"));
+                OptionBuilder.create("j"));
 
         optionsAAM.addOption("g", "image", false, "create png of the mapping");
         optionsAAM.addOption("m", "mappings", false, "Report all mappings");
         optionsAAM.addOption("u", "premap", false, "use user defined mappings");
         optionsAAM.addOption(
-                OptionBuilder.hasArg().withDescription("Job prefix").withArgName("prefix").create("p"));
+                OptionBuilder.create("p"));
 
         optionsAAM.addOption(
-                OptionBuilder.hasArg().withDescription("Output format (TEXT/XML)").withArgName("formatO").create("f"));
+                OptionBuilder.create("f"));
 
         return optionsAAM;
     }
@@ -60,19 +61,19 @@ public class CommandLineOptions {
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Query type (RXN/SMI)").withArgName("formatQ").create("Q"));
+                OptionBuilder.create("Q"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Query").withArgName("query").create("q"));
+                OptionBuilder.create("q"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Task (ANNOTATE)").withArgName("job").create("j"));
+                OptionBuilder.create("j"));
         optionsCompare.addOption("u", "premap", false, "use user defined mappings");
         optionsCompare.addOption("g", "image", false, "create png of the mapping");
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Job prefix").withArgName("prefix").create("p"));
+                OptionBuilder.create("p"));
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Output format (TEXT/XML/BOTH)").withArgName("formatO").create("f"));
+                OptionBuilder.create("f"));
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
         return optionsCompare;
     }
@@ -82,25 +83,25 @@ public class CommandLineOptions {
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
         optionsCompare.addOption("u", "premap", false, "use user defined mappings");
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Query type (RXN/SMI)").withArgName("formatQ").create("Q"));
+                OptionBuilder.create("Q"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Query").withArgName("query").create("q"));
+                OptionBuilder.create("q"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Target type (RXN/SMI)").withArgName("formatT").create("T"));
+                OptionBuilder.create("T"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Target").withArgName("target").create("t"));
+                OptionBuilder.create("t"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Task (COMPARE)").withArgName("job").create("j"));
+                OptionBuilder.create("j"));
 
         optionsCompare.addOption("g", "image", false, "create png of the mapping");
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Job prefix").withArgName("prefix").create("p"));
+                OptionBuilder.create("p"));
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Output format (TEXT/XML/BOTH)").withArgName("formatO").create("f"));
+                OptionBuilder.create("f"));
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
         return optionsCompare;
     }
@@ -110,16 +111,16 @@ public class CommandLineOptions {
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Query type (RXN/SMI)").withArgName("formatQ").create("Q"));
+                OptionBuilder.create("Q"));
         optionsCompare.addOption("u", "premap", false, "use user defined mappings");
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Input Reaction List").withArgName("queries").create("q"));
+                OptionBuilder.create("q"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Task (SIMILARITY)").withArgName("job").create("j"));
+                OptionBuilder.create("j"));
 
         optionsCompare.addOption(
-                OptionBuilder.hasArg().withDescription("Job prefix").withArgName("prefix").create("p"));
+                OptionBuilder.create("p"));
         return optionsCompare;
     }
 
@@ -128,23 +129,24 @@ public class CommandLineOptions {
         options.addOption("h", "help", false, "Help page for command usage");
 
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Query Type (RXN/SMI/RID)").withArgName("formatQ").create("Q"));
+                OptionBuilder.create("Q"));
 
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Query").withArgName("query").create("q"));
+                OptionBuilder.create("q"));
 
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Task (SEARCH)").withArgName("job").create("j"));
+                OptionBuilder.create("j"));
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Similarity Type (BOND/CENTRE/STRUCTURE)").withArgName("sim").create("s"));
+                OptionBuilder.create("s"));
 
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Hits (max:100)").withArgName("hit").create("c"));
+                OptionBuilder.create("c"));
 
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Output Format (TEXT/XML)").withArgName("formatO").create("f"));
+                OptionBuilder.create("f"));
         options.addOption(
-                OptionBuilder.hasArg().withDescription("Job Preffix").withArgName("preffix").create("x"));
+                OptionBuilder.create("x"));
         return options;
     }
+    private static final Logger LOG = Logger.getLogger(CommandLineOptions.class.getName());
 }

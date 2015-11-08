@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * A tree of bounding boxes for objects.
@@ -233,5 +234,6 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
         return sb.toString();
     }
+    private static final Logger LOG = Logger.getLogger(BoundsTree.class.getName());
 
 }

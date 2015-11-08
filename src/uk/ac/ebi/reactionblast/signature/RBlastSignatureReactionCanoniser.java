@@ -18,8 +18,8 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
-
 import uk.ac.ebi.reactionblast.tools.labelling.AbstractReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
@@ -39,4 +39,5 @@ public class RBlastSignatureReactionCanoniser
     public IReaction getCanonicalReaction(IReaction reaction) {
         return super.labelReaction(reaction, labeller);
     }
+    private static final Logger LOG = Logger.getLogger(RBlastSignatureReactionCanoniser.class.getName());
 }

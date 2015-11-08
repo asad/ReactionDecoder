@@ -115,5 +115,6 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
         });
         atomContainer.setBonds(bonds);
     }
+    private static final Logger LOG = Logger.getLogger(SignatureMoleculeLabeller.class.getName());
 
 }

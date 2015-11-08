@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
     
@@ -40,7 +41,6 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
     
     public void registerColor(Color color) {
         if (opaqueToTranslucentColorMap.containsKey(color)) {
-            return;
         } else {
             opaqueToTranslucentColorMap.put(color, makeTranslucentColor(color));
         }
@@ -60,5 +60,6 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
         float[] c = color.getColorComponents(null);
         return new Color(c[0], c[1], c[2], params.highlightAlpha);
     }
+    private static final Logger LOG = Logger.getLogger(AbstractHighlightDrawer.class.getName());
 
 }

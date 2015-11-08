@@ -57,7 +57,7 @@ public enum Trigonal
      * @see <a href="http://en.wikipedia.org/wiki/Prochirality">Prochirality</a>
      */
     si(Type.PSEUDO_ASYMMETRIC);
-    private Type type;
+    private final Type type;
 
     private Trigonal(Type type) {
         this.type = type;

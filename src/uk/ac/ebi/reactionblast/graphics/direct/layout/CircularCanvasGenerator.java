@@ -21,10 +21,9 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
 import java.util.List;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class CircularCanvasGenerator extends 
@@ -101,5 +100,6 @@ public class CircularCanvasGenerator extends
     public Dimension getSize() {
         return size;
     }
+    private static final Logger LOG = Logger.getLogger(CircularCanvasGenerator.class.getName());
 
 }

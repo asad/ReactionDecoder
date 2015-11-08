@@ -17,6 +17,13 @@
  */
 package uk.ac.ebi.centres.ligand;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
@@ -26,13 +33,6 @@ import uk.ac.ebi.centres.PriorityRule;
 import uk.ac.ebi.centres.SignCalculator;
 import uk.ac.ebi.centres.descriptor.General;
 import uk.ac.ebi.centres.descriptor.Tetrahedral;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author John May
@@ -172,4 +172,5 @@ public class TetrahedralCentre<A>
         getProvider().dispose();
         setProvider(null);
     }
+    private static final Logger LOG = Logger.getLogger(TetrahedralCentre.class.getName());
 }

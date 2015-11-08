@@ -22,7 +22,12 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -240,4 +245,5 @@ public class CDKSubGraphHandler implements IResults {
         }
         return new AtomAtomMapping(source, target);
     }
+    private static final Logger LOG = Logger.getLogger(CDKSubGraphHandler.class.getName());
 }

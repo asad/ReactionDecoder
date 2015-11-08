@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -122,7 +122,7 @@ public class SignatureRootFinder {
                 }
             } else {
                 // already in a root system
-                continue;
+
             }
         }
 
@@ -156,7 +156,7 @@ public class SignatureRootFinder {
 
             } else {
                 // already in a root system
-                continue;
+
             }
         }
 //        System.out.println("RS for " + atomContainer.getID() + " = " + rootSystems);
@@ -312,7 +312,7 @@ public class SignatureRootFinder {
                 }
             }
         } else {
-            return;
         }
     }
+    private static final Logger LOG = Logger.getLogger(SignatureRootFinder.class.getName());
 }

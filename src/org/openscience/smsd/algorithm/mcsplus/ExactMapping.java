@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -114,4 +115,5 @@ public class ExactMapping {
         }
         return clique_mapping;
     }
+    private static final Logger LOG = Logger.getLogger(ExactMapping.class.getName());
 }

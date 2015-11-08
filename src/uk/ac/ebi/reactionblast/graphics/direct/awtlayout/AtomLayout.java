@@ -30,17 +30,17 @@ import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.ILonePair;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager;
@@ -62,8 +62,8 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     private Font subscriptFont;
     private Font atomIDFont;
     private Font chiralSymbolFont;
-    private IAtomColorer atomColorer;
-    private LabelManager labelManager;
+    private final IAtomColorer atomColorer;
+    private final LabelManager labelManager;
     private Map<IAtom, IStereoAndConformation> chiralMap;
 
     public AtomLayout(AbstractAWTLayout parent, Params params, LabelManager labelManager) {
@@ -156,7 +156,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     public Rectangle2D layoutAtomSymbol(IAtom atom, Graphics2D g) {
         String text = atom.getSymbol();
         if (atom instanceof PseudoAtom) {
-            text = ((PseudoAtom) atom).getLabel();
+            text = ((IPseudoAtom) atom).getLabel();
         }
         g.setFont(atomSymbolFont);
         Point2d p = atom.getPoint2d();
@@ -405,17 +405,9 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
             } else if (params.drawTerminalCarbons
                     && isTerminal(atom, atomContainer)) {
                 return true;
-            } else if (getAttachedMultipleBondCount(atom, atomContainer) > 1) {
-                return true;
-            } else {
-                return false;
-            }
+            } else return getAttachedMultipleBondCount(atom, atomContainer) > 1;
         } else if (symbol.equals("H")) {
-            if (params.drawExplicitHydrogens) {
-                return true;
-            } else {
-                return false;
-            }
+            return params.drawExplicitHydrogens;
         }
         return true;
     }
@@ -499,4 +491,5 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     public void reset() {
         labelManager.reset();
     }
+    private static final Logger LOG = Logger.getLogger(AtomLayout.class.getName());
 }

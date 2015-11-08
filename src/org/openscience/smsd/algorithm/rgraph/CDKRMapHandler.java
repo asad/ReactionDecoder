@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -168,20 +169,20 @@ public final class CDKRMapHandler {
                 /*UnComment this to get one Unique Mapping*/
                 //List reducedList = removeRedundantMappingsForSingleAtomCase(overlaps);
                 //int counter = 0;
-                identifySingleAtomsMatchedParts(overlaps, getSource(), (IQueryAtomContainer) getTarget());
+                identifySingleAtomsMatchedParts(overlaps, getSource(), getTarget());
 
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), (IQueryAtomContainer) getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
+            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
             while (!allMaxOverlaps.empty()) {
 //                System.out.println("source: " + source.getAtomCount() + ", target: " + target.getAtomCount() + ", overl: " + allMaxOverlaps.peek().size());
-                List<List<CDKRMap>> maxOverlapsAtoms = makeAtomsMapOfBondsMap(allMaxOverlaps.peek(), getSource(), (IQueryAtomContainer) getTarget());
+                List<List<CDKRMap>> maxOverlapsAtoms = makeAtomsMapOfBondsMap(allMaxOverlaps.peek(), getSource(), getTarget());
 //                System.out.println("size of maxOverlaps: " + maxOverlapsAtoms.size());
-                identifyMatchedParts(maxOverlapsAtoms, getSource(), (IQueryAtomContainer) getTarget());
+                identifyMatchedParts(maxOverlapsAtoms, getSource(), getTarget());
 //                identifyMatchedParts(allMaxOverlaps.peek(), source, target);
                 allMaxOverlaps.pop();
             }
@@ -544,7 +545,7 @@ public final class CDKRMapHandler {
         List list = null;
         int count = 0;
         for (Object o : overlaps) {
-            List arrayList = (ArrayList) o;
+            List arrayList = (List) o;
             if (arrayList.size() > count) {
                 list = arrayList;
                 count = arrayList.size();
@@ -731,4 +732,5 @@ public final class CDKRMapHandler {
     public void setTimeout(boolean timeout) {
         this.timeout = timeout;
     }
+    private static final Logger LOG = Logger.getLogger(CDKRMapHandler.class.getName());
 }

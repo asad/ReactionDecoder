@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
@@ -105,7 +106,7 @@ public class BaseTest extends TestUtility {
     public IAtomContainer readMDLMolecule(String name, String dir) throws FileNotFoundException, CDKException {
         String filepath = dir + name + ".mol";
         MDLV2000Reader reader = new MDLV2000Reader(new FileReader(filepath));
-        IAtomContainer AtomContainer = (IAtomContainer) reader.read(new AtomContainer());
+        IAtomContainer AtomContainer = reader.read(new AtomContainer());
         AtomContainer.setID(name);
         return AtomContainer;
     }
@@ -280,4 +281,5 @@ public class BaseTest extends TestUtility {
         new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
         return s.getBondChangeCalculator();
     }
+    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
 }

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -144,4 +145,5 @@ public final class CalculationProcess extends IsomeraseHandler implements Serial
     public synchronized MoleculeMoleculeMapping getReactionBlastMolMapping() {
         return reactionBlastMolMapping;
     }
+    private static final Logger LOG = Logger.getLogger(CalculationProcess.class.getName());
 }

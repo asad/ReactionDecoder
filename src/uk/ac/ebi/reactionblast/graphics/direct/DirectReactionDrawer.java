@@ -33,11 +33,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
@@ -539,8 +538,8 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
 //        int borderX = params.borderX;
 //        int borderY = params.borderY;
 //        int border2 = borderX * 2;
-        double widthRatio = ((double) targetWidth) / zoomedWidth;
-        double heightRatio = ((double) targetHeight) / zoomedHeight;
+        double widthRatio = targetWidth / zoomedWidth;
+        double heightRatio = targetHeight / zoomedHeight;
         if (widthRatio < heightRatio) {
             return Axis.X;
         } else {
@@ -563,7 +562,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         double boundsCenterX = actualWidth / 2;
         double boundsCenterY = actualHeight / 2;
         if (expansionAxis == Axis.Y && xAlign == XAlign.LEFT) {
-            return;
         } else if (expansionAxis == Axis.Y && xAlign == XAlign.CENTER) {
             double dx = (ww / 2) - (boundsCenterX + bXz);
             shift(reaction, null, dx, 0);   // FIXME
@@ -610,8 +608,8 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
 
     private double calculateZoom(int targetWidth, int targetHeight,
             double actualWidth, double actualHeight) {
-        return Math.min((double) targetWidth / actualWidth,
-                (double) targetHeight / actualHeight);
+        return Math.min(targetWidth / actualWidth,
+                targetHeight / actualHeight);
     }
 
     public Rectangle2D getDrawnBounds(List<IAtom> atoms) {
@@ -714,4 +712,5 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
     public DirectMoleculeDrawer getMoleculeDrawer() {
         return moleculeDrawer;
     }
+    private static final Logger LOG = Logger.getLogger(DirectReactionDrawer.class.getName());
 }

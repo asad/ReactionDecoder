@@ -22,9 +22,7 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.vecmath.Point2d;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public abstract class AbstractCanvasGenerator implements CanvasGenerator {

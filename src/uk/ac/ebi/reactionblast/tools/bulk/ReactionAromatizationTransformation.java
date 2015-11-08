@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -46,4 +47,5 @@ public class ReactionAromatizationTransformation implements
         }
         return reaction;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionAromatizationTransformation.class.getName());
 }

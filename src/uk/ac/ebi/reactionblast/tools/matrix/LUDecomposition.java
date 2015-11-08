@@ -1,5 +1,6 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -26,7 +27,7 @@ public class LUDecomposition implements java.io.Serializable {
      *
      * @serial internal array storage.
      */
-    private double[][] LU;
+    private final double[][] LU;
 
     /**
      * Row and column dimensions, and pivot sign.
@@ -35,14 +36,15 @@ public class LUDecomposition implements java.io.Serializable {
      * @serial row dimension.
      * @serial pivot sign.
      */
-    private int m, n, pivsign;
+    private final int m, n;
+    private int pivsign;
 
     /**
      * Internal storage of pivot vector.
      *
      * @serial pivot vector.
      */
-    private int[] piv;
+    private final int[] piv;
 
     /* ------------------------
      Constructor
@@ -241,9 +243,7 @@ public class LUDecomposition implements java.io.Serializable {
      */
     public int[] getPivot() {
         int[] p = new int[m];
-        for (int i = 0; i < m; i++) {
-            p[i] = piv[i];
-        }
+        System.arraycopy(piv, 0, p, 0, m);
         return p;
     }
 
@@ -319,4 +319,5 @@ public class LUDecomposition implements java.io.Serializable {
         }
         return Xmat;
     }
+    private static final Logger LOG = Logger.getLogger(LUDecomposition.class.getName());
 }

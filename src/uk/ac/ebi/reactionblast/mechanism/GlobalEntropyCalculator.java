@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mechanism;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 
@@ -105,13 +106,13 @@ public class GlobalEntropyCalculator implements Serializable {
                 int matValue = (int) m.getValue(i, j);
                 val = typeMap.get(key);
                 int freq = val.get(matValue);
-                double px = (double) freq / (double) freqMap.get(key);
+                double px = freq / freqMap.get(key);
                 if (px != 0.0f) {
                     lH += px * Math.log10(px) / Math.log10(2);
                 }
             }
         }
-        return -lH / (float) ((m.getRowDimension() * m.getColumnDimension() - m.getRowDimension()) / 2);
+        return -lH / ((m.getRowDimension() * m.getColumnDimension() - m.getRowDimension()) / 2);
     }
 
     /**
@@ -164,4 +165,5 @@ public class GlobalEntropyCalculator implements Serializable {
         }
         return matrixMap.get(index);
     }
+    private static final Logger LOG = Logger.getLogger(GlobalEntropyCalculator.class.getName());
 }

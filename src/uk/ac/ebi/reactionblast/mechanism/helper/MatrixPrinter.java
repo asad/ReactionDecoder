@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import uk.ac.ebi.reactionblast.mechanism.BEMatrix;
@@ -169,4 +170,5 @@ public class MatrixPrinter extends Object {
             matrixFileWriter.close();
         }
     }
+    private static final Logger LOG = Logger.getLogger(MatrixPrinter.class.getName());
 }

@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 /**
  *
@@ -85,4 +86,5 @@ public class Combination implements Serializable, Comparable<Combination>, Compa
         String b = o2.row + "_" + o2.col;
         return a.compareTo(b);
     }
+    private static final Logger LOG = Logger.getLogger(Combination.class.getName());
 }

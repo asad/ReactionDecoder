@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.DefaultChemObjectBuilder;
@@ -63,10 +63,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitGridLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
-/*
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
- */
 
 public class ImageGenerator {
 
@@ -653,4 +649,5 @@ public class ImageGenerator {
         setDiff.retainAll(validAtoms);
         filteredList.addAll(setDiff);
     }
+    private static final Logger LOG = Logger.getLogger(ImageGenerator.class.getName());
 }

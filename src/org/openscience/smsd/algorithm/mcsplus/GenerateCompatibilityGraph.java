@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -144,7 +145,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
              */
             String referenceAtom;
             if (refAtom instanceof IQueryAtom) {
-                referenceAtom = ((IQueryAtom) refAtom).getSymbol() == null ? "*" : ((IQueryAtom) refAtom).getSymbol();
+                referenceAtom = ((IQueryAtom) refAtom).getSymbol() == null ? "*" : refAtom.getSymbol();
 //                System.out.println("referenceAtom " + referenceAtom);
             } else if (!(refAtom instanceof IQueryAtom) && this.matchAtomType) {
                 referenceAtom = refAtom.getAtomTypeName() == null ? refAtom.getSymbol() : refAtom.getAtomTypeName();
@@ -159,7 +160,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
             for (IAtom negAtom : connAtoms) {
                 String neighbouringAtom;
                 if (refAtom instanceof IQueryAtom) {
-                    neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : ((IQueryAtom) negAtom).getSymbol();
+                    neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : negAtom.getSymbol();
 //                    System.out.println("neighbouringAtom " + neighbouringAtom);
                 } else if (!(negAtom instanceof IQueryAtom) && this.matchAtomType) {
                     neighbouringAtom = negAtom.getAtomTypeName() == null ? negAtom.getSymbol() : negAtom.getAtomTypeName();
@@ -514,4 +515,5 @@ public final class GenerateCompatibilityGraph implements Serializable {
     private boolean isMatchRings() {
         return shouldMatchRings;
     }
+    private static final Logger LOG = Logger.getLogger(GenerateCompatibilityGraph.class.getName());
 }

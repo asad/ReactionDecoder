@@ -20,7 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -142,4 +142,5 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         }
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(SubgraphAtomSignature.class.getName());
 }

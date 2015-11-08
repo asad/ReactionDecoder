@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
@@ -43,4 +44,5 @@ public class BondChangeCalculationTransformation implements ITransformation<IRea
             return null;
         }
     }
+    private static final Logger LOG = Logger.getLogger(BondChangeCalculationTransformation.class.getName());
 }

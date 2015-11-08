@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
@@ -31,10 +30,10 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReaction.Direction;
 import uk.ac.ebi.reactionblast.containers.FingerPrintContainer;
 import uk.ac.ebi.reactionblast.containers.MolContainer;
-import uk.ac.ebi.reactionblast.tools.BasicDebugger;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
+import uk.ac.ebi.reactionblast.tools.BasicDebugger;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  *
@@ -481,4 +480,5 @@ public class RXNFileManipulator extends BasicDebugger {
 //        System.out.println(molecule.getID());
         return molecule;
     }
+    private static final Logger LOG = Logger.getLogger(RXNFileManipulator.class.getName());
 }

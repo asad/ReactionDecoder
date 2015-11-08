@@ -262,4 +262,5 @@ public final class Substructure extends BaseMapping {
         }
         return mcs.getAllAtomMapping() != null && !mcs.getAllAtomMapping().isEmpty();
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Substructure.class.getName());
 }

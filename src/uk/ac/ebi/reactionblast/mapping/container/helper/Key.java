@@ -20,6 +20,7 @@
 package uk.ac.ebi.reactionblast.mapping.container.helper;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 
 /**
@@ -59,10 +60,7 @@ public class Key implements IKey, Serializable {
         if (this.sourceIndex != other.sourceIndex) {
             return false;
         }
-        if (this.targetIndex != other.targetIndex) {
-            return false;
-        }
-        return true;
+        return this.targetIndex == other.targetIndex;
     }
 
     @Override
@@ -98,4 +96,5 @@ public class Key implements IKey, Serializable {
     public int compare(Key t, Key t1) {
         return t.compareTo(t1);
     }
+    private static final Logger LOG = Logger.getLogger(Key.class.getName());
 }

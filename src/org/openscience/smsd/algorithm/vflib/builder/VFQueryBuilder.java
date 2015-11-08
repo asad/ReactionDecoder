@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
@@ -213,4 +214,5 @@ public class VFQueryBuilder implements IQuery {
         edgesList.add(edge);
         return edge;
     }
+    private static final Logger LOG = Logger.getLogger(VFQueryBuilder.class.getName());
 }

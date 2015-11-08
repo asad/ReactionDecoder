@@ -18,11 +18,12 @@
  */
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.interfaces.IDataSource;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
+import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
 /**
  * Transforms a number of reactions (or molecules in reactions) in turn.
@@ -35,7 +36,7 @@ public class BulkTransformer {
     /**
      * The transformation, or series of transformations, to apply.
      */
-    private ITransformation transformation;
+    private final ITransformation transformation;
 
     public BulkTransformer(ITransformation transformation) {
         this.transformation = transformation;
@@ -56,7 +57,6 @@ public class BulkTransformer {
                 transformMolecules(dataSource, dataStore);
                 break;
             default:
-                return;
         }
     }
 
@@ -85,4 +85,5 @@ public class BulkTransformer {
             }
         }
     }
+    private static final Logger LOG = Logger.getLogger(BulkTransformer.class.getName());
 }

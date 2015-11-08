@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -50,4 +51,5 @@ public class ReactionImplicitHydrogenTransformation implements
         }
         return reaction;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionImplicitHydrogenTransformation.class.getName());
 }

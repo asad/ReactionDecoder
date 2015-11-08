@@ -29,6 +29,7 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -120,4 +121,5 @@ class CDKRMap extends Object {
         hash = 79 * hash + this.getId2();
         return hash;
     }
+    private static final Logger LOG = Logger.getLogger(CDKRMap.class.getName());
 }

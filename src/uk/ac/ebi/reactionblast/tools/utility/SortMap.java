@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
@@ -174,4 +175,5 @@ public class SortMap {
         }
         return result;
     }
+    private static final Logger LOG = Logger.getLogger(SortMap.class.getName());
 }

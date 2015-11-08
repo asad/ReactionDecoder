@@ -22,10 +22,9 @@ package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
@@ -98,4 +97,5 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         // TODO Auto-generated method stub
         return null;
     }
+    private static final Logger LOG = Logger.getLogger(LinearAtomContainerSetLayout.class.getName());
 }

@@ -24,6 +24,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
@@ -341,4 +342,5 @@ public class ReactionContainer implements Cloneable, Serializable {
     public synchronized Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+    private static final Logger LOG = Logger.getLogger(ReactionContainer.class.getName());
 }

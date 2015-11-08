@@ -92,4 +92,5 @@ class PatternComparators {
             }
         };
     }
+    private static final Logger LOG = Logger.getLogger(PatternComparators.class.getName());
 }

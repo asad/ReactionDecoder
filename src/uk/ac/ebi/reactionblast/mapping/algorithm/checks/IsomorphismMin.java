@@ -257,4 +257,5 @@ public final class IsomorphismMin extends Selector implements IResult {
         System.out.println();
 
     }
+    private static final Logger LOG = Logger.getLogger(IsomorphismMin.class.getName());
 }

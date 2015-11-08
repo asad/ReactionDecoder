@@ -19,7 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import java.util.Iterator;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -73,10 +73,10 @@ public class AtomContainerAtomPermutor extends Permutor
                     = atomContainer.getBuilder().newInstance(IAtomContainer.class);
             for (int i = 0; i < p.length; i++) {
                 IAtom atom = atomContainer.getAtom(p[i]);
-                permutedContainer.addAtom((IAtom) atom.clone());
+                permutedContainer.addAtom(atom.clone());
             }
             for (IBond bond : atomContainer.bonds()) {
-                IBond clonedBond = (IBond) bond.clone();
+                IBond clonedBond = bond.clone();
                 clonedBond.setAtoms(new IAtom[clonedBond.getAtomCount()]);
                 int i = 0;
                 for (IAtom atom : bond.atoms()) {
@@ -140,4 +140,5 @@ public class AtomContainerAtomPermutor extends Permutor
     public void remove() {
         // can just increase rank....
     }
+    private static final Logger LOG = Logger.getLogger(AtomContainerAtomPermutor.class.getName());
 }

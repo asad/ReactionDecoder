@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Ligand;
 
 public class DuplicateAtomRule<A>
@@ -36,4 +37,5 @@ public class DuplicateAtomRule<A>
             return 0;
         }
     }
+    private static final Logger LOG = Logger.getLogger(DuplicateAtomRule.class.getName());
 }

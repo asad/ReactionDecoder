@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
@@ -31,7 +32,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 public class MoleculeCanonicalizationTransformation implements ITransformation<IAtomContainer> {
 
-    private ICanonicalMoleculeLabeller canonicalMoleculeLabeller;
+    private final ICanonicalMoleculeLabeller canonicalMoleculeLabeller;
 
     public MoleculeCanonicalizationTransformation(ICanonicalMoleculeLabeller labeller) {
         canonicalMoleculeLabeller = labeller;
@@ -46,4 +47,5 @@ public class MoleculeCanonicalizationTransformation implements ITransformation<I
     public IAtomContainer transform(IAtomContainer atomContainer) {
         return canonicalMoleculeLabeller.getCanonicalMolecule(atomContainer);
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeCanonicalizationTransformation.class.getName());
 }

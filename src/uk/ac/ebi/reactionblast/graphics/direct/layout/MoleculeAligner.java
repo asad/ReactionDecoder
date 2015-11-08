@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -181,4 +181,5 @@ public class MoleculeAligner {
             atom.setPoint2d(p);
         }
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeAligner.class.getName());
 }

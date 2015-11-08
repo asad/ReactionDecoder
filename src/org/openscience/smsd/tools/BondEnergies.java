@@ -25,7 +25,7 @@ package org.openscience.smsd.tools;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -368,4 +368,5 @@ public class BondEnergies {
         bondEngergies.put(key++, new BondEnergy("Xe", "F", Order.SINGLE, 130));
         return key;
     }
+    private static final Logger LOG = Logger.getLogger(BondEnergies.class.getName());
 }

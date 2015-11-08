@@ -23,6 +23,7 @@
  */
 package org.openscience.smsd.helper;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -101,4 +102,5 @@ public class BinaryTree {
     public synchronized void setNotEqual(BinaryTree notEqual) {
         this.notEqual = notEqual;
     }
+    private static final Logger LOG = Logger.getLogger(BinaryTree.class.getName());
 }

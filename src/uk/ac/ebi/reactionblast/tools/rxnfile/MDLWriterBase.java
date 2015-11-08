@@ -26,7 +26,7 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
      * SuperAtomContainer
      */
     protected SuperAtomContainer superAtomContainer;
-    private static String M = "M  ";
+    private static final String M = "M  ";
 
     /**
      * Formats an integer to fit into the connection table and changes it to a

@@ -18,7 +18,14 @@
 package uk.ac.ebi.centres.ligand;
 
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IChemObject;
+import org.openscience.cdk.interfaces.IElement;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Descriptor;
@@ -29,11 +36,6 @@ import uk.ac.ebi.centres.PriorityRule;
 import uk.ac.ebi.centres.SignCalculator;
 import uk.ac.ebi.centres.descriptor.General;
 import uk.ac.ebi.centres.descriptor.Planar;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author John May
@@ -84,8 +86,8 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
     @Override
     public String toString() {
         if (first.getAtom() instanceof IAtom) {
-            return ((IAtom) first.getAtom()).getSymbol() + "" + ((IAtom) first.getAtom()).getProperty("number") + "="
-                    + ((IAtom) second.getAtom()).getSymbol() + "" + ((IAtom) second.getAtom()).getProperty("number");
+            return ((IElement) first.getAtom()).getSymbol() + "" + ((IChemObject) first.getAtom()).getProperty("number") + "="
+                    + ((IElement) second.getAtom()).getSymbol() + "" + ((IChemObject) second.getAtom()).getProperty("number");
         }
         return first.getAtom().toString() + "=" + second.getAtom().toString();
     }
@@ -166,4 +168,5 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         getProvider().dispose();
         setProvider(null);
     }
+    private static final Logger LOG = Logger.getLogger(PlanarCentre.class.getName());
 }

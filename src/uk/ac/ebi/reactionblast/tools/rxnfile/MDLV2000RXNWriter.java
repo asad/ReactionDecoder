@@ -39,15 +39,14 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IChemObject;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IChemObject;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.io.DefaultChemObjectWriter;
@@ -294,7 +293,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
                 Iterator iterator = set.iterator();
                 while (iterator.hasNext()) {
                     Object element = iterator.next();
-                    writer.write("> <" + (String) element + ">");
+                    writer.write("> <" + element + ">");
                     writer.newLine();
                     writer.write(rdFields.get(element).toString());
                     writer.newLine();
@@ -368,4 +367,5 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         fs += s;
         return fs;
     }
+    private static final Logger LOG = Logger.getLogger(MDLV2000RXNWriter.class.getName());
 }

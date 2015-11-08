@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -79,7 +78,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         MDLV2000Reader MolRead
                 = new MDLV2000Reader(new InputStreamReader(ReadMolecule));
         MolRead.close();
-        IAtomContainer newMol = (IAtomContainer) MolRead.read(new AtomContainer());
+        IAtomContainer newMol = MolRead.read(new AtomContainer());
         this.molecule = ExtAtomContainerManipulator.checkAndCleanMolecule(newMol);
         initializeMolecule(molecule);
     }
@@ -334,4 +333,5 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         return count;
 
     }
+    private static final Logger LOG = Logger.getLogger(CDKMolecularDescriptor.class.getName());
 }

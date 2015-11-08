@@ -19,12 +19,6 @@ package uk.ac.ebi.centres.priority.descriptor;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import uk.ac.ebi.centres.Ligand;
-import uk.ac.ebi.centres.Priority;
-import uk.ac.ebi.centres.descriptor.General;
-import uk.ac.ebi.centres.priority.AbstractPriorityRule;
-import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +27,12 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.TreeSet;
+import java.util.logging.Logger;
+import uk.ac.ebi.centres.Ligand;
+import uk.ac.ebi.centres.Priority;
+import uk.ac.ebi.centres.descriptor.General;
+import uk.ac.ebi.centres.priority.AbstractPriorityRule;
+import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
 
 /**
  * A descriptor pair rule. This rule defines that like descriptor pairs have
@@ -245,4 +245,5 @@ public class PairRule<A>
         // exhaustively create pair lists (generate) for each ligand.
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(PairRule.class.getName());
 }

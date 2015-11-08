@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.periodictable.PeriodicTable;
 import uk.ac.ebi.reactionblast.mechanism.helper.BondChange;
 
@@ -196,4 +196,5 @@ public class ValencyCalculator {
         initialize();
         return valencElectronMap.get(key);
     }
+    private static final Logger LOG = Logger.getLogger(ValencyCalculator.class.getName());
 }

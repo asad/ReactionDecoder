@@ -18,12 +18,12 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
-
 import signature.AbstractGraphBuilder;
 
 /**
@@ -163,4 +163,5 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
     public void setBondSensitive(boolean isBondSensitive) {
         this.isBondSensitive = isBondSensitive;
     }
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 }

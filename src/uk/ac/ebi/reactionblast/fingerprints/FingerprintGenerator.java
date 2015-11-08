@@ -20,6 +20,7 @@
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.util.BitSet;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.CircularFingerprinter;
 import org.openscience.cdk.geometry.GeometryTools;
@@ -76,4 +77,5 @@ public class FingerprintGenerator implements IFingerprintGenerator {
     public static int getFingerprinterSize() {
         return new CircularFingerprinter(CircularFingerprinter.CLASS_ECFP4).getSize();
     }
+    private static final Logger LOG = Logger.getLogger(FingerprintGenerator.class.getName());
 }

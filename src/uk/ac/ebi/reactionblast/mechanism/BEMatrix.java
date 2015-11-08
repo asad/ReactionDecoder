@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -430,4 +431,10 @@ public final class BEMatrix extends EBIMatrix implements Serializable {
         }
         return result.toString();
     }
+
+    @Override
+    public synchronized Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+    private static final Logger LOG = Logger.getLogger(BEMatrix.class.getName());
 }

@@ -24,10 +24,9 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 
@@ -55,14 +54,14 @@ public class LabelManager {
 
     private static final Vector2d vNW = new Vector2d(-1, -1);
 
-    private Map<IAtom, BitSet> atomAnnotationPositions;
+    private final Map<IAtom, BitSet> atomAnnotationPositions;
 
     public LabelManager() {
         atomAnnotationPositions = new HashMap<IAtom, BitSet>();
     }
 
     public String getAnnotationPositionsAsString(IAtom atom) {
-        StringBuffer sb = new StringBuffer("|");
+        StringBuilder sb = new StringBuilder("|");
         BitSet positions = getAtomAnnotationPositions(atom);
         AnnotationPosition[] values = AnnotationPosition.values();
         for (int i = 0; i < values.length; i++) {
@@ -81,7 +80,6 @@ public class LabelManager {
     public AnnotationPosition getNextSparePosition(BitSet positions) {
         for (int i = 0; i < AnnotationPosition.values().length; i++) {
             if (positions.get(i)) {
-                continue;
             } else {
                 return AnnotationPosition.values()[i];
             }
@@ -280,5 +278,6 @@ public class LabelManager {
     public void reset() {
         atomAnnotationPositions.clear();
     }
+    private static final Logger LOG = Logger.getLogger(LabelManager.class.getName());
 
 }

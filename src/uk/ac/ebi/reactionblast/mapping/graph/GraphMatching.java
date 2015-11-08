@@ -221,4 +221,5 @@ public final class GraphMatching extends IGraphMatching implements Serializable 
     private synchronized void setMatchedPart(IAtomContainer aMatchedPart) {
         matchedPart = aMatchedPart;
     }
+    private static final Logger LOG = Logger.getLogger(GraphMatching.class.getName());
 }

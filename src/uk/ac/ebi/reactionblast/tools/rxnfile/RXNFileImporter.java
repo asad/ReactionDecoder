@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -58,9 +58,9 @@ public class RXNFileImporter {
             InputStream RXNFile = new BufferedInputStream(new FileInputStream(File));
             reaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
 
-            MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, Mode.STRICT);
-            reaction = reader.read(reaction);
-            reader.close();
+            try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, Mode.STRICT)) {
+                reaction = reader.read(reaction);
+            }
         } catch (CDKException cdkerr) {
             System.out.println("Error: only RXN V2000 file format is "
                     + "supported by this Software");
@@ -136,4 +136,5 @@ public class RXNFileImporter {
         System.out.println();
         System.out.println();
     }
+    private static final Logger LOG = Logger.getLogger(RXNFileImporter.class.getName());
 }

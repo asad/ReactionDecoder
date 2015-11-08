@@ -19,8 +19,6 @@
 
 package uk.ac.ebi.reactionblast.graphics.direct;
 
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -32,10 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -49,8 +47,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
 public class DirectBondDrawer extends AbstractDirectDrawer {
 
-    private LabelManager labelManager;
-    private Stroke dashedWedgeStroke;
+    private final LabelManager labelManager;
+    private final Stroke dashedWedgeStroke;
     private Stroke bondStroke;
 
     public DirectBondDrawer(Params params, LabelManager labelManager) {
@@ -402,13 +400,10 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         if (bothAreH || neitherAreH) {
             return true;
         } else if (atLeastOneIsH) {
-            if (params.drawExplicitHydrogens) {
-                return true;
-            } else {
-                return false;
-            }
+            return params.drawExplicitHydrogens;
         } else {
             return true;
         }
     }
+    private static final Logger LOG = Logger.getLogger(DirectBondDrawer.class.getName());
 }

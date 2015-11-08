@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
@@ -239,4 +240,5 @@ public class MappingSolution implements Serializable {
     public double getEnergyDelta() {
         return energyDelta;
     }
+    private static final Logger LOG = Logger.getLogger(MappingSolution.class.getName());
 }

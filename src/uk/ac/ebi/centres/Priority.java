@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Holds some properties that are determined when sorting/prioritising ligands.
@@ -96,4 +97,5 @@ public class Priority {
         return bins;
 
     }
+    private static final Logger LOG = Logger.getLogger(Priority.class.getName());
 }

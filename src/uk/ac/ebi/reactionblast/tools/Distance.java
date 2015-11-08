@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import java.util.BitSet;
+import java.util.logging.Logger;
 
 /**
  *
@@ -227,4 +228,5 @@ public class Distance {
         return Val;
 
     }
+    private static final Logger LOG = Logger.getLogger(Distance.class.getName());
 }

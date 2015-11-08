@@ -37,11 +37,10 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
@@ -304,7 +303,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                 IChemSequence sequence = object.getBuilder().newInstance(IChemSequence.class);
                 sequence.addChemModel((IChemModel) object);
                 file.addChemSequence(sequence);
-                writeChemFile((IChemFile) file);
+                writeChemFile(file);
                 return;
             } else if (object instanceof IAtomContainer) {
                 writeMolecule((IAtomContainer) object);
@@ -948,5 +947,6 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
             fireIOSettingQuestion(setting);
         }
     }
+    private static final Logger LOG = Logger.getLogger(MDLV2000Writer.class.getName());
 
 }

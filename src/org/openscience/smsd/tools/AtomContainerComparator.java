@@ -24,6 +24,7 @@ package org.openscience.smsd.tools;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.config.IsotopeFactory;
 import org.openscience.cdk.config.Isotopes;
@@ -43,7 +44,7 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
     /**
      * Configure LoggingTool
      */
-    private ILoggingTool logger
+    private final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(AtomContainerComparator.class);
 
     /**
@@ -183,4 +184,5 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
         }
         return mw;
     }
+    private static final Logger LOG = Logger.getLogger(AtomContainerComparator.class.getName());
 }

@@ -29,12 +29,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -46,10 +45,10 @@ import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.graph.GraphUtil;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomType;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IAtomType;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
 import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -193,7 +192,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     //logger.debug(i+"\t"+j);
                     IRing ring = (IRing) ringSet.getAtomContainer(j);
                     if (!ring.getFlag(CDKConstants.ISAROMATIC)) {
-                        continue jloop;
+                        continue;
                     }
 
                     boolean haveatom = ring.contains(mol.getAtom(i));
@@ -725,7 +724,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
 //            Logger.getLogger(ExtAtomContainerManipulator.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
-        IAtomContainer acClone = (IAtomContainer) new AtomContainer(ac).clone();
+        IAtomContainer acClone = new AtomContainer(ac).clone();
         /*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
             acClone.getAtom(i).setID(ac.getAtom(i).getID());

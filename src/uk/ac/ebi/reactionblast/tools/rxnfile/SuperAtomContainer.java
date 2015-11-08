@@ -24,6 +24,7 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -68,4 +69,5 @@ public class SuperAtomContainer {
     public void setCounter(int counter) {
         this.counter = counter;
     }
+    private static final Logger LOG = Logger.getLogger(SuperAtomContainer.class.getName());
 }

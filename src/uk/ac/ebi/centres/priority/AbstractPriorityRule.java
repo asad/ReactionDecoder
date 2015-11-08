@@ -17,6 +17,8 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import java.util.Iterator;
+import java.util.List;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
@@ -24,9 +26,6 @@ import uk.ac.ebi.centres.LigandComparison;
 import uk.ac.ebi.centres.LigandSorter;
 import uk.ac.ebi.centres.Priority;
 import uk.ac.ebi.centres.PriorityRule;
-
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * An abstract comparator that provides construction of the {@link Comparison} wrapper allowing subclasses to focus on

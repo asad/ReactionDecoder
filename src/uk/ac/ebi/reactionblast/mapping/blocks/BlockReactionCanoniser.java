@@ -24,13 +24,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMapping;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerPrinter;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
@@ -370,4 +370,5 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         return s;
 
     }
+    private static final Logger LOG = Logger.getLogger(BlockReactionCanoniser.class.getName());
 }

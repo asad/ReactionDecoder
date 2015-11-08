@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping.graph;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 
@@ -133,4 +134,5 @@ public final class MCSSolution implements Serializable {
     public synchronized int getQueryPosition() {
         return queryPosition;
     }
+    private static final Logger LOG = Logger.getLogger(MCSSolution.class.getName());
 }

@@ -25,6 +25,7 @@ package org.openscience.smsd.algorithm.vflib;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 
@@ -61,4 +62,5 @@ public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
         }
         //return size2 - size1;  assumes you want biggest to smallest;
     }
+    private static final Logger LOG = Logger.getLogger(Map2ValueComparator.class.getName());
 }

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
 
@@ -164,4 +165,5 @@ public class MoleculeMoleculeMapping implements Serializable{
         }
         return mappedMap;
     }
+    private static final Logger LOG = Logger.getLogger(MoleculeMoleculeMapping.class.getName());
 }

@@ -29,10 +29,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.AbstractAWTReactionLayout;
@@ -383,4 +382,5 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         int y = ((int) centerY) - (h / 2);
         g.drawRect(x, y, w, h);
     }
+    private static final Logger LOG = Logger.getLogger(DirectRBLastReactionDrawer.class.getName());
 }

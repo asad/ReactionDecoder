@@ -18,6 +18,7 @@
  */
 package aamtool.rgroup;
 
+import static aamtool.rgroup.ECRgroupFrequency.DEBUG;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,6 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
-import static aamtool.rgroup.ECRgroupFrequency.DEBUG;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
@@ -258,4 +258,5 @@ class MultiReactionContainer {
     public Set<String> getAllFP() {
         return fp.getAllPatternsFP();
     }
+    private static final Logger LOG = Logger.getLogger(MultiReactionContainer.class.getName());
 }

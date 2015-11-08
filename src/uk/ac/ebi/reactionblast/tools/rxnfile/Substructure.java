@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -142,4 +143,5 @@ public class Substructure {
     public void setSGroupIdentifier(int sgroupIdentifier) {
         this.sgroupIdentifier = sgroupIdentifier;
     }
+    private static final Logger LOG = Logger.getLogger(Substructure.class.getName());
 }

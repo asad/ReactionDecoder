@@ -24,15 +24,14 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class DirectHullDrawer extends AbstractDirectDrawer {
     
-    private DirectMoleculeDrawer moleculeDrawer;
+    private final DirectMoleculeDrawer moleculeDrawer;
     
     public DirectHullDrawer() {
         moleculeDrawer = new DirectMoleculeDrawer();
@@ -116,5 +115,6 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         g.fill(new Ellipse2D.Double(r.pointZ.x - 2, r.pointZ.y - 2, 4, 4));
 
     }
+    private static final Logger LOG = Logger.getLogger(DirectHullDrawer.class.getName());
 
 }

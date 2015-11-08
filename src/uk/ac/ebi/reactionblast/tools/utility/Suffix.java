@@ -30,6 +30,7 @@ package uk.ac.ebi.reactionblast.tools.utility;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.logging.Logger;
 import org.openscience.cdk.math.RandomNumbersTool;
 
 //~--- classes ----------------------------------------------------------------
@@ -105,4 +106,5 @@ public final class Suffix {
     public String getRandonNumberSuffix() {
         return randonNumberSuffix;
     }
+    private static final Logger LOG = Logger.getLogger(Suffix.class.getName());
 }

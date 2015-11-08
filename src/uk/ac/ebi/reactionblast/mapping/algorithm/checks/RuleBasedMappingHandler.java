@@ -466,5 +466,6 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer getSmartsSulphate() {
         return smartsSulphate;
     }
+    private static final Logger LOG = Logger.getLogger(RuleBasedMappingHandler.class.getName());
 
 }

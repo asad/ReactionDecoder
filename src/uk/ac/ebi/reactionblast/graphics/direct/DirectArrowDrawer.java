@@ -30,7 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 
@@ -39,7 +39,7 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
     private final static Vector2d X_AXIS = new Vector2d(1, 0);
     private final static Vector2d Y_AXIS = new Vector2d(0, 1);
     
-    private Params params;
+    private final Params params;
 
     public DirectArrowDrawer(Params params) {
         this.params = params;
@@ -305,5 +305,6 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
 //            }
         }
     }
+    private static final Logger LOG = Logger.getLogger(DirectArrowDrawer.class.getName());
 
 }

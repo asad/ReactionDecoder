@@ -18,18 +18,25 @@
  */
 package org.openscience.smsd.mcss;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import org.openscience.smsd.tools.AtomContainerComparator;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * 
@@ -152,7 +159,7 @@ final public class MCSS {
         LinkedBlockingQueue<IAtomContainer> solutions = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Callable<LinkedBlockingQueue<IAtomContainer>>> callablesQueue = new LinkedBlockingQueue<>();
         ExecutorService threadPool = Executors.newFixedThreadPool(nThreads);
-        int step = (int) Math.ceil((double) mcssList.size() / (double) nThreads);
+        int step = (int) Math.ceil(mcssList.size() / nThreads);
         if (step < 2) {
             step = 2; // Can't have a step size of less than 2
         }
@@ -206,4 +213,5 @@ final public class MCSS {
     public synchronized String getTitle() {
         return "Calculating Maximum Commmon Substrutures (MCSS) using SMSD";
     }
+    private static final Logger LOG = Logger.getLogger(MCSS.class.getName());
 }

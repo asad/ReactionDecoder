@@ -19,15 +19,6 @@ package uk.ac.ebi.centres.graph;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import uk.ac.ebi.centres.ConnectionProvider;
-import uk.ac.ebi.centres.DescriptorManager;
-import uk.ac.ebi.centres.Digraph;
-import uk.ac.ebi.centres.Ligand;
-import uk.ac.ebi.centres.MutableDescriptor;
-import uk.ac.ebi.centres.exception.WarpCoreEjection;
-import uk.ac.ebi.centres.ligand.NonterminalLigand;
-import uk.ac.ebi.centres.ligand.TerminalLigand;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import uk.ac.ebi.centres.ConnectionProvider;
+import uk.ac.ebi.centres.DescriptorManager;
+import uk.ac.ebi.centres.Digraph;
+import uk.ac.ebi.centres.Ligand;
+import uk.ac.ebi.centres.MutableDescriptor;
+import uk.ac.ebi.centres.exception.WarpCoreEjection;
+import uk.ac.ebi.centres.ligand.NonterminalLigand;
+import uk.ac.ebi.centres.ligand.TerminalLigand;
 
 /**
  * A digraph with a single immutable root.

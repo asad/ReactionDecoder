@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.tools.descriptors;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -139,4 +140,5 @@ public class LipinskiRuleOfFiveDescriptor {
         return lipinskifailures;
 
     }
+    private static final Logger LOG = Logger.getLogger(LipinskiRuleOfFiveDescriptor.class.getName());
 }

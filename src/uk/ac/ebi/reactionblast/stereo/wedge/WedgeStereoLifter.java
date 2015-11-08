@@ -23,9 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -39,7 +38,7 @@ import org.openscience.cdk.interfaces.IStereoElement;
  */
 public class WedgeStereoLifter {
 
-    private List<WedgeRule> rules;
+    private final List<WedgeRule> rules;
 
     public WedgeStereoLifter() {
         rules = new ArrayList<>();
@@ -128,4 +127,5 @@ public class WedgeStereoLifter {
             return (angle);
         }
     }
+    private static final Logger LOG = Logger.getLogger(WedgeStereoLifter.class.getName());
 }

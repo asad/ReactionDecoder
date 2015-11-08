@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
@@ -80,4 +81,5 @@ public final class GameTheoryFactory implements Serializable {
         }
 
     }
+    private static final Logger LOG = Logger.getLogger(GameTheoryFactory.class.getName());
 }

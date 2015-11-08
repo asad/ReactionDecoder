@@ -17,6 +17,8 @@
  */
 package uk.ac.ebi.centres.priority.access;
 
+import java.util.logging.Logger;
+
 /**
  * Wrapper provides access to a given an atom's atomic number (of type A) to priority rules that require it. The method
  * can be injected into a priority to rule too allow that rule to act on the any given atom class type. This special
@@ -54,5 +56,6 @@ public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
         }
 
     }
+    private static final Logger LOG = Logger.getLogger(PsuedoAtomicNumberModifier.class.getName());
 
 }

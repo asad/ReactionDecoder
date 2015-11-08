@@ -44,7 +44,7 @@ public enum General
      * Indicates that it is unknown whether the atom is a stereo-centre
      */
     UNKNOWN(Type.NON_STEREOGENIC);
-    private Type type;
+    private final Type type;
 
     private General(Type type) {
         this.type = type;

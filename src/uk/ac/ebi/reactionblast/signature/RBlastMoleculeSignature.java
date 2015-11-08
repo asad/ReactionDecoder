@@ -18,13 +18,13 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
-
 import signature.AbstractVertexSignature;
 import signature.ColoredTree;
+import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor;
+import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
 /**
  * Signature implementation specific to rBLAST.
@@ -225,4 +225,5 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
         builder.makeFromColoredTree(tree);
         return builder.getAtomContainer();
     }
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignature.class.getName());
 }

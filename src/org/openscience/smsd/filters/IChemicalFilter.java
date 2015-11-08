@@ -24,7 +24,6 @@ package org.openscience.smsd.filters;
 
 import java.util.List;
 import java.util.Map;
-
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.smsd.AtomAtomMapping;
 

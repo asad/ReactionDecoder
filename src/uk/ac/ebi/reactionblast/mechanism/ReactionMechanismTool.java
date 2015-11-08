@@ -195,12 +195,12 @@ public final class ReactionMechanismTool implements Serializable {
                  */
                 for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
                     for (IAtom a : ac.atoms()) {
-                        a.setID((Integer) a.getProperty(CDKConstants.ATOM_ATOM_MAPPING) + "");
+                        a.setID(a.getProperty(CDKConstants.ATOM_ATOM_MAPPING) + "");
                     }
                 }
                 for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
                     for (IAtom a : ac.atoms()) {
-                        a.setID((Integer) a.getProperty(CDKConstants.ATOM_ATOM_MAPPING) + "");
+                        a.setID(a.getProperty(CDKConstants.ATOM_ATOM_MAPPING) + "");
                     }
                 }
                 /*
@@ -675,4 +675,5 @@ public final class ReactionMechanismTool implements Serializable {
         }
         return count;
     }
+    private static final Logger LOG = Logger.getLogger(ReactionMechanismTool.class.getName());
 }

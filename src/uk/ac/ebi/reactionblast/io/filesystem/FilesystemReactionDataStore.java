@@ -22,7 +22,7 @@ package uk.ac.ebi.reactionblast.io.filesystem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
@@ -56,12 +56,11 @@ public class FilesystemReactionDataStore implements IDataStore<IReaction> {
 //            writer.flush();
 //            writer.close();
             rxnWriter.close();
-        } catch (CDKException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (CDKException | IOException e) {
             e.printStackTrace();
         }
         
     }
+    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataStore.class.getName());
 
 }

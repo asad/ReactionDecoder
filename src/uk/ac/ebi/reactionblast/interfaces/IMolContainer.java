@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.interfaces;
 
 import java.io.IOException;
-
 import java.util.Map;
 import org.openscience.cdk.interfaces.IAtomContainer;
 

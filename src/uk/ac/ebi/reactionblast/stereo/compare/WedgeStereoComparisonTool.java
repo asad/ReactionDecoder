@@ -21,14 +21,13 @@ package uk.ac.ebi.reactionblast.stereo.compare;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.manipulator.MoleculeSetManipulator;
-
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalyser;
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult;
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
@@ -94,4 +93,5 @@ public class WedgeStereoComparisonTool {
         return new WedgeStereoComparisonResult(
                 atomA, atomContainerA, resultForA, atomB, atomContainerB, resultForB);
     }
+    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonTool.class.getName());
 }

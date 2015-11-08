@@ -25,9 +25,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
+import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
@@ -37,7 +36,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
 
-    private DirectMoleculeDrawer drawer;
+    private final DirectMoleculeDrawer drawer;
 
     public ZoomToFitAWTLayout(DirectMoleculeDrawer drawer) {
         this.drawer = drawer;
@@ -157,5 +156,6 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
+    private static final Logger LOG = Logger.getLogger(ZoomToFitAWTLayout.class.getName());
 
 }

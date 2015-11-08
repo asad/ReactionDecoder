@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public interface CanvasGenerator {

@@ -18,12 +18,12 @@
 package uk.ac.ebi.centres.cdk;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import uk.ac.ebi.centres.graph.BasicConnectionTable;
-
-import java.util.Map;
 
 /**
  * @author John May
@@ -70,4 +70,5 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
         Integer value = depths.get(stereo);
         return value != null ? value : 0;
     }
+    private static final Logger LOG = Logger.getLogger(CDKConnectionTable.class.getName());
 }

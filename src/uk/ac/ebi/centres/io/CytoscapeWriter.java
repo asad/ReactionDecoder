@@ -17,9 +17,6 @@
  */
 package uk.ac.ebi.centres.io;
 
-import uk.ac.ebi.centres.Digraph;
-import uk.ac.ebi.centres.Ligand;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +25,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import uk.ac.ebi.centres.Digraph;
+import uk.ac.ebi.centres.Ligand;
 
 /**
  * Allows a digraph to be created
@@ -36,10 +35,10 @@ import java.util.Map;
  */
 public abstract class CytoscapeWriter<A> implements Closeable {
 
-    private Digraph<A> digraph;
+    private final Digraph<A> digraph;
     private Writer sif;
     private File folder;
-    private Map<String, Map<String, String>> attributes = new HashMap<String, Map<String, String>>();
+    private final Map<String, Map<String, String>> attributes = new HashMap<String, Map<String, String>>();
 
     public CytoscapeWriter(File folder, Digraph<A> digraph) throws IOException {
 
@@ -65,12 +64,12 @@ public abstract class CytoscapeWriter<A> implements Closeable {
     public void writeAttributes() throws IOException {
         // do nothing
         for (Map.Entry<String, Map<String, String>> entry : attributes.entrySet()) {
-            FileWriter attributeWriter = new FileWriter(new File(folder, entry.getKey() + ".noa"));
-            attributeWriter.write(entry.getKey().replaceAll(" ", ".") + " (class=String)" + "\n");
-            for (Map.Entry<String, String> nodeEntry : entry.getValue().entrySet()) {
-                attributeWriter.write(nodeEntry.getKey() + " = " + nodeEntry.getValue() + "\n");
+            try (FileWriter attributeWriter = new FileWriter(new File(folder, entry.getKey() + ".noa"))) {
+                attributeWriter.write(entry.getKey().replaceAll(" ", ".") + " (class=String)" + "\n");
+                for (Map.Entry<String, String> nodeEntry : entry.getValue().entrySet()) {
+                    attributeWriter.write(nodeEntry.getKey() + " = " + nodeEntry.getValue() + "\n");
+                }
             }
-            attributeWriter.close();
         }
     }
 

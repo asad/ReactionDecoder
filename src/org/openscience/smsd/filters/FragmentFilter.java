@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -126,4 +126,5 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
         }
         return countFrag;
     }
+    private static final Logger LOG = Logger.getLogger(FragmentFilter.class.getName());
 }

@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.graph;
 
+import java.util.logging.Logger;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
@@ -85,4 +86,5 @@ public class Arc<A> {
     public String toString() {
         return tail + " -> " + head;
     }
+    private static final Logger LOG = Logger.getLogger(Arc.class.getName());
 }

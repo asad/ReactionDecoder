@@ -419,4 +419,10 @@ public final class RMatrix extends EBIMatrix implements Serializable {
 
         return total;
     }
+
+    @Override
+    public synchronized Object clone() throws CloneNotSupportedException {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+    private static final Logger LOG = Logger.getLogger(RMatrix.class.getName());
 }

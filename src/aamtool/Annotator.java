@@ -826,4 +826,5 @@ public class Annotator extends Helper {
         sb.append("Reaction Structure Similarity (ST): ").append(myFormatter.format(similarityReactionStructure));
         sb.append(NEW_LINE);
     }
+    private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
 }

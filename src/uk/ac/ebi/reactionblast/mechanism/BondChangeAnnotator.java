@@ -21,12 +21,21 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openscience.cdk.*;
+import org.openscience.cdk.Atom;
+import org.openscience.cdk.Bond;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
@@ -721,4 +730,5 @@ public final class BondChangeAnnotator extends DUModel {
 
         return -1;
     }
+    private static final Logger LOG = Logger.getLogger(BondChangeAnnotator.class.getName());
 }

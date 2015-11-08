@@ -18,17 +18,16 @@
  */
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
-import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
-import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Stereo;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
@@ -66,4 +65,5 @@ public class SingleDownWedgeRule extends WedgeRule {
         ITetrahedralChirality.Stereo chirality = ITetrahedralChirality.Stereo.ANTI_CLOCKWISE;
         return new TetrahedralChirality(centralAtom, ligandAtoms, chirality);
     }
+    private static final Logger LOG = Logger.getLogger(SingleDownWedgeRule.class.getName());
 }

@@ -19,6 +19,7 @@
 package aamtool.rgroup;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -56,5 +57,6 @@ public class FingerprintType {
     public Set<String> getAllPatternsFP() {
         return allPatternsFP;
     }
+    private static final Logger LOG = Logger.getLogger(FingerprintType.class.getName());
 
 }

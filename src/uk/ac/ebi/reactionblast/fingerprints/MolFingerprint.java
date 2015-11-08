@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.fingerprints;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
@@ -310,4 +311,5 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         }
         return Math.max(len1, len2) - n;
     }
+    private static final Logger LOG = Logger.getLogger(MolFingerprint.class.getName());
 }

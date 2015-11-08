@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
 public class BlockMapper {
@@ -201,5 +201,6 @@ public class BlockMapper {
         }
         return null;
     }
+    private static final Logger LOG = Logger.getLogger(BlockMapper.class.getName());
 
 }

@@ -20,6 +20,7 @@ package org.openscience.smsd.mcss;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.ShortestPathFingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -70,11 +71,7 @@ final public class Fragment implements Comparable<Fragment>, Serializable {
                 || !this.getFingerprint().equals(other.getFingerprint()))) {
             return false;
         }
-        if (this.fingerprintAsLong != other.fingerprintAsLong) {
-            return false;
-        }
-
-        return true;
+        return this.fingerprintAsLong == other.fingerprintAsLong;
     }
 
     @Override
@@ -126,4 +123,5 @@ final public class Fragment implements Comparable<Fragment>, Serializable {
         SmilesGenerator g = new SmilesGenerator().aromatic();
         return g.create(ac);
     }
+    private static final Logger LOG = Logger.getLogger(Fragment.class.getName());
 }

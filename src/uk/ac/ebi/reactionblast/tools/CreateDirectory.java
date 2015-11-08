@@ -30,6 +30,7 @@ package uk.ac.ebi.reactionblast.tools;
 //~--- JDK imports ------------------------------------------------------------
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 import uk.ac.ebi.reactionblast.tools.utility.Suffix;
 
 //~--- classes ----------------------------------------------------------------
@@ -150,4 +151,5 @@ public class CreateDirectory {
         }
         return dir;
     }
+    private static final Logger LOG = Logger.getLogger(CreateDirectory.class.getName());
 }

@@ -30,7 +30,12 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
@@ -304,4 +309,5 @@ class IsomeraseHandler {
         }
         return !bond_to_be_removed.isEmpty();
     }
+    private static final Logger LOG = Logger.getLogger(IsomeraseHandler.class.getName());
 }

@@ -23,9 +23,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-
+import java.util.logging.Logger;
 import javax.vecmath.Point2d;
-
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
@@ -92,5 +91,6 @@ public class ZoomToFitGridLayout {
         double objectHeight = r2D.getHeight() + (borderY * 2);
         return Math.min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
+    private static final Logger LOG = Logger.getLogger(ZoomToFitGridLayout.class.getName());
 
 }
