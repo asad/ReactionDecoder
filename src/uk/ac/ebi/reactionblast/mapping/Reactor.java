@@ -64,7 +64,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.aromaticity.Kekulization;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.GeometryTools;
 import org.openscience.cdk.interfaces.IAtom;
@@ -191,7 +190,7 @@ public final class Reactor extends AbstractReactor implements Serializable {
                 ExtAtomContainerManipulator.aromatizeMolecule(mol);
                 reactionWithSTOICHIOMETRY.addReactant(mol, st);
             }
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException | CDKException e) {
             Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
         }
         try {
@@ -207,7 +206,7 @@ public final class Reactor extends AbstractReactor implements Serializable {
             }
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException | CDKException e) {
             Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
         }
     }
