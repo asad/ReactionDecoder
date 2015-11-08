@@ -158,6 +158,11 @@ Changes (01/11/2015)
 a) CDK-1.5.10 
 b) Minor Cleanups
 
+-----------------------
+Changes (08/11/2015)
+-----------------------
+a) Set all null hydrogen counts in molecules to 0
+
 
 
 -----------------------
