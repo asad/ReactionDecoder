@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 /**
  * @RCSfile: Reactor.java,v
  *
@@ -1124,12 +1123,16 @@ public final class Reactor extends AbstractReactor implements Serializable {
          IMP: Suggested by John May
          */
         int[] p = new int[cloneMolecule.getAtomCount()];
+
         try {
             String smiles = SmilesGenerator.unique().create(cloneMolecule, p);
-            //System.err.println("smiles " + smiles);
+            if (DEBUG) {
+                System.err.println("smiles " + smiles);
+            }
         } catch (CDKException e) {
             Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
         }
+
         permuteWithoutClone(p, cloneMolecule);
 
         if (DEBUG) {
