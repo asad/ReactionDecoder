@@ -1734,4 +1734,137 @@ public class MappingTest extends BaseTest {
         System.out.println("RC SIM: " + similarityRC);
         System.out.println("BC SIM: " + similarityBC);
     }
+
+    /*
+     * @BUG
+     * TO DO 
+     * Functional group regarrangment
+     */
+    @Test
+    public void R07393() throws Exception {
+        String reactionID = "R07393";//"R05069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIXTURE, fp 
+         ID=R07393:Bond Cleaved and Formed (2)
+         {C-H:1.0, H-O:1.0}
+
+         */
+        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
+     * @BUG
+     * TO DO 
+     * Functional group regarrangment
+     */
+    @Test
+    public void R02996() throws Exception {
+        String reactionID = "R02996";//"R05069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        IPatternFingerprinter orderChangedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getOrderChangesWFingerprint();
+
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getStereoChangesWFingerprint();
+
+        System.out.println("FP FC" + formedCleavedWFingerprint);
+        System.out.println("FP OC" + orderChangedWFingerprint);
+        System.out.println("FP ST" + stereoChangesWFingerprint);
+
+        /*
+         * Expected Solution
+         * MIN, fp 
+         ID=R02996:Bond Cleaved and Formed (2)
+         [H-O:2.0, O-S:2.0]
+
+         */
+        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
+     * @BUG
+     * TO DO 
+     * Functional group regarrangment
+     */
+    @Test
+    public void R03775() throws Exception {
+        String reactionID = "R03775";//"R05069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIXTURE, fp 
+         ID=R07393:Bond Cleaved and Formed (2)
+         {C-H:1.0, H-O:1.0}
+
+         */
+        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+
+    /*
+     * @BUG
+     * TO DO 
+     * Flip phosphate
+     */
+    @Test
+    public void GeneralBug() throws Exception {
+        String reactionID = "reaction2";//"R05069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIN, fp 
+         * ID=reaction:Bond Cleaved and Formed (4)
+         * [C-S:1.0, C=O:1.0, O=O:1.0, O=S:1.0]         
+         * BE 2087.0, Fragment 0
+
+         */
+        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    @Test
+    public void R09907() throws Exception {
+        String reactionID = "R09907";//"R05069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * MIN, fp 
+         * ID=R09907:Bond Cleaved and Formed (5)
+         * [C%C:4.0, C%O:1.0, C-C:2.0, C-H:5.0, H-O:1.0]
+         * 
+         * BE 2409.0, Fragment 0
+         * 
+         */
+        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+    }
+
 }
