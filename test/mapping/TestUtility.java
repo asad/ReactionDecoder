@@ -54,7 +54,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  */
 public class TestUtility {
 
-    static final String KEGG_RXN_DIR = "rxn/";
+    static final String KEGG_RXN_DIR = "rxn/kegg/";
     static final String Rhea_RXN_DIR = "rxn/rhea/";
     static final String Brenda_RXN_DIR = "rxn/brenda/";
     static final String BUG_RXN_DIR = "rxn/bug/";
