@@ -63,6 +63,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VF2SubTest")
 public class VF2Sub implements IResults {
+    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(VF2Sub.class);
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<AtomAtomMapping> allAtomMCSCopy;
@@ -78,8 +79,6 @@ public class VF2Sub implements IResults {
     private int countR = 0;
     private int countP = 0;
     private boolean isSubgraph = false;
-    private final static ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(VF2Sub.class);
 
     /**
      * Constructor for an extended VF Algorithm for the MCS search

@@ -20,6 +20,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class SingularValueDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 19981017786L;
+    private static final Logger LOG = Logger.getLogger(SingularValueDecomposition.class.getName());
     /* ------------------------
      Class variables
      * ------------------------ */
@@ -407,7 +408,7 @@ public class SingularValueDecomposition implements java.io.Serializable {
                         }
                     }
                     e[p - 2] = f;
-                    iter = iter + 1;
+                    iter += 1;
                 }
                 break;
 
@@ -537,5 +538,4 @@ public class SingularValueDecomposition implements java.io.Serializable {
         }
         return r;
     }
-    private static final Logger LOG = Logger.getLogger(SingularValueDecomposition.class.getName());
 }

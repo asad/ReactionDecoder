@@ -30,6 +30,7 @@ import java.util.logging.Logger;
  * @author John May
  */
 public class Priority {
+    private static final Logger LOG = Logger.getLogger(Priority.class.getName());
 
     private Boolean unique;
     private Descriptor.Type type;
@@ -97,5 +98,4 @@ public class Priority {
         return bins;
 
     }
-    private static final Logger LOG = Logger.getLogger(Priority.class.getName());
 }

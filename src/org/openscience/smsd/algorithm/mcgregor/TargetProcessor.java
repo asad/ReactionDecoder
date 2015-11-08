@@ -42,6 +42,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.TargetProcessorTest")
 public class TargetProcessor {
+    private static final Logger LOG = Logger.getLogger(TargetProcessor.class.getName());
 
     private final List<String> cTab2Copy;
     private final String[] signArray;
@@ -404,5 +405,4 @@ public class TargetProcessor {
     List<String> getCBondNeighborsB() {
         return Collections.unmodifiableList(this.cBondNeighborsB);
     }
-    private static final Logger LOG = Logger.getLogger(TargetProcessor.class.getName());
 }

@@ -32,6 +32,8 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class IOReaction {
 
+    private static final Logger LOG = Logger.getLogger(IOReaction.class.getName());
+
     private static void printReaction(IReaction reaction) {
         IAtomContainerSet Educt = reaction.getReactants();
         IAtomContainerSet Product = reaction.getProducts();
@@ -83,5 +85,4 @@ public class IOReaction {
         System.out.println();
         System.out.println();
     }
-    private static final Logger LOG = Logger.getLogger(IOReaction.class.getName());
 }

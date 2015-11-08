@@ -48,6 +48,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKMCSHandlerTest")
 public class CDKSubGraphHandler implements IResults {
+    private static final Logger LOG = Logger.getLogger(CDKSubGraphHandler.class.getName());
 
 //    //~--- fields -------------------------------------------------------------
     private final IAtomContainer source;
@@ -245,5 +246,4 @@ public class CDKSubGraphHandler implements IResults {
         }
         return new AtomAtomMapping(source, target);
     }
-    private static final Logger LOG = Logger.getLogger(CDKSubGraphHandler.class.getName());
 }

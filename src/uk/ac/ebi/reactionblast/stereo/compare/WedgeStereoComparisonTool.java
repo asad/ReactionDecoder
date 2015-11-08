@@ -40,6 +40,8 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
  */
 public class WedgeStereoComparisonTool {
 
+    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonTool.class.getName());
+
     public static List<WedgeStereoComparisonResult> compare(IReaction reaction) {
         List<WedgeStereoComparisonResult> results
                 = new ArrayList<>();
@@ -65,9 +67,7 @@ public class WedgeStereoComparisonTool {
      * @param equivMap mapped atoms between the pair
      * @return
      */
-    public static List<WedgeStereoComparisonResult> compare(
-            IAtomContainer atomContainerA, IAtomContainer atomContainerB,
-            Map<Integer, Integer> equivMap) {
+    public static List<WedgeStereoComparisonResult> compare(IAtomContainer atomContainerA, IAtomContainer atomContainerB, Map<Integer, Integer> equivMap) {
         List<WedgeStereoComparisonResult> results
                 = new ArrayList<>();
 
@@ -82,16 +82,11 @@ public class WedgeStereoComparisonTool {
         return results;
     }
 
-    public static WedgeStereoComparisonResult compare(
-            IAtom atomA, IAtomContainer atomContainerA,
-            IAtom atomB, IAtomContainer atomContainerB,
-            WedgeStereoLifter lifter) {
-
+    public static WedgeStereoComparisonResult compare(IAtom atomA, IAtomContainer atomContainerA, IAtom atomB, IAtomContainer atomContainerB, WedgeStereoLifter lifter) {
         WedgeStereoAnalysisResult resultForA = WedgeStereoAnalyser.getResult(atomA, atomContainerA, lifter);
         WedgeStereoAnalysisResult resultForB = WedgeStereoAnalyser.getResult(atomB, atomContainerB, lifter);
 
         return new WedgeStereoComparisonResult(
                 atomA, atomContainerA, resultForA, atomB, atomContainerB, resultForB);
     }
-    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonTool.class.getName());
 }

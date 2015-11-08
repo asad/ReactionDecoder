@@ -63,6 +63,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  */
 
 public class Reader {
+    private static final Logger LOG = Logger.getLogger(Reader.class.getName());
 
     public IAtomContainer layout(IAtomContainer AtomContainer) {
         try {
@@ -287,5 +288,4 @@ public class Reader {
         }
         ImageIO.write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
     }
-    private static final Logger LOG = Logger.getLogger(Reader.class.getName());
 }

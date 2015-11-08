@@ -39,13 +39,14 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class MultiReactionContainer {
+    private static final Logger LOG = Logger.getLogger(MultiReactionContainer.class.getName());
 
     private final Set<ReactionGroup> reaction;
     private final String enzyme;
     private boolean RGroup;
     private final FingerprintType fp;
 
-    public MultiReactionContainer(String enzyme) {
+    MultiReactionContainer(String enzyme) {
         this.enzyme = enzyme;
         this.reaction = new TreeSet<>();
         this.RGroup = false;
@@ -258,5 +259,4 @@ class MultiReactionContainer {
     public Set<String> getAllFP() {
         return fp.getAllPatternsFP();
     }
-    private static final Logger LOG = Logger.getLogger(MultiReactionContainer.class.getName());
 }

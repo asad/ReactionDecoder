@@ -33,26 +33,9 @@ import org.openscience.cdk.interfaces.IBond;
 public class AtomContainerAtomPermutor extends Permutor
         implements Iterator<IAtomContainer> {
 
-    private IAtomContainer original;
     private static boolean useA = false;
     private static boolean clone = false;
-
-    public AtomContainerAtomPermutor(IAtomContainer atomContainer) {
-        super(atomContainer.getAtomCount());
-        original = atomContainer;
-    }
-
-    public AtomContainerAtomPermutor(IAtomContainer atomContainer, boolean useA, boolean clone) {
-        this(atomContainer);
-        AtomContainerAtomPermutor.useA = useA;
-        AtomContainerAtomPermutor.clone = clone;
-    }
-
-    @Override
-    public IAtomContainer next() {
-        int[] p = super.getNextPermutation();
-        return AtomContainerAtomPermutor.permute(p, original);
-    }
+    private static final Logger LOG = Logger.getLogger(AtomContainerAtomPermutor.class.getName());
 
     public static IAtomContainer permute(int[] p, IAtomContainer atomContainer) {
 //        if (useA) {
@@ -135,10 +118,27 @@ public class AtomContainerAtomPermutor extends Permutor
         }
         atomContainer.setAtoms(permutedAtoms);
     }
+    private IAtomContainer original;
+    
+    public AtomContainerAtomPermutor(IAtomContainer atomContainer) {
+        super(atomContainer.getAtomCount());
+        original = atomContainer;
+    }
+
+    public AtomContainerAtomPermutor(IAtomContainer atomContainer, boolean useA, boolean clone) {
+        this(atomContainer);
+        AtomContainerAtomPermutor.useA = useA;
+        AtomContainerAtomPermutor.clone = clone;
+    }
+    
+    @Override
+    public IAtomContainer next() {
+        int[] p = super.getNextPermutation();
+        return AtomContainerAtomPermutor.permute(p, original);
+    }
 
     @Override
     public void remove() {
         // can just increase rank....
     }
-    private static final Logger LOG = Logger.getLogger(AtomContainerAtomPermutor.class.getName());
 }

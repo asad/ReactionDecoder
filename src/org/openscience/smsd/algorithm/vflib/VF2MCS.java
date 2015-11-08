@@ -76,11 +76,12 @@ import org.openscience.smsd.interfaces.IResults;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFlibMCSHandlerTest")
-public final class VF2MCS extends BaseMCS implements IResults {
+public class VF2MCS extends BaseMCS implements IResults {
 
-    private final List<AtomAtomMapping> allAtomMCS;
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(VF2MCS.class);
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(VF2MCS.class.getName());
+    private final List<AtomAtomMapping> allAtomMCS;
     private final boolean DEBUG = false;
 
     /**
@@ -569,6 +570,16 @@ public final class VF2MCS extends BaseMCS implements IResults {
         }
     }
 
+    /**
+     * Constructor for an extended VF Algorithm for the MCS search
+     *
+     * @param source
+     * @param target
+     */
+    public VF2MCS(IQueryAtomContainer source, IQueryAtomContainer target) {
+        this(source, target, true, true, true);
+    }
+
     /*
      * Note: VF MCS will search for cliques which will match the types. Mcgregor will extend the cliques depending of
      * the bond type (sensitive and insensitive).
@@ -611,16 +622,6 @@ public final class VF2MCS extends BaseMCS implements IResults {
             setVFMappings(false, queryCompiler);
         }
         return mapper.isTimeout();
-    }
-
-    /**
-     * Constructor for an extended VF Algorithm for the MCS search
-     *
-     * @param source
-     * @param target
-     */
-    public VF2MCS(IQueryAtomContainer source, IQueryAtomContainer target) {
-        this(source, target, true, true, true);
     }
 
     /**
@@ -689,5 +690,4 @@ public final class VF2MCS extends BaseMCS implements IResults {
             m.remove(r);
         }
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(VF2MCS.class.getName());
 }

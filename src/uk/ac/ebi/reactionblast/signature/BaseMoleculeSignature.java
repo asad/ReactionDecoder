@@ -29,6 +29,7 @@ import signature.AbstractVertexSignature;
  *
  */
 public class BaseMoleculeSignature extends AbstractGraphSignature {
+    private static final Logger LOG = Logger.getLogger(BaseMoleculeSignature.class.getName());
 
     protected IAtomContainer atomContainer;
 
@@ -57,6 +58,5 @@ public class BaseMoleculeSignature extends AbstractGraphSignature {
     protected int getVertexCount() {
         return atomContainer.getAtomCount();
     }
-    private static final Logger LOG = Logger.getLogger(BaseMoleculeSignature.class.getName());
 
 }

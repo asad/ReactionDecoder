@@ -33,49 +33,6 @@ import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
  */
 public abstract class IGraphMatching {
 
-    /**
-     * @return the matchedPart
-     */
-    public abstract IAtomContainer getMatchedPart();
-
-    /**
-     *
-     * @return
-     */
-    public abstract IAtomContainer getRemainingEduct();
-
-    /**
-     *
-     * @return
-     */
-    public abstract IAtomContainer getRemainingProduct();
-
-
-    /**
-     *
-     * @param holder Data holder
-     * @param removeHydrogen
-     * @param I
-     * @param J
-     * @param eductFP
-     * @param prodFP
-     * @return 
-     */
-    public abstract boolean mcsMatch(Holder holder,
-            boolean removeHydrogen,
-            Integer I,
-            Integer J,
-            BitSet eductFP,
-            BitSet prodFP);
-
-    /**
-     * Removed matched part from the reaction
-     *
-     * @param reaction
-     * @return
-     */
-    public abstract int removeMatchedAtomsAndUpdateAAM(IReaction reaction);
-
     public static void setMCSUpdationFlags(Holder holder, int substrateIndex, int productIndex) {
         try {
             ReactionContainer reactionStructureInformation = holder.getReactionContainer();
@@ -87,4 +44,42 @@ public abstract class IGraphMatching {
             Logger.getLogger(IGraphMatching.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * @return the matchedPart
+     */
+    public abstract IAtomContainer getMatchedPart();
+
+    /**
+     *
+     * @return
+     */
+    public abstract IAtomContainer getRemainingEduct();
+
+
+    /**
+     *
+     * @return
+     */
+    public abstract IAtomContainer getRemainingProduct();
+
+    /**
+     *
+     * @param holder Data holder
+     * @param removeHydrogen
+     * @param I
+     * @param J
+     * @param eductFP
+     * @param prodFP
+     * @return 
+     */
+    public abstract boolean mcsMatch(Holder holder, boolean removeHydrogen, Integer I, Integer J, BitSet eductFP, BitSet prodFP);
+
+    /**
+     * Removed matched part from the reaction
+     *
+     * @param reaction
+     * @return
+     */
+    public abstract int removeMatchedAtomsAndUpdateAAM(IReaction reaction);
 }

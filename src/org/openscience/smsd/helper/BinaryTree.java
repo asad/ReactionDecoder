@@ -36,6 +36,13 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.helper.BinaryTreeTest")
 public class BinaryTree {
+    private static final Logger LOG = Logger.getLogger(BinaryTree.class.getName());
+    /**
+     * not equal is initialized as null
+     */
+    private BinaryTree equal = null;
+    private BinaryTree notEqual = null;
+    private int value = -1;
 
     /**
      * Creates a new instance of BinaryTree.
@@ -46,12 +53,6 @@ public class BinaryTree {
     public BinaryTree(int value) {
         this.value = value;
     }
-    /**
-     * not equal is initialized as null
-     */
-    private BinaryTree equal = null;
-    private BinaryTree notEqual = null;
-    private int value = -1;
 
     /**
      * Return value of the node
@@ -98,9 +99,8 @@ public class BinaryTree {
      *
      * @param notEqual the notEqual to set
      */
-    @TestMethod("testSetNotEqual")
+    @TestMethod(value = "testSetNotEqual")
     public synchronized void setNotEqual(BinaryTree notEqual) {
         this.notEqual = notEqual;
     }
-    private static final Logger LOG = Logger.getLogger(BinaryTree.class.getName());
 }

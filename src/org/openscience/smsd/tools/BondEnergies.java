@@ -92,6 +92,7 @@ public class BondEnergies {
 
     private static Map<Integer, BondEnergy> bondEngergies = null;
     private static BondEnergies instance = null;
+    private static final Logger LOG = Logger.getLogger(BondEnergies.class.getName());
 
     /**
      * Returns Singleton pattern instance for the Bond Energy class
@@ -368,5 +369,4 @@ public class BondEnergies {
         bondEngergies.put(key++, new BondEnergy("Xe", "F", Order.SINGLE, 130));
         return key;
     }
-    private static final Logger LOG = Logger.getLogger(BondEnergies.class.getName());
 }

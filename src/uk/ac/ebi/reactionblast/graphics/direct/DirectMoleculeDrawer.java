@@ -36,6 +36,7 @@ import org.openscience.cdk.interfaces.IBond;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectMoleculeDrawer.class.getName());
 
     private Font moleculeIDFont;
     private List<Highlighter> highlightDrawers;
@@ -247,5 +248,4 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
                 textBounds.getWidth(),
                 textBounds.getHeight());
     }
-    private static final Logger LOG = Logger.getLogger(DirectMoleculeDrawer.class.getName());
 }

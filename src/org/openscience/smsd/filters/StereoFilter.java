@@ -50,7 +50,71 @@ import org.openscience.smsd.AtomAtomMapping;
  * @author Syed Asad Rahman <asad@ebi.subGraph.uk>
  * 
  */
-public final class StereoFilter extends Sotter implements IChemicalFilter<Double> {
+public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
+    private static final Logger LOG = Logger.getLogger(StereoFilter.class.getName());
+
+    /**
+     * Get stereo value as integer
+     *
+     * @param bond
+     * @return
+     */
+    public static synchronized int convertBondStereo(IBond bond) {
+        int value;
+        switch (bond.getStereo()) {
+            case UP:
+                value = 1;
+                break;
+            case UP_INVERTED:
+                value = 1;
+                break;
+            case DOWN:
+                value = 6;
+                break;
+            case DOWN_INVERTED:
+                value = 6;
+                break;
+            case UP_OR_DOWN:
+                value = 4;
+                break;
+            case UP_OR_DOWN_INVERTED:
+                value = 4;
+                break;
+            case E_OR_Z:
+                value = 3;
+                break;
+            default:
+                value = 0;
+        }
+        return value;
+    }
+
+    /**
+     * Get bond order value as integer
+     *
+     * @param bond
+     * @return
+     */
+    public static synchronized int convertBondOrder(IBond bond) {
+        int value;
+        switch (bond.getOrder()) {
+            case QUADRUPLE:
+                value = 4;
+                break;
+            case TRIPLE:
+                value = 3;
+                break;
+            case DOUBLE:
+                value = 2;
+                break;
+            case SINGLE:
+                value = 1;
+                break;
+            default:
+                value = 1;
+        }
+        return value;
+    }
 
     private final List<Double> stereoScore;
     private final ChemicalFilters chemfilter;
@@ -269,69 +333,6 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return score;
     }
 
-    /**
-     * Get stereo value as integer
-     *
-     * @param bond
-     * @return
-     */
-    public synchronized static int convertBondStereo(IBond bond) {
-        int value;
-        switch (bond.getStereo()) {
-            case UP:
-                value = 1;
-                break;
-            case UP_INVERTED:
-                value = 1;
-                break;
-            case DOWN:
-                value = 6;
-                break;
-            case DOWN_INVERTED:
-                value = 6;
-                break;
-            case UP_OR_DOWN:
-                value = 4;
-                break;
-            case UP_OR_DOWN_INVERTED:
-                value = 4;
-                break;
-            case E_OR_Z:
-                value = 3;
-                break;
-            default:
-                value = 0;
-        }
-        return value;
-    }
-
-    /**
-     * Get bond order value as integer
-     *
-     * @param bond
-     * @return
-     */
-    public synchronized static int convertBondOrder(IBond bond) {
-        int value;
-        switch (bond.getOrder()) {
-            case QUADRUPLE:
-                value = 4;
-                break;
-            case TRIPLE:
-                value = 3;
-                break;
-            case DOUBLE:
-                value = 2;
-                break;
-            case SINGLE:
-                value = 1;
-                break;
-            default:
-                value = 1;
-        }
-        return value;
-    }
-
     private synchronized double getRingMatchScore(List<IAtomContainer> list) throws CloneNotSupportedException {
         double lScore = 0;
         IAtomContainer listMap = list.get(0).clone();
@@ -388,5 +389,5 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         l.add(subgraphContainer);
         return l;
     }
-    private static final Logger LOG = Logger.getLogger(StereoFilter.class.getName());
+
 }

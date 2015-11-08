@@ -54,9 +54,10 @@ import org.openscience.smsd.helper.LabelContainer;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
-public final class GenerateCompatibilityGraph implements Serializable {
+public class GenerateCompatibilityGraph implements Serializable {
 
     private static final long serialVersionUID = 96986606860861L;
+    private static final Logger LOG = Logger.getLogger(GenerateCompatibilityGraph.class.getName());
     private List<Integer> compGraphNodes = null;
     private List<Integer> compGraphNodesCZero = null;
     private final List<Integer> cEdges;
@@ -515,5 +516,4 @@ public final class GenerateCompatibilityGraph implements Serializable {
     private boolean isMatchRings() {
         return shouldMatchRings;
     }
-    private static final Logger LOG = Logger.getLogger(GenerateCompatibilityGraph.class.getName());
 }

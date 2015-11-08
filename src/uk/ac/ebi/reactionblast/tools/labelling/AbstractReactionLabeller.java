@@ -51,6 +51,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class AbstractReactionLabeller {
+    private static final Logger LOG = Logger.getLogger(AbstractReactionLabeller.class.getName());
 
     /**
      * A nasty hack necessary to get around a bug in the CDK
@@ -234,5 +235,4 @@ public class AbstractReactionLabeller {
         canonReaction.setID(reaction.getID());
         return canonReaction;
     }
-    private static final Logger LOG = Logger.getLogger(AbstractReactionLabeller.class.getName());
 }

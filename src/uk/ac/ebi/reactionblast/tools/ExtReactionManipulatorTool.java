@@ -37,6 +37,8 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  */
 public class ExtReactionManipulatorTool extends ReactionManipulator {
 
+    private static final Logger LOG = Logger.getLogger(ExtReactionManipulatorTool.class.getName());
+
     /**
      *
      * @param reaction
@@ -76,7 +78,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
             acClone.addProperties(ac.getProperties());
             clone.getAgents().addAtomContainer(acClone);
         }
-
+        
         // create a Map of corresponding atoms for molecules (key: original Atom, 
         // value: clone Atom)
         Map<IChemObject, IChemObject> atomatom = new HashMap<>();
@@ -110,7 +112,6 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
      * @throws CloneNotSupportedException
      */
     public static IReaction addExplicitH(IReaction reaction) throws CloneNotSupportedException {
-
         IReaction r = reaction.getBuilder().newInstance(IReaction.class);
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             IAtomContainer addExplicitH = ExtAtomContainerManipulator.addExplicitH(ac);
@@ -127,5 +128,4 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
 
         return r;
     }
-    private static final Logger LOG = Logger.getLogger(ExtReactionManipulatorTool.class.getName());
 }

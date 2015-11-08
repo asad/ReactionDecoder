@@ -34,6 +34,16 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintGenerator implements IFingerprintGenerator {
+    private static final Logger LOG = Logger.getLogger(FingerprintGenerator.class.getName());
+
+    /**
+     * Size of the fingerprint
+     *
+     * @return
+     */
+    public static int getFingerprinterSize() {
+        return new CircularFingerprinter(CircularFingerprinter.CLASS_ECFP4).getSize();
+    }
 
     //define the FINGERPRINT_SIZE of the fingerprint
     //NOTE: this should be a multiple of 64 and preferably not 1024 or 2048
@@ -69,13 +79,4 @@ public class FingerprintGenerator implements IFingerprintGenerator {
         return fingerprinter.getBitFingerprint(mol).asBitSet();
     }
 
-    /**
-     * Size of the fingerprint
-     *
-     * @return
-     */
-    public static int getFingerprinterSize() {
-        return new CircularFingerprinter(CircularFingerprinter.CLASS_ECFP4).getSize();
-    }
-    private static final Logger LOG = Logger.getLogger(FingerprintGenerator.class.getName());
 }

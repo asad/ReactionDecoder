@@ -44,6 +44,8 @@ import uk.ac.ebi.reactionblast.stereo.compare.ChiralityTool;
  */
 public class Chirality3DTool implements ChiralityTool {
 
+    private static final Logger LOG = Logger.getLogger(Chirality3DTool.class.getName());
+
     /**
      * Get R/S Chirality assignments for an atom container that should have
      * 3D coordinates as Point3d set in the atoms. Note that assignments of
@@ -54,8 +56,7 @@ public class Chirality3DTool implements ChiralityTool {
      * @throws Exception  
      */
     @Override
-    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
-            IAtomContainer atomContainer) {
+    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(IAtomContainer atomContainer) {
         return getTetrahedralChiralities(atomContainer, false);
     }
 
@@ -71,8 +72,7 @@ public class Chirality3DTool implements ChiralityTool {
      * @throws Exception  
      */
     @Override
-    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
-            IAtomContainer atomContainer, boolean getNoneAssigments) {
+    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(IAtomContainer atomContainer, boolean getNoneAssigments) {
         Map<IAtom, IStereoAndConformation> chiralMap = new HashMap<IAtom, IStereoAndConformation>();
         for (IAtom atom : atomContainer.atoms()) {
             List<IAtom> neighbours = atomContainer.getConnectedAtomsList(atom);
@@ -104,5 +104,4 @@ public class Chirality3DTool implements ChiralityTool {
 
         return chiralMap;
     }
-    private static final Logger LOG = Logger.getLogger(Chirality3DTool.class.getName());
 }

@@ -35,6 +35,8 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  */
 public class ReactionAtomIDTransformation implements ITransformation<IReaction> {
 
+    private static final Logger LOG = Logger.getLogger(ReactionAtomIDTransformation.class.getName());
+
     @Override
     public ITransformation.TargetType getTargetType() {
         return TargetType.REACTION;
@@ -54,5 +56,4 @@ public class ReactionAtomIDTransformation implements ITransformation<IReaction> 
 
         return reaction;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionAtomIDTransformation.class.getName());
 }

@@ -46,10 +46,11 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
-final public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>> {
+public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>> {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MCSSThread.class);
+    private static final Logger LOG = Logger.getLogger(MCSSThread.class.getName());
     private final List<IAtomContainer> mcssList;
     private final JobType jobType;
     private final int taskNumber;
@@ -311,5 +312,4 @@ final public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomConta
     public synchronized int getTaskNumber() {
         return taskNumber;
     }
-    private static final Logger LOG = Logger.getLogger(MCSSThread.class.getName());
 }

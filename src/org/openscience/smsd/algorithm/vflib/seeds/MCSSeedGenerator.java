@@ -56,14 +56,13 @@ import org.openscience.smsd.interfaces.Algorithm;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
+    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(MCSSeedGenerator.class);
 
     private final IAtomContainer source;
     private final IAtomContainer target;
     private final List<AtomAtomMapping> allCliqueAtomMCS;
     private final boolean ringMatch;
     private final Algorithm algorithm;
-    private final static ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(MCSSeedGenerator.class);
     private final boolean bondMatch;
     private final boolean matchAtomType;
 

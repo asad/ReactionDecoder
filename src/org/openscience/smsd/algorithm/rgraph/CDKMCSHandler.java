@@ -50,6 +50,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKMCSHandlerTest")
 public class CDKMCSHandler implements IResults {
+    private static final Logger LOG = Logger.getLogger(CDKMCSHandler.class.getName());
 
 //    //~--- fields -------------------------------------------------------------
     private final IAtomContainer source;
@@ -264,5 +265,4 @@ public class CDKMCSHandler implements IResults {
     public void setTimeout(boolean timeout) {
         this.timeout = timeout;
     }
-    private static final Logger LOG = Logger.getLogger(CDKMCSHandler.class.getName());
 }

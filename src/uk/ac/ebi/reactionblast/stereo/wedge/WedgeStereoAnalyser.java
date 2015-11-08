@@ -34,6 +34,8 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
  */
 public class WedgeStereoAnalyser {
 
+    private static final Logger LOG = Logger.getLogger(WedgeStereoAnalyser.class.getName());
+
     public static WedgeStereoAnalysisResult getResult(IAtom atom, IAtomContainer atomContainer, WedgeStereoLifter lifter) {
         boolean isPotentialStereoCenter
                 = StereoCenterAnalyser.hasPotentialStereoCenter(atom, atomContainer);
@@ -41,8 +43,7 @@ public class WedgeStereoAnalyser {
         return getResult(atomContainer, isPotentialStereoCenter, element);
     }
 
-    private static WedgeStereoAnalysisResult getResult(IAtomContainer atomContainer,
-            boolean isPotentialStereoCenter, IStereoElement stereoElement) {
+    private static WedgeStereoAnalysisResult getResult(IAtomContainer atomContainer, boolean isPotentialStereoCenter, IStereoElement stereoElement) {
         if (isPotentialStereoCenter) {
             if (stereoElement == null) {
                 return WedgeStereoAnalysisResult.MISSING;
@@ -63,7 +64,6 @@ public class WedgeStereoAnalyser {
                 return WedgeStereoAnalysisResult.ERROR;
             }
         }
-
     }
 
     private static WedgeStereoAnalysisResult convertCipToResult(IStereoAndConformation cipChirality) {
@@ -78,5 +78,4 @@ public class WedgeStereoAnalyser {
                 return WedgeStereoAnalysisResult.NONE;
         }
     }
-    private static final Logger LOG = Logger.getLogger(WedgeStereoAnalyser.class.getName());
 }

@@ -38,6 +38,8 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
  */
 public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
+    private static final Logger LOG = Logger.getLogger(SmilesMoleculeLabeller.class.getName());
+
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         try {
@@ -130,5 +132,4 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
         atomContainer.setBonds(bonds);
     }
-    private static final Logger LOG = Logger.getLogger(SmilesMoleculeLabeller.class.getName());
 }

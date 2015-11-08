@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMoleculePair>, Comparator<MoleculeMoleculePair> {
 
     private static final long serialVersionUID = 107097779868968L;
+    private static final Logger LOG = Logger.getLogger(MoleculeMoleculePair.class.getName());
     private final ReactantProductPair name;
     private final ReactantProductPair smarts;
     private final ReactantProductPair signature;
@@ -269,5 +270,4 @@ public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMo
         }
         return Objects.equals(this.smirks, other.smirks);
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeMoleculePair.class.getName());
 }

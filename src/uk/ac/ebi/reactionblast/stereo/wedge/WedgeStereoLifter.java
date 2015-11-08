@@ -37,6 +37,7 @@ import org.openscience.cdk.interfaces.IStereoElement;
  *
  */
 public class WedgeStereoLifter {
+    private static final Logger LOG = Logger.getLogger(WedgeStereoLifter.class.getName());
 
     private final List<WedgeRule> rules;
 
@@ -127,5 +128,4 @@ public class WedgeStereoLifter {
             return (angle);
         }
     }
-    private static final Logger LOG = Logger.getLogger(WedgeStereoLifter.class.getName());
 }

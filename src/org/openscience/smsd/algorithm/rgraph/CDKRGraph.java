@@ -100,6 +100,7 @@ import org.openscience.cdk.exception.CDKException;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRGraphTest")
 public class CDKRGraph {
+    private static final Logger LOG = Logger.getLogger(CDKRGraph.class.getName());
     // an CDKRGraph is a list of CDKRGraph nodes
     // each node keeping track of its
     // neighbors.
@@ -656,5 +657,4 @@ public class CDKRGraph {
         CDKMCS.getIterationManager().increment();
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(CDKRGraph.class.getName());
 }

@@ -29,7 +29,9 @@ import uk.ac.ebi.reactionblast.mapping.helper.MappingHandler;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class StandardizeReaction implements IStandardizer {
+public class StandardizeReaction implements IStandardizer {
+
+    private static final Logger LOG = Logger.getLogger(StandardizeReaction.class.getName());
 
     /**
      *
@@ -50,5 +52,4 @@ public final class StandardizeReaction implements IStandardizer {
         IReaction standardizedReaction = rBuilder.standardize(reaction);
         return standardizedReaction;
     }
-    private static final Logger LOG = Logger.getLogger(StandardizeReaction.class.getName());
 }

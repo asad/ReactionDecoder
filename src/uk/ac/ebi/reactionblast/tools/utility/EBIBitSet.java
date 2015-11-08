@@ -30,15 +30,8 @@ import org.openscience.cdk.exception.CDKException;
 public class EBIBitSet extends BitSet {
 
     private static final long serialVersionUID = 3997698588986878753L;
+    private static final Logger LOG = Logger.getLogger(EBIBitSet.class.getName());
 
-    public EBIBitSet() {
-        super();
-    }
-
-    public EBIBitSet(int nbits) {
-        super(nbits);
-    }
-    
     /**
      * 
      * @param fp1 fingerprint
@@ -47,30 +40,37 @@ public class EBIBitSet extends BitSet {
      * @throws CDKException 
      */
     public static BitSet append(BitSet fp1, BitSet fp2) throws CDKException {
-       BitSet append=null;
-       
-       if(fp1.size()> 0 && fp2.size() > 0){
-           append=new BitSet(fp1.size()+fp2.size());
+        BitSet append=null;
+        
+        if(fp1.size()> 0 && fp2.size() > 0){
+            append=new BitSet(fp1.size()+fp2.size());
+            
+            int index=0;
+            for(int i=0;i<=fp1.size();i++){
+                append.set(index++, fp1.get(i));
+            }
+            
+            for(int j=0; j<=fp2.size();j++){
+                append.set(index++, fp2.get(j));
+            }
+            
+        }else{
+            throw new CDKException("BitIndex <0: ");
+        }
+        
+        return append;
+    }
+    
+    public EBIBitSet() {
+        super();
+    }
 
-           int index=0;
-           for(int i=0;i<=fp1.size();i++){
-               append.set(index++, fp1.get(i));
-           }
-           
-           for(int j=0; j<=fp2.size();j++){
-               append.set(index++, fp2.get(j));
-           }
-           
-       }else{
-           throw new CDKException("BitIndex <0: ");
-       }
-       
-       return append;
+    public EBIBitSet(int nbits) {
+        super(nbits);
     }
 
     @Override
     public Object clone() {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(EBIBitSet.class.getName());
 }

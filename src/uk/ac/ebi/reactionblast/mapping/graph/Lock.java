@@ -25,12 +25,13 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class Lock {
+    private static final Logger LOG = Logger.getLogger(Lock.class.getName());
 
     private boolean isLocked;
     private Thread lockedBy;
     private int lockedCount;
 
-    public Lock() {
+    Lock() {
         isLocked = false;
         lockedBy = null;
         lockedCount = 0;
@@ -97,5 +98,4 @@ class Lock {
     public void setLockedCount(int lockedCount) {
         this.lockedCount = lockedCount;
     }
-    private static final Logger LOG = Logger.getLogger(Lock.class.getName());
 }

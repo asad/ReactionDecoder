@@ -36,6 +36,7 @@ public class ReactionDBContainer implements Serializable {
     private static Map<String, ReactionInfoCollector> reactionsFingerprints = null;
     private static ReactionDBContainer ref = null;
     private static final long serialVersionUID = 19998987876L;
+    private static final Logger LOG = Logger.getLogger(ReactionDBContainer.class.getName());
 
     /**
      * Creates a new instance of CompoundContainer
@@ -138,5 +139,4 @@ public class ReactionDBContainer implements Serializable {
     synchronized public Set<Entry<String, ReactionInfoCollector>> entrySet() {
         return reactionsFingerprints.entrySet();
     }
-    private static final Logger LOG = Logger.getLogger(ReactionDBContainer.class.getName());
 }

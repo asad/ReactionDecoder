@@ -30,15 +30,11 @@ import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 public class ReactionCenterFragment implements Serializable {
 
     private static final long serialVersionUID = 9879878799977781L;
+    private static final Logger LOG = Logger.getLogger(ReactionCenterFragment.class.getName());
 
     private final String signature;
     private final int level;
     private final EnumSubstrateProduct rpf;
-
-    @Override
-    public String toString() {
-        return "ReactionCenterFragment{" + "signature=" + signature + ", level=" + level + ", rpf=" + rpf + '}';
-    }
 
     /**
      *
@@ -50,6 +46,11 @@ public class ReactionCenterFragment implements Serializable {
         this.signature = signature;
         this.level = level;
         this.rpf = rpf;
+    }
+
+    @Override
+    public String toString() {
+        return "ReactionCenterFragment{" + "signature=" + signature + ", level=" + level + ", rpf=" + rpf + '}';
     }
 
     /**
@@ -75,5 +76,4 @@ public class ReactionCenterFragment implements Serializable {
     public String getSignature() {
         return signature;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionCenterFragment.class.getName());
 }

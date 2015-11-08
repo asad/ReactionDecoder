@@ -37,6 +37,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class CDKSMILES {
+    private static final Logger LOG = Logger.getLogger(CDKSMILES.class.getName());
 
     private final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(CDKSMILES.class);
@@ -129,5 +130,4 @@ public class CDKSMILES {
         }
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(CDKSMILES.class.getName());
 }

@@ -75,6 +75,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IState;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFState implements IState {
+    private static final Logger LOG = Logger.getLogger(VFState.class.getName());
 
     private final List<Match> candidates;
     private final IQuery query;
@@ -316,5 +317,4 @@ public class VFState implements IState {
     private IAtom getTargetPathHead() {
         return targetPath.get(targetPath.size() - 1);
     }
-    private static final Logger LOG = Logger.getLogger(VFState.class.getName());
 }

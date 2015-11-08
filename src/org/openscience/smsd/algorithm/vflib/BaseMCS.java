@@ -57,6 +57,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BaseMCS {
+    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(BaseMCS.class);
 
     protected int countR;
     protected int countP;
@@ -68,8 +69,6 @@ public class BaseMCS {
     protected final List<Map<INode, IAtom>> vfLibSolutions;
     final List<Map<Integer, Integer>> allLocalMCS;
     final List<AtomAtomMapping> allLocalAtomAtomMapping;
-    private final static ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(BaseMCS.class);
 
     BaseMCS(IAtomContainer source, IAtomContainer target, boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.allLocalAtomAtomMapping = new ArrayList<>();

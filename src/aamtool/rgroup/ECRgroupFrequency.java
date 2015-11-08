@@ -41,6 +41,20 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 public class ECRgroupFrequency {
 
+
+    protected final static boolean DEBUG = false;
+
+    private static final Logger LOG = Logger.getLogger(ECRgroupFrequency.class.getName());
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        
+        ECRgroupFrequency ecRgroupFrequency = new ECRgroupFrequency(args);
+    }
+
     public ECRgroupFrequency(String[] args) {
         System.out.println("------------------------------------------------------");
         Map<String, MultiReactionContainer> reactionMap = new TreeMap<>();
@@ -263,8 +277,8 @@ public class ECRgroupFrequency {
 
         System.out.println("------------------------------------------------------");
         /*
-         EC Third Level Signature
-         */
+        EC Third Level Signature
+        */
         int empty_signature = 0;
         int one_signature_common = 0;
         int more_than_one_signature_common = 0;
@@ -323,17 +337,5 @@ public class ECRgroupFrequency {
         System.out.println("# 3rd level EC with more than One Common Union Fragment " + more_than_one_union_common);
         System.out.println("------------------------------------------------------");
     }
-
-    protected final static boolean DEBUG = false;
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-
-        ECRgroupFrequency ecRgroupFrequency = new ECRgroupFrequency(args);
-    }
-    private static final Logger LOG = Logger.getLogger(ECRgroupFrequency.class.getName());
 
 }

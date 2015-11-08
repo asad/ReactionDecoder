@@ -4,6 +4,8 @@ import java.util.logging.Logger;
 
 public class Maths {
 
+    private static final Logger LOG = Logger.getLogger(Maths.class.getName());
+
     /**
      * sqrt(a^2 + b^2) without under/overflow. * * @param a
      *
@@ -25,5 +27,4 @@ public class Maths {
         }
         return r;
     }
-    private static final Logger LOG = Logger.getLogger(Maths.class.getName());
 }

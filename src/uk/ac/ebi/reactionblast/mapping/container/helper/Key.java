@@ -30,6 +30,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 public class Key implements IKey, Serializable {
 
     private static final long serialVersionUID = 92392372979041041L;
+    private static final Logger LOG = Logger.getLogger(Key.class.getName());
     private final int sourceIndex;
     private final int targetIndex;
 
@@ -96,5 +97,4 @@ public class Key implements IKey, Serializable {
     public int compare(Key t, Key t1) {
         return t.compareTo(t1);
     }
-    private static final Logger LOG = Logger.getLogger(Key.class.getName());
 }

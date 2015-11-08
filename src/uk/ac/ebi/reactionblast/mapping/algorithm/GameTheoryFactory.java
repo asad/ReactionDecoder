@@ -32,9 +32,11 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class GameTheoryFactory implements Serializable {
+public class GameTheoryFactory implements Serializable {
 
     private static final long serialVersionUID = 01567272317571L;
+
+    private static final Logger LOG = Logger.getLogger(GameTheoryFactory.class.getName());
 
     /**
      *
@@ -47,14 +49,7 @@ public final class GameTheoryFactory implements Serializable {
      * @return
      * @throws Exception
      */
-    public synchronized static IGameTheory make(
-            IMappingAlgorithm theory,
-            IReaction reaction,
-            boolean removeHydrogen,
-            Map<Integer, IAtomContainer> educts,
-            Map<Integer, IAtomContainer> products,
-            GameTheoryMatrix rpsh) throws Exception {
-
+    public static synchronized IGameTheory make(IMappingAlgorithm theory, IReaction reaction, boolean removeHydrogen, Map<Integer, IAtomContainer> educts, Map<Integer, IAtomContainer> products, GameTheoryMatrix rpsh) throws Exception {
         switch (theory) {
             case MIXTURE:
                 return new GameTheoryMixture(
@@ -79,7 +74,5 @@ public final class GameTheoryFactory implements Serializable {
             default:
                 return null;
         }
-
     }
-    private static final Logger LOG = Logger.getLogger(GameTheoryFactory.class.getName());
 }

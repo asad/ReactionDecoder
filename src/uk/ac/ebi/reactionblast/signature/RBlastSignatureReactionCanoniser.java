@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  */
 public class RBlastSignatureReactionCanoniser
         extends AbstractReactionLabeller implements ICanonicalReactionLabeller {
+    private static final Logger LOG = Logger.getLogger(RBlastSignatureReactionCanoniser.class.getName());
 
     private final ICanonicalMoleculeLabeller labeller
             = new RBlastMoleculeSignatureLabellingAdaptor();
@@ -39,5 +40,4 @@ public class RBlastSignatureReactionCanoniser
     public IReaction getCanonicalReaction(IReaction reaction) {
         return super.labelReaction(reaction, labeller);
     }
-    private static final Logger LOG = Logger.getLogger(RBlastSignatureReactionCanoniser.class.getName());
 }

@@ -42,6 +42,83 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class PairRule<A>
         extends AbstractPriorityRule<A> {
+    private static final Logger LOG = Logger.getLogger(PairRule.class.getName());
+
+    /**
+     * Ugly piece of code to generate permutation of the given ligand groups.
+     * There may be a much better way to do this. This method converts lists
+     * with duplicates into all possible combinations. A, {B1, B2}, C would
+     * permutate to A, B1, B2, C and A, B2, B1, C.
+     * <p/>
+     * This method was adapted from http://goo.gl/s6R7E
+     *
+     * @see <a href="http://goo.gl/s6R7E">http://www.daniweb.com/</a>
+     */
+    private static <T> List<List<T>> permutate(List<List<T>> uncombinedList) {
+        List<List<T>> list = new ArrayList<>();
+        
+        // permeate the sublist
+        for (List sublist : uncombinedList) {
+            if (sublist.size() > 1) {
+                Collection<List> tmp;
+                tmp = Collections2.permutations(sublist);
+                sublist.clear();
+                sublist.addAll(tmp);
+            }
+        }
+        
+        int index[] = new int[uncombinedList.size()];
+        int combinations = combinations(uncombinedList) - 1;
+        // Initialize index
+        for (int i = 0; i < index.length; i++) {
+            index[i] = 0;
+        }
+        // First combination is always valid
+        List<T> combination = new ArrayList<>();
+        for (int m = 0; m < index.length; m++) {
+            Object o = uncombinedList.get(m).get(index[m]);
+            if (o instanceof Collection) {
+                combination.addAll((Collection) o);
+            } else {
+                combination.add((T) o);
+            }
+        }
+        list.add(combination);
+        
+        for (int k = 0; k < combinations; k++) {
+            combination = new ArrayList<>();
+            boolean found = false;
+            // We Use reverse order
+            for (int l = index.length - 1; l >= 0 && found == false; l--) {
+                int currentListSize = uncombinedList.get(l).size();
+                if (index[l] < currentListSize - 1) {
+                    index[l] += 1;
+                    found = true;
+                } else {
+                    // Overflow
+                    index[l] = 0;
+                }
+            }
+            for (int m = 0; m < index.length; m++) {
+                Object o = uncombinedList.get(m).get(index[m]);
+                if (o instanceof Collection) {
+                    combination.addAll((Collection) o);
+                } else {
+                    combination.add((T) o);
+                }
+            }
+            list.add(combination);
+        }
+        return list;
+    }
+
+    private static <T> int combinations(List<List<T>> list) {
+        int count = 1;
+        for (List<T> current : list) {
+            count *= current.size();
+        }
+        return count;
+    }
 
     private final DescriptorAccessor<A> accessor;
 
@@ -141,83 +218,6 @@ public class PairRule<A>
     }
 
     /**
-     * Ugly piece of code to generate permutation of the given ligand groups.
-     * There may be a much better way to do this. This method converts lists
-     * with duplicates into all possible combinations. A, {B1, B2}, C would
-     * permutate to A, B1, B2, C and A, B2, B1, C.
-     * <p/>
-     * This method was adapted from http://goo.gl/s6R7E
-     *
-     * @see <a href="http://goo.gl/s6R7E">http://www.daniweb.com/</a>
-     */
-    private static <T> List<List<T>> permutate(List<List<T>> uncombinedList) {
-
-        List<List<T>> list = new ArrayList<>();
-
-        // permeate the sublist
-        for (List sublist : uncombinedList) {
-            if (sublist.size() > 1) {
-                Collection<List> tmp;
-                tmp = Collections2.permutations(sublist);
-                sublist.clear();
-                sublist.addAll(tmp);
-            }
-        }
-
-        int index[] = new int[uncombinedList.size()];
-        int combinations = combinations(uncombinedList) - 1;
-        // Initialize index
-        for (int i = 0; i < index.length; i++) {
-            index[i] = 0;
-        }
-        // First combination is always valid
-        List<T> combination = new ArrayList<>();
-        for (int m = 0; m < index.length; m++) {
-            Object o = uncombinedList.get(m).get(index[m]);
-            if (o instanceof Collection) {
-                combination.addAll((Collection) o);
-            } else {
-                combination.add((T) o);
-            }
-        }
-        list.add(combination);
-
-        for (int k = 0; k < combinations; k++) {
-            combination = new ArrayList<>();
-            boolean found = false;
-            // We Use reverse order
-            for (int l = index.length - 1; l >= 0 && found == false; l--) {
-                int currentListSize = uncombinedList.get(l).size();
-                if (index[l] < currentListSize - 1) {
-                    index[l] = index[l] + 1;
-                    found = true;
-                } else {
-                    // Overflow
-                    index[l] = 0;
-                }
-            }
-            for (int m = 0; m < index.length; m++) {
-                Object o = uncombinedList.get(m).get(index[m]);
-                if (o instanceof Collection) {
-                    combination.addAll((Collection) o);
-                } else {
-                    combination.add((T) o);
-                }
-            }
-            list.add(combination);
-        }
-        return list;
-    }
-
-    private static <T> int combinations(List<List<T>> list) {
-        int count = 1;
-        for (List<T> current : list) {
-            count = count * current.size();
-        }
-        return count;
-    }
-
-    /**
      * Compares the two ligands based on their generated descriptor pairs.
      *
      * @param o1 first ligand
@@ -226,8 +226,8 @@ public class PairRule<A>
      * @return the value of the comparison
      */
     @Override
-    public int compare(Ligand<A> o1, Ligand<A> o2) {
-
+    public  int compare(Ligand<A> o1, Ligand<A> o2) {
+        
         // produced pair lists are in order
         Iterator<DescriptorList> list1It = generate(o1).iterator();
         Iterator<DescriptorList> list2It = generate(o2).iterator();
@@ -245,5 +245,5 @@ public class PairRule<A>
         // exhaustively create pair lists (generate) for each ligand.
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(PairRule.class.getName());
+
 }

@@ -29,6 +29,7 @@ import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 public class FilesystemReactionDataStore implements IDataStore<IReaction> {
+    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataStore.class.getName());
     
     private File reactionDir;
     
@@ -61,6 +62,5 @@ public class FilesystemReactionDataStore implements IDataStore<IReaction> {
         }
         
     }
-    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataStore.class.getName());
 
 }

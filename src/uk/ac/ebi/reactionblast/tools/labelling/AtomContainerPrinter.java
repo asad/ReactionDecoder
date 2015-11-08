@@ -34,35 +34,8 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class AtomContainerPrinter {
     
-    private class Edge implements Comparable<Edge> {
-        public String firstString;
-        public String lastString;
-        public int first;
-        public int last;
-        public int order;
-        public Edge(int first, int last, int order, String firstString, String lastString) {
-            this.first = first;
-            this.last = last;
-            this.order = order;
-            this.firstString = firstString;
-            this.lastString = lastString;
-        }
-        
-        @Override
-        public int compareTo(Edge o) {
-            if (first < o.first || (first == o.first && last < o.last)) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-        
-        @Override
-        public String toString() {
-            return firstString + first + ":" + lastString + last + "(" + order + ")";
-        }
-    }
-    
+    private static final Logger LOG = Logger.getLogger(AtomContainerPrinter.class.getName());
+
     public String toString(IAtomContainer atomContainer) {
         StringBuilder sb = new StringBuilder();
         for (IAtom atom : atomContainer.atoms()) {
@@ -92,6 +65,36 @@ public class AtomContainerPrinter {
         sb.append(edges.toString());
         return sb.toString();
     }
-    private static final Logger LOG = Logger.getLogger(AtomContainerPrinter.class.getName());
+
+    private class Edge implements Comparable<Edge> {
+
+        public String firstString;
+        public String lastString;
+        public int first;
+        public int last;
+        public int order;
+
+        Edge(int first, int last, int order, String firstString, String lastString) {
+            this.first = first;
+            this.last = last;
+            this.order = order;
+            this.firstString = firstString;
+            this.lastString = lastString;
+        }
+
+        @Override
+        public int compareTo(Edge o) {
+            if (first < o.first || (first == o.first && last < o.last)) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return firstString + first + ":" + lastString + last + "(" + order + ")";
+        }
+    }
 
 }

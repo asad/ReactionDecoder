@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  *
  */
 public class MoleculeCanonicalizationTransformation implements ITransformation<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(MoleculeCanonicalizationTransformation.class.getName());
 
     private final ICanonicalMoleculeLabeller canonicalMoleculeLabeller;
 
@@ -47,5 +48,4 @@ public class MoleculeCanonicalizationTransformation implements ITransformation<I
     public IAtomContainer transform(IAtomContainer atomContainer) {
         return canonicalMoleculeLabeller.getCanonicalMolecule(atomContainer);
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeCanonicalizationTransformation.class.getName());
 }

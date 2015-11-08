@@ -72,9 +72,10 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  */
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
 
-    BufferedReader input = null;
     private static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MDLRXNV2000Reader.class);
+    private static final Logger LOG = Logger.getLogger(MDLRXNV2000Reader.class.getName());
+    BufferedReader input = null;
 
     /**
      * Constructs a new MDLReader that can read AtomContainer from a given
@@ -350,5 +351,4 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     public void close() throws IOException {
         input.close();
     }
-    private static final Logger LOG = Logger.getLogger(MDLRXNV2000Reader.class.getName());
 }

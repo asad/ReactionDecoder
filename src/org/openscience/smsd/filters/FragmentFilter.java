@@ -41,7 +41,8 @@ import org.openscience.smsd.AtomAtomMapping;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * 
  */
-public final class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
+public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
+    private static final Logger LOG = Logger.getLogger(FragmentFilter.class.getName());
 
     private final List<Integer> fragmentSize;
     private final ChemicalFilters chemfilter;
@@ -126,5 +127,4 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
         }
         return countFrag;
     }
-    private static final Logger LOG = Logger.getLogger(FragmentFilter.class.getName());
 }

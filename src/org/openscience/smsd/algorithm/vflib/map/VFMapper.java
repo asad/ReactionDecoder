@@ -74,6 +74,7 @@ import org.openscience.smsd.tools.IterationManager;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFMapper implements IMapper {
+    private static final Logger LOG = Logger.getLogger(VFMapper.class.getName());
 
     private final IQuery query;
     private final List<Map<INode, IAtom>> maps;
@@ -238,5 +239,4 @@ public class VFMapper implements IMapper {
         }
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(VFMapper.class.getName());
 }

@@ -41,6 +41,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.QueryProcessorTest")
 public class QueryProcessor {
+    private static final Logger LOG = Logger.getLogger(QueryProcessor.class.getName());
 
     private final List<String> cTab1Copy;
     private final List<String> cTab2Copy;
@@ -522,5 +523,4 @@ public class QueryProcessor {
     List<String> getCBondNeighborsA() {
         return Collections.unmodifiableList(this.cBondNeighborsA);
     }
-    private static final Logger LOG = Logger.getLogger(QueryProcessor.class.getName());
 }

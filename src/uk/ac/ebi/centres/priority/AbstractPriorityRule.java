@@ -95,7 +95,7 @@ public abstract class AbstractPriorityRule<A>
      *
      * @return a set ligand sorter or a newly created insertion sorter
      */
-    public final LigandSorter<A> getSorter() {
+    public LigandSorter<A> getSorter() {
         if (sorter == null) {
             sorter = new InsertionSorter<A>(this);
         }

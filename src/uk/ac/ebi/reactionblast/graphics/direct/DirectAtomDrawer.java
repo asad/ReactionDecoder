@@ -47,6 +47,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 public class DirectAtomDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectAtomDrawer.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -439,7 +440,9 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
             } else if (params.drawTerminalCarbons
                     && isTerminal(atom, atomContainer)) {
                 return true;
-            } else return getAttachedMultipleBondCount(atom, atomContainer) > 1;
+            } else {
+                return getAttachedMultipleBondCount(atom, atomContainer) > 1;
+            }
         } else if (symbol.equals("H")) {
             return params.drawExplicitHydrogens;
         }
@@ -536,5 +539,4 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     public Color colorForAtom(IAtom atom) {
         return atomColorer.getAtomColor(atom);
     }
-    private static final Logger LOG = Logger.getLogger(DirectAtomDrawer.class.getName());
 }

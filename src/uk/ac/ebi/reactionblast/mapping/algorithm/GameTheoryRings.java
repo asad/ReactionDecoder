@@ -70,10 +70,11 @@ import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 
-final class GameTheoryRings extends BaseGameTheory {
+class GameTheoryRings extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x152ec264bc2L;
+    private static final Logger LOG = Logger.getLogger(GameTheoryRings.class.getName());
     private final List<String> eductList;
     private final List<String> productList;
     private Holder mh;
@@ -90,7 +91,7 @@ final class GameTheoryRings extends BaseGameTheory {
     private final ICanonicalMoleculeLabeller canonLabeler;
 
     //~--- constructors -------------------------------------------------------
-    public GameTheoryRings(
+    GameTheoryRings(
             IReaction reaction,
             boolean removeHydrogen,
             Map<Integer, IAtomContainer> _educts,
@@ -262,5 +263,4 @@ final class GameTheoryRings extends BaseGameTheory {
     public synchronized int getDelta() {
         return delta;
     }
-    private static final Logger LOG = Logger.getLogger(GameTheoryRings.class.getName());
 }

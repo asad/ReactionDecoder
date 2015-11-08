@@ -44,6 +44,7 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.filters.PostFilterTest")
 public class PostFilter {
+    private static final Logger LOG = Logger.getLogger(PostFilter.class.getName());
 
     /**
      *
@@ -94,5 +95,4 @@ public class PostFilter {
         }
         return newMap;
     }
-    private static final Logger LOG = Logger.getLogger(PostFilter.class.getName());
 }

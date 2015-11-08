@@ -30,6 +30,7 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class DirectHullDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectHullDrawer.class.getName());
     
     private final DirectMoleculeDrawer moleculeDrawer;
     
@@ -115,6 +116,5 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         g.fill(new Ellipse2D.Double(r.pointZ.x - 2, r.pointZ.y - 2, 4, 4));
 
     }
-    private static final Logger LOG = Logger.getLogger(DirectHullDrawer.class.getName());
 
 }

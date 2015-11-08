@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  *
  */
 public class ReactionCanonicalizationTransformation implements ITransformation<IReaction> {
+    private static final Logger LOG = Logger.getLogger(ReactionCanonicalizationTransformation.class.getName());
 
     private final ICanonicalReactionLabeller canonicalReactionLabeller;
 
@@ -48,5 +49,4 @@ public class ReactionCanonicalizationTransformation implements ITransformation<I
     public IReaction transform(IReaction reaction) {
         return canonicalReactionLabeller.getCanonicalReaction(reaction);
     }
-    private static final Logger LOG = Logger.getLogger(ReactionCanonicalizationTransformation.class.getName());
 }

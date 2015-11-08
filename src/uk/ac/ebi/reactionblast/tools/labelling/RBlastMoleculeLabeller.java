@@ -38,55 +38,7 @@ import signature.AbstractVertexSignature;
  */
 public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private class OrbitLabelComparator implements Comparator<Integer> {
-
-        public int[] canonicalLabels;
-
-        public OrbitLabelComparator(int[] canonicalLabels) {
-            this.canonicalLabels = canonicalLabels;
-        }
-
-        @Override
-        public int compare(Integer label0, Integer label1) {
-            if (canonicalLabels[label0] < canonicalLabels[label1]) {
-                return -1;
-            } else if (canonicalLabels[label0] > canonicalLabels[label1]) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-
-    }
-
-    private class SortableOrbit implements Comparable<SortableOrbit> {
-
-        public String elementLabel;
-
-        public String signatureLabel;
-
-        public List<Integer> members;
-
-        public SortableOrbit(String elementLabel, String label) {
-            this.signatureLabel = label;
-            this.elementLabel = elementLabel;
-            this.members = new ArrayList<>();
-        }
-
-        public void sortMembers(int[] canonicalLabels) {
-            Collections.sort(members, new OrbitLabelComparator(canonicalLabels));
-        }
-
-        @Override
-        public int compareTo(SortableOrbit other) {
-            int elementCompare = elementLabel.compareTo(other.elementLabel);
-            if (elementCompare != 0) {
-                return elementCompare;
-            } else {
-                return -signatureLabel.compareTo(other.signatureLabel);
-            }
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeLabeller.class.getName());
 
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
@@ -136,5 +88,51 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
         }
         return permutation;
     }
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeLabeller.class.getName());
+
+    private class OrbitLabelComparator implements Comparator<Integer> {
+
+        public int[] canonicalLabels;
+
+        OrbitLabelComparator(int[] canonicalLabels) {
+            this.canonicalLabels = canonicalLabels;
+        }
+
+        @Override
+        public int compare(Integer label0, Integer label1) {
+            if (canonicalLabels[label0] < canonicalLabels[label1]) {
+                return -1;
+            } else if (canonicalLabels[label0] > canonicalLabels[label1]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    private class SortableOrbit implements Comparable<SortableOrbit> {
+
+        public String elementLabel;
+        public String signatureLabel;
+        public List<Integer> members;
+
+        SortableOrbit(String elementLabel, String label) {
+            this.signatureLabel = label;
+            this.elementLabel = elementLabel;
+            this.members = new ArrayList<>();
+        }
+
+        public void sortMembers(int[] canonicalLabels) {
+            Collections.sort(members, new OrbitLabelComparator(canonicalLabels));
+        }
+
+        @Override
+        public int compareTo(SortableOrbit other) {
+            int elementCompare = elementLabel.compareTo(other.elementLabel);
+            if (elementCompare != 0) {
+                return elementCompare;
+            } else {
+                return -signatureLabel.compareTo(other.signatureLabel);
+            }
+        }
+    }
 }

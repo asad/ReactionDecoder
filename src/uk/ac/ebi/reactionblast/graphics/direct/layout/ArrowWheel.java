@@ -30,22 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectArrowDrawer;
 
 public class ArrowWheel {
-    
-    private class Arrow {
-        
-        public IAtomContainer tail;
-        
-        public IAtomContainer head;
-        
-        public Point2d center;
-        
-        public Vector2d vector;
-        
-        public Arrow(IAtomContainer tail, IAtomContainer head) {
-            this.tail = tail;
-            this.head = head;
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(ArrowWheel.class.getName());
 
     private DirectArrowDrawer arrowDrawer;
     
@@ -104,5 +89,17 @@ public class ArrowWheel {
             i++;
         }
     }
-    private static final Logger LOG = Logger.getLogger(ArrowWheel.class.getName());
+
+    private class Arrow {
+
+        public IAtomContainer tail;
+        public IAtomContainer head;
+        public Point2d center;
+        public Vector2d vector;
+
+        Arrow(IAtomContainer tail, IAtomContainer head) {
+            this.tail = tail;
+            this.head = head;
+        }
+    }
 }

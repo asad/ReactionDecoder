@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult;
  *
  */
 public class WedgeStereoComparisonResult {
+    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonResult.class.getName());
 
     private final IAtom firstAtom;
     private final IAtomContainer firstAtomContainer;
@@ -99,5 +100,4 @@ public class WedgeStereoComparisonResult {
         return firstID + "\t:\t" + resultForFirst + "\t\t"
                 + secondID + "\t:\t" + resultForSecond;
     }
-    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonResult.class.getName());
 }

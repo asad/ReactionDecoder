@@ -39,6 +39,7 @@ import uk.ac.ebi.centres.ligand.TetrahedralCentre;
  * @author John May
  */
 public class CDKCentreProvider implements CentreProvider<IAtom> {
+    private static final Logger LOG = Logger.getLogger(CDKCentreProvider.class.getName());
 
     private final IAtomContainer container;
     private final ConnectionTable<IAtom> table;
@@ -149,5 +150,4 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
         }
         return Boolean.FALSE;
     }
-    private static final Logger LOG = Logger.getLogger(CDKCentreProvider.class.getName());
 }

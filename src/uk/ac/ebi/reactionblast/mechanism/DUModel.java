@@ -80,7 +80,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
      * @throws CDKException
      * @throws Exception
      */
-    public DUModel(IReaction reaction,
+    DUModel(IReaction reaction,
             boolean withoutHydrogen,
             boolean generate2D,
             boolean generate3D) throws CDKException, Exception {

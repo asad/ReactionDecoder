@@ -34,6 +34,7 @@ import uk.ac.ebi.centres.PriorityRule;
  * @author John May
  */
 public class CombinedRule<A> extends AbstractPriorityRule<A> {
+    private static final Logger LOG = Logger.getLogger(CombinedRule.class.getName());
 
     /**
      * Rule storage
@@ -159,5 +160,4 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
         }
         return builder.toString();
     }
-    private static final Logger LOG = Logger.getLogger(CombinedRule.class.getName());
 }

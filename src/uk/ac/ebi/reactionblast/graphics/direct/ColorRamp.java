@@ -32,6 +32,8 @@ import java.util.logging.Logger;
  */
 public class ColorRamp {
     
+    private static final Logger LOG = Logger.getLogger(ColorRamp.class.getName());
+
     /**
      * Get N colors as a list.
      * 
@@ -87,8 +89,6 @@ public class ColorRamp {
             float[] hsb = Color.RGBtoHSB(0, 0, 0, null);
             return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
         }
-
     }
-    private static final Logger LOG = Logger.getLogger(ColorRamp.class.getName());
 
 }

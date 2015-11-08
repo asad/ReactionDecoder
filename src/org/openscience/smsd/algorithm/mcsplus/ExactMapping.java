@@ -37,6 +37,8 @@ import org.openscience.cdk.annotations.TestClass;
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
 public class ExactMapping {
 
+    private static final Logger LOG = Logger.getLogger(ExactMapping.class.getName());
+
     /**
      *
      * Extract atom mapping from the cliques and stores it in a List
@@ -46,7 +48,6 @@ public class ExactMapping {
      * @return
      */
     private static List<Integer> extractCliqueMapping(List<Integer> comp_graph_nodes, List<Integer> clique_List_org) {
-
         List<Integer> clique_mapping = Collections.synchronizedList(new ArrayList<Integer>());
         List<Integer> clique_List = new ArrayList<Integer>(clique_List_org);
         int clique_siz = clique_List.size();
@@ -72,8 +73,7 @@ public class ExactMapping {
      * @param clique_List_org
      * @return
      */
-    public static List<List<Integer>> extractMapping(List<List<Integer>> _mappings, List<Integer> comp_graph_nodes,
-            List<Integer> clique_List_org) {
+    public static List<List<Integer>> extractMapping(List<List<Integer>> _mappings, List<Integer> comp_graph_nodes, List<Integer> clique_List_org) {
         try {
             List<Integer> clique_List = extractCliqueMapping(comp_graph_nodes, clique_List_org);
             _mappings.add(clique_List);
@@ -115,5 +115,4 @@ public class ExactMapping {
         }
         return clique_mapping;
     }
-    private static final Logger LOG = Logger.getLogger(ExactMapping.class.getName());
 }

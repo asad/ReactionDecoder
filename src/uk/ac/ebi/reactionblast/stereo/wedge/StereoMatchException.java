@@ -28,6 +28,8 @@ public class StereoMatchException extends Exception {
 
     private static final long serialVersionUID = 0x26ced31f7aL;
 
+    private static final Logger LOG = Logger.getLogger(StereoMatchException.class.getName());
+
     /**
      *
      * @param message
@@ -35,5 +37,4 @@ public class StereoMatchException extends Exception {
     public StereoMatchException(String message) {
         super(message);
     }
-    private static final Logger LOG = Logger.getLogger(StereoMatchException.class.getName());
 }

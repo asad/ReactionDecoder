@@ -34,6 +34,7 @@ import org.openscience.cdk.interfaces.IBond;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Substructure {
+    private static final Logger LOG = Logger.getLogger(Substructure.class.getName());
 
     private final String typeID;
     private int sgroupIdentifier;
@@ -143,5 +144,4 @@ public class Substructure {
     public void setSGroupIdentifier(int sgroupIdentifier) {
         this.sgroupIdentifier = sgroupIdentifier;
     }
-    private static final Logger LOG = Logger.getLogger(Substructure.class.getName());
 }

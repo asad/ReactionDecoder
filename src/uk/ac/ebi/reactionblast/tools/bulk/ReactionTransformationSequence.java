@@ -33,6 +33,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  *
  */
 public class ReactionTransformationSequence implements ITransformation<IReaction> {
+    private static final Logger LOG = Logger.getLogger(ReactionTransformationSequence.class.getName());
 
     private final List<ITransformation<IReaction>> transformations;
 
@@ -57,5 +58,4 @@ public class ReactionTransformationSequence implements ITransformation<IReaction
         }
         return transformedReaction;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionTransformationSequence.class.getName());
 }

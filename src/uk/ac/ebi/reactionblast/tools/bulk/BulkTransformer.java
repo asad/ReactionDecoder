@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  *
  */
 public class BulkTransformer {
+    private static final Logger LOG = Logger.getLogger(BulkTransformer.class.getName());
 
     /**
      * The transformation, or series of transformations, to apply.
@@ -85,5 +86,4 @@ public class BulkTransformer {
             }
         }
     }
-    private static final Logger LOG = Logger.getLogger(BulkTransformer.class.getName());
 }

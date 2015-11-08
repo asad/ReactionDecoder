@@ -26,6 +26,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @author John May
  */
 public class Arc<A> {
+    private static final Logger LOG = Logger.getLogger(Arc.class.getName());
 
     private Ligand<A> tail;
     private Ligand<A> head;
@@ -86,5 +87,4 @@ public class Arc<A> {
     public String toString() {
         return tail + " -> " + head;
     }
-    private static final Logger LOG = Logger.getLogger(Arc.class.getName());
 }

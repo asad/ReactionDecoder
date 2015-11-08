@@ -31,6 +31,7 @@ import uk.ac.ebi.centres.descriptor.General;
  * @author John May
  */
 public class DefaultPerceptor<A> implements Perceptor<A> {
+    private static final Logger LOG = Logger.getLogger(DefaultPerceptor.class.getName());
 
     private final CentrePerceptor<A> mainPerceptor;
     private final CentrePerceptor<A> auxPerceptor;
@@ -144,5 +145,4 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
 
         public abstract Descriptor perceive(Centre<A> centre, Collection<Centre<A>> centres);
     }
-    private static final Logger LOG = Logger.getLogger(DefaultPerceptor.class.getName());
 }

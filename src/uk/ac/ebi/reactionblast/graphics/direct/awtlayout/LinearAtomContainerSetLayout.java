@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
+    private static final Logger LOG = Logger.getLogger(LinearAtomContainerSetLayout.class.getName());
 
     private Vector2d moleculeSetAxis;
     private MoleculeLayout moleculeLayout;
@@ -97,5 +98,4 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         // TODO Auto-generated method stub
         return null;
     }
-    private static final Logger LOG = Logger.getLogger(LinearAtomContainerSetLayout.class.getName());
 }

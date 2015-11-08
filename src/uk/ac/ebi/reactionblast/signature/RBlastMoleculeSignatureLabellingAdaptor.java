@@ -31,6 +31,8 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 public class RBlastMoleculeSignatureLabellingAdaptor
         implements ICanonicalMoleculeLabeller {
 
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignatureLabellingAdaptor.class.getName());
+
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return AtomContainerAtomPermutor.permute(
@@ -43,5 +45,4 @@ public class RBlastMoleculeSignatureLabellingAdaptor
                 = new RBlastMoleculeSignature(container);
         return molSig.getCanonicalLabels();
     }
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignatureLabellingAdaptor.class.getName());
 }

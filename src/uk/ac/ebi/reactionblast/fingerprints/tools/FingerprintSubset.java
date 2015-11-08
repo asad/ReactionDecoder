@@ -31,6 +31,8 @@ public class FingerprintSubset implements Serializable {
 
     private static final long serialVersionUID = 4342623464361L;
 
+    private static final Logger LOG = Logger.getLogger(FingerprintSubset.class.getName());
+
     /**
      * Determine if this set is an (improper) subset of another.
      *
@@ -96,5 +98,4 @@ public class FingerprintSubset implements Serializable {
             throw new CDKException("Null object used in set operation");
         }
     }
-    private static final Logger LOG = Logger.getLogger(FingerprintSubset.class.getName());
 }

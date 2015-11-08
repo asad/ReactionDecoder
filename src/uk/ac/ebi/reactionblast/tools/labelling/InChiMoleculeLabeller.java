@@ -35,6 +35,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
+    private static final Logger LOG = Logger.getLogger(InChiMoleculeLabeller.class.getName());
+
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         int[] canonicalPermutation = getCanonicalPermutation(container);
@@ -61,7 +63,6 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
      */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
-
         long[] labels;
         try {
             labels = InChINumbersTools.getUSmilesNumbers(container);
@@ -74,11 +75,9 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
             permute[i] = (int) labels[i] - 1;
         }
         return permute;
-
     }
 
     public void getCanonicalPermutation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(InChiMoleculeLabeller.class.getName());
 }

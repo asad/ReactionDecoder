@@ -38,28 +38,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class Helper extends ChemicalFormatParser {
-
-    protected File generateImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
-        File file = new File(canonicalRootPath);
-        new ImageGenerator().drawLeftToRightReactionLayout(file, mappedReaction, reactionID);
-        return new File(file.getCanonicalFile(), reactionID + ".png");
-    }
-
-    protected File generateAAMImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
-        File file = new File(canonicalRootPath);
-        new ImageGenerator().drawTopToBottomReactionLayout(file, mappedReaction, reactionID);
-        return new File(file.getCanonicalFile(), reactionID + ".png");
-    }
-
-    protected File writeRXNMappedFile(String canonicalRootPath, IReaction mappedReaction, String name) throws IOException, CDKException {
-//        printReaction(mappedReaction);
-        File f = new File(canonicalRootPath + File.separator + name + ".rxn");
-        try (MDLV2000RXNWriter writer = new MDLV2000RXNWriter(new FileWriter(f))) {
-            writer.write(mappedReaction);
-            writer.close();
-        }
-        return f;
-    }
+    private static final Logger LOG = Logger.getLogger(Helper.class.getName());
 
     protected static void getHeader() {
         StringBuilder sb = new StringBuilder();
@@ -106,9 +85,7 @@ class Helper extends ChemicalFormatParser {
      * @param out OutputStreactionWithLayouteam to which to
      * wreactionWithLayoutite the blank lineheaderString.
      */
-    protected static void displayBlankLines(
-            final int numberBlankLines,
-            final OutputStream out) {
+    protected static void displayBlankLines(final int numberBlankLines, final OutputStream out) {
         try {
             for (int i = 0; i < numberBlankLines; ++i) {
                 out.write("\n".getBytes());
@@ -120,24 +97,20 @@ class Helper extends ChemicalFormatParser {
         }
     }
 
-
     /*
-     System.out.println("-- USAGE --");
-     printUsage(applicationName + " (Posix)", constructPosixOptions(), System.out);
-     displayBlankLines(1, System.out);
-     printUsage(applicationName + " (Gnu)", constructGnuOptions(), System.out);
-
-     displayBlankLines(4, System.out);
-
-     System.out.println("-- HELP --");
-     printHelp(
-     constructPosixOptions(), 80, "POSIX HELP", "End of POSIX Help",
-     3, 5, true, System.out);
-     displayBlankLines(1, System.out);
-     printHelp(
-     constructGnuOptions(), 80, "GNU HELP", "End of GNU Help",
-     5, 3, true, System.out);
-
+    System.out.println("-- USAGE --");
+    printUsage(applicationName + " (Posix)", constructPosixOptions(), System.out);
+    displayBlankLines(1, System.out);
+    printUsage(applicationName + " (Gnu)", constructGnuOptions(), System.out);
+    displayBlankLines(4, System.out);
+    System.out.println("-- HELP --");
+    printHelp(
+    constructPosixOptions(), 80, "POSIX HELP", "End of POSIX Help",
+    3, 5, true, System.out);
+    displayBlankLines(1, System.out);
+    printHelp(
+    constructGnuOptions(), 80, "GNU HELP", "End of GNU Help",
+    5, 3, true, System.out);
      */
     protected static void printHelp(final OutputStream out, final Options options) {
         final String commandLineSyntax = "java -jar RXNDecoder.jar";
@@ -151,14 +124,7 @@ class Helper extends ChemicalFormatParser {
         }
     }
 
-    protected static void printHelp(final Map<String, Options> optionsMap,
-            final int printedRowWidth,
-            final String header,
-            final String footer,
-            final int spacesBeforeOption,
-            final int spacesBeforeOptionDescription,
-            final boolean displayUsage,
-            final OutputStream out) {
+    protected static void printHelp(final Map<String, Options> optionsMap, final int printedRowWidth, final String header, final String footer, final int spacesBeforeOption, final int spacesBeforeOptionDescription, final boolean displayUsage, final OutputStream out) {
         final String commandLineSyntax = "java -jar ReactionDecoder.jar";
         try (PrintWriter writer = new PrintWriter(out)) {
             final HelpFormatter helpFormatter = new HelpFormatter();
@@ -180,6 +146,29 @@ class Helper extends ChemicalFormatParser {
         }
     }
 
+    protected File generateImage(
+            String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+        File file = new File(canonicalRootPath);
+        new ImageGenerator().drawLeftToRightReactionLayout(file, mappedReaction, reactionID);
+        return new File(file.getCanonicalFile(), reactionID + ".png");
+    }
+
+    protected File generateAAMImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+        File file = new File(canonicalRootPath);
+        new ImageGenerator().drawTopToBottomReactionLayout(file, mappedReaction, reactionID);
+        return new File(file.getCanonicalFile(), reactionID + ".png");
+    }
+
+    protected File writeRXNMappedFile(String canonicalRootPath, IReaction mappedReaction, String name) throws IOException, CDKException {
+//        printReaction(mappedReaction);
+        File f = new File(canonicalRootPath + File.separator + name + ".rxn");
+        try (MDLV2000RXNWriter writer = new MDLV2000RXNWriter(new FileWriter(f))) {
+            writer.write(mappedReaction);
+            writer.close();
+        }
+        return f;
+    }
+
     protected String printUsageExamples() {
         StringBuilder sb = new StringBuilder();
         sb.append(NEW_LINE);
@@ -191,6 +180,5 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         return sb.toString();
     }
-    private static final Logger LOG = Logger.getLogger(Helper.class.getName());
 
 }

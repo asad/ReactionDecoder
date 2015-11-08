@@ -32,6 +32,7 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 
 public class AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(AbstractDirectDrawer.class.getName());
     
     protected Params params;
     
@@ -108,6 +109,5 @@ public class AbstractDirectDrawer {
         g.fillRect(0, 0, w, h);
         return image;
     }
-    private static final Logger LOG = Logger.getLogger(AbstractDirectDrawer.class.getName());
 
 }

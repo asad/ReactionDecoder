@@ -58,11 +58,8 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
  */
 public class ReactionContainer implements Cloneable, Serializable {
 
-    @Override
-    public String toString() {
-        return "ReactionContainer{" + "eAtomContainerMap=" + eAtomContainerMap + ", pAtomContainerMap=" + pAtomContainerMap + ", eFingerPrintMap=" + eFingerPrintMap + ", pFingerPrintMap=" + pFingerPrintMap + ", eductContainerModificationMap=" + eductContainerModificationMap + ", productContainerModificationMap=" + productContainerModificationMap + ", fpr=" + fpr + '}';
-    }
     static final long serialVersionUID = 17278639972837695L;
+    private static final Logger LOG = Logger.getLogger(ReactionContainer.class.getName());
 
     /*
      * Singleton Pattern Implementation
@@ -90,7 +87,13 @@ public class ReactionContainer implements Cloneable, Serializable {
         fpr = new FingerprintGenerator();
     }
 
+    @Override
+    public String toString() {
+        return "ReactionContainer{" + "eAtomContainerMap=" + eAtomContainerMap + ", pAtomContainerMap=" + pAtomContainerMap + ", eFingerPrintMap=" + eFingerPrintMap + ", pFingerPrintMap=" + pFingerPrintMap + ", eductContainerModificationMap=" + eductContainerModificationMap + ", productContainerModificationMap=" + productContainerModificationMap + ", fpr=" + fpr + '}';
+    }
+
     //~--- methods ------------------------------------------------------------
+
     /**
      *
      * @throws java.io.IOException
@@ -143,6 +146,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param value
@@ -169,6 +173,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param value
@@ -197,6 +202,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- set methods --------------------------------------------------------
+
     /**
      *
      * @param index
@@ -234,6 +240,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- set methods --------------------------------------------------------
+
     /**
      *
      * @param index
@@ -289,6 +296,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param value
@@ -314,6 +322,7 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- set methods --------------------------------------------------------
+
     /**
      *
      * @param value
@@ -332,8 +341,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @param Prod
      * @throws java.io.IOException
      */
-    private synchronized void setFingerPrintofProduct(int value, BitSet prod)
-            throws IOException {
+    private synchronized void setFingerPrintofProduct(int value, BitSet prod) throws IOException {
         pFingerPrintMap.put(value, prod);
 
     }
@@ -342,5 +350,4 @@ public class ReactionContainer implements Cloneable, Serializable {
     public synchronized Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-    private static final Logger LOG = Logger.getLogger(ReactionContainer.class.getName());
 }

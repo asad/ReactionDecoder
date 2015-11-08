@@ -31,6 +31,7 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperAtomContainer {
+    private static final Logger LOG = Logger.getLogger(SuperAtomContainer.class.getName());
 
     private final List<Substructure> list;
     private int counter;
@@ -69,5 +70,4 @@ public class SuperAtomContainer {
     public void setCounter(int counter) {
         this.counter = counter;
     }
-    private static final Logger LOG = Logger.getLogger(SuperAtomContainer.class.getName());
 }

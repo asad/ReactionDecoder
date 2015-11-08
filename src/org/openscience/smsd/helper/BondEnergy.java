@@ -40,6 +40,7 @@ import org.openscience.cdk.interfaces.IBond.Order;
  */
 @TestClass("org.openscience.cdk.smsd.helper.BondEnergyTest")
 public class BondEnergy {
+    private static final Logger LOG = Logger.getLogger(BondEnergy.class.getName());
 
     private String symbol1 = "";
     private String symbol2 = "";
@@ -115,5 +116,4 @@ public class BondEnergy {
         }
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(BondEnergy.class.getName());
 }

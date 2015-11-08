@@ -51,11 +51,12 @@ import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class GraphMatcher extends Debugger {
+public class GraphMatcher extends Debugger {
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(GraphMatcher.class);
+    private static final Logger LOG = Logger.getLogger(GraphMatcher.class.getName());
 
     /**
      *
@@ -368,5 +369,4 @@ public final class GraphMatcher extends Debugger {
             return smsd.isSubgraph();
         }
     }
-    private static final Logger LOG = Logger.getLogger(GraphMatcher.class.getName());
 }

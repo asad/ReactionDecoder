@@ -112,11 +112,12 @@ import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
  *
  */
 @TestClass("org.openscience.cdk.smsd.factory.SubStructureSearchAlgorithmsTest")
-public final class Isomorphism extends BaseMapping implements Serializable {
+public class Isomorphism extends BaseMapping implements Serializable {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Isomorphism.class.getName());
     private final Algorithm algorithmType;
     private double bondSensitiveMcGregorOut = -1;//mins
     private double bondInSensitiveMcGregor = -1;//mins
@@ -363,5 +364,4 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     public void setBondInSenSitiveMcGregor(double bondInSensitiveMcGregor) {
         this.bondInSensitiveMcGregor = bondInSensitiveMcGregor;
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Isomorphism.class.getName());
 }

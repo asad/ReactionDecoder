@@ -29,6 +29,7 @@ import java.util.logging.Logger;
  * @author John May
  */
 public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
+    private static final Logger LOG = Logger.getLogger(PsuedoAtomicNumberModifier.class.getName());
 
     private final AtomicNumberAccessor<A> accessor;
 
@@ -56,6 +57,5 @@ public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
         }
 
     }
-    private static final Logger LOG = Logger.getLogger(PsuedoAtomicNumberModifier.class.getName());
 
 }

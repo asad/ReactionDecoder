@@ -32,11 +32,6 @@ public abstract class AbstractDirectLayout<T> {
     
     protected BoundsTree boundsTree;
     
-    public abstract BoundsTree layout(T obj, Vector2d axis);
-    
-    public abstract Vector2d getAxis();
-    
-    public abstract double getAxisPosition();
     
     public boolean shouldInvert;
     
@@ -47,6 +42,12 @@ public abstract class AbstractDirectLayout<T> {
     public AbstractDirectLayout(boolean shouldInvert) {
         this.shouldInvert = shouldInvert;
     }
+    
+    public abstract BoundsTree layout(T obj, Vector2d axis);
+
+    public abstract Vector2d getAxis();
+    
+    public abstract double getAxisPosition();
     
     public Params getParams() {
         return params;

@@ -28,6 +28,7 @@ import org.openscience.cdk.interfaces.IBond;
 import signature.AbstractVertexSignature;
 
 public class SubgraphAtomSignature extends AbstractVertexSignature {
+    private static final Logger LOG = Logger.getLogger(SubgraphAtomSignature.class.getName());
 
     private final IAtomContainer atomContainer;
     private Map<Integer, int[]> subgraphAdjacencyLists;
@@ -142,5 +143,4 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         }
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(SubgraphAtomSignature.class.getName());
 }

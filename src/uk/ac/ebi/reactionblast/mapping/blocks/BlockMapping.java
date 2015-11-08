@@ -40,6 +40,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class BlockMapping {
+    private static final Logger LOG = Logger.getLogger(BlockMapping.class.getName());
 
     private final IReaction reaction;
 
@@ -231,5 +232,4 @@ public class BlockMapping {
                 + rbm
                 + pbm;
     }
-    private static final Logger LOG = Logger.getLogger(BlockMapping.class.getName());
 }

@@ -32,6 +32,7 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
 
     private static final Map<IBond.Order, Integer> orders = Maps.newHashMapWithExpectedSize(4);
     private static final Map<IBond.Stereo, Integer> depths = Maps.newHashMapWithExpectedSize(4);
+    private static final Logger LOG = Logger.getLogger(CDKConnectionTable.class.getName());
 
     static {
         orders.put(IBond.Order.SINGLE, 1);
@@ -70,5 +71,4 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
         Integer value = depths.get(stereo);
         return value != null ? value : 0;
     }
-    private static final Logger LOG = Logger.getLogger(CDKConnectionTable.class.getName());
 }

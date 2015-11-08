@@ -52,11 +52,12 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  *
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK @contact asad@ebi.ac.uk
  */
-public final class GraphMatching extends IGraphMatching implements Serializable {
+public class GraphMatching extends IGraphMatching implements Serializable {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(GraphMatching.class);
     private static final long serialVersionUID = 0xf06b2d5f9L;
+    private static final Logger LOG = Logger.getLogger(GraphMatching.class.getName());
     private final IAtomContainer educt;
     private final IAtomContainer product;
     private IAtomContainer matchedPart = null;
@@ -221,5 +222,4 @@ public final class GraphMatching extends IGraphMatching implements Serializable 
     private synchronized void setMatchedPart(IAtomContainer aMatchedPart) {
         matchedPart = aMatchedPart;
     }
-    private static final Logger LOG = Logger.getLogger(GraphMatching.class.getName());
 }

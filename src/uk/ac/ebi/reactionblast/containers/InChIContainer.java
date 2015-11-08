@@ -58,10 +58,31 @@ public class InChIContainer implements IInChIContainer, Cloneable {
 
     private static InChIContainer _instance = null;
     private static Map<String, String> InChIMap = null;
+    private static final Logger LOG = Logger.getLogger(InChIContainer.class.getName());
+
+    /**
+     *
+     * @throws java.io.IOException
+     * @return
+     */    public static int getCount() throws IOException {
+         return InChIMap.size();
+     }
+
+    /**
+     *
+     * @return
+     */
+     public static synchronized InChIContainer getInstance() {
+         if (_instance == null) {
+             _instance = new InChIContainer();
+         }
+         return _instance;
+     }
 
     //~--- constructors -------------------------------------------------------
-    private InChIContainer() {
-        InChIMap = Collections.synchronizedSortedMap(new TreeMap<String, String>());
+
+     private InChIContainer() {
+         InChIMap = Collections.synchronizedSortedMap(new TreeMap<String, String>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -70,7 +91,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    synchronized public void Clear() throws IOException {
+    public synchronized void Clear() throws IOException {
         InChIMap.clear();
         _instance = null;
     }
@@ -110,6 +131,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param Key
@@ -117,7 +139,8 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    synchronized public String getInChI(String Key) throws IOException {
+    synchronized public String getInChI(String Key)
+            throws IOException {
         String value = InChIMap.get(Key);
         return value == null ? "" : value;
     }
@@ -129,7 +152,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    synchronized public String getMoleculeID(String Value) throws IOException {
+    public synchronized String getMoleculeID(String Value) throws IOException {
         String Key = "Key Not Found";
         for (Map.Entry<String, String> map : InChIMap.entrySet()) {
             if (map.getValue().equals(Value)) {
@@ -145,29 +168,8 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    synchronized public Map<String, String> getInChIMap()
-            throws IOException {
+    public synchronized Map<String, String> getInChIMap() throws IOException {
         return Collections.unmodifiableMap(InChIMap);
-    }
-
-    /**
-     *
-     * @throws java.io.IOException
-     * @return
-     */
-    public static int getCount() throws IOException {
-        return InChIMap.size();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static synchronized InChIContainer getInstance() {
-        if (_instance == null) {
-            _instance = new InChIContainer();
-        }
-        return _instance;
     }
 
     /**
@@ -212,7 +214,6 @@ public class InChIContainer implements IInChIContainer, Cloneable {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(InChIContainer.class.getName());
 }
 //~ Formatted by Jindent --- http://www.jindent.com
 

@@ -29,6 +29,7 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class SignatureReactionCanoniser
         extends AbstractReactionLabeller implements ICanonicalReactionLabeller {
+    private static final Logger LOG = Logger.getLogger(SignatureReactionCanoniser.class.getName());
 
     private final SignatureMoleculeLabeller labeller
             = new SignatureMoleculeLabeller();
@@ -37,6 +38,5 @@ public class SignatureReactionCanoniser
     public IReaction getCanonicalReaction(IReaction reaction) {
         return super.labelReaction(reaction, labeller);
     }
-    private static final Logger LOG = Logger.getLogger(SignatureReactionCanoniser.class.getName());
 
 }

@@ -32,7 +32,6 @@ import org.openscience.cdk.interfaces.IBond;
 
 public class LabelManager {
 
-    public enum AnnotationPosition { N, W, S, E, NW, NE, SW, SE }
 
     private static final Vector2d POS_X = new Vector2d(1, 0);
 
@@ -53,6 +52,7 @@ public class LabelManager {
     private static final Vector2d vW = new Vector2d(-1, 0);
 
     private static final Vector2d vNW = new Vector2d(-1, -1);
+    private static final Logger LOG = Logger.getLogger(LabelManager.class.getName());
 
     private final Map<IAtom, BitSet> atomAnnotationPositions;
 
@@ -214,7 +214,9 @@ public class LabelManager {
     private void blockRingSegment(IAtom atom, List<AnnotationPosition> ringPositions) {
         BitSet positions = getAtomAnnotationPositions(atom);
         // erk
-        if (ringPositions.size() != 2) return;
+        if (ringPositions.size() != 2) {
+            return;
+        }
         AnnotationPosition a = ringPositions.get(0);
         AnnotationPosition b = ringPositions.get(1);
         if (positionsEqual(a, b, AnnotationPosition.N, AnnotationPosition.SW)) {
@@ -278,6 +280,10 @@ public class LabelManager {
     public void reset() {
         atomAnnotationPositions.clear();
     }
-    private static final Logger LOG = Logger.getLogger(LabelManager.class.getName());
+
+    public enum AnnotationPosition {
+
+        N, W, S, E, NW, NE, SW, SE
+    }
 
 }

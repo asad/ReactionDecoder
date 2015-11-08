@@ -30,6 +30,8 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 public class MappingTransformation implements ITransformation<IReaction> {
 private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MappingTransformation.class);
+    private static final Logger LOG = Logger.getLogger(MappingTransformation.class.getName());
+
     @Override
     public TargetType getTargetType() {
         return TargetType.REACTION;
@@ -43,13 +45,12 @@ private final static ILoggingTool logger
             boolean generate3D = false;
             ReactionMechanismTool rmt =
                     new ReactionMechanismTool(
-                    reaction, forcedMapping, generate2D, generate3D,
-                    new StandardizeReaction());
+                            reaction, forcedMapping, generate2D, generate3D,
+                            new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
             logger.error(e);
             return null;
         }
     }
-    private static final Logger LOG = Logger.getLogger(MappingTransformation.class.getName());
 }

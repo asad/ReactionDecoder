@@ -39,13 +39,15 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class MappingReferenceResolver {
 
+    private static final Logger LOG = Logger.getLogger(MappingReferenceResolver.class.getName());
+
     /**
      * Do an in-place resolve of the mappings.
      *
      * @param reaction
      */
     public static void resolveReferences(IReaction reaction) {
-//        printIDs(reaction);
+        //        printIDs(reaction);
 
         // make lookup tables for the reactant and product atoms
         Map<String, IAtom> atomIDLookup = new HashMap<>();
@@ -92,8 +94,7 @@ public class MappingReferenceResolver {
      * @param map
      * @param label
      */
-    private static void fillMap(
-            IAtomContainerSet moleculeSet, Map<String, IAtom> map, String label) {
+    private static void fillMap(IAtomContainerSet moleculeSet, Map<String, IAtom> map, String label) {
         for (IAtomContainer atomContainer : moleculeSet.atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
                 String id = label + atom.getID();
@@ -129,5 +130,4 @@ public class MappingReferenceResolver {
         }
         System.out.println("}");
     }
-    private static final Logger LOG = Logger.getLogger(MappingReferenceResolver.class.getName());
 }

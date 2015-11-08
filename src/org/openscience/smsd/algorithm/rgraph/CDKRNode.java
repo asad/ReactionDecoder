@@ -48,6 +48,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRNodeTest")
 public class CDKRNode {
+    private static final Logger LOG = Logger.getLogger(CDKRNode.class.getName());
     // G1/G2 mapping
 
     private CDKRMap rMap = null;
@@ -147,5 +148,4 @@ public class CDKRNode {
     public synchronized void setrMap(CDKRMap rMap) {
         this.rMap = rMap;
     }
-    private static final Logger LOG = Logger.getLogger(CDKRNode.class.getName());
 }

@@ -38,10 +38,24 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.helper.LabelContainerTest")
 public class LabelContainer {
+    private static LabelContainer instance = null;
+    private static final Logger LOG = Logger.getLogger(LabelContainer.class.getName());
+
+    /**
+     * Create ids from atom labels
+     *
+     * @return instance of this object
+     */
+    @TestMethod(value = "testGetInstance")
+    public static synchronized LabelContainer getInstance() {
+        if (instance == null) {
+            instance = new LabelContainer();
+        }
+        return instance;
+    }
 
     private final List<String> labelMap;
     private int labelCounter = 0;
-    private static LabelContainer instance = null;
 
     protected LabelContainer() {
 
@@ -52,25 +66,12 @@ public class LabelContainer {
     }
 
     /**
-     * Create ids from atom labels
-     *
-     * @return instance of this object
-     */
-    @TestMethod("testGetInstance")
-    synchronized public static LabelContainer getInstance() {
-        if (instance == null) {
-            instance = new LabelContainer();
-        }
-        return instance;
-    }
-
-    /**
      * Add label if its not present
      *
      * @param label
      */
     @TestMethod("testAddLabel")
-    synchronized public void addLabel(String label) {
+    public synchronized void addLabel(String label) {
         if (!labelMap.contains(label)) {
             labelMap.add(labelCounter++, label);
         }
@@ -108,5 +109,5 @@ public class LabelContainer {
     synchronized public int getSize() {
         return labelMap.size();
     }
-    private static final Logger LOG = Logger.getLogger(LabelContainer.class.getName());
+
 }

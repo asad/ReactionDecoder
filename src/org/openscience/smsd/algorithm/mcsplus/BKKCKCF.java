@@ -46,7 +46,8 @@ import org.openscience.cdk.annotations.TestClass;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.BKKCKCFTest")
-public final class BKKCKCF {
+public class BKKCKCF {
+    private static final Logger LOG = Logger.getLogger(BKKCKCF.class.getName());
 
     private final Set<List<Integer>> max_Cliques_Set;
     /**
@@ -409,5 +410,4 @@ public final class BKKCKCF {
         //System.out.println("max_Cliques_Set: " + max_Cliques_Set.size());
         return Collections.unmodifiableCollection(max_Cliques_Set);
     }
-    private static final Logger LOG = Logger.getLogger(BKKCKCF.class.getName());
 }

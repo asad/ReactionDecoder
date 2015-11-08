@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
  * @author Gilleain Torrance
  */
 public class FullTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
+    private static final Logger LOG = Logger.getLogger(FullTetrahedralWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = new IBond.Stereo[]{UP, DOWN, UP, DOWN};
 
@@ -42,5 +43,4 @@ public class FullTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
     public Stereo getStereo() {
         return ITetrahedralChirality.Stereo.CLOCKWISE;
     }
-    private static final Logger LOG = Logger.getLogger(FullTetrahedralWedgeRule.class.getName());
 }

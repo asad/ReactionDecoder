@@ -70,7 +70,9 @@ import java.util.logging.Logger;
  *
  *
  */
-public final class Similarity {
+public class Similarity {
+
+    private static final Logger LOG = Logger.getLogger(Similarity.class.getName());
 
     /**
      *
@@ -81,7 +83,6 @@ public final class Similarity {
      * @throws java.lang.Exception
      */
     public static synchronized float getTanimotoSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
-
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 
@@ -96,7 +97,6 @@ public final class Similarity {
         one_and_two.and(bitset2);
         float _common_bit_count = one_and_two.cardinality();
         return _common_bit_count / (_bitset1_cardinality + _bitset2_cardinality - _common_bit_count);
-
     }
 
     /**
@@ -108,7 +108,6 @@ public final class Similarity {
      * @throws Exception
      */
     public static synchronized double getCosineSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
-
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 
@@ -123,7 +122,6 @@ public final class Similarity {
         float _common_bit_count = one_and_two.cardinality();
 
         return _common_bit_count / (Math.sqrt(_bitset1_cardinality * _bitset2_cardinality));
-
     }
 
     /**
@@ -137,7 +135,6 @@ public final class Similarity {
      *
      */
     public static synchronized double getDiceSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
-
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 
@@ -152,7 +149,5 @@ public final class Similarity {
         float _common_bit_count = one_and_two.cardinality();
 
         return 2 * _common_bit_count / (_bitset1_cardinality + _bitset2_cardinality);
-
     }
-    private static final Logger LOG = Logger.getLogger(Similarity.class.getName());
 }

@@ -38,6 +38,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class EdgeBuilder implements IEdge {
+    private static final Logger LOG = Logger.getLogger(EdgeBuilder.class.getName());
 
     private final NodeBuilder source;
     private final NodeBuilder target;
@@ -78,5 +79,4 @@ public class EdgeBuilder implements IEdge {
     public BondMatcher getBondMatcher() {
         return matcher;
     }
-    private static final Logger LOG = Logger.getLogger(EdgeBuilder.class.getName());
 }

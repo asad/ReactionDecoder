@@ -42,10 +42,11 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 class CountSubstructures extends MoleculeInitializer implements Serializable {
 
     private static final long serialVersionUID = 12343289751445148L;
+    private static final Logger LOG = Logger.getLogger(CountSubstructures.class.getName());
     private SmilesParser sp;
     private IAtomContainer mol;
 
-    public CountSubstructures(IAtomContainer atomContainer) throws CloneNotSupportedException {
+    CountSubstructures(IAtomContainer atomContainer) throws CloneNotSupportedException {
         sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         try {
             this.mol = null;
@@ -66,5 +67,4 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
             return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
         }
     }
-    private static final Logger LOG = Logger.getLogger(CountSubstructures.class.getName());
 }

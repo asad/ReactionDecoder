@@ -66,6 +66,7 @@ import org.openscience.smsd.algorithm.matchers.AtomMatcher;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class RingFilter {
+    private static final Logger LOG = Logger.getLogger(RingFilter.class.getName());
 
     private final Comparator comparator;
     private final AtomMatcher filter;
@@ -127,5 +128,4 @@ public class RingFilter {
             return 0;
         }
     }
-    private static final Logger LOG = Logger.getLogger(RingFilter.class.getName());
 }

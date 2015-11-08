@@ -30,6 +30,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 public class RBlastAtomSignatureLabellingAdaptor
         implements ICanonicalMoleculeLabeller {
+    private static final Logger LOG = Logger.getLogger(RBlastAtomSignatureLabellingAdaptor.class.getName());
 
     private int atomIndex;
     private int height;
@@ -62,5 +63,4 @@ public class RBlastAtomSignatureLabellingAdaptor
                     .getCanonicalLabelling(container.getAtomCount());
         }
     }
-    private static final Logger LOG = Logger.getLogger(RBlastAtomSignatureLabellingAdaptor.class.getName());
 }

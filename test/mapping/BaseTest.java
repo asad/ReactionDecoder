@@ -45,6 +45,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BaseTest extends TestUtility {
+    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
 
 
     /**
@@ -281,5 +282,4 @@ public class BaseTest extends TestUtility {
         new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
         return s.getBondChangeCalculator();
     }
-    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
 }

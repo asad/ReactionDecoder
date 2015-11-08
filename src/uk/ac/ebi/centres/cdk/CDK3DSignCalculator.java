@@ -26,6 +26,8 @@ import uk.ac.ebi.centres.calculator.ThreeDimensionalSignCalculator;
  */
 public class CDK3DSignCalculator extends ThreeDimensionalSignCalculator<IAtom> {
 
+    private static final Logger LOG = Logger.getLogger(CDK3DSignCalculator.class.getName());
+
     @Override
     public double getX(IAtom atom) {
         return atom.getPoint3d().x;
@@ -40,5 +42,4 @@ public class CDK3DSignCalculator extends ThreeDimensionalSignCalculator<IAtom> {
     public double getZ(IAtom atom) {
         return atom.getPoint3d().z;
     }
-    private static final Logger LOG = Logger.getLogger(CDK3DSignCalculator.class.getName());
 }

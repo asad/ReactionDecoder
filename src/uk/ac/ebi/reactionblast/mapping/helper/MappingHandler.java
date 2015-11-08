@@ -34,12 +34,13 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
  */
 public class MappingHandler extends BasicDebugger {
 
+    private static final Logger LOG = Logger.getLogger(MappingHandler.class.getName());
+
     /**
      *
      * @param MappedReaction
      */
     public static void cleanMapping(IReaction MappedReaction) {
-
         int count = MappedReaction.getMappingCount();
         for (int i = count; i > 0; i--) {
             MappedReaction.removeMapping(i);
@@ -78,17 +79,13 @@ public class MappingHandler extends BasicDebugger {
      * @param counter
      * @return
      */
-    protected synchronized static int setMappingFlags(
-            IReaction expLabReaction,
-            IReaction MappedReaction,
-            int counter) {
-
+    protected static synchronized int setMappingFlags(IReaction expLabReaction, IReaction MappedReaction, int counter) {
         IAtomContainerSet expEductSet = expLabReaction.getReactants();
         IAtomContainerSet expProductSet = expLabReaction.getProducts();
 
 //        System.out.println("Mapping size " + expLabReaction.getMappingCount());
-
-
+        
+        
         for (IMapping map : expLabReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
@@ -99,10 +96,10 @@ public class MappingHandler extends BasicDebugger {
             if (I_Atom != null && J_Atom != null) {
 
                 /*
-                 *******************************
-                 * Mapping the Reactants ******************************
-                 */
-
+                *******************************
+                * Mapping the Reactants ******************************
+                */
+                
                 boolean eFlag = false;
                 IAtom firstAtom = null;
                 IAtom secondAtom = null;
@@ -128,9 +125,9 @@ public class MappingHandler extends BasicDebugger {
 
                 }
                 /*
-                 *******************************
-                 * Mapping the Products ******************************
-                 */
+                *******************************
+                * Mapping the Products ******************************
+                */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {
                     IAtomContainer pMolecule = expProductSet.getAtomContainer(pMol);
@@ -170,18 +167,13 @@ public class MappingHandler extends BasicDebugger {
      * @param counter
      * @return
      */
-    protected static int setMappingFlags(IReaction MappedReaction,
-            IReaction ReactionWithUniqueSTOICHIOMETRY,
-            IReaction coreMappedReaction,
-            int counter) {
-
-
+    protected static int setMappingFlags(IReaction MappedReaction, IReaction ReactionWithUniqueSTOICHIOMETRY, IReaction coreMappedReaction, int counter) {
         IAtomContainerSet expEductSet = ReactionWithUniqueSTOICHIOMETRY.getReactants();
         IAtomContainerSet expProductSet = ReactionWithUniqueSTOICHIOMETRY.getProducts();
 
 //        System.out.println("Mapping size " + coreMappedReaction.getMappingCount());
-
-
+        
+        
         for (IMapping map : coreMappedReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
@@ -193,10 +185,10 @@ public class MappingHandler extends BasicDebugger {
             if (I_Atom != null && J_Atom != null) {
 
                 /*
-                 *******************************
-                 * Mapping the Reactants ******************************
-                 */
-
+                *******************************
+                * Mapping the Reactants ******************************
+                */
+                
                 boolean eFlag = false;
                 IAtom firstAtom = null;
                 IAtom secondAtom = null;
@@ -228,9 +220,9 @@ public class MappingHandler extends BasicDebugger {
 
                 }
                 /*
-                 *******************************
-                 * Mapping the Products ******************************
-                 */
+                *******************************
+                * Mapping the Products ******************************
+                */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {
                     IAtomContainer pMolecule = expProductSet.getAtomContainer(pMol);
@@ -270,5 +262,4 @@ public class MappingHandler extends BasicDebugger {
 //        System.out.println("Mapping Counter " + counter);
         return counter;
     }
-    private static final Logger LOG = Logger.getLogger(MappingHandler.class.getName());
 }

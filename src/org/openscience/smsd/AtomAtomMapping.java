@@ -52,13 +52,26 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class AtomAtomMapping implements Serializable {
+public class AtomAtomMapping implements Serializable {
 
     private static final long serialVersionUID = 1223637237262778L;
+    private static final Logger LOG = Logger.getLogger(AtomAtomMapping.class.getName());
     private final IAtomContainer query;
     private final IAtomContainer target;
     private final HashBiMap<IAtom, IAtom> mapping;
     private final Map<Integer, Integer> mappingIndex;
+
+    /**
+     *
+     * @param query source molecule
+     * @param target target molecule
+     */
+    public AtomAtomMapping(IAtomContainer query, IAtomContainer target) {
+        this.query = query;
+        this.target = target;
+        this.mapping = HashBiMap.create(new HashMap<IAtom, IAtom>());
+        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -89,18 +102,6 @@ public final class AtomAtomMapping implements Serializable {
         hash = 67 * hash + (this.mapping != null ? this.getMappingsByAtoms().hashCode() : 0);
         hash = 67 * hash + (this.mappingIndex != null ? this.getMappingsByIndex().hashCode() : 0);
         return hash;
-    }
-
-    /**
-     *
-     * @param query source molecule
-     * @param target target molecule
-     */
-    public AtomAtomMapping(IAtomContainer query, IAtomContainer target) {
-        this.query = query;
-        this.target = target;
-        this.mapping = HashBiMap.create(new HashMap<IAtom, IAtom>());
-        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
     }
 
     /**
@@ -321,5 +322,4 @@ public final class AtomAtomMapping implements Serializable {
         SmilesGenerator aromatic = SmilesGenerator.unique().withAtomClasses();
         return aromatic.create(getCommonFragment());
     }
-    private static final Logger LOG = Logger.getLogger(AtomAtomMapping.class.getName());
 }

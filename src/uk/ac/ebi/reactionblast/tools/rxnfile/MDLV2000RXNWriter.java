@@ -77,9 +77,10 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 
 public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
 
-    private BufferedWriter writer;
     private static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MDLV2000RXNWriter.class);
+    private static final Logger LOG = Logger.getLogger(MDLV2000RXNWriter.class.getName());
+    private BufferedWriter writer;
     private int reactionNumber;
     public Map rdFields = null;
 
@@ -367,5 +368,4 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         fs += s;
         return fs;
     }
-    private static final Logger LOG = Logger.getLogger(MDLV2000RXNWriter.class.getName());
 }

@@ -73,9 +73,10 @@ import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
+public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
     private static final long serialVersionUID = 98698690880809981L;
+    private static final Logger LOG = Logger.getLogger(BondChangeCalculator.class.getName());
     private final BondChangeAnnotator bondChangeAnnotator;
     private final IPatternFingerprinter formedCleavedWFingerprint;
     private final IPatternFingerprinter orderChangesWFingerprint;
@@ -1245,5 +1246,4 @@ public final class BondChangeCalculator extends AbstractChangeCalculator impleme
     public int getTotalSmallestFragmentSize() {
         return totalSmallestFragmentSize;
     }
-    private static final Logger LOG = Logger.getLogger(BondChangeCalculator.class.getName());
 }

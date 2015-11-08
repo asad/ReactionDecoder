@@ -29,6 +29,7 @@ import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer;
 
 public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataStore.class.getName());
     
     private File moleculeDir;
     
@@ -55,6 +56,5 @@ public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
         }
         
     }
-    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataStore.class.getName());
 
 }

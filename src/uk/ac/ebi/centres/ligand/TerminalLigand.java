@@ -29,6 +29,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @author John May
  */
 public class TerminalLigand<A> extends NonterminalLigand<A> {
+    private static final Logger LOG = Logger.getLogger(TerminalLigand.class.getName());
 
     public TerminalLigand(ConnectionProvider<A> provider, MutableDescriptor descriptor, A atom, A parent, int distance) {
         super(provider, descriptor, atom, parent, distance);
@@ -60,5 +61,4 @@ public class TerminalLigand<A> extends NonterminalLigand<A> {
     public boolean isBranching() {
         return Boolean.FALSE;
     }
-    private static final Logger LOG = Logger.getLogger(TerminalLigand.class.getName());
 }

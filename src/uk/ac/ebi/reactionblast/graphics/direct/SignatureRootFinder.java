@@ -41,6 +41,7 @@ import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
  *
  */
 public class SignatureRootFinder {
+    private static final Logger LOG = Logger.getLogger(SignatureRootFinder.class.getName());
 
     public static Map<IAtomContainer, List<RootSystem>> findRootSystems(
             RBlastReaction rblReaction) {
@@ -314,5 +315,4 @@ public class SignatureRootFinder {
         } else {
         }
     }
-    private static final Logger LOG = Logger.getLogger(SignatureRootFinder.class.getName());
 }

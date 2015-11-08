@@ -62,6 +62,7 @@ import org.openscience.cdk.interfaces.IAtom;
  *         Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class PathEdge {
+    private static final Logger LOG = Logger.getLogger(PathEdge.class.getName());
 
     private final List<IAtom> atoms;
 
@@ -137,5 +138,4 @@ public class PathEdge {
 
         throw new RuntimeException("Couldn't splice - no intersection.");
     }
-    private static final Logger LOG = Logger.getLogger(PathEdge.class.getName());
 }

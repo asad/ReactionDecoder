@@ -55,6 +55,9 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Annotator extends Helper {
+    static final String NEW_LINE = System.getProperty("line.separator");
+    static final String TAB = "\t";
+    private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
 
     protected boolean REPORT_ALL_MAPPINGS;
     protected boolean GENERATE_IMAGE;
@@ -64,8 +67,6 @@ public class Annotator extends Helper {
     protected boolean REMAP;
     protected String PREFIX;
 
-    final static String NEW_LINE = System.getProperty("line.separator");
-    final static String TAB = "\t";
 
     Annotator() {
         this.REPORT_ALL_MAPPINGS = false;
@@ -826,5 +827,4 @@ public class Annotator extends Helper {
         sb.append("Reaction Structure Similarity (ST): ").append(myFormatter.format(similarityReactionStructure));
         sb.append(NEW_LINE);
     }
-    private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
 }

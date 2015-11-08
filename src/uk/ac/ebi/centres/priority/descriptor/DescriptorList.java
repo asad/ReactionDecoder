@@ -36,7 +36,8 @@ import uk.ac.ebi.centres.Descriptor;
  * @author John May
  * @see Descriptor
  */
-public final class DescriptorList implements Comparable<DescriptorList> {
+public class DescriptorList implements Comparable<DescriptorList> {
+    private static final Logger LOG = Logger.getLogger(DescriptorList.class.getName());
 
     private final List<Descriptor> descriptors = new ArrayList<>();
     private final Set<Descriptor> ignore = new HashSet<>();
@@ -238,5 +239,4 @@ public final class DescriptorList implements Comparable<DescriptorList> {
         pairing = 0;
         descriptors.clear();
     }
-    private static final Logger LOG = Logger.getLogger(DescriptorList.class.getName());
 }

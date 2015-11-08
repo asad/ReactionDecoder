@@ -32,89 +32,12 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class ConvexHull implements Iterable<Point2d> {
-    
-    /**
-     * A rectangle that may not be axis-aligned
-     *
-     */
-    public class Rectangle {
-        
-        public Point2d pointX;
-        
-        public Point2d pointY;
-        
-        public Point2d pointZ;
-        
-        public Point2d cornerA;
-        
-        public Point2d cornerB;
-        
-        public Point2d cornerC;
-        
-        public Point2d cornerD;
-        
-        public Rectangle(
-                Point2d pointOnAB, Point2d cornerC, Point2d cornerD, double distToCD) {
-            pointX = new Point2d(pointOnAB);
-            this.cornerC = new Point2d(cornerC);
-            this.cornerD = new Point2d(cornerD);
-            Vector2d cdVec = new Vector2d(cornerD);
-            cdVec.sub(cornerC);
-            Vector2d cdVecNormalized = new Vector2d(cdVec);
-            if (cdVec.x != 0 && cdVec.y != 0) {
-                cdVecNormalized.normalize();
-            }
-            Vector2d perp = new Vector2d(cdVecNormalized.y, -cdVecNormalized.x);
-//            System.out.println(
-//                    pointOnAB + " " +  cornerC + " " +  cornerD + " " +  distToCD
-//                    + " " +  cdVec + " " +  perp);
-            cornerA = new Point2d(cornerD);
-            cornerA.scaleAdd(distToCD, perp, cornerA);
-            cornerB = new Point2d(cornerC);
-            cornerB.scaleAdd(distToCD, perp, cornerB);
-        }
-
-        public double area() {
-//           return getWidth() * getHeight();
-            return new Point2d(cornerA).distance(new Point2d(cornerC))
-                 * new Point2d(cornerC).distance(new Point2d(cornerD));
-        }
-        
-        public String toString() {
-            return String.format("[(%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f)]", 
-                    cornerA.x, cornerA.y, cornerB.x, cornerB.y, cornerC.x, cornerC.y, cornerD.x, cornerD.y); 
-        }
-
-        public double getWidth() {
-            Vector2d cd = new Vector2d(cornerC);
-            cd.sub(cornerD);
-            return cd.length();
-        }
-        
-        public Vector2d getMajorAxis() {
-            Vector2d cd = new Vector2d(cornerC);
-            cd.sub(cornerD);
-            double cdLen = cd.length();
-            Vector2d ad = new Vector2d(cornerA);
-            ad.sub(cornerD);
-            double adLen = ad.length();
-            if (adLen > cdLen) {
-                return ad;
-            } else {
-                return cd;
-            }
-        }
-
-        public double getHeight() {
-            Vector2d ac = new Vector2d(cornerA);
-            ac.sub(cornerC);
-            return ac.length();
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(ConvexHull.class.getName());
     
     private Point2d[] hull;
     
     private String[] hullIDs;
+    private final Vector2d X_AXIS = new Vector2d(1, 0);
     
     public ConvexHull(IAtomContainer atomContainer) {
         Point2d[] points = new Point2d[atomContainer.getAtomCount()];
@@ -484,10 +407,18 @@ public class ConvexHull implements Iterable<Point2d> {
         double maxX = Double.MIN_VALUE;
         double maxY = Double.MIN_VALUE;
         for (Point2d point : hull) {
-            if (point.x < minX) minX = point.x;
-            if (point.y < minY) minY = point.y;
-            if (point.x > maxX) maxX = point.x;
-            if (point.y > maxY) maxY = point.y;
+            if (point.x < minX) {
+                minX = point.x;
+            }
+            if (point.y < minY) {
+                minY = point.y;
+            }
+            if (point.x > maxX) {
+                maxX = point.x;
+            }
+            if (point.y > maxY) {
+                maxY = point.y;
+            }
         }
         
         return new Rectangle2D.Double(minX, minY, maxX, maxY);
@@ -572,7 +503,6 @@ public class ConvexHull implements Iterable<Point2d> {
         return sortedPoints;
     }
     
-    private final Vector2d X_AXIS = new Vector2d(1, 0);
     private double getAngle(Point2d ref, Point2d point) {
 //        double angle = Math.atan((point.y - ref.y) / (point.x - ref.x));
 //        if (angle < 0) angle += Math.PI;
@@ -597,6 +527,77 @@ public class ConvexHull implements Iterable<Point2d> {
     public Iterator<Point2d> iterator() {
         return Arrays.asList(hull).iterator();
     }
-    private static final Logger LOG = Logger.getLogger(ConvexHull.class.getName());
+
+    /**
+     * A rectangle that may not be axis-aligned
+     *
+     */
+    public class Rectangle {
+
+        public Point2d pointX;
+        public Point2d pointY;
+        public Point2d pointZ;
+        public Point2d cornerA;
+        public Point2d cornerB;
+        public Point2d cornerC;
+        public Point2d cornerD;
+
+        public Rectangle(Point2d pointOnAB, Point2d cornerC, Point2d cornerD, double distToCD) {
+            pointX = new Point2d(pointOnAB);
+            this.cornerC = new Point2d(cornerC);
+            this.cornerD = new Point2d(cornerD);
+            Vector2d cdVec = new Vector2d(cornerD);
+            cdVec.sub(cornerC);
+            Vector2d cdVecNormalized = new Vector2d(cdVec);
+            if (cdVec.x != 0 && cdVec.y != 0) {
+                cdVecNormalized.normalize();
+            }
+            Vector2d perp = new Vector2d(cdVecNormalized.y, -cdVecNormalized.x);
+//            System.out.println(
+//                    pointOnAB + " " +  cornerC + " " +  cornerD + " " +  distToCD
+//                    + " " +  cdVec + " " +  perp);
+            cornerA = new Point2d(cornerD);
+            cornerA.scaleAdd(distToCD, perp, cornerA);
+            cornerB = new Point2d(cornerC);
+            cornerB.scaleAdd(distToCD, perp, cornerB);
+        }
+
+        public double area() {
+//           return getWidth() * getHeight();
+            return new Point2d(cornerA).distance(new Point2d(cornerC))
+                    * new Point2d(cornerC).distance(new Point2d(cornerD));
+        }
+
+        public String toString() {
+            return String.format("[(%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f)]",
+                    cornerA.x, cornerA.y, cornerB.x, cornerB.y, cornerC.x, cornerC.y, cornerD.x, cornerD.y);
+        }
+
+        public double getWidth() {
+            Vector2d cd = new Vector2d(cornerC);
+            cd.sub(cornerD);
+            return cd.length();
+        }
+
+        public Vector2d getMajorAxis() {
+            Vector2d cd = new Vector2d(cornerC);
+            cd.sub(cornerD);
+            double cdLen = cd.length();
+            Vector2d ad = new Vector2d(cornerA);
+            ad.sub(cornerD);
+            double adLen = ad.length();
+            if (adLen > cdLen) {
+                return ad;
+            } else {
+                return cd;
+            }
+        }
+
+        public double getHeight() {
+            Vector2d ac = new Vector2d(cornerA);
+            ac.sub(cornerC);
+            return ac.length();
+        }
+    }
 
 }

@@ -42,14 +42,14 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
-public final class RMatrix extends EBIMatrix implements Serializable {
+public class RMatrix extends EBIMatrix implements Serializable {
+    private static final long serialVersionUID = 7057060562283378684L;
+    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RMatrix.class);
+    private static final Logger LOG = Logger.getLogger(RMatrix.class.getName());
 
     private BEMatrix reactantBEMatrix = null;
     private BEMatrix productBEMatrix = null;
     private AtomAtomMappingContainer myMapping = null;
-    private static final long serialVersionUID = 7057060562283378684L;
-    private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(RMatrix.class);
     private boolean DEBUG = false;
 
     /**
@@ -260,7 +260,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return
      */
-    protected synchronized final int getMappedAtomCount() {
+    protected synchronized int getMappedAtomCount() {
         return getMyMapping().getSize();
     }
 
@@ -424,5 +424,4 @@ public final class RMatrix extends EBIMatrix implements Serializable {
     public synchronized Object clone() throws CloneNotSupportedException {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(RMatrix.class.getName());
 }

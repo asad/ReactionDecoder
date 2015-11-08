@@ -28,8 +28,23 @@ import java.util.logging.Logger;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class ReactantProductPair implements Serializable,
+public class ReactantProductPair implements Serializable,
         Comparable<ReactantProductPair>, Comparator<ReactantProductPair> {
+
+    private static final long serialVersionUID = 19876565735478L;
+    private static final Logger LOG = Logger.getLogger(ReactantProductPair.class.getName());
+    private final String query;
+    private final String target;
+
+    /**
+     *
+     * @param query
+     * @param target
+     */
+    public ReactantProductPair(String query, String target) {
+        this.query = query;
+        this.target = target;
+    }
 
     @Override
     public int hashCode() {
@@ -52,19 +67,6 @@ public final class ReactantProductPair implements Serializable,
             return false;
         }
         return Objects.equals(this.target, other.target);
-    }
-    private static final long serialVersionUID = 19876565735478L;
-    private final String query;
-    private final String target;
-
-    /**
-     *
-     * @param query
-     * @param target
-     */
-    public ReactantProductPair(String query, String target) {
-        this.query = query;
-        this.target = target;
     }
 
     @Override
@@ -100,5 +102,4 @@ public final class ReactantProductPair implements Serializable,
     public int compare(ReactantProductPair o1, ReactantProductPair o2) {
         return o1.compareTo(o2);
     }
-    private static final Logger LOG = Logger.getLogger(ReactantProductPair.class.getName());
 }

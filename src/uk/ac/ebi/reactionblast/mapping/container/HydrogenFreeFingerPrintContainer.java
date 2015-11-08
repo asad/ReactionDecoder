@@ -70,12 +70,24 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     //depth search is set to 6, if not given explicitly as a parameter to Fingerprinter
     private static final int DEPTH_SEARCH = 8;
     private static final long serialVersionUID = 987987606869669691L;
-    private final Map<String, BitSet> fingerPrintMap;
+    private static final Logger LOG = Logger.getLogger(HydrogenFreeFingerPrintContainer.class.getName());
 
-    @Override
-    public String toString() {
-        return "HydrogenFreeFingerPrintContainer{" + "fingerPrintMap=" + fingerPrintMap + '}';
+    /**
+     *
+     * @return
+     */
+    public static int getFingerPrintSize() {
+        return FINGER_SIZE;
     }
+
+    /**
+     *
+     * @return
+     */
+    public static int getFingerPrintDepth() {
+        return DEPTH_SEARCH;
+    }
+    private final Map<String, BitSet> fingerPrintMap;
 
     //~--- constructors -------------------------------------------------------
     /**
@@ -83,6 +95,11 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      */
     public HydrogenFreeFingerPrintContainer() {
         fingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
+    }
+
+    @Override
+    public String toString() {
+        return "HydrogenFreeFingerPrintContainer{" + "fingerPrintMap=" + fingerPrintMap + '}';
     }
 
     //~--- methods ------------------------------------------------------------
@@ -170,22 +187,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
 
     /**
      *
-     * @return
-     */
-    public static int getFingerPrintSize() {
-        return FINGER_SIZE;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static int getFingerPrintDepth() {
-        return DEPTH_SEARCH;
-    }
-
-    /**
-     *
      * @param Key
      * @throws java.io.IOException
      * @return
@@ -196,6 +197,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     }
 
     //~--- set methods --------------------------------------------------------
+
     /**
      *
      * @param Key
@@ -203,10 +205,9 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void setValue(String Key, BitSet Value)
-            throws IOException {
-        fingerPrintMap.put(Key, Value);
-    }
+public synchronized void setValue(String Key, BitSet Value) throws IOException {
+    fingerPrintMap.put(Key, Value);
+}
 
     /**
      *
@@ -242,5 +243,5 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(HydrogenFreeFingerPrintContainer.class.getName());
+
 }

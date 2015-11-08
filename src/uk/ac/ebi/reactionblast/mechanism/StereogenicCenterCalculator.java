@@ -41,9 +41,50 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class StereogenicCenterCalculator implements Serializable {
+public class StereogenicCenterCalculator implements Serializable {
 
     private static final long serialVersionUID = -1420740601548197863L;
+    //    /**
+//     * Returns type of Chirality changes
+//     *
+//     * @param a
+//     * @param b
+//     * @return
+//     */
+//    public boolean isChiralityChange(InchiStereoAndConformation a, InchiStereoAndConformation b) {
+//        if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.MINUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.NONE)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.PLUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.NONE)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.NONE)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.PLUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.MINUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.PLUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.MINUS)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.OPPOSITE) && b.equals(InchiStereoAndConformation.TOGETHER)) {
+//            return true;
+//        } else if (a.equals(InchiStereoAndConformation.TOGETHER) && b.equals(InchiStereoAndConformation.OPPOSITE)) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+    private static final Logger LOG = Logger.getLogger(StereogenicCenterCalculator.class.getName());
 
     /**
      *
@@ -234,45 +275,4 @@ public final class StereogenicCenterCalculator implements Serializable {
         }
         return false;
     }
-    //    /**
-//     * Returns type of Chirality changes
-//     *
-//     * @param a
-//     * @param b
-//     * @return
-//     */
-//    public boolean isChiralityChange(InchiStereoAndConformation a, InchiStereoAndConformation b) {
-//        if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.MINUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.PLUS) && b.equals(InchiStereoAndConformation.NONE)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.PLUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.MINUS) && b.equals(InchiStereoAndConformation.NONE)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.UNKNOWN)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.NONE)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.PLUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.UNKNOWN) && b.equals(InchiStereoAndConformation.MINUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.PLUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.NONE) && b.equals(InchiStereoAndConformation.MINUS)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.OPPOSITE) && b.equals(InchiStereoAndConformation.TOGETHER)) {
-//            return true;
-//        } else if (a.equals(InchiStereoAndConformation.TOGETHER) && b.equals(InchiStereoAndConformation.OPPOSITE)) {
-//            return true;
-//        }
-//        return false;
-//    }
-//
-    private static final Logger LOG = Logger.getLogger(StereogenicCenterCalculator.class.getName());
 }

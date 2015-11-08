@@ -24,6 +24,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
 
 public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
+    private static final Logger LOG = Logger.getLogger(TopToBottomReactionLayout.class.getName());
 
     public TopToBottomReactionLayout() {
         this(true);
@@ -80,5 +81,4 @@ public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;
     }
-    private static final Logger LOG = Logger.getLogger(TopToBottomReactionLayout.class.getName());
 }

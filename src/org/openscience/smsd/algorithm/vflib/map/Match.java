@@ -61,6 +61,20 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class Match {
+    private static final Logger LOG = Logger.getLogger(Match.class.getName());
+    private final INode query;
+    private final IAtom target;
+
+    /**
+     * Constructor
+     *
+     * @param query
+     * @param target
+     */
+    public Match(INode query, IAtom target) {
+        this.query = query;
+        this.target = target;
+    }
 
     @Override
     public String toString() {
@@ -90,19 +104,6 @@ public class Match {
         }
         return Objects.equals(this.target, other.target);
     }
-    private final INode query;
-    private final IAtom target;
-
-    /**
-     * Constructor
-     *
-     * @param query
-     * @param target
-     */
-    public Match(INode query, IAtom target) {
-        this.query = query;
-        this.target = target;
-    }
 
     /**
      * Return query node
@@ -121,5 +122,4 @@ public class Match {
     public IAtom getTargetAtom() {
         return target;
     }
-    private static final Logger LOG = Logger.getLogger(Match.class.getName());
 }

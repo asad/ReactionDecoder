@@ -39,6 +39,7 @@ import signature.AbstractVertexSignature;
  *
  */
 public class SubgraphMoleculeSignature extends AbstractGraphSignature {
+    private static final Logger LOG = Logger.getLogger(SubgraphMoleculeSignature.class.getName());
 
     private final int vertexCount;
 
@@ -163,6 +164,5 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         // TODO Auto-generated method stub
         return null;
     }
-    private static final Logger LOG = Logger.getLogger(SubgraphMoleculeSignature.class.getName());
 
 }

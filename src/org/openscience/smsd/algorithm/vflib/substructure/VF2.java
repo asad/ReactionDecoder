@@ -63,7 +63,7 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class VF2 implements IResults {
+public class VF2 implements IResults {
 
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;

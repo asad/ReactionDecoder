@@ -32,6 +32,7 @@ import signature.AbstractGraphBuilder;
  *
  */
 public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 
     /**
      * The chem object builder
@@ -163,5 +164,4 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
     public void setBondSensitive(boolean isBondSensitive) {
         this.isBondSensitive = isBondSensitive;
     }
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 }

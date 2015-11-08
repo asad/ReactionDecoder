@@ -29,9 +29,10 @@ import uk.ac.ebi.centres.Ligand;
 public class PrimaryDescriptor<A> implements
         uk.ac.ebi.centres.priority.access.DescriptorAccessor<A> {
 
+    private static final Logger LOG = Logger.getLogger(PrimaryDescriptor.class.getName());
+
     @Override
     public Descriptor getDescriptor(Ligand<A> ligand) {
         return ligand.getDescriptor();
     }
-    private static final Logger LOG = Logger.getLogger(PrimaryDescriptor.class.getName());
 }

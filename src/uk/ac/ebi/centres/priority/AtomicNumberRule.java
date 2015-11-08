@@ -29,6 +29,7 @@ import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
  */
 public class AtomicNumberRule<A>
         extends AbstractPriorityRule<A> {
+    private static final Logger LOG = Logger.getLogger(AtomicNumberRule.class.getName());
 
     /**
      * Accessor used to get the atomic number from an atom.
@@ -61,5 +62,4 @@ public class AtomicNumberRule<A>
         }
         return accessor.getAtomicNumber(o1.getAtom()) - accessor.getAtomicNumber(o2.getAtom());
     }
-    private static final Logger LOG = Logger.getLogger(AtomicNumberRule.class.getName());
 }

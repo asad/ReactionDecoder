@@ -34,6 +34,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  */
 public class MoleculeLabelDrawer extends AbstractDirectDrawer {
 
+    private static final Logger LOG = Logger.getLogger(MoleculeLabelDrawer.class.getName());
+
     // TODO: remove axis
     public MoleculeLabelDrawer(Axis axis, Params params) {
         setParams(params);
@@ -51,5 +53,4 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             g.drawString(label, p.x, p.y);
         }
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeLabelDrawer.class.getName());
 }

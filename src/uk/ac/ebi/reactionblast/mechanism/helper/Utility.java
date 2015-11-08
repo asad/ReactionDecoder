@@ -87,68 +87,6 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     }
 
     /**
-     *
-     * @param rid
-     * @param molOrignal
-     * @param atom
-     * @param patternFP
-     * @throws Exception
-     * @throws CloneNotSupportedException
-     */
-    protected void setCircularFingerprints(
-            String rid,
-            IAtomContainer molOrignal,
-            IAtom atom,
-            Map<Integer, IPatternFingerprinter> patternFP) throws Exception, CloneNotSupportedException {
-        IAtomContainer clone = molOrignal.clone();
-        for (int i = 0; i < 3; i++) {
-            if (!patternFP.containsKey(i)) {
-                IPatternFingerprinter fp = new PatternFingerprinter();
-                fp.setFingerprintID(rid + ":" + "Signature: " + i);
-                patternFP.put(i, fp);
-            }
-            String circularSMILES = getCircularSMILES(clone, atom, i, true);
-            patternFP.get(i).add(new Feature(circularSMILES, 1.0));
-        }
-        if (!patternFP.containsKey(-1)) {
-            IPatternFingerprinter fp = new PatternFingerprinter();
-            fp.setFingerprintID(rid + ":" + "Signature: " + -1);
-            patternFP.put(-1, fp);
-        }
-
-        String circularSMILES = getCircularSMILES(clone, atom, -1, true);
-        patternFP.get(-1).add(new Feature(circularSMILES, 1.0));
-
-    }
-
-    /**
-     *
-     * @param molOrignal
-     * @param type
-     * @param atom
-     * @return
-     * @throws Exception
-     * @throws CloneNotSupportedException
-     */
-    protected List<ReactionCenterFragment> getCircularReactionPatternFingerprints(
-            IAtomContainer molOrignal,
-            IAtom atom,
-            EnumSubstrateProduct type) throws Exception, CloneNotSupportedException {
-        List<ReactionCenterFragment> fragmentsRC = new ArrayList<>();
-        IAtomContainer clone = molOrignal.clone();
-        for (int i = 0; i < 3; i++) {
-            String smiles = getCircularSMILES(clone, atom, i, true);
-            ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, i, type);
-//            System.out.println(reactionCenterFragment + " smiles " + smiles);
-            fragmentsRC.add(reactionCenterFragment);
-        }
-        String smiles = getCircularSMILES(clone, atom, -1, true);
-        ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, -1, type);
-        fragmentsRC.add(reactionCenterFragment);
-        return fragmentsRC;
-    }
-
-    /**
      * Used CDK to generate smiles
      *
      * @param mol
@@ -159,8 +97,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws Exception
      */
     public static String getCircularSMILES(
-            IAtomContainer mol, IAtom atom, int level, boolean remove_AAM)
-            throws Exception {
+            IAtomContainer mol, IAtom atom, int level, boolean remove_AAM) throws Exception {
         int refAtom = getAtomIndexByID(mol, atom);
         IAtomContainer fragment = getCircularFragment(mol, refAtom, level);
         String smiles = getSMILES(fragment, remove_AAM);
@@ -174,7 +111,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param remove_AAM
      * @return
      */
-    public static String getSMILES(IAtomContainer mol, boolean remove_AAM) {
+    public static String getSMILES(
+            IAtomContainer mol, boolean remove_AAM) {
         String smiles = "";
         try {
             return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
@@ -184,7 +122,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return smiles;
     }
 
-    protected static List<IAtom> getAtoms(IAtomContainer mol) {
+    protected static List<IAtom> getAtoms(
+            IAtomContainer mol) {
         List<IAtom> atoms = new ArrayList<>(mol.getAtomCount());
         for (IAtom atom : mol.atoms()) {
             atoms.add(atom);
@@ -313,11 +252,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws CDKException
      * @throws CloneNotSupportedException
      */
-    protected static void setCircularSignatureFingerprints(String rid,
-            IAtomContainer mol,
-            IAtom atom,
-            Map<Integer, IPatternFingerprinter> patternFP) throws CDKException, CloneNotSupportedException {
-
+    protected static void setCircularSignatureFingerprints(String rid, IAtomContainer mol, IAtom atom, Map<Integer, IPatternFingerprinter> patternFP) throws CDKException, CloneNotSupportedException {
+        
         for (int i = 1; i < 5; i++) {
             if (!patternFP.containsKey(i)) {
                 IPatternFingerprinter fp = new PatternFingerprinter();
@@ -503,9 +439,9 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
 //        SignatureMoleculeLabeller().getCanonicalPermutation(cloneMolecule);
 
         /*
-         Use the Canonical labelling from the SMILES
-         IMP: Suggested by John May
-         */
+        Use the Canonical labelling from the SMILES
+        IMP: Suggested by John May
+        */
         try {
             SmilesGenerator.unique().create(cloneMolecule, p);
         } catch (CDKException e) {
@@ -515,8 +451,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         permuteWithoutClone(p, cloneMolecule);
 
         /*
-         Set the IDs to container
-         */
+        Set the IDs to container
+        */
         if (org_mol.getID() != null) {
             cloneMolecule.setID(org_mol.getID());
         }
@@ -525,9 +461,9 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     }
 
     /*
-     This is a very imp code modified by John May
-     The idea is to canonicalise the atoms and bonds
-     */
+    This is a very imp code modified by John May
+    The idea is to canonicalise the atoms and bonds
+    */
     private static void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
         IAtom[] permutedAtoms = new IAtom[n];
@@ -621,5 +557,60 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             }
         }
         return paths;
+    }
+
+    /**
+     *
+     * @param rid
+     * @param molOrignal
+     * @param atom
+     * @param patternFP
+     * @throws Exception
+     * @throws CloneNotSupportedException
+     */
+    protected void setCircularFingerprints(String rid, IAtomContainer molOrignal, IAtom atom, Map<Integer, IPatternFingerprinter> patternFP) throws Exception, CloneNotSupportedException {
+        IAtomContainer clone = molOrignal.clone();
+        for (int i = 0; i < 3; i++) {
+            if (!patternFP.containsKey(i)) {
+                IPatternFingerprinter fp = new PatternFingerprinter();
+                fp.setFingerprintID(rid + ":" + "Signature: " + i);
+                patternFP.put(i, fp);
+            }
+            String circularSMILES = getCircularSMILES(clone, atom, i, true);
+            patternFP.get(i).add(new Feature(circularSMILES, 1.0));
+        }
+        if (!patternFP.containsKey(-1)) {
+            IPatternFingerprinter fp = new PatternFingerprinter();
+            fp.setFingerprintID(rid + ":" + "Signature: " + -1);
+            patternFP.put(-1, fp);
+        }
+
+        String circularSMILES = getCircularSMILES(clone, atom, -1, true);
+        patternFP.get(-1).add(new Feature(circularSMILES, 1.0));
+
+    }
+
+    /**
+     *
+     * @param molOrignal
+     * @param type
+     * @param atom
+     * @return
+     * @throws Exception
+     * @throws CloneNotSupportedException
+     */
+    protected List<ReactionCenterFragment> getCircularReactionPatternFingerprints(IAtomContainer molOrignal, IAtom atom, EnumSubstrateProduct type) throws Exception, CloneNotSupportedException {
+        List<ReactionCenterFragment> fragmentsRC = new ArrayList<>();
+        IAtomContainer clone = molOrignal.clone();
+        for (int i = 0; i < 3; i++) {
+            String smiles = getCircularSMILES(clone, atom, i, true);
+            ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, i, type);
+//            System.out.println(reactionCenterFragment + " smiles " + smiles);
+            fragmentsRC.add(reactionCenterFragment);
+        }
+        String smiles = getCircularSMILES(clone, atom, -1, true);
+        ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, -1, type);
+        fragmentsRC.add(reactionCenterFragment);
+        return fragmentsRC;
     }
 }

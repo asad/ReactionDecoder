@@ -65,13 +65,27 @@ public class FingerPrintContainer implements IFingerPrintContainer {
 
     private static FingerPrintContainer _instance = null;
     private static Map<String, BitSet> FingerPrintMap = null;
+    private static final Logger LOG = Logger.getLogger(FingerPrintContainer.class.getName());
+
+    /**
+     *
+     * @return
+     */    public static synchronized FingerPrintContainer getInstance() {
+         if (_instance == null) {
+             _instance = new FingerPrintContainer();
+         }
+         
+         return _instance;
+     }
 
     //~--- constructors -------------------------------------------------------
-    private FingerPrintContainer() {
-        FingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
+
+     private FingerPrintContainer() {
+         FingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
     }
 
     //~--- methods ------------------------------------------------------------
+
     /**
      *
      * @throws java.io.IOException
@@ -112,6 +126,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param Key
@@ -131,7 +146,8 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized String getMoleculeID(BitSet bitset) throws IOException {
+    public synchronized String getMoleculeID(BitSet bitset)
+            throws IOException {
         String Key = null;
         for (Map.Entry<String, BitSet> map : FingerPrintMap.entrySet()) {
             String key = map.getKey();
@@ -154,21 +170,8 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized Map<String, BitSet> getFingerPrintMap()
-            throws IOException {
+    public synchronized Map<String, BitSet> getFingerPrintMap() throws IOException {
         return Collections.unmodifiableMap(FingerPrintMap);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static synchronized FingerPrintContainer getInstance() {
-        if (_instance == null) {
-            _instance = new FingerPrintContainer();
-        }
-
-        return _instance;
     }
 
     /**
@@ -234,5 +237,4 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(FingerPrintContainer.class.getName());
 }

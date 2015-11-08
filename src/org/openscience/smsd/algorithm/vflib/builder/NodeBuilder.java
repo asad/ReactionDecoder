@@ -42,6 +42,21 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class NodeBuilder implements INode {
+    private static final Logger LOG = Logger.getLogger(NodeBuilder.class.getName());
+    private final List<INode> neighborsList;
+    private final List<IEdge> edgesList;
+    private final AtomMatcher matcher;
+
+    /**
+     * Construct a node for a query atom
+     *
+     * @param matcher
+     */
+    protected NodeBuilder(AtomMatcher matcher) {
+        edgesList = new ArrayList<IEdge>();
+        neighborsList = new ArrayList<INode>();
+        this.matcher = matcher;
+    }
 
     @Override
     public int hashCode() {
@@ -65,20 +80,6 @@ public class NodeBuilder implements INode {
     @Override
     public String toString() {
         return "NodeBuilder{" + "matcher=" + matcher.getQueryAtom().getID() + '}';
-    }
-    private final List<INode> neighborsList;
-    private final List<IEdge> edgesList;
-    private final AtomMatcher matcher;
-
-    /**
-     * Construct a node for a query atom
-     *
-     * @param matcher
-     */
-    protected NodeBuilder(AtomMatcher matcher) {
-        edgesList = new ArrayList<IEdge>();
-        neighborsList = new ArrayList<INode>();
-        this.matcher = matcher;
     }
 
     /**
@@ -128,5 +129,4 @@ public class NodeBuilder implements INode {
     public void addNeighbor(NodeBuilder node) {
         neighborsList.add(node);
     }
-    private static final Logger LOG = Logger.getLogger(NodeBuilder.class.getName());
 }

@@ -48,9 +48,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         Serializable {
     
     private static final long serialVersionUID = 0156306561546552043757L;
-    private final Set<IFeature> featureSet;
-    private String fingerprintID = "?";
-    private int fingerprintSize;
+    private static final Logger LOG = Logger.getLogger(PatternFingerprinter.class.getName());
 
     /**
      *
@@ -67,8 +65,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @param valueCollection
      * @return
      */
-    public static IPatternFingerprinter makePatternFingerprint(
-            Collection<String> keyCollection, Collection<Double> valueCollection) {
+    public static IPatternFingerprinter makePatternFingerprint(Collection<String> keyCollection, Collection<Double> valueCollection) {
         List<IFeature> features = new ArrayList<>();
         
         List<String> keyList = new ArrayList<>(keyCollection);
@@ -80,7 +77,10 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return new PatternFingerprinter(features);
     }
-    
+    private final Set<IFeature> featureSet;    
+    private String fingerprintID = "?";
+    private int fingerprintSize;
+
     public PatternFingerprinter() {
         this(FingerprintGenerator.getFingerprinterSize());
     }
@@ -89,7 +89,8 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      *
      * @param features
      */
-    public PatternFingerprinter(Collection<IFeature> features) {
+    public PatternFingerprinter(
+            Collection<IFeature> features) {
         this(features, FingerprintGenerator.getFingerprinterSize());
     }
 
@@ -408,5 +409,5 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return p;
     }
-    private static final Logger LOG = Logger.getLogger(PatternFingerprinter.class.getName());
+
 }

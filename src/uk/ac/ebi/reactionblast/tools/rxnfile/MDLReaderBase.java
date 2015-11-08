@@ -50,7 +50,6 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
 
     private static final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MDLReaderBase.class);
-    protected SuperAtomContainer superAtomContainer;
 
     public static void replaceAtom(IAtomContainer molecule, IAtom prevAtom, IPseudoAtom pseudoAtom) {
         if (prevAtom.getPoint2d() != null) {
@@ -61,6 +60,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         }
         ExtAtomContainerManipulator.replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
     }
+    protected SuperAtomContainer superAtomContainer;
 
     /*
      * M STY (Sgroup Type)
@@ -366,4 +366,5 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         string = string.trim();
         return string;
     }
+
 }

@@ -44,6 +44,7 @@ public class MoleculeAligner {
 
     public static final Vector2d X_AXIS = new Vector2d(1, 0);
     public static final Vector2d Y_AXIS = new Vector2d(0, 1);
+    private static final Logger LOG = Logger.getLogger(MoleculeAligner.class.getName());
 
     /**
      * Finds the minimum-area bounding box of the atom container and uses the
@@ -181,5 +182,4 @@ public class MoleculeAligner {
             atom.setPoint2d(p);
         }
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeAligner.class.getName());
 }

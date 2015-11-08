@@ -32,6 +32,7 @@ import org.openscience.cdk.interfaces.IMapping;
  *
  */
 public class BlockPair {
+    private static final Logger LOG = Logger.getLogger(BlockPair.class.getName());
 
     private final Block reactantBlock;
 
@@ -65,6 +66,5 @@ public class BlockPair {
     public String toString() {
         return reactantBlock + "-" + productBlock;
     }
-    private static final Logger LOG = Logger.getLogger(BlockPair.class.getName());
 
 }

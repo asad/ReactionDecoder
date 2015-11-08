@@ -22,10 +22,6 @@ import org.openscience.cdk.io.DefaultChemObjectWriter;
  */
 public abstract class MDLWriterBase extends DefaultChemObjectWriter {
 
-    /**
-     * SuperAtomContainer
-     */
-    protected SuperAtomContainer superAtomContainer;
     private static final String M = "M  ";
 
     /**
@@ -96,6 +92,10 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
         }
         return s;
     }
+    /**
+     * SuperAtomContainer
+     */
+    protected SuperAtomContainer superAtomContainer;
 
     /**
      * Returns a <code>String</code> to which is appended enough space (" ")

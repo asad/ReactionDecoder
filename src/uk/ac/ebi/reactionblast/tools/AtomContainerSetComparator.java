@@ -38,6 +38,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  * GraphAtomContainer Comparator
  */
 public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(AtomContainerSetComparator.class.getName());
 
     /**
      * Configure LoggingTool
@@ -194,5 +195,4 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
         }
         return mw;
     }
-    private static final Logger LOG = Logger.getLogger(AtomContainerSetComparator.class.getName());
 }

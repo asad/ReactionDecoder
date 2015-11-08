@@ -29,14 +29,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class LipinskiRuleOfFiveDescriptor {
 
     /**
-     * *********Value from the User***********
-     */
-    private double xlogPvalue = -1.0;
-    private int acceptors = -1;
-    private int donors = -1;
-    private double mwvalue = -1.0;
-    private double rotatablebonds = -1.0;
-    /**
      * *********Default Lipinski Rule***********
      */
     private static double xlogPvalueLipinski = 5.0;
@@ -44,6 +36,15 @@ public class LipinskiRuleOfFiveDescriptor {
     private static int donorsLipinski = 5;
     private static double mwvalueLipinski = 500.0;
     private static double rotatablebondsLipinski = 10.0;
+    private static final Logger LOG = Logger.getLogger(LipinskiRuleOfFiveDescriptor.class.getName());
+    /**
+     * *********Value from the User***********
+     */
+    private double xlogPvalue = -1.0;
+    private int acceptors = -1;
+    private int donors = -1;
+    private double mwvalue = -1.0;
+    private double rotatablebonds = -1.0;
 
     /**
      * *******************************************
@@ -140,5 +141,4 @@ public class LipinskiRuleOfFiveDescriptor {
         return lipinskifailures;
 
     }
-    private static final Logger LOG = Logger.getLogger(LipinskiRuleOfFiveDescriptor.class.getName());
 }

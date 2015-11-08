@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 public class Combination implements Serializable, Comparable<Combination>, Comparator<Combination> {
 
     private static final long serialVersionUID = 786786786L;
+    private static final Logger LOG = Logger.getLogger(Combination.class.getName());
     private final int row;
     private final int col;
 
@@ -86,5 +87,4 @@ public class Combination implements Serializable, Comparable<Combination>, Compa
         String b = o2.row + "_" + o2.col;
         return a.compareTo(b);
     }
-    private static final Logger LOG = Logger.getLogger(Combination.class.getName());
 }

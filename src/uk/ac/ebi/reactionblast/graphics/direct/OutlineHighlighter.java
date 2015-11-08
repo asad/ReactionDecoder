@@ -36,6 +36,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
+    private static final Logger LOG = Logger.getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 
@@ -162,6 +163,5 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
     public void clearHighlights() {
         colorMap.clear();
     }
-    private static final Logger LOG = Logger.getLogger(OutlineHighlighter.class.getName());
 
 }

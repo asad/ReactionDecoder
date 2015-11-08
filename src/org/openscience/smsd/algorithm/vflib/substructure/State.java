@@ -68,7 +68,8 @@ import org.openscience.smsd.algorithm.matchers.DefaultBondMatcher;
  */
 // The State class represents a single state in the isomorphism detection
 // algorithm. Every state uses and modifies the same SharedState object.
-final class State {
+class State {
+    private static final Logger LOG = Logger.getLogger(State.class.getName());
 
     private final boolean shouldMatchBonds;
     private final boolean shouldMatchRings;
@@ -76,38 +77,6 @@ final class State {
     private final IAtomContainer target;
     private final boolean shouldMatchAtomType;
 
-    // Returns true if the state contains an isomorphism.
-    public boolean isGoal() {
-        return size == source.getAtomCount();
-    }
-
-    public boolean isDead() {
-        return (!isMatchPossible || source.getAtomCount() > target.getAtomCount());
-    }
-
-    public boolean hasNextCandidate(Pair<Integer, Integer> candidate) {
-        return candidate.getSourceAtom() != -1;
-    }
-
-    int getSize() {
-        return size;
-    }
-
-    IAtomContainer getSource() {
-        return source;
-    }
-
-    IAtomContainer getTarget() {
-        return target;
-    }
-
-    IAtom sourceAtom(int index) {
-        return source.getAtom(index);
-    }
-
-    IAtom targetAtom(int index) {
-        return target.getAtom(index);
-    }
     private int size;
     private int sourceTerminalSize;
     private int targetTerminalSize;
@@ -169,6 +138,36 @@ final class State {
         this.shouldMatchAtomType = state.shouldMatchAtomType;
     }
 
+    // Returns true if the state contains an isomorphism.
+    public boolean isGoal() {
+        return size == source.getAtomCount();
+    }
+
+    public boolean isDead() {
+        return (!isMatchPossible || source.getAtomCount() > target.getAtomCount());
+    }
+    public boolean hasNextCandidate(Pair<Integer, Integer> candidate) {
+        return candidate.getSourceAtom() != -1;
+    }
+    int getSize(
+            ) {
+        return size;
+    }
+    IAtomContainer getSource() {
+        return source;
+    }
+    IAtomContainer getTarget() {
+        return target;
+    }
+
+    IAtom sourceAtom(int index) {
+        return source.getAtom(index);
+    }
+
+    IAtom targetAtom(int index) {
+        return target.getAtom(index);
+    }
+
     private boolean isFeasible() {
         for (int i = 0; i < source.getAtomCount(); i++) {
             boolean flag = false;
@@ -212,8 +211,7 @@ final class State {
     // Returns the next candidate pair (sourceAtom, targetAtom) to be added
     // to the state. The candidate should be checked for feasibility and then added
     // using the addPair() method.
-    Pair<Integer, Integer> nextCandidate(
-            Pair<Integer, Integer> lastCandidate) {
+    Pair<Integer, Integer> nextCandidate(Pair<Integer, Integer> lastCandidate) {
         int lastSourceAtom = lastCandidate.getSourceAtom();
         int lastTargetAtom = lastCandidate.getTargetAtom();
 
@@ -426,7 +424,7 @@ final class State {
     }
 
     boolean matchFirst(State state, List<AtomAtomMapping> mappings) {
-//            System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
+        //            System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
         if (state.isGoal()) {
             mappings.add(state.getMapping());
             return true;
@@ -460,7 +458,7 @@ final class State {
 
     /* TO DO: Fix the match all results*/
     void matchAll(State state, List<AtomAtomMapping> mappings) {
-//        System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
+        //        System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
 
         if (state.isGoal()) {
             AtomAtomMapping map = state.getMapping();
@@ -521,5 +519,4 @@ final class State {
         }
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(State.class.getName());
 }

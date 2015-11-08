@@ -37,6 +37,7 @@ import uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionSimilarityTool {
+    private static final Logger LOG = Logger.getLogger(ReactionSimilarityTool.class.getName());
 
     /**
      *
@@ -602,5 +603,4 @@ public class ReactionSimilarityTool {
 
         return MI;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionSimilarityTool.class.getName());
 }

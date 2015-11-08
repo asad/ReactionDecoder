@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 public class MappingSolution implements Serializable {
 
     private static final long serialVersionUID = 1678787866L;
+    private static final Logger LOG = Logger.getLogger(MappingSolution.class.getName());
 
     private final IMappingAlgorithm algorithmID;
     private final double bondEnergySum;
@@ -49,8 +50,42 @@ public class MappingSolution implements Serializable {
     private boolean generate3D;
     private boolean generate2D;
 
+    /**
+     *
+     * @param bondChangeCalculator
+     * @param ma
+     * @param reactor
+     * @param localScore
+     * @param bondEnergyChange
+     * @param totalCarbonBondChanges
+     * @param totalBondChanges
+     * @param totalFragmentChanges
+     * @param totalStereoChanges
+     * @param smallestFragmentCount
+     * @param reaction
+     * @param energyDelta
+     */
+    public MappingSolution(BondChangeCalculator bondChangeCalculator, IMappingAlgorithm ma, IReaction reaction, Reactor reactor, double bondEnergyChange, int totalCarbonBondChanges, int totalBondChanges, int totalFragmentChanges, int totalStereoChanges, int smallestFragmentCount, int localScore, double energyDelta) {
+        this.algorithmID = ma;
+        this.bondEnergySum = bondEnergyChange;
+        this.totalBondChanges = totalBondChanges;
+        this.totalFragmentChanges = totalFragmentChanges;
+        this.totalStereoChanges = totalStereoChanges;
+        this.smallestFragmentCount = smallestFragmentCount;
+        this.reaction = reaction;
+        this.reactor = reactor;
+        this.totalChanges = localScore;
+        this.bondChangeCalculator = bondChangeCalculator;
+        this.totalCarbonBondChanges = totalCarbonBondChanges;
+        this.chosen = false;
+        this.generate2D = false;
+        this.generate3D = false;
+        this.energyDelta = energyDelta;
+    }
+
     @Override
-    public String toString() {
+    public String toString(
+            ) {
         StringBuilder sb = new StringBuilder();
         String property = System.getProperty("line.separator");
         sb.append(property);
@@ -71,51 +106,6 @@ public class MappingSolution implements Serializable {
                 .append(", generate3D=").append(generate3D).append(", generate2D=").append(generate2D).append('}');
         sb.append(property);
         return sb.toString();
-    }
-
-    /**
-     *
-     * @param bondChangeCalculator
-     * @param ma
-     * @param reactor
-     * @param localScore
-     * @param bondEnergyChange
-     * @param totalCarbonBondChanges
-     * @param totalBondChanges
-     * @param totalFragmentChanges
-     * @param totalStereoChanges
-     * @param smallestFragmentCount
-     * @param reaction
-     * @param energyDelta
-     */
-    public MappingSolution(
-            BondChangeCalculator bondChangeCalculator,
-            IMappingAlgorithm ma,
-            IReaction reaction,
-            Reactor reactor,
-            double bondEnergyChange,
-            int totalCarbonBondChanges,
-            int totalBondChanges,
-            int totalFragmentChanges,
-            int totalStereoChanges,
-            int smallestFragmentCount,
-            int localScore,
-            double energyDelta) {
-        this.algorithmID = ma;
-        this.bondEnergySum = bondEnergyChange;
-        this.totalBondChanges = totalBondChanges;
-        this.totalFragmentChanges = totalFragmentChanges;
-        this.totalStereoChanges = totalStereoChanges;
-        this.smallestFragmentCount = smallestFragmentCount;
-        this.reaction = reaction;
-        this.reactor = reactor;
-        this.totalChanges = localScore;
-        this.bondChangeCalculator = bondChangeCalculator;
-        this.totalCarbonBondChanges = totalCarbonBondChanges;
-        this.chosen = false;
-        this.generate2D = false;
-        this.generate3D = false;
-        this.energyDelta = energyDelta;
     }
 
     /**
@@ -240,5 +230,4 @@ public class MappingSolution implements Serializable {
     public double getEnergyDelta() {
         return energyDelta;
     }
-    private static final Logger LOG = Logger.getLogger(MappingSolution.class.getName());
 }

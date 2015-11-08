@@ -38,6 +38,7 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
     
     private final static Vector2d X_AXIS = new Vector2d(1, 0);
     private final static Vector2d Y_AXIS = new Vector2d(0, 1);
+    private static final Logger LOG = Logger.getLogger(DirectArrowDrawer.class.getName());
     
     private final Params params;
 
@@ -305,6 +306,5 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
 //            }
         }
     }
-    private static final Logger LOG = Logger.getLogger(DirectArrowDrawer.class.getName());
 
 }

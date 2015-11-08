@@ -46,6 +46,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
 public class DirectBondDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectBondDrawer.class.getName());
 
     private final LabelManager labelManager;
     private final Stroke dashedWedgeStroke;
@@ -405,5 +406,4 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
             return true;
         }
     }
-    private static final Logger LOG = Logger.getLogger(DirectBondDrawer.class.getName());
 }

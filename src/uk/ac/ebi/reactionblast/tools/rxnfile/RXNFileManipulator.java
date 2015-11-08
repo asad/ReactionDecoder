@@ -43,6 +43,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class RXNFileManipulator extends BasicDebugger {
 
     private static FingerPrintContainer FPC = FingerPrintContainer.getInstance();
+    private static final Logger LOG = Logger.getLogger(RXNFileManipulator.class.getName());
     private MolContainer atomContainer = MolContainer.getInstance();
     private Integer moleculeCounter = 0;
 
@@ -480,5 +481,4 @@ public class RXNFileManipulator extends BasicDebugger {
 //        System.out.println(molecule.getID());
         return molecule;
     }
-    private static final Logger LOG = Logger.getLogger(RXNFileManipulator.class.getName());
 }

@@ -46,14 +46,7 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * @author Asad
  */
 class IsomeraseHandler {
-
-    private final Map<IRingSet, IAtomContainer> ringContainerCountR;
-    private final Map<IRingSet, IAtomContainer> ringContainerCountP;
-    private final IRingSet sssrEduct;
-    private final IRingSet sssrProduct;
-    private final boolean DEBUG = false;
-
-    protected final IReaction reaction;
+    private static final Logger LOG = Logger.getLogger(IsomeraseHandler.class.getName());
 
     /**
      *
@@ -66,7 +59,15 @@ class IsomeraseHandler {
         MoleculeInitializer.initializeMolecule(atomContainer);
     }
 
-    public IsomeraseHandler(IReaction reaction) {
+    private final Map<IRingSet, IAtomContainer> ringContainerCountR;
+    private final Map<IRingSet, IAtomContainer> ringContainerCountP;
+    private final IRingSet sssrEduct;
+    private final IRingSet sssrProduct;
+    private final boolean DEBUG = false;
+
+    protected final IReaction reaction;
+
+    IsomeraseHandler(IReaction reaction) {
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
@@ -188,6 +189,7 @@ class IsomeraseHandler {
         return false;
     }
 
+
     private boolean findAndChipBond(IAtomContainer container, IAtomContainer referenceContainer) {
         boolean flag = false;
 
@@ -263,9 +265,9 @@ class IsomeraseHandler {
     }
 
     /*
-     This Method will find and chip the bonds between the rings 
-     Example R01557
-     */
+    This Method will find and chip the bonds between the rings
+    Example R01557
+    */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
         if (DEBUG) {
             System.out.println("Find and Chip Bond Between Rings");
@@ -309,5 +311,5 @@ class IsomeraseHandler {
         }
         return !bond_to_be_removed.isEmpty();
     }
-    private static final Logger LOG = Logger.getLogger(IsomeraseHandler.class.getName());
+
 }

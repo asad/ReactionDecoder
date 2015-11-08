@@ -41,6 +41,7 @@ import uk.ac.ebi.centres.descriptor.Planar;
  * @author John May
  */
 public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
+    private static final Logger LOG = Logger.getLogger(PlanarCentre.class.getName());
 
     private final AbstractLigand<A> first;
     private final AbstractLigand<A> second;
@@ -168,5 +169,4 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         getProvider().dispose();
         setProvider(null);
     }
-    private static final Logger LOG = Logger.getLogger(PlanarCentre.class.getName());
 }

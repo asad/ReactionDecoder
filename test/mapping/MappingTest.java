@@ -40,6 +40,7 @@ import uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MappingTest extends BaseTest {
+    private static final Logger LOG = Logger.getLogger(MappingTest.class.getName());
 
     @Before
     public void setup() {
@@ -1867,6 +1868,5 @@ public class MappingTest extends BaseTest {
          */
         Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
-    private static final Logger LOG = Logger.getLogger(MappingTest.class.getName());
 
 }

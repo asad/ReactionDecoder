@@ -28,6 +28,7 @@ import uk.ac.ebi.centres.descriptor.General;
  * @author John May
  */
 public class MutableDescriptor {
+    private static final Logger LOG = Logger.getLogger(MutableDescriptor.class.getName());
 
     private Descriptor descriptor = General.UNKNOWN;
 
@@ -41,5 +42,4 @@ public class MutableDescriptor {
         }
         this.descriptor = descriptor;
     }
-    private static final Logger LOG = Logger.getLogger(MutableDescriptor.class.getName());
 }

@@ -41,6 +41,22 @@ import uk.ac.ebi.reactionblast.tools.labelling.SignatureMoleculeLabeller;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CanonicalNumberingGenerator {
+    private static final Logger LOG = Logger.getLogger(CanonicalNumberingGenerator.class.getName());
+
+    private static synchronized void resetFlags(IAtomContainer atomContainer) {
+        for (int f = 0; f < atomContainer.getAtomCount(); f++) {
+            atomContainer.getAtom(f).setFlag(CDKConstants.VISITED, false);
+        }
+        for (int f = 0; f < atomContainer.getBondCount(); f++) {
+            atomContainer.getBond(f).setFlag(CDKConstants.VISITED, false);
+        }
+    }
+
+    private static synchronized <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+        List<T> list = new ArrayList<T>(c);
+        java.util.Collections.sort(list);
+        return list;
+    }
 
     private final IAtomContainer atomContainer;
     private final SimpleGraph simpleGraph;
@@ -113,21 +129,6 @@ public class CanonicalNumberingGenerator {
         return intList;
     }
 
-    private static synchronized void resetFlags(IAtomContainer atomContainer) {
-        for (int f = 0; f < atomContainer.getAtomCount(); f++) {
-            atomContainer.getAtom(f).setFlag(CDKConstants.VISITED, false);
-        }
-        for (int f = 0; f < atomContainer.getBondCount(); f++) {
-            atomContainer.getBond(f).setFlag(CDKConstants.VISITED, false);
-        }
-    }
-
-    private static synchronized <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-        List<T> list = new ArrayList<T>(c);
-        java.util.Collections.sort(list);
-        return list;
-    }
-
     /**
      * @return the canonicalPermutation
      */
@@ -151,6 +152,7 @@ public class CanonicalNumberingGenerator {
         }
         return val;
     }
+
 
     class Label extends Object {
 
@@ -190,5 +192,4 @@ public class CanonicalNumberingGenerator {
             return -1;
         }
     }
-    private static final Logger LOG = Logger.getLogger(CanonicalNumberingGenerator.class.getName());
 }

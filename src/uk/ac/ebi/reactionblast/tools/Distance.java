@@ -72,6 +72,7 @@ public class Distance {
 
     private static BitSet A;
     private static BitSet B;
+    private static final Logger LOG = Logger.getLogger(Distance.class.getName());
 
     /**
      *
@@ -228,5 +229,4 @@ public class Distance {
         return Val;
 
     }
-    private static final Logger LOG = Logger.getLogger(Distance.class.getName());
 }

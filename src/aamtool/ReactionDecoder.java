@@ -59,54 +59,7 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 public class ReactionDecoder extends Annotator {
 
     private final static boolean DEBUG = false;
-
-    private void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
-
-        // write xml to file
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-        doc.setXmlStandalone(true);
-        DOMSource source = new DOMSource(doc);
-
-        /*
-         Write to a File
-         */
-        File file = new File(fileName + ".xml");
-        StreamResult result = new StreamResult(file);
-        transformer.transform(source, result);
-
-        System.out.println("Output is presented in xml format: " + file.getAbsolutePath());
-
-        if (DEBUG) {
-            // Show output on console during development
-            result = new StreamResult(System.out);
-            transformer.transform(source, result);
-        }
-    }
-
-    private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
-        File file = new File(fileName + ".txt");
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
-            writer.write(doc.toString());
-        }
-
-        System.out.println("Output is presented in text format: " + file.getAbsolutePath());
-
-        if (DEBUG) {
-            // Show output on console during development
-            System.out.println(doc.toString());
-        }
-    }
-
-    public ReactionDecoder() {
-        super();
-    }
+    private static final Logger LOG = Logger.getLogger(ReactionDecoder.class.getName());
 
     /**
      * @param args the command line areactionWithLayoutgumentheaderString
@@ -129,8 +82,8 @@ public class ReactionDecoder extends Annotator {
             CommandLine similarityLine = parser3.parse(createSimilarityOptions, args, true);
 
             /*
-             * Print the Header
-             */
+            * Print the Header
+            */
             getHeader();
 
             if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")
@@ -191,7 +144,55 @@ public class ReactionDecoder extends Annotator {
         } catch (Exception ex) {
             Logger.getLogger(ReactionDecoder.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+    }
 
+    public ReactionDecoder() {
+        super();
+    }
+    
+    private void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
+        
+        // write xml to file
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        
+        doc.setXmlStandalone(true);
+        DOMSource source = new DOMSource(doc);
+        
+        /*
+        Write to a File
+        */
+        File file = new File(fileName + ".xml");
+        StreamResult result = new StreamResult(file);
+        transformer.transform(source, result);
+        
+        System.out.println("Output is presented in xml format: " + file.getAbsolutePath());
+        
+        if (DEBUG) {
+            // Show output on console during development
+            result = new StreamResult(System.out);
+            transformer.transform(source, result);
+        }
+    }
+    
+    private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        File file = new File(fileName + ".txt");
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
+            writer.write(doc.toString());
+        }
+        
+        System.out.println("Output is presented in text format: " + file.getAbsolutePath());
+
+        if (DEBUG) {
+            // Show output on console during development
+            System.out.println(doc.toString());
+        }
     }
 
     private void AAMTask(CommandLine aamLine, Options createAAMOptions)
@@ -640,6 +641,5 @@ public class ReactionDecoder extends Annotator {
             printHelp(System.out, createAnnotateOptions);
         }
     }
-    private static final Logger LOG = Logger.getLogger(ReactionDecoder.class.getName());
 
 }

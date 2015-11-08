@@ -69,6 +69,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQueryCompiler;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class QueryCompiler implements IQueryCompiler {
+    private static final Logger LOG = Logger.getLogger(QueryCompiler.class.getName());
 
     private IAtomContainer molecule = null;
     private IQueryAtomContainer queryMolecule = null;
@@ -178,5 +179,4 @@ public class QueryCompiler implements IQueryCompiler {
     private boolean isMatchAtomType() {
         return matchAtomType;
     }
-    private static final Logger LOG = Logger.getLogger(QueryCompiler.class.getName());
 }

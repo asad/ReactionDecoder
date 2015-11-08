@@ -30,10 +30,12 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContainer> {
 
+    private static final Logger LOG = Logger.getLogger(AtomContainerComparatorBy2DCenter.class.getName());
+
     /**
      * Compare two AtomContainers based on their 2D position.
      *
-     * @param atCont1 
+     * @param atCont1
      * @param atCont2 
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
@@ -52,6 +54,5 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
         }
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(AtomContainerComparatorBy2DCenter.class.getName());
     
 }

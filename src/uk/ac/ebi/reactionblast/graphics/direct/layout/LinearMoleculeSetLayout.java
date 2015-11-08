@@ -32,6 +32,7 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainerSet> {
+    private static final Logger LOG = Logger.getLogger(LinearMoleculeSetLayout.class.getName());
 
     /**
      * This is an axis for the individual molecules to be aligned to
@@ -119,5 +120,4 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;
     }
-    private static final Logger LOG = Logger.getLogger(LinearMoleculeSetLayout.class.getName());
 }

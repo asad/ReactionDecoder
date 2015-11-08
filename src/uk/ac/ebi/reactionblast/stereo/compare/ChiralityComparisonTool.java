@@ -37,14 +37,15 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
  */
 public class ChiralityComparisonTool {
 
+    private static final Logger LOG = Logger.getLogger(ChiralityComparisonTool.class.getName());
+
     /**
      *
      * @param atomContainerA
      * @param atomContainerB
      * @throws Exception
      */
-    public static void compare(IAtomContainer atomContainerA,
-            IAtomContainer atomContainerB) throws Exception {
+    public static void compare(IAtomContainer atomContainerA, IAtomContainer atomContainerB) throws Exception {
         Map<IAtom, IStereoAndConformation> chiralityMapA;
         if (has3DCoordinates(atomContainerA)) {
             chiralityMapA = new Chirality3DTool().getTetrahedralChiralities(atomContainerA);
@@ -80,5 +81,4 @@ public class ChiralityComparisonTool {
         }
         return false;
     }
-    private static final Logger LOG = Logger.getLogger(ChiralityComparisonTool.class.getName());
 }

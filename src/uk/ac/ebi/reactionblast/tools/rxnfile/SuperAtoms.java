@@ -32,6 +32,7 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperAtoms {
+    private static final Logger LOG = Logger.getLogger(SuperAtoms.class.getName());
 
     private String sgroupType;
     private IPseudoAtom pseudoAtom;
@@ -123,5 +124,4 @@ public class SuperAtoms {
     public void setCrossingBond(IBond crossingBond) {
         this.crossingBond = crossingBond;
     }
-    private static final Logger LOG = Logger.getLogger(SuperAtoms.class.getName());
 }

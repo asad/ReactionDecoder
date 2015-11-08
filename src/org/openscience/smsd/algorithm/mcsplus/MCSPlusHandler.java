@@ -46,7 +46,8 @@ import org.openscience.smsd.interfaces.IResults;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
-public final class MCSPlusHandler implements IResults {
+public class MCSPlusHandler implements IResults {
+    private static final Logger LOG = Logger.getLogger(MCSPlusHandler.class.getName());
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<Map<Integer, Integer>> allMCS;
@@ -215,5 +216,4 @@ public final class MCSPlusHandler implements IResults {
     public synchronized boolean isTimeout() {
         return timeout;
     }
-    private static final Logger LOG = Logger.getLogger(MCSPlusHandler.class.getName());
 }

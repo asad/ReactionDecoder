@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 
 public class ZoomToFitGridLayout {
+    private static final Logger LOG = Logger.getLogger(ZoomToFitGridLayout.class.getName());
 
     private DirectMoleculeDrawer drawer;
 
@@ -91,6 +92,5 @@ public class ZoomToFitGridLayout {
         double objectHeight = r2D.getHeight() + (borderY * 2);
         return Math.min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
-    private static final Logger LOG = Logger.getLogger(ZoomToFitGridLayout.class.getName());
 
 }

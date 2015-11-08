@@ -30,61 +30,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class BondChange implements Serializable {
 
     private static final long serialVersionUID = 9890766688070991L;
-
-    private final IBond reactantBond;
-    private final IBond productBond;
-    private float bondChangeDelta;
-
-    /**
-     *
-     * @param reactantBond
-     * @param productBond
-     */
-    public BondChange(IBond reactantBond, IBond productBond) {
-        this.bondChangeDelta = 0;
-        this.reactantBond = reactantBond;
-        this.productBond = productBond;
-        if (this.reactantBond != null && this.productBond != null) {
-            float change = convertBondOrder(this.productBond) - convertBondOrder(this.reactantBond);
-            if (change != 0) {
-                setBondChangeInformation(change);
-            } else if (change == 0) {
-                setBondChangeInformation(0);
-            }
-        } else if (this.reactantBond == null && this.productBond != null) {
-            setBondChangeInformation(convertBondOrder(this.productBond));
-        } else if (this.reactantBond != null && this.productBond == null) {
-            setBondChangeInformation(convertBondOrder(this.reactantBond));
-        }
-    }
-
-    /**
-     * @return the reactantBond
-     */
-    public synchronized IBond getReactantBond() {
-        return reactantBond;
-    }
-
-    /**
-     * @return the productBond
-     */
-    public synchronized IBond getProductBond() {
-        return productBond;
-    }
-
-    /**
-     * @return the bondChangeDelta
-     */
-    public synchronized float getBondChangeDelta() {
-        return bondChangeDelta;
-    }
-
-    /**
-     * @param bondChangeDelta the bondChangeDelta to set
-     */
-    private synchronized void setBondChangeInformation(float bondChangeInformation) {
-        this.bondChangeDelta = bondChangeInformation;
-    }
+    private static final Logger LOG = Logger.getLogger(BondChange.class.getName());
 
     /**
      *
@@ -147,6 +93,61 @@ public class BondChange implements Serializable {
         return value;
     }
 
+    private final IBond reactantBond;
+    private final IBond productBond;
+    private float bondChangeDelta;
+
+    /**
+     *
+     * @param reactantBond
+     * @param productBond
+     */
+    public BondChange(IBond reactantBond, IBond productBond) {
+        this.bondChangeDelta = 0;
+        this.reactantBond = reactantBond;
+        this.productBond = productBond;
+        if (this.reactantBond != null && this.productBond != null) {
+            float change = convertBondOrder(this.productBond) - convertBondOrder(this.reactantBond);
+            if (change != 0) {
+                setBondChangeInformation(change);
+            } else if (change == 0) {
+                setBondChangeInformation(0);
+            }
+        } else if (this.reactantBond == null && this.productBond != null) {
+            setBondChangeInformation(convertBondOrder(this.productBond));
+        } else if (this.reactantBond != null && this.productBond == null) {
+            setBondChangeInformation(convertBondOrder(this.reactantBond));
+        }
+    }
+
+    /**
+     * @return the reactantBond
+     */
+    public synchronized IBond getReactantBond() {
+        return reactantBond;
+    }
+
+    /**
+     * @return the productBond
+     */
+    public synchronized IBond getProductBond() {
+        return productBond;
+    }
+
+    /**
+     * @return the bondChangeDelta
+     */
+    public synchronized float getBondChangeDelta() {
+        return bondChangeDelta;
+    }
+
+    /**
+     * @param bondChangeDelta the bondChangeDelta to set
+     */
+    private synchronized void setBondChangeInformation(float bondChangeInformation) {
+        this.bondChangeDelta = bondChangeInformation;
+    }
+
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
@@ -177,5 +178,5 @@ public class BondChange implements Serializable {
         }
         return result.toString();
     }
-    private static final Logger LOG = Logger.getLogger(BondChange.class.getName());
+
 }

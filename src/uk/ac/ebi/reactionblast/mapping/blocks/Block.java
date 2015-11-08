@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class Block implements Comparable<Block> {
+    private static final Logger LOG = Logger.getLogger(Block.class.getName());
 
     private final IAtomContainer atomContainer;
 
@@ -182,6 +183,5 @@ public class Block implements Comparable<Block> {
     public String toString() {
         return atomContainer.getID() + " " + getIndices(getAtoms(), atomContainer) + " " + getSignatureString();
     }
-    private static final Logger LOG = Logger.getLogger(Block.class.getName());
 
 }

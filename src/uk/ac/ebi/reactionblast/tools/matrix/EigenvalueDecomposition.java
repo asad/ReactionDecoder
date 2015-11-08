@@ -22,6 +22,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class EigenvalueDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 17869981017L;
+    private static final Logger LOG = Logger.getLogger(EigenvalueDecomposition.class.getName());
     /* ------------------------
      Class variables
      * ------------------------ */
@@ -64,7 +65,63 @@ public class EigenvalueDecomposition implements java.io.Serializable {
 
     /* ------------------------
      Private Methods
-     * ------------------------ */    // Symmetric Householder reduction to tridiagonal form.
+     * ------------------------ */       private transient double cdivr, cdivi;
+
+    /* ------------------------
+    Constructor
+     * ------------------------ */
+    /**
+     * Check for symmetry, then construct the eigenvalue decomposition
+     *
+     * @param Arg
+     */
+    public EigenvalueDecomposition(EBIMatrix Arg) {
+        double[][] A = Arg.getArray();
+        n = Arg.getColumnDimension();
+        V = new double[n][n];
+        d = new double[n];
+        e = new double[n];
+        
+        issymmetric = true;
+        for (int j = 0; (j < n) & issymmetric; j++) {
+            for (int i = 0; (i < n) & issymmetric; i++) {
+                issymmetric = (A[i][j] == A[j][i]);
+            }
+        }
+        
+        if (issymmetric) {
+            for (int i = 0; i < n; i++) {
+                System.arraycopy(A[i], 0, V[i], 0, n);
+            }
+            
+            // Tridiagonalize.
+            tred2();
+            
+            // Diagonalize.
+            tql2();
+            
+        } else {
+            H = new double[n][n];
+            ort = new double[n];
+            
+            for (int j = 0; j < n; j++) {
+                for (int i = 0; i < n; i++) {
+                    H[i][j] = A[i][j];
+                }
+            }
+            
+            // Reduce to Hessenberg form.
+            orthes();
+            
+            // Reduce Hessenberg to real Schur form.
+            hqr2();
+        }
+    }
+
+    /* ------------------------
+    Private Methods
+    * ------------------------ */
+    // Symmetric Householder reduction to tridiagonal form.
     private void tred2() {
         System.arraycopy(V[n - 1], 0, d, 0, n);
 
@@ -167,7 +224,9 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         e[0] = 0.0;
     }
 
+    
     // Symmetric tridiagonal QL algorithm.
+    
     private void tql2() {
 
         //  This is derived from the Algol procedures tql2, by
@@ -248,11 +307,11 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                     p = -s * s2 * c3 * el1 * e[l] / dl1;
                     e[l] = s * p;
                     d[l] = c * p;
-
-                // Check for convergence.
+                    
+                    // Check for convergence.
                 } while (Math.abs(e[l]) > eps * tst1);
             }
-            d[l] = d[l] + f;
+            d[l] += f;
             e[l] = 0.0;
         }
 
@@ -279,6 +338,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
     }
 
     // Nonsymmetric reduction to Hessenberg form.
+    
     private void orthes() {
 
         //  This is derived from the Algol procedures orthes and ortran,
@@ -364,8 +424,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
             }
         }
     }    // Complex scalar division.
-    private transient double cdivr, cdivi;
-
+    
+    
     private void cdiv(double xr, double xi, double yr, double yi) {
         double r, d1;
         if (Math.abs(yr) > Math.abs(yi)) {
@@ -406,7 +466,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                 e[i] = 0.0;
             }
             for (int j = Math.max(i - 1, 0); j < nn; j++) {
-                norm = norm + Math.abs(H[i][j]);
+                norm += Math.abs(H[i][j]);
             }
         }
 
@@ -435,8 +495,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                 e[n1] = 0.0;
                 n1--;
                 iter = 0;
-
-            // Two roots found
+                
+                // Two roots found
             } else if (l == n1 - 1) {
                 w = H[n1][n1 - 1] * H[n1 - 1][n1];
                 p = (H[n1 - 1][n1 - 1] - H[n1][n1]) / 2.0;
@@ -488,8 +548,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                         V[i][n1 - 1] = q * z + p * V[i][n1];
                         V[i][n1] = q * V[i][n1] - p * z;
                     }
-
-                // Complex pair
+                    
+                    // Complex pair
                 } else {
                     d[n1 - 1] = x + p;
                     d[n1] = x + p;
@@ -498,8 +558,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                 }
                 n1 -= 2;
                 iter = 0;
-
-            // No convergence yet
+                
+                // No convergence yet
             } else {
 
                 // Form shift
@@ -674,8 +734,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                             } else {
                                 H[i][n1] = -r / (eps * norm);
                             }
-
-                        // Solve real equations
+                            
+                            // Solve real equations
                         } else {
                             x = H[i][i + 1];
                             y = H[i + 1][i];
@@ -698,8 +758,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                         }
                     }
                 }
-
-            // Complex vector
+                
+                // Complex vector
             } else if (q < 0) {
                 int l = n1 - 1;
 
@@ -790,61 +850,9 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         }
     }
 
-
     /* ------------------------
-     Constructor
-     * ------------------------ */
-    /**
-     * Check for symmetry, then construct the eigenvalue decomposition
-     *
-     * @param Arg
-     */
-    public EigenvalueDecomposition(EBIMatrix Arg) {
-        double[][] A = Arg.getArray();
-        n = Arg.getColumnDimension();
-        V = new double[n][n];
-        d = new double[n];
-        e = new double[n];
-
-        issymmetric = true;
-        for (int j = 0; (j < n) & issymmetric; j++) {
-            for (int i = 0; (i < n) & issymmetric; i++) {
-                issymmetric = (A[i][j] == A[j][i]);
-            }
-        }
-
-        if (issymmetric) {
-            for (int i = 0; i < n; i++) {
-                System.arraycopy(A[i], 0, V[i], 0, n);
-            }
-
-            // Tridiagonalize.
-            tred2();
-
-            // Diagonalize.
-            tql2();
-
-        } else {
-            H = new double[n][n];
-            ort = new double[n];
-
-            for (int j = 0; j < n; j++) {
-                for (int i = 0; i < n; i++) {
-                    H[i][j] = A[i][j];
-                }
-            }
-
-            // Reduce to Hessenberg form.
-            orthes();
-
-            // Reduce Hessenberg to real Schur form.
-            hqr2();
-        }
-    }
-
-    /* ------------------------
-     Public Methods
-     * ------------------------ */
+    Public Methods
+    * ------------------------ */
     /**
      * Return the eigenvector matrix
      *
@@ -893,5 +901,4 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         }
         return X;
     }
-    private static final Logger LOG = Logger.getLogger(EigenvalueDecomposition.class.getName());
 }

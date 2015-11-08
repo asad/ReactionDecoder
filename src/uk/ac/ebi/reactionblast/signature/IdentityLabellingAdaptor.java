@@ -30,6 +30,8 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 public class IdentityLabellingAdaptor
         implements ICanonicalMoleculeLabeller {
 
+    private static final Logger LOG = Logger.getLogger(IdentityLabellingAdaptor.class.getName());
+
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return container;
@@ -44,5 +46,4 @@ public class IdentityLabellingAdaptor
         }
         return identity;
     }
-    private static final Logger LOG = Logger.getLogger(IdentityLabellingAdaptor.class.getName());
 }

@@ -29,12 +29,13 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class Feature implements IFeature,
+public class Feature implements IFeature,
         Comparable<IFeature>,
         Comparator<IFeature>,
         Serializable {
 
     private static final long serialVersionUID = 0xe6c5aecf276L;
+    private static final Logger LOG = Logger.getLogger(Feature.class.getName());
     private final String pattern;
     private double weight;
 
@@ -122,5 +123,4 @@ public final class Feature implements IFeature,
     public void setValue(double weight) {
         this.weight = weight;
     }
-    private static final Logger LOG = Logger.getLogger(Feature.class.getName());
 }

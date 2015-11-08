@@ -35,6 +35,7 @@ import java.util.logging.Logger;
  *
  */
 public class BoundsTree implements Iterable<Rectangle2D> {
+    private static final Logger LOG = Logger.getLogger(BoundsTree.class.getName());
 
     private Rectangle2D root;
 
@@ -234,6 +235,5 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
         return sb.toString();
     }
-    private static final Logger LOG = Logger.getLogger(BoundsTree.class.getName());
 
 }

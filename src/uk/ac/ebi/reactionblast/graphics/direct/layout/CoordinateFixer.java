@@ -26,6 +26,8 @@ import org.openscience.cdk.interfaces.IReaction;
 
 public class CoordinateFixer {
 
+    private static final Logger LOG = Logger.getLogger(CoordinateFixer.class.getName());
+
     public static void fixCoordinates(IReaction reaction) {
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
@@ -35,6 +37,5 @@ public class CoordinateFixer {
             }
         }
     }
-    private static final Logger LOG = Logger.getLogger(CoordinateFixer.class.getName());
 
 }

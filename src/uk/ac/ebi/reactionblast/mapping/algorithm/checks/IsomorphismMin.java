@@ -38,11 +38,12 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public final class IsomorphismMin extends Selector implements IResult {
+public class IsomorphismMin extends Selector implements IResult {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(IsomorphismMin.class);
     private static final long serialVersionUID = 1908987778L;
+    private static final Logger LOG = Logger.getLogger(IsomorphismMin.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean isSubstructure;
@@ -257,5 +258,4 @@ public final class IsomorphismMin extends Selector implements IResult {
         System.out.println();
 
     }
-    private static final Logger LOG = Logger.getLogger(IsomorphismMin.class.getName());
 }

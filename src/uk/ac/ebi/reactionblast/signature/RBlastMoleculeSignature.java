@@ -33,6 +33,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * @author modified by Asad to use rBLAST SMILES
  */
 public class RBlastMoleculeSignature extends BaseMoleculeSignature {
+    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignature.class.getName());
 
     private boolean useAromatics = true;
     private boolean useCharge = true;
@@ -225,5 +226,4 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
         builder.makeFromColoredTree(tree);
         return builder.getAtomContainer();
     }
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignature.class.getName());
 }

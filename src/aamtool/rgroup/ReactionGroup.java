@@ -27,8 +27,12 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class ReactionGroup implements Comparable<ReactionGroup>, Comparator<ReactionGroup> {
+    private static final Logger LOG = Logger.getLogger(ReactionGroup.class.getName());
 
-    public ReactionGroup(String name) {
+    private final String name;
+    private boolean rGroupPresent;
+
+    ReactionGroup(String name) {
         this.name = name;
         this.rGroupPresent = false;
     }
@@ -51,9 +55,6 @@ class ReactionGroup implements Comparable<ReactionGroup>, Comparator<ReactionGro
         final ReactionGroup other = (ReactionGroup) obj;
         return Objects.equals(this.name, other.name);
     }
-
-    private final String name;
-    private boolean rGroupPresent;
 
     @Override
     public int compareTo(ReactionGroup o) {
@@ -78,5 +79,4 @@ class ReactionGroup implements Comparable<ReactionGroup>, Comparator<ReactionGro
     public void setRGroupPresent(boolean isRGroupPresent) {
         this.rGroupPresent = isRGroupPresent;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionGroup.class.getName());
 }

@@ -40,41 +40,16 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
  *
  */
 public class Chirality2DTool implements ChiralityTool {
-
-    @Override
-    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(IAtomContainer atomContainer) {
-        return getTetrahedralChiralities(atomContainer, false);
-    }
+    private static final Logger LOG = Logger.getLogger(Chirality2DTool.class.getName());
 
     /**
-     * 
-     * @param atomContainer
-     * @param getNoneAssesments
-     * @return
-     */
-    @Override
-    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
-            IAtomContainer atomContainer, boolean getNoneAssesments) {
-        Map<IAtom, IStereoAndConformation> chiralities = new HashMap<>();
-        WedgeStereoLifter lifter = new WedgeStereoLifter();
-        for (IAtom atom : atomContainer.atoms()) {
-            IStereoAndConformation chirality = getChirality2D(lifter, atom, atomContainer);
-            if (getNoneAssesments || chirality != IStereoAndConformation.NONE) {
-                chiralities.put(atom, chirality);
-            }
-        }
-        return chiralities;
-    }
-
-    /**
-     * 
+     *
      * @param lifter
      * @param atom
      * @param atomContainer
      * @return
      */
-    public static IStereoAndConformation getChirality2D(
-            WedgeStereoLifter lifter, IAtom atom, IAtomContainer atomContainer) {
+    public static IStereoAndConformation getChirality2D(WedgeStereoLifter lifter, IAtom atom, IAtomContainer atomContainer) {
         IStereoElement stereoElement = lifter.lift(atom, atomContainer);
         return getChirality2D(stereoElement, atomContainer);
     }
@@ -100,5 +75,30 @@ public class Chirality2DTool implements ChiralityTool {
             return IStereoAndConformation.NONE;
         }
     }
-    private static final Logger LOG = Logger.getLogger(Chirality2DTool.class.getName());
+
+    @Override
+    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
+            IAtomContainer atomContainer) {
+        return getTetrahedralChiralities(atomContainer, false);
+    }
+
+    /**
+     *
+     * @param atomContainer
+     * @param getNoneAssesments
+     * @return
+     */
+    @Override
+    public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
+            IAtomContainer atomContainer, boolean getNoneAssesments) {
+        Map<IAtom, IStereoAndConformation> chiralities = new HashMap<>();
+        WedgeStereoLifter lifter = new WedgeStereoLifter();
+        for (IAtom atom : atomContainer.atoms()) {
+            IStereoAndConformation chirality = getChirality2D(lifter, atom, atomContainer);
+            if (getNoneAssesments || chirality != IStereoAndConformation.NONE) {
+                chiralities.put(atom, chirality);
+            }
+        }
+        return chiralities;
+    }
 }

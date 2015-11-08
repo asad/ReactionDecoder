@@ -44,12 +44,36 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  *
  * @Copyright Syed Asad Rahman (C) 2004-2011
  */
-public final class CallableAtomMappingTool implements Serializable {
+public class CallableAtomMappingTool implements Serializable {
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
+    private static final Logger LOG = Logger.getLogger(CallableAtomMappingTool.class.getName());
+
+    /**
+     * Creates mapping PDFs for all the processed reaction mappings
+     *
+     * @param reactor
+     * @param outputDirectoryName
+     * @param outFileName
+     * @throws Exception
+     */
+    public static synchronized void writeMappingRXN(Reactor reactor, String outputDirectoryName, String outFileName) throws Exception {
+        String reactionID = reactor.getReactionWithAtomAtomMapping().getID();
+        IReaction mappedReaction = reactor.getReactionWithAtomAtomMapping();
+        if (reactionID == null) {
+            reactionID = String.valueOf(System.currentTimeMillis());
+            reactor.getReactionWithAtomAtomMapping().setID(reactionID);
+        }
+        
+        String outputFile = outputDirectoryName;
+        outputFile += File.separator + outFileName;
+        try (MDLV2000RXNWriter rxnW = new MDLV2000RXNWriter(new FileWriter(new File(outputFile)))) {
+            rxnW.write(mappedReaction);
+        }
+    }
     private Map<IMappingAlgorithm, Reactor> solution = null;
 
     /**
@@ -190,31 +214,6 @@ public final class CallableAtomMappingTool implements Serializable {
     }
 
     /**
-     * Creates mapping PDFs for all the processed reaction mappings
-     *
-     * @param reactor
-     * @param outputDirectoryName
-     * @param outFileName
-     * @throws Exception
-     */
-    public static synchronized void writeMappingRXN(Reactor reactor, String outputDirectoryName, String outFileName) throws Exception {
-
-        String reactionID = reactor.getReactionWithAtomAtomMapping().getID();
-        IReaction mappedReaction = reactor.getReactionWithAtomAtomMapping();
-        if (reactionID == null) {
-            reactionID = String.valueOf(System.currentTimeMillis());
-            reactor.getReactionWithAtomAtomMapping().setID(reactionID);
-        }
-
-        String outputFile = outputDirectoryName;
-        outputFile += File.separator + outFileName;
-        try (MDLV2000RXNWriter rxnW = new MDLV2000RXNWriter(new FileWriter(new File(outputFile)))) {
-            rxnW.write(mappedReaction);
-        }
-
-    }
-
-    /**
      * @return the solution
      */
     public Map<IMappingAlgorithm, Reactor> getSolutions() {
@@ -227,5 +226,5 @@ public final class CallableAtomMappingTool implements Serializable {
     private void putSolution(IMappingAlgorithm choice, Reactor reactor) {
         this.solution.put(choice, reactor);
     }
-    private static final Logger LOG = Logger.getLogger(CallableAtomMappingTool.class.getName());
+
 }

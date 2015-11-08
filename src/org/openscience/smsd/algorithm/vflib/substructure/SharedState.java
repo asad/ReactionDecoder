@@ -59,13 +59,14 @@ import java.util.logging.Logger;
 // the two graphs and the terminal sets. It is shared between all the states
 // in each isomorphism test.
 class SharedState {
+    private static final Logger LOG = Logger.getLogger(SharedState.class.getName());
 
     int[] sourceMapping;
     int[] targetMapping;
     int[] sourceTerminalSet;
     int[] targetTerminalSet;
 
-    public SharedState(int sourceSize, int targetSize) {
+    SharedState(int sourceSize, int targetSize) {
         sourceMapping = new int[sourceSize];
         Arrays.fill(sourceMapping, -1);
 
@@ -78,5 +79,4 @@ class SharedState {
         targetTerminalSet = new int[targetSize];
         Arrays.fill(targetTerminalSet, 0);
     }
-    private static final Logger LOG = Logger.getLogger(SharedState.class.getName());
 }

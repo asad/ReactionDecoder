@@ -31,6 +31,7 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(SingleMoleculeLayout.class.getName());
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
@@ -81,5 +82,4 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(SingleMoleculeLayout.class.getName());
 }

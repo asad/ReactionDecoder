@@ -87,6 +87,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 @TestClass("org.openscience.cdk.smiles.SmilesGeneratorTest")
 public class RBlastSmilesGenerator {
+    private static final Logger LOG = Logger.getLogger(RBlastSmilesGenerator.class.getName());
     //private final static boolean debug = false;
 
     /**
@@ -1389,10 +1390,10 @@ public class RBlastSmilesGenerator {
         }
 
         String mass = generateMassString(a);
-        brackets = brackets | !mass.equals("");
+        brackets |= !mass.equals("");
 
         String charge = generateChargeString(a);
-        brackets = brackets | !charge.equals("");
+        brackets |= !charge.equals("");
 
         if (chiral && stereo && (BondTools.isTrigonalBipyramidalOrOctahedral(container, a) != 0 || BondTools.isSquarePlanar(container, a) || BondTools.isTetrahedral(container, a, false) != 0 || BondTools.isSquarePlanar(container, a))) {
             brackets = true;
@@ -1577,12 +1578,47 @@ public class RBlastSmilesGenerator {
         }
     }
 
+
+    /**
+     * Returns the current AllRingsFinder instance
+     *
+     * @return the current AllRingsFinder instance
+     */
+    public AllRingsFinder getRingFinder() {
+        return ringFinder;
+    }
+
+    /**
+     * Sets the current AllRingsFinder instance Use this if you want to
+     * customize the timeout for the AllRingsFinder. AllRingsFinder is stopping
+     * its quest to find all rings after a default of 5 seconds.
+     *
+     * @see org.openscience.cdk.ringsearch.AllRingsFinder
+     *
+     * @param ringFinder The value to assign ringFinder.
+     */
+    public void setRingFinder(AllRingsFinder ringFinder) {
+        this.ringFinder = ringFinder;
+    }
+
+    /**
+     * Indicates whether output should be an aromatic SMILES.
+     *
+     * @param useAromaticityFlag if false only SP2-hybridized atoms will be
+     * lower case (default), true=SP2 or aromaticity trigger lower case
+     */
+    @TestMethod("testSFBug956923")
+    public void setUseAromaticityFlag(boolean useAromaticityFlag) {
+        this.useAromaticityFlag = useAromaticityFlag;
+    }
+
     class BrokenBond {
 
         /**
          * The atoms which close the ring
          */
-        private final IAtom a1, a2;
+        private final IAtom a1;
+        private final IAtom a2;
         /**
          * The number of the marker
          */
@@ -1641,38 +1677,4 @@ public class RBlastSmilesGenerator {
             return (a1.equals(bond.getA1()) && a2.equals(bond.getA2())) || (a1.equals(bond.getA2()) && a2.equals(bond.getA1()));
         }
     }
-
-    /**
-     * Returns the current AllRingsFinder instance
-     *
-     * @return the current AllRingsFinder instance
-     */
-    public AllRingsFinder getRingFinder() {
-        return ringFinder;
-    }
-
-    /**
-     * Sets the current AllRingsFinder instance Use this if you want to
-     * customize the timeout for the AllRingsFinder. AllRingsFinder is stopping
-     * its quest to find all rings after a default of 5 seconds.
-     *
-     * @see org.openscience.cdk.ringsearch.AllRingsFinder
-     *
-     * @param ringFinder The value to assign ringFinder.
-     */
-    public void setRingFinder(AllRingsFinder ringFinder) {
-        this.ringFinder = ringFinder;
-    }
-
-    /**
-     * Indicates whether output should be an aromatic SMILES.
-     *
-     * @param useAromaticityFlag if false only SP2-hybridized atoms will be
-     * lower case (default), true=SP2 or aromaticity trigger lower case
-     */
-    @TestMethod("testSFBug956923")
-    public void setUseAromaticityFlag(boolean useAromaticityFlag) {
-        this.useAromaticityFlag = useAromaticityFlag;
-    }
-    private static final Logger LOG = Logger.getLogger(RBlastSmilesGenerator.class.getName());
 }

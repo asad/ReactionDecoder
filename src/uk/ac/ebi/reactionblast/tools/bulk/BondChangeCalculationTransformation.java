@@ -26,6 +26,8 @@ import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 
 public class BondChangeCalculationTransformation implements ITransformation<IReaction> {
 
+    private static final Logger LOG = Logger.getLogger(BondChangeCalculationTransformation.class.getName());
+
     @Override
     public TargetType getTargetType() {
         return TargetType.REACTION;
@@ -44,5 +46,4 @@ public class BondChangeCalculationTransformation implements ITransformation<IRea
             return null;
         }
     }
-    private static final Logger LOG = Logger.getLogger(BondChangeCalculationTransformation.class.getName());
 }

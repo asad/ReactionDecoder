@@ -53,6 +53,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolDescriptors {
+    private static final Logger LOG = Logger.getLogger(CDKMolecularDescriptor.class.getName());
 
     private final IAtomContainer molecule;
 
@@ -333,5 +334,4 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         return count;
 
     }
-    private static final Logger LOG = Logger.getLogger(CDKMolecularDescriptor.class.getName());
 }

@@ -31,6 +31,8 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
  */
 class PatternComparators {
 
+    private static final Logger LOG = Logger.getLogger(PatternComparators.class.getName());
+
     public static Comparator<IPatternFingerprinter> overallComparator() {
         return new Comparator<IPatternFingerprinter>() {
 
@@ -92,5 +94,4 @@ class PatternComparators {
             }
         };
     }
-    private static final Logger LOG = Logger.getLogger(PatternComparators.class.getName());
 }

@@ -42,6 +42,7 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.tools.TimeManagerTest")
 public class TimeManager {
+    private static final Logger LOG = Logger.getLogger(TimeManager.class.getName());
 
     private final double startTime;
     private final SimpleDateFormat dateFormat;
@@ -105,5 +106,4 @@ public class TimeManager {
         return (currentTime - startTime);
 
     }
-    private static final Logger LOG = Logger.getLogger(TimeManager.class.getName());
 }

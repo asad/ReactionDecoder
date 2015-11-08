@@ -30,14 +30,82 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
 public class BlockMapper {
+    private static final Logger LOG = Logger.getLogger(BlockMapper.class.getName());
+
+    public List<BlockPair> createBlockPairs(IReaction reaction) {
+        List<BlockPair> blockPairs = new ArrayList<>();
+
+        List<DefinedMapping> definedMappings = createDefinedMappings(reaction);
+        List<List<DefinedMapping>> mappingComponents
+                = findMappedConnectedComponents(reaction, definedMappings);
+
+        for (List<DefinedMapping> mappingComponent : mappingComponents) {
+            // all components have at least one member
+            DefinedMapping aMapping = mappingComponent.get(0);
+
+            // initialise with this member
+            BlockPair blockPair
+                    = new BlockPair(aMapping.getrAtomContainer(), aMapping.getpAtomContainer());
+
+            // add the mappings
+            for (int i = 0; i < mappingComponent.size(); i++) {
+                DefinedMapping definedMapping = mappingComponent.get(i);
+                IMapping mapping = reaction.getMapping(definedMapping.getIndex());
+                blockPair.addMapping(mapping,
+                        definedMapping.getRAtom(), definedMapping.getPAtom());
+            }
+            blockPairs.add(blockPair);
+        }
+
+        return blockPairs;
+    }
+
+    public List<List<DefinedMapping>> findMappedConnectedComponents(
+            IReaction reaction, List<DefinedMapping> definedMappings) {
+
+        MappingGraph mappingGraph = new MappingGraph(definedMappings);
+        return mappingGraph.calculateConnectedComponents();
+    }
+
+    public List<DefinedMapping> createDefinedMappings(IReaction reaction) {
+        IAtomContainerSet reactants = reaction.getReactants();
+        IAtomContainerSet products = reaction.getProducts();
+
+        List<DefinedMapping> definedMappings = new ArrayList<DefinedMapping>();
+        int i = 0;
+        for (IMapping mapping : reaction.mappings()) {
+            String id = mapping.getChemObject(0).getID();
+            AtomContainerAtomPair reactantPair = getByID(reactants, id);
+            AtomContainerAtomPair productPair = getByID(products, id);
+            int rIndex = reactantPair.getIndex();
+            int pIndex = productPair.getIndex();
+            definedMappings.add(
+                    new DefinedMapping(rIndex, pIndex, i,
+                            reactantPair.atomContainer, productPair.atomContainer));
+            i++;
+        }
+        return definedMappings;
+    }
+
+    private AtomContainerAtomPair getByID(IAtomContainerSet moleculeSet, String id) {
+//        System.out.println("getting id " + id);
+        for (IAtomContainer ac : moleculeSet.atomContainers()) {
+            for (IAtom atom : ac.atoms()) {
+                String atomID = atom.getID();
+                if (atomID != null && atomID.equals(id)) {
+                    return new AtomContainerAtomPair(ac, atom);
+                }
+            }
+        }
+        return null;
+    }
 
     private class AtomContainerAtomPair {
 
         public final IAtomContainer atomContainer;
-
         public final IAtom atom;
 
-        public AtomContainerAtomPair(IAtomContainer atomContainer, IAtom atom) {
+        AtomContainerAtomPair(IAtomContainer atomContainer, IAtom atom) {
             this.atom = atom;
             this.atomContainer = atomContainer;
         }
@@ -50,10 +118,9 @@ public class BlockMapper {
     private class MappingGraph {
 
         public List<DefinedMapping> vertices;
-
         public List<DefinedMapping>[] adjacencyTable;
 
-        public MappingGraph(List<DefinedMapping> mappings) {
+        MappingGraph(List<DefinedMapping> mappings) {
             vertices = mappings;
             adjacencyTable = makeAdjacencyTable();
         }
@@ -133,74 +200,5 @@ public class BlockMapper {
             }
         }
     }
-
-    public List<BlockPair> createBlockPairs(IReaction reaction) {
-        List<BlockPair> blockPairs = new ArrayList<>();
-
-        List<DefinedMapping> definedMappings = createDefinedMappings(reaction);
-        List<List<DefinedMapping>> mappingComponents
-                = findMappedConnectedComponents(reaction, definedMappings);
-
-        for (List<DefinedMapping> mappingComponent : mappingComponents) {
-            // all components have at least one member
-            DefinedMapping aMapping = mappingComponent.get(0);
-
-            // initialise with this member
-            BlockPair blockPair
-                    = new BlockPair(aMapping.getrAtomContainer(), aMapping.getpAtomContainer());
-
-            // add the mappings
-            for (int i = 0; i < mappingComponent.size(); i++) {
-                DefinedMapping definedMapping = mappingComponent.get(i);
-                IMapping mapping = reaction.getMapping(definedMapping.getIndex());
-                blockPair.addMapping(mapping,
-                        definedMapping.getRAtom(), definedMapping.getPAtom());
-            }
-            blockPairs.add(blockPair);
-        }
-
-        return blockPairs;
-    }
-
-    public List<List<DefinedMapping>> findMappedConnectedComponents(
-            IReaction reaction, List<DefinedMapping> definedMappings) {
-
-        MappingGraph mappingGraph = new MappingGraph(definedMappings);
-        return mappingGraph.calculateConnectedComponents();
-    }
-
-    public List<DefinedMapping> createDefinedMappings(IReaction reaction) {
-        IAtomContainerSet reactants = reaction.getReactants();
-        IAtomContainerSet products = reaction.getProducts();
-
-        List<DefinedMapping> definedMappings = new ArrayList<DefinedMapping>();
-        int i = 0;
-        for (IMapping mapping : reaction.mappings()) {
-            String id = mapping.getChemObject(0).getID();
-            AtomContainerAtomPair reactantPair = getByID(reactants, id);
-            AtomContainerAtomPair productPair = getByID(products, id);
-            int rIndex = reactantPair.getIndex();
-            int pIndex = productPair.getIndex();
-            definedMappings.add(
-                    new DefinedMapping(rIndex, pIndex, i,
-                            reactantPair.atomContainer, productPair.atomContainer));
-            i++;
-        }
-        return definedMappings;
-    }
-
-    private AtomContainerAtomPair getByID(IAtomContainerSet moleculeSet, String id) {
-//        System.out.println("getting id " + id);
-        for (IAtomContainer ac : moleculeSet.atomContainers()) {
-            for (IAtom atom : ac.atoms()) {
-                String atomID = atom.getID();
-                if (atomID != null && atomID.equals(id)) {
-                    return new AtomContainerAtomPair(ac, atom);
-                }
-            }
-        }
-        return null;
-    }
-    private static final Logger LOG = Logger.getLogger(BlockMapper.class.getName());
 
 }

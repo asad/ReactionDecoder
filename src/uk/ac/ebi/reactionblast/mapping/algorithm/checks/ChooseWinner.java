@@ -43,16 +43,38 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public final class ChooseWinner extends Selector implements Serializable {
+public class ChooseWinner extends Selector implements Serializable {
 
     private static final long serialVersionUID = 0x296558709L;
+    private static final Logger LOG = Logger.getLogger(ChooseWinner.class.getName());
     private EBIMatrix stereoMatrix;
     private EBIMatrix energyMatrix;
+
+    private EBIMatrix similarityMatrix = null;
+    private List<Cells> crossMappingTracer = null;
+    private Map<Integer, IAtomContainer> educts = null;
+    private Map<Integer, IAtomContainer> products = null;
+
+    //~--- constructors -------------------------------------------------------
+    /**
+     * Creates a new instance of Maximize
+     *
+     * @param eductNameList
+     * @param productNameList
+     */
+    public ChooseWinner(List<String> eductNameList,
+            List<String> productNameList) {
+
+        this.rowSize = eductNameList.size();
+        this.colSize = productNameList.size();
+        this.flagMatrix = new boolean[rowSize][colSize];
+    }
 
     /**
      * @return the stereoMatrix
      */
-    public EBIMatrix getStereoMatrix() {
+    public EBIMatrix getStereoMatrix(
+            ) {
         return stereoMatrix;
     }
 
@@ -78,45 +100,12 @@ public final class ChooseWinner extends Selector implements Serializable {
     }
 
     /**
-     * Chosen cell of the matrix is stored here
-     */
-    final class Cells {
-
-        String eductName;
-        String productName;
-        int indexI;
-        int indexJ;
-    }
-    private EBIMatrix similarityMatrix = null;
-    private List<Cells> crossMappingTracer = null;
-    private Map<Integer, IAtomContainer> educts = null;
-    private Map<Integer, IAtomContainer> products = null;
-
-    //~--- constructors -------------------------------------------------------
-    /**
-     * Creates a new instance of Maximize
-     *
-     * @param eductNameList
-     * @param productNameList
-     */
-    public ChooseWinner(List<String> eductNameList,
-            List<String> productNameList) {
-
-        this.rowSize = eductNameList.size();
-        this.colSize = productNameList.size();
-        this.flagMatrix = new boolean[rowSize][colSize];
-    }
-
-    /**
      *
      * @param eductMap
      * @param productMap
      * @param mHolder
      */
-    public synchronized void searchWinners(
-            Map<Integer, IAtomContainer> eductMap,
-            Map<Integer, IAtomContainer> productMap,
-            Holder mHolder) {
+    public synchronized void searchWinners(Map<Integer, IAtomContainer> eductMap, Map<Integer, IAtomContainer> productMap, Holder mHolder) {
         initFlagMatrix();
         this.educts = eductMap;
         this.products = productMap;
@@ -172,10 +161,10 @@ public final class ChooseWinner extends Selector implements Serializable {
 //        System.out.println("Done");
     }
 
-    /* 
-     * @return true if a cell in the this.flagMatrix
-     * was set true else false
-     */
+    /*
+    * @return true if a cell in the this.flagMatrix
+    * was set true else false
+    */
     public synchronized boolean getFlag() {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
@@ -224,7 +213,6 @@ public final class ChooseWinner extends Selector implements Serializable {
     }
 
     private synchronized void setWinOverFlags() {
-
         for (Integer indexI : educts.keySet()) {
             for (Integer indexJ : products.keySet()) {
                 Cells cell = new Cells();
@@ -275,10 +263,21 @@ public final class ChooseWinner extends Selector implements Serializable {
     }
 
     /**
+     * Chosen cell of the matrix is stored here
+     */
+    class Cells {
+        String eductName;
+        String productName;
+        int indexI;
+        int indexJ;
+
+    }
+
+    /**
      * Resolves deadlocks if more than one cell clashes with same scores. The
      * decision is then made on the max. stereo score and min. energy score
      */
-    final class DeadLockResolver {
+    class DeadLockResolver {
 
         private synchronized double getMaxStereo(List<ChooseWinner.Cells> choosenCells) {
             double max = -999;
@@ -336,7 +335,5 @@ public final class ChooseWinner extends Selector implements Serializable {
             }
             return choosenCells.listIterator().next();
         }
-
     }
-    private static final Logger LOG = Logger.getLogger(ChooseWinner.class.getName());
 }

@@ -46,6 +46,7 @@ import org.openscience.smsd.helper.BinaryTree;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McGregorChecksTest")
 public class McGregorChecks {
+    private static final Logger LOG = Logger.getLogger(McGregorChecks.class.getName());
 
     /**
      *
@@ -682,5 +683,4 @@ public class McGregorChecks {
         }
         return unmappedMolAtoms;
     }
-    private static final Logger LOG = Logger.getLogger(McGregorChecks.class.getName());
 }

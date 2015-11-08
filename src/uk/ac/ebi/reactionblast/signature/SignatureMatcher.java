@@ -34,6 +34,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class SignatureMatcher {
+    private static final Logger LOG = Logger.getLogger(SignatureMatcher.class.getName());
 
     private int minHeight;
 
@@ -141,6 +142,5 @@ public class SignatureMatcher {
         }
         return null;
     }
-    private static final Logger LOG = Logger.getLogger(SignatureMatcher.class.getName());
 
 }

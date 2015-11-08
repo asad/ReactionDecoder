@@ -43,6 +43,8 @@ public class UnblancedReactionChecker {
     private static final boolean DEBUG = false;
     private static final File dir = new File("rxn/rhea");
 
+    private static final Logger LOG = Logger.getLogger(UnblancedReactionChecker.class.getName());
+
     /**
      * @param args the command line arguments
      */
@@ -71,7 +73,6 @@ public class UnblancedReactionChecker {
     }
 
     private static boolean isBalanced(IReaction r) {
-
         Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
         Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
 
@@ -174,6 +175,5 @@ public class UnblancedReactionChecker {
         }
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
-    private static final Logger LOG = Logger.getLogger(UnblancedReactionChecker.class.getName());
 
 }

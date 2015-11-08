@@ -48,9 +48,10 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class BondChangeAnnotator extends DUModel {
+public class BondChangeAnnotator extends DUModel {
 
     private static final long serialVersionUID = 988987678877861L;
+    private static final Logger LOG = Logger.getLogger(BondChangeAnnotator.class.getName());
 
     /**
      *
@@ -730,5 +731,4 @@ public final class BondChangeAnnotator extends DUModel {
 
         return -1;
     }
-    private static final Logger LOG = Logger.getLogger(BondChangeAnnotator.class.getName());
 }

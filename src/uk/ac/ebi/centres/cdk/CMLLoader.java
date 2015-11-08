@@ -39,6 +39,8 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  */
 public class CMLLoader {
 
+    private static final Logger LOG = Logger.getLogger(CMLLoader.class.getName());
+
     public static IAtomContainer loadCML(InputStream in) {
         CMLReader reader = new CMLReader(in);
         try {
@@ -70,5 +72,4 @@ public class CMLLoader {
         }
         return new AtomContainer();
     }
-    private static final Logger LOG = Logger.getLogger(CMLLoader.class.getName());
 }

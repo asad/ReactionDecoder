@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.interfaces.IDataSource;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
 public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataSource.class.getName());
     
     private File moleculeDir;
     
@@ -138,6 +139,5 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
             e.printStackTrace();
         }
     }
-    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataSource.class.getName());
 
 }

@@ -60,18 +60,12 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 19869866609698L;
+    private static final Logger LOG = Logger.getLogger(CDKReactionBuilder.class.getName());
     private final IReactionSet reactionSet;
     private int moleculeCounter = 0; //Counter to create Unique Molecules
     private final Map<String, Double> stoichiometryMap;
     private final Map<String, BitSet> fingerprintMap;
     private final Map<String, IAtomContainer> moleculeMap;
-
-    @Override
-    public String toString() {
-        return "CDKReactionBuilder{" + "reactionSet=" + reactionSet + ", moleculeCounter="
-                + moleculeCounter + ", stoichiometryMap=" + stoichiometryMap + ", fingerprintMap="
-                + fingerprintMap + ", moleculeMap=" + moleculeMap + '}';
-    }
 
     /**
      *
@@ -82,6 +76,13 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
         stoichiometryMap = Collections.synchronizedMap(new HashMap<String, Double>());
         fingerprintMap = Collections.synchronizedMap(new HashMap<String, BitSet>());
         moleculeMap = Collections.synchronizedMap(new HashMap<String, IAtomContainer>());
+    }
+
+    @Override
+    public String toString() {
+        return "CDKReactionBuilder{" + "reactionSet=" + reactionSet + ", moleculeCounter="
+                + moleculeCounter + ", stoichiometryMap=" + stoichiometryMap + ", fingerprintMap="
+                + fingerprintMap + ", moleculeMap=" + moleculeMap + '}';
     }
 
     /**
@@ -597,5 +598,4 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
         mcs.setChemFilters(true, true, true);
         return mcs.isSubgraph() && !mcs.isStereoMisMatch();
     }
-    private static final Logger LOG = Logger.getLogger(CDKReactionBuilder.class.getName());
 }

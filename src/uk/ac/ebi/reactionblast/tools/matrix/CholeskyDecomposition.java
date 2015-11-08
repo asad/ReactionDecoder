@@ -16,6 +16,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class CholeskyDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 78619981017L;
+    private static final Logger LOG = Logger.getLogger(CholeskyDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -202,5 +203,4 @@ public class CholeskyDecomposition implements java.io.Serializable {
 
         return new EBIMatrix(X, n, nx);
     }
-    private static final Logger LOG = Logger.getLogger(CholeskyDecomposition.class.getName());
 }

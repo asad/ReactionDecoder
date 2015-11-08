@@ -31,30 +31,7 @@ import java.util.logging.Logger;
 public class EBIArrayList<E> extends ArrayList<E> {
 
     private static final long serialVersionUID = 7683452581122892189L;
-
-    /**
-     *
-     * @param initialCapacity
-     */
-    public EBIArrayList(int initialCapacity) {
-        super(initialCapacity);
-    }
-
-    /**
-     *
-     */
-    public EBIArrayList() {
-        super();
-    }
-
-    /**
-     *
-     * @param c
-     */
-    @SuppressWarnings("unchecked")
-    public EBIArrayList(Collection<? extends E> c) {
-        super(c);
-    }
+    private static final Logger LOG = Logger.getLogger(EBIArrayList.class.getName());
 
     /**
      *
@@ -84,9 +61,32 @@ public class EBIArrayList<E> extends ArrayList<E> {
         return mergedList;
     }
 
+    /**
+     *
+     * @param initialCapacity
+     */
+    public EBIArrayList(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    /**
+     *
+     */
+    public EBIArrayList() {
+        super();
+    }
+
+    /**
+     *
+     * @param c
+     */
+    @SuppressWarnings("unchecked")
+    public EBIArrayList(Collection<? extends E> c) {
+        super(c);
+    }
+
     @Override
     public Object clone() {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(EBIArrayList.class.getName());
 }

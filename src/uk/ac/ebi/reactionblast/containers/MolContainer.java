@@ -72,13 +72,27 @@ public class MolContainer implements IMolContainer {
      */
     private static MolContainer _instance = null;
     private static Map<String, IAtomContainer> molContainer = null;
+    private static final Logger LOG = Logger.getLogger(MolContainer.class.getName());
+
+    /**
+     *
+     * @return
+     */    public static synchronized MolContainer getInstance() {
+         if (_instance == null) {
+             _instance = new MolContainer();
+         }
+         
+         return _instance;
+     }
 
     //~--- constructors -------------------------------------------------------
-    private MolContainer() {
-        molContainer = Collections.synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+
+     private MolContainer() {
+         molContainer = Collections.synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
     }
 
     //~--- methods ------------------------------------------------------------
+
     /**
      *
      * @throws java.io.IOException
@@ -114,6 +128,7 @@ public class MolContainer implements IMolContainer {
     }
 
     //~--- get methods --------------------------------------------------------
+
     /**
      *
      * @param key
@@ -121,7 +136,8 @@ public class MolContainer implements IMolContainer {
      * @return
      */
     @Override
-    public synchronized IAtomContainer getAtomContainer(String key) throws IOException {
+    public synchronized IAtomContainer getAtomContainer(String key)
+            throws IOException {
         return molContainer.get(key);
     }
 
@@ -131,21 +147,8 @@ public class MolContainer implements IMolContainer {
      * @return
      */
     @Override
-    public synchronized Map<String, IAtomContainer> getAtomContainerMap()
-            throws IOException {
+    public synchronized Map<String, IAtomContainer> getAtomContainerMap() throws IOException {
         return Collections.unmodifiableMap(molContainer);
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static synchronized MolContainer getInstance() {
-        if (_instance == null) {
-            _instance = new MolContainer();
-        }
-
-        return _instance;
     }
 
     /**
@@ -263,5 +266,4 @@ public class MolContainer implements IMolContainer {
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(MolContainer.class.getName());
 }

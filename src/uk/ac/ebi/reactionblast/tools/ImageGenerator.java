@@ -69,17 +69,29 @@ public class ImageGenerator {
     private static final ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(ImageGenerator.class);
 
-    static { /* works fine! ! */
+    public final static int SUB_IMAGE_WIDTH = 300;
+    public final static int SUB_IMAGE_HEIGHT = 300;
+    private static final Logger LOG = Logger.getLogger(ImageGenerator.class.getName());
+    static {
+        /* works fine! ! */
         /*
-         This makes the awt headless
-         */
-
+        This makes the awt headless
+        */
+        
         System.setProperty("java.awt.headless", "true");
         logger.info("Headless enabled: " + java.awt.GraphicsEnvironment.isHeadless());
         /* ---> prints true */
     }
+    private final List<QueryTargetPair> queryTargetPairs;
+    private final Params params;
 
-    private IReaction layoutReaction(IReaction mappedReaction, String reactionID) {
+    public ImageGenerator() {
+        queryTargetPairs = new ArrayList<>();
+        params = new Params();
+    }
+
+    private IReaction layoutReaction(
+            IReaction mappedReaction, String reactionID) {
         IReaction reactionWithLayout = new Reaction();
         reactionWithLayout.setDirection(IReaction.Direction.FORWARD);
         reactionWithLayout.setID(reactionID);
@@ -105,41 +117,9 @@ public class ImageGenerator {
 
     }
 
-    private class QueryTargetPair {
-
-        public final IAtomContainer query;
-        public final IAtomContainer target;
-        public final IAtomContainer querySubgraph;
-        public final IAtomContainer targetSubgraph;
-        public final String label;
-
-        public QueryTargetPair(
-                IAtomContainer query, IAtomContainer target,
-                IAtomContainer querySubgraph, IAtomContainer targetSubgraph,
-                String label) {
-            this.query = query;
-            this.target = target;
-            this.querySubgraph = querySubgraph;
-            this.targetSubgraph = targetSubgraph;
-            this.label = label;
-        }
-    }
-    public final static int SUB_IMAGE_WIDTH = 300;
-    public final static int SUB_IMAGE_HEIGHT = 300;
-    private final List<QueryTargetPair> queryTargetPairs;
-    private final Params params;
-
-    public ImageGenerator() {
-        queryTargetPairs = new ArrayList<>();
-        params = new Params();
-    }
-
     public void addImages(
-            IAtomContainer query,
-            IAtomContainer target,
-            String label,
-            Map<Integer, Integer> maxac) throws IOException, Exception {
-
+            IAtomContainer query, IAtomContainer target, String label, Map<Integer, Integer> maxac) throws IOException, Exception {
+        
         SingleMoleculeLayout msl = new SingleMoleculeLayout(params);
         msl.layout(query, new Vector2d(0.0, 0.0));
         msl.layout(target, new Vector2d(0.0, 0.0));
@@ -178,12 +158,8 @@ public class ImageGenerator {
                         cloneOfQuery, cloneOfTarget, querySubgraph, targetSubgraph, label));
     }
 
-    public void addImages(
-            IAtomContainer query,
-            IAtomContainer target,
-            String label,
-            AtomAtomMapping maxac) throws IOException, Exception {
-
+    public void addImages(IAtomContainer query, IAtomContainer target, String label, AtomAtomMapping maxac) throws IOException, Exception {
+        
         SingleMoleculeLayout msl = new SingleMoleculeLayout(params);
         msl.layout(query, new Vector2d(0.0, 0.0));
         msl.layout(target, new Vector2d(0.0, 0.0));
@@ -319,9 +295,8 @@ public class ImageGenerator {
      * @param molID
      * @throws IOException
      */
-    public synchronized void directMoleculeImageNaturalScale(File outputDirName,
-            IAtomContainer molecule, String molID) throws IOException {
-
+    public synchronized void directMoleculeImageNaturalScale(File outputDirName, IAtomContainer molecule, String molID) throws IOException {
+        
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
         Params p1 = moleculeDrawer.getParams();
         p1.drawAtomID = false;
@@ -358,16 +333,16 @@ public class ImageGenerator {
         File outFile = new File(outputDirName, molID + ".png");
         ImageIO.write((RenderedImage) image, "PNG", outFile);
     }
-
-    public synchronized void directMoleculeImageZoomedToFit(File outputDirName, IAtomContainer molecule, String molID) throws IOException {
+    
+    public synchronized void directMoleculeImageZoomedToFit(
+            File outputDirName, IAtomContainer molecule, String molID) throws IOException {
         int width = 800;
         int height = 600;
         directMoleculeImageZoomedToFit(outputDirName, molecule, molID, width, height);
     }
-
-    public synchronized void directMoleculeImageZoomedToFit(
-            File outputDirName, IAtomContainer molecule, String molID, int width, int height) throws IOException {
-
+    
+    public synchronized void directMoleculeImageZoomedToFit(File outputDirName, IAtomContainer molecule, String molID, int width, int height) throws IOException {
+        
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
         Params par = moleculeDrawer.getParams();
         par.drawAtomID = false;
@@ -467,13 +442,14 @@ public class ImageGenerator {
      * @param reactionID
      * @throws Exception
      */
-    public synchronized void drawLeftToRightReactionLayout(File outputDirName, IReaction mappedReaction, String reactionID) throws Exception {
+    public synchronized void drawLeftToRightReactionLayout(
+            File outputDirName, IReaction mappedReaction, String reactionID) throws Exception {
         int width = 2048;
         int height = 600;
 
         /*
-         Layout reaction to avoid image errors
-         */
+        Layout reaction to avoid image errors
+        */
         IReaction reactionWithLayout = layoutReaction(mappedReaction, reactionID);
         RBlastReaction rbReaction = new RBlastReaction(reactionWithLayout, true);
 
@@ -503,15 +479,15 @@ public class ImageGenerator {
         drawer.getParams().drawArrowFilled = true;
 
         /*
-         * For Lighter images 
-         *   drawer.getParams().highlightAlpha = 0.25f;
-         *   drawer.getParams().bondStrokeWidth = default;
-         */
-
+        * For Lighter images
+        *   drawer.getParams().highlightAlpha = 0.25f;
+        *   drawer.getParams().bondStrokeWidth = default;
+        */
+        
         /* for darker presentation images
-         * drawer.getParams().highlightAlpha = 0.30f;
-         * drawer.getParams().bondStrokeWidth=2.0f;
-         */
+        * drawer.getParams().highlightAlpha = 0.30f;
+        * drawer.getParams().bondStrokeWidth=2.0f;
+        */
         drawer.getParams().highlightAlpha = 0.30f;
         drawer.getParams().bondStrokeWidth = 2.0f;
 
@@ -559,8 +535,8 @@ public class ImageGenerator {
         par.drawRS = true;
 
         /*
-         Layout reaction to avoid image errors
-         */
+        Layout reaction to avoid image errors
+        */
         IReaction reactionWithLayout = layoutReaction(mappedReaction, reactionID);
         DirectRBLastReactionDrawer reactionDrawer = new DirectRBLastReactionDrawer(
                 par, new LeftToRightReactionLayout());
@@ -579,17 +555,16 @@ public class ImageGenerator {
         File file = new File(outputDir, reactionID + ".png");
         ImageIO.write((RenderedImage) image, "PNG", file);
     }
-
-    private void setHighightsFromSignatures(
-            DirectRBLastReactionDrawer drawer, RBlastReaction rblReaction, List<String> signatures) {
+    
+    private void setHighightsFromSignatures(DirectRBLastReactionDrawer drawer, RBlastReaction rblReaction, List<String> signatures) {
         /*
-         Layout reaction to avoid image errors
-         */
+        Layout reaction to avoid image errors
+        */
         IReaction reaction = layoutReaction(rblReaction.getReaction(), "Signature_" + rblReaction.getReaction().getID());
 
         /*
-         Layout reaction to avoid image errors
-         */
+        Layout reaction to avoid image errors
+        */
         // TODO : do this in one step
         SignatureMatcher matcher = new SignatureMatcher(1, 3);
         List<IAtom> roots = matcher.getMatchingRootAtoms(signatures, reaction);
@@ -649,5 +624,21 @@ public class ImageGenerator {
         setDiff.retainAll(validAtoms);
         filteredList.addAll(setDiff);
     }
-    private static final Logger LOG = Logger.getLogger(ImageGenerator.class.getName());
+
+    private class QueryTargetPair {
+        
+        public final IAtomContainer query;
+        public final IAtomContainer target;
+        public final IAtomContainer querySubgraph;
+        public final IAtomContainer targetSubgraph;
+        public final String label;
+
+        QueryTargetPair(IAtomContainer query, IAtomContainer target, IAtomContainer querySubgraph, IAtomContainer targetSubgraph, String label) {
+            this.query = query;
+            this.target = target;
+            this.querySubgraph = querySubgraph;
+            this.targetSubgraph = targetSubgraph;
+            this.label = label;
+        }
+    }
 }

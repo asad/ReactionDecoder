@@ -34,10 +34,11 @@ import uk.ac.ebi.beam.Graph;
  *
  * @author John May
  */
-public final class CanonSmiAdapter {
+public class CanonSmiAdapter {
 
     // convert to Beam excluding stereo (not canonicalised) and aromaticity
     static final CDKToBeam cdkToBeam = new CDKToBeam(false, false);
+    private static final Logger LOG = Logger.getLogger(CanonSmiAdapter.class.getName());
 
     public static String create(IAtomContainer ac) throws CDKException, IOException {
 
@@ -139,5 +140,4 @@ public final class CanonSmiAdapter {
         }
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(CanonSmiAdapter.class.getName());
 }

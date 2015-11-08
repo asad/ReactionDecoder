@@ -37,11 +37,12 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class CalculationProcess extends IsomeraseHandler implements Serializable {
+public class CalculationProcess extends IsomeraseHandler implements Serializable {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(CalculationProcess.class);
     private static final long serialVersionUID = 0x4a0bba049L;
+    private static final Logger LOG = Logger.getLogger(CalculationProcess.class.getName());
     private final boolean removeHydrogen;
     private int delta = 0;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
@@ -145,5 +146,4 @@ public final class CalculationProcess extends IsomeraseHandler implements Serial
     public synchronized MoleculeMoleculeMapping getReactionBlastMolMapping() {
         return reactionBlastMolMapping;
     }
-    private static final Logger LOG = Logger.getLogger(CalculationProcess.class.getName());
 }

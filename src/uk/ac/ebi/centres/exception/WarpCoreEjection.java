@@ -25,8 +25,9 @@ import java.util.logging.Logger;
 public class WarpCoreEjection extends RuntimeException {
     private static final long serialVersionUID = 757858878509985951L;
 
+    private static final Logger LOG = Logger.getLogger(WarpCoreEjection.class.getName());
+
     public WarpCoreEjection() {
         super("Boy, that escalated quickly. I mean, that really got out of hand fast! - combinatorial explosion immanent");
     }
-    private static final Logger LOG = Logger.getLogger(WarpCoreEjection.class.getName());
 }

@@ -43,6 +43,11 @@ public class CreateDirectory {
 
     private static final int MKDIR_RETRY_SLEEP_MILLIS = 10;
     private static String suffix = null;
+    private static final Logger LOG = Logger.getLogger(CreateDirectory.class.getName());
+
+    public static String getSuffix() {
+        return suffix;
+    }
     //~--- fields -------------------------------------------------------------
     private File dir;
 
@@ -101,10 +106,6 @@ public class CreateDirectory {
     }
     //~--- get methods --------------------------------------------------------
 
-    public static String getSuffix() {
-        return suffix;
-    }
-
     //~--- set methods --------------------------------------------------------
     /**
      *
@@ -113,8 +114,7 @@ public class CreateDirectory {
      * @return
      * @throws java.io.IOException
      */
-    public File createDirectory(String dirname, boolean SUFFIX)
-            throws IOException {
+    public File createDirectory(String dirname, boolean SUFFIX) throws IOException {
         if (SUFFIX) {
             setSuffix();
             String dirSuffix = getSuffix();
@@ -135,8 +135,7 @@ public class CreateDirectory {
      * @return
      * @throws IOException
      */
-    public File createDirectory(String parentDirName, String childDirName,
-            boolean SUFFIX)
+    public File createDirectory(String parentDirName, String childDirName, boolean SUFFIX)
             throws IOException {
         if (SUFFIX) {
             setSuffix();
@@ -151,5 +150,5 @@ public class CreateDirectory {
         }
         return dir;
     }
-    private static final Logger LOG = Logger.getLogger(CreateDirectory.class.getName());
+
 }

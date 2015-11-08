@@ -32,12 +32,21 @@ import org.openscience.cdk.smiles.SmilesGenerator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
-final public class Fragment implements Comparable<Fragment>, Serializable {
+public class Fragment implements Comparable<Fragment>, Serializable {
 
     private static final long serialVersionUID = 134634654886765L;
+    private static final Logger LOG = Logger.getLogger(Fragment.class.getName());
 
-    public synchronized IAtomContainer getContainer() {
-        return container;
+    /**
+     * Return SMILES
+     *
+     * @param ac
+     * @return
+     * @throws org.openscience.cdk.exception.CDKException
+     */
+    public static String toSmiles(IAtomContainer ac) throws CDKException {
+        SmilesGenerator g = new SmilesGenerator().aromatic();
+        return g.create(ac);
     }
     private final BitSet fingerprint;
     private final long fingerprintAsLong;
@@ -50,6 +59,10 @@ final public class Fragment implements Comparable<Fragment>, Serializable {
         this.container = container;
         this.fingerprint = new ShortestPathFingerprinter().getBitFingerprint(container).asBitSet();
         this.fingerprintAsLong = convert(this.fingerprint);
+    }
+
+    public synchronized IAtomContainer getContainer() {
+        return container;
     }
 
     @Override
@@ -111,17 +124,4 @@ final public class Fragment implements Comparable<Fragment>, Serializable {
     public BitSet getFingerprint() {
         return fingerprint;
     }
-
-    /**
-     * Return SMILES
-     *
-     * @param ac
-     * @return
-     * @throws org.openscience.cdk.exception.CDKException
-     */
-    public static String toSmiles(IAtomContainer ac) throws CDKException {
-        SmilesGenerator g = new SmilesGenerator().aromatic();
-        return g.create(ac);
-    }
-    private static final Logger LOG = Logger.getLogger(Fragment.class.getName());
 }

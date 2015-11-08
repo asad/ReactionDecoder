@@ -39,9 +39,10 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
-public final class DefaultAtomMatcher implements AtomMatcher {
+public class DefaultAtomMatcher implements AtomMatcher {
 
     static final long serialVersionUID = -7861469841127327812L;
+    private static final Logger LOG = Logger.getLogger(DefaultAtomMatcher.class.getName());
     private final String symbol;
     private final IAtom qAtom;
     private final boolean shouldMatchRings;
@@ -152,5 +153,4 @@ public final class DefaultAtomMatcher implements AtomMatcher {
     public boolean isMatchRings() {
         return shouldMatchRings;
     }
-    private static final Logger LOG = Logger.getLogger(DefaultAtomMatcher.class.getName());
 }

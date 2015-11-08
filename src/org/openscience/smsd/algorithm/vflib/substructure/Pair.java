@@ -60,6 +60,7 @@ import java.util.logging.Logger;
  * @param <S>
  */
 public class Pair<T, S> {
+    private static final Logger LOG = Logger.getLogger(Pair.class.getName());
 
     private T source;
     private S target;
@@ -101,5 +102,4 @@ public class Pair<T, S> {
     public synchronized void setTargetAtom(S second) {
         this.target = second;
     }
-    private static final Logger LOG = Logger.getLogger(Pair.class.getName());
 }

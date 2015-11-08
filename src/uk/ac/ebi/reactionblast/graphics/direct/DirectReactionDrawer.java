@@ -60,6 +60,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.TopToBottomReactionLayout;
  *
  */
 public class DirectReactionDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectReactionDrawer.class.getName());
 
     private AbstractDirectReactionLayout reactionLayout;
     private AbstractAWTReactionLayout exactReactionLayout;
@@ -358,7 +359,9 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             Rectangle2D bounds = tree.get(boundsLabel);
             float boundsWidth = (float)bounds.getWidth();
             TextLayout textLayout = new TextLayout(label, font, frc);
-            if (boundsWidth <= 0) continue; // XXX
+            if (boundsWidth <= 0) {
+                continue; // XXX
+            }
             TextLayout justifiedLayout = textLayout.getJustifiedLayout(boundsWidth);
             double height = justifiedLayout.getBounds().getHeight();
             if (height > maxHeight) {
@@ -712,5 +715,4 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
     public DirectMoleculeDrawer getMoleculeDrawer() {
         return moleculeDrawer;
     }
-    private static final Logger LOG = Logger.getLogger(DirectReactionDrawer.class.getName());
 }

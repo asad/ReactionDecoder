@@ -39,6 +39,8 @@ import org.openscience.cdk.annotations.TestMethod;
 public class RandomNumber implements Serializable {
 
     private static final long serialVersionUID = 23345464573453571L;
+    private static final Logger LOG = Logger.getLogger(RandomNumber.class.getName());
+    private transient final RandomGenerator rg = new RandomAdaptor(new MersenneTwister());
 
     /**
      * Mersenne Twister Random Number
@@ -49,7 +51,6 @@ public class RandomNumber implements Serializable {
     public long generateMersenneTwisterRandomNumber(int maximum) {
         return rg.nextInt(maximum);
     }
-    private transient final RandomGenerator rg = new RandomAdaptor(new MersenneTwister());
 
     /**
      * Mersenne Twister Random Number for a hashcode within a range between 0 to n.
@@ -58,10 +59,9 @@ public class RandomNumber implements Serializable {
      * @param seed the seed for the next pseudorandom number
      * @return next pseudorandom number
      */
-    @TestMethod("testGenerateMersenneTwisterRandomNumber")
+    @TestMethod(value = "testGenerateMersenneTwisterRandomNumber")
     public int generateMersenneTwisterRandomNumber(int n, long seed) {
         rg.setSeed(seed);
         return rg.nextInt(n);
     }
-    private static final Logger LOG = Logger.getLogger(RandomNumber.class.getName());
 }

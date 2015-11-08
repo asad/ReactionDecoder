@@ -52,6 +52,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class MDLFileReader {
 
     private static IAtomContainer molecule = null;
+    private static final Logger LOG = Logger.getLogger(MDLFileReader.class.getName());
 
     /**
      * Constructor for MDL file reader
@@ -211,5 +212,4 @@ public class MDLFileReader {
         }
         return chemModel;
     }
-    private static final Logger LOG = Logger.getLogger(MDLFileReader.class.getName());
 }

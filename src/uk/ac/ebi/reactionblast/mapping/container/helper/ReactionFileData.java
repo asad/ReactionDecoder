@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 public class ReactionFileData extends Object implements Serializable {
 
     private static final long serialVersionUID = 193790837047304701L;
+    private static final Logger LOG = Logger.getLogger(ReactionFileData.class.getName());
     private List<String> _data = null;
 
     public ReactionFileData() {
@@ -106,5 +107,4 @@ public class ReactionFileData extends Object implements Serializable {
         }
         return data;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionFileData.class.getName());
 }

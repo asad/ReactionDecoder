@@ -43,6 +43,13 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  *
  */
 public class CDKInChI {
+    /*
+    On suggestion from D. Schomburg as 'At' a radioactive halogen that never appears in nature
+     */
+    public static final String R_Group_replacement_String = "At";
+    public static final String[] metals = {"At", "Th", "Pa", "U", "Np", "Pu", "Am",
+        "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"};
+    private static final Logger LOG = Logger.getLogger(CDKInChI.class.getName());
 
     private InChIGenerator _genInchi;
     private final InChIToStructure _intostruct;
@@ -60,12 +67,6 @@ public class CDKInChI {
         _intostruct = null;
         molecule = null;
     }
-    /*
-     On suggestion from D. Schomburg as 'At' a radioactive halogen that never appears in nature
-     */
-    public static final String R_Group_replacement_String = "At";
-    public static final String[] metals = {"At", "Th", "Pa", "U", "Np", "Pu", "Am",
-        "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"};
 
     private synchronized IAtomContainer convertRGroupsToMetals(IAtomContainer mol) {
         try {
@@ -182,5 +183,4 @@ public class CDKInChI {
     public synchronized String getAuxinfo() {
         return _genInchi.getAuxInfo();
     }
-    private static final Logger LOG = Logger.getLogger(CDKInChI.class.getName());
 }

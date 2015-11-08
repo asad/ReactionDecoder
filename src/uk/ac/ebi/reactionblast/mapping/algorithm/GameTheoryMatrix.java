@@ -61,9 +61,22 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public final class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatrix {
+public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatrix {
 
     private static final long serialVersionUID = 0x2c36427fd2L;
+    //~--- constructors -------------------------------------------------------
+    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(GameTheoryMatrix.class);
+//    private void initializeMappingFLAGS(Holder mh) throws Exception {
+//        ReactionContainer reactionStructureInformation = mh.getReactionContainer();
+    /*Reset all the flags*/
+//        for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
+//            for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
+//                reactionStructureInformation.setEductModified(substrateIndex, true);
+//                reactionStructureInformation.setProductModified(productIndex, true);
+//            }
+//        }
+//    }
+    private static final Logger LOG = Logger.getLogger(GameTheoryMatrix.class.getName());
     private Holder matrixHolder;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
     private final List<String> eductCounter;
@@ -78,9 +91,6 @@ public final class GameTheoryMatrix extends BaseGameTheory implements IGraphTheo
     private final ReactionContainer structureMapObj;
     private final BestMatch bestMatchContainer;
     private final IMappingAlgorithm theory;
-    //~--- constructors -------------------------------------------------------
-    private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(GameTheoryMatrix.class);
 
     /**
      * Creates a new instance of GameTheoryMatrix
@@ -280,15 +290,4 @@ public final class GameTheoryMatrix extends BaseGameTheory implements IGraphTheo
         this.reactionBlastMolMapping = reactionMolMapping;
     }
 
-//    private void initializeMappingFLAGS(Holder mh) throws Exception {
-//        ReactionContainer reactionStructureInformation = mh.getReactionContainer();
-        /*Reset all the flags*/
-//        for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
-//            for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
-//                reactionStructureInformation.setEductModified(substrateIndex, true);
-//                reactionStructureInformation.setProductModified(productIndex, true);
-//            }
-//        }
-//    }
-    private static final Logger LOG = Logger.getLogger(GameTheoryMatrix.class.getName());
 }

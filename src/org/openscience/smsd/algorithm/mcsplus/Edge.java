@@ -40,6 +40,20 @@ import java.util.logging.Logger;
 public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     private static final long serialVersionUID = 52343464641L;
+    private static final Logger LOG = Logger.getLogger(Edge.class.getName());
+
+    private final int i;
+    private final int j;
+
+    /**
+     *
+     * @param i
+     * @param j
+     */
+    public Edge(int i, int j) {
+        this.i = i;
+        this.j = j;
+    }
 
     @Override
     public int hashCode() {
@@ -65,19 +79,6 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
             return false;
         }
         return this.i == other.i || this.j == other.j;
-    }
-
-    private final int i;
-    private final int j;
-
-    /**
-     *
-     * @param i
-     * @param j
-     */
-    public Edge(int i, int j) {
-        this.i = i;
-        this.j = j;
     }
 
     @Override
@@ -109,5 +110,4 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
     public int getSink() {
         return j;
     }
-    private static final Logger LOG = Logger.getLogger(Edge.class.getName());
 }

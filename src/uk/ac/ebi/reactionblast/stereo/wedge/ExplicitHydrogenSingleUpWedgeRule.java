@@ -37,6 +37,7 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  * @author Gilleain Torrance
  */
 public class ExplicitHydrogenSingleUpWedgeRule extends WedgeRule {
+    private static final Logger LOG = Logger.getLogger(ExplicitHydrogenSingleUpWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE, NONE};
 
@@ -59,5 +60,4 @@ public class ExplicitHydrogenSingleUpWedgeRule extends WedgeRule {
         ITetrahedralChirality.Stereo chirality = ITetrahedralChirality.Stereo.CLOCKWISE;
         return new TetrahedralChirality(centralAtom, ligandAtoms, chirality);
     }
-    private static final Logger LOG = Logger.getLogger(ExplicitHydrogenSingleUpWedgeRule.class.getName());
 }

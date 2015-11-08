@@ -32,6 +32,7 @@ import uk.ac.ebi.centres.descriptor.General;
  * @author John May
  */
 public class CDKManager implements DescriptorManager<IAtom> {
+    private static final Logger LOG = Logger.getLogger(CDKManager.class.getName());
 
     private final IAtomContainer container;
     private final Map<IChemObject, MutableDescriptor> map = new HashMap<IChemObject, MutableDescriptor>();
@@ -59,11 +60,17 @@ public class CDKManager implements DescriptorManager<IAtom> {
         return mutator;
     }
 
+
+    @Override
+    public void clear() {
+        map.clear();
+    }
+
     class ProxyMutator extends MutableDescriptor {
 
         private final IChemObject chemObject;
 
-        public ProxyMutator(IChemObject chemObject) {
+        ProxyMutator(IChemObject chemObject) {
             this.chemObject = chemObject;
             chemObject.setProperty("descriptor", General.UNKNOWN);
         }
@@ -78,10 +85,4 @@ public class CDKManager implements DescriptorManager<IAtom> {
             chemObject.setProperty("descriptor", descriptor);
         }
     }
-
-    @Override
-    public void clear() {
-        map.clear();
-    }
-    private static final Logger LOG = Logger.getLogger(CDKManager.class.getName());
 }

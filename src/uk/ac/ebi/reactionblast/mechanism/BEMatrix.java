@@ -41,12 +41,13 @@ import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
  * @author Syed Asad Rahman<asad@ebi.ac.uk>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
-public final class BEMatrix extends EBIMatrix implements Serializable {
+public class BEMatrix extends EBIMatrix implements Serializable {
+    private static final long serialVersionUID = -1420740601548197863L;
+    private static final Logger LOG = Logger.getLogger(BEMatrix.class.getName());
 
     private IAtomContainerSet myMoleculeSet = null;
     private List<IBond> bonds = null;
     private List<IAtom> atomArray = null;
-    private static final long serialVersionUID = -1420740601548197863L;
     private final boolean withoutH;
     private final Map<IAtom, IAtom> mappings;
 
@@ -436,5 +437,4 @@ public final class BEMatrix extends EBIMatrix implements Serializable {
     public synchronized Object clone() throws CloneNotSupportedException {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
-    private static final Logger LOG = Logger.getLogger(BEMatrix.class.getName());
 }

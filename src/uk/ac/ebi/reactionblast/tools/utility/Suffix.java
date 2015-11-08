@@ -39,14 +39,33 @@ import org.openscience.cdk.math.RandomNumbersTool;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class Suffix {
+public class Suffix {
 
     private static String suffix = "";
     private static String timeSuffix = "";
     private static String randonNumberSuffix = "";
     private static Suffix ref = null;
+    private static final Logger LOG = Logger.getLogger(Suffix.class.getName());
+
+    //~--- get methods --------------------------------------------------------
+    /**
+     * Creates a new instance of Suffix
+     *
+     * @return
+     * @throws IOException
+     */
+    public static synchronized Suffix getInstance() throws IOException {
+        if (ref == null) {
+            
+            // it's ok, we can call this constructor
+            ref = new Suffix();
+        }
+        
+        return ref;
+    }
 
     //~--- constructors -------------------------------------------------------
+
     protected Suffix() throws IOException {
         Calendar cal = new GregorianCalendar();
         int ms = cal.get(Calendar.YEAR);
@@ -64,23 +83,6 @@ public final class Suffix {
 
         randonNumberSuffix = String.valueOf(RandomNumbersTool.randomInt(1, 1000));
         suffix = timeSuffix + randonNumberSuffix;
-    }
-
-    //~--- get methods --------------------------------------------------------
-    /**
-     * Creates a new instance of Suffix
-     *
-     * @return
-     * @throws IOException
-     */
-    public synchronized static Suffix getInstance() throws IOException {
-        if (ref == null) {
-
-            // it's ok, we can call this constructor
-            ref = new Suffix();
-        }
-
-        return ref;
     }
 
     /**
@@ -106,5 +108,4 @@ public final class Suffix {
     public String getRandonNumberSuffix() {
         return randonNumberSuffix;
     }
-    private static final Logger LOG = Logger.getLogger(Suffix.class.getName());
 }

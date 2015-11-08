@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 public class AtomStereoChangeInformation implements Serializable {
 
     private static final long serialVersionUID = 1896986585959789L;
+    private static final Logger LOG = Logger.getLogger(AtomStereoChangeInformation.class.getName());
     private final IAtom reactantAtom;
     private final IAtom productAtom;
     private boolean stereoChange = false;
@@ -111,5 +112,4 @@ public class AtomStereoChangeInformation implements Serializable {
         this.atomStereoR = atomStereoR;
         this.atomStereoP = atomStereoP;
     }
-    private static final Logger LOG = Logger.getLogger(AtomStereoChangeInformation.class.getName());
 }

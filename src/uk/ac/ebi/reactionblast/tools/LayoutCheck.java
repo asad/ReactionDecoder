@@ -35,6 +35,8 @@ import org.openscience.cdk.tools.manipulator.MoleculeSetManipulator;
  */
 public class LayoutCheck {
 
+    private static final Logger LOG = Logger.getLogger(LayoutCheck.class.getName());
+
     /**
      *
      * @param mol
@@ -75,5 +77,4 @@ public class LayoutCheck {
         }
         return chemModel;
     }
-    private static final Logger LOG = Logger.getLogger(LayoutCheck.class.getName());
 }

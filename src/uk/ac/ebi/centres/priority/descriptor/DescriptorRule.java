@@ -35,6 +35,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  * @author John May
  */
 public class DescriptorRule<A> extends AbstractPriorityRule<A> {
+    private static final Logger LOG = Logger.getLogger(DescriptorRule.class.getName());
 
     private DescriptorAccessor<A> accessor;
     private Map<Descriptor, Integer> ranking;
@@ -97,5 +98,4 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
     public int compare(Ligand<A> o1, Ligand<A> o2) {
         return getRank(o1) - getRank(o2);
     }
-    private static final Logger LOG = Logger.getLogger(DescriptorRule.class.getName());
 }

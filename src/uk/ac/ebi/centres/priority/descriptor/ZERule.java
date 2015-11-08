@@ -29,8 +29,9 @@ import uk.ac.ebi.centres.priority.access.descriptor.ArcPrimaryDescriptor;
  */
 public class ZERule<A> extends DescriptorRule<A> {
 
+    private static final Logger LOG = Logger.getLogger(ZERule.class.getName());
+
     public ZERule() {
         super(new ArcPrimaryDescriptor<A>(), Type.GEOMETRICAL, Planar.E, Planar.Z);
     }
-    private static final Logger LOG = Logger.getLogger(ZERule.class.getName());
 }

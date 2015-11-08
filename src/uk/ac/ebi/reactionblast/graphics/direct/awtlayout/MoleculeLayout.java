@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  *
  */
 public class MoleculeLayout extends AbstractAWTLayout<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(MoleculeLayout.class.getName());
     
     private AtomLayout atomLayout;
     
@@ -73,6 +74,5 @@ public class MoleculeLayout extends AbstractAWTLayout<IAtomContainer> {
         
         return boundsTree;
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeLayout.class.getName());
 
 }

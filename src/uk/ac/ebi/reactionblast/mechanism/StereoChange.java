@@ -31,12 +31,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 public class StereoChange implements Serializable {
 
     private static final long serialVersionUID = 6778787889667901L;
-
-    @Override
-    public String toString() {
-        return "StereoChange{" + "rAtomStereo=" + rAtomStereo + ", pAtomStereo=" + pAtomStereo + ", rAtom="
-                + rAtom.getSymbol() + rAtom.getID() + ", pAtom=" + pAtom.getSymbol() + pAtom.getID() + '}';
-    }
+    private static final Logger LOG = Logger.getLogger(StereoChange.class.getName());
     private final IStereoAndConformation rAtomStereo;
     private final IStereoAndConformation pAtomStereo;
     private final IAtom rAtom;
@@ -54,6 +49,12 @@ public class StereoChange implements Serializable {
         this.pAtomStereo = pAtomStereo;
         this.rAtom = rAtom;
         this.pAtom = pAtom;
+    }
+
+    @Override
+    public String toString() {
+        return "StereoChange{" + "rAtomStereo=" + rAtomStereo + ", pAtomStereo=" + pAtomStereo + ", rAtom="
+                + rAtom.getSymbol() + rAtom.getID() + ", pAtom=" + pAtom.getSymbol() + pAtom.getID() + '}';
     }
 
     /**
@@ -83,5 +84,4 @@ public class StereoChange implements Serializable {
     public IAtom getProductAtom() {
         return pAtom;
     }
-    private static final Logger LOG = Logger.getLogger(StereoChange.class.getName());
 }

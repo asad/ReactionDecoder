@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
+    private static final Logger LOG = Logger.getLogger(Map1ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
@@ -60,5 +61,4 @@ public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
         }
         //return size2 - size1;  assumes you want biggest to smallest;
     }
-    private static final Logger LOG = Logger.getLogger(Map1ValueComparator.class.getName());
 }

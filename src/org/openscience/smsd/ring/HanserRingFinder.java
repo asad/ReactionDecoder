@@ -80,7 +80,9 @@ import org.openscience.cdk.interfaces.IRingSet;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  * 
  */
-final public class HanserRingFinder {
+public class HanserRingFinder {
+
+    private static final Logger LOG = Logger.getLogger(HanserRingFinder.class.getName());
 
     /**
      * Returns Collection of atoms in Rings based on Hanser Ring Finding method
@@ -130,5 +132,4 @@ final public class HanserRingFinder {
         }
         return ringSet;
     }
-    private static final Logger LOG = Logger.getLogger(HanserRingFinder.class.getName());
 }

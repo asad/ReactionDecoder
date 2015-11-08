@@ -26,7 +26,8 @@ import java.util.logging.Logger;
  *
  * @author John May
  */
-public final class LigandComparison implements Comparison {
+public class LigandComparison implements Comparison {
+    private static final Logger LOG = Logger.getLogger(LigandComparison.class.getName());
 
     private final Integer         order;
     private final Descriptor.Type type;
@@ -63,5 +64,4 @@ public final class LigandComparison implements Comparison {
     public Descriptor.Type getType() {
         return type;
     }
-    private static final Logger LOG = Logger.getLogger(LigandComparison.class.getName());
 }

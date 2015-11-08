@@ -53,89 +53,14 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class ReactionMechanismTool implements Serializable {
+public class ReactionMechanismTool implements Serializable {
 
-    private boolean isBalanced(IReaction r) {
-
-        Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
-        Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
-
-        int leftHandAtomCount = 0;
-        for (IAtomContainer q : r.getReactants().atomContainers()) {
-            for (IAtom a : q.atoms()) {
-                if (a.getSymbol().equals("H")) {
-                    continue;
-                }
-                if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
-                    atomUniqueCounter1.put(a.getSymbol(), 1);
-                } else {
-                    int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
-                    atomUniqueCounter1.put(a.getSymbol(), counter);
-                }
-                leftHandAtomCount++;
-            }
-            if (DEBUG) {
-                try {
-                    System.out.println("Q=mol " + SmilesGenerator.generic().create(q));
-                } catch (CDKException ex) {
-                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-
-        int rightHandAtomCount = 0;
-        for (IAtomContainer t : r.getProducts().atomContainers()) {
-            for (IAtom b : t.atoms()) {
-                if (b.getSymbol().equals("H")) {
-                    continue;
-                }
-                if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
-                    atomUniqueCounter2.put(b.getSymbol(), 1);
-                } else {
-                    int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
-                    atomUniqueCounter2.put(b.getSymbol(), counter);
-                }
-                rightHandAtomCount++;
-            }
-            if (DEBUG) {
-                try {
-                    System.out.println("T=mol " + SmilesGenerator.generic().create(t));
-                } catch (CDKException ex) {
-                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-
-        if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
-        }
-
-        if (leftHandAtomCount != rightHandAtomCount) {
-            System.err.println();
-            System.err.println("Number of atom(s) on the Left side " + leftHandAtomCount
-                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            System.err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
-            return false;
-        } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            System.err.println();
-            System.err.println("Number of atom(s) on the Left side " + leftHandAtomCount
-                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            System.err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
-            return false;
-        }
-
-        if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-        }
-        return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
-    }
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(ReactionMechanismTool.class);
     private static final long serialVersionUID = 07342630505L;
+    private static final Logger LOG = Logger.getLogger(ReactionMechanismTool.class.getName());
     private MappingSolution selectedMapping;
     private Collection<MappingSolution> allSolutions;
 
@@ -260,13 +185,86 @@ public final class ReactionMechanismTool implements Serializable {
         }
     }
 
-    private synchronized boolean isMappingSolutionAcceptable(
-            Reactor reactor,
-            IMappingAlgorithm ma,
-            IReaction reaction,
-            boolean generate2D,
-            boolean generate3D) throws Exception {
+    private boolean isBalanced(
+            IReaction r) {
+        
+        Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
+        Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
+        
+        int leftHandAtomCount = 0;
+        for (IAtomContainer q : r.getReactants().atomContainers()) {
+            for (IAtom a : q.atoms()) {
+                if (a.getSymbol().equals("H")) {
+                    continue;
+                }
+                if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
+                    atomUniqueCounter1.put(a.getSymbol(), 1);
+                } else {
+                    int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
+                    atomUniqueCounter1.put(a.getSymbol(), counter);
+                }
+                leftHandAtomCount++;
+            }
+            if (DEBUG) {
+                try {
+                    System.out.println("Q=mol " + SmilesGenerator.generic().create(q));
+                } catch (CDKException ex) {
+                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        int rightHandAtomCount = 0;
+        for (IAtomContainer t : r.getProducts().atomContainers()) {
+            for (IAtom b : t.atoms()) {
+                if (b.getSymbol().equals("H")) {
+                    continue;
+                }
+                if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
+                    atomUniqueCounter2.put(b.getSymbol(), 1);
+                } else {
+                    int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
+                    atomUniqueCounter2.put(b.getSymbol(), counter);
+                }
+                rightHandAtomCount++;
+            }
+            if (DEBUG) {
+                try {
+                    System.out.println("T=mol " + SmilesGenerator.generic().create(t));
+                } catch (CDKException ex) {
+                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        if (DEBUG) {
+            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
+            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
+        }
+        
+        if (leftHandAtomCount != rightHandAtomCount) {
+            System.err.println();
+            System.err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
+            System.err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            return false;
+        } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
+            System.err.println();
+            System.err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
+            System.err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            return false;
+        }
+        
+        if (DEBUG) {
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+        }
+        return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
+    }
 
+    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor, IMappingAlgorithm ma, IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+        
         boolean chosen = false;
         try {
             BondChangeCalculator bcc;
@@ -359,17 +357,17 @@ public final class ReactionMechanismTool implements Serializable {
     }
 
     /*
-     * if bond changes are lesser than stored bond changes then update the flag or if stereo changes are lesser than
-     * stores stereo changes
-     */
+    * if bond changes are lesser than stored bond changes then update the flag or if stereo changes are lesser than
+    * stores stereo changes
+    */
     private synchronized boolean isChangeFeasible(MappingSolution ms) {
 
         /*
-         * This condition is valuble to trace graph isomorphism as only min algorithm checks this change. the idea is to
-         * assume a change if rest of the algorithm detects no change.
-         *
-         * TODO: check what is the impact if this logic if there are only stereo changes in a reaction.
-         */
+        * This condition is valuble to trace graph isomorphism as only min algorithm checks this change. the idea is to
+        * assume a change if rest of the algorithm detects no change.
+        *
+        * TODO: check what is the impact if this logic if there are only stereo changes in a reaction.
+        */
         if (DEBUG) {
 
             if (this.selectedMapping != null) {
@@ -389,9 +387,9 @@ public final class ReactionMechanismTool implements Serializable {
         }
 
         /*
-         This is to skip reaction where the no change is detected.
-         Example: R02996
-         */
+        This is to skip reaction where the no change is detected.
+        Example: R02996
+        */
         if (this.selectedMapping != null
                 && ms.getTotalBondChanges() == 0
                 && ms.getTotalStereoChanges() == 0) {
@@ -399,8 +397,8 @@ public final class ReactionMechanismTool implements Serializable {
         }
 
         /*
-         * if this is the first solution then accept it
-         */
+        * if this is the first solution then accept it
+        */
         if (this.selectedMapping == null) {
             logger.info("Condition Default " + ms.getAlgorithmID().description());
             if (DEBUG) {
@@ -519,9 +517,9 @@ public final class ReactionMechanismTool implements Serializable {
         } else if (this.selectedMapping.getTotalBondChanges() == ms.getTotalBondChanges()
                 && this.selectedMapping.getTotalCarbonBondChanges() == ms.getTotalCarbonBondChanges()
                 && this.selectedMapping.getSmallestFragmentCount() > ms.getSmallestFragmentCount()) {
-            /*This condition is for reactions like: 
-             CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(O)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(O)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.NC(CCC(N)=O)C(O)=O.NC(CCC(N)=O)C(O)=O.O[H].O[H]>>CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(N)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(N)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(O)=O)C(O)C1O.[H]OP(O)(=O)OP(O)(=O)OCC1OC(C(O)C1O)n1cnc2c(N)ncnc12.NC(CCC(O)=O)C(O)=O.NC(CCC(O)=O)C(O)=O.[H]OP(O)(O)=O.OP(O)(O)=O
-             **/
+            /*This condition is for reactions like:
+            CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(O)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(O)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.NC(CCC(N)=O)C(O)=O.NC(CCC(N)=O)C(O)=O.O[H].O[H]>>CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(N)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(N)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(O)=O)C(O)C1O.[H]OP(O)(=O)OP(O)(=O)OCC1OC(C(O)C1O)n1cnc2c(N)ncnc12.NC(CCC(O)=O)C(O)=O.NC(CCC(O)=O)C(O)=O.[H]OP(O)(O)=O.OP(O)(O)=O
+            **/
             logger.info("Condition 14 " + ms.getAlgorithmID().description());
             if (DEBUG) {
                 System.out.println("CASE: Condition 14");
@@ -530,9 +528,9 @@ public final class ReactionMechanismTool implements Serializable {
         } else if (this.selectedMapping.getTotalBondChanges() == ms.getTotalBondChanges()
                 && this.selectedMapping.getTotalCarbonBondChanges() == ms.getTotalCarbonBondChanges()
                 && this.selectedMapping.getBondEnergySum() > ms.getBondEnergySum()) {
-            /*This condition is for reactions like: 
-             R05421 (O-P over O-C)
-             **/
+            /*This condition is for reactions like:
+            R05421 (O-P over O-C)
+            **/
             logger.info("Condition 15 " + ms.getAlgorithmID().description());
             if (DEBUG) {
                 System.out.println("CASE: Condition 15");
@@ -598,8 +596,8 @@ public final class ReactionMechanismTool implements Serializable {
                         int energy = be.getEnergies(temp[0], temp[1], IBond.Order.SINGLE);
                         if (energy > 0) {
                             /*
-                             * Ring energy correction factor example:R01081
-                             */
+                            * Ring energy correction factor example:R01081
+                            */
                             if (key.contains("%")) {
                                 total += val * (energy - 5.0);
 
@@ -675,5 +673,4 @@ public final class ReactionMechanismTool implements Serializable {
         }
         return count;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionMechanismTool.class.getName());
 }

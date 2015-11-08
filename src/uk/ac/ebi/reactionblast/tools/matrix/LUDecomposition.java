@@ -18,6 +18,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class LUDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 19978681017L;
+    private static final Logger LOG = Logger.getLogger(LUDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -319,5 +320,4 @@ public class LUDecomposition implements java.io.Serializable {
         }
         return Xmat;
     }
-    private static final Logger LOG = Logger.getLogger(LUDecomposition.class.getName());
 }

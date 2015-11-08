@@ -30,11 +30,12 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class RSRule<A> extends DescriptorRule<A> {
 
+    private static final Logger LOG = Logger.getLogger(RSRule.class.getName());
+
     public RSRule(DescriptorAccessor<A> accessor) {
         super(Descriptor.Type.PSEUDO_ASYMMETRIC,
                 Type.TOPOGRAPHICAL,
                 accessor,
                 Tetrahedral.S, Tetrahedral.R);
     }
-    private static final Logger LOG = Logger.getLogger(RSRule.class.getName());
 }

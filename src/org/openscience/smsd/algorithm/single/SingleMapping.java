@@ -56,6 +56,7 @@ import org.openscience.smsd.tools.BondEnergies;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.single.SingleMappingTest")
 public class SingleMapping {
+    private static final Logger LOG = Logger.getLogger(SingleMapping.class.getName());
 
     private IAtomContainer source = null;
     private IAtomContainer target = null;
@@ -256,5 +257,4 @@ public class SingleMapping {
         }
         return result;
     }
-    private static final Logger LOG = Logger.getLogger(SingleMapping.class.getName());
 }

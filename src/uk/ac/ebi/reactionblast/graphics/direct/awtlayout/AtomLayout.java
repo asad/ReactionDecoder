@@ -57,6 +57,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  *
  */
 public class AtomLayout extends AbstractAWTLayout<IAtom> {
+    private static final Logger LOG = Logger.getLogger(AtomLayout.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -405,7 +406,9 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
             } else if (params.drawTerminalCarbons
                     && isTerminal(atom, atomContainer)) {
                 return true;
-            } else return getAttachedMultipleBondCount(atom, atomContainer) > 1;
+            } else {
+                return getAttachedMultipleBondCount(atom, atomContainer) > 1;
+            }
         } else if (symbol.equals("H")) {
             return params.drawExplicitHydrogens;
         }
@@ -491,5 +494,4 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     public void reset() {
         labelManager.reset();
     }
-    private static final Logger LOG = Logger.getLogger(AtomLayout.class.getName());
 }

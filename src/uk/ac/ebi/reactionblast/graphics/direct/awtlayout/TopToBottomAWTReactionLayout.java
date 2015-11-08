@@ -27,6 +27,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
+    private static final Logger LOG = Logger.getLogger(TopToBottomAWTReactionLayout.class.getName());
 
     public TopToBottomAWTReactionLayout() {
         this(new Params());
@@ -79,5 +80,4 @@ public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
         // TODO Auto-generated method stub
         return null;
     }
-    private static final Logger LOG = Logger.getLogger(TopToBottomAWTReactionLayout.class.getName());
 }

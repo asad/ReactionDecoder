@@ -35,11 +35,12 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK 
  * @contact asad@ebi.ac.uk
  */
-public final class IsomorphismMax extends Selector implements IResult {
+public class IsomorphismMax extends Selector implements IResult {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(IsomorphismMax.class);
     private static final long serialVersionUID = 0x192aa60a59L;
+    private static final Logger LOG = Logger.getLogger(IsomorphismMax.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean SubAndCompleteFlag;
@@ -208,5 +209,4 @@ public final class IsomorphismMax extends Selector implements IResult {
     public synchronized Holder getUpdatedHolder() {
         return updatedHolder;
     }
-    private static final Logger LOG = Logger.getLogger(IsomorphismMax.class.getName());
 }

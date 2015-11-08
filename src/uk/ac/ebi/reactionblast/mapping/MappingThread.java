@@ -29,13 +29,13 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-final class MappingThread implements Callable<Reactor> {
+class MappingThread implements Callable<Reactor> {
+    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(MappingThread.class);
+    private static final Logger LOG = Logger.getLogger(MappingThread.class.getName());
 
     private final IReaction cleanedReaction;
     private final IMappingAlgorithm algorithm;
     private final boolean removeHydrogen;
-    private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MappingThread.class);
 
     /**
      *
@@ -65,5 +65,4 @@ final class MappingThread implements Callable<Reactor> {
             throw ex;
         }
     }
-    private static final Logger LOG = Logger.getLogger(MappingThread.class.getName());
 }

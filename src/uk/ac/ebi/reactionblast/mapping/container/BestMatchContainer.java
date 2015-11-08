@@ -56,16 +56,12 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 public class BestMatchContainer extends BestMatch implements Serializable {
 
     private static final long serialVersionUID = 10947239472059259L;
+    private static final Logger LOG = Logger.getLogger(BestMatchContainer.class.getName());
     private final Map<IKey, AtomAtomMapping> mcsAtomMap;
     private final Map<IKey, Integer> fragmentCount;
     private final Map<IKey, Double> bondBreakingEnergy;
     private final Map<IKey, Double> stereoScore;
     private final Map<IKey, Double> similarity;
-
-    @Override
-    public String toString() {
-        return "BestMatchContainer{" + "mcsAtomMap=" + mcsAtomMap + ", fragmentCount=" + fragmentCount + ", bondBreakingEnergy=" + bondBreakingEnergy + ", stereoScore=" + stereoScore + ", similarity=" + similarity + '}';
-    }
 
     //~--- constructors -------------------------------------------------------
     /**
@@ -78,6 +74,11 @@ public class BestMatchContainer extends BestMatch implements Serializable {
         stereoScore = Collections.synchronizedMap(new HashMap<IKey, Double>());
         similarity = Collections.synchronizedMap(new HashMap<IKey, Double>());
         // System.out.println("FingerPrint Map Created");
+    }
+
+    @Override
+    public String toString() {
+        return "BestMatchContainer{" + "mcsAtomMap=" + mcsAtomMap + ", fragmentCount=" + fragmentCount + ", bondBreakingEnergy=" + bondBreakingEnergy + ", stereoScore=" + stereoScore + ", similarity=" + similarity + '}';
     }
 
     //~--- methods ------------------------------------------------------------
@@ -270,5 +271,4 @@ public class BestMatchContainer extends BestMatch implements Serializable {
         IKey key = new Key(indexI, indexJ);
         return similarity.containsKey(key) == true ? similarity.get(key) : 0.0;
     }
-    private static final Logger LOG = Logger.getLogger(BestMatchContainer.class.getName());
 }

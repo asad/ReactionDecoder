@@ -37,9 +37,10 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
  */
 public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
+    private static final Logger LOG = Logger.getLogger(SignatureMoleculeLabeller.class.getName());
+
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
-
         try {
             IAtomContainer permute = container.clone();
 
@@ -72,8 +73,8 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
     }
 
     /*
-     This is a very imp code modified by John May
-     The idea is to canonicalise the atoms and bonds
+    This is a very imp code modified by John May
+    The idea is to canonicalise the atoms and bonds
      */
     private void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
@@ -115,6 +116,5 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
         });
         atomContainer.setBonds(bonds);
     }
-    private static final Logger LOG = Logger.getLogger(SignatureMoleculeLabeller.class.getName());
 
 }

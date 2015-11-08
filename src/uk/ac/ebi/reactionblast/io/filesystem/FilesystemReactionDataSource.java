@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 public class FilesystemReactionDataSource implements IDataSource<IReaction> {
+    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataSource.class.getName());
     
     private File reactionDir;
     
@@ -135,6 +136,5 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
             e.printStackTrace();
         }
     }
-    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataSource.class.getName());
 
 }

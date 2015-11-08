@@ -24,6 +24,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class DefinedMapping {
+    private static final Logger LOG = Logger.getLogger(DefinedMapping.class.getName());
 
     private final IAtomContainer rAtomContainer;
 
@@ -140,5 +141,4 @@ public class DefinedMapping {
     public int getIndex() {
         return index;
     }
-    private static final Logger LOG = Logger.getLogger(DefinedMapping.class.getName());
 }

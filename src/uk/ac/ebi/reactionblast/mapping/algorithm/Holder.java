@@ -39,10 +39,11 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  *
  * @author Asad
  */
-public final class Holder extends Debugger implements Cloneable, Serializable {
+public class Holder extends Debugger implements Cloneable, Serializable {
 
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 18989786786L;
+    private static final Logger LOG = Logger.getLogger(Holder.class.getName());
     /*
      Final methods
      */
@@ -68,41 +69,6 @@ public final class Holder extends Debugger implements Cloneable, Serializable {
     private IMappingAlgorithm theory;
 
     /**
-     * @return the stereoMatrix
-     */
-    public synchronized EBIMatrix getStereoMatrix() {
-        return stereoMatrix;
-    }
-
-    /**
-     * @return the cliqueMatrix
-     */
-    public synchronized EBIMatrix getCliqueMatrix() {
-        return cliqueMatrix;
-    }
-
-    /**
-     * @return the graphSimilarityMatrix
-     */
-    public synchronized EBIMatrix getGraphSimilarityMatrix() {
-        return graphSimilarityMatrix;
-    }
-
-    /**
-     * @return the fragmentMatrix
-     */
-    public synchronized EBIMatrix getFragmentMatrix() {
-        return fragmentMatrix;
-    }
-
-    /**
-     * @return the energyMatrix
-     */
-    public synchronized EBIMatrix getEnergyMatrix() {
-        return energyMatrix;
-    }
-
-    /**
      *
      * @param theory
      * @param reactionID
@@ -113,15 +79,8 @@ public final class Holder extends Debugger implements Cloneable, Serializable {
      * @param hydFPFree
      * @throws IOException
      */
-    public Holder(
-            IMappingAlgorithm theory,
-            String reactionID,
-            List<String> eductCounter,
-            List<String> productCounter,
-            ReactionContainer reactionContainer,
-            BestMatch bestMatchContainer,
-            HydrogenFreeFingerPrintContainer hydFPFree) throws IOException {
-
+    public Holder(IMappingAlgorithm theory, String reactionID, List<String> eductCounter, List<String> productCounter, ReactionContainer reactionContainer, BestMatch bestMatchContainer, HydrogenFreeFingerPrintContainer hydFPFree) throws IOException {
+        
         this(eductCounter.size(), productCounter.size());
         this.theory = theory;
         this.reactionID = reactionID;
@@ -155,6 +114,42 @@ public final class Holder extends Debugger implements Cloneable, Serializable {
             System.out.println("initialize the Matrix");
         }
         initialize();
+    }
+
+    /**
+     * @return the stereoMatrix
+     */
+    public synchronized EBIMatrix getStereoMatrix() {
+        return stereoMatrix;
+    }
+
+    /**
+     * @return the cliqueMatrix
+     */
+    public synchronized EBIMatrix getCliqueMatrix() {
+        return cliqueMatrix;
+    }
+
+    /**
+     * @return the graphSimilarityMatrix
+     */
+    public synchronized EBIMatrix getGraphSimilarityMatrix() {
+        return graphSimilarityMatrix;
+    }
+
+    /**
+     * @return the fragmentMatrix
+     */
+    public synchronized EBIMatrix getFragmentMatrix(
+    ) {
+        return fragmentMatrix;
+    }
+
+    /**
+     * @return the energyMatrix
+     */
+    public synchronized EBIMatrix getEnergyMatrix() {
+        return energyMatrix;
     }
 
     private void initialize() {
@@ -298,5 +293,4 @@ public final class Holder extends Debugger implements Cloneable, Serializable {
     public void setTheory(IMappingAlgorithm theory) {
         this.theory = theory;
     }
-    private static final Logger LOG = Logger.getLogger(Holder.class.getName());
 }

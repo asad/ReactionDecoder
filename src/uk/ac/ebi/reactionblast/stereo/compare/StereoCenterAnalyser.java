@@ -37,6 +37,8 @@ import org.openscience.cdk.tools.SaturationChecker;
  */
 public class StereoCenterAnalyser {
 
+    private static final Logger LOG = Logger.getLogger(StereoCenterAnalyser.class.getName());
+
     /**
      * Check an atom to see if it has a potential tetrahedral stereo center. This can only be true if:
      * <ol>
@@ -49,8 +51,7 @@ public class StereoCenterAnalyser {
      * @param atomContainer the atom container the atom is in
      * @return true if all conditions for a stereocenter are met
      */
-    public static synchronized boolean hasPotentialStereoCenter(
-            IAtom atom, IAtomContainer atomContainer) {
+    public static synchronized boolean hasPotentialStereoCenter(IAtom atom, IAtomContainer atomContainer) {
         List<IAtom> neighbours = atomContainer.getConnectedAtomsList(atom);
         int numberOfNeighbours = neighbours.size();
         boolean hasImplicitHydrogen = false;
@@ -96,5 +97,4 @@ public class StereoCenterAnalyser {
         CIPTool.order(ligands);
         return CIPTool.checkIfAllLigandsAreDifferent(ligands);
     }
-    private static final Logger LOG = Logger.getLogger(StereoCenterAnalyser.class.getName());
 }

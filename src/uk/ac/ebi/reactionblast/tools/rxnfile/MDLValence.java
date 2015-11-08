@@ -48,10 +48,9 @@ import org.openscience.cdk.interfaces.IBond;
  * href="http://nextmovesoftware.com/blog/2013/02/27/explicit-and-implicit-hydrogens-taking-liberties-with-valence/">Explicit
  * and Implicit Hydrogens: taking liberties with valence</a>
  */
-final class MDLValence {
+class MDLValence {
 
-    private MDLValence() {
-    }
+    private static final Logger LOG = Logger.getLogger(MDLValence.class.getName());
 
     /**
      * Apply the MDL valence model to the provided atom container.
@@ -59,9 +58,8 @@ final class MDLValence {
      * @param container an atom container loaded from an MDL format
      * @return the container (for convenience)
      */
-    @TestMethod("carbon_neutral,tin_ii,tin_iv")
+    @TestMethod(value = "carbon_neutral,tin_ii,tin_iv")
     static IAtomContainer apply(IAtomContainer container) {
-
         int n = container.getAtomCount();
 
         int[] valences = new int[n];
@@ -70,7 +68,7 @@ final class MDLValence {
         for (IAtom atom : container.atoms()) {
             atomToIndex.put(atom, atomToIndex.size());
         }
-
+        
         // compute the bond order sums 
         for (IBond bond : container.bonds()) {
             int u = atomToIndex.get(bond.getAtom(0));
@@ -129,7 +127,7 @@ final class MDLValence {
      * href="http://nextmovesoftware.com/blog/2013/02/27/explicit-and-implicit-hydrogens-taking-liberties-with-valence/">Explicit
      * and Implicit Hydrogens taking liberties with valence</a>
      */
-    @TestMethod("nitrogen_implicitValence")
+    @TestMethod(value = "nitrogen_implicitValence")
     static int implicitValence(int elem, int q, int val) {
         switch (elem) {
             case 1:  // H
@@ -1275,5 +1273,7 @@ final class MDLValence {
         }
         return val;
     }
-    private static final Logger LOG = Logger.getLogger(MDLValence.class.getName());
+
+    private MDLValence() {
+    }
 }

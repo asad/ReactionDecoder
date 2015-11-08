@@ -47,6 +47,8 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(CDKPerceptor.class);
 
+    private static final Logger LOG = Logger.getLogger(CDKPerceptor.class.getName());
+
     public CDKPerceptor() {
         super(new CombinedRule<>(
                 new AtomicNumberRule<>(
@@ -56,9 +58,9 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                                     @Override
                                     public int getAtomicNumber(IAtom atom) {
                                         /*
-                                         * if its null, assuming its an "R" then put the masss less than element Carbon (6) TO DO this
-                                         * fix properly
-                                         */
+                                        * if its null, assuming its an "R" then put the masss less than element Carbon (6) TO DO this
+                                        * fix properly
+                                        */
                                         return atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber();
                                     }
                                 })),
@@ -68,8 +70,8 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                     @Override
                     public int getMassNumber(IAtom atom) {
                         /*
-                         * if its null, assuming its an "R" then put the masss less than element Carbon
-                         */
+                        * if its null, assuming its an "R" then put the masss less than element Carbon
+                        */
                         return atom.getMassNumber() == null ? 11 : atom.getMassNumber();
                     }
                 }),
@@ -84,9 +86,9 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                                             @Override
                                             public int getAtomicNumber(IAtom atom) {
                                                 /*
-                                                 * if its null, assuming its an "R" then put the masss less than element Carbon TO DO this fix
-                                                 * properly
-                                                 */
+                                                * if its null, assuming its an "R" then put the masss less than element Carbon TO DO this fix
+                                                * properly
+                                                */
                                                 return atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber();
                                             }
                                         })),
@@ -101,19 +103,18 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                         new PairRule<IAtom>(new AuxiliaryDescriptor<IAtom>()),
                         new RSRule<IAtom>(new AuxiliaryDescriptor<IAtom>())),
                 new CDK2DSignCalculator());
-
     }
 
     public void perceive(IAtomContainer container) {
         try {
             /*
-             Check for 2D co-ordinates for EC-BLAST, must else it will fail!
-             */
+            Check for 2D co-ordinates for EC-BLAST, must else it will fail!
+            */
             if (!GeometryTools.has2DCoordinates(container)) {
                 try {
                     /*
-                     Clone it else it will loose mol ID
-                     */
+                    Clone it else it will loose mol ID
+                    */
                     IAtomContainer clone = container.clone();
                     StructureDiagramGenerator sdg = new StructureDiagramGenerator(clone);
                     sdg.generateCoordinates();
@@ -126,5 +127,4 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
             logger.warn("WARNING: 2D CDK based stereo perception failed! ");
         }
     }
-    private static final Logger LOG = Logger.getLogger(CDKPerceptor.class.getName());
 }

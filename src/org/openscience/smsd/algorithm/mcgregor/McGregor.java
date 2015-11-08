@@ -55,7 +55,8 @@ import org.openscience.smsd.tools.IterationManager;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McGregorTest")
-public final class McGregor {
+public class McGregor {
+    private static final Logger LOG = Logger.getLogger(McGregor.class.getName());
 
     private final boolean shouldMatchRings;
     private final boolean bondMatch;
@@ -63,36 +64,6 @@ public final class McGregor {
     private IterationManager iterationManager = null;
     private boolean timeout = false;
 
-    /**
-     * @return the timeout
-     */
-    public synchronized boolean isTimeout() {
-        return timeout;
-    }
-
-    private synchronized boolean checkTimeout() {
-        if (getIterationManager().isMaxIteration()) {
-            this.timeout = true;
-//            System.err.println("McGregor MCS has hit the iteration limits " + getIterationManager().getCounter());
-            return true;
-        }
-        getIterationManager().increment();
-        return false;
-    }
-
-    /**
-     * @return the iterationManager
-     */
-    public IterationManager getIterationManager() {
-        return iterationManager;
-    }
-
-    /**
-     * @param iterationManager the iterationManager to set
-     */
-    public void setIterationManager(IterationManager iterationManager) {
-        this.iterationManager = iterationManager;
-    }
     /*
      *
      * McGregor starts
@@ -176,6 +147,38 @@ public final class McGregor {
         this.modifiedARCS = Collections.synchronizedList(new ArrayList<Integer>());
         this.bestARCS = new Stack<>();
         this.newMatrix = false;
+    }
+
+    /**
+     * @return the timeout
+     */
+    public synchronized boolean isTimeout() {
+        return timeout;
+    }
+
+    private synchronized boolean checkTimeout() {
+        if (getIterationManager().isMaxIteration()) {
+            this.timeout = true;
+//            System.err.println("McGregor MCS has hit the iteration limits " + getIterationManager().getCounter());
+            return true;
+        }
+        getIterationManager().increment();
+        return false;
+    }
+
+    /**
+     * @return the iterationManager
+     */
+    public IterationManager getIterationManager(
+            ) {
+        return iterationManager;
+    }
+
+    /**
+     * @param iterationManager the iterationManager to set
+     */
+    public void setIterationManager(IterationManager iterationManager) {
+        this.iterationManager = iterationManager;
     }
 
     /**
@@ -356,11 +359,7 @@ public final class McGregor {
         //System.out.println("Mapped Atoms before iterator Over: " + mappedAtoms);
         return 0;
     }
-
-    private synchronized void searchAndExtendMappings(
-            IAtomContainer source,
-            Stack<List<Integer>> bestARCSClone,
-            McgregorHelper mcGregorHelper) throws IOException {
+    private synchronized void searchAndExtendMappings(IAtomContainer source, Stack<List<Integer>> bestARCSClone, McgregorHelper mcGregorHelper) throws IOException {
         int mappedAtomCount = mcGregorHelper.getMappedAtomCount();
         int setNumA = mcGregorHelper.getSetNumA();
         int setNumB = mcGregorHelper.getsetNumB();
@@ -649,6 +648,7 @@ public final class McGregor {
     }
 
 //The function is called in function partsearch. The function is given indexZ temporary matrix.
+    
 //The function checks whether the temporary matrix is already found by calling the function
 //"verifyNodes". If the matrix already exists the function returns false which means that
 //the matrix will not be stored. Otherwise the function returns true which means that the
@@ -914,5 +914,4 @@ public final class McGregor {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
-    private static final Logger LOG = Logger.getLogger(McGregor.class.getName());
 }

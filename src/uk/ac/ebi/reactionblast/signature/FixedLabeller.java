@@ -29,6 +29,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  *
  */
 public class FixedLabeller implements ICanonicalMoleculeLabeller {
+    private static final Logger LOG = Logger.getLogger(FixedLabeller.class.getName());
 
     private final int[] labels;
 
@@ -45,6 +46,5 @@ public class FixedLabeller implements ICanonicalMoleculeLabeller {
     public int[] getCanonicalPermutation(IAtomContainer container) {
         return labels;
     }
-    private static final Logger LOG = Logger.getLogger(FixedLabeller.class.getName());
 
 }

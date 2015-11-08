@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -156,6 +157,5 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(ZoomToFitAWTLayout.class.getName());
 
 }

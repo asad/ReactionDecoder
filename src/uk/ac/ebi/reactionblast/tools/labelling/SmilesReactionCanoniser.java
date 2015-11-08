@@ -29,6 +29,7 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class SmilesReactionCanoniser
         extends AbstractReactionLabeller implements ICanonicalReactionLabeller {
+    private static final Logger LOG = Logger.getLogger(SmilesReactionCanoniser.class.getName());
 
     private final SmilesMoleculeLabeller labeller = new SmilesMoleculeLabeller();
 
@@ -36,6 +37,5 @@ public class SmilesReactionCanoniser
     public IReaction getCanonicalReaction(IReaction reaction) {
         return super.labelReaction(reaction, labeller);
     }
-    private static final Logger LOG = Logger.getLogger(SmilesReactionCanoniser.class.getName());
 
 }

@@ -37,11 +37,11 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * 
  */
 public class BaseFilter {
+    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(BaseFilter.class);
+    private static final Logger LOG = Logger.getLogger(BaseFilter.class.getName());
 
     private final IAtomContainer mol1;
     private final IAtomContainer mol2;
-    private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(BaseFilter.class);
 
     /**
      *
@@ -93,5 +93,4 @@ public class BaseFilter {
     public synchronized IAtomContainer getTarget() {
         return mol2;
     }
-    private static final Logger LOG = Logger.getLogger(BaseFilter.class.getName());
 }

@@ -83,6 +83,7 @@ public class CDKMCS {
     protected final static int ID1 = 0;
     protected final static int ID2 = 1;
     private static IterationManager iterationManager = null;
+    private static final Logger LOG = Logger.getLogger(CDKMCS.class.getName());
 
     ///////////////////////////////////////////////////////////////////////////
     //                            Query Methods
@@ -1178,5 +1179,4 @@ public class CDKMCS {
     private static void setIterationManager(IterationManager aIterationManager) {
         iterationManager = aIterationManager;
     }
-    private static final Logger LOG = Logger.getLogger(CDKMCS.class.getName());
 }

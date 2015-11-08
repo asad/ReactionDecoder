@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IBond;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperBonds {
+    private static final Logger LOG = Logger.getLogger(SuperBonds.class.getName());
 
     final private IBond superBond;
     final private int bondIndex;
@@ -82,5 +83,4 @@ public class SuperBonds {
     public int getBondIndex() {
         return bondIndex;
     }
-    private static final Logger LOG = Logger.getLogger(SuperBonds.class.getName());
 }

@@ -41,6 +41,7 @@ import java.util.logging.Logger;
  *
  */
 public class Permutor {
+    private static final Logger LOG = Logger.getLogger(Permutor.class.getName());
 
     /**
      * The current rank of the permutation to use
@@ -207,6 +208,5 @@ public class Permutor {
         }
         return shiftedPermutation;
     }
-    private static final Logger LOG = Logger.getLogger(Permutor.class.getName());
 
 }

@@ -30,9 +30,10 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class ReactionIsomorphismHandler implements Serializable {
+public class ReactionIsomorphismHandler implements Serializable {
 
     private static final long serialVersionUID = 0x1bfce07abac99fL;
+    private static final Logger LOG = Logger.getLogger(ReactionIsomorphismHandler.class.getName());
     private int rowSize = -1;
     private int colSize = -1;
     private boolean[][] flagSimilarityMatrix = null;
@@ -253,5 +254,4 @@ public final class ReactionIsomorphismHandler implements Serializable {
     public synchronized void setMatrixHolder(Holder matrixHolder) {
         this.matrixHolder = matrixHolder;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionIsomorphismHandler.class.getName());
 }

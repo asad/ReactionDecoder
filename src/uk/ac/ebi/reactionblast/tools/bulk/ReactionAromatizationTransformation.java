@@ -30,6 +30,8 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class ReactionAromatizationTransformation implements
         ITransformation<IReaction> {
 
+    private static final Logger LOG = Logger.getLogger(ReactionAromatizationTransformation.class.getName());
+
     @Override
     public ITransformation.TargetType getTargetType() {
         return TargetType.REACTION;
@@ -37,7 +39,6 @@ public class ReactionAromatizationTransformation implements
 
     @Override
     public IReaction transform(IReaction reaction) {
-        
         for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
             try {
                 ExtAtomContainerManipulator.aromatizeDayLight(atomContainer);
@@ -47,5 +48,4 @@ public class ReactionAromatizationTransformation implements
         }
         return reaction;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionAromatizationTransformation.class.getName());
 }

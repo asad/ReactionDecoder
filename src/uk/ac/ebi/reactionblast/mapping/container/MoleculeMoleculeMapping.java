@@ -59,11 +59,7 @@ import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
  */
 public class MoleculeMoleculeMapping implements Serializable{
     private static final long serialVersionUID = 1094750239472059259L;
-
-    @Override
-    public String toString() {
-        return "MoleculeMoleculeMapping{" + "reactant_product_mapping_map=" + reactant_product_mapping_map + '}';
-    }
+    private static final Logger LOG = Logger.getLogger(MoleculeMoleculeMapping.class.getName());
 
     //~--- fields -------------------------------------------------------------
     private final Map<String, List<MolMapping>> reactant_product_mapping_map;
@@ -76,11 +72,16 @@ public class MoleculeMoleculeMapping implements Serializable{
         reactant_product_mapping_map = Collections.synchronizedMap(new HashMap<String, List<MolMapping>>());
     }
 
+    @Override
+    public String toString() {
+        return "MoleculeMoleculeMapping{" + "reactant_product_mapping_map=" + reactant_product_mapping_map + '}';
+    }
+
     /**
      *
      * @throws java.io.IOException
      */
-    synchronized public void Clear() throws IOException {
+    public synchronized void Clear() throws IOException {
         reactant_product_mapping_map.clear();
     }
 
@@ -99,19 +100,21 @@ public class MoleculeMoleculeMapping implements Serializable{
      * @return
      * @throws java.io.IOException
      */
-    public synchronized boolean isPresent(String Key) throws IOException {
+    public synchronized boolean isPresent(String Key)
+            throws IOException {
         return reactant_product_mapping_map.containsKey(Key);
     }
 
     //~--- set methods --------------------------------------------------------
+
     /**
      *
      * @param Key
      * @param Value
      * @throws java.io.IOException
      */
-    public synchronized void setMolMappings(String Key, List<MolMapping> Value)
-            throws IOException {
+    public synchronized void setMolMappings(String Key, List<MolMapping> Value) throws
+            IOException {
         reactant_product_mapping_map.put(Key, Value);
         // Stores Reaction ID and RPAIR ID as Value in ArrayList
     }
@@ -122,8 +125,7 @@ public class MoleculeMoleculeMapping implements Serializable{
      * @return
      * @throws CDKException
      */
-    public synchronized List<MolMapping> getMolMappings(String RID) throws
-            CDKException {
+    public synchronized List<MolMapping> getMolMappings(String RID) throws CDKException {
         return reactant_product_mapping_map.containsKey(RID) == true ? reactant_product_mapping_map.get(RID) : null;
     }
 
@@ -165,5 +167,4 @@ public class MoleculeMoleculeMapping implements Serializable{
         }
         return mappedMap;
     }
-    private static final Logger LOG = Logger.getLogger(MoleculeMoleculeMapping.class.getName());
 }

@@ -38,23 +38,7 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class MappingGraph {
-
-    private class AtomContainerAtomPair {
-
-        public IAtomContainer atomContainer = null;
-        public IAtom atom = null;
-        public int index = -1;
-
-        public AtomContainerAtomPair(IAtomContainer atomContainer, IAtom atom, int index) {
-            this.atom = atom;
-            this.atomContainer = atomContainer;
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return this.index;
-        }
-    }
+    private static final Logger LOG = Logger.getLogger(MappingGraph.class.getName());
     public List<DefinedMapping> vertices;
     public List<DefinedMapping>[] adjacencyTable;
 
@@ -215,5 +199,21 @@ public class MappingGraph {
             }
         }
     }
-    private static final Logger LOG = Logger.getLogger(MappingGraph.class.getName());
+
+    private class AtomContainerAtomPair {
+
+        public IAtomContainer atomContainer = null;
+        public IAtom atom = null;
+        public int index = -1;
+
+        AtomContainerAtomPair(IAtomContainer atomContainer, IAtom atom, int index) {
+            this.atom = atom;
+            this.atomContainer = atomContainer;
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return this.index;
+        }
+    }
 }

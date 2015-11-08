@@ -51,7 +51,12 @@ import org.openscience.cdk.tools.manipulator.BondManipulator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRMapHandlerTest")
-public final class CDKRMapHandler {
+public class CDKRMapHandler {
+    private static final Logger LOG = Logger.getLogger(CDKRMapHandler.class.getName());
+    private List<Map<Integer, Integer>> mappings;
+    private IAtomContainer source;
+    private IAtomContainer target;
+    private boolean timeout;
 
     public CDKRMapHandler() {
         this.timeout = false;
@@ -71,7 +76,8 @@ public final class CDKRMapHandler {
      *
      * @param aSource the source to set
      */
-    public synchronized void setSource(IAtomContainer aSource) {
+    public synchronized void setSource(
+            IAtomContainer aSource) {
         source = aSource;
     }
 
@@ -92,10 +98,6 @@ public final class CDKRMapHandler {
     public synchronized void setTarget(IAtomContainer aTarget) {
         target = aTarget;
     }
-    private List<Map<Integer, Integer>> mappings;
-    private IAtomContainer source;
-    private IAtomContainer target;
-    private boolean timeout;
 
     /**
      * This function calculates all the possible combinations of MCS
@@ -108,8 +110,7 @@ public final class CDKRMapHandler {
      * @return
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1,
-            IAtomContainer molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1, IAtomContainer molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         setSource(molecule1);
         setTarget(molecule2);
         List<Map<Integer, Integer>> solution = new ArrayList<>();
@@ -153,8 +154,7 @@ public final class CDKRMapHandler {
      * @return
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1,
-            IQueryAtomContainer molecule2) throws CDKException {
+    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1, IQueryAtomContainer molecule2) throws CDKException {
         setSource(molecule1);
         setTarget(molecule2);
         List<Map<Integer, Integer>> solution = new ArrayList<>();
@@ -202,13 +202,8 @@ public final class CDKRMapHandler {
      * @param matchAtomType
      * @throws CDKException
      */
-    public synchronized void calculateOverlapsAndReduceExactMatch(
-            IAtomContainer Molecule1,
-            IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
-
+    public synchronized void calculateOverlapsAndReduceExactMatch(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+        
         setSource(Molecule1);
         setTarget(Molecule2);
 
@@ -256,12 +251,8 @@ public final class CDKRMapHandler {
      * @return
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateSubGraphs(IAtomContainer Molecule1,
-            IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
-
+    public synchronized List<Map<Integer, Integer>> calculateSubGraphs(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+        
         setSource(Molecule1);
         setTarget(Molecule2);
 
@@ -313,12 +304,8 @@ public final class CDKRMapHandler {
      * @return
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateIsomorphs(IAtomContainer Molecule1,
-            IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
-
+    public synchronized List<Map<Integer, Integer>> calculateIsomorphs(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+        
         setSource(Molecule1);
         setTarget(Molecule2);
         List<Map<Integer, Integer>> solutions = new ArrayList<>();
@@ -597,12 +584,12 @@ public final class CDKRMapHandler {
 //        List<IAtom> array2 = new ArrayList<IAtom>();
 
         /*
-         * We have serial numbers of the bonds/Atoms to delete
-         * Now we will collect the actual bond/Atoms rather than
-         * serial number for deletion. RonP flag check whether reactant is
-         * mapped on product or Vise Versa
-         *
-         */
+        * We have serial numbers of the bonds/Atoms to delete
+        * Now we will collect the actual bond/Atoms rather than
+        * serial number for deletion. RonP flag check whether reactant is
+        * mapped on product or Vise Versa
+        *
+        */
         for (List<CDKRMap> rMap : list) {
             Map<Integer, Integer> atomNumbersFromContainer = new TreeMap<>();
             for (CDKRMap rmap : rMap) {
@@ -618,7 +605,7 @@ public final class CDKRMapHandler {
                 atomNumbersFromContainer.put(indexI, indexJ);
             }
             /*Added the Mapping Numbers to the FinalMapping*
-             */
+            */
             getMappings().add(atomNumbersFromContainer);
         }
     }
@@ -629,18 +616,16 @@ public final class CDKRMapHandler {
      * @param source
      * @param target
      */
-    protected synchronized void identifySingleAtomsMatchedParts(List<CDKRMap> list,
-            IAtomContainer source,
-            IAtomContainer target) {
-
+    protected synchronized void identifySingleAtomsMatchedParts(List<CDKRMap> list, IAtomContainer source, IAtomContainer target) {
+        
 //        List<IAtom> array1 = new ArrayList<>();
 //        List<IAtom> array2 = new ArrayList<>();
 
         /* We have serial numbers of the bonds/Atoms to delete
-         * Now we will collect the actual bond/Atoms rather than
-         * serial number for deletion. RonP flag check whether reactant is
-         * mapped on product or Vise Versa
-         */
+        * Now we will collect the actual bond/Atoms rather than
+        * serial number for deletion. RonP flag check whether reactant is
+        * mapped on product or Vise Versa
+        */
         TreeMap<Integer, Integer> atomNumbersFromContainer = new TreeMap<>();
 
         for (CDKRMap rmap : list) {
@@ -657,7 +642,7 @@ public final class CDKRMapHandler {
             atomNumbersFromContainer.put(indexI, indexJ);
 
             /*Added the Mapping Numbers to the FinalMapping*
-             */
+            */
             getMappings().add(atomNumbersFromContainer);
 
         }
@@ -732,5 +717,4 @@ public final class CDKRMapHandler {
     public void setTimeout(boolean timeout) {
         this.timeout = timeout;
     }
-    private static final Logger LOG = Logger.getLogger(CDKRMapHandler.class.getName());
 }

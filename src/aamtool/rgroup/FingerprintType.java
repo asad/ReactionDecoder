@@ -26,6 +26,7 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintType {
+    private static final Logger LOG = Logger.getLogger(FingerprintType.class.getName());
 
     private final Set<String> commonCommonFP;
     private final Set<String> commonDifferenceFP;
@@ -57,6 +58,5 @@ public class FingerprintType {
     public Set<String> getAllPatternsFP() {
         return allPatternsFP;
     }
-    private static final Logger LOG = Logger.getLogger(FingerprintType.class.getName());
 
 }

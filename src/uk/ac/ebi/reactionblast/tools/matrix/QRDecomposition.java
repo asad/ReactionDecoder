@@ -17,6 +17,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class QRDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 199810878617L;
+    private static final Logger LOG = Logger.getLogger(QRDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -226,5 +227,4 @@ public class QRDecomposition implements java.io.Serializable {
         }
         return (new EBIMatrix(X, n, nx).getMatrix(0, n - 1, 0, nx - 1));
     }
-    private static final Logger LOG = Logger.getLogger(QRDecomposition.class.getName());
 }

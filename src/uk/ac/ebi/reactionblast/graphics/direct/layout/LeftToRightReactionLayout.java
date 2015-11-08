@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Axis;
  *
  */
 public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
+    private static final Logger LOG = Logger.getLogger(LeftToRightReactionLayout.class.getName());
 
     public LeftToRightReactionLayout() {
         this(true);
@@ -88,6 +89,5 @@ public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
     public double getAxisPosition() {
         return (boundsTree.getHeight() / 2) + params.borderY;
     }
-    private static final Logger LOG = Logger.getLogger(LeftToRightReactionLayout.class.getName());
 
 }

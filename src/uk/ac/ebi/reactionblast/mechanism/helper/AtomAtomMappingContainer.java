@@ -39,6 +39,7 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
 public class AtomAtomMappingContainer extends Object implements Serializable {
 
     private static final long serialVersionUID = 17879096958755L;
+    private static final Logger LOG = Logger.getLogger(AtomAtomMappingContainer.class.getName());
 
     private List<IAtom> reactantAtomArray = new ArrayList<>();
     private List<IAtom> productAtomArray = new ArrayList<>();
@@ -320,5 +321,4 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     public synchronized boolean isProductAtomPresent(IAtom atom) {
         return productAtomArray.contains(atom) == true;
     }
-    private static final Logger LOG = Logger.getLogger(AtomAtomMappingContainer.class.getName());
 }

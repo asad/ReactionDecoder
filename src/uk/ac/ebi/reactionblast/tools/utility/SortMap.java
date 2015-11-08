@@ -31,6 +31,7 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SortMap {
+    private static final Logger LOG = Logger.getLogger(SortMap.class.getName());
 
     /**
      *
@@ -175,5 +176,4 @@ public class SortMap {
         }
         return result;
     }
-    private static final Logger LOG = Logger.getLogger(SortMap.class.getName());
 }

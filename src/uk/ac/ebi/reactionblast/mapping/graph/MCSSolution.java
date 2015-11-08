@@ -27,9 +27,10 @@ import org.openscience.smsd.AtomAtomMapping;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class MCSSolution implements Serializable {
+public class MCSSolution implements Serializable {
 
     private static final long serialVersionUID = 0xc678991ddf0L;
+    private static final Logger LOG = Logger.getLogger(MCSSolution.class.getName());
     private final IAtomContainer queryContainer;
     private final int targetPosition;
     private final IAtomContainer targetContainer;
@@ -134,5 +135,4 @@ public final class MCSSolution implements Serializable {
     public synchronized int getQueryPosition() {
         return queryPosition;
     }
-    private static final Logger LOG = Logger.getLogger(MCSSolution.class.getName());
 }

@@ -33,6 +33,7 @@ import org.openscience.cdk.interfaces.IBond;
  *
  */
 public class RootSystem {
+    private static final Logger LOG = Logger.getLogger(RootSystem.class.getName());
     
     /**
      * The atom roots of the trees that make up the system.
@@ -105,6 +106,5 @@ public class RootSystem {
         printAtomList(leaves, sb);
         return sb.toString();
     }
-    private static final Logger LOG = Logger.getLogger(RootSystem.class.getName());
 
 }

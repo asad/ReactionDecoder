@@ -34,6 +34,7 @@ import signature.AbstractVertexSignature;
 public class RBlastAtomSignature extends AbstractVertexSignature {
 
     public static final String CHARGE_SEPARATOR = ":";
+    private static final Logger LOG = Logger.getLogger(RBlastAtomSignature.class.getName());
     private final IAtomContainer atomContainer;
     private boolean useAromatics = true;
     private boolean useCharge = true;
@@ -175,5 +176,4 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         }
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(RBlastAtomSignature.class.getName());
 }

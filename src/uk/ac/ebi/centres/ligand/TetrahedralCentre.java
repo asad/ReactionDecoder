@@ -40,6 +40,7 @@ import uk.ac.ebi.centres.descriptor.Tetrahedral;
 public class TetrahedralCentre<A>
         extends AbstractLigand<A>
         implements Centre<A> {
+    private static final Logger LOG = Logger.getLogger(TetrahedralCentre.class.getName());
 
     private final A atom;
     private A parent;
@@ -172,5 +173,4 @@ public class TetrahedralCentre<A>
         getProvider().dispose();
         setProvider(null);
     }
-    private static final Logger LOG = Logger.getLogger(TetrahedralCentre.class.getName());
 }

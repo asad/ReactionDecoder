@@ -30,26 +30,12 @@ import java.util.logging.Logger;
  *
  */
 public class BlockList implements Comparable<BlockList> {
+    private static final Logger LOG = Logger.getLogger(BlockList.class.getName());
 
     private final List<Block> blocks;
     private String signatureString;
     private int totalSize;
 
-    private class StringIntPair implements Comparable<StringIntPair> {
-
-        public String stringValue;
-        public int intValue;
-
-        public StringIntPair(String stringValue, int intValue) {
-            this.stringValue = stringValue;
-            this.intValue = intValue;
-        }
-
-        @Override
-        public int compareTo(StringIntPair o) {
-            return stringValue.compareTo(o.stringValue);
-        }
-    }
 
     public BlockList() {
         blocks = new ArrayList<>();
@@ -178,5 +164,20 @@ public class BlockList implements Comparable<BlockList> {
     public String toString() {
         return blocks.toString();
     }
-    private static final Logger LOG = Logger.getLogger(BlockList.class.getName());
+
+    private class StringIntPair implements Comparable<StringIntPair> {
+
+        public String stringValue;
+        public int intValue;
+
+        StringIntPair(String stringValue, int intValue) {
+            this.stringValue = stringValue;
+            this.intValue = intValue;
+        }
+
+        @Override
+        public int compareTo(StringIntPair o) {
+            return stringValue.compareTo(o.stringValue);
+        }
+    }
 }

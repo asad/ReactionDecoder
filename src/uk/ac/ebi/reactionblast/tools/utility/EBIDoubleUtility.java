@@ -33,6 +33,7 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 public class EBIDoubleUtility {
 
     private static final long serialVersionUID = 7683452581122892189L;
+    private static final Logger LOG = Logger.getLogger(EBIDoubleUtility.class.getName());
 
     /**
      *
@@ -220,5 +221,4 @@ public class EBIDoubleUtility {
 
         return flag;
     }
-    private static final Logger LOG = Logger.getLogger(EBIDoubleUtility.class.getName());
 }

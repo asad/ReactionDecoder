@@ -46,6 +46,7 @@ import org.openscience.smsd.AtomAtomMapping;
  */
 @TestClass("org.openscience.cdk.smsd.filters.ChemicalFiltersTest")
 public class ChemicalFilters extends BaseFilter {
+    private static final Logger LOG = Logger.getLogger(ChemicalFilters.class.getName());
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final IChemicalFilter<Double> energyFilter;
@@ -306,5 +307,4 @@ public class ChemicalFilters extends BaseFilter {
     protected synchronized List<AtomAtomMapping> getMCSList() {
         return Collections.synchronizedList(allAtomMCS);
     }
-    private static final Logger LOG = Logger.getLogger(ChemicalFilters.class.getName());
 }

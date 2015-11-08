@@ -42,6 +42,7 @@ import uk.ac.ebi.reactionblast.mapping.blocks.BlockPair;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = Logger.getLogger(DirectRBLastReactionDrawer.class.getName());
 
     private DirectReactionDrawer reactionDrawer;
 
@@ -382,5 +383,4 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         int y = ((int) centerY) - (h / 2);
         g.drawRect(x, y, w, h);
     }
-    private static final Logger LOG = Logger.getLogger(DirectRBLastReactionDrawer.class.getName());
 }

@@ -41,6 +41,7 @@ public class ValencyCalculator {
 
     private static Map<String, Integer> valencElectronMap = null;
     private static boolean isInitialized = false;
+    private static final Logger LOG = Logger.getLogger(ValencyCalculator.class.getName());
 
     private static void initialize() {
         if (isInitialized) {
@@ -196,5 +197,4 @@ public class ValencyCalculator {
         initialize();
         return valencElectronMap.get(key);
     }
-    private static final Logger LOG = Logger.getLogger(ValencyCalculator.class.getName());
 }

@@ -46,6 +46,8 @@ import org.openscience.cdk.interfaces.IElectronContainer;
  */
 public class EBIMolSplitter {
 
+    private static final Logger LOG = Logger.getLogger(EBIMolSplitter.class.getName());
+
     /**
      * Check whether a set of atoms in an atomcontainer is connected
      *
@@ -118,5 +120,4 @@ public class EBIMolSplitter {
         }
         return molecules;
     }
-    private static final Logger LOG = Logger.getLogger(EBIMolSplitter.class.getName());
 }

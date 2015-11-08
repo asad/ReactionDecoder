@@ -28,6 +28,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @param <A>
  */
 public class NonterminalLigand<A> extends AbstractLigand<A> {
+    private static final Logger LOG = Logger.getLogger(NonterminalLigand.class.getName());
 
     private final A atom;
     private A parent;
@@ -127,5 +128,4 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
     public Boolean isParent(A atom) {
         return parent.equals(atom);
     }
-    private static final Logger LOG = Logger.getLogger(NonterminalLigand.class.getName());
 }

@@ -25,7 +25,8 @@ import java.util.logging.Logger;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-final public class SimilarityResult {
+public class SimilarityResult {
+    private static final Logger LOG = Logger.getLogger(SimilarityResult.class.getName());
 
     private final String query;
     private final String target;
@@ -63,6 +64,5 @@ final public class SimilarityResult {
     public Map<String, String> getSimilarityReactions() {
         return similarityReactions;
     }
-    private static final Logger LOG = Logger.getLogger(SimilarityResult.class.getName());
 
 }

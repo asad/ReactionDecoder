@@ -64,6 +64,7 @@ import org.openscience.cdk.interfaces.IBond;
  *         Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class PathGraph {
+    private static final Logger LOG = Logger.getLogger(PathGraph.class.getName());
 
     private final List<PathEdge> edges;
     private final List<IAtom> atoms;
@@ -160,5 +161,4 @@ public class PathGraph {
             atoms.add(molecule.getAtom(i));
         }
     }
-    private static final Logger LOG = Logger.getLogger(PathGraph.class.getName());
 }

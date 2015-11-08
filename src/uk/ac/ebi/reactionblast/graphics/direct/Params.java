@@ -23,39 +23,10 @@ import java.awt.Color;
 import java.util.logging.Logger;
 
 public class Params {
-
-    public enum BondStrokeCap {
-
-        BUTT, ROUND, SQUARE
-    };
-
-    public enum BondStrokeJoin {
-
-        BEVEL, MITRE, ROUND
-    };
+    private static final Logger LOG = Logger.getLogger(Params.class.getName());
     public BondStrokeCap bondStrokeCap = BondStrokeCap.BUTT;
     public BondStrokeJoin bondStrokeJoin = BondStrokeJoin.MITRE;
 
-    public enum XAlign {
-
-        LEFT, CENTER, RIGHT
-    }
-
-    public enum YAlign {
-
-        TOP, CENTER, BOTTOM
-    }
-    
-    public enum ArrowType {
-        FORWARD,
-        BACKWARD,
-        BIDIRECTIONAL
-    }
-    
-    public enum MoleculeAlignMethod {
-        MAX_AXIS,
-        MIN_AREA
-    }
     
     public XAlign leftRightAlignment = XAlign.CENTER;
     public YAlign topBottomAlignment = YAlign.CENTER;
@@ -141,5 +112,34 @@ public class Params {
     public boolean shouldCrop = true;
     public double labelPanelHeight = 20;
     public double labelGap = 10;;
-    private static final Logger LOG = Logger.getLogger(Params.class.getName());
+
+    public enum BondStrokeCap {
+
+        BUTT, ROUND, SQUARE
+    }
+
+    public enum BondStrokeJoin {
+
+        BEVEL, MITRE, ROUND
+    }
+
+    public enum XAlign {
+
+        LEFT, CENTER, RIGHT
+    }
+
+    public enum YAlign {
+
+        TOP, CENTER, BOTTOM
+    }
+
+    public enum ArrowType {
+
+        FORWARD, BACKWARD, BIDIRECTIONAL
+    }
+
+    public enum MoleculeAlignMethod {
+
+        MAX_AXIS, MIN_AREA
+    }
 }

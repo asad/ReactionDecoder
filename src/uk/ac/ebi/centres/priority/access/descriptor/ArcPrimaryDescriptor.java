@@ -29,9 +29,10 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class ArcPrimaryDescriptor<A> implements DescriptorAccessor<A> {
 
+    private static final Logger LOG = Logger.getLogger(ArcPrimaryDescriptor.class.getName());
+
     @Override
     public Descriptor getDescriptor(Ligand<A> ligand) {
         return ligand.getParentArc().getDescriptor();
     }
-    private static final Logger LOG = Logger.getLogger(ArcPrimaryDescriptor.class.getName());
 }

@@ -35,6 +35,7 @@ import org.openscience.cdk.interfaces.IAtom;
 public class GlobalEntropyCalculator implements Serializable {
 
     private static final long serialVersionUID = 7879978965972591251L;
+    private static final Logger LOG = Logger.getLogger(GlobalEntropyCalculator.class.getName());
     private final HashMap<Integer, RMatrix> matrixMap = new HashMap<>();
     private final HashMap<String, HashMap<Integer, Integer>> typeMap = new HashMap<>();
     private final HashMap<String, Integer> freqMap = new HashMap<>();
@@ -165,5 +166,4 @@ public class GlobalEntropyCalculator implements Serializable {
         }
         return matrixMap.get(index);
     }
-    private static final Logger LOG = Logger.getLogger(GlobalEntropyCalculator.class.getName());
 }

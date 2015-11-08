@@ -48,7 +48,8 @@ import org.openscience.smsd.tools.IterationManager;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
-public final class MCSPlus {
+public class MCSPlus {
+    private static final Logger LOG = Logger.getLogger(MCSPlus.class.getName());
 
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
@@ -60,27 +61,6 @@ public final class MCSPlus {
 
     private IterationManager iterationManager = null;
     private final boolean matchAtomType;
-
-    /**
-     * @return the timeout
-     */
-    public synchronized boolean isTimeout() {
-        return timeout;
-    }
-
-    /**
-     * @return the iterationManager
-     */
-    private IterationManager getIterationManager() {
-        return iterationManager;
-    }
-
-    /**
-     * @param iterationManager the iterationManager to set
-     */
-    private void setIterationManager(IterationManager iterationManager) {
-        this.iterationManager = iterationManager;
-    }
 
     /**
      *
@@ -111,6 +91,27 @@ public final class MCSPlus {
         this.ac1 = ac1;
         this.ac2 = ac2;
         this.overlaps = calculateMCS();
+    }
+
+    /**
+     * @return the timeout
+     */
+    public synchronized boolean isTimeout() {
+        return timeout;
+    }
+
+    /**
+     * @return the iterationManager
+     */
+    private IterationManager getIterationManager() {
+        return iterationManager;
+    }
+
+    /**
+     * @param iterationManager the iterationManager to set
+     */
+    private void setIterationManager(IterationManager iterationManager) {
+        this.iterationManager = iterationManager;
     }
 
     /**
@@ -313,5 +314,4 @@ public final class MCSPlus {
     public synchronized boolean isMatchAtomType() {
         return matchAtomType;
     }
-    private static final Logger LOG = Logger.getLogger(MCSPlus.class.getName());
 }

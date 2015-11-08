@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 public class IterationManager implements Serializable {
 
     private static final long serialVersionUID = 396239639826981L;
+    private static final Logger LOG = Logger.getLogger(IterationManager.class.getName());
     private int max;
     private int counter;
     private int coverage;
@@ -113,5 +114,4 @@ public class IterationManager implements Serializable {
     public int getIterationLimit() {
         return limit;
     }
-    private static final Logger LOG = Logger.getLogger(IterationManager.class.getName());
 }

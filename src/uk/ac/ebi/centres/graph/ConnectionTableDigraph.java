@@ -28,6 +28,7 @@ import uk.ac.ebi.centres.Ligand;
  */
 public class ConnectionTableDigraph<A>
         extends AbstractDigraph<A> {
+    private static final Logger LOG = Logger.getLogger(ConnectionTableDigraph.class.getName());
 
     private final ConnectionTable<A> table;
 
@@ -52,5 +53,4 @@ public class ConnectionTableDigraph<A>
     public Collection<A> getConnected(A atom) {
         return table.getConnected(atom);
     }
-    private static final Logger LOG = Logger.getLogger(ConnectionTableDigraph.class.getName());
 }

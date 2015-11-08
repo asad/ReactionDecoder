@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.CanvasGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
 
 public class ZoomToFitDrawer {
+    private static final Logger LOG = Logger.getLogger(ZoomToFitDrawer.class.getName());
     
     private DirectMoleculeDrawer moleculeDrawer;
     
@@ -89,6 +90,5 @@ public class ZoomToFitDrawer {
         double objectHeight = r2D.getHeight() + (params.borderY * 2);
         return Math.min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
-    private static final Logger LOG = Logger.getLogger(ZoomToFitDrawer.class.getName());
 
 }

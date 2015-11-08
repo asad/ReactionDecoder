@@ -32,6 +32,8 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class ReactionImplicitHydrogenTransformation implements
         ITransformation<IReaction> {
 
+    private static final Logger LOG = Logger.getLogger(ReactionImplicitHydrogenTransformation.class.getName());
+
     @Override
     public ITransformation.TargetType getTargetType() {
         return TargetType.REACTION;
@@ -51,5 +53,4 @@ public class ReactionImplicitHydrogenTransformation implements
         }
         return reaction;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionImplicitHydrogenTransformation.class.getName());
 }

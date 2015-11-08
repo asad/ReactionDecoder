@@ -82,6 +82,204 @@ import uk.ac.ebi.reactionblast.tools.matrix.SingularValueDecomposition;
 public class EBIMatrix extends Object implements Cloneable, java.io.Serializable {
 
     private static final long serialVersionUID = 19787786981017786L;
+    private static final Logger LOG = Logger.getLogger(EBIMatrix.class.getName());
+
+    /**
+     * Solves a linear equation system with Gauss elimination.
+     *
+     * @param matrix
+     * @param vector
+     * @return
+     * @keyword Gauss elimination
+     */
+    public static List<Double> elimination(EBIMatrix matrix, List<Double> vector) {
+        int i, j, k, ipvt;
+        int n = vector.size();
+        int[] pivot = new int[n];
+        double c, temp;
+        //double[] x = new double[n];
+        EBIMatrix a = matrix.duplicate();
+        List<Double> b = new ArrayList<>(vector);
+        for (j = 0; j < (n - 1); j++) {
+            c = Math.abs(a.matrix[j][j]);
+            pivot[j] = j;
+            ipvt = j;
+            for (i = j + 1; i < n; i++) {
+                if (Math.abs(a.matrix[i][j]) > c) {
+                    c = Math.abs(a.matrix[i][j]);
+                    ipvt = i;
+                }
+            }
+            
+            // Exchanges rows when necessary
+            if (pivot[j] != ipvt) {
+                pivot[j] = ipvt;
+                pivot[ipvt] = j;
+                for (k = 0; k < n; k++) {
+                    temp = a.matrix[j][k];
+                    a.matrix[j][k] = a.matrix[pivot[j]][k];
+                    a.matrix[pivot[j]][k] = temp;
+                }
+                
+                temp = b.get(j);
+                b.set(j, b.get(pivot[j]));
+                b.set(pivot[j], temp);
+            }
+            
+            // Store multipliers
+            for (i = j + 1; i < n; i++) {
+                a.matrix[i][j] /= a.matrix[j][j];
+            }
+            
+            // Give elements below the diagonal a zero value
+            for (i = j + 1; i < n; i++) {
+                for (k = j + 1; k < n; k++) {
+                    a.matrix[i][k] -= a.matrix[i][j] * a.matrix[j][k];
+                }
+                b.set(i, b.get(i) - a.matrix[i][j] * b.get(j));
+                
+                a.matrix[i][j] = 0.0; // Not necessary
+            }
+        }
+        // Rueckwaertseinsetzen (which is?)
+        List<Double> result = new ArrayList<>(n);
+        result.set(n - 1, b.get(n - 1) / a.matrix[n - 1][n - 1]);
+        for (j = n - 2; j >= 0; j--) {
+            result.set(j, b.get(j));
+            for (k = n - 1; k > j; k--) {
+                result.set(j, result.get(j) - result.get(k) * a.matrix[j][k]);
+            }
+            
+            result.set(j, result.get(j) / a.matrix[j][k]);
+        }
+        return result;
+    }
+
+    /**
+     * Generate matrix with random elements
+     *
+     * @param m
+     * @param n
+     * @return An rows-by-columns matrix with uniformly distributed random
+     * elements.
+     */
+    public static EBIMatrix random(int m, int n) {
+        EBIMatrix A = new EBIMatrix(m, n);
+        double[][] X = A.getArray();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                X[i][j] = Math.random();
+            }
+        }
+        return A;
+    }
+
+    /**
+     * Generate identity matrix
+     *
+     * @param m
+     * @param n
+     * @return An rows-by-columns matrix with ones on the diagonal and zeros
+     * elsewhere.
+     */
+    public static EBIMatrix identity(int m, int n) {
+        EBIMatrix A = new EBIMatrix(m, n);
+        double[][] X = A.getArray();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                X[i][j] = (i == j ? 1.0 : 0.0);
+            }
+        }
+        return A;
+    }
+
+    /**
+     * Read a matrix from a stream. The format is the same the print method, so
+     * printed matrices can be read back in (provided they were printed using US
+     * Locale). Elements are separated by whitespace, all the elements for each
+     * row appear on a single line, the last row is followed by a blank line.
+     *
+     * @param input the input stream.
+     * @return
+     * @throws java.io.IOException
+     */
+    @SuppressWarnings(value = {"empty-statement", "unchecked"})
+    public static EBIMatrix read(BufferedReader input) throws java.io.IOException {
+        StreamTokenizer tokenizer = new StreamTokenizer(input);
+        
+        // Although StreamTokenizer will parse numbers, it doesn't recognize
+        // scientific notation (E or D); however, double.valueOf does.
+        // The strategy here is to disable StreamTokenizer's number parsing.
+        // We'll only get whitespace delimited words, EOL's and EOF's.
+        // These words should all be numbers, for double.valueOf to parse.
+        tokenizer.resetSyntax();
+        tokenizer.wordChars(0, 255);
+        tokenizer.whitespaceChars(0, ' ');
+        tokenizer.eolIsSignificant(true);
+        ArrayList v = new ArrayList();
+        
+        // Ignore initial empty lines
+        while (tokenizer.nextToken() == StreamTokenizer.TT_EOL) {
+            ;
+        }
+        if (tokenizer.ttype == StreamTokenizer.TT_EOF) {
+            throw new java.io.IOException("Unexpected EOF on matrix read.");
+        }
+        do {
+            v.add(Double.valueOf(tokenizer.sval)); // Read & store 1st row.
+        } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
+        
+        int n = v.size();  // Now we've got the number of columns!
+        double row[] = new double[n];
+        for (int j = 0; j < n; j++) {
+            // extract the elements of the 1st row.
+            row[j] = ((Number) v.get(j)).doubleValue();
+        }
+        v.removeAll(v);
+        v.add(row);  // Start storing rows instead of columns.
+        while (tokenizer.nextToken() == StreamTokenizer.TT_WORD) {
+            // While non-empty lines
+            v.add(row = new double[n]);
+            int j = 0;
+            do {
+                if (j >= n) {
+                    throw new java.io.IOException("Row " + v.size() + " is too long.");
+                }
+                Double.valueOf(tokenizer.sval).doubleValue();
+            } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
+            if (j < n) {
+                throw new java.io.IOException("Row " + v.size() + " is too short.");
+            }
+        }
+        int m = v.size();  // Now we've got the number of rows.
+        double[][] A = new double[m][];
+        for (int i = 0; i < v.size(); i++) {
+            A[i] = (double[]) v.get(i);// duplicate the rows out of the vector
+        }
+        return new EBIMatrix(A);
+    }
+
+    /*
+     * ------------------------ Public Methods ------------------------
+     */
+    /**
+     *
+     * @param A
+     * @return
+     */
+    public static EBIMatrix constructWithCopy(double[][] A) {
+        int m = A.length;
+        int n = A[0].length;
+        EBIMatrix X = new EBIMatrix(m, n);
+        double[][] C = X.getArray();
+        for (int i = 0; i < m; i++) {
+            if (A[i].length != n) {
+                throw new IllegalArgumentException("All rows must have the same length.");
+            }
+            System.arraycopy(A[i], 0, C[i], 0, n);
+        }
+        return X;
+    }
     /*
      * ------------------------ Class variables ------------------------
      */
@@ -145,6 +343,48 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         this.matrix = A;
         this.rows = m;
         this.columns = n;
+    }
+
+    /*
+     * ------------------------ Constructors ------------------------
+     */
+    /**
+     * dataonstruct an rows-by-columns constant matrix.
+     *
+     * @param m
+     * @param n
+     * @param s Fill the matrix with this scalar value.
+     */
+    public EBIMatrix(int m, int n, double s) {
+        this.rows = m;
+        this.columns = n;
+        matrix = new double[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = s;
+            }
+        }
+    }
+
+    /**
+     * dataonstruct a matrix from a one-dimensional packed array
+     *
+     * @param vals One-dimensional array of doubles, packed by columns (ala
+     * Fortran).
+     * @param m
+     */
+    public EBIMatrix(double vals[], int m) {
+        this.rows = m;
+        this.columns = (m != 0 ? vals.length / m : 0);
+        if (m * columns != vals.length) {
+            throw new IllegalArgumentException("Array length must be a multiple of m.");
+        }
+        matrix = new double[m][columns];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrix[i][j] = vals[i + j * m];
+            }
+        }
     }
 
     /**
@@ -714,82 +954,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
     /**
-     * Solves a linear equation system with Gauss elimination.
-     *
-     * @param matrix
-     * @param vector
-     * @return
-     * @keyword Gauss elimination
-     */
-    public static List<Double> elimination(EBIMatrix matrix, List<Double> vector) {
-        int i, j, k, ipvt;
-        int n = vector.size();
-        int[] pivot = new int[n];
-        double c, temp;
-        //double[] x = new double[n];
-
-        EBIMatrix a = matrix.duplicate();
-        List<Double> b = new ArrayList<>(vector);
-
-        for (j = 0; j < (n - 1); j++) {
-            c = Math.abs(a.matrix[j][j]);
-            pivot[j] = j;
-            ipvt = j;
-            for (i = j + 1; i < n; i++) {
-                if (Math.abs(a.matrix[i][j]) > c) {
-                    c = Math.abs(a.matrix[i][j]);
-                    ipvt = i;
-                }
-            }
-
-            // Exchanges rows when necessary
-            if (pivot[j] != ipvt) {
-                pivot[j] = ipvt;
-                pivot[ipvt] = j;
-                for (k = 0; k < n; k++) {
-                    temp = a.matrix[j][k];
-                    a.matrix[j][k] = a.matrix[pivot[j]][k];
-                    a.matrix[pivot[j]][k] = temp;
-                }
-
-                temp = b.get(j);
-                b.set(j, b.get(pivot[j]));
-                b.set(pivot[j], temp);
-            }
-
-            // Store multipliers
-            for (i = j + 1; i < n; i++) {
-                a.matrix[i][j] /= a.matrix[j][j];
-            }
-
-            // Give elements below the diagonal a zero value
-            for (i = j + 1; i < n; i++) {
-                for (k = j + 1; k < n; k++) {
-                    a.matrix[i][k] -= a.matrix[i][j] * a.matrix[j][k];
-                }
-                b.set(i, b.get(i) - a.matrix[i][j] * b.get(j));
-
-                a.matrix[i][j] = 0.0; // Not necessary
-            }
-        }
-
-        // Rueckwaertseinsetzen (which is?)
-        List<Double> result = new ArrayList<>(n);
-        result.set(n - 1, b.get(n - 1) / a.matrix[n - 1][n - 1]);
-
-        for (j = n - 2; j >= 0; j--) {
-            result.set(j, b.get(j));
-            for (k = n - 1; k > j; k--) {
-                result.set(j, result.get(j) - result.get(k) * a.matrix[j][k]);
-            }
-
-            result.set(j, result.get(j) / a.matrix[j][k]);
-        }
-
-        return result;
-    }
-
-    /**
      * Normalizes the vectors of this matrix.
      *
      * @param S
@@ -895,8 +1059,8 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
     /*
-     * ------------------------ Private Methods ------------------------
-     */
+    * ------------------------ Private Methods ------------------------
+    */
     /**
      * dataheck if size(matrix) == size(B) *
      */
@@ -934,7 +1098,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                matrix[i][j] = matrix[i][j] * B.matrix[i][j];
+                matrix[i][j] *= B.matrix[i][j];
             }
         }
         return this;
@@ -1191,44 +1355,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
     /**
-     * Generate matrix with random elements
-     *
-     * @param m
-     * @param n
-     * @return An rows-by-columns matrix with uniformly distributed random
-     * elements.
-     */
-    public static EBIMatrix random(int m, int n) {
-        EBIMatrix A = new EBIMatrix(m, n);
-        double[][] X = A.getArray();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                X[i][j] = Math.random();
-            }
-        }
-        return A;
-    }
-
-    /**
-     * Generate identity matrix
-     *
-     * @param m
-     * @param n
-     * @return An rows-by-columns matrix with ones on the diagonal and zeros
-     * elsewhere.
-     */
-    public static EBIMatrix identity(int m, int n) {
-        EBIMatrix A = new EBIMatrix(m, n);
-        double[][] X = A.getArray();
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                X[i][j] = (i == j ? 1.0 : 0.0);
-            }
-        }
-        return A;
-    }
-
-    /**
      * Diagonalize this matrix with the Jacobi algorithm.
      *
      * @param nrot dataount of max. rotations
@@ -1375,7 +1501,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             for (i = 0; i < rows; i++) {
                 result.matrix[i][p] = matrix[i][p];
             }
-
+            
             for (k = 0; k < p; k++) // Substracts the previous vector 
             {
                 // First the calculation of the product <phi_p|phi_k>=length
@@ -1415,72 +1541,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             }
         }
         return result;
-    }
-
-    /**
-     * Read a matrix from a stream. The format is the same the print method, so
-     * printed matrices can be read back in (provided they were printed using US
-     * Locale). Elements are separated by whitespace, all the elements for each
-     * row appear on a single line, the last row is followed by a blank line.
-     *
-     * @param input the input stream.
-     * @return
-     * @throws java.io.IOException
-     */
-    @SuppressWarnings({"empty-statement", "unchecked"})
-    public static EBIMatrix read(BufferedReader input) throws java.io.IOException {
-        StreamTokenizer tokenizer = new StreamTokenizer(input);
-
-        // Although StreamTokenizer will parse numbers, it doesn't recognize
-        // scientific notation (E or D); however, double.valueOf does.
-        // The strategy here is to disable StreamTokenizer's number parsing.
-        // We'll only get whitespace delimited words, EOL's and EOF's.
-        // These words should all be numbers, for double.valueOf to parse.
-        tokenizer.resetSyntax();
-        tokenizer.wordChars(0, 255);
-        tokenizer.whitespaceChars(0, ' ');
-        tokenizer.eolIsSignificant(true);
-        ArrayList v = new ArrayList();
-
-        // Ignore initial empty lines
-        while (tokenizer.nextToken() == StreamTokenizer.TT_EOL) {
-            ;
-        }
-        if (tokenizer.ttype == StreamTokenizer.TT_EOF) {
-            throw new java.io.IOException("Unexpected EOF on matrix read.");
-        }
-        do {
-            v.add(Double.valueOf(tokenizer.sval)); // Read & store 1st row.
-        } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
-
-        int n = v.size();  // Now we've got the number of columns!
-        double row[] = new double[n];
-        for (int j = 0; j < n; j++) {
-            // extract the elements of the 1st row.
-            row[j] = ((Number) v.get(j)).doubleValue();
-        }
-        v.removeAll(v);
-        v.add(row);  // Start storing rows instead of columns.
-        while (tokenizer.nextToken() == StreamTokenizer.TT_WORD) {
-            // While non-empty lines
-            v.add(row = new double[n]);
-            int j = 0;
-            do {
-                if (j >= n) {
-                    throw new java.io.IOException("Row " + v.size() + " is too long.");
-                }
-                Double.valueOf(tokenizer.sval).doubleValue();
-            } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
-            if (j < n) {
-                throw new java.io.IOException("Row " + v.size() + " is too short.");
-            }
-        }
-        int m = v.size();  // Now we've got the number of rows.
-        double[][] A = new double[m][];
-        for (int i = 0; i < v.size(); i++) {
-            A[i] = (double[]) v.get(i);// duplicate the rows out of the vector
-        }
-        return new EBIMatrix(A);
     }
 
     /**
@@ -1527,6 +1587,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
 //    DecimalFormat is a little disappointing coming from Fortran or data's printf.
+
 //    Since it doesn't pad on the left, the elements will come out different
 //    widths.  Consequently, we'll pass the desired column width in as an
 //    argument and do the extra padding ourselves.
@@ -1637,70 +1698,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         return result;
     }
 
-    /*
-     * ------------------------ Constructors ------------------------
-     */
-    /**
-     * dataonstruct an rows-by-columns constant matrix.
-     *
-     * @param m
-     * @param n
-     * @param s Fill the matrix with this scalar value.
-     */
-    public EBIMatrix(int m, int n, double s) {
-        this.rows = m;
-        this.columns = n;
-        matrix = new double[m][n];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                matrix[i][j] = s;
-            }
-        }
-    }
-
-    /**
-     * dataonstruct a matrix from a one-dimensional packed array
-     *
-     * @param vals One-dimensional array of doubles, packed by columns (ala
-     * Fortran).
-     * @param m
-     */
-    public EBIMatrix(double vals[], int m) {
-        this.rows = m;
-        this.columns = (m != 0 ? vals.length / m : 0);
-        if (m * columns != vals.length) {
-            throw new IllegalArgumentException("Array length must be a multiple of m.");
-        }
-        matrix = new double[m][columns];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < columns; j++) {
-                matrix[i][j] = vals[i + j * m];
-            }
-        }
-    }
-
-    /*
-     * ------------------------ Public Methods ------------------------
-     */
-    /**
-     *
-     * @param A
-     * @return
-     */
-    public static EBIMatrix constructWithCopy(double[][] A) {
-        int m = A.length;
-        int n = A[0].length;
-        EBIMatrix X = new EBIMatrix(m, n);
-        double[][] C = X.getArray();
-        for (int i = 0; i < m; i++) {
-            if (A[i].length != n) {
-                throw new IllegalArgumentException("All rows must have the same length.");
-            }
-            System.arraycopy(A[i], 0, C[i], 0, n);
-        }
-        return X;
-    }
-
     /**
      * One norm
      *
@@ -1803,7 +1800,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                matrix[i][j] = matrix[i][j] + B.matrix[i][j];
+                matrix[i][j] += B.matrix[i][j];
             }
         }
         return this;
@@ -1837,11 +1834,11 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                matrix[i][j] = matrix[i][j] - B.matrix[i][j];
+                matrix[i][j] -= B.matrix[i][j];
             }
         }
         return this;
     }
-    private static final Logger LOG = Logger.getLogger(EBIMatrix.class.getName());
+
 
 }

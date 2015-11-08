@@ -36,6 +36,7 @@ import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 public class RBlastReaction {
+    private static final Logger LOG = Logger.getLogger(RBlastReaction.class.getName());
 
     private IReaction reaction;
     private List<BlockPair> blockPairs;
@@ -249,5 +250,4 @@ public class RBlastReaction {
     public Map<IAtom, IStereoAndConformation> getAtomStereoReactantMap() {
         return Collections.unmodifiableMap(atomStereoReactantMap);
     }
-    private static final Logger LOG = Logger.getLogger(RBlastReaction.class.getName());
 }

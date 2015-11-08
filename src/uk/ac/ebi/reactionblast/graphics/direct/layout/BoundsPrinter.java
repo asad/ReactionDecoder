@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 
 public class BoundsPrinter {
 
+    private static final Logger LOG = Logger.getLogger(BoundsPrinter.class.getName());
+
     /**
      * DEBUG method for printing readable rectangle 2Ds
      */
@@ -32,6 +34,5 @@ public class BoundsPrinter {
                 b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY(),
                 b.getWidth(), b.getHeight(), b.getCenterX(), b.getCenterY());
     }
-    private static final Logger LOG = Logger.getLogger(BoundsPrinter.class.getName());
 
 }

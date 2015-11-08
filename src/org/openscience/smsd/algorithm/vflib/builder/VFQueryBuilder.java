@@ -71,6 +71,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFQueryBuilder implements IQuery {
+    private static final Logger LOG = Logger.getLogger(VFQueryBuilder.class.getName());
 
     private final List<INode> nodesList;
     private final List<IEdge> edgesList;
@@ -214,5 +215,4 @@ public class VFQueryBuilder implements IQuery {
         edgesList.add(edge);
         return edge;
     }
-    private static final Logger LOG = Logger.getLogger(VFQueryBuilder.class.getName());
 }

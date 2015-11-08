@@ -51,6 +51,7 @@ import org.openscience.smsd.interfaces.IAtomMapping;
  *
  */
 public class BaseMapping extends ChemicalFilters implements IAtomMapping {
+    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(BaseMapping.class);
 
     private final boolean matchBonds;
     private final boolean matchRings;
@@ -59,8 +60,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     private List<Double> stereoScoreList;
     private List<Integer> fragmentSizeList;
     private List<Double> bondEnergiesList;
-    private final static ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(BaseMapping.class);
 
     /**
      *

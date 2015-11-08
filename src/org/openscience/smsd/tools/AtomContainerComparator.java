@@ -40,6 +40,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman<asad@ebi.ac.uk> 
  */
 public class AtomContainerComparator implements Comparator<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(AtomContainerComparator.class.getName());
 
     /**
      * Configure LoggingTool
@@ -184,5 +185,4 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
         }
         return mw;
     }
-    private static final Logger LOG = Logger.getLogger(AtomContainerComparator.class.getName());
 }

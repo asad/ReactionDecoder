@@ -39,6 +39,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McgregorHelperTest")
 public class McgregorHelper {
+    private static final Logger LOG = Logger.getLogger(McgregorHelper.class.getName());
 
     private final List<String> c_bond_setA;
     private final List<String> c_bond_setB;
@@ -208,5 +209,4 @@ public class McgregorHelper {
     int getsetNumB() {
         return setNumB;
     }
-    private static final Logger LOG = Logger.getLogger(McgregorHelper.class.getName());
 }

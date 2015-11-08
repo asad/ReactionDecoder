@@ -51,14 +51,15 @@ import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class MCSThread implements Callable<MCSSolution> {
+public class MCSThread implements Callable<MCSSolution> {
+    private static final boolean DEBUG1 = false;
+    private static final boolean DEBUG2 = false;
+    private static final Logger LOG = Logger.getLogger(MCSThread.class.getName());
 
     private boolean stereoFlag;
     private boolean fragmentFlag;
     private boolean energyFlag;
 
-    private final static boolean DEBUG1 = false;
-    private final static boolean DEBUG2 = false;
 
     private SmilesGenerator smiles;
     private Aromaticity aromaticity;
@@ -657,5 +658,4 @@ public final class MCSThread implements Callable<MCSSolution> {
     void setProductCount(Integer productCount) {
         this.productCount = productCount;
     }
-    private static final Logger LOG = Logger.getLogger(MCSThread.class.getName());
 }

@@ -41,6 +41,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  *
  */
 public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
+    private static final Logger LOG = Logger.getLogger(ZoomToFitLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -106,6 +107,5 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         // TODO Auto-generated method stub
         return 0;
     }
-    private static final Logger LOG = Logger.getLogger(ZoomToFitLayout.class.getName());
 
 }

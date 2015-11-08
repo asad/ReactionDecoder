@@ -44,6 +44,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRMapTest")
 class CDKRMap extends Object {
+    private static final Logger LOG = Logger.getLogger(CDKRMap.class.getName());
 
     private int id1 = 0;
     private int id2 = 0;
@@ -54,7 +55,7 @@ class CDKRMap extends Object {
      * @param id1 number of the edge (bond) in the graph e1
      * @param id2 number of the edge (bond) in the graph e2
      */
-    public CDKRMap(int id1, int id2) {
+    CDKRMap(int id1, int id2) {
         this.id1 = id1;
         this.id2 = id2;
     }
@@ -121,5 +122,4 @@ class CDKRMap extends Object {
         hash = 79 * hash + this.getId2();
         return hash;
     }
-    private static final Logger LOG = Logger.getLogger(CDKRMap.class.getName());
 }

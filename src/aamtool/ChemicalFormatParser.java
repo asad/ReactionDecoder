@@ -47,6 +47,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class ChemicalFormatParser {
+    private static final Logger LOG = Logger.getLogger(ChemicalFormatParser.class.getName());
 
     protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
@@ -181,5 +182,4 @@ class ChemicalFormatParser {
         r.setID(split[0]);
         return r;
     }
-    private static final Logger LOG = Logger.getLogger(ChemicalFormatParser.class.getName());
 }

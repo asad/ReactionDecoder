@@ -31,6 +31,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class MolMapping extends Object implements Serializable {
 
     private static final long serialVersionUID = 1738327023703717L;
+    private static final Logger LOG = Logger.getLogger(MolMapping.class.getName());
     private final String mol1;
     private final String mol2;
     private final Integer indexI;
@@ -206,5 +207,4 @@ public class MolMapping extends Object implements Serializable {
     public String toString() {
         return "MolMapping{" + "mol1=" + mol1 + ", mol2=" + mol2 + ", indexI=" + indexI + ", indexJ=" + indexJ + ", indexStep=" + indexStep + ", keggMapping=" + keggMapping + ", rBLASTMapping=" + rBLASTMapping + ", matchedMol=" + matchedMol + ", matchedSMILES=" + matchedSMILES + '}';
     }
-    private static final Logger LOG = Logger.getLogger(MolMapping.class.getName());
 }

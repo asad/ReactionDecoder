@@ -41,9 +41,39 @@ import org.openscience.smsd.tools.BondEnergies;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * 
  */
-public final class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
+public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
     public static final Double MAX_ENERGY = Double.MAX_VALUE;
+    private static final Logger LOG = Logger.getLogger(EnergyFilter.class.getName());
+
+    private static synchronized double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
+        Double eEnergy = 0.0;
+        BondEnergies bondEnergy = BondEnergies.getInstance();
+        for (int i = 0; i
+                < educt.getBondCount(); i++) {
+            IBond bond = educt.getBond(i);
+            eEnergy += getBondEnergy(bond, bondEnergy);
+        }
+        Double pEnergy = 0.0;
+        for (int j = 0; j
+                < product.getBondCount(); j++) {
+            IBond bond = product.getBond(j);
+            pEnergy += getBondEnergy(bond, bondEnergy);
+        }
+        return (eEnergy + pEnergy);
+    }
+
+    private static synchronized double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
+        double energy = 0.0;
+        if ((bond.getAtom(0).getFlag(0) == true && bond.getAtom(1).getFlag(0) == false)
+                || (bond.getAtom(0).getFlag(0) == false && bond.getAtom(1).getFlag(0) == true)) {
+            Integer val = bondEnergy.getEnergies(bond.getAtom(0), bond.getAtom(1), bond.getOrder());
+            if (val != null) {
+                energy = val;
+            }
+        }
+        return energy;
+    }
     private final List<Double> bEnergies;
     private final ChemicalFilters chemfilter;
 
@@ -125,33 +155,4 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
         return totalBondEnergy;
     }
 
-    private synchronized static double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
-        Double eEnergy = 0.0;
-        BondEnergies bondEnergy = BondEnergies.getInstance();
-        for (int i = 0; i
-                < educt.getBondCount(); i++) {
-            IBond bond = educt.getBond(i);
-            eEnergy += getBondEnergy(bond, bondEnergy);
-        }
-        Double pEnergy = 0.0;
-        for (int j = 0; j
-                < product.getBondCount(); j++) {
-            IBond bond = product.getBond(j);
-            pEnergy += getBondEnergy(bond, bondEnergy);
-        }
-        return (eEnergy + pEnergy);
-    }
-
-    private synchronized static double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
-        double energy = 0.0;
-        if ((bond.getAtom(0).getFlag(0) == true && bond.getAtom(1).getFlag(0) == false)
-                || (bond.getAtom(0).getFlag(0) == false && bond.getAtom(1).getFlag(0) == true)) {
-            Integer val = bondEnergy.getEnergies(bond.getAtom(0), bond.getAtom(1), bond.getOrder());
-            if (val != null) {
-                energy = val;
-            }
-        }
-        return energy;
-    }
-    private static final Logger LOG = Logger.getLogger(EnergyFilter.class.getName());
 }

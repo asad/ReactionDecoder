@@ -23,6 +23,8 @@ import uk.ac.ebi.centres.Ligand;
 public class DuplicateAtomRule<A>
         extends AbstractPriorityRule<A> {
 
+    private static final Logger LOG = Logger.getLogger(DuplicateAtomRule.class.getName());
+
     public DuplicateAtomRule() {
         super(Type.CONSTITUTIONAL);
     }
@@ -37,5 +39,4 @@ public class DuplicateAtomRule<A>
             return 0;
         }
     }
-    private static final Logger LOG = Logger.getLogger(DuplicateAtomRule.class.getName());
 }

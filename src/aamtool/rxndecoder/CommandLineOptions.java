@@ -27,6 +27,7 @@ import org.apache.commons.cli.Options;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CommandLineOptions {
+    private static final Logger LOG = Logger.getLogger(CommandLineOptions.class.getName());
 
     public CommandLineOptions() {
     }
@@ -107,5 +108,4 @@ public class CommandLineOptions {
 
         return optionsCompare;
     }
-    private static final Logger LOG = Logger.getLogger(CommandLineOptions.class.getName());
 }

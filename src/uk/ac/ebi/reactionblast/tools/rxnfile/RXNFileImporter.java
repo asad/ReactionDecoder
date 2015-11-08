@@ -33,12 +33,13 @@ import uk.ac.ebi.reactionblast.tools.EBIMolSplitter;
  *
  */
 public class RXNFileImporter {
+    public static final String RXN = "$RXN";
+    private static final Logger LOG = Logger.getLogger(RXNFileImporter.class.getName());
 
     private IReaction reaction;
     protected IAtomContainer atomContainer;
     int nProducts;
     int nReactants;
-    public final static String RXN = "$RXN";
 
     /**
      * Creates a new instance of RXNFileImporter
@@ -136,5 +137,4 @@ public class RXNFileImporter {
         System.out.println();
         System.out.println();
     }
-    private static final Logger LOG = Logger.getLogger(RXNFileImporter.class.getName());
 }

@@ -70,7 +70,8 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public final class Substructure extends BaseMapping {
+public class Substructure extends BaseMapping {
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Substructure.class.getName());
 
     private int vfMappingSize = -1;
     private final ILoggingTool Logger
@@ -262,5 +263,4 @@ public final class Substructure extends BaseMapping {
         }
         return mcs.getAllAtomMapping() != null && !mcs.getAllAtomMapping().isEmpty();
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Substructure.class.getName());
 }

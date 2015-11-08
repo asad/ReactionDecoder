@@ -28,6 +28,7 @@ import uk.ac.ebi.centres.ConnectionTable;
  * @author John May
  */
 public class BasicConnectionTable<A> implements ConnectionTable<A> {
+    private static final Logger LOG = Logger.getLogger(BasicConnectionTable.class.getName());
 
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
@@ -70,5 +71,4 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
     public Integer getAtomCount() {
         return connections.keySet().size();
     }
-    private static final Logger LOG = Logger.getLogger(BasicConnectionTable.class.getName());
 }

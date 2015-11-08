@@ -30,6 +30,7 @@ import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
  */
 public class MassNumberRule<A>
         extends AbstractPriorityRule<A> {
+    private static final Logger LOG = Logger.getLogger(MassNumberRule.class.getName());
 
     /**
      * Accessor used to get the atomic number from an atom.
@@ -55,5 +56,4 @@ public class MassNumberRule<A>
     public int compare(Ligand<A> o1, Ligand<A> o2) {
         return accessor.getMassNumber(o1.getAtom()) - accessor.getMassNumber(o2.getAtom());
     }
-    private static final Logger LOG = Logger.getLogger(MassNumberRule.class.getName());
 }

@@ -37,9 +37,10 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
-public final class DefaultBondMatcher implements BondMatcher {
+public class DefaultBondMatcher implements BondMatcher {
 
     static final long serialVersionUID = -7861469841127328812L;
+    private static final Logger LOG = Logger.getLogger(DefaultBondMatcher.class.getName());
     private final IBond queryBond;
     private final boolean shouldMatchBonds;
     private final boolean matchAtomTypes;
@@ -141,5 +142,4 @@ public final class DefaultBondMatcher implements BondMatcher {
     public boolean isShouldMatchRings() {
         return shouldMatchRings;
     }
-    private static final Logger LOG = Logger.getLogger(DefaultBondMatcher.class.getName());
 }

@@ -37,6 +37,35 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         Comparator<MolFingerprint> {
 
     private static final long serialVersionUID = 7057060562283378622L;
+    private static final Logger LOG = Logger.getLogger(MolFingerprint.class.getName());
+
+    private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
+        if (boolArray1.length != boolArray2.length) {
+            throw new CDKException("EBIFingerprint.or(boolean[], boolean[]): array with different dimensions.");
+        }
+        MolFingerprint res = new MolFingerprint(boolArray1);
+        for (int i = 0; i < boolArray1.length; i++) {
+            if (boolArray2[i] == true) {
+                res.setBit(i, true);
+            }
+        }
+        return res;
+    }
+
+    private static synchronized MolFingerprint and(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
+        if (boolArray1.length != boolArray2.length) {
+            throw new CDKException("EBIFingerprint.and(boolean[], boolean[]): array with different dimensions.");
+        }
+        MolFingerprint res = new MolFingerprint(boolArray1.length);
+        for (int i = 0; i < boolArray1.length; i++) {
+            if ((boolArray1[i] == true) && (boolArray2[i] == true)) {
+                res.setBit(i, true);
+            } else {
+                res.setBit(i, false);
+            }
+        }
+        return res;
+    }
     private boolean[] arrayFingerprint = null;
     private BitSet bitsetFingerprint = null;
     private final FingerprintGenerator hashedFP = new FingerprintGenerator();
@@ -212,34 +241,6 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         return similarity;
     }
 
-    private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
-        if (boolArray1.length != boolArray2.length) {
-            throw new CDKException("EBIFingerprint.or(boolean[], boolean[]): array with different dimensions.");
-        }
-        MolFingerprint res = new MolFingerprint(boolArray1);
-        for (int i = 0; i < boolArray1.length; i++) {
-            if (boolArray2[i] == true) {
-                res.setBit(i, true);
-            }
-        }
-        return res;
-    }
-
-    private static synchronized MolFingerprint and(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
-        if (boolArray1.length != boolArray2.length) {
-            throw new CDKException("EBIFingerprint.and(boolean[], boolean[]): array with different dimensions.");
-        }
-        MolFingerprint res = new MolFingerprint(boolArray1.length);
-        for (int i = 0; i < boolArray1.length; i++) {
-            if ((boolArray1[i] == true) && (boolArray2[i] == true)) {
-                res.setBit(i, true);
-            } else {
-                res.setBit(i, false);
-            }
-        }
-        return res;
-    }
-
     /**
      * Returns 0 if two fingerprints are equal and if they share same labels it
      * returns difference in their weight
@@ -248,9 +249,9 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      */
     @Override
-    public synchronized int compareTo(MolFingerprint t) {
-        return compare(this, t);
-    }
+public synchronized int compareTo(MolFingerprint t) {
+    return compare(this, t);
+}
 
     /**
      * Return true if two Fingerprints are equal
@@ -258,30 +259,30 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @param object
      * @return
      */
-    @Override
-    public synchronized boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof MolFingerprint)) {
-            return false;
-        }
-
-        MolFingerprint fpn = (MolFingerprint) object;
-
-        if (this.arrayFingerprint.length != fpn.getBooleanArray().length) {
-            return false;
-        }
-
-        for (int i = 0; i < arrayFingerprint.length; i++) {
-            if (this.arrayFingerprint[i] != arrayFingerprint[i]) {
-                return false;
-            }
-        }
+@Override
+public synchronized boolean equals(Object object) {
+    if (this == object) {
         return true;
     }
+    if (!(object instanceof MolFingerprint)) {
+        return false;
+    }
+    
+    MolFingerprint fpn = (MolFingerprint) object;
+    
+    if (this.arrayFingerprint.length != fpn.getBooleanArray().length) {
+        return false;
+    }
+    
+    for (int i = 0; i < arrayFingerprint.length; i++) {
+        if (this.arrayFingerprint[i] != arrayFingerprint[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
-    @Override
+@Override
     public synchronized int hashCode() {
         int hash = 7;
         hash = 19 * hash + Arrays.hashCode(this.arrayFingerprint);
@@ -311,5 +312,5 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         }
         return Math.max(len1, len2) - n;
     }
-    private static final Logger LOG = Logger.getLogger(MolFingerprint.class.getName());
+
 }

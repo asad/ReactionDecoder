@@ -28,6 +28,7 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @author John May
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
+    private static final Logger LOG = Logger.getLogger(DefaultDescriptorManager.class.getName());
 
     private final Map<A, MutableDescriptor> atomMap = new HashMap<A, MutableDescriptor>();
     private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<Map.Entry<A, A>, MutableDescriptor>();
@@ -77,5 +78,4 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
         atomMap.clear();
         bondMap.clear();
     }
-    private static final Logger LOG = Logger.getLogger(DefaultDescriptorManager.class.getName());
 }

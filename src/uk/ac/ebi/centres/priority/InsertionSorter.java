@@ -35,6 +35,7 @@ import uk.ac.ebi.centres.PriorityRule;
  * @author John May
  */
 public class InsertionSorter<A> implements LigandSorter<A> {
+    private static final Logger LOG = Logger.getLogger(InsertionSorter.class.getName());
 
     private final List<PriorityRule<A>> rules = new ArrayList<PriorityRule<A>>(5);
 
@@ -138,5 +139,4 @@ public class InsertionSorter<A> implements LigandSorter<A> {
         return groups;
 
     }
-    private static final Logger LOG = Logger.getLogger(InsertionSorter.class.getName());
 }

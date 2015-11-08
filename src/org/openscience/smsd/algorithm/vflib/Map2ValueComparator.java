@@ -36,6 +36,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
+    private static final Logger LOG = Logger.getLogger(Map2ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
@@ -62,5 +63,4 @@ public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
         }
         //return size2 - size1;  assumes you want biggest to smallest;
     }
-    private static final Logger LOG = Logger.getLogger(Map2ValueComparator.class.getName());
 }

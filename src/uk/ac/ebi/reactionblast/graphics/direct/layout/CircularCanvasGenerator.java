@@ -28,6 +28,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class CircularCanvasGenerator extends 
                  AbstractCanvasGenerator implements CanvasGenerator {
+    private static final Logger LOG = Logger.getLogger(CircularCanvasGenerator.class.getName());
     
     private Vector2d vectorToStart;
     
@@ -61,7 +62,9 @@ public class CircularCanvasGenerator extends
         } else {
             n = atomContainers.size();
         }
-        if (n < 1) return;
+        if (n < 1) {
+            return;
+        }
         
         double maxDim = Math.max(cellCanvas.width, cellCanvas.height);
         double alpha = Math.toRadians(360 / n);
@@ -100,6 +103,5 @@ public class CircularCanvasGenerator extends
     public Dimension getSize() {
         return size;
     }
-    private static final Logger LOG = Logger.getLogger(CircularCanvasGenerator.class.getName());
 
 }

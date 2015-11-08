@@ -38,8 +38,10 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 public class Sotter {
     
-    @TestMethod("testSortMapByValueInAscendingOrder")
-    public synchronized static Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
+    private static final Logger LOG = Logger.getLogger(Sotter.class.getName());
+
+    @TestMethod(value = "testSortMapByValueInAscendingOrder")
+    public static synchronized Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<Map.Entry<Integer, Double>>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
@@ -57,8 +59,8 @@ public class Sotter {
         return result;
     }
 
-    @TestMethod("testSortMapByValueInDescendingOrder")
-    public synchronized static Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
+    @TestMethod(value = "testSortMapByValueInDescendingOrder")
+    public static synchronized Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<Map.Entry<Integer, Double>>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
@@ -76,5 +78,4 @@ public class Sotter {
         }
         return result;
     }
-    private static final Logger LOG = Logger.getLogger(Sotter.class.getName());
 }

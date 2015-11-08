@@ -44,10 +44,11 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
-final public class MCSS {
+public class MCSS {
 
     private final static ILoggingTool logger
             = LoggingToolFactory.createLoggingTool(MCSS.class);
+    private static final Logger LOG = Logger.getLogger(MCSS.class.getName());
     private final Collection<IAtomContainer> calculateMCSS;
     private final boolean matchBonds;
     private final boolean matchRings;
@@ -213,5 +214,4 @@ final public class MCSS {
     public synchronized String getTitle() {
         return "Calculating Maximum Commmon Substrutures (MCSS) using SMSD";
     }
-    private static final Logger LOG = Logger.getLogger(MCSS.class.getName());
 }

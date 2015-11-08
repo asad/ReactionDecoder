@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.mechanism.RMatrix;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MatrixPrinter extends Object {
+    private static final Logger LOG = Logger.getLogger(MatrixPrinter.class.getName());
 
     /**
      * This method prints the matrix to the standard output
@@ -170,5 +171,4 @@ public class MatrixPrinter extends Object {
             matrixFileWriter.close();
         }
     }
-    private static final Logger LOG = Logger.getLogger(MatrixPrinter.class.getName());
 }

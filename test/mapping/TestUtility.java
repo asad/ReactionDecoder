@@ -71,6 +71,7 @@ public class TestUtility {
     static final String METRXN_RXN = "rxn/metrxn/";
     static final String INFORCHEM_RXN = "rxn/infochem/";
     static final String MACIE_RXN = "rxn/macie/";
+    private static final Logger LOG = Logger.getLogger(TestUtility.class.getName());
 
     protected static void setLonePairs(IReaction reaction) {
         LonePairElectronChecker checker = new LonePairElectronChecker();
@@ -295,6 +296,5 @@ public class TestUtility {
             }
         }
     }
-    private static final Logger LOG = Logger.getLogger(TestUtility.class.getName());
 
 }

@@ -34,6 +34,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 public class SimpleHighlighter extends AbstractHighlightDrawer implements Highlighter {
+    private static final Logger LOG = Logger.getLogger(SimpleHighlighter.class.getName());
     
     private Map<IAtom, Color> atomColorMap;
     private final Map<IBond, Color> bondColorMap;
@@ -185,6 +186,5 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         atomColorMap.clear();
         bondColorMap.clear();
     }
-    private static final Logger LOG = Logger.getLogger(SimpleHighlighter.class.getName());
 
 }

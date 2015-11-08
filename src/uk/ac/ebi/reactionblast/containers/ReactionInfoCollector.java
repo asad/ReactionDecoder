@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 public class ReactionInfoCollector implements Serializable {
 
     private static final long serialVersionUID = 878898788771L;
+    private static final Logger LOG = Logger.getLogger(ReactionInfoCollector.class.getName());
     private final String sourceDbID;
     private BitSet rorFp = null;
     private BitSet porFp = null;
@@ -126,5 +127,4 @@ public class ReactionInfoCollector implements Serializable {
     public synchronized String getSourceDbID() {
         return sourceDbID;
     }
-    private static final Logger LOG = Logger.getLogger(ReactionInfoCollector.class.getName());
 }

@@ -36,6 +36,8 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class DefaultMatcher {
 
+    private static final Logger LOG = Logger.getLogger(DefaultMatcher.class.getName());
+
     /**
      *
      * @param bondMatcher
@@ -48,7 +50,6 @@ public class DefaultMatcher {
     }
 
     private static boolean isAtomMatch(IBond bondA1, IBond bondA2, boolean shouldMatchRings, boolean matchAtomTypes) {
-
         AtomMatcher atomMatcher1;
         AtomMatcher atomMatcher2;
 
@@ -77,13 +78,10 @@ public class DefaultMatcher {
      * @param matchAtomTypes (atom type also matched and symbol matched)
      * @return
      */
-    public static boolean matches(IBond bondA1, IBond bondA2,
-            boolean matchBond, boolean shouldMatchRings, boolean matchAtomTypes) {
-
+    public static boolean matches(IBond bondA1, IBond bondA2, boolean matchBond, boolean shouldMatchRings, boolean matchAtomTypes) {
         if (!isAtomMatch(bondA1, bondA2, shouldMatchRings, matchAtomTypes)) {
             return false;
         }
         return isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2);
     }
-    private static final Logger LOG = Logger.getLogger(DefaultMatcher.class.getName());
 }

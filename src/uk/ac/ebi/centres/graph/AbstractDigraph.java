@@ -218,6 +218,19 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
                 getDepth(tail.getAtom(), head.getAtom()));
     }
 
+
+    @Override
+    public void dispose() {
+        ligandMap.clear();
+        arcs.tails.clear();
+        arcs.heads.clear();
+        root = null;
+        arcs = null;
+        ligandMap = null;
+        manager = null;
+
+    }
+
     /**
      * Manages maps of ligands and thier arcs
      */
@@ -268,17 +281,5 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             }
             return arc.getTail();
         }
-    }
-
-    @Override
-    public void dispose() {
-        ligandMap.clear();
-        arcs.tails.clear();
-        arcs.heads.clear();
-        root = null;
-        arcs = null;
-        ligandMap = null;
-        manager = null;
-
     }
 }

@@ -36,6 +36,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerPrinter;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
+    private static final Logger LOG = Logger.getLogger(BlockReactionCanoniser.class.getName());
 
     private IChemObjectBuilder builder;
 
@@ -370,5 +371,4 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         return s;
 
     }
-    private static final Logger LOG = Logger.getLogger(BlockReactionCanoniser.class.getName());
 }
