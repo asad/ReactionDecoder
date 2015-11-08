@@ -18,13 +18,17 @@
  */
 package mapping;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IMapping;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static mapping.TestUtility.INFORCHEM_RXN;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
@@ -32,14 +36,47 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class AAMTest {
+public final class AAMTest extends TestUtility {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        String RXN_DIR = INFORCHEM_RXN + "rxn" + File.separator + "all" + File.separator;
+        /*
+         Call AAM Class
+         */
+        AAMTest aamTest = new AAMTest(RXN_DIR);
 
+    }
+
+    /**
+     *
+     * @param RXN_DIR Directory with RXN Files
+     */
+    public AAMTest(String RXN_DIR) {
+        System.out.println("RXN File Directory: " + RXN_DIR);
+        /*
+         Instance of SMILES with AAM
+         */
+        SmilesGenerator smilesAAM = SmilesGenerator.generic().withAtomClasses();
+        File dir = new File(RXN_DIR);
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            //System.out.println("Iterating: " + file);
+            IReaction readReaction;
+            try {
+                readReaction = readReactionFile(file.getName().split("\\.")[0], RXN_DIR, true, false);
+                IReaction mapReaction = mapReaction(readReaction, true);
+                System.out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
+                        + smilesAAM.createReactionSMILES(mapReaction));
+            } catch (CDKException ex) {
+                Logger.getLogger(AAMTest.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(AAMTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**
@@ -108,18 +145,6 @@ public class AAMTest {
         //TO DO
         reaction.setID(reactionName);
         return reaction;
-    }
-
-    protected static void renumberMappingIDs(IReaction reaction) {
-        int i = 1;
-        for (IMapping mapping : reaction.mappings()) {
-            IAtom a0 = (IAtom) mapping.getChemObject(0);
-            IAtom a1 = (IAtom) mapping.getChemObject(1);
-            a0.setID(String.valueOf(i));
-            a1.setID(String.valueOf(i));
-            mapping.setID(String.valueOf(i));
-            i++;
-        }
     }
 
 }
