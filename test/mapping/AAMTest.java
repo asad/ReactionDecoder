@@ -53,11 +53,11 @@ public class AAMTest {
         List<IReaction> mappedReactionList = new ArrayList<>();
         for (IReaction cdkReaction : reactionSet.reactions()) {
             String reactionName = cdkReaction.getID();
-            cleanReaction(cdkReaction, reactionName);
+            IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
             /*
              * RMT for the reaction mapping
              */
-            ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, remap, true, false, new StandardizeReaction());
+            ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
 
             /*
             Reaction with hydrogens mapped but unchanged hydrogens suppressed
