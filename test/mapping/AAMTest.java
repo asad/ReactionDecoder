@@ -39,12 +39,13 @@ public class AAMTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+
     }
 
     /**
      *
      * @param reactionSet
-     * @param remap overide existing mappings
+     * @param remap override existing mappings
      * @return
      * @throws FileNotFoundException
      * @throws Exception
@@ -52,33 +53,47 @@ public class AAMTest {
     public static List<IReaction> mapReactions(IReactionSet reactionSet, boolean remap) throws FileNotFoundException, Exception {
         List<IReaction> mappedReactionList = new ArrayList<>();
         for (IReaction cdkReaction : reactionSet.reactions()) {
-            String reactionName = cdkReaction.getID();
-            IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
-            /*
-             * RMT for the reaction mapping
-             */
-            ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
 
+            IReaction mappedReaction = mapReaction(cdkReaction, remap);
             /*
-            Reaction with hydrogens mapped but unchanged hydrogens suppressed
-             */
-            //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
-            /*
-            Reaction with hydrogens mapped
-             */
-            IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
-
-            /*
-            optional step: Renumber the atoms as per mapping
-             */
-            renumberMappingIDs(mappedReaction);
-
-            /*
-            Add mapped reaction to the list
-             */
-            mappedReactionList.add(mappedReaction);
+             Add mapped reaction to the list
+             */ mappedReactionList.add(mappedReaction);
         }
         return mappedReactionList;
+    }
+
+    /**
+     *
+     * @param cdkReaction reaction for be mapped
+     * @param remap override existing mappings
+     * @return
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    public static IReaction mapReaction(IReaction cdkReaction, boolean remap) throws FileNotFoundException, Exception {
+
+        String reactionName = cdkReaction.getID();
+        IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
+        /*
+         * RMT for the reaction mapping
+         */
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
+
+        /*
+         Reaction with hydrogens mapped but unchanged hydrogens suppressed
+         */
+        //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+            /*
+         Reaction with hydrogens mapped
+         */
+        IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
+
+        /*
+         optional step: Renumber the atoms as per mapping
+         */
+        renumberMappingIDs(mappedReaction);
+
+        return mappedReaction;
     }
 
     /**
