@@ -18,12 +18,7 @@
  */
 package mapping;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,11 +28,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.AtomContainerSet;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -45,23 +38,15 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
-import org.openscience.cdk.tools.LonePairElectronChecker;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
-import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
-import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
-import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 
@@ -69,37 +54,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class BaseTest {
+public class BaseTest extends TestUtility {
 
-    final static String KEGG_RXN_DIR = "rxn/";
-    final static String Rhea_RXN_DIR = "rxn/rhea/";
-    final static String Brenda_RXN_DIR = "rxn/brenda/";
-    final static String BUG_RXN_DIR = "rxn/bug/";
-    final static String OTHER_RXN = "rxn/other/";
-    final static String METRXN_RXN = "rxn/metrxn/";
-    final static String INFORCHEM_RXN = "rxn/infochem/";
-    final static String MACIE_RXN = "rxn/macie/";
-
-    public IAtomContainer layout(IAtomContainer AtomContainer) {
-        try {
-            StructureDiagramGenerator sdg = new StructureDiagramGenerator();
-            sdg.setMolecule(AtomContainer, true);
-            sdg.generateCoordinates();
-            return sdg.getMolecule();
-        } catch (CDKException e) {
-            return AtomContainer;
-        }
-    }
-
-    public BufferedImage makeBlankImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, width, height);
-        return image;
-    }
 
     /**
      *
@@ -221,15 +177,7 @@ public class BaseTest {
         return AtomContainer;
     }
 
-    /**
-     *
-     * @param reaction
-     * @return
-     */
-    public IReaction canonise(IReaction reaction) {
-        ICanonicalReactionLabeller labeller = new BlockReactionCanoniser();
-        return labeller.getCanonicalReaction(reaction);
-    }
+   
 
     /**
      *
@@ -267,120 +215,7 @@ public class BaseTest {
         ImageIO.write((RenderedImage) image, "PNG", outfile);
     }
 
-    private void setLonePairs(IReaction reaction) {
-        LonePairElectronChecker checker = new LonePairElectronChecker();
-        setLonePairs(reaction.getReactants(), checker);
-        setLonePairs(reaction.getProducts(), checker);
-    }
 
-    private void setLonePairs(IAtomContainerSet AtomContainerSet, LonePairElectronChecker checker) {
-        for (IAtomContainer atomContainer : AtomContainerSet.atomContainers()) {
-            try {
-                checker.saturate(atomContainer);
-            } catch (CDKException c) {
-                c.printStackTrace();
-            }
-        }
-    }
-
-    private void detectAromaticity(IReaction reaction) {
-        detectAromaticity(reaction.getReactants());
-        detectAromaticity(reaction.getProducts());
-    }
-
-    private void detectAromaticity(IAtomContainerSet molSet) {
-        for (IAtomContainer ac : molSet.atomContainers()) {
-            try {
-                ExtAtomContainerManipulator.aromatizeCDK(ac);
-            } catch (CDKException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void addImplicitHydrogens(IReaction reaction) {
-        addImplicitHydrogens(reaction.getReactants());
-        addImplicitHydrogens(reaction.getProducts());
-    }
-
-    public void addImplicitHydrogens(IAtomContainerSet molSet) {
-        for (IAtomContainer atomContainer : molSet.atomContainers()) {
-            addImplicitHydrogens(atomContainer);
-        }
-    }
-
-    public void addImplicitHydrogens(IAtomContainer atomContainer) {
-        try {
-            CDKHydrogenAdder.getInstance(
-                    DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
-        } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void typeAtoms(IAtomContainer atomContainer) {
-        try {
-            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
-        } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    private void setMappingIDs(IReaction reaction) {
-        int i = 0;
-        for (IMapping mapping : reaction.mappings()) {
-            IAtom a0 = (IAtom) mapping.getChemObject(0);
-            IAtom a1 = (IAtom) mapping.getChemObject(1);
-            Object mappingID = a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
-//            Integer mappingID =
-//                (Integer)a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
-            if (mappingID != null) {
-                a0.setID(String.valueOf(mappingID));
-                a1.setID(String.valueOf(mappingID));
-            } else {
-                a0.setID(String.valueOf(i));
-                a1.setID(String.valueOf(i));
-            }
-            i++;
-        }
-    }
-
-    protected void renumberMappingIDs(IReaction reaction) {
-        int i = 1;
-        for (IMapping mapping : reaction.mappings()) {
-            IAtom a0 = (IAtom) mapping.getChemObject(0);
-            IAtom a1 = (IAtom) mapping.getChemObject(1);
-            a0.setID(String.valueOf(i));
-            a1.setID(String.valueOf(i));
-            mapping.setID(String.valueOf(i));
-            i++;
-        }
-    }
-
-    public void draw(DirectMoleculeDrawer molDrawer, IAtomContainer AtomContainer,
-            String dirPath, String name) throws IOException {
-        int width = 700;
-        int height = 700;
-        SingleMoleculeLayout layout = new SingleMoleculeLayout(molDrawer.getParams());
-        layout.layout(AtomContainer, new Vector2d(width / 2, height / 2));
-        ZoomToFitLayout layout2 = new ZoomToFitLayout(molDrawer);
-        Image image = makeBlankImage(width, height);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-//        if (molDrawer.getParams().useAntialias) {
-//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-//                               RenderingHints.VALUE_ANTIALIAS_ON);
-//        }
-//        molDrawer.drawAtomContainer(AtomContainer, g);
-        layout2.layout(AtomContainer, new Dimension(width, height), g);
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        ImageIO.write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
-    }
 
     /**
      *
