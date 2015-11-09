@@ -670,6 +670,9 @@ public class ImageGenerator {
             int width, int height,
             File outFile) throws IOException {
         Params params = new Params();
+        
+        params.leftToRightMoleculeLabelFontSize = 10;
+        
         params.drawMappings = false;
         params.drawHighlights = true;
         params.highlightsAbove = true;
@@ -797,6 +800,7 @@ public class ImageGenerator {
         drawer.getParams().drawArrowFilled = true;
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
+        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
 
         Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
         ImageIO.write((RenderedImage) drawRBlastReaction, "PNG", outFile);
@@ -847,6 +851,8 @@ public class ImageGenerator {
         drawer.getParams().arrowLength = 60;
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
+        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
+        
 
         /*
          * Hack the code to crop by Asad else use //java.awt.Image image =
@@ -913,6 +919,7 @@ public class ImageGenerator {
         drawer.getParams().drawArrowFilled = true;
         drawer.getParams().drawLabelPanel = false;
         drawer.getParams().drawMoleculeID = true;
+        drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
 
         java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
         ImageIO.write((RenderedImage) image, "PNG", outFile);
