@@ -151,7 +151,7 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
         // Write Atom Value
         for (int i = 0; i < container.getAtomCount(); i++) {
             IAtom atom = container.getAtom(i);
-            if (atom.getProperty(COMMENT) != null && atom.getProperty(COMMENT) instanceof String && !((String) atom.getProperty(COMMENT)).trim().equals("")) {
+            if (atom.getProperty(COMMENT) != null && atom.getProperty(COMMENT) instanceof String && !((String) atom.getProperty(COMMENT)).trim().isEmpty()) {
                 writer.write("V  ");
                 writer.write(formatMDLInt(i + 1, 3));
                 writer.write(" ");

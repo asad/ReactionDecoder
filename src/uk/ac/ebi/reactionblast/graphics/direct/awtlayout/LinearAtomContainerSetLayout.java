@@ -71,7 +71,7 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         for (IAtomContainer molecule : atomContainerSet.atomContainers()) {
 //            System.out.println("curr pos = " + curr.x + " " + curr.y);
             String label = molecule.getID();
-            if (label == null || label.equals("")) {
+            if (label == null || label.isEmpty()) {
                 label = "mol" + valueOf(moleculeCounter);
             } else {
                 label += ":" + valueOf(moleculeCounter);

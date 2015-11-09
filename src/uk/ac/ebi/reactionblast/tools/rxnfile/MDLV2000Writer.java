@@ -713,7 +713,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
             IAtom atom = container.getAtom(i);
             if (atom.getProperty(COMMENT) != null
                     && atom.getProperty(COMMENT) instanceof String
-                    && !((String) atom.getProperty(COMMENT)).trim().equals("")) {
+                    && !((String) atom.getProperty(COMMENT)).trim().isEmpty()) {
                 writer.write("V  ");
                 writer.write(formatMDLInt(i + 1, 3));
                 writer.write(" ");

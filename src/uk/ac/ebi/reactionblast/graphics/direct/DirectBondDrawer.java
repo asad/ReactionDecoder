@@ -194,25 +194,27 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
     }
 
     private void drawStereo(Point2d p1, Point2d p2, Stereo stereo, Graphics2D g) {
-        if (null != stereo) switch (stereo) {
-            case UP_OR_DOWN:
-                drawWigglyLine(p1, p2, g);
-                break;
-            case DOWN:
-                drawWedge(p1, p2, false, g);
-                break;
-            case DOWN_INVERTED:
-                drawWedge(p2, p1, false, g);
-                break;
-            case UP:
-                drawWedge(p1, p2, true, g);
-                break;
-            case UP_INVERTED:
-                drawWedge(p2, p1, true, g);
-                break;
-        // ?
-            default:
-                break;
+        if (null != stereo) {
+            switch (stereo) {
+                case UP_OR_DOWN:
+                    drawWigglyLine(p1, p2, g);
+                    break;
+                case DOWN:
+                    drawWedge(p1, p2, false, g);
+                    break;
+                case DOWN_INVERTED:
+                    drawWedge(p2, p1, false, g);
+                    break;
+                case UP:
+                    drawWedge(p1, p2, true, g);
+                    break;
+                case UP_INVERTED:
+                    drawWedge(p2, p1, true, g);
+                    break;
+                    // ?
+                default:
+                    break;
+            }
         }
     }
 

@@ -204,24 +204,26 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     private Rectangle2D drawChiralSymbol(IAtom atom, IStereoAndConformation chirality, Graphics2D g) {
         String text = "(-)";
         Point2d p = atom.getPoint2d();
-        if (null != chirality) switch (chirality) {
-            case NONE:
-                return new Rectangle2D.Double(p.x, p.y, 0, 0);
-            case R:
-                text = "(R)";
-                break;
-            case S:
-                text = "(S)";
-                break;
-            case E:
-                text = "(E)";
-                break;
-            case Z:
-                text = "(Z)";
-                break;
-            default:
-                text = "(-)";
-                break;
+        if (null != chirality) {
+            switch (chirality) {
+                case NONE:
+                    return new Rectangle2D.Double(p.x, p.y, 0, 0);
+                case R:
+                    text = "(R)";
+                    break;
+                case S:
+                    text = "(S)";
+                    break;
+                case E:
+                    text = "(E)";
+                    break;
+                case Z:
+                    text = "(Z)";
+                    break;
+                default:
+                    text = "(-)";
+                    break;
+            }
         }
         g.setFont(chiralSymbolFont);
         Color color = DARK_GRAY;
@@ -379,38 +381,40 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         double aH2 = atomSymbolBounds.getHeight() / 2;
         double bH2 = bounds.getHeight() / 2;
 
-        if (null != pos) switch (pos) {
-            case N:
-                pID.y -= aH2 + bH2;
-                break;
-            case NE:
-                pID.x += aW2 + bW2;
-                pID.y -= aH2 + bH2;
-                break;
-            case E:
-                pID.x += aW2 + bW2;
-                break;
-            case SE:
-                pID.x += aW2 + bW2;
-                pID.y += aH2 + bH2;
-                break;
-            case S:
-                pID.y += aH2 + bH2;
-                break;
-            case SW:
-                pID.x -= aW2 + bW2;
-                pID.y += aH2 + bH2;
-                break;
-            case W:
-                pID.x -= aW2 + bW2;
-                break;
-            case NW:
-                pID.x -= aW2 + bW2;
-                pID.y -= aH2 + bH2;
-                break;
-            default:
-                pID.x += aW2 + bW2;
-                break;
+        if (null != pos) {
+            switch (pos) {
+                case N:
+                    pID.y -= aH2 + bH2;
+                    break;
+                case NE:
+                    pID.x += aW2 + bW2;
+                    pID.y -= aH2 + bH2;
+                    break;
+                case E:
+                    pID.x += aW2 + bW2;
+                    break;
+                case SE:
+                    pID.x += aW2 + bW2;
+                    pID.y += aH2 + bH2;
+                    break;
+                case S:
+                    pID.y += aH2 + bH2;
+                    break;
+                case SW:
+                    pID.x -= aW2 + bW2;
+                    pID.y += aH2 + bH2;
+                    break;
+                case W:
+                    pID.x -= aW2 + bW2;
+                    break;
+                case NW:
+                    pID.x -= aW2 + bW2;
+                    pID.y -= aH2 + bH2;
+                    break;
+                default:
+                    pID.x += aW2 + bW2;
+                    break;
+            }
         }
 
         if (pos != null) {

@@ -603,15 +603,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 id2 = bond.getAtom(1).getID();
                 symbol2 = bond.getAtom(1).getSymbol();
             }
-            if (!symbol1.equals("") && !symbol2.equals("")) {
+            if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")");
                 result.append(getBondOrderSign(bond)).append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
-            } else if (!symbol1.equals("") && symbol2.equals("")) {
+            } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")" + "\t").append(molID);
-            } else if (symbol1.equals("") && !symbol2.equals("")) {
+            } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
@@ -634,15 +634,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 id2 = bond.getAtom(1).getID();
                 symbol2 = bond.getAtom(1).getSymbol();
             }
-            if (!symbol1.equals("") && !symbol2.equals("")) {
+            if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")");
                 result.append(getBondOrderSign(bond)).append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
-            } else if (!symbol1.equals("") && symbol2.equals("")) {
+            } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")" + "\t").append(molID);
-            } else if (symbol1.equals("") && !symbol2.equals("")) {
+            } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
@@ -665,15 +665,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 id2 = bond.getAtom(1).getID();
                 symbol2 = bond.getAtom(1).getSymbol();
             }
-            if (!symbol1.equals("") && !symbol2.equals("")) {
+            if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")");
                 result.append(getBondOrderSign(bond)).append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
-            } else if (!symbol1.equals("") && symbol2.equals("")) {
+            } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")" + "\t").append(molID);
-            } else if (symbol1.equals("") && !symbol2.equals("")) {
+            } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
@@ -696,15 +696,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 id2 = bond.getAtom(1).getID();
                 symbol2 = bond.getAtom(1).getSymbol();
             }
-            if (!symbol1.equals("") && !symbol2.equals("")) {
+            if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")");
                 result.append(getBondOrderSign(bond)).append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
-            } else if (!symbol1.equals("") && symbol2.equals("")) {
+            } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                 result.append(symbol1);
                 result.append("(").append(id1).append(")" + "\t").append(molID);
-            } else if (symbol1.equals("") && !symbol2.equals("")) {
+            } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
@@ -783,12 +783,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     id2 = bond.getAtom(1).getID();
                     symbol2 = bond.getAtom(1).getSymbol();
                 }
-                if (!symbol1.equals("") && !symbol2.equals("")) {
+                if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + getBondOrderSign(bond)
                             + symbol2 + "(" + id2 + ")" + "\t" + molID);
-                } else if (!symbol1.equals("") && symbol2.equals("")) {
+                } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + "\t" + molID);
-                } else if (symbol1.equals("") && !symbol2.equals("")) {
+                } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol2 + "(" + id2 + ")" + "\t" + molID);
                 }
             }
@@ -811,12 +811,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     id2 = bond.getAtom(1).getID();
                     symbol2 = bond.getAtom(1).getSymbol();
                 }
-                if (!symbol1.equals("") && !symbol2.equals("")) {
+                if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + getBondOrderSign(bond)
                             + symbol2 + "(" + id2 + ")" + "\t" + molID);
-                } else if (!symbol1.equals("") && symbol2.equals("")) {
+                } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + "\t" + molID);
-                } else if (symbol1.equals("") && !symbol2.equals("")) {
+                } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol2 + "(" + id2 + ")" + "\t" + molID);
                 }
             }
@@ -839,12 +839,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     id2 = bond.getAtom(1).getID();
                     symbol2 = bond.getAtom(1).getSymbol();
                 }
-                if (!symbol1.equals("") && !symbol2.equals("")) {
+                if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + getBondOrderSign(bond)
                             + symbol2 + "(" + id2 + ")" + "\t" + molID);
-                } else if (!symbol1.equals("") && symbol2.equals("")) {
+                } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + "\t" + molID);
-                } else if (symbol1.equals("") && !symbol2.equals("")) {
+                } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol2 + "(" + id2 + ")" + "\t" + molID);
                 }
             }
@@ -867,12 +867,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     id2 = bond.getAtom(1).getID();
                     symbol2 = bond.getAtom(1).getSymbol();
                 }
-                if (!symbol1.equals("") && !symbol2.equals("")) {
+                if (!symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + getBondOrderSign(bond)
                             + symbol2 + "(" + id2 + ")" + "\t" + molID);
-                } else if (!symbol1.equals("") && symbol2.equals("")) {
+                } else if (!symbol1.isEmpty() && symbol2.isEmpty()) {
                     bfw.write(symbol1 + "(" + id1 + ")" + "\t" + molID);
-                } else if (symbol1.equals("") && !symbol2.equals("")) {
+                } else if (symbol1.isEmpty() && !symbol2.isEmpty()) {
                     bfw.write(symbol2 + "(" + id2 + ")" + "\t" + molID);
                 }
             }

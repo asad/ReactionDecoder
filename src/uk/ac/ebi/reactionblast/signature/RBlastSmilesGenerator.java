@@ -1413,10 +1413,10 @@ public class RBlastSmilesGenerator {
         }
 
         String mass = generateMassString(a);
-        brackets |= !mass.equals("");
+        brackets |= !mass.isEmpty();
 
         String charge = generateChargeString(a);
-        brackets |= !charge.equals("");
+        brackets |= !charge.isEmpty();
 
         if (chiral && stereo && (isTrigonalBipyramidalOrOctahedral(container, a) != 0 || isSquarePlanar(container, a) || isTetrahedral(container, a, false) != 0 || isSquarePlanar(container, a))) {
             brackets = true;

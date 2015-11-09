@@ -102,7 +102,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
             curr.scaleAdd(molGap, moleculeSetAxis, curr);
 
             String moleculeLabel = molecule.getID();
-            if (moleculeLabel == null || moleculeLabel.equals("")) {
+            if (moleculeLabel == null || moleculeLabel.isEmpty()) {
                 moleculeLabel = "mol" + valueOf(molLabel);
                 molLabel++;
             } else {

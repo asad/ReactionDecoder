@@ -68,7 +68,7 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
      */
     public void makeEdge(int vertexIndex1, int vertexIndex2,
             String vertexSymbol1, String vertexSymbol2, String edgeLabel) {
-        if (edgeLabel.equals("") || !isBondSensitive) {
+        if (edgeLabel.isEmpty() || !isBondSensitive) {
             container.addBond(vertexIndex1, vertexIndex2, SINGLE);
         } else if (edgeLabel.equals("=")) {
             container.addBond(vertexIndex1, vertexIndex2, DOUBLE);
