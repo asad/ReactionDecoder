@@ -70,20 +70,17 @@ public class ReactionDecoder extends Annotator {
             Options createAAMOptions = cmd.createAAMOptions();
             Options createCompareOptions = cmd.createCompareOptions();
             Options createAnnotateOptions = cmd.createAnnotateOptions();
-            Options createSimilarityOptions = cmd.createSimilarityOptions();
 
             PosixParser parser1 = new PosixParser();
             CommandLine aamLine = parser1.parse(createAAMOptions, args, true);
             PosixParser parser2 = new PosixParser();
             CommandLine compareLine = parser2.parse(createCompareOptions, args, true);
-            PosixParser parser4 = new PosixParser();
-            CommandLine annotateLine = parser4.parse(createAnnotateOptions, args, true);
             PosixParser parser3 = new PosixParser();
-            CommandLine similarityLine = parser3.parse(createSimilarityOptions, args, true);
+            CommandLine annotateLine = parser3.parse(createAnnotateOptions, args, true);
 
             /*
-            * Print the Header
-            */
+             * Print the Header
+             */
             getHeader();
 
             if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")
@@ -110,32 +107,21 @@ public class ReactionDecoder extends Annotator {
                 ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AnnotateTask(annotateLine, createAnnotateOptions);
 
-            } else if (similarityLine.hasOption('j') && similarityLine.getOptionValue("j").equalsIgnoreCase("SIMILARITY")
-                    && similarityLine.hasOption('Q') && similarityLine.hasOption('q')) {
-
-                System.out.println("-- SIMILARITY --");
-                ReactionDecoder rxn = new ReactionDecoder();
-                rxn.SimilarityTask(similarityLine, createSimilarityOptions);
-
             } else if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")) {
                 System.out.println("-- AAM USAGE --");
                 printHelp(System.out, createAAMOptions);
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("COMPARE")) {
                 System.out.println("-- REACTION COMPARE USAGE --");
                 printHelp(System.out, createCompareOptions);
-            } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("SIMILARITY")) {
-                System.out.println("-- REACTION SIMILARITY USAGE --");
-                printHelp(System.out, createSimilarityOptions);
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("ANNOTATE")) {
                 System.out.println("-- REACTION ANNOTATION USAGE --");
                 printHelp(System.out, createAnnotateOptions);
             } else {
                 System.out.println("-- REACTION DECODER HELP --");
                 Map<String, Options> options = new TreeMap<>();
-                options.put("Atom-Atom Mapping (AAM Tool)", createAAMOptions);
-                options.put("Reaction Annotation (RA Tool)", createAnnotateOptions);
-                options.put("Reaction Comparison (RC Tool)", createCompareOptions);
-                options.put("Reaction Similarity (RM Tool)", createSimilarityOptions);
+                options.put("Atom-Atom Mapping (AAM-Tool)", createAAMOptions);
+                options.put("Reaction Annotation (RA-Tool)", createAnnotateOptions);
+                options.put("Reaction Comparison (RC-Tool)", createCompareOptions);
                 printHelp(options, 80, "EC-BLAST", "End of Help",
                         5, 3, true, System.out);
             }
@@ -144,49 +130,49 @@ public class ReactionDecoder extends Annotator {
         } catch (Exception ex) {
             Logger.getLogger(ReactionDecoder.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public ReactionDecoder() {
         super();
     }
-    
+
     private void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
-        
+
         // write xml to file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        
+
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        
+
         doc.setXmlStandalone(true);
         DOMSource source = new DOMSource(doc);
-        
+
         /*
-        Write to a File
-        */
+         Write to a File
+         */
         File file = new File(fileName + ".xml");
         StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
-        
+
         System.out.println("Output is presented in xml format: " + file.getAbsolutePath());
-        
+
         if (DEBUG) {
             // Show output on console during development
             result = new StreamResult(System.out);
             transformer.transform(source, result);
         }
     }
-    
+
     private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         File file = new File(fileName + ".txt");
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
             writer.write(doc.toString());
         }
-        
+
         System.out.println("Output is presented in text format: " + file.getAbsolutePath());
 
         if (DEBUG) {

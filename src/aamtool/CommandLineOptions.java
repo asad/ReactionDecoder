@@ -19,7 +19,6 @@
 package aamtool;
 
 import java.util.logging.Logger;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 /**
@@ -27,6 +26,7 @@ import org.apache.commons.cli.Options;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CommandLineOptions {
+
     private static final Logger LOG = Logger.getLogger(CommandLineOptions.class.getName());
 
     public CommandLineOptions() {
@@ -35,24 +35,14 @@ public class CommandLineOptions {
     protected Options createAAMOptions() {
         Options optionsAAM = new Options();
         optionsAAM.addOption("h", "help", false, "Help page for command usage");
-
-        optionsAAM.addOption(
-                OptionBuilder.create("Q"));
-
-        optionsAAM.addOption(
-                OptionBuilder.create("q"));
-
-        optionsAAM.addOption(
-                OptionBuilder.create("j"));
-
+        optionsAAM.addOption("Q", "formatQ", true, "Query Type (RXN/SMI)");
+        optionsAAM.addOption("q", "query", true, "Query");
+        optionsAAM.addOption("j", "job", true, "Task (AAM)");
         optionsAAM.addOption("g", "image", false, "create png of the mapping");
         optionsAAM.addOption("m", "mappings", false, "Report all mappings");
         optionsAAM.addOption("u", "premap", false, "use user defined mappings");
-        optionsAAM.addOption(
-                OptionBuilder.create("p"));
-
-        optionsAAM.addOption(
-                OptionBuilder.create("f"));
+        optionsAAM.addOption("p", "prefix", true, "Job prefix");
+        optionsAAM.addOption("f", "formatO", true, "Output format (TEXT/XML)");
 
         return optionsAAM;
     }
@@ -60,21 +50,13 @@ public class CommandLineOptions {
     protected Options createAnnotateOptions() {
         Options optionsCompare = new Options();
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
-
-        optionsCompare.addOption(
-                OptionBuilder.create("Q"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("q"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("j"));
+        optionsCompare.addOption("Q", "formatQ", true, "Query Type (RXN/SMI)");
+        optionsCompare.addOption("q", "query", true, "Query");
+        optionsCompare.addOption("j", "job", true, "Task (ANNOTATE)");
         optionsCompare.addOption("u", "premap", false, "use user defined mappings");
         optionsCompare.addOption("g", "image", false, "create png of the mapping");
-        optionsCompare.addOption(
-                OptionBuilder.create("p"));
-        optionsCompare.addOption(
-                OptionBuilder.create("f"));
+        optionsCompare.addOption("p", "prefix", true, "Job prefix");
+        optionsCompare.addOption("f", "formatO", true, "Output format (TEXT/XML/BOTH)");
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
         return optionsCompare;
     }
@@ -83,70 +65,16 @@ public class CommandLineOptions {
         Options optionsCompare = new Options();
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
         optionsCompare.addOption("u", "premap", false, "use user defined mappings");
-        optionsCompare.addOption(
-                OptionBuilder.create("Q"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("q"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("T"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("t"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("j"));
-
+        optionsCompare.addOption("Q", "formatQ", true, "Query Type (RXN/SMI)");
+        optionsCompare.addOption("q", "query", true, "Query");
+        optionsCompare.addOption("T", "formatT", true, "Target Type (RXN/SMI)");
+        optionsCompare.addOption("t", "target", true, "Target");
+        optionsCompare.addOption("j", "job", true, "Task (COMPARE)");
         optionsCompare.addOption("g", "image", false, "create png of the mapping");
-        optionsCompare.addOption(
-                OptionBuilder.create("p"));
-        optionsCompare.addOption(
-                OptionBuilder.create("f"));
+        optionsCompare.addOption("p", "prefix", true, "Job prefix");
+        optionsCompare.addOption("f", "formatO", true, "Output format (TEXT/XML/BOTH)");
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
         return optionsCompare;
     }
 
-    protected Options createSimilarityOptions() {
-        Options optionsCompare = new Options();
-        optionsCompare.addOption("h", "help", false, "Help page for command usage");
-
-        optionsCompare.addOption(
-                OptionBuilder.create("Q"));
-        optionsCompare.addOption("u", "premap", false, "use user defined mappings");
-        optionsCompare.addOption(
-                OptionBuilder.create("q"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("j"));
-
-        optionsCompare.addOption(
-                OptionBuilder.create("p"));
-        return optionsCompare;
-    }
-
-    protected Options createSearchOptions() {
-        Options options = new Options();
-        options.addOption("h", "help", false, "Help page for command usage");
-
-        options.addOption(
-                OptionBuilder.create("Q"));
-
-        options.addOption(
-                OptionBuilder.create("q"));
-
-        options.addOption(
-                OptionBuilder.create("j"));
-        options.addOption(
-                OptionBuilder.create("s"));
-
-        options.addOption(
-                OptionBuilder.create("c"));
-
-        options.addOption(
-                OptionBuilder.create("f"));
-        options.addOption(
-                OptionBuilder.create("x"));
-        return options;
-    }
 }
