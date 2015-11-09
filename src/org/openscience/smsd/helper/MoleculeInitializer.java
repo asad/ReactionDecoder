@@ -319,6 +319,9 @@ public class MoleculeInitializer {
         }
         return map.isEmpty();
     }
+
+    public MoleculeInitializer() {
+    }
     /**
      * Defines which set of rings to define rings in the target.
      */
@@ -365,6 +368,4 @@ public class MoleculeInitializer {
         abstract IRingSet ringSet(IAtomContainer m);
     }
 
-    public MoleculeInitializer() {
-    }
 }
