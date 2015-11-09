@@ -183,7 +183,7 @@ public class BaseTest extends TestUtility {
         IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
         ImageGenerator.LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-        ImageGenerator.TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+        ImageGenerator.TopToBottomReactionLayoutImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
         int i = 1;
         for (MappingSolution m : rmt.getAllSolutions()) {
