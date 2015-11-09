@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -31,6 +32,7 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.CLOCKWISE;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 
 /**
@@ -38,7 +40,7 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  * @author Gilleain Torrance
  */
 public class SingleUpWedgeRule extends WedgeRule {
-    private static final Logger LOG = Logger.getLogger(SingleUpWedgeRule.class.getName());
+    private static final Logger LOG = getLogger(SingleUpWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE};
 
@@ -52,7 +54,7 @@ public class SingleUpWedgeRule extends WedgeRule {
             IAtomContainer atomContainer,
             SortedMap<Double, IBond> angleMap) {
         int[] permutation = getMatchPermutation();
-        List<IBond> bonds = new ArrayList<IBond>(angleMap.values());
+        List<IBond> bonds = new ArrayList<>(angleMap.values());
         IAtom[] ligandAtoms = new IAtom[4];
         for (int index = 0; index < 3; index++) {
             IBond bond = bonds.get(permutation[index]);
@@ -63,7 +65,7 @@ public class SingleUpWedgeRule extends WedgeRule {
         atomContainer.addAtom(explicitHydrogen);
         atomContainer.addBond(builder.newInstance(IBond.class, centralAtom, explicitHydrogen));
         ligandAtoms[3] = explicitHydrogen;
-        ITetrahedralChirality.Stereo chirality = ITetrahedralChirality.Stereo.CLOCKWISE;
+        ITetrahedralChirality.Stereo chirality = CLOCKWISE;
         return new TetrahedralChirality(centralAtom, ligandAtoms, chirality);
     }
 }

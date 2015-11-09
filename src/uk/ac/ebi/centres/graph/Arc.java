@@ -18,6 +18,7 @@
 package uk.ac.ebi.centres.graph;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
@@ -26,7 +27,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @author John May
  */
 public class Arc<A> {
-    private static final Logger LOG = Logger.getLogger(Arc.class.getName());
+    private static final Logger LOG = getLogger(Arc.class.getName());
 
     private Ligand<A> tail;
     private Ligand<A> head;

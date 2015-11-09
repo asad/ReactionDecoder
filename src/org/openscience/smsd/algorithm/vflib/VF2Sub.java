@@ -24,11 +24,11 @@ package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -36,7 +36,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
 import org.openscience.smsd.algorithm.vflib.interfaces.IMapper;
@@ -44,7 +44,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
 import org.openscience.smsd.algorithm.vflib.map.VFMapper;
 import org.openscience.smsd.algorithm.vflib.query.QueryCompiler;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import static org.openscience.smsd.helper.MoleculeInitializer.testIsSubgraphHeuristics;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -63,7 +63,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VF2SubTest")
 public class VF2Sub implements IResults {
-    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(VF2Sub.class);
+    private static final ILoggingTool Logger = createLoggingTool(VF2Sub.class);
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<AtomAtomMapping> allAtomMCSCopy;
@@ -126,7 +126,7 @@ public class VF2Sub implements IResults {
      *
      */
     private boolean findSubgraph() {
-        if (!MoleculeInitializer.testIsSubgraphHeuristics(source, target, this.matchBonds)) {
+        if (!testIsSubgraphHeuristics(source, target, this.matchBonds)) {
             return false;
         }
         boolean timoutVF = searchVFMappings();
@@ -136,7 +136,7 @@ public class VF2Sub implements IResults {
             try {
                 searchMcGregorMapping();
             } catch (CDKException | IOException ex) {
-                Logger.error(Level.SEVERE, null, ex);
+                Logger.error(SEVERE, null, ex);
             }
         } else if (!allAtomMCSCopy.isEmpty()
                 && allAtomMCSCopy.iterator().next().getCount() == source.getAtomCount()) {
@@ -170,7 +170,7 @@ public class VF2Sub implements IResults {
     @Override
     @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return Collections.unmodifiableList(allAtomMCS);
+        return unmodifiableList(allAtomMCS);
     }
 
     /**
@@ -301,7 +301,7 @@ public class VF2Sub implements IResults {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        Logger.error(SEVERE, null, ex);
                     }
                 }
             }

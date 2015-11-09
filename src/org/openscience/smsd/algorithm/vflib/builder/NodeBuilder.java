@@ -23,10 +23,11 @@
 package org.openscience.smsd.algorithm.vflib.builder;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.vflib.interfaces.IEdge;
@@ -42,7 +43,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class NodeBuilder implements INode {
-    private static final Logger LOG = Logger.getLogger(NodeBuilder.class.getName());
+    private static final Logger LOG = getLogger(NodeBuilder.class.getName());
     private final List<INode> neighborsList;
     private final List<IEdge> edgesList;
     private final AtomMatcher matcher;
@@ -53,8 +54,8 @@ public class NodeBuilder implements INode {
      * @param matcher
      */
     protected NodeBuilder(AtomMatcher matcher) {
-        edgesList = new ArrayList<IEdge>();
-        neighborsList = new ArrayList<INode>();
+        edgesList = new ArrayList<>();
+        neighborsList = new ArrayList<>();
         this.matcher = matcher;
     }
 
@@ -95,7 +96,7 @@ public class NodeBuilder implements INode {
      */
     @Override
     public Iterable<INode> neighbors() {
-        return Collections.unmodifiableList(neighborsList);
+        return unmodifiableList(neighborsList);
     }
 
     /**
@@ -111,7 +112,7 @@ public class NodeBuilder implements INode {
      */
     @Override
     public List<IEdge> getEdges() {
-        return Collections.unmodifiableList(edgesList);
+        return unmodifiableList(edgesList);
     }
 
     /**

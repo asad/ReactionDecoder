@@ -50,13 +50,14 @@
  */
 package org.openscience.smsd.algorithm.vflib.map;
 
-import com.google.common.collect.HashBiMap;
+import static com.google.common.collect.HashBiMap.create;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -75,7 +76,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IState;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFState implements IState {
-    private static final Logger LOG = Logger.getLogger(VFState.class.getName());
+    private static final Logger LOG = getLogger(VFState.class.getName());
 
     private final List<Match> candidates;
     private final IQuery query;
@@ -91,7 +92,7 @@ public class VFState implements IState {
      * @param target
      */
     public VFState(IQuery query, IAtomContainer target) {
-        this.map = HashBiMap.create();
+        this.map = create();
         this.queryPath = new ArrayList<>();
         this.targetPath = new ArrayList<>();
 
@@ -145,7 +146,7 @@ public class VFState implements IState {
      */
     @Override
     public Map<INode, IAtom> getMap() {
-        return Collections.synchronizedMap(new HashMap<>(map));
+        return synchronizedMap(new HashMap<>(map));
     }
 
     /**

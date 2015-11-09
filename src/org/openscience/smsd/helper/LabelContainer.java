@@ -26,6 +26,7 @@ package org.openscience.smsd.helper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -39,7 +40,7 @@ import org.openscience.cdk.annotations.TestMethod;
 @TestClass("org.openscience.cdk.smsd.helper.LabelContainerTest")
 public class LabelContainer {
     private static LabelContainer instance = null;
-    private static final Logger LOG = Logger.getLogger(LabelContainer.class.getName());
+    private static final Logger LOG = getLogger(LabelContainer.class.getName());
 
     /**
      * Create ids from atom labels
@@ -60,7 +61,7 @@ public class LabelContainer {
     protected LabelContainer() {
 
         // System.err.println("List Initialized");
-        labelMap = new ArrayList<String>();
+        labelMap = new ArrayList<>();
         labelMap.add(labelCounter++, "X");
         labelMap.add(labelCounter++, "R");
     }

@@ -23,7 +23,9 @@
 package org.openscience.smsd.tools;
 
 import java.io.Serializable;
+import static java.lang.Integer.MAX_VALUE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Class that handles execution time of the MCS search.
@@ -36,7 +38,7 @@ import java.util.logging.Logger;
 public class IterationManager implements Serializable {
 
     private static final long serialVersionUID = 396239639826981L;
-    private static final Logger LOG = Logger.getLogger(IterationManager.class.getName());
+    private static final Logger LOG = getLogger(IterationManager.class.getName());
     private int max;
     private int counter;
     private int coverage;
@@ -46,7 +48,7 @@ public class IterationManager implements Serializable {
      * Constructor for storing execution time
      */
     public IterationManager() {
-        this(Integer.MAX_VALUE);
+        this(MAX_VALUE);
     }
 
     /**

@@ -19,7 +19,8 @@
 package uk.ac.ebi.reactionblast.mapping.helper;
 
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -34,7 +35,7 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
  */
 public class MappingHandler extends BasicDebugger {
 
-    private static final Logger LOG = Logger.getLogger(MappingHandler.class.getName());
+    private static final Logger LOG = getLogger(MappingHandler.class.getName());
 
     /**
      *
@@ -55,7 +56,7 @@ public class MappingHandler extends BasicDebugger {
                 IAtom atomEMap = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
 //                System.out.println("AtomCopy: " + atomEMap.getSymbol());
                 String atomLabel = Integer.toString(-1);
-                atomEMap.setFlag(CDKConstants.MAPPED, false);
+                atomEMap.setFlag(MAPPED, false);
                 atomEMap.setID(atomLabel);
             }
         }
@@ -66,7 +67,7 @@ public class MappingHandler extends BasicDebugger {
 
                 IAtom atomPMap = MappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                 String atomLabel = Integer.toString(-1);
-                atomPMap.setFlag(CDKConstants.MAPPED, false);
+                atomPMap.setFlag(MAPPED, false);
                 atomPMap.setID(atomLabel);
             }
         }
@@ -113,7 +114,7 @@ public class MappingHandler extends BasicDebugger {
 
                             firstAtom = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                             firstAtom.setID(atomLabel);
-                            firstAtom.setFlag(CDKConstants.MAPPED, true);
+                            firstAtom.setFlag(MAPPED, true);
                             eFlag = true;
                             break;
                         }
@@ -141,7 +142,7 @@ public class MappingHandler extends BasicDebugger {
 
                             secondAtom = MappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                             secondAtom.setID(atomLabel);
-                            secondAtom.setFlag(CDKConstants.MAPPED, true);
+                            secondAtom.setFlag(MAPPED, true);
                             IMapping mappingObject = MappedReaction.getBuilder().newInstance(IMapping.class, firstAtom, secondAtom);
                             MappedReaction.addMapping(mappingObject);
                             counter++;
@@ -208,7 +209,7 @@ public class MappingHandler extends BasicDebugger {
 
                             firstAtom = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                             firstAtom.setID(atomLabel);
-                            firstAtom.setFlag(CDKConstants.MAPPED, true);
+                            firstAtom.setFlag(MAPPED, true);
                             eFlag = true;
                             break;
                         }
@@ -238,7 +239,7 @@ public class MappingHandler extends BasicDebugger {
 
                             secondAtom = MappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                             secondAtom.setID(atomLabel);
-                            secondAtom.setFlag(CDKConstants.MAPPED, true);
+                            secondAtom.setFlag(MAPPED, true);
                             counter++;
                             pFlag = true;
                             break;

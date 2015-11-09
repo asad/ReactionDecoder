@@ -17,9 +17,11 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import java.util.Collections;
+import static java.lang.Boolean.FALSE;
+import static java.util.Collections.EMPTY_SET;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.MutableDescriptor;
 
@@ -28,7 +30,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @param <A>
  */
 public class NonterminalLigand<A> extends AbstractLigand<A> {
-    private static final Logger LOG = Logger.getLogger(NonterminalLigand.class.getName());
+    private static final Logger LOG = getLogger(NonterminalLigand.class.getName());
 
     private final A atom;
     private A parent;
@@ -37,7 +39,7 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
             A atom,
             A parent,
             int distance) {
-        this(descriptor, Collections.EMPTY_SET, atom, parent, distance);
+        this(descriptor, EMPTY_SET, atom, parent, distance);
     }
 
     public NonterminalLigand(ConnectionProvider<A> provider,
@@ -45,7 +47,7 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
             A atom,
             A parent,
             int distance) {
-        this(provider, descriptor, Collections.EMPTY_SET, atom, parent, distance);
+        this(provider, descriptor, EMPTY_SET, atom, parent, distance);
     }
 
     public NonterminalLigand(ConnectionProvider<A> provider,
@@ -116,12 +118,12 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
 
     @Override
     public boolean isTerminal() {
-        return Boolean.FALSE;
+        return FALSE;
     }
 
     @Override
     public boolean isBranching() {
-        return Boolean.FALSE;
+        return FALSE;
     }
 
     @Override

@@ -28,10 +28,18 @@ package uk.ac.ebi.reactionblast.tools.utility;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.io.IOException;
+import static java.lang.String.valueOf;
 import java.util.Calendar;
+import static java.util.Calendar.DATE;
+import static java.util.Calendar.HOUR;
+import static java.util.Calendar.MILLISECOND;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
-import org.openscience.cdk.math.RandomNumbersTool;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.math.RandomNumbersTool.randomInt;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -45,7 +53,7 @@ public class Suffix {
     private static String timeSuffix = "";
     private static String randonNumberSuffix = "";
     private static Suffix ref = null;
-    private static final Logger LOG = Logger.getLogger(Suffix.class.getName());
+    private static final Logger LOG = getLogger(Suffix.class.getName());
 
     //~--- get methods --------------------------------------------------------
     /**
@@ -68,20 +76,20 @@ public class Suffix {
 
     protected Suffix() throws IOException {
         Calendar cal = new GregorianCalendar();
-        int ms = cal.get(Calendar.YEAR);
-        timeSuffix = String.valueOf(ms);
-        ms = cal.get(Calendar.MONTH);
-        timeSuffix = timeSuffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.DATE);
-        timeSuffix = timeSuffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.HOUR);
-        timeSuffix = timeSuffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.MINUTE);
-        timeSuffix = timeSuffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.MILLISECOND);
-        timeSuffix = timeSuffix.concat(String.valueOf(ms));
+        int ms = cal.get(YEAR);
+        timeSuffix = valueOf(ms);
+        ms = cal.get(MONTH);
+        timeSuffix = timeSuffix.concat(valueOf(ms));
+        ms = cal.get(DATE);
+        timeSuffix = timeSuffix.concat(valueOf(ms));
+        ms = cal.get(HOUR);
+        timeSuffix = timeSuffix.concat(valueOf(ms));
+        ms = cal.get(MINUTE);
+        timeSuffix = timeSuffix.concat(valueOf(ms));
+        ms = cal.get(MILLISECOND);
+        timeSuffix = timeSuffix.concat(valueOf(ms));
 
-        randonNumberSuffix = String.valueOf(RandomNumbersTool.randomInt(1, 1000));
+        randonNumberSuffix = valueOf(randomInt(1, 1000));
         suffix = timeSuffix + randonNumberSuffix;
     }
 

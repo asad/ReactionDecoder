@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.tools.utility;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
 public class EBIArrayList<E> extends ArrayList<E> {
 
     private static final long serialVersionUID = 7683452581122892189L;
-    private static final Logger LOG = Logger.getLogger(EBIArrayList.class.getName());
+    private static final Logger LOG = getLogger(EBIArrayList.class.getName());
 
     /**
      *

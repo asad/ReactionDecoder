@@ -24,19 +24,20 @@
 package org.openscience.smsd;
 
 import java.io.Serializable;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.algorithm.mcsplus.MCSPlusHandler;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
 import org.openscience.smsd.interfaces.Algorithm;
 import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
@@ -115,9 +116,9 @@ import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
 public class Isomorphism extends BaseMapping implements Serializable {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(Isomorphism.class);
+            = createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Isomorphism.class.getName());
+    private static final java.util.logging.Logger LOG = getLogger(Isomorphism.class.getName());
     private final Algorithm algorithmType;
     private double bondSensitiveMcGregorOut = -1;//mins
     private double bondInSensitiveMcGregor = -1;//mins
@@ -180,8 +181,8 @@ public class Isomorphism extends BaseMapping implements Serializable {
         this.algorithmType = algorithmType;
         if (isMatchRings()) {
             try {
-                MoleculeInitializer.initializeMolecule(getQuery());
-                MoleculeInitializer.initializeMolecule(getTarget());
+                initializeMolecule(getQuery());
+                initializeMolecule(getTarget());
             } catch (CDKException ex) {
             }
         }
@@ -305,7 +306,7 @@ public class Isomorphism extends BaseMapping implements Serializable {
                 }
             }
         } catch (CDKException e) {
-            logger.error(Level.SEVERE, null, e);
+            logger.error(SEVERE, null, e);
         }
     }
 

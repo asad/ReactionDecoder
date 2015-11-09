@@ -21,11 +21,12 @@ package uk.ac.ebi.reactionblast.mapping.container;
 //~--- JDK imports ------------------------------------------------------------
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
+import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.smsd.AtomAtomMapping;
 import uk.ac.ebi.reactionblast.mapping.container.helper.Key;
@@ -56,7 +57,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 public class BestMatchContainer extends BestMatch implements Serializable {
 
     private static final long serialVersionUID = 10947239472059259L;
-    private static final Logger LOG = Logger.getLogger(BestMatchContainer.class.getName());
+    private static final Logger LOG = getLogger(BestMatchContainer.class.getName());
     private final Map<IKey, AtomAtomMapping> mcsAtomMap;
     private final Map<IKey, Integer> fragmentCount;
     private final Map<IKey, Double> bondBreakingEnergy;
@@ -68,11 +69,11 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      *
      */
     public BestMatchContainer() {
-        mcsAtomMap = Collections.synchronizedMap(new HashMap<IKey, AtomAtomMapping>());
-        fragmentCount = Collections.synchronizedMap(new HashMap<IKey, Integer>());
-        bondBreakingEnergy = Collections.synchronizedMap(new HashMap<IKey, Double>());
-        stereoScore = Collections.synchronizedMap(new HashMap<IKey, Double>());
-        similarity = Collections.synchronizedMap(new HashMap<IKey, Double>());
+        mcsAtomMap = synchronizedMap(new HashMap<IKey, AtomAtomMapping>());
+        fragmentCount = synchronizedMap(new HashMap<IKey, Integer>());
+        bondBreakingEnergy = synchronizedMap(new HashMap<IKey, Double>());
+        stereoScore = synchronizedMap(new HashMap<IKey, Double>());
+        similarity = synchronizedMap(new HashMap<IKey, Double>());
         // System.out.println("FingerPrint Map Created");
     }
 
@@ -131,7 +132,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
             try {
                 throw new CDKException("Key not found:" + key + " in " + mcsAtomMap.keySet());
             } catch (CDKException ex) {
-                Logger.getLogger(BestMatchContainer.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(BestMatchContainer.class.getName()).log(SEVERE, null, ex);
             }
         }
         return null;

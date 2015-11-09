@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.BasicStroke;
@@ -27,37 +26,57 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
+import static java.lang.String.valueOf;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.PseudoAtom;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabel;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabelXY;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.N;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.S;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.W;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 /**
- * Layout an atom's symbol, and surrounding annotations, such as : charge, implicit hydrogens, etc.
+ * Layout an atom's symbol, and surrounding annotations, such as : charge,
+ * implicit hydrogens, etc.
  *
  *
  * @author maclean
  *
  */
 public class AtomLayout extends AbstractAWTLayout<IAtom> {
-    private static final Logger LOG = Logger.getLogger(AtomLayout.class.getName());
+
+    private static final Logger LOG = getLogger(AtomLayout.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -97,27 +116,27 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
             if (params.drawImplicitHydrogens) {
                 Integer implicitHydrogenCount = atom.getImplicitHydrogenCount();
                 if (implicitHydrogenCount != null
-                        && implicitHydrogenCount.intValue() > 0) {
+                        && implicitHydrogenCount > 0) {
                     int align = 1;
                     if (molecule != null) {
-                        GeometryTools.getBestAlignmentForLabel(molecule, atom);
+                        getBestAlignmentForLabel(molecule, atom);
                     }
-                    AnnotationPosition suggestedPosition =
-                            labelManager.alignmentToAnnotationPosition(align);
+                    AnnotationPosition suggestedPosition
+                            = labelManager.alignmentToAnnotationPosition(align);
 
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
                             && (molecule == null
                             || molecule.getConnectedAtomsCount(atom) == 0)) {
-                        suggestedPosition = AnnotationPosition.W;
+                        suggestedPosition = W;
                     }
 
                     if (labelManager.isUsed(atom, suggestedPosition)) {
                         suggestedPosition = labelManager.getNextSparePosition(atom);
                     }
                     labelManager.setUsedPosition(atom, suggestedPosition);
-                    Rectangle2D hBounds =
-                            layoutImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
+                    Rectangle2D hBounds
+                            = layoutImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
                     if (hBounds != null) {  // TODO - shouldn't be null!
                         boundsTree.add(id + ":hs", hBounds);
                     }
@@ -185,20 +204,28 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     }
 
     private Rectangle2D layoutChiralSymbol(IAtom atom, IStereoAndConformation chirality, Graphics2D g) {
-        String text;
+        String text = "(-)";
         Point2d p = atom.getPoint2d();
-        if (chirality == IStereoAndConformation.NONE) {
-            return new Rectangle2D.Double(p.x, p.y, 0, 0);
-        } else if (chirality == IStereoAndConformation.R) {
-            text = "(R)";
-        } else if (chirality == IStereoAndConformation.S) {
-            text = "(S)";
-        } else if (chirality == IStereoAndConformation.E) {
-            text = "(E)";
-        } else if (chirality == IStereoAndConformation.Z) {
-            text = "(Z)";
-        } else {
-            text = "(-)";
+        if (null != chirality) {
+            switch (chirality) {
+                case NONE:
+                    return new Rectangle2D.Double(p.x, p.y, 0, 0);
+                case R:
+                    text = "(R)";
+                    break;
+                case S:
+                    text = "(S)";
+                    break;
+                case E:
+                    text = "(E)";
+                    break;
+                case Z:
+                    text = "(Z)";
+                    break;
+                default:
+                    text = "(-)";
+                    break;
+            }
         }
         g.setFont(chiralSymbolFont);
         return layoutText(text, p, g);
@@ -230,7 +257,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                     hWidth, hHeight);
             if (implicitHydrogenCount > 1) {
                 g.setFont(subscriptFont);
-                String hCount = String.valueOf(implicitHydrogenCount);
+                String hCount = valueOf(implicitHydrogenCount);
                 Rectangle2D subscriptBounds = getTextBounds(g, hCount);
                 subscriptWidth = subscriptBounds.getWidth();
                 cx += (hWidth / 2) + (subscriptWidth / 2);
@@ -243,12 +270,12 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                         subscriptWidth,
                         subscriptHeight));
             }
-        } else if (pos == AnnotationPosition.W) {
+        } else if (pos == W) {
 
             float x;
             float y;
             if (implicitHydrogenCount > 1) {
-                String hCount = String.valueOf(implicitHydrogenCount);
+                String hCount = valueOf(implicitHydrogenCount);
                 g.setFont(subscriptFont);
                 Rectangle2D subscriptBounds = getTextBounds(g, hCount);
                 subscriptWidth = subscriptBounds.getWidth();
@@ -304,9 +331,8 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         g.setFont(atomIDFont);
         Rectangle2D bounds = getTextBounds(g, atomID);
         Point2d pID = new Point2d(p);
-        AnnotationPosition suggestedPosition =
-                labelManager.alignmentToAnnotationPosition(
-                GeometryTools.getBestAlignmentForLabelXY(container, atom));
+        AnnotationPosition suggestedPosition
+                = labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
         AnnotationPosition pos;
         if (labelManager.isUsed(atom, suggestedPosition)) {
             pos = labelManager.getNextSparePosition(atom);
@@ -317,34 +343,45 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         //        System.out.println("Alignment for atom " + atomID + " " + pos
         //                + " given annotations at "
         //                + labelManager.getAnnotationPositionsAsString(atom));
-
         double aW2 = atomSymbolBounds.getWidth() / 2;
         double bW2 = bounds.getWidth() / 2;
         double aH2 = atomSymbolBounds.getHeight() / 2;
         double bH2 = bounds.getHeight() / 2;
 
-        if (pos == AnnotationPosition.N) {
-            pID.y -= aH2 + bH2;
-        } else if (pos == AnnotationPosition.NE) {
-            pID.x += aW2 + bW2;
-            pID.y -= aH2 + bH2;
-        } else if (pos == AnnotationPosition.E) {
-            pID.x += aW2 + bW2;
-        } else if (pos == AnnotationPosition.SE) {
-            pID.x += aW2 + bW2;
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.S) {
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.SW) {
-            pID.x -= aW2 + bW2;
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.W) {
-            pID.x -= aW2 + bW2;
-        } else if (pos == AnnotationPosition.NW) {
-            pID.x -= aW2 + bW2;
-            pID.y -= aH2 + bH2;
-        } else {
-            pID.x += aW2 + bW2;
+        if (null != pos) {
+            switch (pos) {
+                case N:
+                    pID.y -= aH2 + bH2;
+                    break;
+                case NE:
+                    pID.x += aW2 + bW2;
+                    pID.y -= aH2 + bH2;
+                    break;
+                case E:
+                    pID.x += aW2 + bW2;
+                    break;
+                case SE:
+                    pID.x += aW2 + bW2;
+                    pID.y += aH2 + bH2;
+                    break;
+                case S:
+                    pID.y += aH2 + bH2;
+                    break;
+                case SW:
+                    pID.x -= aW2 + bW2;
+                    pID.y += aH2 + bH2;
+                    break;
+                case W:
+                    pID.x -= aW2 + bW2;
+                    break;
+                case NW:
+                    pID.x -= aW2 + bW2;
+                    pID.y -= aH2 + bH2;
+                    break;
+                default:
+                    pID.x += aW2 + bW2;
+                    break;
+            }
         }
 
         if (pos != null) {
@@ -419,7 +456,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
             IAtom atom, IAtomContainer atomContainer) {
         int count = 0;
         for (IBond bond : atomContainer.getConnectedBondsList(atom)) {
-            if (bond.getOrder() != IBond.Order.SINGLE) {
+            if (bond.getOrder() != SINGLE) {
                 count++;
             }
         }
@@ -451,13 +488,13 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
 
         Point2d atomPoint = atom.getPoint2d();
         Point2d chargePoint = new Point2d(atomPoint);
-        double chargeDim = Math.min(chargeBounds.getWidth(),
+        double chargeDim = min(chargeBounds.getWidth(),
                 chargeBounds.getHeight());
 
         // preferred position for charge is NE (superscript)
         chargePoint.x += (atomBounds.getWidth() / 2) + (chargeDim / 2);
         chargePoint.y -= (atomBounds.getHeight() / 2);
-        annotationPositions.set(AnnotationPosition.NE.ordinal());
+        annotationPositions.set(NE.ordinal());
 
         return new Rectangle2D.Double(
                 chargePoint.x - (chargeBounds.getWidth() / 2),

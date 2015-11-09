@@ -17,6 +17,10 @@
  */
 package uk.ac.ebi.centres;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.signum;
+
 /**
  * @author John May
  */
@@ -37,7 +41,7 @@ public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
             {getX(a4.getAtom()), getY(a4.getAtom()), 1, a4.getDepth()},};
 
 
-        return (int) Math.abs(determinant(matrix));
+        return (int) abs(determinant(matrix));
 
 
     }
@@ -47,7 +51,7 @@ public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
         double[][] matrix = new double[][]{{getX(a1), getY(a1), 1},
             {getX(a2), getY(a2), 1},
             {getX(a3), getY(a3), 1}};
-        return (int) Math.signum(determinant(matrix));
+        return (int) signum(determinant(matrix));
     }
 
     public abstract double getX(A atom);
@@ -80,7 +84,7 @@ public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
                     }
                 }
             }
-            result += arr[0][i] * Math.pow(-1, i) * determinant(temp);
+            result += arr[0][i] * pow(-1, i) * determinant(temp);
         }
         return result;
     }

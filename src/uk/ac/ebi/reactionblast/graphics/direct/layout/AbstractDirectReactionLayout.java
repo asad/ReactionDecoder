@@ -22,11 +22,12 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
+import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 public abstract class AbstractDirectReactionLayout extends AbstractDirectLayout<IReaction> {
@@ -106,13 +107,13 @@ public abstract class AbstractDirectReactionLayout extends AbstractDirectLayout<
             Rectangle2D bounds = molSetBoundsTree.get(label);
             bounds.setFrame(bounds.getCenterX() + dx, bounds.getCenterY() + dy,
                             bounds.getWidth(), bounds.getHeight());
-            GeometryTools.translate2D(molecule, dx, dy);
+            translate2D(molecule, dx, dy);
             counter++;
         }
     }
     
     public Point2d getArrowCenter() {
-        if (arrowAxis == Axis.X) {
+        if (arrowAxis == X) {
             return new Point2d(arrowPos, getAxisPosition());
         } else {
             return new Point2d(getAxisPosition(), arrowPos);

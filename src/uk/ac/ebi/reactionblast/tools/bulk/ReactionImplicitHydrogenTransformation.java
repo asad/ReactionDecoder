@@ -20,32 +20,34 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 public class ReactionImplicitHydrogenTransformation implements
         ITransformation<IReaction> {
 
-    private static final Logger LOG = Logger.getLogger(ReactionImplicitHydrogenTransformation.class.getName());
+    private static final Logger LOG = getLogger(ReactionImplicitHydrogenTransformation.class.getName());
 
     @Override
     public ITransformation.TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override
     public IReaction transform(IReaction reaction) {
-        CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(
-                DefaultChemObjectBuilder.getInstance());
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        CDKHydrogenAdder adder = getInstance(getInstance());
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             try {
-                ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+                percieveAtomTypesAndConfigureAtoms(atomContainer);
                 adder.addImplicitHydrogens(atomContainer);
             } catch (CDKException e) {
                 e.printStackTrace();

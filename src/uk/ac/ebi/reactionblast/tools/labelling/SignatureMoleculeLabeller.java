@@ -18,15 +18,19 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
-import java.util.Arrays;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.System.err;
+import static java.util.Arrays.sort;
 import java.util.Comparator;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.signature.MoleculeSignature;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
  * Canonically labels (permutes) an atom container according to the signature
@@ -37,7 +41,7 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
  */
 public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = Logger.getLogger(SignatureMoleculeLabeller.class.getName());
+    private static final Logger LOG = getLogger(SignatureMoleculeLabeller.class.getName());
 
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
@@ -60,7 +64,7 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
             return permute;
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(SignatureMoleculeLabeller.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(SignatureMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
         }
 
         return null;
@@ -87,8 +91,8 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
         }
         atomContainer.setAtoms(permutedAtoms);
 
-        IBond[] bonds = AtomContainerManipulator.getBondArray(atomContainer);
-        Arrays.sort(bonds, new Comparator<IBond>() {
+        IBond[] bonds = getBondArray(atomContainer);
+        sort(bonds, new Comparator<IBond>() {
 
             @Override
             public int compare(IBond o1, IBond o2) {
@@ -96,10 +100,10 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
                 int v = o1.getAtom(1).getProperty("label");
                 int x = o2.getAtom(0).getProperty("label");
                 int y = o2.getAtom(1).getProperty("label");
-                int min1 = Math.min(u, v);
-                int min2 = Math.min(x, y);
-                int max1 = Math.max(u, v);
-                int max2 = Math.max(x, y);
+                int min1 = min(u, v);
+                int min2 = min(x, y);
+                int max1 = max(u, v);
+                int max2 = max(x, y);
 
                 int minCmp = Integer.compare(min1, min2);
                 if (minCmp != 0) {
@@ -109,7 +113,7 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
                 if (maxCmp != 0) {
                     return maxCmp;
                 }
-                System.err.println("pokemon!");
+                err.println("pokemon!");
                 throw new InternalError();
             }
 

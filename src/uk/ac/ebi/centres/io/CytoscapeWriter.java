@@ -38,7 +38,7 @@ public abstract class CytoscapeWriter<A> implements Closeable {
     private final Digraph<A> digraph;
     private Writer sif;
     private File folder;
-    private final Map<String, Map<String, String>> attributes = new HashMap<String, Map<String, String>>();
+    private final Map<String, Map<String, String>> attributes = new HashMap<>();
 
     public CytoscapeWriter(File folder, Digraph<A> digraph) throws IOException {
 
@@ -84,7 +84,7 @@ public abstract class CytoscapeWriter<A> implements Closeable {
             sif.write(sourceId + "\t->\t" + targetId + "\n");
 
             // invert map properties
-            Map<String, String> map = new HashMap<String, String>();
+            Map<String, String> map = new HashMap<>();
             mapAttributes(ligand.getAtom(), map);
             for (Map.Entry<String, String> e : map.entrySet()) {
                 if (!attributes.containsKey(e.getKey())) {

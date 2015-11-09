@@ -50,11 +50,13 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
+import static java.lang.System.out;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
@@ -71,7 +73,7 @@ class GameTheoryMax extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 1887868678797L;
-    private static final Logger LOG = Logger.getLogger(GameTheoryMax.class.getName());
+    private static final Logger LOG = getLogger(GameTheoryMax.class.getName());
     private final List<String> eductList;
     private final List<String> productList;
     private final ChooseWinner winner;
@@ -96,7 +98,7 @@ class GameTheoryMax extends BaseGameTheory {
             GameTheoryMatrix rpsh)
             throws Exception {
         if (DEBUG) {
-            System.out.println("I am MAX");
+            out.println("I am MAX");
         }
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
@@ -104,8 +106,8 @@ class GameTheoryMax extends BaseGameTheory {
         this.educts = _educts;
         this.products = _products;
         this.rid = reaction.getID();
-        this.eductList = Collections.synchronizedList(rpsh.getEductCounter());
-        this.productList = Collections.synchronizedList(rpsh.getProductCounter());
+        this.eductList = synchronizedList(rpsh.getEductCounter());
+        this.productList = synchronizedList(rpsh.getProductCounter());
         this.mh = rpsh.getMatrixHolder();
 
         setReactionMolMapping(rpsh.getReactionMolMapping());
@@ -116,7 +118,7 @@ class GameTheoryMax extends BaseGameTheory {
 
     private synchronized void GenerateMapping() throws Exception {
         if (DEBUG) {
-            System.out.println("**********Orignal Matrix**************");
+            out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
             printCliqueMatrix(mh, eductList, productList);

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 
 /**
@@ -35,7 +36,7 @@ public class Feature implements IFeature,
         Serializable {
 
     private static final long serialVersionUID = 0xe6c5aecf276L;
-    private static final Logger LOG = Logger.getLogger(Feature.class.getName());
+    private static final Logger LOG = getLogger(Feature.class.getName());
     private final String pattern;
     private double weight;
 

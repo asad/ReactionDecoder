@@ -23,14 +23,17 @@
  */
 package org.openscience.smsd.algorithm.mcsplus;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -47,7 +50,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.BKKCKCFTest")
 public class BKKCKCF {
-    private static final Logger LOG = Logger.getLogger(BKKCKCF.class.getName());
+    private static final Logger LOG = getLogger(BKKCKCF.class.getName());
 
     private final Set<List<Integer>> max_Cliques_Set;
     /**
@@ -107,9 +110,9 @@ public class BKKCKCF {
             List<Integer> cEdges,
             List<Integer> dEdges) {
 
-        this.comp_graph_nodes = Collections.unmodifiableList(new ArrayList<>(compGraphNodes));
-        this.C_edges = Collections.unmodifiableList(new ArrayList<>(cEdges));
-        this.D_edges = Collections.unmodifiableList(new ArrayList<>(dEdges));
+        this.comp_graph_nodes = unmodifiableList(new ArrayList<>(compGraphNodes));
+        this.C_edges = unmodifiableList(new ArrayList<>(cEdges));
+        this.D_edges = unmodifiableList(new ArrayList<>(dEdges));
         best_clique_size = 0;
         max_Cliques_Set = new HashSet<>();
 
@@ -247,7 +250,7 @@ public class BKKCKCF {
                 }
             }
             if (ut_node_pos == 100000) {
-                System.out.println("ut_node_pos = 100000");
+                out.println("ut_node_pos = 100000");
             }
             //delete P_Prime node in P
             for (int counter = ut_node_pos; counter < P_size - 1; counter++) {
@@ -408,6 +411,6 @@ public class BKKCKCF {
      */
     public synchronized Collection<List<Integer>> getMaxCliqueSet() {
         //System.out.println("max_Cliques_Set: " + max_Cliques_Set.size());
-        return Collections.unmodifiableCollection(max_Cliques_Set);
+        return unmodifiableCollection(max_Cliques_Set);
     }
 }

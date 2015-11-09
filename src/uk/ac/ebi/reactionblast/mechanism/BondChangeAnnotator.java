@@ -21,19 +21,25 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Math.abs;
+import static java.lang.System.out;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
-import org.openscience.cdk.CDKConstants;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
@@ -41,8 +47,17 @@ import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
 import uk.ac.ebi.reactionblast.mechanism.helper.BondChange;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
-import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -51,7 +66,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 public class BondChangeAnnotator extends DUModel {
 
     private static final long serialVersionUID = 988987678877861L;
-    private static final Logger LOG = Logger.getLogger(BondChangeAnnotator.class.getName());
+    private static final Logger LOG = getLogger(BondChangeAnnotator.class.getName());
 
     /**
      *
@@ -101,7 +116,7 @@ public class BondChangeAnnotator extends DUModel {
 
     @Override
     public synchronized Map<IAtom, IAtom> getMappingMap() {
-        return Collections.synchronizedMap(mappingMap);
+        return synchronizedMap(mappingMap);
     }
 
     @Override
@@ -129,7 +144,7 @@ public class BondChangeAnnotator extends DUModel {
         try {
             writeBEMatrix(outputFile, reactantBE);
         } catch (IOException ex) {
-            Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -143,7 +158,7 @@ public class BondChangeAnnotator extends DUModel {
         try {
             writeBEMatrix(outputFile, productBE);
         } catch (IOException ex) {
-            Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -157,7 +172,7 @@ public class BondChangeAnnotator extends DUModel {
         try {
             writeReactionMatrix(outputFile, reactionMatrix);
         } catch (IOException ex) {
-            Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -181,7 +196,7 @@ public class BondChangeAnnotator extends DUModel {
                  */
                 initializeMolecule(atomContainerQ);
             } catch (CDKException ex) {
-                Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
             }
             IRingSet singleRingsQ = new SSSRFinder(atomContainerQ).findSSSR();
             queryRingSet.add(singleRingsQ);
@@ -194,7 +209,7 @@ public class BondChangeAnnotator extends DUModel {
                  */
                 initializeMolecule(atomContainerT);
             } catch (CDKException ex) {
-                Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
             }
             IRingSet singleRingsT = new SSSRFinder(atomContainerT).findSSSR();
             targetRingSet.add(singleRingsT);
@@ -212,26 +227,26 @@ public class BondChangeAnnotator extends DUModel {
 
             if (atomE != null && atomP != null) {
                 if (atomE.getSymbol().equals("P") || atomP.getSymbol().equals("P")) {
-                    System.out.println("\nWARNING: The stereo change " + atomE.getSymbol()
+                    out.println("\nWARNING: The stereo change " + atomE.getSymbol()
                             + " not supported");
                     continue;
                 }
-                atomE.setProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION, rsb);
-                atomP.setProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION, psb);
-                atomE.setFlag(CDKConstants.REACTIVE_CENTER, true);
-                atomP.setFlag(CDKConstants.REACTIVE_CENTER, true);
+                atomE.setProperty(ATOM_STEREO_CHANGE_INFORMATION, rsb);
+                atomP.setProperty(ATOM_STEREO_CHANGE_INFORMATION, psb);
+                atomE.setFlag(REACTIVE_CENTER, true);
+                atomP.setFlag(REACTIVE_CENTER, true);
                 getReactionCenterSet().add(atomE);
                 getReactionCenterSet().add(atomP);
 
-                if ((sc.getReactantAtomStereo().equals(IStereoAndConformation.E)
-                        || sc.getProductAtomStereo().equals(IStereoAndConformation.Z))
-                        || (sc.getReactantAtomStereo().equals(IStereoAndConformation.Z)
-                        || sc.getProductAtomStereo().equals(IStereoAndConformation.E))) {
+                if ((sc.getReactantAtomStereo().equals(E)
+                        || sc.getProductAtomStereo().equals(Z))
+                        || (sc.getReactantAtomStereo().equals(Z)
+                        || sc.getProductAtomStereo().equals(E))) {
                     getConformationChangeList().add(new AtomStereoChangeInformation(atomE, atomP, sc.getReactantAtomStereo(), sc.getProductAtomStereo()));
-                } else if ((sc.getReactantAtomStereo().equals(IStereoAndConformation.R)
-                        || sc.getProductAtomStereo().equals(IStereoAndConformation.S))
-                        || (sc.getReactantAtomStereo().equals(IStereoAndConformation.S)
-                        || sc.getProductAtomStereo().equals(IStereoAndConformation.R))) {
+                } else if ((sc.getReactantAtomStereo().equals(R)
+                        || sc.getProductAtomStereo().equals(S))
+                        || (sc.getReactantAtomStereo().equals(S)
+                        || sc.getProductAtomStereo().equals(R))) {
                     getStereoChangeList().add(new AtomStereoChangeInformation(atomE, atomP, sc.getReactantAtomStereo(), sc.getProductAtomStereo()));
                 }
             }
@@ -254,14 +269,14 @@ public class BondChangeAnnotator extends DUModel {
                             affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
                         }
                     } catch (CDKException ex) {
-                        Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
                     }
                     try {
                         if (i < sizeT && j < sizeT) {
                             affectedBondProducts = getBondOfProductsByRMatrix(reactionMatrix.getProductAtom(i), reactionMatrix.getProductAtom(j));
                         }
                     } catch (CDKException ex) {
-                        Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
                     }
                     if (affectedBondReactants == null && affectedBondProducts == null) {
                         continue;
@@ -269,20 +284,20 @@ public class BondChangeAnnotator extends DUModel {
 
                     int kekuleEffect = isAlternateKekuleChange(affectedBondReactants, affectedBondProducts);
                     if (kekuleEffect == 0) {
-                        bondChangeInformation = ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+                        bondChangeInformation = BOND_ORDER;
                         if (affectedBondReactants != null) {
-                            affectedBondReactants.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                            affectedBondReactants.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                            affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                            affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                             getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                             getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                            affectedBondReactants.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                            affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                         }
                         if (affectedBondProducts != null) {
-                            affectedBondProducts.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                            affectedBondProducts.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                            affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                            affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                             getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                             getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                            affectedBondProducts.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                            affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                         }
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     }
@@ -300,20 +315,20 @@ public class BondChangeAnnotator extends DUModel {
                         try {
                             reactantAtom = reactionMatrix.getReactantAtom(i);
                             if (reactantAtom != null) {
-                                reactantAtom.setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                reactantAtom.setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(reactantAtom);
                             }
                         } catch (CDKException ex) {
-                            Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
                         }
                         try {
                             productAtom = reactionMatrix.getProductAtom(j);
                             if (productAtom != null) {
-                                productAtom.setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                productAtom.setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(productAtom);
                             }
                         } catch (CDKException ex) {
-                            Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
                         }
                     }
 
@@ -332,8 +347,8 @@ public class BondChangeAnnotator extends DUModel {
                         }
                         if (affectedBondReactants != null
                                 && affectedBondProducts != null
-                                && affectedBondReactants.getProperties().containsKey(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION)
-                                && affectedBondProducts.getProperties().containsKey(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION)) {
+                                && affectedBondReactants.getProperties().containsKey(BOND_CHANGE_INFORMATION)
+                                && affectedBondProducts.getProperties().containsKey(BOND_CHANGE_INFORMATION)) {
                             continue;
                         }
                         int kekuleEffect = isKekuleEffect(affectedBondReactants, affectedBondProducts);
@@ -350,26 +365,26 @@ public class BondChangeAnnotator extends DUModel {
                                 /*
                                  * Here the bond is cleaved (Reduced)
                                  */
-                                bondChangeInformation = ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
+                                bondChangeInformation = BOND_CLEAVED;
                             } else {
-                                bondChangeInformation = ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+                                bondChangeInformation = BOND_ORDER;
                             }
 
                             if (affectedBondReactants != null) {
 
-                                affectedBondReactants.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                                affectedBondReactants.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                                affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                                affectedBondReactants.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                             }
                             if (affectedBondProducts != null) {
 
-                                affectedBondProducts.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                                affectedBondProducts.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                                affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                                affectedBondProducts.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                             }
                         } /*
                          * Changes in the educt
@@ -380,27 +395,27 @@ public class BondChangeAnnotator extends DUModel {
                                 /*
                                  * Here the bond is Formed (Gained)
                                  */
-                                bondChangeInformation = ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
+                                bondChangeInformation = BOND_FORMED;
                             } else {
 
-                                bondChangeInformation = ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+                                bondChangeInformation = BOND_ORDER;
                             }
 
                             if (affectedBondReactants != null) {
 
-                                affectedBondReactants.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                                affectedBondReactants.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                                affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                                affectedBondReactants.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                             }
                             if (affectedBondProducts != null) {
 
-                                affectedBondProducts.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                                affectedBondProducts.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                                affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                                affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                                affectedBondProducts.getProperties().put(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                             }
                         }
                         /*
@@ -408,7 +423,7 @@ public class BondChangeAnnotator extends DUModel {
                          */
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
-                        Logger.getLogger(BondChangeAnnotator.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
                     }
                 }
             }
@@ -456,8 +471,7 @@ public class BondChangeAnnotator extends DUModel {
                             }
                         }
                         if (isBondChange) {
-                            eBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                                    ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                            eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
                             affectedBondReactants = eBond;
                         }
                     }
@@ -473,16 +487,15 @@ public class BondChangeAnnotator extends DUModel {
                             }
                         }
                         if (isBondChange) {
-                            pBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                                    ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                            pBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
                             affectedBondProducts = pBond;
                         }
                     }
                     if (affectedBondReactants != null && affectedBondProducts != null) {
-                        affectedBondReactants.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                        affectedBondReactants.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                        affectedBondProducts.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                        affectedBondProducts.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                        affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                        affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
+                        affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                        affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
 
                         getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                         getReactionCenterSet().add(affectedBondReactants.getAtom(1));
@@ -496,18 +509,16 @@ public class BondChangeAnnotator extends DUModel {
                         && pMol.getConnectedBondsCount(productAtom) > 0) {
 
                     IAtom psudoAtom = new Atom("PsH");
-                    IBond eBond = new Bond(psudoAtom, eductAtom, IBond.Order.SINGLE);
+                    IBond eBond = new Bond(psudoAtom, eductAtom, SINGLE);
                     IBond pBond = connectedProductBondsList.iterator().next();
 
-                    eBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND);
-                    pBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    eBond.setProperty(BOND_CHANGE_INFORMATION, PSEUDO_BOND);
+                    pBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
                     affectedBondReactants = eBond;
                     affectedBondProducts = pBond;
 
-                    affectedBondProducts.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                    affectedBondProducts.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                    affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
 
                     getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                     getReactionCenterSet().add(affectedBondProducts.getAtom(1));
@@ -521,18 +532,16 @@ public class BondChangeAnnotator extends DUModel {
 
                     IBond eBond = connectedEductBondsList.iterator().next();
                     IAtom psudoAtom = new Atom("PsH");
-                    IBond pBond = new Bond(psudoAtom, productAtom, IBond.Order.SINGLE);
+                    IBond pBond = new Bond(psudoAtom, productAtom, SINGLE);
 
-                    eBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                    pBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND);
+                    eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
+                    pBond.setProperty(BOND_CHANGE_INFORMATION, PSEUDO_BOND);
 
                     affectedBondReactants = eBond;
                     affectedBondProducts = pBond;
 
-                    affectedBondReactants.getAtom(0).setFlag(CDKConstants.REACTIVE_CENTER, true);
-                    affectedBondReactants.getAtom(1).setFlag(CDKConstants.REACTIVE_CENTER, true);
+                    affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
 
                     getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                     getReactionCenterSet().add(affectedBondReactants.getAtom(1));
@@ -558,8 +567,7 @@ public class BondChangeAnnotator extends DUModel {
                 }
                 IBond pBond = null;
                 if (isNotMapped) {
-                    eBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
                     BondChange bondChange = new BondChange(eBond, pBond);
                     getBondChangeList().add(bondChange);
                 }
@@ -577,8 +585,7 @@ public class BondChangeAnnotator extends DUModel {
                 }
                 IBond eBond = null;
                 if (isNotMapped) {
-                    pBond.setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION,
-                            ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    pBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
                     BondChange bondChange = new BondChange(eBond, pBond);
                     getBondChangeList().add(bondChange);
                 }
@@ -612,13 +619,13 @@ public class BondChangeAnnotator extends DUModel {
      */
     public int isKekuleEffect(IBond affectedBondReactants, IBond affectedBondProducts) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
-            if (affectedBondReactants.getFlag(CDKConstants.ISINRING)
-                    == affectedBondProducts.getFlag(CDKConstants.ISINRING)) {
+            if (affectedBondReactants.getFlag(ISINRING)
+                    == affectedBondProducts.getFlag(ISINRING)) {
 
-                if ((!affectedBondReactants.getFlag(CDKConstants.ISAROMATIC)
-                        && affectedBondProducts.getFlag(CDKConstants.ISAROMATIC))
-                        || (affectedBondReactants.getFlag(CDKConstants.ISAROMATIC)
-                        && !affectedBondProducts.getFlag(CDKConstants.ISAROMATIC))) {
+                if ((!affectedBondReactants.getFlag(ISAROMATIC)
+                        && affectedBondProducts.getFlag(ISAROMATIC))
+                        || (affectedBondReactants.getFlag(ISAROMATIC)
+                        && !affectedBondProducts.getFlag(ISAROMATIC))) {
                     IRingSet smallestRingSetR = getSmallestRingSet(affectedBondReactants, queryRingSet);
                     IRingSet smallestRingSetP = getSmallestRingSet(affectedBondProducts, targetRingSet);
 
@@ -665,13 +672,13 @@ public class BondChangeAnnotator extends DUModel {
      */
     public int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
-            if (affectedBondReactants.getFlag(CDKConstants.ISINRING)
-                    == affectedBondProducts.getFlag(CDKConstants.ISINRING)) {
+            if (affectedBondReactants.getFlag(ISINRING)
+                    == affectedBondProducts.getFlag(ISINRING)) {
 
-                if ((!affectedBondReactants.getFlag(CDKConstants.ISAROMATIC)
-                        && affectedBondProducts.getFlag(CDKConstants.ISAROMATIC))
-                        || (affectedBondReactants.getFlag(CDKConstants.ISAROMATIC)
-                        && !affectedBondProducts.getFlag(CDKConstants.ISAROMATIC))) {
+                if ((!affectedBondReactants.getFlag(ISAROMATIC)
+                        && affectedBondProducts.getFlag(ISAROMATIC))
+                        || (affectedBondReactants.getFlag(ISAROMATIC)
+                        && !affectedBondProducts.getFlag(ISAROMATIC))) {
                     IRingSet smallestRingSetR = getSmallestRingSet(affectedBondReactants, queryRingSet);
                     IRingSet smallestRingSetP = getSmallestRingSet(affectedBondProducts, targetRingSet);
                     int countR = getNeighbourBondOrderCountFromRing(affectedBondReactants, smallestRingSetR);
@@ -698,12 +705,12 @@ public class BondChangeAnnotator extends DUModel {
                                     return 1;
                                 } else {
                                     if (!affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
-                                        if (Math.abs(countR - countP) <= 1 && sizeR == sizeP) {
+                                        if (abs(countR - countP) <= 1 && sizeR == sizeP) {
                                             return 1;
                                         }
                                     }
                                     if (affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
-                                        if (Math.abs(countR - countP) == 0 && sizeR == sizeP) {
+                                        if (abs(countR - countP) == 0 && sizeR == sizeP) {
                                             return 0;
                                         }
                                     }
@@ -712,13 +719,13 @@ public class BondChangeAnnotator extends DUModel {
                                     && atomR2.getHybridization().equals(atomP2.getHybridization())) {
 
                                 if (!affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
-                                    if (Math.abs(countR - countP) <= 1
+                                    if (abs(countR - countP) <= 1
                                             && sizeR == sizeP) {
                                         return 0;
                                     }
                                 }
                                 if (affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
-                                    if (Math.abs(countR - countP) > 1 && sizeR == sizeP) {
+                                    if (abs(countR - countP) > 1 && sizeR == sizeP) {
                                         return 0;
                                     }
                                 }

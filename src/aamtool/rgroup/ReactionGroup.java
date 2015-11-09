@@ -21,13 +21,14 @@ package aamtool.rgroup;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class ReactionGroup implements Comparable<ReactionGroup>, Comparator<ReactionGroup> {
-    private static final Logger LOG = Logger.getLogger(ReactionGroup.class.getName());
+    private static final Logger LOG = getLogger(ReactionGroup.class.getName());
 
     private final String name;
     private boolean rGroupPresent;

@@ -23,9 +23,10 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(AbstractHighlightDrawer.class.getName());
+    private static final Logger LOG = getLogger(AbstractHighlightDrawer.class.getName());
     
     protected Color opaqueHighlightColor;
     

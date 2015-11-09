@@ -18,17 +18,20 @@
  */
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
+import static java.lang.System.out;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import signature.AbstractVertexSignature;
 
 public class SubgraphAtomSignature extends AbstractVertexSignature {
-    private static final Logger LOG = Logger.getLogger(SubgraphAtomSignature.class.getName());
+    private static final Logger LOG = getLogger(SubgraphAtomSignature.class.getName());
 
     private final IAtomContainer atomContainer;
     private Map<Integer, int[]> subgraphAdjacencyLists;
@@ -81,9 +84,9 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         IAtom atomA = atomContainer.getAtom(atomIndexA);
         IAtom atomB = atomContainer.getAtom(atomIndexB);
         IBond bond = atomContainer.getBond(atomA, atomB);
-        if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+        if (bond.getFlag(ISAROMATIC)) {
             return "@";
-        } else if (bond.getFlag(CDKConstants.ISINRING)) {
+        } else if (bond.getFlag(ISINRING)) {
             return "%";
         }
         switch (bond.getOrder()) {
@@ -118,7 +121,7 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
             }
         } catch (NullPointerException npe) {
             //XXX remove!
-            System.out.println("npe getting atom " + atomIndex
+            out.println("npe getting atom " + atomIndex
                     + " from " + atomContainer.getID());
             npe.printStackTrace();
             return "C";

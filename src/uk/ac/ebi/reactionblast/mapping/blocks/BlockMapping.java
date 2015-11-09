@@ -19,15 +19,16 @@
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAtomCount;
 
 /**
  * Converts the flat list of atom-atom mappings into blocks of mappings such
@@ -40,7 +41,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class BlockMapping {
-    private static final Logger LOG = Logger.getLogger(BlockMapping.class.getName());
+    private static final Logger LOG = getLogger(BlockMapping.class.getName());
 
     private final IReaction reaction;
 
@@ -56,11 +57,11 @@ public class BlockMapping {
 
     public BlockMapping(IReaction reaction) {
         this.reaction = reaction;
-        reactantBlocks = new ArrayList<Block>();
-        productBlocks = new ArrayList<Block>();
+        reactantBlocks = new ArrayList<>();
+        productBlocks = new ArrayList<>();
 
-        reactantBlockMap = new HashMap<IAtomContainer, BlockList>();
-        productBlockMap = new HashMap<IAtomContainer, BlockList>();
+        reactantBlockMap = new HashMap<>();
+        productBlockMap = new HashMap<>();
 
         MappingGraph mappingGraph = new MappingGraph(reaction);
         blockPairs = mappingGraph.createBlockPairs(reaction);
@@ -104,7 +105,7 @@ public class BlockMapping {
     }
 
     public int[] getTotalPermutation() {
-        int n = ReactionManipulator.getAtomCount(reaction);
+        int n = getAtomCount(reaction);
         int[] totalPermutation = new int[n];
         int totalIndex = 0;
         int offset = 0;
@@ -179,7 +180,7 @@ public class BlockMapping {
 
         // map the block lists for each atom container to the original index
         Map<BlockList, Integer> blockListToOriginalOrderMap
-                = new HashMap<BlockList, Integer>();
+                = new HashMap<>();
         for (int i = 0; i < n; i++) {
             IAtomContainer container = containers.getAtomContainer(i);
             BlockList blockList = map.get(container);
@@ -190,9 +191,9 @@ public class BlockMapping {
 
         // bucket-sort the original indices of the containers
         List<BlockList> blockListKeys
-                = new ArrayList<BlockList>(blockListToOriginalOrderMap.keySet());
+                = new ArrayList<>(blockListToOriginalOrderMap.keySet());
 //        System.out.println(blockListKeys);
-        Collections.sort(blockListKeys);
+        sort(blockListKeys);
 
         // construct a permutation of the atom containers
         int[] containerPermutation = new int[n];

@@ -18,13 +18,15 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.GraphUtil;
-import org.openscience.cdk.graph.invariant.Canon;
-import org.openscience.cdk.graph.invariant.InChINumbersTools;
+import static org.openscience.cdk.graph.GraphUtil.toAdjList;
+import static org.openscience.cdk.graph.invariant.Canon.label;
+import static org.openscience.cdk.graph.invariant.InChINumbersTools.getUSmilesNumbers;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 
 /**
  * Canonically labels (permutes) an atom container according to the SMILES
@@ -35,12 +37,12 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = Logger.getLogger(InChiMoleculeLabeller.class.getName());
+    private static final Logger LOG = getLogger(InChiMoleculeLabeller.class.getName());
 
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         int[] canonicalPermutation = getCanonicalPermutation(container);
-        IAtomContainer permute = AtomContainerAtomPermutor.permute(
+        IAtomContainer permute = permute(
                 canonicalPermutation, container);
         if (container.getID() != null) {
             permute.setID(container.getID());
@@ -65,10 +67,10 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
     public int[] getCanonicalPermutation(IAtomContainer container) {
         long[] labels;
         try {
-            labels = InChINumbersTools.getUSmilesNumbers(container);
+            labels = getUSmilesNumbers(container);
         } catch (CDKException ex) {
-            labels = Canon.label(container, GraphUtil.toAdjList(container));
-            Logger.getLogger(InChiMoleculeLabeller.class.getName()).log(Level.SEVERE, null, ex);
+            labels = label(container, toAdjList(container));
+            getLogger(InChiMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
         }
         int[] permute = new int[labels.length];
         for (int i = 0; i < labels.length; i++) {

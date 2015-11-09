@@ -50,9 +50,18 @@ package uk.ac.ebi.reactionblast.mapping;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.Integer.parseInt;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.String.valueOf;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import static java.util.Arrays.sort;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedMap;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,28 +69,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
-import org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator;
+import static org.openscience.cdk.smiles.SmilesGenerator.generic;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getTotalFormalCharge;
 import uk.ac.ebi.reactionblast.mapping.algorithm.CalculationProcess;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.helper.AbstractReactor;
-import uk.ac.ebi.reactionblast.mapping.helper.MappingHandler;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
-import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
 
 /**
  *
@@ -92,7 +108,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 197816786981017L;
-    private static final Logger LOG = Logger.getLogger(Reactor.class.getName());
+    private static final Logger LOG = getLogger(Reactor.class.getName());
     private final Map<Integer, Integer> rLabelledAtoms;
     private final Map<Integer, Integer> pLabelledAtoms;
     private final Map<Integer, IAtomContainer> educts;
@@ -131,49 +147,49 @@ public class Reactor extends AbstractReactor implements Serializable {
         this.reactionWithUniqueSTOICHIOMETRY = reaction.getBuilder().newInstance(IReaction.class);
         this.balanceFlag = true;
 
-        this.rLabelledAtoms = Collections.synchronizedMap(new HashMap<Integer, Integer>());
-        this.pLabelledAtoms = Collections.synchronizedMap(new HashMap<Integer, Integer>());
-        this.rBonds = Collections.synchronizedList(new ArrayList<IBond>());
-        this.pBonds = Collections.synchronizedList(new ArrayList<IBond>());
+        this.rLabelledAtoms = synchronizedMap(new HashMap<Integer, Integer>());
+        this.pLabelledAtoms = synchronizedMap(new HashMap<Integer, Integer>());
+        this.rBonds = synchronizedList(new ArrayList<IBond>());
+        this.pBonds = synchronizedList(new ArrayList<IBond>());
 
-        this.educts = Collections.synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
-        this.products = Collections.synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+        this.educts = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+        this.products = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
         if (DEBUG) {
-            System.out.println("|++++++++++++++++++++++++++++|");
-            System.out.println("|i. Reactor Initialized");
+            out.println("|++++++++++++++++++++++++++++|");
+            out.println("|i. Reactor Initialized");
         }
-        MappingHandler.cleanMapping(reaction);
+        cleanMapping(reaction);
         if (DEBUG) {
-            System.out.println("|++++++++++++++++++++++++++++|");
+            out.println("|++++++++++++++++++++++++++++|");
             printReaction(reaction);
-            System.out.println("|ii. Create Mapping Objects");
+            out.println("|ii. Create Mapping Objects");
         }
         copyReferenceReaction(reaction);
         expandReaction();
         checkReactionBalance();
         if (DEBUG) {
-            System.out.println("|iii. Compute atom-atom Mappings");
+            out.println("|iii. Compute atom-atom Mappings");
         }
         calculateAtomAtomMapping();
         if (DEBUG) {
             printReaction(reactionWithUniqueSTOICHIOMETRY);
-            System.out.println("|++++++++++++++++++++++++++++|");
-            System.out.println("|iv. Done|");
-            System.out.println("|++++++++++++++++++++++++++++|\n\n");
+            out.println("|++++++++++++++++++++++++++++|");
+            out.println("|iv. Done|");
+            out.println("|++++++++++++++++++++++++++++|\n\n");
         }
     }
 
     @Override
     public String toString() {
-        SmilesGenerator smiles = SmilesGenerator.unique().aromatic().withAtomClasses();
+        SmilesGenerator smiles = unique().aromatic().withAtomClasses();
         String createReactionSMILES = "";
         try {
             createReactionSMILES = smiles.createReactionSMILES(reactionWithUniqueSTOICHIOMETRY);
         } catch (CDKException ex) {
-            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(Reactor.class.getName()).log(SEVERE, null, ex);
         }
         return "Reactor{" + "partialMapping=" + partialMapping + ", algorithm=" + algorithm
                 + ", mapping=" + createReactionSMILES + '}';
@@ -183,32 +199,32 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             for (int i = 0; i < referenceReaction.getReactantCount(); i++) {
                 IAtomContainer refMol = referenceReaction.getReactants().getAtomContainer(i);
-                IAtomContainer mol = ExtAtomContainerManipulator.cloneWithIDs(refMol);//refMol.clone();
+                IAtomContainer mol = cloneWithIDs(refMol);//refMol.clone();
                 mol = mol_smiles_mol(mol);
 
                 mol.setID(referenceReaction.getReactants().getAtomContainer(i).getID());
                 Double st = referenceReaction.getReactantCoefficient(refMol);
-                ExtAtomContainerManipulator.aromatizeMolecule(mol);
+                aromatizeMolecule(mol);
                 reactionWithSTOICHIOMETRY.addReactant(mol, st);
             }
         } catch (CloneNotSupportedException | CDKException e) {
-            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
         }
         try {
             for (int i = 0; i < referenceReaction.getProductCount(); i++) {
                 IAtomContainer refMol = referenceReaction.getProducts().getAtomContainer(i);
-                IAtomContainer mol = ExtAtomContainerManipulator.cloneWithIDs(refMol);//refMol.clone();
+                IAtomContainer mol = cloneWithIDs(refMol);//refMol.clone();
                 mol = mol_smiles_mol(mol);
 
                 mol.setID(referenceReaction.getProducts().getAtomContainer(i).getID());
                 Double st = referenceReaction.getProductCoefficient(refMol);
-                ExtAtomContainerManipulator.aromatizeMolecule(mol);
+                aromatizeMolecule(mol);
                 reactionWithSTOICHIOMETRY.addProduct(mol, st);
             }
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
         } catch (CloneNotSupportedException | CDKException e) {
-            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
         }
     }
 
@@ -219,7 +235,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             Double stoichiometry = reactionWithSTOICHIOMETRY.getReactantCoefficient(_react);
             while (stoichiometry > 0.0) {
                 stoichiometry -= 1;
-                IAtomContainer _reactDup = ExtAtomContainerManipulator.cloneWithIDs(_react);
+                IAtomContainer _reactDup = cloneWithIDs(_react);
                 _reactDup.setID(_react.getID());
                 _reactDup.setProperty("STOICHIOMETRY", 1.0);
                 reactionWithUniqueSTOICHIOMETRY.addReactant(_reactDup, 1.0);
@@ -232,7 +248,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             Double stoichiometry = reactionWithSTOICHIOMETRY.getProductCoefficient(_prod);
             while (stoichiometry > 0.0) {
                 stoichiometry -= 1;
-                IAtomContainer prodDup = ExtAtomContainerManipulator.cloneWithIDs(_prod);
+                IAtomContainer prodDup = cloneWithIDs(_prod);
                 prodDup.setID(_prod.getID());
                 prodDup.setProperty("STOICHIOMETRY", 1.0);
                 reactionWithUniqueSTOICHIOMETRY.addProduct(prodDup, 1.0);
@@ -244,9 +260,8 @@ public class Reactor extends AbstractReactor implements Serializable {
                 reactionWithSTOICHIOMETRY.getID() == null
                         ? "MappedReaction (ecBLAST)"
                         : reactionWithSTOICHIOMETRY.getID());
-        reactionWithUniqueSTOICHIOMETRY.setDirection(
-                reactionWithSTOICHIOMETRY.getDirection() == null
-                        ? IReaction.Direction.BIDIRECTIONAL
+        reactionWithUniqueSTOICHIOMETRY.setDirection(reactionWithSTOICHIOMETRY.getDirection() == null
+                        ? BIDIRECTIONAL
                         : reactionWithSTOICHIOMETRY.getDirection());
 //
 //        System.out.println("ExpandedEduct Count: " + reactionWithUniqueSTOICHIOMETRY.getReactantCount()
@@ -371,14 +386,14 @@ public class Reactor extends AbstractReactor implements Serializable {
             reactionWithUniqueSTOICHIOMETRY = getMapping(mappedReaction);
             setReactionBlastMolMapping(calP.getReactionBlastMolMapping());
         } catch (Exception ex) {
-            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(Reactor.class.getName()).log(SEVERE, null, ex);
         }
     }
 
     private synchronized IReaction getMapping(IReaction coreMappedReaction) throws IOException, CDKException, CloneNotSupportedException {
 
-        IReaction mappedReaction = ExtReactionManipulatorTool.deepClone(reactionWithUniqueSTOICHIOMETRY);
-        MappingHandler.cleanMapping(mappedReaction);
+        IReaction mappedReaction = deepClone(reactionWithUniqueSTOICHIOMETRY);
+        cleanMapping(mappedReaction);
 
 //        printReaction(mappedReaction);
 
@@ -387,7 +402,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         */
         int counter = 1;
 
-        counter = MappingHandler.setMappingFlags(mappedReaction, reactionWithUniqueSTOICHIOMETRY, coreMappedReaction, counter);
+        counter = setMappingFlags(mappedReaction, reactionWithUniqueSTOICHIOMETRY, coreMappedReaction, counter);
 
         /*
         * This section set the mappingMap ID for the unmapped atoms
@@ -400,7 +415,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 if (!atom.getSymbol().equalsIgnoreCase("H") && atom.getID().equalsIgnoreCase("-1")) {
                     String atomLabel = Integer.toString(counter);
                     atom.setID(atomLabel);
-                    atom.setFlag(CDKConstants.MAPPED, false);
+                    atom.setFlag(MAPPED, false);
                 }
                 counter += 1;
             }
@@ -413,7 +428,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 if (!atom.getSymbol().equalsIgnoreCase("H") && atom.getID().equalsIgnoreCase("-1")) {
                     String atomLabel = Integer.toString(counter);
                     atom.setID(atomLabel);
-                    atom.setFlag(CDKConstants.MAPPED, false);
+                    atom.setFlag(MAPPED, false);
                     counter += 1;
                 }
             }
@@ -435,10 +450,10 @@ public class Reactor extends AbstractReactor implements Serializable {
                             if (!productHAtoms.isEmpty()) {
                                 String atomLabel = Integer.toString(counter);
                                 eAtomH.setID(atomLabel);
-                                eAtomH.setFlag(CDKConstants.MAPPED, true);
+                                eAtomH.setFlag(MAPPED, true);
                                 IAtom pAtomH = productHAtoms.iterator().next();
                                 pAtomH.setID(atomLabel);
-                                pAtomH.setFlag(CDKConstants.MAPPED, true);
+                                pAtomH.setFlag(MAPPED, true);
                                 productHAtoms.remove(pAtomH);
                                 counter += 1;
                             } else {
@@ -466,10 +481,10 @@ public class Reactor extends AbstractReactor implements Serializable {
             if (!unMappedSingleHAtProduct.isEmpty()) {
                 String atomLabel = Integer.toString(counter);
                 eAtomH.setID(atomLabel);
-                eAtomH.setFlag(CDKConstants.MAPPED, true);
+                eAtomH.setFlag(MAPPED, true);
                 IAtom pAtomH = unMappedSingleHAtProduct.iterator().next();
                 pAtomH.setID(atomLabel);
-                pAtomH.setFlag(CDKConstants.MAPPED, true);
+                pAtomH.setFlag(MAPPED, true);
                 unMappedSingleHAtProduct.remove(pAtomH);
                 counter += 1;
             } else {
@@ -493,10 +508,10 @@ public class Reactor extends AbstractReactor implements Serializable {
             if (!unMappedHAtProduct.isEmpty()) {
                 String atomLabel = Integer.toString(counter);
                 eAtomH.setID(atomLabel);
-                eAtomH.setFlag(CDKConstants.MAPPED, true);
+                eAtomH.setFlag(MAPPED, true);
                 IAtom pAtomH = unMappedHAtProduct.iterator().next();
                 pAtomH.setID(atomLabel);
-                pAtomH.setFlag(CDKConstants.MAPPED, true);
+                pAtomH.setFlag(MAPPED, true);
                 unMappedHAtProduct.remove(pAtomH);
                 counter += 1;
             } else {
@@ -634,7 +649,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         if (!Objects.equals(this.getLabledReactantAtomsCount(), this.getLabledProductAtomsCount())) {
             flag = false;
         }
-        if (AtomContainerSetManipulator.getTotalFormalCharge(this.getExpandedReactants()) != AtomContainerSetManipulator.getTotalFormalCharge(this.getExpandedProducts())) {
+        if (getTotalFormalCharge(this.getExpandedReactants()) != getTotalFormalCharge(this.getExpandedProducts())) {
             flag = false;
         }
         if (!getReactionBalanceFlagWithoutHydrogen()) {
@@ -673,7 +688,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 reactantAtoms.add(M.getAtom(k));
             }
         }
-        return Collections.unmodifiableList(reactantAtoms);
+        return unmodifiableList(reactantAtoms);
     }
 
     /**
@@ -693,7 +708,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 productAtoms.add(M.getAtom(k));
             }
         }
-        return Collections.unmodifiableList(productAtoms);
+        return unmodifiableList(productAtoms);
     }
 
     /**
@@ -726,7 +741,7 @@ public class Reactor extends AbstractReactor implements Serializable {
      */
     @Override
     public synchronized List<IBond> getEductBonds() {
-        return Collections.unmodifiableList(rBonds);
+        return unmodifiableList(rBonds);
     }
 
     /**
@@ -734,7 +749,7 @@ public class Reactor extends AbstractReactor implements Serializable {
      */
     @Override
     public synchronized List<IBond> getProductBonds() {
-        return Collections.unmodifiableList(pBonds);
+        return unmodifiableList(pBonds);
     }
 
     @Override
@@ -749,7 +764,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (int i = 0; i < orignalReaction.getReactantCount(); i++) {
             IAtomContainer mol = orignalReaction.getReactants().getAtomContainer(i);
             Double st = orignalReaction.getReactantCoefficient(mol);
-            IAtomContainer newMol = ExtAtomContainerManipulator.cloneWithIDs(mol);
+            IAtomContainer newMol = cloneWithIDs(mol);
             for (int index = 0; index < mol.getAtomCount(); index++) {
                 mol.getAtom(index).setProperty("index", index);
                 IAtom atom = newMol.getAtom(index);
@@ -757,9 +772,9 @@ public class Reactor extends AbstractReactor implements Serializable {
             }
 //            System.out.println("Hydrogen Before" + newMol.getAtomCount());
 
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(newMol);
+            percieveAtomTypesAndConfigureAtoms(newMol);
             if (removeHydrogen) {
-                newMol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(newMol);
+                newMol = removeHydrogensExceptSingleAndPreserveAtomID(newMol);
             }
 //            System.out.println("Hydrogen After" + newMol.getAtomCount());
             copiedReaction.addReactant(newMol, st);
@@ -767,7 +782,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (int i = 0; i < orignalReaction.getProductCount(); i++) {
             IAtomContainer mol = orignalReaction.getProducts().getAtomContainer(i);
             Double st = orignalReaction.getProductCoefficient(mol);
-            IAtomContainer newMol = ExtAtomContainerManipulator.cloneWithIDs(mol);
+            IAtomContainer newMol = cloneWithIDs(mol);
             for (int index = 0; index < mol.getAtomCount(); index++) {
                 mol.getAtom(index).setProperty("index", index);
                 IAtom atom = newMol.getAtom(index);
@@ -775,9 +790,9 @@ public class Reactor extends AbstractReactor implements Serializable {
             }
 //            System.out.println("Hydrogen Before " + newMol.getAtomCount());
 
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(newMol);
+            percieveAtomTypesAndConfigureAtoms(newMol);
             if (removeHydrogen) {
-                newMol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(newMol);
+                newMol = removeHydrogensExceptSingleAndPreserveAtomID(newMol);
             }
 //            System.out.println("Hydrogen After " + newMol.getAtomCount());
             copiedReaction.addProduct(newMol, st);
@@ -830,7 +845,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 for (int atomIndex = 0; atomIndex < mol.getAtomCount(); atomIndex++) {
                     IAtom atom = molSet.getAtomContainer(index).getAtom(atomIndex);
                     if (atom.getSymbol().equalsIgnoreCase("H")
-                            && !atom.getFlag(CDKConstants.MAPPED)
+                            && !atom.getFlag(MAPPED)
                             && atom.getID().equalsIgnoreCase("-1")) {
                         list.add(atom);
                     }
@@ -852,7 +867,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (int atomIndex = 0; atomIndex < mol.getAtomCount(); atomIndex++) {
                 IAtom atom = molSet.getAtomContainer(index).getAtom(atomIndex);
                 if (atom.getSymbol().equalsIgnoreCase("H")
-                        && !atom.getFlag(CDKConstants.MAPPED)
+                        && !atom.getFlag(MAPPED)
                         && atom.getID().equalsIgnoreCase("-1")) {
                     list.add(atom);
                 }
@@ -878,10 +893,10 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer eMolecule = mappedReaction.getReactants().getAtomContainer(eMol);
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
                 IAtom atom = mappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
-                if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(CDKConstants.MAPPED)
+                if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(MAPPED)
                         && atom.getID().equalsIgnoreCase("-1")) {
                     String atomLabel = Integer.toString(localCounter);
-                    atom.setFlag(CDKConstants.MAPPED, false);
+                    atom.setFlag(MAPPED, false);
                     atom.setID(atomLabel);
                     localCounter += 1;
                 }
@@ -892,11 +907,11 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer pMolecule = mappedReaction.getProducts().getAtomContainer(pMol);
             for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
                 IAtom atom = mappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
-                if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(CDKConstants.MAPPED)
+                if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(MAPPED)
                         && atom.getID().equalsIgnoreCase("-1")) {
                     String atomLabel = Integer.toString(localCounter);
                     atom.setID(atomLabel);
-                    atom.setFlag(CDKConstants.MAPPED, false);
+                    atom.setFlag(MAPPED, false);
                     localCounter += 1;
                 }
             }
@@ -945,8 +960,8 @@ public class Reactor extends AbstractReactor implements Serializable {
         Map<IAtom, IAtom> mappingMap = new HashMap<>();
 
         for (IMapping aaMapping : mappedReaction.mappings()) {
-            aaMapping.getChemObject(0).removeProperty(CDKConstants.ATOM_ATOM_MAPPING);
-            aaMapping.getChemObject(1).removeProperty(CDKConstants.ATOM_ATOM_MAPPING);
+            aaMapping.getChemObject(0).removeProperty(ATOM_ATOM_MAPPING);
+            aaMapping.getChemObject(1).removeProperty(ATOM_ATOM_MAPPING);
             mappingMap.put((IAtom) aaMapping.getChemObject(0), (IAtom) aaMapping.getChemObject(1));
         }
 
@@ -957,9 +972,9 @@ public class Reactor extends AbstractReactor implements Serializable {
             List<Integer> atom_index = new ArrayList<>();
             try {
                 int[] p = new int[mol.getAtomCount()];
-                String smiles = SmilesGenerator.unique().create(mol, p);
+                String smiles = unique().create(mol, p);
             } catch (CDKException e) {
-                Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
+                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
             }
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
@@ -988,9 +1003,9 @@ public class Reactor extends AbstractReactor implements Serializable {
 
             try {
                 int[] p = new int[mol.getAtomCount()];
-                String smiles = SmilesGenerator.unique().create(mol, p);
+                String smiles = unique().create(mol, p);
             } catch (CDKException e) {
-                Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
+                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
             }
 
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
@@ -1024,11 +1039,11 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (IAtom qAtom : mol.atoms()) {
                 if (mappingMap.containsKey(qAtom) && !qAtom.getSymbol().equalsIgnoreCase("H")) {
 //                    System.out.println("Atom " + qAtom.getSymbol() + " new Rank: " + counter);
-                    String id = String.valueOf(counter);
+                    String id = valueOf(counter);
                     qAtom.setID(id);
                     mappingMap.get(qAtom).setID(id);
-                    qAtom.setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(qAtom.getID()));
-                    mappingMap.get(qAtom).setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(mappingMap.get(qAtom).getID()));
+                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
+                    mappingMap.get(qAtom).setProperty(ATOM_ATOM_MAPPING, parseInt(mappingMap.get(qAtom).getID()));
                     counter++;
                 }
             }
@@ -1041,11 +1056,11 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (IAtom qAtom : mol.atoms()) {
                 if (mappingMap.containsKey(qAtom) && qAtom.getSymbol().equalsIgnoreCase("H")) {
 //                    System.out.println("Atom " + qAtom.getSymbol() + " new Rank: " + counter);
-                    String id = String.valueOf(counter);
+                    String id = valueOf(counter);
                     qAtom.setID(id);
                     mappingMap.get(qAtom).setID(id);
-                    qAtom.setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(qAtom.getID()));
-                    mappingMap.get(qAtom).setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(mappingMap.get(qAtom).getID()));
+                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
+                    mappingMap.get(qAtom).setProperty(ATOM_ATOM_MAPPING, parseInt(mappingMap.get(qAtom).getID()));
                     counter++;
                 }
             }
@@ -1057,9 +1072,9 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (IAtomContainer mol : rMolSet.atomContainers()) {
             for (IAtom qAtom : mol.atoms()) {
                 if (!mappingMap.containsKey(qAtom)) {
-                    String id = String.valueOf(counter);
+                    String id = valueOf(counter);
                     qAtom.setID(id);
-                    qAtom.setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(qAtom.getID()));
+                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
                     counter++;
                 }
             }
@@ -1071,9 +1086,9 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (IAtomContainer mol : pMolSet.atomContainers()) {
             for (IAtom tAtom : mol.atoms()) {
                 if (!mappingMap.containsValue(tAtom)) {
-                    String id = String.valueOf(counter);
+                    String id = valueOf(counter);
                     tAtom.setID(id);
-                    tAtom.setProperty(CDKConstants.ATOM_ATOM_MAPPING, Integer.parseInt(tAtom.getID()));
+                    tAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(tAtom.getID()));
                     counter++;
                 }
             }
@@ -1084,7 +1099,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (IAtomContainer mol : pMolSet.atomContainers()) {
             TreeMap<Integer, Integer> mapping_rank = new TreeMap<>();
             for (IAtom a : mol.atoms()) {
-                mapping_rank.put((Integer) a.getProperty(CDKConstants.ATOM_ATOM_MAPPING), mol.getAtomNumber(a));
+                mapping_rank.put((Integer) a.getProperty(ATOM_ATOM_MAPPING), mol.getAtomNumber(a));
             }
             int[] mappingIndexPermutation = new int[mapping_rank.size()];
             int index = 0;
@@ -1108,15 +1123,15 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     private IAtomContainer mol_smiles_mol(IAtomContainer org_mol) throws CloneNotSupportedException, CDKException {
 
-        IAtomContainer cloneMolecule = ExtAtomContainerManipulator.cloneWithIDs(org_mol);
+        IAtomContainer cloneMolecule = cloneWithIDs(org_mol);
 
         if (DEBUG) {
-            System.err.println("Orignal");
+            err.println("Orignal");
             printAtoms(cloneMolecule);
         }
 
         if (DEBUG) {
-            System.err.println("\nmol before: ");
+            err.println("\nmol before: ");
             printAtoms(cloneMolecule);
         }
         /*
@@ -1126,25 +1141,25 @@ public class Reactor extends AbstractReactor implements Serializable {
         int[] p = new int[cloneMolecule.getAtomCount()];
 
         try {
-            String smiles = SmilesGenerator.unique().create(cloneMolecule, p);
+            String smiles = unique().create(cloneMolecule, p);
             if (DEBUG) {
-                System.err.println("smiles " + smiles);
+                err.println("smiles " + smiles);
             }
         } catch (CDKException e) {
-            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
         }
 
         permuteWithoutClone(p, cloneMolecule);
 
         if (DEBUG) {
-            System.err.println("mol after: ");
+            err.println("mol after: ");
             printAtoms(cloneMolecule);
         }
 
         /*
         Generate 2D Diagram without cloning
         */
-        if (!GeometryTools.has2DCoordinates(cloneMolecule)) {
+        if (!has2DCoordinates(cloneMolecule)) {
             try {
                 /*
                 Clone it else it will loose mol ID
@@ -1171,10 +1186,10 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         if (DEBUG) {
-            System.err.println("Processed");
+            err.println("Processed");
             printAtoms(cloneMolecule);
-            System.err.println("canonicalMolecule: "
-                    + SmilesGenerator.generic().create(cloneMolecule)
+            err.println("canonicalMolecule: "
+                    + generic().create(cloneMolecule)
                     + "\n\n");
         }
 
@@ -1188,7 +1203,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     private void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
         if (DEBUG) {
-            System.err.println("permuting " + java.util.Arrays.toString(p));
+            err.println("permuting " + java.util.Arrays.toString(p));
         }
         IAtom[] permutedAtoms = new IAtom[n];
 
@@ -1199,8 +1214,8 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
         atomContainer.setAtoms(permutedAtoms);
 
-        IBond[] bonds = AtomContainerManipulator.getBondArray(atomContainer);
-        Arrays.sort(bonds, new Comparator<IBond>() {
+        IBond[] bonds = getBondArray(atomContainer);
+        sort(bonds, new Comparator<IBond>() {
 
             @Override
             public int compare(IBond o1, IBond o2) {
@@ -1208,10 +1223,10 @@ public class Reactor extends AbstractReactor implements Serializable {
                 int v = o1.getAtom(1).getProperty("label");
                 int x = o2.getAtom(0).getProperty("label");
                 int y = o2.getAtom(1).getProperty("label");
-                int min1 = Math.min(u, v);
-                int min2 = Math.min(x, y);
-                int max1 = Math.max(u, v);
-                int max2 = Math.max(x, y);
+                int min1 = min(u, v);
+                int min2 = min(x, y);
+                int max1 = max(u, v);
+                int max2 = max(x, y);
 
                 int minCmp = Integer.compare(min1, min2);
                 if (minCmp != 0) {
@@ -1221,7 +1236,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 if (maxCmp != 0) {
                     return maxCmp;
                 }
-                System.err.println("pokemon!");
+                err.println("pokemon!");
                 throw new InternalError();
             }
 

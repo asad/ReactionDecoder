@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
@@ -35,7 +36,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 public class FilesystemReactionDataSource implements IDataSource<IReaction> {
-    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataSource.class.getName());
+    private static final Logger LOG = getLogger(FilesystemReactionDataSource.class.getName());
     
     private File reactionDir;
     
@@ -121,7 +122,7 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
 
     @Override
     public List<String> getIDList() {
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>();
         for (String filename : reactionDir.list()) {
             ids.add(filename.substring(0, filename.indexOf('.')));
         }

@@ -23,11 +23,12 @@ package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.graphics.direct.Axis;
+import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReaction> {
@@ -56,7 +57,7 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
             Rectangle2D bounds = molSetBoundsTree.get(molLabel);
             bounds.setFrame(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
-            GeometryTools.translate2D(molecule, dx, dy);
+            translate2D(molecule, dx, dy);
 //            System.out.println("shifting " + molecule.getID() + " to " + BoundsPrinter.toString(GeometryTools.getRectangle2D(molecule)));
             counter++;
         }
@@ -72,7 +73,7 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
     
     public Point2d getArrowCenter() {
         Rectangle2D bounds = getBoundsTree().getRoot();
-        if (arrowAxis == Axis.X) {
+        if (arrowAxis == X) {
             return new Point2d(arrowPos, bounds.getCenterY());
         } else {
             return new Point2d(bounds.getCenterX(), arrowPos);

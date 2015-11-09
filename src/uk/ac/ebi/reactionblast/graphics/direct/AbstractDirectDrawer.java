@@ -20,19 +20,23 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import static java.awt.Color.WHITE;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 
 public class AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(AbstractDirectDrawer.class.getName());
+    private static final Logger LOG = getLogger(AbstractDirectDrawer.class.getName());
     
     protected Params params;
     
@@ -89,7 +93,7 @@ public class AbstractDirectDrawer {
      * @return
      */
     public BufferedImage makeBlankImage(int w, int h) {
-        return makeBlankImage(w, h, Color.WHITE);
+        return makeBlankImage(w, h, WHITE);
     }
 
     /**
@@ -100,11 +104,9 @@ public class AbstractDirectDrawer {
      * @return
      */
     public BufferedImage makeBlankImage(int w, int h, Color color) {
-        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(w, h, TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D)image.getGraphics();
-        g.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         g.setColor(color);
         g.fillRect(0, 0, w, h);
         return image;

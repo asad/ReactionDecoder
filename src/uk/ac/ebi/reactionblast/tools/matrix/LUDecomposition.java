@@ -1,6 +1,11 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import static java.lang.Double.valueOf;
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+import static java.lang.System.arraycopy;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -18,7 +23,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class LUDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 19978681017L;
-    private static final Logger LOG = Logger.getLogger(LUDecomposition.class.getName());
+    private static final Logger LOG = getLogger(LUDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -82,7 +87,7 @@ public class LUDecomposition implements java.io.Serializable {
                 LUrowi = LU[i];
 
                 // Most of the time is spent in the following dot product.
-                int kmax = Math.min(i, j);
+                int kmax = min(i, j);
                 double s = 0.0;
                 for (int k = 0; k < kmax; k++) {
                     s += LUrowi[k] * LUcolj[k];
@@ -94,7 +99,7 @@ public class LUDecomposition implements java.io.Serializable {
             // Find pivot and exchange if necessary.
             int p = j;
             for (int i = j + 1; i < m; i++) {
-                if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+                if (abs(LUcolj[i]) > abs(LUcolj[p])) {
                     p = i;
                 }
             }
@@ -244,7 +249,7 @@ public class LUDecomposition implements java.io.Serializable {
      */
     public int[] getPivot() {
         int[] p = new int[m];
-        System.arraycopy(piv, 0, p, 0, m);
+        arraycopy(piv, 0, p, 0, m);
         return p;
     }
 
@@ -256,7 +261,7 @@ public class LUDecomposition implements java.io.Serializable {
     public double[] getDoublePivot() {
         double[] vals = new double[m];
         for (int i = 0; i < m; i++) {
-            vals[i] = Double.valueOf(piv[i]);
+            vals[i] = valueOf(piv[i]);
         }
         return vals;
     }
@@ -271,7 +276,7 @@ public class LUDecomposition implements java.io.Serializable {
         if (m != n) {
             throw new IllegalArgumentException("Matrix must be square.");
         }
-        double d = Double.valueOf(pivsign);
+        double d = valueOf(pivsign);
         for (int j = 0; j < n; j++) {
             d *= LU[j][j];
         }

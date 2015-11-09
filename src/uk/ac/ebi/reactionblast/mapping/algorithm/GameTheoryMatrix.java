@@ -32,19 +32,24 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
  */
 import java.io.IOException;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.sort;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
+import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import uk.ac.ebi.reactionblast.mapping.container.BestMatchContainer;
 import uk.ac.ebi.reactionblast.mapping.container.HydrogenFreeFingerPrintContainer;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
@@ -53,7 +58,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphTheoryMatrix;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.AtomContainerSetComparator;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -65,7 +70,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 
     private static final long serialVersionUID = 0x2c36427fd2L;
     //~--- constructors -------------------------------------------------------
-    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(GameTheoryMatrix.class);
+    private static final ILoggingTool logger = createLoggingTool(GameTheoryMatrix.class);
 //    private void initializeMappingFLAGS(Holder mh) throws Exception {
 //        ReactionContainer reactionStructureInformation = mh.getReactionContainer();
     /*Reset all the flags*/
@@ -76,7 +81,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 //            }
 //        }
 //    }
-    private static final Logger LOG = Logger.getLogger(GameTheoryMatrix.class.getName());
+    private static final Logger LOG = getLogger(GameTheoryMatrix.class.getName());
     private Holder matrixHolder;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
     private final List<String> eductCounter;
@@ -113,11 +118,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
         this.reaction = reaction;
         this.reactionID = reaction.getID();
 
-        this.substrateductFPMap = Collections.synchronizedSortedMap(new TreeMap<Integer, BitSet>());
-        this.productFPMap = Collections.synchronizedSortedMap(new TreeMap<Integer, BitSet>());
+        this.substrateductFPMap = synchronizedSortedMap(new TreeMap<Integer, BitSet>());
+        this.productFPMap = synchronizedSortedMap(new TreeMap<Integer, BitSet>());
         this.fpr = new FingerprintGenerator();
-        this.eductCounter = Collections.synchronizedList(new LinkedList<String>());
-        this.productCounter = Collections.synchronizedList(new LinkedList<String>());
+        this.eductCounter = synchronizedList(new LinkedList<String>());
+        this.productCounter = synchronizedList(new LinkedList<String>());
         this.structureMapObj = new ReactionContainer();
         this.bestMatchContainer = new BestMatchContainer();
         this.hydFreeFPContainer = new HydrogenFreeFingerPrintContainer();
@@ -174,7 +179,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      */
     @Override
     public synchronized List<String> getEductCounter() {
-        return Collections.unmodifiableList(eductCounter);
+        return unmodifiableList(eductCounter);
     }
 
     /**
@@ -183,7 +188,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      */
     @Override
     public synchronized List<String> getProductCounter() {
-        return Collections.unmodifiableList(productCounter);
+        return unmodifiableList(productCounter);
     }
 
     private synchronized void StoichiometricCoefficientReplicator_Structure_FingerPrint_MapGenerator() {
@@ -202,10 +207,10 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                     FP = hydFreeFPContainer.getFingerPrint(eductID);
                 } else {
                     if (mol.getAtomCount() > 0) {
-                        IAtomContainer tempMol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
+                        IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
                         FP = fpr.getFingerprint(tempMol);
                     } else {
-                        FP = new BitSet(FingerprintGenerator.getFingerprinterSize());
+                        FP = new BitSet(getFingerprinterSize());
                     }
                 }
                 hydFreeFPContainer.setValue(eductID, FP);
@@ -214,7 +219,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 structureMapObj.setEductModified(key, true);
                 substrateductFPMap.put(key, FP);
             } catch (Exception ex) {
-                Logger.getLogger(GameTheoryMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(GameTheoryMatrix.class.getName()).log(SEVERE, null, ex);
             }
 
         }
@@ -231,10 +236,10 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 } else {
 
                     if (mol.getAtomCount() > 0) {
-                        IAtomContainer tempMol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
+                        IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
                         fingerPrint = fpr.getFingerprint(tempMol);
                     } else {
-                        fingerPrint = new BitSet(FingerprintGenerator.getFingerprinterSize());
+                        fingerPrint = new BitSet(getFingerprinterSize());
                     }
                 }
                 hydFreeFPContainer.setValue(productID, fingerPrint);
@@ -243,7 +248,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 structureMapObj.setProductModified(key, true);
                 productFPMap.put(key, fingerPrint);
             } catch (Exception ex) {
-                Logger.getLogger(GameTheoryMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(GameTheoryMatrix.class.getName()).log(SEVERE, null, ex);
             }
         }
     }
@@ -273,8 +278,8 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 
         try {
             Comparator<IAtomContainer> comparator = new AtomContainerSetComparator();
-            Collections.sort(ac, comparator);
-            Collections.sort(pd, comparator);
+            sort(ac, comparator);
+            sort(pd, comparator);
         } catch (Exception e) {
             logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
         }

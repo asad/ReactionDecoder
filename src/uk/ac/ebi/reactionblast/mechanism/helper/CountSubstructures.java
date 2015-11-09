@@ -19,17 +19,18 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
+import static org.openscience.cdk.smiles.smarts.parser.SMARTSParser.parse;
 import org.openscience.smsd.algorithm.vflib.substructure.VF2;
 import org.openscience.smsd.helper.MoleculeInitializer;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *
@@ -42,18 +43,18 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 class CountSubstructures extends MoleculeInitializer implements Serializable {
 
     private static final long serialVersionUID = 12343289751445148L;
-    private static final Logger LOG = Logger.getLogger(CountSubstructures.class.getName());
+    private static final Logger LOG = getLogger(CountSubstructures.class.getName());
     private SmilesParser sp;
     private IAtomContainer mol;
 
     CountSubstructures(IAtomContainer atomContainer) throws CloneNotSupportedException {
-        sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        sp = new SmilesParser(getInstance());
         try {
             this.mol = null;
-            mol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(atomContainer);
+            mol = removeHydrogensExceptSingleAndPreserveAtomID(atomContainer);
             initializeMolecule(mol);
         } catch (CDKException ex) {
-            Logger.getLogger(CountSubstructures.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(CountSubstructures.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -63,7 +64,7 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
             VF2 vf = new VF2(parseSmiles, mol, true, true, true);
             return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
         } catch (InvalidSmilesException ex) {
-            VF2 vf = new VF2(SMARTSParser.parse(smiles, mol.getBuilder()), mol);
+            VF2 vf = new VF2(parse(smiles, mol.getBuilder()), mol);
             return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
         }
     }

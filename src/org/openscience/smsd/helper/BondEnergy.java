@@ -24,6 +24,7 @@
 package org.openscience.smsd.helper;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
@@ -40,7 +41,7 @@ import org.openscience.cdk.interfaces.IBond.Order;
  */
 @TestClass("org.openscience.cdk.smsd.helper.BondEnergyTest")
 public class BondEnergy {
-    private static final Logger LOG = Logger.getLogger(BondEnergy.class.getName());
+    private static final Logger LOG = getLogger(BondEnergy.class.getName());
 
     private String symbol1 = "";
     private String symbol2 = "";

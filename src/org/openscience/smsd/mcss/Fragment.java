@@ -21,6 +21,7 @@ package org.openscience.smsd.mcss;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.ShortestPathFingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,7 +36,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 public class Fragment implements Comparable<Fragment>, Serializable {
 
     private static final long serialVersionUID = 134634654886765L;
-    private static final Logger LOG = Logger.getLogger(Fragment.class.getName());
+    private static final Logger LOG = getLogger(Fragment.class.getName());
 
     /**
      * Return SMILES

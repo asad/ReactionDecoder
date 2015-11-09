@@ -18,8 +18,10 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
+import static java.lang.System.out;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -35,7 +37,7 @@ public class AtomContainerAtomPermutor extends Permutor
 
     private static boolean useA = false;
     private static boolean clone = false;
-    private static final Logger LOG = Logger.getLogger(AtomContainerAtomPermutor.class.getName());
+    private static final Logger LOG = getLogger(AtomContainerAtomPermutor.class.getName());
 
     public static IAtomContainer permute(int[] p, IAtomContainer atomContainer) {
 //        if (useA) {
@@ -72,7 +74,7 @@ public class AtomContainerAtomPermutor extends Permutor
 
         } catch (CloneNotSupportedException cne) {
             //?
-            System.out.println(cne);
+            out.println(cne);
         }
 
         return permutedContainer;
@@ -98,7 +100,7 @@ public class AtomContainerAtomPermutor extends Permutor
             permutedContainer.setAtoms(permutedAtoms);
         } catch (CloneNotSupportedException cne) {
             //?
-            System.out.println(cne);
+            out.println(cne);
         }
         return permutedContainer;
     }
@@ -127,14 +129,14 @@ public class AtomContainerAtomPermutor extends Permutor
 
     public AtomContainerAtomPermutor(IAtomContainer atomContainer, boolean useA, boolean clone) {
         this(atomContainer);
-        AtomContainerAtomPermutor.useA = useA;
-        AtomContainerAtomPermutor.clone = clone;
+        useA = useA;
+        clone = clone;
     }
     
     @Override
     public IAtomContainer next() {
         int[] p = super.getNextPermutation();
-        return AtomContainerAtomPermutor.permute(p, original);
+        return permute(p, original);
     }
 
     @Override

@@ -19,12 +19,13 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.graphics.direct.Axis;
+import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
 
 public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
-    private static final Logger LOG = Logger.getLogger(TopToBottomReactionLayout.class.getName());
+    private static final Logger LOG = getLogger(TopToBottomReactionLayout.class.getName());
 
     public TopToBottomReactionLayout() {
         this(true);
@@ -36,7 +37,7 @@ public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
 
     public TopToBottomReactionLayout(boolean shouldInvert, Vector2d moleculeAxis) {
         super(shouldInvert, moleculeAxis);
-        arrowAxis = Axis.Y;
+        arrowAxis = Y;
     }
 
     /**

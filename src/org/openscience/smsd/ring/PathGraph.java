@@ -48,10 +48,12 @@
  */
 package org.openscience.smsd.ring;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -64,15 +66,15 @@ import org.openscience.cdk.interfaces.IBond;
  *         Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class PathGraph {
-    private static final Logger LOG = Logger.getLogger(PathGraph.class.getName());
+    private static final Logger LOG = getLogger(PathGraph.class.getName());
 
     private final List<PathEdge> edges;
     private final List<IAtom> atoms;
     private final IAtomContainer mol;
 
     public PathGraph(IAtomContainer molecule) {
-        edges = new ArrayList<PathEdge>();
-        atoms = new ArrayList<IAtom>();
+        edges = new ArrayList<>();
+        atoms = new ArrayList<>();
         this.mol = molecule;
 
         loadEdges(molecule);
@@ -82,20 +84,20 @@ public class PathGraph {
     public void printPaths() {
         for (PathEdge edge : edges) {
             if (edge.isCycle()) {
-                System.out.print("*");
+                out.print("*");
             }
 
             for (IAtom atom : edge.getAtoms()) {
-                System.out.print(mol.getAtomNumber(atom) + "-");
+                out.print(mol.getAtomNumber(atom) + "-");
             }
 
-            System.out.println();
+            out.println();
         }
     }
 
     public List<PathEdge> remove(IAtom atom) {
         List<PathEdge> oldEdges = getEdges(atom);
-        List<PathEdge> result = new ArrayList<PathEdge>();
+        List<PathEdge> result = new ArrayList<>();
 
         for (PathEdge edge : oldEdges) {
             if (edge.isCycle()) {
@@ -116,7 +118,7 @@ public class PathGraph {
     }
 
     private List<PathEdge> spliceEdges(List<PathEdge> edges) {
-        List<PathEdge> result = new ArrayList<PathEdge>();
+        List<PathEdge> result = new ArrayList<>();
 
         for (int i = 0; i < edges.size(); i++) {
             for (int j = i + 1; j < edges.size(); j++) {
@@ -132,7 +134,7 @@ public class PathGraph {
     }
 
     private List<PathEdge> getEdges(IAtom atom) {
-        List<PathEdge> result = new ArrayList<PathEdge>();
+        List<PathEdge> result = new ArrayList<>();
 
         for (PathEdge edge : edges) {
             if (edge.isCycle()) {
@@ -152,7 +154,7 @@ public class PathGraph {
     private void loadEdges(IAtomContainer molecule) {
         for (int i = 0; i < molecule.getBondCount(); i++) {
             IBond bond = molecule.getBond(i);
-            edges.add(new PathEdge(Arrays.asList(bond.getAtom(0), bond.getAtom(1))));
+            edges.add(new PathEdge(asList(bond.getAtom(0), bond.getAtom(1))));
         }
     }
 

@@ -23,10 +23,13 @@
  */
 package org.openscience.smsd.algorithm.vflib;
 
+import static java.lang.Integer.signum;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
+import static org.openscience.smsd.algorithm.vflib.SortOrder.ASCENDING;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 
  /*
@@ -36,7 +39,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
-    private static final Logger LOG = Logger.getLogger(Map2ValueComparator.class.getName());
+    private static final Logger LOG = getLogger(Map2ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
@@ -54,9 +57,9 @@ public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
     public int compare(Map<INode, IAtom> object1, Map<INode, IAtom> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
-        int compare = Integer.signum(new Integer(size1).compareTo(new Integer(size2)));
+        int compare = signum(new Integer(size1).compareTo(size2));
 
-        if (sortOrder == SortOrder.ASCENDING) {
+        if (sortOrder == ASCENDING) {
             return compare;
         } else {
             return compare * (-1);

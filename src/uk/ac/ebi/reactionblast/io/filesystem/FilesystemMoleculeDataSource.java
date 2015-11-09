@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,7 +36,7 @@ import uk.ac.ebi.reactionblast.interfaces.IDataSource;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
 public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer> {
-    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataSource.class.getName());
+    private static final Logger LOG = getLogger(FilesystemMoleculeDataSource.class.getName());
     
     private File moleculeDir;
     
@@ -124,7 +125,7 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
 
     @Override
     public List<String> getIDList() {
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>();
         for (String filename : moleculeDir.list()) {
             ids.add(filename.substring(0, filename.indexOf('.')));
         }

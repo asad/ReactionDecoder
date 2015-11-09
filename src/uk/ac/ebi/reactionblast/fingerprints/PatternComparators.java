@@ -19,9 +19,12 @@
 
 package uk.ac.ebi.reactionblast.fingerprints;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import java.util.Comparator;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
@@ -31,7 +34,7 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
  */
 class PatternComparators {
 
-    private static final Logger LOG = Logger.getLogger(PatternComparators.class.getName());
+    private static final Logger LOG = getLogger(PatternComparators.class.getName());
 
     public static Comparator<IPatternFingerprinter> overallComparator() {
         return new Comparator<IPatternFingerprinter>() {
@@ -43,7 +46,7 @@ class PatternComparators {
                 if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
                     return o1.getFingerprintID().compareTo(o2.getFingerprintID());
                 }
-                int n = Math.min(len1, len2);
+                int n = min(len1, len2);
                 if (len1 == len2) {
                     int pos = 0;
                     while (n-- != 0) {
@@ -51,19 +54,19 @@ class PatternComparators {
                             if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
                                 return o1.getFeature(pos).compareTo(o2.getFeature(pos));
                             } else if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
-                                double v1 = o1.getWeight(pos).doubleValue();
-                                double v2 = o2.getWeight(pos).doubleValue();
+                                double v1 = o1.getWeight(pos);
+                                double v2 = o2.getWeight(pos);
                                 if (v1 != v2) {
-                                    return (int) (Math.max(v1, v2) - Math.min(v1, v2));
+                                    return (int) (max(v1, v2) - min(v1, v2));
                                 }
                             }
                         } catch (CDKException ex) {
-                            Logger.getLogger(PatternFingerprinter.class.getName()).log(Level.SEVERE, null, ex);
+                            getLogger(PatternFingerprinter.class.getName()).log(SEVERE, null, ex);
                         }
                         pos++;
                     }
                 }
-                return Math.max(len1, len2) - n;
+                return max(len1, len2) - n;
             }
         };
     }
@@ -78,19 +81,19 @@ class PatternComparators {
                 if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
                     return o1.getFingerprintID().compareTo(o2.getFingerprintID());
                 }
-                int n = Math.min(len1, len2);
+                int n = min(len1, len2);
                 if (len1 == len2) {
                     int pos = 0;
                     while (n-- != 0) {
-                        double v1 = o1.getWeight(pos).doubleValue();
-                        double v2 = o2.getWeight(pos).doubleValue();
+                        double v1 = o1.getWeight(pos);
+                        double v2 = o2.getWeight(pos);
                         if (v1 != v2) {
-                            return (int) (Math.max(v1, v2) - Math.min(v1, v2));
+                            return (int) (max(v1, v2) - min(v1, v2));
                         }
                         pos++;
                     }
                 }
-                return Math.max(len1, len2) - n;
+                return max(len1, len2) - n;
             }
         };
     }

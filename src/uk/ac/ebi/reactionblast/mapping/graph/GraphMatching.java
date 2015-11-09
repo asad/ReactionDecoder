@@ -31,22 +31,23 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 
 /**
  *
@@ -55,9 +56,9 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class GraphMatching extends IGraphMatching implements Serializable {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(GraphMatching.class);
+            = createLoggingTool(GraphMatching.class);
     private static final long serialVersionUID = 0xf06b2d5f9L;
-    private static final Logger LOG = Logger.getLogger(GraphMatching.class.getName());
+    private static final Logger LOG = getLogger(GraphMatching.class.getName());
     private final IAtomContainer educt;
     private final IAtomContainer product;
     private IAtomContainer matchedPart = null;
@@ -84,7 +85,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
             product.setID(productOrg.getID());
 
             if (educt.getAtomCount() > 0 && product.getAtomCount() > 0) {
-                setMatchedPart(ExtAtomContainerManipulator.cloneWithIDs(educt));
+                setMatchedPart(cloneWithIDs(educt));
             }
         } catch (CloneNotSupportedException e) {
             throw new CDKException("Error: In GraphMatching Class" + e);
@@ -126,7 +127,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
             }
         } catch (IOException ex) {
             logger.debug("Files: " + educt.getID() + ", " + product.getID());
-            logger.debug(Level.SEVERE, null, ex);
+            logger.debug(SEVERE, null, ex);
         }
         return false;
     }
@@ -151,7 +152,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
                 IAtom pAtom = getAtomByID(product, pID);
 
                 if (eAtom != null && pAtom != null) {
-                    IMapping im = DefaultChemObjectBuilder.getInstance().newInstance(IMapping.class, eAtom, pAtom);
+                    IMapping im = getInstance().newInstance(IMapping.class, eAtom, pAtom);
                     reaction.addMapping(im);
                 }
                 educt.removeAtomAndConnectedElectronContainers(eAtom);
@@ -171,7 +172,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!");
             } catch (CDKException ex) {
-                Logger.getLogger(GraphMatching.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(GraphMatching.class.getName()).log(SEVERE, null, ex);
             }
         }
         return delta;
@@ -205,7 +206,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
     }
 
     protected synchronized Map<IAtom, IAtom> getFirstAtomMapping() {
-        return Collections.unmodifiableMap(bestAtomMappingList);
+        return unmodifiableMap(bestAtomMappingList);
     }
 
     /**

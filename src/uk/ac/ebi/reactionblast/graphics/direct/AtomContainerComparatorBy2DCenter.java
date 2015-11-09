@@ -20,8 +20,9 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.Comparator;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -30,7 +31,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContainer> {
 
-    private static final Logger LOG = Logger.getLogger(AtomContainerComparatorBy2DCenter.class.getName());
+    private static final Logger LOG = getLogger(AtomContainerComparatorBy2DCenter.class.getName());
 
     /**
      * Compare two AtomContainers based on their 2D position.
@@ -42,13 +43,13 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
     @Override
     public int compare(IAtomContainer atCont1, IAtomContainer atCont2) {
         if (atCont1 != null && atCont2 != null) {
-            Point2d p1 = GeometryTools.get2DCenter(atCont1);
-            Point2d p2 = GeometryTools.get2DCenter(atCont2);
+            Point2d p1 = get2DCenter(atCont1);
+            Point2d p2 = get2DCenter(atCont2);
             if (p1 != null && p2 != null) {
                 if (p1.x != p2.x) {
-                    return new Double(p1.x).compareTo(new Double(p2.x));
+                    return new Double(p1.x).compareTo(p2.x);
                 } else {
-                    return new Double(p1.y).compareTo(new Double(p2.y));
+                    return new Double(p1.y).compareTo(p2.y);
                 }
             }
         }

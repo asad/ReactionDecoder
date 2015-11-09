@@ -20,8 +20,13 @@ package uk.ac.ebi.reactionblast.stereo.compare;
 
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.cip.CIPTool;
+import static org.openscience.cdk.geometry.cip.CIPTool.HYDROGEN;
+import static org.openscience.cdk.geometry.cip.CIPTool.checkIfAllLigandsAreDifferent;
+import static org.openscience.cdk.geometry.cip.CIPTool.defineLigand;
+import static org.openscience.cdk.geometry.cip.CIPTool.order;
 import org.openscience.cdk.geometry.cip.ILigand;
 import org.openscience.cdk.geometry.cip.VisitedAtoms;
 import org.openscience.cdk.interfaces.IAtom;
@@ -37,7 +42,7 @@ import org.openscience.cdk.tools.SaturationChecker;
  */
 public class StereoCenterAnalyser {
 
-    private static final Logger LOG = Logger.getLogger(StereoCenterAnalyser.class.getName());
+    private static final Logger LOG = getLogger(StereoCenterAnalyser.class.getName());
 
     /**
      * Check an atom to see if it has a potential tetrahedral stereo center. This can only be true if:
@@ -86,15 +91,14 @@ public class StereoCenterAnalyser {
         int chiralAtomIndex = atomContainer.getAtomNumber(atom);
         for (IAtom neighbour : neighbours) {
             int ligandAtomIndex = atomContainer.getAtomNumber(neighbour);
-            ligands[index] = CIPTool.defineLigand(
+            ligands[index] = defineLigand(
                     atomContainer, bitSet, chiralAtomIndex, ligandAtomIndex);
             index++;
         }
         if (hasImplicitHydrogen) {
-            ligands[index] = CIPTool.defineLigand(
-                    atomContainer, bitSet, chiralAtomIndex, CIPTool.HYDROGEN);
+            ligands[index] = defineLigand(atomContainer, bitSet, chiralAtomIndex, HYDROGEN);
         }
-        CIPTool.order(ligands);
-        return CIPTool.checkIfAllLigandsAreDifferent(ligands);
+        order(ligands);
+        return checkIfAllLigandsAreDifferent(ligands);
     }
 }

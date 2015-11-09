@@ -24,6 +24,7 @@
 package org.openscience.smsd.helper;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -36,7 +37,7 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.helper.BinaryTreeTest")
 public class BinaryTree {
-    private static final Logger LOG = Logger.getLogger(BinaryTree.class.getName());
+    private static final Logger LOG = getLogger(BinaryTree.class.getName());
     /**
      * not equal is initialized as null
      */

@@ -18,12 +18,14 @@
  */
 package uk.ac.ebi.reactionblast.tools.utility;
 
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -31,7 +33,7 @@ import java.util.logging.Logger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SortMap {
-    private static final Logger LOG = Logger.getLogger(SortMap.class.getName());
+    private static final Logger LOG = getLogger(SortMap.class.getName());
 
     /**
      *
@@ -41,7 +43,7 @@ public class SortMap {
     public static synchronized Map<Object, Double> valueInAscendingOrder(Map<Object, Double> map) {
         List<Map.Entry<Object, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Object, Double>>() {
+        sort(list, new Comparator<Map.Entry<Object, Double>>() {
 
             @Override
             public int compare(Map.Entry<Object, Double> entry, Map.Entry<Object, Double> entry1) {
@@ -65,7 +67,7 @@ public class SortMap {
     public static synchronized Map<Object, Double> valueInDescendingOrder(Map<Object, Double> map) {
         List<Map.Entry<Object, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Object, Double>>() {
+        sort(list, new Comparator<Map.Entry<Object, Double>>() {
 
             @Override
             public int compare(Map.Entry<Object, Double> entry, Map.Entry<Object, Double> entry1) {
@@ -89,7 +91,7 @@ public class SortMap {
     public static synchronized Map<Integer, Integer> intValueInAscendingOrder(Map<Integer, Integer> map) {
         List<Map.Entry<Integer, Integer>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+        sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 
             @Override
             public int compare(Map.Entry<Integer, Integer> entry, Map.Entry<Integer, Integer> entry1) {
@@ -113,7 +115,7 @@ public class SortMap {
     public static synchronized Map<Integer, Integer> intValueInDescendingOrder(Map<Integer, Integer> map) {
         List<Map.Entry<Integer, Integer>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+        sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 
             @Override
             public int compare(Map.Entry<Integer, Integer> entry, Map.Entry<Integer, Integer> entry1) {
@@ -137,7 +139,7 @@ public class SortMap {
     public static synchronized Map<Double, Double> doubleValueInAscendingOrder(Map<Double, Double> map) {
         List<Map.Entry<Double, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Double, Double>>() {
+        sort(list, new Comparator<Map.Entry<Double, Double>>() {
 
             @Override
             public int compare(Map.Entry<Double, Double> entry, Map.Entry<Double, Double> entry1) {
@@ -161,7 +163,7 @@ public class SortMap {
     public static synchronized Map<Double, Double> doubleValueInDescendingOrder(Map<Double, Double> map) {
         List<Map.Entry<Double, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        java.util.Collections.sort(list, new Comparator<Map.Entry<Double, Double>>() {
+        sort(list, new Comparator<Map.Entry<Double, Double>>() {
 
             @Override
             public int compare(Map.Entry<Double, Double> entry, Map.Entry<Double, Double> entry1) {

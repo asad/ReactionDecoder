@@ -20,9 +20,12 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import static java.awt.Color.RGBtoHSB;
+import static java.awt.Color.getHSBColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Simple utility class to generate a 'ramp' of colors between two values.
@@ -32,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class ColorRamp {
     
-    private static final Logger LOG = Logger.getLogger(ColorRamp.class.getName());
+    private static final Logger LOG = getLogger(ColorRamp.class.getName());
 
     /**
      * Get N colors as a list.
@@ -43,7 +46,7 @@ public class ColorRamp {
     public static List<Color> getColors(int number) {
         List<Color> colors = new ArrayList<>();
         for (int i = 0; i < number; i++) {
-            colors.add(ColorRamp.colorRamp(i, 0, number));
+            colors.add(colorRamp(i, 0, number));
         }
         return colors;
     }
@@ -82,12 +85,12 @@ public class ColorRamp {
                 g = 1.0 + 4.0 * (vmin + 0.75 * dv - v) / dv;
                 b = 0.0;
             }
-            float[] hsb = Color.RGBtoHSB(
+            float[] hsb = RGBtoHSB(
                     (int) (r * 255), (int) (g * 255), (int) (b * 255), null);
-            return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
+            return getHSBColor(hsb[0], hsb[1], hsb[2]);
         } catch (ArithmeticException zde) {
-            float[] hsb = Color.RGBtoHSB(0, 0, 0, null);
-            return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
+            float[] hsb = RGBtoHSB(0, 0, 0, null);
+            return getHSBColor(hsb[0], hsb[1], hsb[2]);
         }
     }
 

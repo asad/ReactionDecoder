@@ -18,22 +18,30 @@
  */
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
+import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.or;
+import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
@@ -46,7 +54,7 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * @author Asad
  */
 class IsomeraseHandler {
-    private static final Logger LOG = Logger.getLogger(IsomeraseHandler.class.getName());
+    private static final Logger LOG = getLogger(IsomeraseHandler.class.getName());
 
     /**
      *
@@ -78,12 +86,12 @@ class IsomeraseHandler {
             try {
                 initializeMolecule(educt);
             } catch (CDKException ex) {
-                Logger.getLogger(GameTheoryRings.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(GameTheoryRings.class.getName()).log(SEVERE, null, ex);
             }
             try {
                 initializeMolecule(product);
             } catch (CDKException ex) {
-                Logger.getLogger(GameTheoryRings.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(GameTheoryRings.class.getName()).log(SEVERE, null, ex);
             }
             // sets SSSR information
             SSSRFinder finder = new SSSRFinder(educt);
@@ -104,7 +112,7 @@ class IsomeraseHandler {
                     IAtomContainer product = products.atomContainers().iterator().next();
                     boolean chipPhophateInSingleReactantProductNotInRing = chipPhophateInSingleReactantProductNotInRing(educt, product);
                 } catch (CDKException ex) {
-                    Logger.getLogger(IsomeraseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -114,7 +122,7 @@ class IsomeraseHandler {
      * Returns Number of Container with Ring Atoms
      */
     private Map<IRingSet, IAtomContainer> getRingContainerCount(IAtomContainerSet acs) {
-        CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
+        CycleFinder cycles = or(all(), relevant());
         Map<IRingSet, IAtomContainer> ringSet = new HashMap<>();
         for (IAtomContainer ac : acs.atomContainers()) {
             IRingSet basicRings;
@@ -126,7 +134,7 @@ class IsomeraseHandler {
                     ringSet.put(basicRings, ac);
                 }
             } catch (Intractable ex) {
-                Logger.getLogger(IsomeraseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
             }
         }
         return ringSet;
@@ -162,25 +170,25 @@ class IsomeraseHandler {
             SMARTSQueryTool smartsPhosphate;
 
             if (DEBUG) {
-                System.out.println("String phosphateSMILES = \"OP(O)(O)=O\";");
+                out.println("String phosphateSMILES = \"OP(O)(O)=O\";");
             }
 
-            smartsPhosphate = new SMARTSQueryTool(phosphateSMILES, DefaultChemObjectBuilder.getInstance());
+            smartsPhosphate = new SMARTSQueryTool(phosphateSMILES, getInstance());
             boolean matchesE = smartsPhosphate.matches(educt);
             boolean matchesP = smartsPhosphate.matches(product);
 
             if (DEBUG) {
-                System.out.println("String smartsPhosphate Q " + matchesE);
-                System.out.println("String smartsPhosphate T " + matchesP);
+                out.println("String smartsPhosphate Q " + matchesE);
+                out.println("String smartsPhosphate T " + matchesP);
             }
             if (matchesE && matchesP) {
                 boolean findAndChipBondPhophate1 = findAndChipBondPhophate(educt);
                 boolean findAndChipBondPhophate2 = findAndChipBondPhophate(product);
                 if (DEBUG) {
-                    System.out.println("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
-                    System.out.println("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
-                    System.out.println("SM " + new SmilesGenerator().create(educt));
-                    System.out.println("SM " + new SmilesGenerator().create(product));
+                    out.println("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
+                    out.println("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
+                    out.println("SM " + new SmilesGenerator().create(educt));
+                    out.println("SM " + new SmilesGenerator().create(product));
                 }
                 return findAndChipBondPhophate1 && findAndChipBondPhophate2;
             }
@@ -199,14 +207,14 @@ class IsomeraseHandler {
                         && bond.getAtom(1).getSymbol().equalsIgnoreCase("C"))
                         || (bond.getAtom(0).getSymbol().equalsIgnoreCase("C")
                         && bond.getAtom(1).getSymbol().equalsIgnoreCase("O"))) {
-                    if (!bond.getAtom(0).getFlag(CDKConstants.ISAROMATIC)
-                            && !bond.getAtom(1).getFlag(CDKConstants.ISAROMATIC)) {
+                    if (!bond.getAtom(0).getFlag(ISAROMATIC)
+                            && !bond.getAtom(1).getFlag(ISAROMATIC)) {
                         if (referenceContainer.contains(bond)) {
                             IAtom atom = bond.getAtom(0).getSymbol().equalsIgnoreCase("C") ? bond.getAtom(0) : bond.getAtom(1);
                             List<IBond> neighbourhoodBonds = referenceContainer.getConnectedBondsList(atom);
                             flag = false;
                             for (IBond neighbourhoodBond : neighbourhoodBonds) {
-                                if (neighbourhoodBond.contains(atom) && !neighbourhoodBond.getFlag(CDKConstants.ISINRING)) {
+                                if (neighbourhoodBond.contains(atom) && !neighbourhoodBond.getFlag(ISINRING)) {
                                     if ((neighbourhoodBond.getAtom(0).getSymbol().equalsIgnoreCase("O")
                                             && neighbourhoodBond.getAtom(1).getSymbol().equalsIgnoreCase("C"))
                                             || (neighbourhoodBond.getAtom(0).getSymbol().equalsIgnoreCase("C")
@@ -236,7 +244,7 @@ class IsomeraseHandler {
             IAtom atomP = bond.getAtom(1);
             if ((atomE.getSymbol().equals("O") && atomP.getSymbol().equals("P"))
                     || (atomE.getSymbol().equals("P") && atomP.getSymbol().equals("O"))) {
-                if (bond.getOrder().equals(IBond.Order.SINGLE)) {
+                if (bond.getOrder().equals(SINGLE)) {
                     IAtom oxygen = atomE.getSymbol().equals("O") ? atomE : atomP;
                     List<IBond> neighbourBonds = container.getConnectedBondsList(oxygen);
                     if (neighbourBonds.size() == 2) {
@@ -248,9 +256,9 @@ class IsomeraseHandler {
                                     container.removeBond(b);
 
                                     if (DEBUG) {
-                                        System.out.println("bondToBeChipped " + b.getAtom(0).getSymbol());
-                                        System.out.println("bondToBeChipped " + b.getAtom(1).getSymbol());
-                                        System.out.println("removeBond o-p ");
+                                        out.println("bondToBeChipped " + b.getAtom(0).getSymbol());
+                                        out.println("bondToBeChipped " + b.getAtom(1).getSymbol());
+                                        out.println("removeBond o-p ");
                                     }
                                 }
                             }
@@ -270,21 +278,21 @@ class IsomeraseHandler {
     */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
         if (DEBUG) {
-            System.out.println("Find and Chip Bond Between Rings");
+            out.println("Find and Chip Bond Between Rings");
         }
         List<IBond> bond_to_be_removed = new ArrayList<>();
         for (IAtom atom : container.atoms()) {
             if (atom.getSymbol().equals("O")) {
-                int number_of_rings = ((Integer) atom.getProperty(CDKConstants.RING_CONNECTIONS));
+                int number_of_rings = ((Integer) atom.getProperty(RING_CONNECTIONS));
                 if (DEBUG) {
-                    System.out.println("number_of_rings " + number_of_rings);
+                    out.println("number_of_rings " + number_of_rings);
                 }
 
                 List<IBond> bonds = container.getConnectedBondsList(atom);
                 if (DEBUG) {
-                    System.out.println("number_of_bonds " + bonds.size());
+                    out.println("number_of_bonds " + bonds.size());
                     for (IBond bond : bonds) {
-                        System.out.println("BONDS "
+                        out.println("BONDS "
                                 + " B0 " + bond.getAtom(0).getSymbol()
                                 + " B1 " + bond.getAtom(1).getSymbol());
                     }
@@ -300,12 +308,12 @@ class IsomeraseHandler {
             container.removeBond(bond);
             if (DEBUG) {
                 try {
-                    System.out.println("CHIPPING BONDS "
+                    out.println("CHIPPING BONDS "
                             + " B0 " + bond.getAtom(0).getSymbol()
                             + " B1 " + bond.getAtom(1).getSymbol());
-                    System.out.println("CHIPPED SM " + new SmilesGenerator().create(container));
+                    out.println("CHIPPED SM " + new SmilesGenerator().create(container));
                 } catch (CDKException ex) {
-                    Logger.getLogger(IsomeraseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }

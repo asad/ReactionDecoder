@@ -17,11 +17,14 @@
 package org.openscience.cdk.smiles;
 
 import java.io.IOException;
+import static java.lang.Math.abs;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.GraphUtil;
 import org.openscience.cdk.graph.GraphUtil.EdgeToBondMap;
-import org.openscience.cdk.graph.invariant.Canon;
+import static org.openscience.cdk.graph.GraphUtil.EdgeToBondMap.withSpaceFor;
+import static org.openscience.cdk.graph.GraphUtil.toAdjList;
+import static org.openscience.cdk.graph.invariant.Canon.label;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -38,14 +41,14 @@ public class CanonSmiAdapter {
 
     // convert to Beam excluding stereo (not canonicalised) and aromaticity
     static final CDKToBeam cdkToBeam = new CDKToBeam(false, false);
-    private static final Logger LOG = Logger.getLogger(CanonSmiAdapter.class.getName());
+    private static final Logger LOG = getLogger(CanonSmiAdapter.class.getName());
 
     public static String create(IAtomContainer ac) throws CDKException, IOException {
 
-        EdgeToBondMap bonds = EdgeToBondMap.withSpaceFor(ac);
-        int[][] graph = GraphUtil.toAdjList(ac, bonds);
+        EdgeToBondMap bonds = withSpaceFor(ac);
+        int[][] graph = toAdjList(ac, bonds);
 
-        long[] labels = Canon.label(ac, graph, betterInvariants(ac, graph, bonds));
+        long[] labels = label(ac, graph, betterInvariants(ac, graph, bonds));
 
         Graph g = cdkToBeam.toBeamGraph(ac);
         g = g.permute(toPermutation(labels));
@@ -100,7 +103,7 @@ public class CanonSmiAdapter {
             label <<= 1;   // charge sign == 1 (1 bit)
             label |= chg >> 31 & 0x1;
             label <<= 2;   // charge <= 3 (2 bits)
-            label |= Math.abs(chg) & 0x3;
+            label |= abs(chg) & 0x3;
             label <<= 4;   // hydrogen count <= 15 (4 bits)
             label |= impH + expH & 0xf;
             label <<= 1;   // ring membership (1 bit)

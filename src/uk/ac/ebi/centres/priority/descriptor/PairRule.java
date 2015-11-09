@@ -17,8 +17,8 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Collections2.permutations;
+import static com.google.common.collect.Lists.newLinkedList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,9 +28,13 @@ import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.Priority;
-import uk.ac.ebi.centres.descriptor.General;
+import static uk.ac.ebi.centres.PriorityRule.Type.GEOMETRICAL;
+import static uk.ac.ebi.centres.descriptor.General.NONE;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
+import static uk.ac.ebi.centres.descriptor.General.UNSPECIFIED;
 import uk.ac.ebi.centres.priority.AbstractPriorityRule;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
 
@@ -42,7 +46,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class PairRule<A>
         extends AbstractPriorityRule<A> {
-    private static final Logger LOG = Logger.getLogger(PairRule.class.getName());
+    private static final Logger LOG = getLogger(PairRule.class.getName());
 
     /**
      * Ugly piece of code to generate permutation of the given ligand groups.
@@ -61,7 +65,7 @@ public class PairRule<A>
         for (List sublist : uncombinedList) {
             if (sublist.size() > 1) {
                 Collection<List> tmp;
-                tmp = Collections2.permutations(sublist);
+                tmp = permutations(sublist);
                 sublist.clear();
                 sublist.addAll(tmp);
             }
@@ -130,7 +134,7 @@ public class PairRule<A>
      * @param accessor access to a descriptor on a ligand
      */
     public PairRule(DescriptorAccessor<A> accessor) {
-        super(Type.GEOMETRICAL);
+        super(GEOMETRICAL);
         this.accessor = accessor;
     }
 
@@ -146,7 +150,7 @@ public class PairRule<A>
      */
     protected NavigableSet<DescriptorList> generate(Ligand<A> ligand) {
         // would be good to give an expected size
-        Queue<Ligand<A>> queue = Lists.newLinkedList();
+        Queue<Ligand<A>> queue = newLinkedList();
         queue.add(ligand);
         return generate(queue);
     }
@@ -171,10 +175,7 @@ public class PairRule<A>
         NavigableSet<DescriptorList> lists = new TreeSet<>();
 
         // create a descriptor list with given exclusions
-        DescriptorList descriptors = new DescriptorList(null,
-                General.NONE,
-                General.UNSPECIFIED,
-                General.UNKNOWN);
+        DescriptorList descriptors = new DescriptorList(null, NONE, UNSPECIFIED, UNKNOWN);
 
         while (!queue.isEmpty()) {
 

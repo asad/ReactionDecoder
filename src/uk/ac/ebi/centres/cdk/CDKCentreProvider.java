@@ -17,16 +17,27 @@
  */
 package uk.ac.ebi.centres.cdk;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.graph.SpanningTree;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomType;
+import static org.openscience.cdk.interfaces.IAtomType.Hybridization.SP3;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN_INVERTED;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN_INVERTED;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.CentreProvider;
 import uk.ac.ebi.centres.ConnectionTable;
@@ -39,7 +50,7 @@ import uk.ac.ebi.centres.ligand.TetrahedralCentre;
  * @author John May
  */
 public class CDKCentreProvider implements CentreProvider<IAtom> {
-    private static final Logger LOG = Logger.getLogger(CDKCentreProvider.class.getName());
+    private static final Logger LOG = getLogger(CDKCentreProvider.class.getName());
 
     private final IAtomContainer container;
     private final ConnectionTable<IAtom> table;
@@ -58,18 +69,18 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
     @Override
     public Collection<Centre<IAtom>> getCentres(DescriptorManager<IAtom> manager) {
 
-        List<Centre<IAtom>> centres = new ArrayList<Centre<IAtom>>(container.getAtomCount());
+        List<Centre<IAtom>> centres = new ArrayList<>(container.getAtomCount());
 
         // tetrahedral centres
         for (IAtom atom : container.atoms()) {
 
             // might need refinement
-            if (IAtomType.Hybridization.SP3.equals(atom.getHybridization())
+            if (SP3.equals(atom.getHybridization())
                     && container.getConnectedAtomsCount(atom) > 2
                     && atom.getFormalNeighbourCount() == 4
                     && hasStereoBonds(container, atom)) {
-                TetrahedralCentre<IAtom> centre = new TetrahedralCentre<IAtom>(manager.getDescriptor(atom), atom);
-                centre.setProvider(new ConnectionTableDigraph<IAtom>(centre, manager, table));
+                TetrahedralCentre<IAtom> centre = new TetrahedralCentre<>(manager.getDescriptor(atom), atom);
+                centre.setProvider(new ConnectionTableDigraph<>(centre, manager, table));
                 centres.add(centre);
             }
         }
@@ -77,17 +88,17 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
 
         // planar centres
         for (IBond bond : container.bonds()) {
-            if (IBond.Order.DOUBLE.equals(bond.getOrder())
+            if (DOUBLE.equals(bond.getOrder())
                     && container.getConnectedAtomsCount(bond.getAtom(0)) > 1
                     && container.getConnectedAtomsCount(bond.getAtom(1)) > 1
-                    && bond.getFlag(CDKConstants.ISAROMATIC) == Boolean.FALSE
+                    && bond.getFlag(ISAROMATIC) == FALSE
                     && onlyConnectedToSingleBonds(bond, container)
                     && !getCyclicFragments().contains(bond)
                     && !hasVariableBond(container, bond.getAtom(0))
                     && !hasVariableBond(container, bond.getAtom(1))) {
-                PlanarCentre<IAtom> centre = new PlanarCentre<IAtom>(bond.getAtom(0), bond.getAtom(1),
+                PlanarCentre<IAtom> centre = new PlanarCentre<>(bond.getAtom(0), bond.getAtom(1),
                         manager.getDescriptor(bond.getAtom(0), bond.getAtom(1)));
-                centre.setProvider(new ConnectionTableDigraph<IAtom>(centre, manager, table));
+                centre.setProvider(new ConnectionTableDigraph<>(centre, manager, table));
                 centres.add(centre);
 
             }
@@ -113,11 +124,11 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
 
     private boolean onlyConnectedToSingleBonds(IBond bond, IAtom atom, IAtomContainer container) {
         for (IBond connected : container.getConnectedBondsList(atom)) {
-            if (!IBond.Order.SINGLE.equals(connected.getOrder()) && !connected.equals(bond)) {
-                return Boolean.FALSE;
+            if (!SINGLE.equals(connected.getOrder()) && !connected.equals(bond)) {
+                return FALSE;
             }
         }
-        return Boolean.TRUE;
+        return TRUE;
     }
 
     private IAtomContainer getCyclicFragments() {
@@ -130,24 +141,24 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
     private boolean hasVariableBond(IAtomContainer container, IAtom atom) {
         for (IBond bond : container.getConnectedBondsList(atom)) {
             IBond.Stereo stereo = bond.getStereo();
-            if (IBond.Stereo.UP_OR_DOWN.equals(stereo)
-                    || IBond.Stereo.UP_OR_DOWN_INVERTED.equals(stereo)) {
-                return Boolean.TRUE;
+            if (UP_OR_DOWN.equals(stereo)
+                    || UP_OR_DOWN_INVERTED.equals(stereo)) {
+                return TRUE;
             }
         }
-        return Boolean.FALSE;
+        return FALSE;
     }
 
     private boolean hasStereoBonds(IAtomContainer container, IAtom atom) {
         for (IBond bond : container.getConnectedBondsList(atom)) {
             IBond.Stereo stereo = bond.getStereo();
-            if (IBond.Stereo.UP.equals(stereo)
-                    || IBond.Stereo.DOWN.equals(stereo)
-                    || IBond.Stereo.UP_INVERTED.equals(stereo)
-                    || IBond.Stereo.DOWN_INVERTED.equals(stereo)) {
-                return Boolean.TRUE;
+            if (UP.equals(stereo)
+                    || DOWN.equals(stereo)
+                    || UP_INVERTED.equals(stereo)
+                    || DOWN_INVERTED.equals(stereo)) {
+                return TRUE;
             }
         }
-        return Boolean.FALSE;
+        return FALSE;
     }
 }

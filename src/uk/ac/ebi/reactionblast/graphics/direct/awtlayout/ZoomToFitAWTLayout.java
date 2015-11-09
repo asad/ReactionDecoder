@@ -18,16 +18,22 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
-import java.awt.Color;
+import static java.awt.Color.BLACK;
 import java.awt.Dimension;
 import java.awt.Font;
+import static java.awt.Font.PLAIN;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
+import static org.openscience.cdk.geometry.GeometryTools.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
@@ -35,7 +41,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = Logger.getLogger(ZoomToFitAWTLayout.class.getName());
+    private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -61,7 +67,7 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
         Rectangle2D stringBounds = null;
         String label = mol.getID();
         Font labelFont = new Font(
-                params.labelPanelFont, Font.PLAIN, params.labelPanelFontSize);
+                params.labelPanelFont, PLAIN, params.labelPanelFontSize);
         if (params.drawLabelPanel) {
             g.setFont(labelFont);
             FontMetrics metrics = g.getFontMetrics();
@@ -115,17 +121,17 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
             float x = (float) (cX - halfWidth);
             float y = (float) (lY - halfHeight + ascent);
 
-            g.setColor(Color.BLACK);
+            g.setColor(BLACK);
 //            System.out.println("drawing label " + label + " at " + x + " " + y);
             g.drawString(label, x, y);
         }
     }
 
     private BoundsTree getBoundsTree(IAtomContainer mol, Graphics2D g) {
-        Rectangle2D bb = GeometryTools.getRectangle2D(mol);
-        GeometryTools.translate2D(mol, -bb.getCenterX(), -bb.getCenterY());
-        GeometryTools.scaleMolecule(mol,
-                GeometryTools.getScaleFactor(mol, params.bondLength));
+        Rectangle2D bb = getRectangle2D(mol);
+        translate2D(mol, -bb.getCenterX(), -bb.getCenterY());
+        scaleMolecule(mol,
+                getScaleFactor(mol, params.bondLength));
         MoleculeLayout exactLayout = new MoleculeLayout(params);
         return exactLayout.layout(mol, g);
     }
@@ -137,7 +143,7 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
 //        System.out.println("border " + borderX + " " + borderY);
         double rW = tw + (borderX * 2);
         double rH = th + (borderY * 2);
-        return Math.min(cw / rW, ch / rH);
+        return min(cw / rW, ch / rH);
     }
 
     @Override

@@ -19,20 +19,25 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
-import java.util.logging.Level;
+import static java.lang.String.valueOf;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainerSet> {
-    private static final Logger LOG = Logger.getLogger(LinearMoleculeSetLayout.class.getName());
+    private static final Logger LOG = getLogger(LinearMoleculeSetLayout.class.getName());
 
     /**
      * This is an axis for the individual molecules to be aligned to
@@ -67,7 +72,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
         Point2d curr = new Point2d(0, 0);
         int i = 0;
         for (IAtomContainer molecule : atomContainerSet.atomContainers()) {
-            if (!GeometryTools.has2DCoordinates(molecule)) {
+            if (!has2DCoordinates(molecule)) {
                 //Added by Asad for 3D to 2D
 
                 StructureDiagramGenerator sdg
@@ -75,7 +80,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
                 try {
                     sdg.generateCoordinates();
                 } catch (CDKException ex) {
-                    Logger.getLogger(LinearMoleculeSetLayout.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(LinearMoleculeSetLayout.class.getName()).log(SEVERE, null, ex);
                 }
                 molecule = sdg.getMolecule();
 
@@ -84,9 +89,9 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
             if (params.alignMolecules && moleculeAxis != null) {
                 align(molecule, moleculeAxis);
             }
-            GeometryTools.scaleMolecule(molecule,
-                    GeometryTools.getScaleFactor(molecule, bondLength));
-            Rectangle2D bounds = GeometryTools.getRectangle2D(molecule);
+            scaleMolecule(molecule,
+                    getScaleFactor(molecule, bondLength));
+            Rectangle2D bounds = getRectangle2D(molecule);
 
             double boundsWidth = bounds.getWidth();
             double halfBoundsWidth = boundsWidth / 2;
@@ -98,7 +103,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
 
             String moleculeLabel = molecule.getID();
             if (moleculeLabel == null || moleculeLabel.equals("")) {
-                moleculeLabel = "mol" + String.valueOf(molLabel);
+                moleculeLabel = "mol" + valueOf(molLabel);
                 molLabel++;
             } else {
                 moleculeLabel += ":" + i;

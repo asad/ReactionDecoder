@@ -21,28 +21,36 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.String.valueOf;
+import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.Calendar;
+import static java.util.Calendar.DATE;
+import static java.util.Calendar.HOUR;
+import static java.util.Calendar.MILLISECOND;
+import static java.util.Calendar.MINUTE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
-import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.interfaces.Algorithm;
-import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
+import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
-import uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher;
+import static uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher.matcher;
 import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
@@ -56,7 +64,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(BaseGameTheory.class);
+            = createLoggingTool(BaseGameTheory.class);
     private static final long serialVersionUID = 1698688633678282L;
 
     /**
@@ -77,19 +85,19 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     @Override
     public synchronized String getSuffix() throws IOException {
         Calendar cal = new GregorianCalendar();
-        int ms = cal.get(Calendar.YEAR);
+        int ms = cal.get(YEAR);
 
-        String suffix = String.valueOf(ms);
-        ms = cal.get(Calendar.MONTH);
-        suffix = suffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.DATE);
-        suffix = suffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.HOUR);
-        suffix = suffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.MINUTE);
-        suffix = suffix.concat(String.valueOf(ms));
-        ms = cal.get(Calendar.MILLISECOND);
-        suffix = suffix.concat(String.valueOf(ms));
+        String suffix = valueOf(ms);
+        ms = cal.get(MONTH);
+        suffix = suffix.concat(valueOf(ms));
+        ms = cal.get(DATE);
+        suffix = suffix.concat(valueOf(ms));
+        ms = cal.get(HOUR);
+        suffix = suffix.concat(valueOf(ms));
+        ms = cal.get(MINUTE);
+        suffix = suffix.concat(valueOf(ms));
+        ms = cal.get(MILLISECOND);
+        suffix = suffix.concat(valueOf(ms));
         //System.err.println("Suffix: " + suffix);
         return suffix;
 
@@ -105,12 +113,12 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     public synchronized void UpdateMatrix(Holder mh, boolean removeHydrogen) throws InterruptedException {
         try {
             if (DEBUG) {
-                System.out.println("**********Updated Matrix And Calculate Similarity**************");
+                out.println("**********Updated Matrix And Calculate Similarity**************");
             }
             ReactionContainer reactionStructureInformation = mh.getReactionContainer();
             Collection<MCSSolution> mcsSolutions = null;
             try {
-                mcsSolutions = GraphMatcher.matcher(mh);
+                mcsSolutions = matcher(mh);
             } catch (Exception e) {
                 logger.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
             }
@@ -120,7 +128,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                         IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                         IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
                         if (DEBUG) {
-                            System.out.println("mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) "
+                            out.println("mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) "
                                     + mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex));
                         }
                         if ((educt != null && product != null)
@@ -142,7 +150,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                             mh.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
                         }
                     } catch (IOException | CDKException ex) {
-                        logger.error(Level.SEVERE, null, ex);
+                        logger.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -157,7 +165,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
              */
             resetFLAGS(mh);
         } catch (Exception ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         }
     }
 
@@ -218,7 +226,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             int productIndex,
             Collection<MCSSolution> mcsSolutions) {
         if (DEBUG) {
-            System.out.println("**********Generate MCS And Calculate Similarity**************");
+            out.println("**********Generate MCS And Calculate Similarity**************");
         }
         try {
             ReactionContainer reactionContainer = holder.getReactionContainer();
@@ -235,10 +243,10 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             IAtomContainer product = reactionContainer.getProduct(productIndex);
 
             if (DEBUG) {
-                System.out.println("Get matches");
-                System.out.print("Q " + educt.getID() + ": " + educt.getAtomCount());
-                System.out.print(", P " + product.getID() + ": " + product.getAtomCount());
-                System.out.println(", Matches " + mcsSolutions.size());
+                out.println("Get matches");
+                out.print("Q " + educt.getID() + ": " + educt.getAtomCount());
+                out.print(", P " + product.getID() + ": " + product.getAtomCount());
+                out.println(", Matches " + mcsSolutions.size());
             }
 
             MCSSolution atomatomMapping = getMappings(substrateIndex, productIndex, educt, product, mcsSolutions);
@@ -248,10 +256,10 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             }
 
             if (DEBUG) {
-                System.out.println("set matching atoms");
-                System.out.print("Q " + educt.getID() + ": " + educt.getAtomCount());
-                System.out.print(", P " + product.getID() + ": " + product.getAtomCount());
-                System.out.println(", Matches " + mcsSolutions.size());
+                out.println("set matching atoms");
+                out.print("Q " + educt.getID() + ": " + educt.getAtomCount());
+                out.print(", P " + product.getID() + ": " + product.getAtomCount());
+                out.println(", Matches " + mcsSolutions.size());
             }
             if (atomatomMapping.getStereoScore() != null) {
                 stereoVal = atomatomMapping.getStereoScore();
@@ -271,7 +279,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
             mappingSize = atomatomMapping.getAtomAtomMapping().getCount();
             if (DEBUG) {
-                System.out.println(substrateIndex + " KEY " + productIndex + ", MCS Mapping Size " + mappingSize);
+                out.println(substrateIndex + " KEY " + productIndex + ", MCS Mapping Size " + mappingSize);
             }
             graphSimilarity = mappingSize / (ACount + BCount - mappingSize);
 
@@ -284,9 +292,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             BitSet b = reactionContainer.getFingerPrintofProduct(productIndex);
             if (a != null && b != null) {
                 try {
-                    fpSim = Similarity.getTanimotoSimilarity(a, b);
+                    fpSim = getTanimotoSimilarity(a, b);
                 } catch (Exception ex) {
-                    Logger.getLogger(BaseGameTheory.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(BaseGameTheory.class.getName()).log(SEVERE, null, ex);
                 }
             }
 
@@ -298,7 +306,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
 
         } catch (IOException | CDKException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         }
     }
 
@@ -327,9 +335,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     atomMaps.clear();
                     if (mappingPossible) {
                         if (DEBUG) {
-                            System.out.println("Expected Mapping");
-                            System.out.println(educt.getID() + " ED: " + SmilesGenerator.unique().aromatic().create(educt));
-                            System.out.println(product.getID() + " PD: " + SmilesGenerator.unique().aromatic().create(product));
+                            out.println("Expected Mapping");
+                            out.println(educt.getID() + " ED: " + unique().aromatic().create(educt));
+                            out.println(product.getID() + " PD: " + unique().aromatic().create(product));
                         }
                         return quickMapping(educt, product, queryPosition, targetPosition);
                     }
@@ -345,7 +353,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+        Isomorphism mcsThread = new Isomorphism(educt, product, DEFAULT, false, false, false);
         mcsThread.setChemFilters(true, true, true);
         try {
             MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, mcsThread.getFirstAtomMapping());
@@ -354,7 +362,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             mcs.setStereoScore(mcsThread.getStereoScore(0));
             return mcs;
         } catch (Exception ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -414,9 +422,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 BitSet b = reactionContainer.getFingerPrintofProduct(productIndex);
                 if (a != null && b != null) {
                     try {
-                        fpSim = Similarity.getTanimotoSimilarity(a, b);
+                        fpSim = getTanimotoSimilarity(a, b);
                     } catch (Exception ex) {
-                        logger.error(Level.SEVERE, null, ex);
+                        logger.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -428,9 +436,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getEnergyMatrix().setValue(substrateIndex, productIndex, energyVal);
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
         } catch (CDKException ex) {
-            logger.debug(Level.SEVERE, null, ex);
+            logger.debug(SEVERE, null, ex);
         } catch (IOException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         }
     }
 }

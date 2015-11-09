@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.fingerprints.tools;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 
 /**
@@ -31,7 +32,7 @@ public class FingerprintSubset implements Serializable {
 
     private static final long serialVersionUID = 4342623464361L;
 
-    private static final Logger LOG = Logger.getLogger(FingerprintSubset.class.getName());
+    private static final Logger LOG = getLogger(FingerprintSubset.class.getName());
 
     /**
      * Determine if this set is an (improper) subset of another.

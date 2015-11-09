@@ -24,20 +24,25 @@ package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
-import org.openscience.cdk.tools.manipulator.BondManipulator;
+import static org.openscience.cdk.tools.manipulator.BondManipulator.getAtomArray;
+import static org.openscience.smsd.algorithm.rgraph.CDKMCS.checkSingleAtomCases;
+import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getIsomorphMaps;
+import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getSubgraphMaps;
+import static org.openscience.smsd.algorithm.rgraph.CDKMCS.search;
 
 /**
  * This algorithm derives from the algorithm described in [Tonnelier, C. and
@@ -52,7 +57,7 @@ import org.openscience.cdk.tools.manipulator.BondManipulator;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRMapHandlerTest")
 public class CDKRMapHandler {
-    private static final Logger LOG = Logger.getLogger(CDKRMapHandler.class.getName());
+    private static final Logger LOG = getLogger(CDKRMapHandler.class.getName());
     private List<Map<Integer, Integer>> mappings;
     private IAtomContainer source;
     private IAtomContainer target;
@@ -117,7 +122,7 @@ public class CDKRMapHandler {
         setMappings(solution);
 
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
-            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -130,7 +135,7 @@ public class CDKRMapHandler {
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            List<List<CDKRMap>> overlaps = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -161,7 +166,7 @@ public class CDKRMapHandler {
         setMappings(solution);
 
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
-            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -174,7 +179,7 @@ public class CDKRMapHandler {
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
+            List<List<CDKRMap>> overlaps = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -213,7 +218,7 @@ public class CDKRMapHandler {
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -224,7 +229,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true,
+                    = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true,
                             shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
@@ -263,7 +268,7 @@ public class CDKRMapHandler {
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -274,7 +279,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = CDKMCS.getSubgraphMaps(getSource(), getTarget(),
+                    = getSubgraphMaps(getSource(), getTarget(),
                             shouldMatchBonds,
                             shouldMatchRings,
                             matchAtomType);
@@ -315,7 +320,7 @@ public class CDKRMapHandler {
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -326,7 +331,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = CDKMCS.getIsomorphMaps(getSource(), getTarget(), shouldMatchBonds, shouldMatchRings, matchAtomType);
+                    = getIsomorphMaps(getSource(), getTarget(), shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -347,7 +352,7 @@ public class CDKRMapHandler {
      */
     protected synchronized List<List<CDKRMap>> removeSubGraph(List<List<CDKRMap>> overlaps) {
 
-        List<List<CDKRMap>> reducedList = new ArrayList<List<CDKRMap>>(overlaps);
+        List<List<CDKRMap>> reducedList = new ArrayList<>(overlaps);
 
         for (int i = 0; i < overlaps.size(); i++) {
             List<CDKRMap> graphI = overlaps.get(i);
@@ -376,7 +381,7 @@ public class CDKRMapHandler {
      * @return
      */
     protected synchronized List<CDKRMap> removeRedundantMappingsForSingleAtomCase(List<CDKRMap> overlaps) {
-        List<CDKRMap> reducedList = Collections.synchronizedList(new ArrayList<CDKRMap>());
+        List<CDKRMap> reducedList = synchronizedList(new ArrayList<CDKRMap>());
         reducedList.add(overlaps.get(0));
         //reducedList.add(overlaps.get(1));
         return reducedList;
@@ -400,12 +405,12 @@ public class CDKRMapHandler {
         if (rMapList.size() == 1) {
             result = makeAtomsMapOfBondsMapSingleBond(rMapList, graph1, graph2);
         } else {
-            List<CDKRMap> resultLocal = new ArrayList<CDKRMap>();
+            List<CDKRMap> resultLocal = new ArrayList<>();
             for (CDKRMap rMapList2 : rMapList) {
                 IBond qBond = graph1.getBond(rMapList2.getId1());
                 IBond tBond = graph2.getBond(rMapList2.getId2());
-                IAtom[] qAtoms = BondManipulator.getAtomArray(qBond);
-                IAtom[] tAtoms = BondManipulator.getAtomArray(tBond);
+                IAtom[] qAtoms = getAtomArray(qBond);
+                IAtom[] tAtoms = getAtomArray(tBond);
                 for (int j = 0; j < 2; j++) {
                     List<IBond> bondsConnectedToAtom1j = graph1.getConnectedBondsList(qAtoms[j]);
                     for (IBond bondsConnectedToAtom1j1 : bondsConnectedToAtom1j) {
@@ -465,7 +470,7 @@ public class CDKRMapHandler {
         if (list == null) {
             return null;
         }
-        Map<IBond, IBond> bondMap = new HashMap<IBond, IBond>(list.size());
+        Map<IBond, IBond> bondMap = new HashMap<>(list.size());
         for (CDKRMap solBondMap : list) {
             int id1 = solBondMap.getId1();
             int id2 = solBondMap.getId2();
@@ -473,8 +478,8 @@ public class CDKRMapHandler {
             IBond tBond = targetGraph.getBond(id2);
             bondMap.put(qBond, tBond);
         }
-        List<CDKRMap> result1 = new ArrayList<CDKRMap>();
-        List<CDKRMap> result2 = new ArrayList<CDKRMap>();
+        List<CDKRMap> result1 = new ArrayList<>();
+        List<CDKRMap> result2 = new ArrayList<>();
         for (IBond qbond : sourceGraph.bonds()) {
             if (bondMap.containsKey(qbond)) {
                 IBond tbond = bondMap.get(qbond);
@@ -511,7 +516,7 @@ public class CDKRMapHandler {
                 }
             }
         }
-        List<List<CDKRMap>> result = new ArrayList<List<CDKRMap>>();
+        List<List<CDKRMap>> result = new ArrayList<>();
         if (result1.size() == result2.size()) {
             result.add(result1);
             result.add(result2);
@@ -558,12 +563,12 @@ public class CDKRMapHandler {
 
             if (arrayList.size() > count) {
 
-                List<CDKRMap> list = new ArrayList<CDKRMap>(arrayList);
+                List<CDKRMap> list = new ArrayList<>(arrayList);
                 count = arrayList.size();
-                allMaximumMappings = new Stack<List<CDKRMap>>();
+                allMaximumMappings = new Stack<>();
                 allMaximumMappings.push(list);
             } else if (arrayList.size() == count) {
-                List<CDKRMap> list = new ArrayList<CDKRMap>(arrayList);
+                List<CDKRMap> list = new ArrayList<>(arrayList);
                 count = arrayList.size();
                 allMaximumMappings.push(list);
             }

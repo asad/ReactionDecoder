@@ -23,26 +23,27 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
-    private static final Logger LOG = Logger.getLogger(OutlineHighlighter.class.getName());
+    private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 
     public OutlineHighlighter(Params params) {
         super(params);
-        colorMap = new HashMap<IAtomContainer, Color>();
+        colorMap = new HashMap<>();
     }
 
     @Override
@@ -86,8 +87,8 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
         Point2d center = null;
         List<IAtomContainer> highlightContainers;
         if (params.circularHighlightIsConcentric) {
-            highlightContainers = new ArrayList<IAtomContainer>(colorMap.keySet());
-            Collections.sort(highlightContainers, new Comparator<IAtomContainer>() {
+            highlightContainers = new ArrayList<>(colorMap.keySet());
+            sort(highlightContainers, new Comparator<IAtomContainer>() {
 
                 @Override
                 public int compare(IAtomContainer ac0, IAtomContainer ac1) {
@@ -101,10 +102,10 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
                 }
                 
             });
-            center = GeometryTools.get2DCenter(
+            center = get2DCenter(
                     highlightContainers.get(highlightContainers.size() - 1));
         } else {
-            highlightContainers = new ArrayList<IAtomContainer>(colorMap.keySet());
+            highlightContainers = new ArrayList<>(colorMap.keySet());
         }
         
         for (int containerIndex = 0; containerIndex < highlightContainers.size(); containerIndex++) {
@@ -117,7 +118,7 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
             }
             
             if (!params.circularHighlightIsConcentric || center == null) {
-                center = GeometryTools.get2DCenter(highlightContainer);
+                center = get2DCenter(highlightContainer);
             }
             double maxDist = 0.0;
             for (IAtom highlightAtom : highlightContainer.atoms()) {

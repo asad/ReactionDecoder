@@ -18,13 +18,20 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import static java.lang.Integer.parseInt;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import signature.AbstractGraphBuilder;
+import static uk.ac.ebi.reactionblast.signature.RBlastAtomSignature.CHARGE_SEPARATOR;
 
 /**
  *
@@ -32,7 +39,7 @@ import signature.AbstractGraphBuilder;
  *
  */
 public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
+    private static final Logger LOG = getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 
     /**
      * The chem object builder
@@ -62,26 +69,26 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
     public void makeEdge(int vertexIndex1, int vertexIndex2,
             String vertexSymbol1, String vertexSymbol2, String edgeLabel) {
         if (edgeLabel.equals("") || !isBondSensitive) {
-            container.addBond(vertexIndex1, vertexIndex2, IBond.Order.SINGLE);
+            container.addBond(vertexIndex1, vertexIndex2, SINGLE);
         } else if (edgeLabel.equals("=")) {
-            container.addBond(vertexIndex1, vertexIndex2, IBond.Order.DOUBLE);
+            container.addBond(vertexIndex1, vertexIndex2, DOUBLE);
         } else if (edgeLabel.equals("#")) {
-            container.addBond(vertexIndex1, vertexIndex2, IBond.Order.TRIPLE);
+            container.addBond(vertexIndex1, vertexIndex2, TRIPLE);
         } else if (edgeLabel.equals("@")) {
-            container.addBond(vertexIndex1, vertexIndex2, IBond.Order.SINGLE);
+            container.addBond(vertexIndex1, vertexIndex2, SINGLE);
             if (useAromatics) {
                 IBond bond = container.getBond(container.getBondCount() - 1);
-                bond.getAtom(0).setFlag(CDKConstants.ISAROMATIC, true);
-                bond.getAtom(1).setFlag(CDKConstants.ISAROMATIC, true);
-                bond.setFlag(CDKConstants.ISAROMATIC, true);
+                bond.getAtom(0).setFlag(ISAROMATIC, true);
+                bond.getAtom(1).setFlag(ISAROMATIC, true);
+                bond.setFlag(ISAROMATIC, true);
             }
         } else if (edgeLabel.equals("%")) {
-            container.addBond(vertexIndex1, vertexIndex2, IBond.Order.SINGLE);
+            container.addBond(vertexIndex1, vertexIndex2, SINGLE);
             if (useAromatics) {
                 IBond bond = container.getBond(container.getBondCount() - 1);
-                bond.getAtom(0).setFlag(CDKConstants.ISINRING, true);
-                bond.getAtom(1).setFlag(CDKConstants.ISINRING, true);
-                bond.setFlag(CDKConstants.ISINRING, true);
+                bond.getAtom(0).setFlag(ISINRING, true);
+                bond.getAtom(1).setFlag(ISINRING, true);
+                bond.setFlag(ISINRING, true);
             }
         }
     }
@@ -100,11 +107,11 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
      */
     public void makeVertex(String label) {
         IAtom atom;
-        if (label.contains(RBlastAtomSignature.CHARGE_SEPARATOR)) {
-            String[] parts = label.split("\\" + RBlastAtomSignature.CHARGE_SEPARATOR);
+        if (label.contains(CHARGE_SEPARATOR)) {
+            String[] parts = label.split("\\" + CHARGE_SEPARATOR);
             atom = this.builder.newInstance(IAtom.class, parts[0]);
             if (useCharge) {
-                int charge = Integer.parseInt(parts[1]);
+                int charge = parseInt(parts[1]);
                 atom.setFormalCharge(charge);
             }
         } else {

@@ -19,7 +19,9 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import static java.lang.System.getProperty;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -30,7 +32,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class BondChange implements Serializable {
 
     private static final long serialVersionUID = 9890766688070991L;
-    private static final Logger LOG = Logger.getLogger(BondChange.class.getName());
+    private static final Logger LOG = getLogger(BondChange.class.getName());
 
     /**
      *
@@ -151,7 +153,7 @@ public class BondChange implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         result.append("\t");
         result.append(NEW_LINE);
         if (reactantBond != null) {

@@ -18,6 +18,7 @@
 package uk.ac.ebi.centres.exception;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @author John May
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 public class WarpCoreEjection extends RuntimeException {
     private static final long serialVersionUID = 757858878509985951L;
 
-    private static final Logger LOG = Logger.getLogger(WarpCoreEjection.class.getName());
+    private static final Logger LOG = getLogger(WarpCoreEjection.class.getName());
 
     public WarpCoreEjection() {
         super("Boy, that escalated quickly. I mean, that really got out of hand fast! - combinatorial explosion immanent");

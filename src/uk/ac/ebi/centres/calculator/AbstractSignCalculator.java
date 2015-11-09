@@ -17,6 +17,8 @@
  */
 package uk.ac.ebi.centres.calculator;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import uk.ac.ebi.centres.SignCalculator;
 
 /**
@@ -39,7 +41,7 @@ public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
     }
 
     double magnitude(double[] vector) {
-        return Math.sqrt(vector[x] * vector[x]
+        return sqrt(vector[x] * vector[x]
                 + vector[y] * vector[y]
                 + vector[z] * vector[z]);
 
@@ -73,7 +75,7 @@ public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
                     }
                 }
             }
-            result += arr[0][i] * Math.pow(-1, i) * determinant(temp);
+            result += arr[0][i] * pow(-1, i) * determinant(temp);
         }
         return result;
     }

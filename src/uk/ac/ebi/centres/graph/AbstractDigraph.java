@@ -17,8 +17,9 @@
  */
 package uk.ac.ebi.centres.graph;
 
-import com.google.common.collect.ArrayListMultimap;
+import static com.google.common.collect.ArrayListMultimap.create;
 import com.google.common.collect.ListMultimap;
+import static java.lang.System.err;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
     private Ligand<A> root;
     private ArcMap arcs = new ArcMap(); // Could set expected size
-    private ListMultimap<A, Ligand<A>> ligandMap = ArrayListMultimap.create();
+    private ListMultimap<A, Ligand<A>> ligandMap = create();
     private DescriptorManager<A> manager;
 
     public AbstractDigraph(Ligand<A> root) {
@@ -88,7 +89,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
         root = ligand;
         ligand.reset();
 
-        Queue<Arc<A>> queue = new LinkedList<Arc<A>>();
+        Queue<Arc<A>> queue = new LinkedList<>();
 
         // get parent arcs
         Arc<A> arc = arcs.getForHead(ligand);
@@ -118,7 +119,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             throw new IllegalArgumentException("Attempting build without a root");
         }
 
-        Queue<Ligand<A>> queue = new LinkedList<Ligand<A>>();
+        Queue<Ligand<A>> queue = new LinkedList<>();
 
         queue.addAll(root.getLigands());
 
@@ -165,8 +166,8 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
             // create the new ligand - terminal ligands are created in cases of cyclic molecules
             Ligand<A> neighbour = ligand.isVisited(atom)
-                    ? new TerminalLigand<A>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1)
-                    : new NonterminalLigand<A>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
+                    ? new TerminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1)
+                    : new NonterminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
             arcs.add(newArc(ligand, neighbour));
             ligandMap.put(atom, neighbour);
 
@@ -179,7 +180,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
                 // create required number of ghost ligands
                 for (int i = 1; i < order; i++) {
-                    Ligand<A> ghost = new TerminalLigand<A>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
+                    Ligand<A> ghost = new TerminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
                     arcs.add(newArc(ligand, ghost));
                     ligandMap.put(atom, ghost);
                     ligands.add(ghost);
@@ -194,7 +195,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
                 //      c3
                 // when we're at c2 we preload c3 with the oxygen and then add the ghost c2
                 getLigands(neighbour);
-                Ligand<A> ghost = new TerminalLigand<A>(this, descriptor, ligand.getVisited(), ligand.getAtom(), atom, ligand.getDistanceFromRoot() + 1);
+                Ligand<A> ghost = new TerminalLigand<>(this, descriptor, ligand.getVisited(), ligand.getAtom(), atom, ligand.getDistanceFromRoot() + 1);
                 arcs.add(newArc(neighbour, ghost));
                 ligandMap.put(ligand.getAtom(), ghost);
 
@@ -213,7 +214,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
     public abstract int getDepth(A first, A second);
 
     private Arc<A> newArc(Ligand<A> tail, Ligand<A> head) {
-        return new Arc<A>(tail, head,
+        return new Arc<>(tail, head,
                 manager.getDescriptor(tail.getAtom(), head.getAtom()),
                 getDepth(tail.getAtom(), head.getAtom()));
     }
@@ -236,8 +237,8 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
      */
     class ArcMap {
 
-        private final ListMultimap<Ligand<A>, Arc<A>> tails = ArrayListMultimap.create();
-        private final Map<Ligand<A>, Arc<A>> heads = new HashMap<Ligand<A>, Arc<A>>();
+        private final ListMultimap<Ligand<A>, Arc<A>> tails = create();
+        private final Map<Ligand<A>, Arc<A>> heads = new HashMap<>();
 
         public void remove(Arc<A> arc) {
             //System.out.println("\tremoving " + arc.getTail() + ": " + arc + " and " + arc.getHead() + ": " + arc);
@@ -248,7 +249,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
         public void add(Arc<A> arc) {
             tails.put(arc.getTail(), arc);
             if (heads.containsKey(arc.getHead())) {
-                System.err.println("Key clash!");
+                err.println("Key clash!");
             }
             heads.put(arc.getHead(), arc);
         }
@@ -266,7 +267,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             // this okay for now but should create a custom list that proxyies calls
             // to the arc list
             List<Arc<A>> arcs = tails.get(tail);
-            List<Ligand<A>> ligands = new ArrayList<Ligand<A>>(arcs.size());
+            List<Ligand<A>> ligands = new ArrayList<>(arcs.size());
             for (Arc<A> arc : arcs) {
                 ligands.add(arc.getHead());
             }

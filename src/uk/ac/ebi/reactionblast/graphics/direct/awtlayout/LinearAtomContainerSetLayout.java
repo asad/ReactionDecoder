@@ -20,9 +20,12 @@
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Font;
+import static java.awt.Font.PLAIN;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.String.valueOf;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -31,7 +34,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
-    private static final Logger LOG = Logger.getLogger(LinearAtomContainerSetLayout.class.getName());
+    private static final Logger LOG = getLogger(LinearAtomContainerSetLayout.class.getName());
 
     private Vector2d moleculeSetAxis;
     private MoleculeLayout moleculeLayout;
@@ -51,7 +54,7 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         // TODO : plusBounds.getHeight() for T2B layout
         double molGap = 2 * params.plusGap;
 
-        Font plusFont = new Font("ROMAN", Font.PLAIN, params.plusFontSize);
+        Font plusFont = new Font("ROMAN", PLAIN, params.plusFontSize);
         graphics.setFont(plusFont);
 
         if (atomContainerSet.getAtomContainerCount() > 1) {
@@ -69,9 +72,9 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
 //            System.out.println("curr pos = " + curr.x + " " + curr.y);
             String label = molecule.getID();
             if (label == null || label.equals("")) {
-                label = "mol" + String.valueOf(moleculeCounter);
+                label = "mol" + valueOf(moleculeCounter);
             } else {
-                label += ":" + String.valueOf(moleculeCounter);
+                label += ":" + valueOf(moleculeCounter);
             }
 
             BoundsTree molBounds = moleculeLayout.layout(molecule, label, graphics);

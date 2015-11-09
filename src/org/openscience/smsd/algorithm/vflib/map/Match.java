@@ -48,6 +48,7 @@ package org.openscience.smsd.algorithm.vflib.map;
 
 import java.util.Objects;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
@@ -61,7 +62,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class Match {
-    private static final Logger LOG = Logger.getLogger(Match.class.getName());
+    private static final Logger LOG = getLogger(Match.class.getName());
     private final INode query;
     private final IAtom target;
 

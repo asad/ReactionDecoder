@@ -20,11 +20,13 @@
 package org.openscience.smsd.filters;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSortedMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -44,7 +46,7 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.filters.PostFilterTest")
 public class PostFilter {
-    private static final Logger LOG = Logger.getLogger(PostFilter.class.getName());
+    private static final Logger LOG = getLogger(PostFilter.class.getName());
 
     /**
      *
@@ -78,7 +80,7 @@ public class PostFilter {
      * @return
      */
     private synchronized static List<Map<Integer, Integer>> removeRedundantMapping(List<List<Integer>> mapping_org) {
-        List<Map<Integer, Integer>> nonRedundantMapping = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        List<Map<Integer, Integer>> nonRedundantMapping = synchronizedList(new ArrayList<Map<Integer, Integer>>());
         for (List<Integer> M : mapping_org) {
             Map<Integer, Integer> newMap = getMappingMapFromList(M);
             if (!hasMap(newMap, nonRedundantMapping)) {
@@ -89,7 +91,7 @@ public class PostFilter {
     }
 
     private synchronized static Map<Integer, Integer> getMappingMapFromList(List<Integer> list) {
-        Map<Integer, Integer> newMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        Map<Integer, Integer> newMap = synchronizedSortedMap(new TreeMap<Integer, Integer>());
         for (int index = 0; index < list.size(); index += 2) {
             newMap.put(list.get(index), list.get(index + 1));
         }

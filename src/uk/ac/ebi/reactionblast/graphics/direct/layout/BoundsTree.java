@@ -21,12 +21,14 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * A tree of bounding boxes for objects.
@@ -35,7 +37,7 @@ import java.util.logging.Logger;
  *
  */
 public class BoundsTree implements Iterable<Rectangle2D> {
-    private static final Logger LOG = Logger.getLogger(BoundsTree.class.getName());
+    private static final Logger LOG = getLogger(BoundsTree.class.getName());
 
     private Rectangle2D root;
 
@@ -51,7 +53,7 @@ public class BoundsTree implements Iterable<Rectangle2D> {
     public BoundsTree(String rootLabel) {
         root = null;    // important : the first added bounds must replace root
         this.rootLabel = rootLabel;
-        childMap = new HashMap<String, Rectangle2D>();
+        childMap = new HashMap<>();
     }
 
     /**
@@ -168,7 +170,7 @@ public class BoundsTree implements Iterable<Rectangle2D> {
     }
 
     public List<String> getBoundLabels() {
-        return new ArrayList<String>(childMap.keySet());
+        return new ArrayList<>(childMap.keySet());
     }
 
     public void shift(double dx, double dy) {
@@ -228,8 +230,7 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         StringBuilder sb = new StringBuilder();
         for (String key : childMap.keySet()) {
             Rectangle2D rect = get(key);
-            sb.append(key).append("=").append(
-                    String.format("[(%2.0f, %2.0f), (%2.0f, %2.0f)]",
+            sb.append(key).append("=").append(format("[(%2.0f, %2.0f), (%2.0f, %2.0f)]",
                             rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY()));
             sb.append("\n");
         }

@@ -26,6 +26,8 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import static java.lang.Float.parseFloat;
+import static java.lang.Integer.parseInt;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -37,8 +39,8 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.ISingleElectron;
 import org.openscience.cdk.io.DefaultChemObjectReader;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.replaceAtomByAtom;
 
 /**
  * @cdk.module io
@@ -49,7 +51,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public abstract class MDLReaderBase extends DefaultChemObjectReader {
 
     private static final ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MDLReaderBase.class);
+            = createLoggingTool(MDLReaderBase.class);
 
     public static void replaceAtom(IAtomContainer molecule, IAtom prevAtom, IPseudoAtom pseudoAtom) {
         if (prevAtom.getPoint2d() != null) {
@@ -58,7 +60,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         if (prevAtom.getPoint3d() != null) {
             pseudoAtom.setPoint3d(prevAtom.getPoint3d());
         }
-        ExtAtomContainerManipulator.replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
+        replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
     }
     protected SuperAtomContainer superAtomContainer;
 
@@ -74,23 +76,23 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         if (line.startsWith("M  CHG")) {
             // FIXME: if this is encountered for the first time, all
             // atom charges should be set to zero first!
-            int infoCount = Integer.parseInt(extractString(line, 6, 9));
+            int infoCount = parseInt(extractString(line, 6, 9));
             StringTokenizer st = new StringTokenizer(line.substring(9));
             for (int i = 1; i <= infoCount; i++) {
                 String token = st.nextToken();
-                int atomNumber = Integer.parseInt(token.trim());
+                int atomNumber = parseInt(token.trim());
                 token = st.nextToken();
-                int charge = Integer.parseInt(token.trim());
+                int charge = parseInt(token.trim());
                 molecule.getAtom(atomNumber - 1).setFormalCharge(charge);
             }
         } else if (line.startsWith("M  ISO")) {
             try {
                 String countString = extractString(line, 6, 10);
-                int infoCount = Integer.parseInt(countString);
+                int infoCount = parseInt(countString);
                 StringTokenizer st = new StringTokenizer(line.substring(10));
                 for (int i = 1; i <= infoCount; i++) {
-                    int atomNumber = Integer.parseInt(st.nextToken().trim());
-                    int absMass = Integer.parseInt(st.nextToken().trim());
+                    int atomNumber = parseInt(st.nextToken().trim());
+                    int absMass = parseInt(st.nextToken().trim());
                     if (absMass != 0) {
                         IAtom isotope = molecule.getAtom(atomNumber - 1);
                         isotope.setMassNumber(absMass);
@@ -104,11 +106,11 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         } else if (line.startsWith("M  RAD")) {
             try {
                 String countString = extractString(line, 6, 9);
-                int infoCount = Integer.parseInt(countString);
+                int infoCount = parseInt(countString);
                 StringTokenizer st = new StringTokenizer(line.substring(9));
                 for (int i = 1; i <= infoCount; i++) {
-                    int atomNumber = Integer.parseInt(st.nextToken().trim());
-                    int spinMultiplicity = Integer.parseInt(st.nextToken().trim());
+                    int atomNumber = parseInt(st.nextToken().trim());
+                    int spinMultiplicity = parseInt(st.nextToken().trim());
                     if (spinMultiplicity > 1) {
                         IAtom radical = molecule.getAtom(atomNumber - 1);
                         for (int j = 2; j <= spinMultiplicity; j++) {
@@ -129,7 +131,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
     protected void createGroupOldVersion(BufferedReader input, IAtomContainer outputContainer, IAtomContainer molecule, String line, int linecount) throws IOException, CDKException {
         try {
             String atomNumberString = extractString(line, 3, 6);
-            int atomNumber = Integer.parseInt(atomNumberString);
+            int atomNumber = parseInt(atomNumberString);
             //String whatIsThisString = line.substring(6,9).trim();
             String atomName = input.readLine();
             // convert Atom into a PseudoAtom
@@ -143,7 +145,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
             if (prevAtom.getPoint3d() != null) {
                 pseudoAtom.setPoint3d(prevAtom.getPoint3d());
             }
-            ExtAtomContainerManipulator.replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
+            replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
         } catch (NumberFormatException exception) {
             String error = "Error (" + exception.toString() + ") while parsing line " + linecount + ": " + line + " in property block.";
             logger.error(error);
@@ -321,7 +323,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
             return 0;
         }
         try {
-            value = Float.parseFloat(string);
+            value = parseFloat(string);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Error trying to parse: " + string + " as a float.");
         }
@@ -345,7 +347,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
             return 0;
         }
         try {
-            value = Integer.parseInt(string);
+            value = parseInt(string);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Error trying to parse: " + string + " as an integer.");
         }

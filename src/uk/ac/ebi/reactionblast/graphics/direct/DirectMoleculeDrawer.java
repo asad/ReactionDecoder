@@ -20,7 +20,9 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import static java.awt.Color.BLACK;
 import java.awt.Font;
+import static java.awt.Font.PLAIN;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -28,15 +30,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(DirectMoleculeDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectMoleculeDrawer.class.getName());
 
     private Font moleculeIDFont;
     private List<Highlighter> highlightDrawers;
@@ -50,7 +53,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         params.bondLength = 20;
 
         // make an initial highlight drawer and add to a list
-        highlightDrawers = new ArrayList<Highlighter>();
+        highlightDrawers = new ArrayList<>();
         Highlighter highlightDrawer;
         if (params.useCircularHighlight) {
             highlightDrawer = new OutlineHighlighter(params);
@@ -62,7 +65,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         labelManager = new LabelManager();
         atomDrawer = new DirectAtomDrawer(params, labelManager);
         bondDrawer = new DirectBondDrawer(params, labelManager);
-        chiralMap = new HashMap<IAtom, IStereoAndConformation>();
+        chiralMap = new HashMap<>();
     }
 
     public DirectMoleculeDrawer() {
@@ -137,7 +140,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     }
 
     public void addHighlights(List<IAtom> atoms, Color color) {
-        Map<IAtom, Color> atomColorMap = new HashMap<IAtom, Color>();
+        Map<IAtom, Color> atomColorMap = new HashMap<>();
         for (IAtom atom : atoms) {
             atomColorMap.put(atom, color);
         }
@@ -187,20 +190,16 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         labelManager.reset();
         
         // setup fonts
-        atomDrawer.setAtomSymbolFont(
-                new Font("ROMAN", Font.PLAIN, params.atomSymbolFontSize));
-        atomDrawer.setSubscriptFont(
-                new Font("ROMAN", Font.PLAIN, params.subscriptTextSize));
-        atomDrawer.setAtomIDFont(
-                new Font("ROMAN", Font.PLAIN, params.atomIDFontSize));
-        atomDrawer.setChiralSymbolFont(
-                new Font("ROMAN", Font.PLAIN, params.chiralSymbolFontSize));
+        atomDrawer.setAtomSymbolFont(new Font("ROMAN", PLAIN, params.atomSymbolFontSize));
+        atomDrawer.setSubscriptFont(new Font("ROMAN", PLAIN, params.subscriptTextSize));
+        atomDrawer.setAtomIDFont(new Font("ROMAN", PLAIN, params.atomIDFontSize));
+        atomDrawer.setChiralSymbolFont(new Font("ROMAN", PLAIN, params.chiralSymbolFontSize));
 
-        moleculeIDFont = new Font("ROMAN", Font.PLAIN, params.moleculeLabelFontSize);
+        moleculeIDFont = new Font("ROMAN", PLAIN, params.moleculeLabelFontSize);
 
         Color savedColor = g.getColor();
         if (params.drawBounds) {
-            Rectangle2D bounds = GeometryTools.getRectangle2D(molecule);
+            Rectangle2D bounds = getRectangle2D(molecule);
             g.draw(bounds);
         }
 
@@ -234,12 +233,12 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         if (id == null) {
             return null;
         }
-        Rectangle2D moleculeBounds = GeometryTools.getRectangle2D(atomContainer);
+        Rectangle2D moleculeBounds = getRectangle2D(atomContainer);
         double labelCenterX = moleculeBounds.getCenterX();
         double labelCenterY = moleculeBounds.getMaxY() + params.labelYGap;
         Point2f textPoint = getTextPoint(g, id, labelCenterX, labelCenterY);
         g.setFont(moleculeIDFont);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         g.drawString(id, textPoint.x, textPoint.y);
         Rectangle2D textBounds = getTextBounds(g, id);
         return new Rectangle2D.Double(

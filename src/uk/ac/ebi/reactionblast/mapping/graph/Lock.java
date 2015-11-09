@@ -18,14 +18,16 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
+import static java.lang.Thread.currentThread;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class Lock {
-    private static final Logger LOG = Logger.getLogger(Lock.class.getName());
+    private static final Logger LOG = getLogger(Lock.class.getName());
 
     private boolean isLocked;
     private Thread lockedBy;
@@ -38,7 +40,7 @@ class Lock {
     }
 
     public synchronized void lock() throws InterruptedException {
-        Thread callingThread = Thread.currentThread();
+        Thread callingThread = currentThread();
         while (isIsLocked() && getLockedBy() != callingThread) {
             wait();
         }
@@ -48,7 +50,7 @@ class Lock {
     }
 
     public synchronized void unlock() {
-        if (Thread.currentThread() == this.getLockedBy()) {
+        if (currentThread() == this.getLockedBy()) {
             setLockedCount(getLockedCount() - 1);
             if (getLockedCount() == 0) {
                 setIsLocked(false);

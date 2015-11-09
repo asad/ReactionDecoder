@@ -19,28 +19,33 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
-import org.openscience.cdk.smiles.CanonSmiAdapter;
+import static org.openscience.cdk.smiles.CanonSmiAdapter.create;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class CDKSMILES {
-    private static final Logger LOG = Logger.getLogger(CDKSMILES.class.getName());
+    private static final Logger LOG = getLogger(CDKSMILES.class.getName());
 
     private final ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(CDKSMILES.class);
+            = createLoggingTool(CDKSMILES.class);
     private final IAtomContainer molecule;
 
     /**
@@ -51,10 +56,10 @@ public class CDKSMILES {
      * @throws CloneNotSupportedException
      */
     public CDKSMILES(IAtomContainer mol, boolean removeH, boolean remove_AAM) throws CloneNotSupportedException {
-        this.molecule = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(ExtAtomContainerManipulator.cloneWithIDs(mol));
+        this.molecule = removeHydrogensExceptSingleAndPreserveAtomID(cloneWithIDs(mol));
         if (remove_AAM) {
             for (IAtom a : molecule.atoms()) {
-                a.removeProperty(CDKConstants.ATOM_ATOM_MAPPING);
+                a.removeProperty(ATOM_ATOM_MAPPING);
             }
         }
     }
@@ -65,12 +70,12 @@ public class CDKSMILES {
             return smiles;
         }
         try {
-            ExtAtomContainerManipulator.aromatizeDayLight(molecule);
-            return CanonSmiAdapter.create(molecule);
+            aromatizeDayLight(molecule);
+            return create(molecule);
         } catch (CDKException ex) {
             logger.error("ERROR : in generating CDK SMILES" + molecule.getID());
         } catch (IOException ex) {
-            Logger.getLogger(CDKSMILES.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(CDKSMILES.class.getName()).log(SEVERE, null, ex);
         }
 //        /*
 //         Chemaxon based unique SMILES generator for debugging
@@ -113,7 +118,7 @@ public class CDKSMILES {
         }
         try {
             SmilesGenerator g;
-            g = SmilesGenerator.generic().aromatic();
+            g = generic().aromatic();
             return g.create(molecule);
         } catch (CDKException ex) {
             logger.error("ERROR : in generating CDK SMILES" + molecule.getID());

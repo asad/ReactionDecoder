@@ -19,13 +19,16 @@
 
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import static java.lang.String.valueOf;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 
 /**
  * Just sets the atom ID to the mapping ID.
@@ -35,21 +38,21 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  */
 public class ReactionAtomIDTransformation implements ITransformation<IReaction> {
 
-    private static final Logger LOG = Logger.getLogger(ReactionAtomIDTransformation.class.getName());
+    private static final Logger LOG = getLogger(ReactionAtomIDTransformation.class.getName());
 
     @Override
     public ITransformation.TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override
     public IReaction transform(IReaction reaction) {
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             for (IAtom atom : atomContainer.atoms()) {
-                Object prop = atom.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
+                Object prop = atom.getProperty(ATOM_ATOM_MAPPING);
                 if (prop != null) {
                     int mappingID = (Integer) prop;
-                    atom.setID(String.valueOf(mappingID));
+                    atom.setID(valueOf(mappingID));
                 }
             }
         }

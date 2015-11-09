@@ -23,19 +23,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import java.util.logging.Logger;
-import uk.ac.ebi.centres.descriptor.General;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.centres.descriptor.General.NONE;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
  * @author John May
  */
 public class DefaultPerceptor<A> implements Perceptor<A> {
-    private static final Logger LOG = Logger.getLogger(DefaultPerceptor.class.getName());
+    private static final Logger LOG = getLogger(DefaultPerceptor.class.getName());
 
     private final CentrePerceptor<A> mainPerceptor;
     private final CentrePerceptor<A> auxPerceptor;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = newSingleThreadExecutor();
     private long timeout = 250;
 
     public DefaultPerceptor(final PriorityRule<A> rule,
@@ -55,7 +57,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
                 // only attempt re-perception if there were auxiliary labels defined
                 return centre.perceiveAuxiliary(centres, rule, calculator) != 0
                         ? centre.perceive(auxRule, calculator)
-                        : General.UNKNOWN;
+                        : UNKNOWN;
             }
         };
     }
@@ -63,8 +65,8 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
     private List<Centre<A>> _perceive(Collection<Centre<A>> unperceived,
             CentrePerceptor<A> perceptor) {
 
-        List<Centre<A>> perceived = new ArrayList<Centre<A>>();
-        Map<Centre<A>, Descriptor> map = new LinkedHashMap<Centre<A>, Descriptor>();
+        List<Centre<A>> perceived = new ArrayList<>();
+        Map<Centre<A>, Descriptor> map = new LinkedHashMap<>();
 
         do {
 
@@ -74,7 +76,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
 
                 Descriptor descriptor = perceptor.perceive(centre, unperceived);
 
-                if (descriptor != General.UNKNOWN) {
+                if (descriptor != UNKNOWN) {
                     map.put(centre, descriptor);
                 }
 
@@ -118,7 +120,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
 
         // set all unperceived centres to 'none'
         for (Centre<A> centre : unperceived) {
-            centre.setDescriptor(General.NONE);
+            centre.setDescriptor(NONE);
             centre.dispose();
         }
 

@@ -22,13 +22,17 @@ package uk.ac.ebi.reactionblast.stereo.tools;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.openscience.cdk.geometry.cip.CIPTool;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.geometry.cip.CIPTool.CIP_CHIRALITY;
+import static org.openscience.cdk.geometry.cip.CIPTool.getCIPChirality;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import uk.ac.ebi.reactionblast.stereo.compare.ChiralityTool;
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
 
@@ -40,7 +44,7 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
  *
  */
 public class Chirality2DTool implements ChiralityTool {
-    private static final Logger LOG = Logger.getLogger(Chirality2DTool.class.getName());
+    private static final Logger LOG = getLogger(Chirality2DTool.class.getName());
 
     /**
      *
@@ -63,16 +67,16 @@ public class Chirality2DTool implements ChiralityTool {
     public static IStereoAndConformation getChirality2D(
             IStereoElement stereoElement, IAtomContainer atomContainer) {
         if (stereoElement instanceof ITetrahedralChirality) {
-            CIP_CHIRALITY chiral = CIPTool.getCIPChirality(
+            CIP_CHIRALITY chiral = getCIPChirality(
                     atomContainer, (ITetrahedralChirality) stereoElement);
             switch (chiral) {
-                case NONE: return IStereoAndConformation.NONE;
-                case R: return IStereoAndConformation.R;
-                case S: return IStereoAndConformation.S;
-                default: return IStereoAndConformation.NONE;
+                case NONE: return NONE;
+                case R: return R;
+                case S: return S;
+                default: return NONE;
             }
         } else {
-            return IStereoAndConformation.NONE;
+            return NONE;
         }
     }
 
@@ -95,7 +99,7 @@ public class Chirality2DTool implements ChiralityTool {
         WedgeStereoLifter lifter = new WedgeStereoLifter();
         for (IAtom atom : atomContainer.atoms()) {
             IStereoAndConformation chirality = getChirality2D(lifter, atom, atomContainer);
-            if (getNoneAssesments || chirality != IStereoAndConformation.NONE) {
+            if (getNoneAssesments || chirality != NONE) {
                 chiralities.put(atom, chirality);
             }
         }

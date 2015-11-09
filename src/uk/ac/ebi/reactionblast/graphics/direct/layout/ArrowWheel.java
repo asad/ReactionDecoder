@@ -24,13 +24,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectArrowDrawer;
 
 public class ArrowWheel {
-    private static final Logger LOG = Logger.getLogger(ArrowWheel.class.getName());
+    private static final Logger LOG = getLogger(ArrowWheel.class.getName());
 
     private DirectArrowDrawer arrowDrawer;
     
@@ -51,7 +52,7 @@ public class ArrowWheel {
         this.arrowDrawer = arrowDrawer;
         // this may seem over-the-top but am considering extending
         // to a more general 'arrow graph' class
-        arrows = new ArrayList<Arrow>();
+        arrows = new ArrayList<>();
         hub = hubMolecule;
         
         for (IAtomContainer molecule : rimMolecules) {

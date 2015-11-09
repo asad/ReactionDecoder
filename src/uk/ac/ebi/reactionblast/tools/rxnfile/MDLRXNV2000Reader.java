@@ -33,9 +33,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import static java.lang.Integer.valueOf;
+import static java.lang.System.getProperty;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import static org.openscience.cdk.CDKConstants.TITLE;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -50,10 +54,11 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.io.DefaultChemObjectReader;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
+import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.formats.IResourceFormat;
-import org.openscience.cdk.io.formats.MDLRXNFormat;
+import static org.openscience.cdk.io.formats.MDLRXNFormat.getInstance;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  * Reads a molecule from an MDL RXN file {
@@ -73,8 +78,8 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
 
     private static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MDLRXNV2000Reader.class);
-    private static final Logger LOG = Logger.getLogger(MDLRXNV2000Reader.class.getName());
+            = createLoggingTool(MDLRXNV2000Reader.class);
+    private static final Logger LOG = getLogger(MDLRXNV2000Reader.class.getName());
     BufferedReader input = null;
 
     /**
@@ -84,7 +89,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param in The Reader to read from
      */
     public MDLRXNV2000Reader(Reader in) {
-        this(in, Mode.RELAXED);
+        this(in, RELAXED);
     }
 
     public MDLRXNV2000Reader(Reader in, Mode mode) {
@@ -97,7 +102,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     }
 
     public MDLRXNV2000Reader(InputStream input) {
-        this(input, Mode.RELAXED);
+        this(input, RELAXED);
     }
 
     public MDLRXNV2000Reader(InputStream input, Mode mode) {
@@ -111,7 +116,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
-        return MDLRXNFormat.getInstance();
+        return getInstance();
     }
 
     @TestMethod("testSetReader_Reader")
@@ -227,9 +232,9 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             /* this line contains the number of reactants
              and products */
             StringTokenizer tokenizer = new StringTokenizer(countsLine);
-            reactantCount = Integer.valueOf(tokenizer.nextToken());
+            reactantCount = valueOf(tokenizer.nextToken());
             logger.info("Expecting " + reactantCount + " reactants in file");
-            productCount = Integer.valueOf(tokenizer.nextToken());
+            productCount = valueOf(tokenizer.nextToken());
             logger.info("Expecting " + productCount + " products in file");
         } catch (IOException | NumberFormatException exception) {
             logger.debug(exception);
@@ -245,7 +250,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                 do {
                     molFileLine = input.readLine();
                     molFile.append(molFileLine);
-                    molFile.append(System.getProperty("line.separator"));
+                    molFile.append(getProperty("line.separator"));
                 } while (!molFileLine.equals("M  END"));
 
                 // read MDL molfile content
@@ -259,7 +264,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                     continue;
                 }
                 // add reactant mol ID
-                String readMolID = (String) reactant.getProperty(CDKConstants.TITLE);
+                String readMolID = (String) reactant.getProperty(TITLE);
                 if (readMolID != null) {
                     reactant.setID(readMolID.trim());
                 }
@@ -283,7 +288,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                 do {
                     molFileLine = input.readLine();
                     molFile.append(molFileLine);
-                    molFile.append(System.getProperty("line.separator"));
+                    molFile.append(getProperty("line.separator"));
                 } while (!molFileLine.equals("M  END"));
 
                 // read MDL molfile content
@@ -297,7 +302,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                 }
 
                 // add product molID
-                String readMolID = (String) product.getProperty(CDKConstants.TITLE);
+                String readMolID = (String) product.getProperty(TITLE);
                 if (readMolID != null) {
                     product.setID(readMolID.trim());
                 }
@@ -332,8 +337,8 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             for (int j = 0; j < producedSide.getAtomCount(); j++) {
                 IAtom eductAtom = reactingSide.getAtom(i);
                 IAtom productAtom = producedSide.getAtom(j);
-                if (eductAtom.getProperty(CDKConstants.ATOM_ATOM_MAPPING) != null
-                        && eductAtom.getProperty(CDKConstants.ATOM_ATOM_MAPPING).equals(productAtom.getProperty(CDKConstants.ATOM_ATOM_MAPPING))) {
+                if (eductAtom.getProperty(ATOM_ATOM_MAPPING) != null
+                        && eductAtom.getProperty(ATOM_ATOM_MAPPING).equals(productAtom.getProperty(ATOM_ATOM_MAPPING))) {
                     reaction.addMapping(
                             builder.newInstance(IMapping.class, eductAtom, productAtom));
                     mappingCount++;

@@ -18,7 +18,10 @@
 package uk.ac.ebi.centres.priority.descriptor;
 
 import java.util.logging.Logger;
-import uk.ac.ebi.centres.descriptor.Planar;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.centres.PriorityRule.Type.GEOMETRICAL;
+import static uk.ac.ebi.centres.descriptor.Planar.E;
+import static uk.ac.ebi.centres.descriptor.Planar.Z;
 import uk.ac.ebi.centres.priority.access.descriptor.ArcPrimaryDescriptor;
 
 /**
@@ -29,9 +32,9 @@ import uk.ac.ebi.centres.priority.access.descriptor.ArcPrimaryDescriptor;
  */
 public class ZERule<A> extends DescriptorRule<A> {
 
-    private static final Logger LOG = Logger.getLogger(ZERule.class.getName());
+    private static final Logger LOG = getLogger(ZERule.class.getName());
 
     public ZERule() {
-        super(new ArcPrimaryDescriptor<A>(), Type.GEOMETRICAL, Planar.E, Planar.Z);
+        super(new ArcPrimaryDescriptor<A>(), GEOMETRICAL, E, Z);
     }
 }

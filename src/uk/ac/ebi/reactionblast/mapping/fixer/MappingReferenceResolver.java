@@ -18,11 +18,14 @@
  */
 package uk.ac.ebi.reactionblast.mapping.fixer;
 
+import static java.lang.String.format;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -39,7 +42,7 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class MappingReferenceResolver {
 
-    private static final Logger LOG = Logger.getLogger(MappingReferenceResolver.class.getName());
+    private static final Logger LOG = getLogger(MappingReferenceResolver.class.getName());
 
     /**
      * Do an in-place resolve of the mappings.
@@ -107,27 +110,27 @@ public class MappingReferenceResolver {
         IAtomContainerSet reactants = reaction.getReactants();
         IAtomContainerSet products = reaction.getProducts();
         for (IAtomContainer reactant : reactants.atomContainers()) {
-            System.out.print("[");
+            out.print("[");
             for (int i = 0; i < reactant.getAtomCount(); i++) {
                 IAtom atom = reactant.getAtom(i);
-                System.out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
+                out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
             }
-            System.out.println("]");
+            out.println("]");
         }
         for (IAtomContainer product : products.atomContainers()) {
-            System.out.print("[");
+            out.print("[");
             for (int i = 0; i < product.getAtomCount(); i++) {
                 IAtom atom = product.getAtom(i);
-                System.out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
+                out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
             }
-            System.out.println("]");
+            out.println("]");
         }
-        System.out.print("{");
+        out.print("{");
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
             IAtom a1 = (IAtom) mapping.getChemObject(1);
-            System.out.print(String.format("%s-%s, ", a0.getID(), a1.getID()));
+            out.print(format("%s-%s, ", a0.getID(), a1.getID()));
         }
-        System.out.println("}");
+        out.println("}");
     }
 }

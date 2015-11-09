@@ -22,11 +22,14 @@
  */
 package org.openscience.smsd.filters;
 
+import static java.lang.Double.MAX_VALUE;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -39,12 +42,12 @@ import org.openscience.smsd.tools.BondEnergies;
  * Filter based on energies.
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
- * 
+ *
  */
 public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
-    public static final Double MAX_ENERGY = Double.MAX_VALUE;
-    private static final Logger LOG = Logger.getLogger(EnergyFilter.class.getName());
+    public static final Double MAX_ENERGY = MAX_VALUE;
+    private static final Logger LOG = getLogger(EnergyFilter.class.getName());
 
     private static synchronized double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
         Double eEnergy = 0.0;
@@ -79,7 +82,7 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
     EnergyFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        bEnergies = Collections.synchronizedList(new ArrayList<Double>());
+        bEnergies = synchronizedList(new ArrayList<Double>());
 
     }
 
@@ -106,7 +109,7 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
     @Override
     public synchronized List<Double> getScores() {
-        return Collections.unmodifiableList(bEnergies);
+        return unmodifiableList(bEnergies);
     }
 
     @Override

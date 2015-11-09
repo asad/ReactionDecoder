@@ -18,24 +18,29 @@
  */
 package mapping;
 
-import java.awt.Color;
+import static java.awt.Color.WHITE;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.image.BufferedImage;
+import static java.awt.image.BufferedImage.TYPE_INT_BGR;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Level;
+import static java.lang.String.valueOf;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import static java.util.logging.Logger.getLogger;
+import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainerSet;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import static org.openscience.cdk.CDKConstants.TITLE;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -45,15 +50,16 @@ import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
+import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
 import org.openscience.cdk.tools.LonePairElectronChecker;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
-import uk.ac.ebi.reactionblast.mapping.helper.MappingHandler;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeCDK;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
@@ -71,7 +77,7 @@ public class TestUtility {
     static final String METRXN_RXN = "rxn/metrxn/";
     static final String INFORCHEM_RXN = "rxn/infochem/";
     static final String MACIE_RXN = "rxn/macie/";
-    private static final Logger LOG = Logger.getLogger(TestUtility.class.getName());
+    private static final Logger LOG = getLogger(TestUtility.class.getName());
 
     protected static void setLonePairs(IReaction reaction) {
         LonePairElectronChecker checker = new LonePairElectronChecker();
@@ -97,7 +103,7 @@ public class TestUtility {
     protected static void detectAromaticity(IAtomContainerSet molSet) {
         for (IAtomContainer ac : molSet.atomContainers()) {
             try {
-                ExtAtomContainerManipulator.aromatizeCDK(ac);
+                aromatizeCDK(ac);
             } catch (CDKException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -110,15 +116,15 @@ public class TestUtility {
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
             IAtom a1 = (IAtom) mapping.getChemObject(1);
-            Object mappingID = a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
+            Object mappingID = a0.getProperty(ATOM_ATOM_MAPPING);
             //            Integer mappingID =
             //                (Integer)a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
             if (mappingID != null) {
-                a0.setID(String.valueOf(mappingID));
-                a1.setID(String.valueOf(mappingID));
+                a0.setID(valueOf(mappingID));
+                a1.setID(valueOf(mappingID));
             } else {
-                a0.setID(String.valueOf(i));
-                a1.setID(String.valueOf(i));
+                a0.setID(valueOf(i));
+                a1.setID(valueOf(i));
             }
             i++;
         }
@@ -129,9 +135,9 @@ public class TestUtility {
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
             IAtom a1 = (IAtom) mapping.getChemObject(1);
-            a0.setID(String.valueOf(i));
-            a1.setID(String.valueOf(i));
-            mapping.setID(String.valueOf(i));
+            a0.setID(valueOf(i));
+            a1.setID(valueOf(i));
+            mapping.setID(valueOf(i));
             i++;
         }
     }
@@ -149,8 +155,7 @@ public class TestUtility {
 
     protected static void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
-            CDKHydrogenAdder.getInstance(
-                    DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
+            getInstance(getInstance()).addImplicitHydrogens(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -159,7 +164,7 @@ public class TestUtility {
 
     protected static void typeAtoms(IAtomContainer atomContainer) {
         try {
-            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            percieveAtomTypesAndConfigureAtoms(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -188,11 +193,10 @@ public class TestUtility {
     }
 
     protected static BufferedImage makeBlankImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.WHITE);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
         return image;
     }
@@ -216,7 +220,7 @@ public class TestUtility {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        ImageIO.write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
+        write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
     }
 
     /**
@@ -237,7 +241,7 @@ public class TestUtility {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
         } catch (Exception ex) {
-            Logger.getLogger(BaseTest.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(BaseTest.class.getName()).log(SEVERE, null, ex);
         }
 
         if (removeHydrogens) {
@@ -246,18 +250,18 @@ public class TestUtility {
             IAtomContainerSet reactants = new AtomContainerSet();
             for (IAtomContainer atomContainer : reaction.getReactants().atomContainers()) {
                 setNullHCountToZero(atomContainer);
-                AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
-                IAtomContainer acMinusH = ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens(atomContainer);
-                acMinusH.setID((String) atomContainer.getProperty(CDKConstants.TITLE));
+                percieveAtomTypesAndConfigureAtoms(atomContainer);
+                IAtomContainer acMinusH = convertExplicitToImplicitHydrogens(atomContainer);
+                acMinusH.setID((String) atomContainer.getProperty(TITLE));
                 reactants.addAtomContainer(acMinusH);
             }
             hydrogenFreeReaction.setReactants(reactants);
             IAtomContainerSet products = new AtomContainerSet();
             for (IAtomContainer atomContainer : reaction.getProducts().atomContainers()) {
                 setNullHCountToZero(atomContainer);
-                AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
-                IAtomContainer acMinusH = ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens(atomContainer);
-                acMinusH.setID((String) atomContainer.getProperty(CDKConstants.TITLE));
+                percieveAtomTypesAndConfigureAtoms(atomContainer);
+                IAtomContainer acMinusH = convertExplicitToImplicitHydrogens(atomContainer);
+                acMinusH.setID((String) atomContainer.getProperty(TITLE));
                 products.addAtomContainer(acMinusH);
             }
             hydrogenFreeReaction.setProducts(products);
@@ -272,7 +276,7 @@ public class TestUtility {
         }
 
         if (reMap) {
-            MappingHandler.cleanMapping(reaction);
+            cleanMapping(reaction);
         } else {
             renumberMappingIDs(reaction);
         }

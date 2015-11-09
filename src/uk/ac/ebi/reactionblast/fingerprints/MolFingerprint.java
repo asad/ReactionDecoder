@@ -19,13 +19,19 @@
 
 package uk.ac.ebi.reactionblast.fingerprints;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.System.arraycopy;
+import static java.lang.System.out;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
+import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 
 /**
  *
@@ -37,7 +43,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         Comparator<MolFingerprint> {
 
     private static final long serialVersionUID = 7057060562283378622L;
-    private static final Logger LOG = Logger.getLogger(MolFingerprint.class.getName());
+    private static final Logger LOG = getLogger(MolFingerprint.class.getName());
 
     private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
         if (boolArray1.length != boolArray2.length) {
@@ -95,8 +101,8 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         try {
             this.bitsetFingerprint = hashedFP.getFingerprint(mol);
             this.set(this.bitsetFingerprint);
-            arrayFingerprint = new boolean[FingerprintGenerator.getFingerprinterSize()];
-            for (int i = 0; i < FingerprintGenerator.getFingerprinterSize(); i++) {
+            arrayFingerprint = new boolean[getFingerprinterSize()];
+            for (int i = 0; i < getFingerprinterSize(); i++) {
                 arrayFingerprint[i] = (this.bitsetFingerprint.get(i));
             }
         } catch (CDKException e) {
@@ -122,13 +128,13 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     public MolFingerprint(boolean[] fgprt) throws CDKException {
         this();
         arrayFingerprint = new boolean[fgprt.length];
-        System.arraycopy(fgprt, 0, arrayFingerprint, 0, fgprt.length);
+        arraycopy(fgprt, 0, arrayFingerprint, 0, fgprt.length);
     }
 
     public MolFingerprint(MolFingerprint molFingerprint) throws CDKException {
         this();
         arrayFingerprint = new boolean[molFingerprint.getBooleanArray().length];
-        System.arraycopy(molFingerprint.getBooleanArray(), 0, this.arrayFingerprint, 0, arrayFingerprint.length);
+        arraycopy(molFingerprint.getBooleanArray(), 0, this.arrayFingerprint, 0, arrayFingerprint.length);
     }
 
     private synchronized void set(boolean value) {
@@ -185,7 +191,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     }
 
     public synchronized void println() {
-        System.out.println(toString());
+        out.println(toString());
     }
 
     public synchronized int length() {
@@ -208,7 +214,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
 
     public synchronized boolean[] getBooleanArray() {
         boolean[] bs = new boolean[arrayFingerprint.length];
-        System.arraycopy(arrayFingerprint, 0, bs, 0, arrayFingerprint.length);
+        arraycopy(arrayFingerprint, 0, bs, 0, arrayFingerprint.length);
         return bs;
     }
 
@@ -228,16 +234,16 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     }
 
     public synchronized MolFingerprint or(MolFingerprint molFp) throws CDKException {
-        return MolFingerprint.or(arrayFingerprint, molFp.getBooleanArray());
+        return or(arrayFingerprint, molFp.getBooleanArray());
     }
 
     public synchronized MolFingerprint and(MolFingerprint molFp) throws CDKException {
-        return MolFingerprint.and(arrayFingerprint, molFp.getBooleanArray());
+        return and(arrayFingerprint, molFp.getBooleanArray());
     }
 
     public synchronized double similarity(MolFingerprint fingerprint) throws Exception {
         double similarity;
-        similarity = Similarity.getTanimotoSimilarity(fingerprint.getBitSet(), bitsetFingerprint);
+        similarity = getTanimotoSimilarity(fingerprint.getBitSet(), bitsetFingerprint);
         return similarity;
     }
 
@@ -302,7 +308,7 @@ public synchronized boolean equals(Object object) {
     public int compare(MolFingerprint o1, MolFingerprint o2) {
         int len1 = o1.getBooleanArray().length;
         int len2 = o2.getBooleanArray().length;
-        int n = Math.min(len1, len2);
+        int n = min(len1, len2);
         if (len1 == len2) {
             if (o1.equals(o2)) {
                 return 0;
@@ -310,7 +316,7 @@ public synchronized boolean equals(Object object) {
                 return -1;
             }
         }
-        return Math.max(len1, len2) - n;
+        return max(len1, len2) - n;
     }
 
 }

@@ -25,22 +25,24 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.geometry.GeometryTools;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
+import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.MDLReader;
 import org.openscience.cdk.io.MDLV3000Reader;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
-import org.openscience.cdk.tools.manipulator.MoleculeSetManipulator;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAllAtomContainers;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 /**
  * Class that reads MDL files (various versions). 
@@ -52,7 +54,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class MDLFileReader {
 
     private static IAtomContainer molecule = null;
-    private static final Logger LOG = Logger.getLogger(MDLFileReader.class.getName());
+    private static final Logger LOG = getLogger(MDLFileReader.class.getName());
 
     /**
      * Constructor for MDL file reader
@@ -78,7 +80,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    Logger.getLogger(MDLFileReader.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
                 }
 
             } else if (string.contains("This file must be read with the MDLReader.")) {
@@ -88,7 +90,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    Logger.getLogger(MDLFileReader.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -103,7 +105,7 @@ public class MDLFileReader {
      */
     @TestMethod("MDLFileReaderTest")
     public MDLFileReader(InputStream inputStream) throws IOException, CDKException {
-        this(inputStream, Mode.RELAXED);
+        this(inputStream, RELAXED);
     }
 
     /**
@@ -115,7 +117,7 @@ public class MDLFileReader {
      */
     @TestMethod("MDLFileReaderTest")
     public MDLFileReader(Reader reader) throws IOException, CDKException {
-        this(reader, Mode.RELAXED);
+        this(reader, RELAXED);
     }
 
     /**
@@ -141,7 +143,7 @@ public class MDLFileReader {
                         molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     } catch (CDKException ex) {
-                        Logger.getLogger(MDLFileReader.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
                     }
                 }
 
@@ -152,7 +154,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    Logger.getLogger(MDLFileReader.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -175,7 +177,7 @@ public class MDLFileReader {
      */
     @TestMethod("testGetMoleculeWithLayoutCheck")
     public IAtomContainer getMoleculeWithLayoutCheck() {
-        if (!GeometryTools.has2DCoordinates(molecule)) {
+        if (!has2DCoordinates(molecule)) {
             try {
                 StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(molecule));
                 sdg.generateCoordinates();
@@ -196,12 +198,12 @@ public class MDLFileReader {
     @TestMethod("testGetChemModelWithMoleculeWithLayoutCheck")
     public IChemModel getChemModelWithMoleculeWithLayoutCheck() {
         IChemModel chemModel = new ChemModel();
-        chemModel.setMoleculeSet(ConnectivityChecker.partitionIntoMolecules(molecule));
-        for (IAtomContainer ac : MoleculeSetManipulator.getAllAtomContainers(chemModel.getMoleculeSet())) {
-            if (!GeometryTools.has2DCoordinates(ac)) {
+        chemModel.setMoleculeSet(partitionIntoMolecules(molecule));
+        for (IAtomContainer ac : getAllAtomContainers(chemModel.getMoleculeSet())) {
+            if (!has2DCoordinates(ac)) {
                 try {
                     IAtomContainer mol = ac.getBuilder().newInstance(IAtomContainer.class, ac);
-                    ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+                    percieveAtomTypesAndConfigureAtoms(mol);
                     StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(mol));
                     sdg.generateCoordinates();
                     ac = sdg.getMolecule();

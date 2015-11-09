@@ -19,16 +19,27 @@
 
 package uk.ac.ebi.reactionblast.graphics.direct;
 
+import static java.lang.Math.toDegrees;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.N;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.S;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.W;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.values;
 
 public class LabelManager {
 
@@ -52,18 +63,18 @@ public class LabelManager {
     private static final Vector2d vW = new Vector2d(-1, 0);
 
     private static final Vector2d vNW = new Vector2d(-1, -1);
-    private static final Logger LOG = Logger.getLogger(LabelManager.class.getName());
+    private static final Logger LOG = getLogger(LabelManager.class.getName());
 
     private final Map<IAtom, BitSet> atomAnnotationPositions;
 
     public LabelManager() {
-        atomAnnotationPositions = new HashMap<IAtom, BitSet>();
+        atomAnnotationPositions = new HashMap<>();
     }
 
     public String getAnnotationPositionsAsString(IAtom atom) {
         StringBuilder sb = new StringBuilder("|");
         BitSet positions = getAtomAnnotationPositions(atom);
-        AnnotationPosition[] values = AnnotationPosition.values();
+        AnnotationPosition[] values = values();
         for (int i = 0; i < values.length; i++) {
             if (positions.get(i)) {
                 sb.append(values[i]);
@@ -78,10 +89,10 @@ public class LabelManager {
     }
 
     public AnnotationPosition getNextSparePosition(BitSet positions) {
-        for (int i = 0; i < AnnotationPosition.values().length; i++) {
+        for (int i = 0; i < values().length; i++) {
             if (positions.get(i)) {
             } else {
-                return AnnotationPosition.values()[i];
+                return values()[i];
             }
         }
         return null;
@@ -153,11 +164,11 @@ public class LabelManager {
 
     public AnnotationPosition alignmentToAnnotationPosition(int align) {
         switch (align) {
-            case 1: return AnnotationPosition.E;
-            case -1: return AnnotationPosition.W;
-            case -2: return AnnotationPosition.N;
-            case 2: return AnnotationPosition.S;
-            default: return AnnotationPosition.E;
+            case 1: return E;
+            case -1: return W;
+            case -2: return N;
+            case 2: return S;
+            default: return E;
         }
     }
 
@@ -188,27 +199,27 @@ public class LabelManager {
         bondVector.sub(fromPoint);
         bondVector.normalize();
 
-        double xAng = Math.toDegrees(bondVector.angle(POS_X));
-        double yAng = Math.toDegrees(bondVector.angle(POS_Y));
+        double xAng = toDegrees(bondVector.angle(POS_X));
+        double yAng = toDegrees(bondVector.angle(POS_Y));
         if (xAng < 22.5 && (yAng > 67.5 && yAng < 115.5)) {
-            return AnnotationPosition.E;
+            return E;
         } else if ((xAng > 22.5 && xAng < 67.5) && (yAng > 115.5 && yAng < 155.5)) {
-            return AnnotationPosition.NE;
+            return NE;
         } else if ((xAng > 67.5 && xAng < 115.5) && (yAng > 155.5)) {
-            return AnnotationPosition.N;
+            return N;
         } else if ((xAng > 115.5 && xAng < 155.5) && (yAng > 115.5 && yAng < 155.5)) {
-            return AnnotationPosition.NW;
+            return NW;
         } else if (xAng > 155.5 && (yAng > 67.5 && yAng < 115.5)) {
-            return AnnotationPosition.W;
+            return W;
         } else if ((xAng > 115.5 && xAng < 155.5) && (yAng > 22.5 && yAng < 67.5)) {
-            return AnnotationPosition.SW;
+            return SW;
         } else if ((xAng > 67.5 && xAng < 115.5) && yAng < 22.5) {
-            return AnnotationPosition.S;
+            return S;
         } else if ((xAng > 22.5 && xAng < 67.5) && (yAng > 22.5 && yAng < 67.5)) {
-            return AnnotationPosition.SE;
+            return SE;
         }
 
-        return AnnotationPosition.E;    // whatever
+        return E;    // whatever
     }
 
     private void blockRingSegment(IAtom atom, List<AnnotationPosition> ringPositions) {
@@ -219,38 +230,38 @@ public class LabelManager {
         }
         AnnotationPosition a = ringPositions.get(0);
         AnnotationPosition b = ringPositions.get(1);
-        if (positionsEqual(a, b, AnnotationPosition.N, AnnotationPosition.SW)) {
-            positions.set(AnnotationPosition.NW.ordinal());
-            positions.set(AnnotationPosition.W.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.N, AnnotationPosition.SE)) {
-            positions.set(AnnotationPosition.NE.ordinal());
-            positions.set(AnnotationPosition.E.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NW, AnnotationPosition.S)) {
-            positions.set(AnnotationPosition.W.ordinal());
-            positions.set(AnnotationPosition.SW.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NE, AnnotationPosition.S)) {
-            positions.set(AnnotationPosition.E.ordinal());
-            positions.set(AnnotationPosition.SE.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.W, AnnotationPosition.SE)) {
-            positions.set(AnnotationPosition.SW.ordinal());
-            positions.set(AnnotationPosition.S.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.E, AnnotationPosition.SW)) {
-            positions.set(AnnotationPosition.SE.ordinal());
-            positions.set(AnnotationPosition.S.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NW, AnnotationPosition.E)) {
-            positions.set(AnnotationPosition.N.ordinal());
-            positions.set(AnnotationPosition.NE.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NE, AnnotationPosition.W)) {
-            positions.set(AnnotationPosition.NW.ordinal());
-            positions.set(AnnotationPosition.N.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NW, AnnotationPosition.NE)) {
-            positions.set(AnnotationPosition.N.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.SW, AnnotationPosition.SE)) {
-            positions.set(AnnotationPosition.S.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NW, AnnotationPosition.SW)) {
-            positions.set(AnnotationPosition.W.ordinal());
-        } else if (positionsEqual(a, b, AnnotationPosition.NE, AnnotationPosition.SE)) {
-            positions.set(AnnotationPosition.E.ordinal());
+        if (positionsEqual(a, b, N, SW)) {
+            positions.set(NW.ordinal());
+            positions.set(W.ordinal());
+        } else if (positionsEqual(a, b, N, SE)) {
+            positions.set(NE.ordinal());
+            positions.set(E.ordinal());
+        } else if (positionsEqual(a, b, NW, S)) {
+            positions.set(W.ordinal());
+            positions.set(SW.ordinal());
+        } else if (positionsEqual(a, b, NE, S)) {
+            positions.set(E.ordinal());
+            positions.set(SE.ordinal());
+        } else if (positionsEqual(a, b, W, SE)) {
+            positions.set(SW.ordinal());
+            positions.set(S.ordinal());
+        } else if (positionsEqual(a, b, E, SW)) {
+            positions.set(SE.ordinal());
+            positions.set(S.ordinal());
+        } else if (positionsEqual(a, b, NW, E)) {
+            positions.set(N.ordinal());
+            positions.set(NE.ordinal());
+        } else if (positionsEqual(a, b, NE, W)) {
+            positions.set(NW.ordinal());
+            positions.set(N.ordinal());
+        } else if (positionsEqual(a, b, NW, NE)) {
+            positions.set(N.ordinal());
+        } else if (positionsEqual(a, b, SW, SE)) {
+            positions.set(S.ordinal());
+        } else if (positionsEqual(a, b, NW, SW)) {
+            positions.set(W.ordinal());
+        } else if (positionsEqual(a, b, NE, SE)) {
+            positions.set(E.ordinal());
         }
 
     }
@@ -264,7 +275,7 @@ public class LabelManager {
     public void addRingCenterToAtomAnnotationPosition(
             IAtom atom, List<IAtom> connectedAtomsInRing) {
         Point2d p1 = atom.getPoint2d();
-        List<AnnotationPosition> ringPositions = new ArrayList<AnnotationPosition>();
+        List<AnnotationPosition> ringPositions = new ArrayList<>();
         for (IAtom connectedAtom : connectedAtomsInRing) {
             Point2d p2 = connectedAtom.getPoint2d();
             ringPositions.add(calculateRelativePosition(p1, p2));

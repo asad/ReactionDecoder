@@ -17,12 +17,21 @@
  */
 package uk.ac.ebi.centres.cdk;
 
-import com.google.common.collect.Maps;
+import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.QUADRUPLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN_INVERTED;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import uk.ac.ebi.centres.graph.BasicConnectionTable;
 
 /**
@@ -30,22 +39,22 @@ import uk.ac.ebi.centres.graph.BasicConnectionTable;
  */
 public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
 
-    private static final Map<IBond.Order, Integer> orders = Maps.newHashMapWithExpectedSize(4);
-    private static final Map<IBond.Stereo, Integer> depths = Maps.newHashMapWithExpectedSize(4);
-    private static final Logger LOG = Logger.getLogger(CDKConnectionTable.class.getName());
+    private static final Map<IBond.Order, Integer> orders = newHashMapWithExpectedSize(4);
+    private static final Map<IBond.Stereo, Integer> depths = newHashMapWithExpectedSize(4);
+    private static final Logger LOG = getLogger(CDKConnectionTable.class.getName());
 
     static {
-        orders.put(IBond.Order.SINGLE, 1);
-        orders.put(IBond.Order.DOUBLE, 2);
-        orders.put(IBond.Order.TRIPLE, 3);
-        orders.put(IBond.Order.QUADRUPLE, 4);
+        orders.put(SINGLE, 1);
+        orders.put(DOUBLE, 2);
+        orders.put(TRIPLE, 3);
+        orders.put(QUADRUPLE, 4);
     }
 
     static {
-        depths.put(IBond.Stereo.UP, -1);
-        depths.put(IBond.Stereo.DOWN, 1);
-        depths.put(IBond.Stereo.UP_INVERTED, 1);
-        depths.put(IBond.Stereo.DOWN_INVERTED, -1);
+        depths.put(UP, -1);
+        depths.put(DOWN, 1);
+        depths.put(UP_INVERTED, 1);
+        depths.put(DOWN_INVERTED, -1);
     }
 
     public CDKConnectionTable(IAtomContainer container) {

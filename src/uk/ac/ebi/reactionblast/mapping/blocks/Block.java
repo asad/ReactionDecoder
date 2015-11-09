@@ -20,17 +20,18 @@ package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class Block implements Comparable<Block> {
-    private static final Logger LOG = Logger.getLogger(Block.class.getName());
+    private static final Logger LOG = getLogger(Block.class.getName());
 
     private final IAtomContainer atomContainer;
 
@@ -79,7 +80,7 @@ public class Block implements Comparable<Block> {
 
     private Map<Integer, Integer> getCompactMap(List<Integer> indices) {
         Map<Integer, Integer> compactMap = new HashMap<>();
-        Collections.sort(indices);
+        sort(indices);
         int compactIndex = 0;
         for (Integer index : indices) {
             compactMap.put(index, compactIndex);

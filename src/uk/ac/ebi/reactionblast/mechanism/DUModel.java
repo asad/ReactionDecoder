@@ -19,8 +19,11 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
+import static java.lang.System.err;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedMap;
+import static java.util.Collections.synchronizedSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -87,11 +90,11 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
 
         this.reactantSet = reaction.getReactants();
         this.productSet = reaction.getProducts();
-        this.bondChangeList = Collections.synchronizedList(new ArrayList<BondChange>());
-        this.reactionCenterList = Collections.synchronizedSet(new LinkedHashSet<IAtom>());
-        this.stereoChangeList = Collections.synchronizedList(new ArrayList<AtomStereoChangeInformation>());
-        this.conformationChangeList = Collections.synchronizedList(new ArrayList<AtomStereoChangeInformation>());
-        this.mappingMap = Collections.synchronizedMap(new HashMap<IAtom, IAtom>());
+        this.bondChangeList = synchronizedList(new ArrayList<BondChange>());
+        this.reactionCenterList = synchronizedSet(new LinkedHashSet<IAtom>());
+        this.stereoChangeList = synchronizedList(new ArrayList<AtomStereoChangeInformation>());
+        this.conformationChangeList = synchronizedList(new ArrayList<AtomStereoChangeInformation>());
+        this.mappingMap = synchronizedMap(new HashMap<IAtom, IAtom>());
 
         this.generate3DCoordinates = generate3D;
         this.generate2DCoordinates = generate2D;
@@ -133,9 +136,9 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
          */
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
-            chiralityCDK2D = StereoCenteralityTool.getChirality2D(reaction);
+            chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
-            System.err.println("WARNING: 2D CDK based stereo perception failed");
+            err.println("WARNING: 2D CDK based stereo perception failed");
         }
         /*
          * Generate stereo information

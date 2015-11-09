@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
@@ -31,7 +32,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 public class AtomStereoChangeInformation implements Serializable {
 
     private static final long serialVersionUID = 1896986585959789L;
-    private static final Logger LOG = Logger.getLogger(AtomStereoChangeInformation.class.getName());
+    private static final Logger LOG = getLogger(AtomStereoChangeInformation.class.getName());
     private final IAtom reactantAtom;
     private final IAtom productAtom;
     private boolean stereoChange = false;

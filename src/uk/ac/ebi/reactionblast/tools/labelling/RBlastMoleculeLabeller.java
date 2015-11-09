@@ -19,15 +19,17 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.signature.MoleculeSignature;
 import signature.AbstractVertexSignature;
+import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 
 /**
  * 
@@ -38,11 +40,11 @@ import signature.AbstractVertexSignature;
  */
 public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeLabeller.class.getName());
+    private static final Logger LOG = getLogger(RBlastMoleculeLabeller.class.getName());
 
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
-        return AtomContainerAtomPermutor.permute(
+        return permute(
                 getCanonicalPermutation(container), container);
     }
 
@@ -77,7 +79,7 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
             orbit.sortMembers(canonicalLabels);
             orbits.add(orbit);
         }
-        Collections.sort(orbits);
+        sort(orbits);
         int[] permutation = new int[atomCount];
         int newIndex = 0;
         for (SortableOrbit orbit : orbits) {
@@ -122,7 +124,7 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
         }
 
         public void sortMembers(int[] canonicalLabels) {
-            Collections.sort(members, new OrbitLabelComparator(canonicalLabels));
+            sort(members, new OrbitLabelComparator(canonicalLabels));
         }
 
         @Override

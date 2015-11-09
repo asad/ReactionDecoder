@@ -20,6 +20,7 @@ package uk.ac.ebi.centres.graph;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.MutableDescriptor;
 import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
@@ -28,10 +29,10 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @author John May
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
-    private static final Logger LOG = Logger.getLogger(DefaultDescriptorManager.class.getName());
+    private static final Logger LOG = getLogger(DefaultDescriptorManager.class.getName());
 
-    private final Map<A, MutableDescriptor> atomMap = new HashMap<A, MutableDescriptor>();
-    private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<Map.Entry<A, A>, MutableDescriptor>();
+    private final Map<A, MutableDescriptor> atomMap = new HashMap<>();
+    private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<>();
 
     @Override
     public MutableDescriptor getDescriptor(A atom) {

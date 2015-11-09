@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.blocks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMapping;
@@ -32,7 +33,7 @@ import org.openscience.cdk.interfaces.IMapping;
  *
  */
 public class BlockPair {
-    private static final Logger LOG = Logger.getLogger(BlockPair.class.getName());
+    private static final Logger LOG = getLogger(BlockPair.class.getName());
 
     private final Block reactantBlock;
 
@@ -41,7 +42,7 @@ public class BlockPair {
     private final List<IMapping> mappings;
 
     public BlockPair(IAtomContainer reactant, IAtomContainer product) {
-        mappings = new ArrayList<IMapping>();
+        mappings = new ArrayList<>();
         reactantBlock = new Block(reactant);
         productBlock = new Block(product);
         reactantBlock.setPartner(productBlock);

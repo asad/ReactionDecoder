@@ -6,11 +6,13 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import static java.lang.String.valueOf;
 import java.text.NumberFormat;
+import static java.text.NumberFormat.getNumberInstance;
 import java.util.List;
-import java.util.Locale;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.config.Isotopes;
+import static java.util.Locale.ENGLISH;
+import static org.openscience.cdk.CDKConstants.COMMENT;
+import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -34,7 +36,7 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
      */
     protected static String formatMDLInt(int i, int l) {
         String s = "", fs = "";
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        NumberFormat nf = getNumberInstance(ENGLISH);
         nf.setParseIntegerOnly(true);
         nf.setMinimumIntegerDigits(1);
         nf.setMaximumIntegerDigits(l);
@@ -58,7 +60,7 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
     protected static String formatMDLFloat(float fl) {
         String s = "", fs = "";
         int l;
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        NumberFormat nf = getNumberInstance(ENGLISH);
         nf.setMinimumIntegerDigits(1);
         nf.setMaximumIntegerDigits(4);
         nf.setMinimumFractionDigits(4);
@@ -149,11 +151,11 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
         // Write Atom Value
         for (int i = 0; i < container.getAtomCount(); i++) {
             IAtom atom = container.getAtom(i);
-            if (atom.getProperty(CDKConstants.COMMENT) != null && atom.getProperty(CDKConstants.COMMENT) instanceof String && !((String) atom.getProperty(CDKConstants.COMMENT)).trim().equals("")) {
+            if (atom.getProperty(COMMENT) != null && atom.getProperty(COMMENT) instanceof String && !((String) atom.getProperty(COMMENT)).trim().equals("")) {
                 writer.write("V  ");
                 writer.write(formatMDLInt(i + 1, 3));
                 writer.write(" ");
-                writer.write((String) atom.getProperty(CDKConstants.COMMENT));
+                writer.write((String) atom.getProperty(COMMENT));
                 writer.newLine();
             }
         }
@@ -187,7 +189,7 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
             if (!(atom instanceof IPseudoAtom)) {
                 Integer atomicMass = atom.getMassNumber();
                 if (atomicMass != null) {
-                    int majorMass = Isotopes.getInstance().getMajorIsotope(atom.getSymbol()).getMassNumber();
+                    int majorMass = getInstance().getMajorIsotope(atom.getSymbol()).getMassNumber();
                     if (atomicMass != majorMass) {
                         writer.write("M  ISO  1 ");
                         writer.write(formatMDLInt(i + 1, 3));
@@ -229,17 +231,17 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
 
     private void writeSgroupCount(IAtomContainer molecule, BufferedWriter writer) throws IOException {
         int substructureCount = superAtomContainer.countSuperatoms();
-        writer.write(M + "STY" + padLeft(String.valueOf(substructureCount), 3));
+        writer.write(M + "STY" + padLeft(valueOf(substructureCount), 3));
         for (int i = 0; i < substructureCount; i++) {
-            writer.write(padLeft(String.valueOf(i + 1), 4));
+            writer.write(padLeft(valueOf(i + 1), 4));
             writer.write(padLeft("SUP", 4));
         }
         writer.newLine();
 
-        writer.write(M + "SLB" + padLeft(String.valueOf(substructureCount), 3));
+        writer.write(M + "SLB" + padLeft(valueOf(substructureCount), 3));
         for (int i = 0; i < substructureCount; i++) {
-            writer.write(padLeft(String.valueOf(i + 1), 4));
-            writer.write(padLeft(String.valueOf(i + 1), 4));
+            writer.write(padLeft(valueOf(i + 1), 4));
+            writer.write(padLeft(valueOf(i + 1), 4));
         }
         writer.newLine();
 
@@ -255,19 +257,19 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
     }
 
     private void writeSingleSgroup(Substructure substructure, BufferedWriter writer) throws IOException {
-        writer.write(M + "SAL" + padLeft(String.valueOf(substructure.getIndex() + 1), 4)
-                + padLeft(String.valueOf(substructure.getSuperAtomCount()), 3));
+        writer.write(M + "SAL" + padLeft(valueOf(substructure.getIndex() + 1), 4)
+                + padLeft(valueOf(substructure.getSuperAtomCount()), 3));
         for (int i = 0; i < substructure.getSuperAtomCount(); i++) {
-            writer.write(padLeft(String.valueOf(substructure.getSuperAtom(i).getIndex() + 1), 4));
+            writer.write(padLeft(valueOf(substructure.getSuperAtom(i).getIndex() + 1), 4));
         }
         writer.newLine();
-        writer.write(M + "SBL" + padLeft(String.valueOf(substructure.getIndex() + 1), 4) + padLeft(String.valueOf(substructure.getSuperBondCount()), 3));
+        writer.write(M + "SBL" + padLeft(valueOf(substructure.getIndex() + 1), 4) + padLeft(valueOf(substructure.getSuperBondCount()), 3));
         for (int i = 0; i < substructure.getSuperBondCount(); i++) {
-            writer.write(padLeft(String.valueOf(substructure.getSuperBond(i).getBondIndex() + 1), 4));
+            writer.write(padLeft(valueOf(substructure.getSuperBond(i).getBondIndex() + 1), 4));
         }
         writer.newLine();
         for (int i = 0; i < substructure.getSuperAtomCount(); i++) {
-            writer.write(M + "SMT" + padLeft(String.valueOf(substructure.getIndex() + 1), 4)
+            writer.write(M + "SMT" + padLeft(valueOf(substructure.getIndex() + 1), 4)
                     + " " + substructure.getSuperAtom(i).getPseudoAtom().getLabel());
         }
         writer.newLine();

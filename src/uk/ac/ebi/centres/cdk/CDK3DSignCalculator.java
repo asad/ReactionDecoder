@@ -18,6 +18,7 @@
 package uk.ac.ebi.centres.cdk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import uk.ac.ebi.centres.calculator.ThreeDimensionalSignCalculator;
 
@@ -26,7 +27,7 @@ import uk.ac.ebi.centres.calculator.ThreeDimensionalSignCalculator;
  */
 public class CDK3DSignCalculator extends ThreeDimensionalSignCalculator<IAtom> {
 
-    private static final Logger LOG = Logger.getLogger(CDK3DSignCalculator.class.getName());
+    private static final Logger LOG = getLogger(CDK3DSignCalculator.class.getName());
 
     @Override
     public double getX(IAtom atom) {

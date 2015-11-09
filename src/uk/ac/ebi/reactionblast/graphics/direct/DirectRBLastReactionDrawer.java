@@ -20,20 +20,28 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.GRAY;
 import java.awt.Font;
+import static java.awt.Font.PLAIN;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import static uk.ac.ebi.reactionblast.graphics.direct.ColorRamp.getColors;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.AbstractAWTReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
@@ -42,7 +50,7 @@ import uk.ac.ebi.reactionblast.mapping.blocks.BlockPair;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(DirectRBLastReactionDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectRBLastReactionDrawer.class.getName());
 
     private DirectReactionDrawer reactionDrawer;
 
@@ -162,7 +170,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
 //            System.out.println("drawing labels");
             g.setTransform(originalTransform);
             g.translate((w / 2), (h / 2));
-            g.setFont(new Font(params.labelPanelFont, Font.PLAIN, params.labelPanelFontSize));
+            g.setFont(new Font(params.labelPanelFont, PLAIN, params.labelPanelFontSize));
             AffineTransform labelTransform = new AffineTransform();
             labelTransform.scale(zoom, zoom);
 
@@ -173,7 +181,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
             labelTransform.translate(0, labelShift);
             BoundsTree labelBoundsTree = centeredBoundsTree.transform(labelTransform);
             // TODO : label color selection
-            g.setColor(Color.BLACK);
+            g.setColor(BLACK);
 
             reactionDrawer.drawLabelPanel(labelMap, labelBoundsTree, g);
             finalHeight += labelHeight + labelGap;
@@ -182,17 +190,17 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         if (params.shouldCrop) {
             double dX = w - finalWidth;
             double dY = h - finalHeight;
-            int cropX = Math.max(0, (int) dX / 2);
-            int cropY = Math.max(0, (int) dY / 2);
-            int cropW = (int) Math.min(finalWidth, w);
-            int cropH = (int) Math.min(finalHeight, w);
+            int cropX = max(0, (int) dX / 2);
+            int cropY = max(0, (int) dY / 2);
+            int cropW = (int) min(finalWidth, w);
+            int cropH = (int) min(finalHeight, w);
 //            System.out.println("CROPPING totalBounds " 
 //                    + BoundsPrinter.toString(totalBoundingBox));
 //            System.out.println("zoom " + zoom + " dX " + dX + " dY " + dY 
 //                            + " crop " + cropX + " " + cropY + " " 
 //                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
-                System.out.println("Not cropping to ["
+                out.println("Not cropping to ["
                         + cropX + ", " + cropY + "] "
                         + cropW + " x " + cropH + " as "
                         + (cropX + cropW) + " > " + w + " or "
@@ -213,7 +221,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
     public void drawSubgraphBoxes(RBlastReaction rBlastReaction, Graphics2D g) {
         List<Color> colors;
         if (params.colorSubgraphBoxes) {
-            colors = ColorRamp.getColors(rBlastReaction.getMappedSubgraphs().size());
+            colors = getColors(rBlastReaction.getMappedSubgraphs().size());
         } else {
             colors = new ArrayList<>();
         }
@@ -232,7 +240,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
     }
 
     public void highlightSubgraphs(RBlastReaction rBlastReaction) {
-        List<Color> colors = ColorRamp.getColors(rBlastReaction.getMappedSubgraphs().size());
+        List<Color> colors = getColors(rBlastReaction.getMappedSubgraphs().size());
         int blockIndex = 0;
         for (BlockPair subgraphMapping : rBlastReaction.getMappedSubgraphs()) {
             Block productBlock = subgraphMapping.getProductBlock();
@@ -250,7 +258,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
 
     public Color getColorForBlock(List<Color> colors, int index) {
         if (colors.isEmpty() || index > colors.size() || !params.colorSubgraphBoxes) {
-            return Color.GRAY;
+            return GRAY;
         } else {
             return colors.get(getWheelIndex(index, colors.size()));
         }

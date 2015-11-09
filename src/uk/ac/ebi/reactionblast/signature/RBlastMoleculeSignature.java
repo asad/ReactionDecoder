@@ -19,11 +19,12 @@
 package uk.ac.ebi.reactionblast.signature;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import signature.AbstractVertexSignature;
+import static signature.AbstractVertexSignature.parse;
 import signature.ColoredTree;
-import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor;
+import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
 /**
@@ -33,7 +34,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * @author modified by Asad to use rBLAST SMILES
  */
 public class RBlastMoleculeSignature extends BaseMoleculeSignature {
-    private static final Logger LOG = Logger.getLogger(RBlastMoleculeSignature.class.getName());
+    private static final Logger LOG = getLogger(RBlastMoleculeSignature.class.getName());
 
     private boolean useAromatics = true;
     private boolean useCharge = true;
@@ -179,13 +180,13 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
      */
     public String getSmilesForAtomSignature(int atomIndex, int height, ICanonicalMoleculeLabeller labeller) {
         String atomSignatureString = getSignatureStringForAtom(atomIndex, height);
-        ColoredTree tree = AbstractVertexSignature.parse(atomSignatureString);
+        ColoredTree tree = parse(atomSignatureString);
 
         builder = new RBlastMoleculeFromSignatureBuilder(atomContainer.getBuilder());
         setFlags(builder);
         builder.makeFromColoredTree(tree);
         IAtomContainer fragment = builder.getAtomContainer();
-        fragment = AtomContainerAtomPermutor.permute(labeller.getCanonicalPermutation(fragment), fragment);
+        fragment = permute(labeller.getCanonicalPermutation(fragment), fragment);
 //        System.out.println(new AtomContainerPrinter().toString(fragment));
 //        System.out.println(Arrays.toString(labeller.getCanonicalPermutation(fragment)));
 //        return "";
@@ -220,7 +221,7 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
      * @return
      */
     public IAtomContainer makeMoleculeFromSignature(String signatureString) {
-        ColoredTree tree = AbstractVertexSignature.parse(signatureString);
+        ColoredTree tree = parse(signatureString);
         builder = new RBlastMoleculeFromSignatureBuilder(atomContainer.getBuilder());
         setFlags(builder);
         builder.makeFromColoredTree(tree);

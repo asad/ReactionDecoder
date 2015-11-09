@@ -31,9 +31,10 @@
  */
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
-import com.google.common.collect.Maps;
+import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -50,7 +51,7 @@ import org.openscience.cdk.interfaces.IBond;
  */
 class MDLValence {
 
-    private static final Logger LOG = Logger.getLogger(MDLValence.class.getName());
+    private static final Logger LOG = getLogger(MDLValence.class.getName());
 
     /**
      * Apply the MDL valence model to the provided atom container.
@@ -64,7 +65,7 @@ class MDLValence {
 
         int[] valences = new int[n];
 
-        Map<IAtom, Integer> atomToIndex = Maps.newHashMapWithExpectedSize(n);
+        Map<IAtom, Integer> atomToIndex = newHashMapWithExpectedSize(n);
         for (IAtom atom : container.atoms()) {
             atomToIndex.put(atom, atomToIndex.size());
         }

@@ -19,10 +19,13 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
+import static java.lang.Boolean.TRUE;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
+import static uk.ac.ebi.reactionblast.graphics.direct.layout.MoleculeAligner.alignToMaxWidth;
+import static uk.ac.ebi.reactionblast.graphics.direct.layout.MoleculeAligner.alignToMinAreaBox;
 
 public abstract class AbstractDirectLayout<T> {
     
@@ -77,16 +80,16 @@ public abstract class AbstractDirectLayout<T> {
             for (IAtom atom : ac.atoms()) {
                 atom.getPoint2d().y *= - 1;
             }
-            ac.setProperty(INVERTED, Boolean.TRUE);
+            ac.setProperty(INVERTED, TRUE);
         }
         shouldInvert = false;
     }
     
     public void align(IAtomContainer atomContainer, Vector2d molAxis) {
         switch (params.moleculeAlignMethod) {
-            case MAX_AXIS: MoleculeAligner.alignToMaxWidth(atomContainer, molAxis);
-            case MIN_AREA: MoleculeAligner.alignToMinAreaBox(atomContainer, molAxis);
-            default: MoleculeAligner.alignToMaxWidth(atomContainer, molAxis);
+            case MAX_AXIS: alignToMaxWidth(atomContainer, molAxis);
+            case MIN_AREA: alignToMinAreaBox(atomContainer, molAxis);
+            default: alignToMaxWidth(atomContainer, molAxis);
         }
     }
 

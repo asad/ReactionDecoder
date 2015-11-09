@@ -19,7 +19,8 @@
 package aamtool.rxndecoder;
 
 import java.util.logging.Logger;
-import org.apache.commons.cli.OptionBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.apache.commons.cli.OptionBuilder.create;
 import org.apache.commons.cli.Options;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.commons.cli.Options;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CommandLineOptions {
-    private static final Logger LOG = Logger.getLogger(CommandLineOptions.class.getName());
+    private static final Logger LOG = getLogger(CommandLineOptions.class.getName());
 
     public CommandLineOptions() {
     }
@@ -36,23 +37,18 @@ public class CommandLineOptions {
         Options optionsAAM = new Options();
         optionsAAM.addOption("h", "help", false, "Help page for command usage");
 
-        optionsAAM.addOption(
-                OptionBuilder.create("Q"));
+        optionsAAM.addOption(create("Q"));
 
-        optionsAAM.addOption(
-                OptionBuilder.create("q"));
+        optionsAAM.addOption(create("q"));
 
-        optionsAAM.addOption(
-                OptionBuilder.create("j"));
+        optionsAAM.addOption(create("j"));
 
         optionsAAM.addOption("g", "image", false, "create png of the mapping");
         optionsAAM.addOption("m", "mappings", false, "Report all Mappings");
         optionsAAM.addOption("p", "patterns", false, "Report all Mol Mol Pair (RPAIR type)");
 
-        optionsAAM.addOption(
-                OptionBuilder.create("f"));
-        optionsAAM.addOption(
-                OptionBuilder.create("x"));
+        optionsAAM.addOption(create("f"));
+        optionsAAM.addOption(create("x"));
         return optionsAAM;
     }
 
@@ -60,22 +56,16 @@ public class CommandLineOptions {
         Options options = new Options();
         options.addOption("h", "help", false, "Help page for command usage");
 
-        options.addOption(
-                OptionBuilder.create("Q"));
+        options.addOption(create("Q"));
 
-        options.addOption(
-                OptionBuilder.create("q"));
+        options.addOption(create("q"));
 
-        options.addOption(
-                OptionBuilder.create("j"));
-        options.addOption(
-                OptionBuilder.create("c"));
+        options.addOption(create("j"));
+        options.addOption(create("c"));
 
         options.addOption("r", "recursive", false, "Resursive Matching Filter");
-        options.addOption(
-                OptionBuilder.create("x"));
-        options.addOption(
-                OptionBuilder.create("f"));
+        options.addOption(create("x"));
+        options.addOption(create("f"));
 
         return options;
     }
@@ -84,27 +74,20 @@ public class CommandLineOptions {
         Options optionsCompare = new Options();
         optionsCompare.addOption("h", "help", false, "Help page for command usage");
 
-        optionsCompare.addOption(
-                OptionBuilder.create("Q"));
+        optionsCompare.addOption(create("Q"));
 
-        optionsCompare.addOption(
-                OptionBuilder.create("q"));
+        optionsCompare.addOption(create("q"));
 
-        optionsCompare.addOption(
-                OptionBuilder.create("T"));
+        optionsCompare.addOption(create("T"));
 
-        optionsCompare.addOption(
-                OptionBuilder.create("t"));
+        optionsCompare.addOption(create("t"));
 
-        optionsCompare.addOption(
-                OptionBuilder.create("j"));
+        optionsCompare.addOption(create("j"));
 
         optionsCompare.addOption("g", "image", false, "create png of the mapping");
         optionsCompare.addOption("m", "mappings", false, "Report all Mappings");
-        optionsCompare.addOption(
-                OptionBuilder.create("x"));
-        optionsCompare.addOption(
-                OptionBuilder.create("f"));
+        optionsCompare.addOption(create("x"));
+        optionsCompare.addOption(create("f"));
 
         return optionsCompare;
     }

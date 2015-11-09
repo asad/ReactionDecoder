@@ -146,7 +146,7 @@ public abstract class AbstractChangeCalculator extends Utility {
             IAtomContainer atomContainerR,
             IAtomContainer atomContainerP) throws Exception {
 
-        int atomIndexR = Utility.getAtomIndexByID(atomContainerR, reactantAtom);
+        int atomIndexR = getAtomIndexByID(atomContainerR, reactantAtom);
 
         String signatureR1 = getSignature(atomContainerR, reactantAtom, 1);
         String signatureR2 = getSignature(atomContainerR, reactantAtom, 2);
@@ -163,7 +163,7 @@ public abstract class AbstractChangeCalculator extends Utility {
         String signatureP3 = getSignature(atomContainerP, productAtom, 3);
         String signatureP = getSignature(atomContainerP, productAtom, -1);
 
-        int atomIndexP = Utility.getAtomIndexByID(atomContainerP, productAtom);
+        int atomIndexP = getAtomIndexByID(atomContainerP, productAtom);
 
         IAtomContainer fragP1 = getCircularFragment(atomContainerP, atomIndexP, 1);
         IAtomContainer fragP2 = getCircularFragment(atomContainerP, atomIndexP, 2);

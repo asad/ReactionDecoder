@@ -25,13 +25,14 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperAtomContainer {
-    private static final Logger LOG = Logger.getLogger(SuperAtomContainer.class.getName());
+    private static final Logger LOG = getLogger(SuperAtomContainer.class.getName());
 
     private final List<Substructure> list;
     private int counter;

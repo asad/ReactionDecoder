@@ -18,8 +18,11 @@
 package uk.ac.ebi.centres.priority.descriptor;
 
 import java.util.logging.Logger;
-import uk.ac.ebi.centres.Descriptor;
-import uk.ac.ebi.centres.descriptor.Tetrahedral;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.centres.Descriptor.Type.PSEUDO_ASYMMETRIC;
+import static uk.ac.ebi.centres.PriorityRule.Type.TOPOGRAPHICAL;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.R;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.S;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
 
 /**
@@ -30,12 +33,10 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class RSRule<A> extends DescriptorRule<A> {
 
-    private static final Logger LOG = Logger.getLogger(RSRule.class.getName());
+    private static final Logger LOG = getLogger(RSRule.class.getName());
 
     public RSRule(DescriptorAccessor<A> accessor) {
-        super(Descriptor.Type.PSEUDO_ASYMMETRIC,
-                Type.TOPOGRAPHICAL,
-                accessor,
-                Tetrahedral.S, Tetrahedral.R);
+        super(PSEUDO_ASYMMETRIC, TOPOGRAPHICAL,
+                accessor, S, R);
     }
 }

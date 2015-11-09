@@ -19,18 +19,29 @@
 
 package uk.ac.ebi.reactionblast.graphics.direct;
 
-import java.awt.Color;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.MAGENTA;
+import static java.awt.Color.ORANGE;
+import static java.awt.Color.PINK;
+import static java.awt.Color.RED;
+import static java.awt.Color.YELLOW;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.geom.Ellipse2D;
+import static java.lang.String.valueOf;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class DirectHullDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(DirectHullDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectHullDrawer.class.getName());
     
     private final DirectMoleculeDrawer moleculeDrawer;
     
@@ -43,11 +54,10 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         Image image = super.makeBlankImage(w, h);
         Graphics2D g = (Graphics2D) image.getGraphics();
         if (params.useAntialias) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-                               RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         }
         for (int i = 0; i < atomContainer.getAtomCount(); i++) {
-            atomContainer.getAtom(i).setID(String.valueOf(i));
+            atomContainer.getAtom(i).setID(valueOf(i));
         }
         params.drawAtomID = true;
         drawHull(atomContainer, g);
@@ -66,9 +76,9 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
                 prev = hullPoint;
                 first = prev;
             } else {
-                g.setColor(Color.RED);
+                g.setColor(RED);
                 drawLine(prev, hullPoint, g);
-                g.setColor(Color.BLACK);
+                g.setColor(BLACK);
                 Point2d midPoint = new Point2d(prev);
                 midPoint.interpolate(hullPoint, 0.5);
                 Vector2d direction = new Vector2d(hullPoint);
@@ -79,9 +89,9 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
                 prev = hullPoint;
             }
         }
-        g.setColor(Color.RED);
+        g.setColor(RED);
         drawLine(first, prev, g);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         Point2d midPoint = new Point2d(prev);
         midPoint.interpolate(first, 0.5);
         Vector2d direction = new Vector2d(first);
@@ -94,25 +104,25 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         majorAxis.normalize();
         Point2d center = hull.getCenter();
         arrowDrawer.drawArrow(g, center, majorAxis);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         drawLine(r.cornerA, r.cornerB, g);
         drawLine(r.cornerB, r.cornerC, g);
         drawLine(r.cornerC, r.cornerD, g);
         drawLine(r.cornerD, r.cornerA, g);
-        g.setColor(Color.BLUE);
+        g.setColor(BLUE);
         g.fill(new Ellipse2D.Double(r.cornerA.x - 3, r.cornerA.y - 3, 6, 6));
-        g.setColor(Color.MAGENTA);
+        g.setColor(MAGENTA);
         g.fill(new Ellipse2D.Double(r.cornerB.x - 3, r.cornerB.y - 3, 6, 6));
-        g.setColor(Color.YELLOW);
+        g.setColor(YELLOW);
         g.fill(new Ellipse2D.Double(r.cornerC.x - 3, r.cornerC.y - 3, 6, 6));
-        g.setColor(Color.CYAN);
+        g.setColor(CYAN);
         g.fill(new Ellipse2D.Double(r.cornerD.x - 3, r.cornerD.y - 3, 6, 6));
         
-        g.setColor(Color.GREEN);
+        g.setColor(GREEN);
         g.fill(new Ellipse2D.Double(r.pointX.x - 2, r.pointX.y - 2, 4, 4));
-        g.setColor(Color.PINK);
+        g.setColor(PINK);
         g.fill(new Ellipse2D.Double(r.pointY.x - 2, r.pointY.y - 2, 4, 4));
-        g.setColor(Color.ORANGE);
+        g.setColor(ORANGE);
         g.fill(new Ellipse2D.Double(r.pointZ.x - 2, r.pointZ.y - 2, 4, 4));
 
     }

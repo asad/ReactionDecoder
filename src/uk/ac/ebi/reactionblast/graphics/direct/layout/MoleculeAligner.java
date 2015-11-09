@@ -18,10 +18,17 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.ConvexHull;
@@ -44,7 +51,7 @@ public class MoleculeAligner {
 
     public static final Vector2d X_AXIS = new Vector2d(1, 0);
     public static final Vector2d Y_AXIS = new Vector2d(0, 1);
-    private static final Logger LOG = Logger.getLogger(MoleculeAligner.class.getName());
+    private static final Logger LOG = getLogger(MoleculeAligner.class.getName());
 
     /**
      * Finds the minimum-area bounding box of the atom container and uses the
@@ -99,25 +106,25 @@ public class MoleculeAligner {
 
     public static void alignToMaxWidth(IAtomContainer atomContainer, Vector2d axis) {
         Vector2d widthVector = getMaxWidthVector(atomContainer);
-        Point2d center = GeometryTools.get2DCenter(atomContainer);
-        MoleculeAligner.alignToAxis(atomContainer, widthVector, axis, center);
+        Point2d center = get2DCenter(atomContainer);
+        alignToAxis(atomContainer, widthVector, axis, center);
     }
 
     private static double getPolarAngle(Vector2d vector) {
         double x = vector.x;
         double y = vector.y;
         if (x > 0) {
-            return Math.atan(y / x);
+            return atan(y / x);
         } else if (x < 0) {
             if (y >= 0) {
-                return Math.atan(y / x) + Math.PI;
+                return atan(y / x) + PI;
             } else {
-                return Math.atan(y / x) - Math.PI;
+                return atan(y / x) - PI;
             }
         } else if (y > 0) {
-            return Math.PI / 2;
+            return PI / 2;
         } else if (y < 0) {
-            return -(Math.PI / 2);
+            return -(PI / 2);
         } else {
             return 0;
         }
@@ -135,13 +142,13 @@ public class MoleculeAligner {
      */
     public static double getMinAngle(Vector2d axisFrom, Vector2d axisTo) {
         // all angles converted to [0, 2*PI] from [-PI, PI]
-        double polarAngleForwardFrom = Math.atan2(axisFrom.y, axisFrom.x);
-        double polarAngleBackwardFrom = Math.atan2(-axisFrom.y, -axisFrom.x);
-        double polarAngleTo = Math.atan2(axisTo.y, axisTo.x);
+        double polarAngleForwardFrom = atan2(axisFrom.y, axisFrom.x);
+        double polarAngleBackwardFrom = atan2(-axisFrom.y, -axisFrom.x);
+        double polarAngleTo = atan2(axisTo.y, axisTo.x);
         double forwardDiff = polarAngleForwardFrom - polarAngleTo;
         double backwardDiff = polarAngleBackwardFrom - polarAngleTo;
         double minAngleDiff;
-        if (Math.abs(forwardDiff) < Math.abs(backwardDiff)) {
+        if (abs(forwardDiff) < abs(backwardDiff)) {
             minAngleDiff = forwardDiff;
         } else {
             minAngleDiff = backwardDiff;
@@ -168,8 +175,8 @@ public class MoleculeAligner {
             Vector2d axisTo,
             Point2d center) {
         double angle = getMinAngle(axisFrom, axisTo);
-        double cosA = Math.cos(angle);
-        double sinA = Math.sin(angle);
+        double cosA = cos(angle);
+        double sinA = sin(angle);
         double minCosA = 1 - cosA;
         for (IAtom atom : atomContainer.atoms()) {
             Point2d p = atom.getPoint2d();

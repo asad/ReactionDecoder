@@ -47,6 +47,7 @@
 package org.openscience.smsd.algorithm.vflib.substructure;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Holds source and target atoms
@@ -60,7 +61,7 @@ import java.util.logging.Logger;
  * @param <S>
  */
 public class Pair<T, S> {
-    private static final Logger LOG = Logger.getLogger(Pair.class.getName());
+    private static final Logger LOG = getLogger(Pair.class.getName());
 
     private T source;
     private S target;

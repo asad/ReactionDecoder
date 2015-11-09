@@ -31,8 +31,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.graph.PathTools;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.VISITED;
+import static org.openscience.cdk.graph.PathTools.breadthFirstSearch;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -46,7 +47,7 @@ import org.openscience.cdk.interfaces.IElectronContainer;
  */
 public class EBIMolSplitter {
 
-    private static final Logger LOG = Logger.getLogger(EBIMolSplitter.class.getName());
+    private static final Logger LOG = getLogger(EBIMolSplitter.class.getName());
 
     /**
      * Check whether a set of atoms in an atomcontainer is connected
@@ -60,23 +61,23 @@ public class EBIMolSplitter {
         IAtomContainer ac = atomContainer.getBuilder().newInstance(IAtomContainer.class);
         IAtom atom = null;
         IAtomContainer molecule = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-        List<IAtom> sphere = new ArrayList<IAtom>();
+        List<IAtom> sphere = new ArrayList<>();
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {
             atom = atomContainer.getAtom(f);
-            atomContainer.getAtom(f).setFlag(CDKConstants.VISITED, false);
+            atomContainer.getAtom(f).setFlag(VISITED, false);
             ac.addAtom(atomContainer.getAtom(f));
         }
 
         Iterator<IBond> bonds = atomContainer.bonds().iterator();
         while (bonds.hasNext()) {
             IBond bond = bonds.next();
-            bond.setFlag(CDKConstants.VISITED, false);
+            bond.setFlag(VISITED, false);
             ac.addBond(bond);
         }
         atom = ac.getAtom(0);
         sphere.add(atom);
-        atom.setFlag(CDKConstants.VISITED, true);
-        PathTools.breadthFirstSearch(ac, sphere, molecule);
+        atom.setFlag(VISITED, true);
+        breadthFirstSearch(ac, sphere, molecule);
         if (molecule.getAtomCount() == atomContainer.getAtomCount()) {
             flag = true;
         }
@@ -99,13 +100,13 @@ public class EBIMolSplitter {
         List<IAtom> sphere = new ArrayList<>();
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {
             atom = atomContainer.getAtom(f);
-            atom.setFlag(CDKConstants.VISITED, false);
+            atom.setFlag(VISITED, false);
             ac.addAtom(atom);
         }
         Iterator<IElectronContainer> eContainers = atomContainer.electronContainers().iterator();
         while (eContainers.hasNext()) {
             eContainer = eContainers.next();
-            eContainer.setFlag(CDKConstants.VISITED, false);
+            eContainer.setFlag(VISITED, false);
             ac.addElectronContainer(eContainer);
         }
         while (ac.getAtomCount() > 0) {
@@ -113,8 +114,8 @@ public class EBIMolSplitter {
             molecule = atomContainer.getBuilder().newInstance(IAtomContainer.class);
             sphere.clear();
             sphere.add(atom);
-            atom.setFlag(CDKConstants.VISITED, true);
-            PathTools.breadthFirstSearch(ac, sphere, molecule);
+            atom.setFlag(VISITED, true);
+            breadthFirstSearch(ac, sphere, molecule);
             molecules.addAtomContainer(molecule);
             ac.remove(molecule);
         }

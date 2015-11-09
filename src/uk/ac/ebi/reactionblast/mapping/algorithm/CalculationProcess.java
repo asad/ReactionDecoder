@@ -21,17 +21,23 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 //~--- non-JDK imports --------------------------------------------------------
 
 import java.io.Serializable;
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static uk.ac.ebi.reactionblast.mapping.algorithm.GameTheoryFactory.make;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -40,9 +46,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 public class CalculationProcess extends IsomeraseHandler implements Serializable {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(CalculationProcess.class);
+            = createLoggingTool(CalculationProcess.class);
     private static final long serialVersionUID = 0x4a0bba049L;
-    private static final Logger LOG = Logger.getLogger(CalculationProcess.class.getName());
+    private static final Logger LOG = getLogger(CalculationProcess.class.getName());
     private final boolean removeHydrogen;
     private int delta = 0;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
@@ -78,19 +84,19 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
         switch (algorithm) {
             case MIN:
                 logger.debug("Processing Reaction for Local Minimum: ");
-                delta = (int) calRelation(reaction, IMappingAlgorithm.MIN);
+                delta = (int) calRelation(reaction, MIN);
                 break;
             case MAX:
                 logger.debug("Processing Reaction for Global Minimum: ");
-                delta = (int) calRelation(reaction, IMappingAlgorithm.MAX);
+                delta = (int) calRelation(reaction, MAX);
                 break;
             case MIXTURE:
                 logger.debug("Processing Reaction for Max-Mixture Model: ");
-                delta = (int) calRelation(reaction, IMappingAlgorithm.MIXTURE);
+                delta = (int) calRelation(reaction, MIXTURE);
                 break;
             case RINGS:
                 logger.debug("Processing Reaction for Ring Model: ");
-                delta = (int) calRelation(reaction, IMappingAlgorithm.RINGS);
+                delta = (int) calRelation(reaction, RINGS);
                 break;
         }
     }
@@ -102,13 +108,13 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
     private synchronized double calRelation(IReaction reaction, IMappingAlgorithm theory) {
         try {
             Map<Integer, IAtomContainer> educts
-                    = Collections.synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+                    = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
             for (int i = 0; i < reaction.getReactantCount(); i++) {
                 educts.put(i, reaction.getReactants().getAtomContainer(i));
             }
 
             Map<Integer, IAtomContainer> products
-                    = Collections.synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+                    = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
             for (int i = 0; i < reaction.getProductCount(); i++) {
                 products.put(i, reaction.getProducts().getAtomContainer(i));
             }
@@ -116,7 +122,7 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
             GameTheoryMatrix EDSH
                     = new GameTheoryMatrix(theory, reaction, educts, products, removeHydrogen);
 
-            IGameTheory gameTheory = GameTheoryFactory.make(theory,
+            IGameTheory gameTheory = make(theory,
                     reaction,
                     removeHydrogen,
                     educts,

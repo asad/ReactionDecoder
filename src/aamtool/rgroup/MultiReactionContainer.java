@@ -19,27 +19,30 @@
 package aamtool.rgroup;
 
 import static aamtool.rgroup.ECRgroupFrequency.DEBUG;
+import static java.lang.System.out;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
-import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularFragment;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class MultiReactionContainer {
-    private static final Logger LOG = Logger.getLogger(MultiReactionContainer.class.getName());
+    private static final Logger LOG = getLogger(MultiReactionContainer.class.getName());
 
     private final Set<ReactionGroup> reaction;
     private final String enzyme;
@@ -60,7 +63,7 @@ class MultiReactionContainer {
             calculateCommonFingerprint(r);
 
             boolean local_r_group_finder = false;
-            List<IAtomContainer> allAtomContainers = ReactionManipulator.getAllAtomContainers(r);
+            List<IAtomContainer> allAtomContainers = getAllAtomContainers(r);
             for (IAtomContainer a : allAtomContainers) {
                 if (isRGroupPresent(a)) {
                     local_r_group_finder = true;
@@ -131,80 +134,80 @@ class MultiReactionContainer {
     private void calculateCommonFingerprint(IReaction reaction) {
         Set<String> l = new HashSet<>();
         Set<String> r = new HashSet<>();
-        SmilesGenerator sm = SmilesGenerator.unique().aromatic();
+        SmilesGenerator sm = unique().aromatic();
         for (IAtomContainer a : reaction.getReactants().atomContainers()) {
             IAtomContainer ac = null;
             try {
-                ac = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(a);
+                ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
 
                 for (int i = 0; i < ac.getAtomCount(); i++) {
                     try {
-                        IAtomContainer circularFragment = Utility.getCircularFragment(ac, i, 1);
+                        IAtomContainer circularFragment = getCircularFragment(ac, i, 1);
                         String smiles = sm.create(circularFragment);
                         l.add(smiles);
                         getAllFP().add(smiles);
 
-                        circularFragment = Utility.getCircularFragment(ac, i, 2);
+                        circularFragment = getCircularFragment(ac, i, 2);
                         smiles = sm.create(circularFragment);
                         l.add(smiles);
                         getAllFP().add(smiles);
 
-                        circularFragment = Utility.getCircularFragment(ac, i, 3);
+                        circularFragment = getCircularFragment(ac, i, 3);
                         smiles = sm.create(circularFragment);
                         l.add(smiles);
                         getAllFP().add(smiles);
 
                     } catch (Exception ex) {
-                        Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                     }
                 }
             } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
             }
         }
 
         for (IAtomContainer a : reaction.getProducts().atomContainers()) {
             IAtomContainer ac = null;
             try {
-                ac = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(a);
+                ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
 
                 for (int i = 0; i < ac.getAtomCount(); i++) {
                     try {
-                        IAtomContainer circularFragment = Utility.getCircularFragment(ac, i, 1);
+                        IAtomContainer circularFragment = getCircularFragment(ac, i, 1);
                         String smiles = sm.create(circularFragment);
                         r.add(smiles);
                         getAllFP().add(smiles);
 
-                        circularFragment = Utility.getCircularFragment(ac, i, 2);
+                        circularFragment = getCircularFragment(ac, i, 2);
                         smiles = sm.create(circularFragment);
                         r.add(smiles);
                         getAllFP().add(smiles);
 
-                        circularFragment = Utility.getCircularFragment(ac, i, 3);
+                        circularFragment = getCircularFragment(ac, i, 3);
                         smiles = sm.create(circularFragment);
                         r.add(smiles);
                         getAllFP().add(smiles);
 
                     } catch (Exception ex) {
-                        Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                        getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                     }
                 }
             } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
             }
         }
         Set<String> common = new HashSet<>(l);
         boolean intersection = common.retainAll(r);
 
         if (DEBUG) {
-            System.out.println("intersection " + common);
+            out.println("intersection " + common);
         }
 
         Set<String> difference = new TreeSet<>(l);
         difference.addAll(r);
         boolean removeAll = difference.removeAll(common);
         if (DEBUG) {
-            System.out.println("difference " + difference);
+            out.println("difference " + difference);
         }
         /*
          if no reaction is present then add all the patterns

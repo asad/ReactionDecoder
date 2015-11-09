@@ -19,12 +19,18 @@
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IStereoElement;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
-import uk.ac.ebi.reactionblast.stereo.compare.StereoCenterAnalyser;
-import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
+import static uk.ac.ebi.reactionblast.stereo.compare.StereoCenterAnalyser.hasPotentialStereoCenter;
+import static uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool.getChirality2D;
+import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.CHIRAL_R;
+import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.CHIRAL_S;
+import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.ERROR;
+import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.MISSING;
+import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.NONE;
 
 /**
  * Analyse the stereo wedges around an atom, to determine if they are correct.
@@ -34,11 +40,11 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
  */
 public class WedgeStereoAnalyser {
 
-    private static final Logger LOG = Logger.getLogger(WedgeStereoAnalyser.class.getName());
+    private static final Logger LOG = getLogger(WedgeStereoAnalyser.class.getName());
 
     public static WedgeStereoAnalysisResult getResult(IAtom atom, IAtomContainer atomContainer, WedgeStereoLifter lifter) {
         boolean isPotentialStereoCenter
-                = StereoCenterAnalyser.hasPotentialStereoCenter(atom, atomContainer);
+                = hasPotentialStereoCenter(atom, atomContainer);
         IStereoElement element = lifter.lift(atom, atomContainer);
         return getResult(atomContainer, isPotentialStereoCenter, element);
     }
@@ -46,22 +52,22 @@ public class WedgeStereoAnalyser {
     private static WedgeStereoAnalysisResult getResult(IAtomContainer atomContainer, boolean isPotentialStereoCenter, IStereoElement stereoElement) {
         if (isPotentialStereoCenter) {
             if (stereoElement == null) {
-                return WedgeStereoAnalysisResult.MISSING;
+                return MISSING;
             } else {
-                IStereoAndConformation chirality = Chirality2DTool.getChirality2D(stereoElement, atomContainer);
+                IStereoAndConformation chirality = getChirality2D(stereoElement, atomContainer);
                 WedgeStereoAnalysisResult result = convertCipToResult(chirality);
-                if (result == WedgeStereoAnalysisResult.NONE) {
+                if (result == NONE) {
                     // should have R or S!
-                    return WedgeStereoAnalysisResult.ERROR;
+                    return ERROR;
                 } else {
                     return result;
                 }
             }
         } else {
             if (stereoElement == null) {
-                return WedgeStereoAnalysisResult.NONE;
+                return NONE;
             } else {
-                return WedgeStereoAnalysisResult.ERROR;
+                return ERROR;
             }
         }
     }
@@ -69,13 +75,13 @@ public class WedgeStereoAnalyser {
     private static WedgeStereoAnalysisResult convertCipToResult(IStereoAndConformation cipChirality) {
         switch (cipChirality) {
             case NONE:
-                return WedgeStereoAnalysisResult.NONE;
+                return NONE;
             case R:
-                return WedgeStereoAnalysisResult.CHIRAL_R;
+                return CHIRAL_R;
             case S:
-                return WedgeStereoAnalysisResult.CHIRAL_S;
+                return CHIRAL_S;
             default:
-                return WedgeStereoAnalysisResult.NONE;
+                return NONE;
         }
     }
 }

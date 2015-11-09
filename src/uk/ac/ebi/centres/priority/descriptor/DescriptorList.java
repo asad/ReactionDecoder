@@ -17,14 +17,16 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
+import static java.lang.Boolean.FALSE;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Descriptor;
 
 /**
@@ -37,7 +39,7 @@ import uk.ac.ebi.centres.Descriptor;
  * @see Descriptor
  */
 public class DescriptorList implements Comparable<DescriptorList> {
-    private static final Logger LOG = Logger.getLogger(DescriptorList.class.getName());
+    private static final Logger LOG = getLogger(DescriptorList.class.getName());
 
     private final List<Descriptor> descriptors = new ArrayList<>();
     private final Set<Descriptor> ignore = new HashSet<>();
@@ -50,7 +52,7 @@ public class DescriptorList implements Comparable<DescriptorList> {
      * @param ignore one or more descriptors to ignore
      */
     public DescriptorList(Descriptor... ignore) {
-        this(Arrays.asList(ignore));
+        this(asList(ignore));
     }
 
     /**
@@ -101,7 +103,7 @@ public class DescriptorList implements Comparable<DescriptorList> {
      * @return whether the ignored descriptors were modified, false indicates the descriptor is already ignored
      */
     public boolean ignoreAll(Collection<? extends Descriptor> ignores) {
-        boolean changed = Boolean.FALSE;
+        boolean changed = FALSE;
         for (Descriptor l : ignores) {
             changed = ignore(l) || changed;
         }
@@ -148,7 +150,7 @@ public class DescriptorList implements Comparable<DescriptorList> {
      * @return whether any of the provided descriptors was added
      */
     public boolean addAll(Collection<? extends Descriptor> descriptors) {
-        boolean changed = Boolean.FALSE;
+        boolean changed = FALSE;
         for (Descriptor descriptor : descriptors) {
             changed = add(descriptor) || changed;
         }

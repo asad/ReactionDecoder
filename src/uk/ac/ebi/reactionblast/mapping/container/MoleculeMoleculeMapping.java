@@ -22,12 +22,13 @@ package uk.ac.ebi.reactionblast.mapping.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
 
@@ -59,7 +60,7 @@ import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
  */
 public class MoleculeMoleculeMapping implements Serializable{
     private static final long serialVersionUID = 1094750239472059259L;
-    private static final Logger LOG = Logger.getLogger(MoleculeMoleculeMapping.class.getName());
+    private static final Logger LOG = getLogger(MoleculeMoleculeMapping.class.getName());
 
     //~--- fields -------------------------------------------------------------
     private final Map<String, List<MolMapping>> reactant_product_mapping_map;
@@ -69,7 +70,7 @@ public class MoleculeMoleculeMapping implements Serializable{
      *
      */
     public MoleculeMoleculeMapping() {
-        reactant_product_mapping_map = Collections.synchronizedMap(new HashMap<String, List<MolMapping>>());
+        reactant_product_mapping_map = synchronizedMap(new HashMap<String, List<MolMapping>>());
     }
 
     @Override

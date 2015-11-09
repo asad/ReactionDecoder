@@ -21,9 +21,11 @@ package uk.ac.ebi.reactionblast.mapping.container.helper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableCollection;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -32,11 +34,11 @@ import java.util.logging.Logger;
 public class ReactionFileData extends Object implements Serializable {
 
     private static final long serialVersionUID = 193790837047304701L;
-    private static final Logger LOG = Logger.getLogger(ReactionFileData.class.getName());
+    private static final Logger LOG = getLogger(ReactionFileData.class.getName());
     private List<String> _data = null;
 
     public ReactionFileData() {
-        _data = Collections.synchronizedList(new ArrayList<String>());
+        _data = synchronizedList(new ArrayList<String>());
     }
 
     /**
@@ -75,7 +77,7 @@ public class ReactionFileData extends Object implements Serializable {
      * @return true/false
      */
     public Collection<String> getValues() {
-        return Collections.unmodifiableCollection(_data);
+        return unmodifiableCollection(_data);
     }
 
     /**

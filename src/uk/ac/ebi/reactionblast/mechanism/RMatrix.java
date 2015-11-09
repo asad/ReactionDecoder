@@ -19,18 +19,23 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
@@ -44,8 +49,8 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  */
 public class RMatrix extends EBIMatrix implements Serializable {
     private static final long serialVersionUID = 7057060562283378684L;
-    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RMatrix.class);
-    private static final Logger LOG = Logger.getLogger(RMatrix.class.getName());
+    private static final ILoggingTool logger = createLoggingTool(RMatrix.class);
+    private static final Logger LOG = getLogger(RMatrix.class.getName());
 
     private BEMatrix reactantBEMatrix = null;
     private BEMatrix productBEMatrix = null;
@@ -77,7 +82,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
          */
         int expectedOverlap = countAtomOverlap(reactantBE.getAtoms(), productBE.getAtoms());
         if (DEBUG) {
-            System.out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
+            out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
         }
         if (expectedOverlap != mapping.getSize()) {
             logger.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
@@ -96,7 +101,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
             reactantBEMatrix.setAromaticBond();
             productBEMatrix.setAromaticBond();
         } catch (CDKException ex) {
-            Logger.getLogger(RMatrix.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
         }
         ArrayList<IAtom> orderedBEMatrixAtomArray = new ArrayList<>();
 
@@ -145,8 +150,8 @@ public class RMatrix extends EBIMatrix implements Serializable {
         IBond rb = getReactantBEMatrix().getAtomContainer(ra1).getBond(ra1, ra2);
         IBond pb = getProductBEMatrix().getAtomContainer(pa1).getBond(pa1, pa2);
         if (rb != null && pb != null) {
-            if ((rb.getFlag(CDKConstants.ISINRING) && pb.getFlag(CDKConstants.ISINRING))
-                    && (rb.getFlag(CDKConstants.ISAROMATIC) && pb.getFlag(CDKConstants.ISAROMATIC))) {
+            if ((rb.getFlag(ISINRING) && pb.getFlag(ISINRING))
+                    && (rb.getFlag(ISAROMATIC) && pb.getFlag(ISAROMATIC))) {
                 return true;
             }
         }
@@ -250,7 +255,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
         int acc = 0;
         for (int i = 0; i < getRowDimension(); i++) {
             for (int j = 0; j < getColumnDimension(); j++) {
-                acc += Math.abs((int) getValue(i, j));
+                acc += abs((int) getValue(i, j));
             }
         }
         return acc;
@@ -317,7 +322,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         result.append("\t");
         for (int i = 0; i < this.getRowDimension() - 1; i++) {
             result.append("\t").append(i);
@@ -328,7 +333,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
             try {
                 result.append("\t").append(this.getReactantBEMatrix().getAtom(i).getSymbol()).append(this.getReactantBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
-                Logger.getLogger(RMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
             }
         }
         result.append(NEW_LINE);
@@ -337,7 +342,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
             try {
                 result.append("\t").append(this.getProductBEMatrix().getAtom(i).getSymbol()).append(this.getProductBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
-                Logger.getLogger(RMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
             }
         }
         result.append(NEW_LINE);
@@ -353,7 +358,7 @@ public class RMatrix extends EBIMatrix implements Serializable {
                     result.append(this.getProductBEMatrix().getAtom(i).getID());
                     result.append("\t");
                 } catch (CDKException ex) {
-                    Logger.getLogger(RMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
                 }
             }
             for (int j = 0; j < this.getColumnDimension() - 1; j++) {
@@ -412,9 +417,9 @@ public class RMatrix extends EBIMatrix implements Serializable {
             total += i;
         }
         if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
-            System.out.println("overlap " + total);
+            out.println("atomUniqueCounter1 " + leftHandAtomCount);
+            out.println("atomUniqueCounter2 " + rightHandAtomCount);
+            out.println("overlap " + total);
         }
 
         return total;

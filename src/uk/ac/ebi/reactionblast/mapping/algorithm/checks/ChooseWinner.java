@@ -29,11 +29,13 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.Serializable;
+import static java.lang.Double.MIN_VALUE;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
@@ -46,7 +48,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class ChooseWinner extends Selector implements Serializable {
 
     private static final long serialVersionUID = 0x296558709L;
-    private static final Logger LOG = Logger.getLogger(ChooseWinner.class.getName());
+    private static final Logger LOG = getLogger(ChooseWinner.class.getName());
     private EBIMatrix stereoMatrix;
     private EBIMatrix energyMatrix;
 
@@ -112,7 +114,7 @@ public class ChooseWinner extends Selector implements Serializable {
         this.similarityMatrix = mHolder.getGraphSimilarityMatrix();
         this.setStereoMatrix(mHolder.getStereoMatrix());
         this.setEnergyMatrix(mHolder.getEnergyMatrix());
-        this.crossMappingTracer = Collections.synchronizedList(new ArrayList<Cells>());
+        this.crossMappingTracer = synchronizedList(new ArrayList<Cells>());
 
         boolean isMappingFesiable = checkStatusFlag();
         List<Double> scores = new ArrayList<>();
@@ -130,7 +132,7 @@ public class ChooseWinner extends Selector implements Serializable {
                     double similarity = similarityMatrix.getValue(i, j);
                     //System.out.println("similarity "+similarity);
                     //matrix.
-                    if (similarity > Double.MIN_VALUE) {
+                    if (similarity > MIN_VALUE) {
                         maxValueI = isMajorSubgraphRow(similarityMatrix, i, j);
                         maxValueJ = isMajorSubgraphColumn(similarityMatrix, i, j);
 
@@ -204,7 +206,7 @@ public class ChooseWinner extends Selector implements Serializable {
     private synchronized boolean checkStatusFlag() {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
-                if (similarityMatrix.getValue(i, j) > Double.MIN_VALUE) {
+                if (similarityMatrix.getValue(i, j) > MIN_VALUE) {
                     return true;
                 }
             }
@@ -311,7 +313,7 @@ public class ChooseWinner extends Selector implements Serializable {
             List<ChooseWinner.Cells> choosenCells = new ArrayList<>();
             for (int i = 0; i < rowSize; i++) {
                 for (int j = 0; j < colSize; j++) {
-                    if (flagMatrix[i][j] && choosenScore > Double.MIN_VALUE
+                    if (flagMatrix[i][j] && choosenScore > MIN_VALUE
                             && similarityMatrix.getValue(i, j) == choosenScore) {
                         ChooseWinner.Cells cells = new ChooseWinner.Cells();
                         cells.indexI = i;

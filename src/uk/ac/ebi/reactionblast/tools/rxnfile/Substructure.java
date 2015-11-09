@@ -24,9 +24,10 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableCollection;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -34,7 +35,7 @@ import org.openscience.cdk.interfaces.IBond;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Substructure {
-    private static final Logger LOG = Logger.getLogger(Substructure.class.getName());
+    private static final Logger LOG = getLogger(Substructure.class.getName());
 
     private final String typeID;
     private int sgroupIdentifier;
@@ -98,7 +99,7 @@ public class Substructure {
      * @return super atoms
      */
     public Collection<SuperAtoms> atoms() {
-        return Collections.unmodifiableCollection(superAtoms);
+        return unmodifiableCollection(superAtoms);
     }
 
     /**
@@ -106,7 +107,7 @@ public class Substructure {
      * @return
      */
     public Collection<SuperBonds> bonds() {
-        return Collections.unmodifiableCollection(superBonds);
+        return unmodifiableCollection(superBonds);
     }
 
     public SuperBonds getSuperBond(int i) {

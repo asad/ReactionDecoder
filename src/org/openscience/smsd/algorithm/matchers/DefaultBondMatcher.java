@@ -23,9 +23,12 @@
 package org.openscience.smsd.algorithm.matchers;
 
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.UNSET;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 
 /**
@@ -40,7 +43,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 public class DefaultBondMatcher implements BondMatcher {
 
     static final long serialVersionUID = -7861469841127328812L;
-    private static final Logger LOG = Logger.getLogger(DefaultBondMatcher.class.getName());
+    private static final Logger LOG = getLogger(DefaultBondMatcher.class.getName());
     private final IBond queryBond;
     private final boolean shouldMatchBonds;
     private final boolean matchAtomTypes;
@@ -91,11 +94,11 @@ public class DefaultBondMatcher implements BondMatcher {
             return true;
         } else if ((queryBond != null && targetBond != null)
                 && !isBondMatchFlag() && isShouldMatchRings()) {
-            if (queryBond.getFlag(CDKConstants.ISAROMATIC)
-                    && targetBond.getFlag(CDKConstants.ISAROMATIC)) {
+            if (queryBond.getFlag(ISAROMATIC)
+                    && targetBond.getFlag(ISAROMATIC)) {
                 return true;
-            } else if (!queryBond.getFlag(CDKConstants.ISAROMATIC)
-                    && !targetBond.getFlag(CDKConstants.ISAROMATIC)) {
+            } else if (!queryBond.getFlag(ISAROMATIC)
+                    && !targetBond.getFlag(ISAROMATIC)) {
                 return true;
             }
         } else if ((queryBond != null && targetBond != null)
@@ -113,20 +116,20 @@ public class DefaultBondMatcher implements BondMatcher {
      */
     private boolean isBondTypeMatch(IBond targetBond) {
 
-        if ((queryBond.getFlag(CDKConstants.ISAROMATIC) == targetBond.getFlag(CDKConstants.ISAROMATIC))
+        if ((queryBond.getFlag(ISAROMATIC) == targetBond.getFlag(ISAROMATIC))
                 && queryBond.getOrder().equals(targetBond.getOrder())) {
             return true;
         }
 
-        if (queryBond.getFlag(CDKConstants.ISAROMATIC) && targetBond.getFlag(CDKConstants.ISAROMATIC)) {
+        if (queryBond.getFlag(ISAROMATIC) && targetBond.getFlag(ISAROMATIC)) {
             return true;
         }
 
         return !matchAtomTypes
-                && queryBond.getFlag(CDKConstants.ISINRING)
-                && targetBond.getFlag(CDKConstants.ISINRING)
-                && (queryBond.getOrder() == IBond.Order.UNSET
-                || targetBond.getOrder() == IBond.Order.UNSET);
+                && queryBond.getFlag(ISINRING)
+                && targetBond.getFlag(ISINRING)
+                && (queryBond.getOrder() == UNSET
+                || targetBond.getOrder() == UNSET);
     }
 
     /**

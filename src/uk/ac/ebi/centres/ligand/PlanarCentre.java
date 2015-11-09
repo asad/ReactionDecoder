@@ -17,31 +17,38 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import com.google.common.collect.Sets;
+import static com.google.common.collect.Sets.newHashSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IElement;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.PSEUDO_ASYMMETRIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
 import uk.ac.ebi.centres.Priority;
 import uk.ac.ebi.centres.PriorityRule;
 import uk.ac.ebi.centres.SignCalculator;
-import uk.ac.ebi.centres.descriptor.General;
-import uk.ac.ebi.centres.descriptor.Planar;
+import static uk.ac.ebi.centres.descriptor.General.NONE;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
+import static uk.ac.ebi.centres.descriptor.General.UNSPECIFIED;
+import static uk.ac.ebi.centres.descriptor.Planar.E;
+import static uk.ac.ebi.centres.descriptor.Planar.Z;
+import static uk.ac.ebi.centres.descriptor.Planar.e;
+import static uk.ac.ebi.centres.descriptor.Planar.z;
 
 /**
  * @author John May
  */
 public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
-    private static final Logger LOG = Logger.getLogger(PlanarCentre.class.getName());
+    private static final Logger LOG = getLogger(PlanarCentre.class.getName());
 
     private final AbstractLigand<A> first;
     private final AbstractLigand<A> second;
@@ -56,10 +63,10 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         Ligand<A> self = this;
 
         // create two ligand delegates
-        this.first = new NonterminalLigand<A>(descriptor, first, second, 0);
-        this.second = new NonterminalLigand<A>(descriptor, second, first, 0);
+        this.first = new NonterminalLigand<>(descriptor, first, second, 0);
+        this.second = new NonterminalLigand<>(descriptor, second, first, 0);
 
-        atoms = Sets.newHashSet(first, second);
+        atoms = newHashSet(first, second);
 
     }
 
@@ -72,7 +79,7 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
 
     @Override
     public List<Ligand<A>> getLigands() {
-        List<Ligand<A>> ligands = new ArrayList<Ligand<A>>(16);
+        List<Ligand<A>> ligands = new ArrayList<>(16);
         ligands.addAll(first.getLigands());
         ligands.addAll(second.getLigands());
         return ligands;
@@ -122,7 +129,7 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
     @Override
     public Descriptor perceive(List<Ligand<A>> proximal, PriorityRule<A> rule, SignCalculator<A> calculator) {
         // can't do this type of perception for planar centres
-        return General.UNKNOWN;
+        return UNKNOWN;
     }
 
     @Override
@@ -132,7 +139,7 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         List<Ligand<A>> secondLigands = second.getLigands();
 
         if (firstLigands.isEmpty() || secondLigands.isEmpty()) {
-            return General.NONE;
+            return NONE;
         }
 
         // check for pseudo
@@ -141,7 +148,7 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
 
         if (!firstPriority.isUnique() || !secondPriority.isUnique()) {
             // we don't know whether it is none yet...
-            return General.UNKNOWN;
+            return UNKNOWN;
         }
 
         int firstSign = calculator.getSign(firstLigands.iterator().next().getAtom(),
@@ -152,15 +159,15 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
                 first.getAtom());
 
         if (firstSign == 0 || secondSign == 0) {
-            return General.UNSPECIFIED;
+            return UNSPECIFIED;
         }
 
-        boolean pseudo = firstPriority.getType().equals(Descriptor.Type.PSEUDO_ASYMMETRIC)
-                && secondPriority.getType().equals(Descriptor.Type.PSEUDO_ASYMMETRIC);
+        boolean pseudo = firstPriority.getType().equals(PSEUDO_ASYMMETRIC)
+                && secondPriority.getType().equals(PSEUDO_ASYMMETRIC);
 
         // also check for psuedo (from prioritise)
-        return firstSign == secondSign ? pseudo ? Planar.e : Planar.E
-                : pseudo ? Planar.z : Planar.Z;
+        return firstSign == secondSign ? pseudo ? e : E
+                : pseudo ? z : Z;
 
     }
 

@@ -26,15 +26,20 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
+import static javax.xml.transform.OutputKeys.ENCODING;
+import static javax.xml.transform.OutputKeys.INDENT;
+import static javax.xml.transform.OutputKeys.METHOD;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -56,7 +61,7 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 public class ReactionDecoder extends Annotator {
 
     private final static boolean DEBUG = false;
-    private static final Logger LOG = Logger.getLogger(ReactionDecoder.class.getName());
+    private static final Logger LOG = getLogger(ReactionDecoder.class.getName());
 
     /**
      * @param args the command line areactionWithLayoutgumentheaderString
@@ -83,7 +88,7 @@ public class ReactionDecoder extends Annotator {
             if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")
                     && aamLine.hasOption('Q') && aamLine.hasOption('q') && aamLine.hasOption('f')) {
 
-                System.out.println("-- AAM --");
+                out.println("-- AAM --");
                 ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AAMTask(aamLine, createAAMOptions);
 
@@ -92,7 +97,7 @@ public class ReactionDecoder extends Annotator {
                     && compareLine.hasOption('T') && compareLine.hasOption('t')
                     && compareLine.hasOption('f')) {
 
-                System.out.println("-- COMPARE --");
+                out.println("-- COMPARE --");
                 ReactionDecoder rxn = new ReactionDecoder();
                 rxn.CompareTask(compareLine, createCompareOptions);
 
@@ -100,32 +105,32 @@ public class ReactionDecoder extends Annotator {
                     && annotateLine.hasOption('Q') && annotateLine.hasOption('q')
                     && annotateLine.hasOption('f')) {
 
-                System.out.println("-- ANNOTATE --");
+                out.println("-- ANNOTATE --");
                 ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AnnotateTask(annotateLine, createAnnotateOptions);
 
             } else if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")) {
-                System.out.println("-- AAM USAGE --");
-                printHelp(System.out, createAAMOptions);
+                out.println("-- AAM USAGE --");
+                printHelp(out, createAAMOptions);
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("COMPARE")) {
-                System.out.println("-- REACTION COMPARE USAGE --");
-                printHelp(System.out, createCompareOptions);
+                out.println("-- REACTION COMPARE USAGE --");
+                printHelp(out, createCompareOptions);
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("ANNOTATE")) {
-                System.out.println("-- REACTION ANNOTATION USAGE --");
-                printHelp(System.out, createAnnotateOptions);
+                out.println("-- REACTION ANNOTATION USAGE --");
+                printHelp(out, createAnnotateOptions);
             } else {
-                System.out.println("-- REACTION DECODER HELP --");
+                out.println("-- REACTION DECODER HELP --");
                 Map<String, Options> options = new TreeMap<>();
                 options.put("Atom-Atom Mapping (AAM-Tool)", createAAMOptions);
                 options.put("Reaction Annotation (RA-Tool)", createAnnotateOptions);
                 options.put("Reaction Comparison (RC-Tool)", createCompareOptions);
                 printHelp(options, 80, "EC-BLAST", "End of Help",
-                        5, 3, true, System.out);
+                        5, 3, true, out);
             }
         } catch (ParseException ex) {
-            Logger.getLogger(ReactionDecoder.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(ReactionDecoder.class.getName()).log(SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(ReactionDecoder.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(ReactionDecoder.class.getName()).log(SEVERE, null, ex);
         }
 
     }
@@ -140,9 +145,9 @@ public class ReactionDecoder extends Annotator {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
         Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(METHOD, "xml");
+        transformer.setOutputProperty(ENCODING, "UTF-8");
+        transformer.setOutputProperty(INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
         doc.setXmlStandalone(true);
@@ -155,11 +160,11 @@ public class ReactionDecoder extends Annotator {
         StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
 
-        System.out.println("Output is presented in xml format: " + file.getAbsolutePath());
+        out.println("Output is presented in xml format: " + file.getAbsolutePath());
 
         if (DEBUG) {
             // Show output on console during development
-            result = new StreamResult(System.out);
+            result = new StreamResult(out);
             transformer.transform(source, result);
         }
     }
@@ -170,11 +175,11 @@ public class ReactionDecoder extends Annotator {
             writer.write(doc.toString());
         }
 
-        System.out.println("Output is presented in text format: " + file.getAbsolutePath());
+        out.println("Output is presented in text format: " + file.getAbsolutePath());
 
         if (DEBUG) {
             // Show output on console during development
-            System.out.println(doc.toString());
+            out.println(doc.toString());
         }
     }
 
@@ -211,7 +216,7 @@ public class ReactionDecoder extends Annotator {
                         reaction = parseReactions.iterator().next();
                     }
                 } else {
-                    System.err.println("Not a valid reaction SMILES");
+                    err.println("Not a valid reaction SMILES");
                 }
                 break;
             case "RXN":
@@ -221,9 +226,9 @@ public class ReactionDecoder extends Annotator {
                 }
                 break;
             default:
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createAAMOptions);
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createAAMOptions);
                 break;
         }
         if (reaction == null) {
@@ -251,7 +256,7 @@ public class ReactionDecoder extends Annotator {
             doc.appendChild(rootElement);
             annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
             FormatXMLToFile(doc, jobFileName);
-            System.out.println("XML File saved!");
+            out.println("XML File saved!");
 
         } else if (writeFiles && aamLine.getOptionValue("f").equalsIgnoreCase("TEXT")) {
             StringBuilder sb = new StringBuilder();
@@ -276,12 +281,12 @@ public class ReactionDecoder extends Annotator {
              */
             FormatTextToFile(sb, jobFileName);
             FormatXMLToFile(doc, jobFileName);
-            System.out.println("XML File saved!");
+            out.println("XML File saved!");
 
         } else {
-            displayBlankLines(2, System.out);
-            System.out.println("-- USAGE --");
-            printHelp(System.out, createAAMOptions);
+            displayBlankLines(2, out);
+            out.println("-- USAGE --");
+            printHelp(out, createAAMOptions);
         }
     }
 
@@ -323,7 +328,7 @@ public class ReactionDecoder extends Annotator {
                         queryReaction = parseReactions.iterator().next();
                     }
                 } else {
-                    System.err.println("Not a valid reaction SMILES");
+                    err.println("Not a valid reaction SMILES");
                 }
                 break;
 
@@ -334,9 +339,9 @@ public class ReactionDecoder extends Annotator {
                 }
                 break;
             default:
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createCompareOptions);
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createCompareOptions);
                 break;
         }
         IReaction targetReaction = null;
@@ -349,7 +354,7 @@ public class ReactionDecoder extends Annotator {
                         targetReaction = parseReactions.iterator().next();
                     }
                 } else {
-                    System.err.println("Not a valid reaction SMILES");
+                    err.println("Not a valid reaction SMILES");
                 }
                 break;
 
@@ -360,9 +365,9 @@ public class ReactionDecoder extends Annotator {
                 }
                 break;
             default:
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createCompareOptions);
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createCompareOptions);
                 break;
         }
 
@@ -411,7 +416,7 @@ public class ReactionDecoder extends Annotator {
                 doc.appendChild(rootElement);
                 compareRXNXML(annotateReactionQ, jobFileNameQuery, annotateReactionT, jobFileNameTarget, doc, rootElement);
                 FormatXMLToFile(doc, jobFileName);
-                System.out.println("XML File saved!");
+                out.println("XML File saved!");
             } else if (writeFiles && compareLine.getOptionValue("f").equalsIgnoreCase("TEXT")) {
                 StringBuilder sb = new StringBuilder();
                 compareRXNText(annotateReactionQ, jobFileNameQuery, annotateReactionT, jobFileNameTarget, sb);
@@ -434,11 +439,11 @@ public class ReactionDecoder extends Annotator {
                  */
                 FormatTextToFile(sb, jobFileName);
                 FormatXMLToFile(doc, jobFileName);
-                System.out.println("XML File saved!");
+                out.println("XML File saved!");
             } else {
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createCompareOptions);
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createCompareOptions);
             }
         }
     }
@@ -482,7 +487,7 @@ public class ReactionDecoder extends Annotator {
                         reaction = parseReactions.iterator().next();
                     }
                 } else {
-                    System.err.println("Not a valid reaction SMILES");
+                    err.println("Not a valid reaction SMILES");
                 }
                 break;
             case "RXN":
@@ -492,9 +497,9 @@ public class ReactionDecoder extends Annotator {
                 }
                 break;
             default:
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createAnnotateOptions);
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createAnnotateOptions);
                 break;
         }
         if (reaction == null) {
@@ -522,7 +527,7 @@ public class ReactionDecoder extends Annotator {
             doc.appendChild(rootElement);
             annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
             FormatXMLToFile(doc, jobFileName);
-            System.out.println("XML File saved!");
+            out.println("XML File saved!");
 
         } else if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("TEXT")) {
             StringBuilder sb = new StringBuilder();
@@ -547,12 +552,12 @@ public class ReactionDecoder extends Annotator {
              */
             FormatTextToFile(sb, jobFileName);
             FormatXMLToFile(doc, jobFileName);
-            System.out.println("XML File saved!");
+            out.println("XML File saved!");
 
         } else {
-            displayBlankLines(2, System.out);
-            System.out.println("-- USAGE --");
-            printHelp(System.out, createAnnotateOptions);
+            displayBlankLines(2, out);
+            out.println("-- USAGE --");
+            printHelp(out, createAnnotateOptions);
         }
     }
 

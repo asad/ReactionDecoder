@@ -19,9 +19,13 @@
 package uk.ac.ebi.reactionblast.mapping.graph;
 
 import java.io.IOException;
+import static java.lang.Runtime.getRuntime;
+import static java.lang.System.gc;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedCollection;
+import static java.util.Collections.unmodifiableCollection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -30,17 +34,23 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
+import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.or;
+import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -55,8 +65,8 @@ public class GraphMatcher extends Debugger {
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(GraphMatcher.class);
-    private static final Logger LOG = Logger.getLogger(GraphMatcher.class.getName());
+            = createLoggingTool(GraphMatcher.class);
+    private static final Logger LOG = getLogger(GraphMatcher.class.getName());
 
     /**
      *
@@ -66,7 +76,7 @@ public class GraphMatcher extends Debugger {
      */
     public synchronized static Collection<MCSSolution> matcher(Holder mh) throws InterruptedException {
         ExecutorService executor = null;
-        Collection<MCSSolution> mcsSolutions = Collections.synchronizedCollection(new ArrayList<MCSSolution>());
+        Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<MCSSolution>());
 
 //        System.out.println(threadsAvailable + " threads to be used for graph matching for " + mh.getTheory());
         Set<Combination> jobReplicatorList = new TreeSet<>();
@@ -95,7 +105,7 @@ public class GraphMatcher extends Debugger {
             }
 
             if (jobReplicatorList.isEmpty()) {
-                return Collections.unmodifiableCollection(mcsSolutions);
+                return unmodifiableCollection(mcsSolutions);
             }
             Map<Combination, Set<Combination>> jobMap = new TreeMap<>();
 
@@ -130,7 +140,7 @@ public class GraphMatcher extends Debugger {
             /*
              Assign the threads
              */
-            int threadsAvailable = Runtime.getRuntime().availableProcessors() - 1;
+            int threadsAvailable = getRuntime().availableProcessors() - 1;
             if (threadsAvailable == 0) {
                 threadsAvailable = 1;
             }
@@ -139,13 +149,13 @@ public class GraphMatcher extends Debugger {
                 threadsAvailable = jobMap.size();
             }
             if (DEBUG) {
-                System.out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
+                out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
             }
 
             if (DEBUG) {
-                executor = Executors.newSingleThreadExecutor();
+                executor = newSingleThreadExecutor();
             } else {
-                executor = Executors.newCachedThreadPool();
+                executor = newCachedThreadPool();
             }
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
 
@@ -158,7 +168,7 @@ public class GraphMatcher extends Debugger {
                 /*
                  Ring matcher is set trie if both sides have rings else it set to false (IMP for MCS)
                  */
-                CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
+                CycleFinder cycles = or(all(), relevant());
                 boolean ring = false;
                 boolean ringSizeEqual = false;
 
@@ -176,9 +186,9 @@ public class GraphMatcher extends Debugger {
                 }
 
                 if (DEBUG) {
-                    System.out.println(educt.getID() + " ED: " + new SmilesGenerator().create(educt));
-                    System.out.println(product.getID() + " PD: " + new SmilesGenerator().create(product));
-                    System.out.println("----------------------------------");
+                    out.println(educt.getID() + " ED: " + new SmilesGenerator().create(educt));
+                    out.println(product.getID() + " PD: " + new SmilesGenerator().create(product));
+                    out.println("----------------------------------");
                 }
 
                 MCSThread mcsThread;
@@ -230,7 +240,7 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
-            Collection<MCSSolution> threadedUniqueMCSSolutions = Collections.synchronizedCollection(new ArrayList<MCSSolution>());
+            Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<MCSSolution>());
             for (int count = 0; count < taskCounter; count++) {
                 MCSSolution isomorphism = callablesQueue.take().get();
                 threadedUniqueMCSSolutions.add(isomorphism);
@@ -252,7 +262,7 @@ public class GraphMatcher extends Debugger {
             }
 
             if (DEBUG) {
-                System.out.println("Gathering MCS solution from the Thread");
+                out.println("Gathering MCS solution from the Thread");
             }
             for (MCSSolution mcs : threadedUniqueMCSSolutions) {
                 if (mcs == null) {
@@ -261,7 +271,7 @@ public class GraphMatcher extends Debugger {
                 int queryPosition = mcs.getQueryPosition();
                 int targetPosition = mcs.getTargetPosition();
                 if (DEBUG) {
-                    System.out.println("MCS " + "i " + queryPosition + " J " + targetPosition + " size " + mcs.getAtomAtomMapping().getCount());
+                    out.println("MCS " + "i " + queryPosition + " J " + targetPosition + " size " + mcs.getAtomAtomMapping().getCount());
                 }
 
                 Combination removeKey = null;
@@ -277,16 +287,16 @@ public class GraphMatcher extends Debugger {
                 }
             }
             jobReplicatorList.clear();
-            System.gc();
+            gc();
 
         } catch (IOException | CDKException | ExecutionException | InterruptedException | CloneNotSupportedException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         } finally {
             if (executor != null) {
                 executor.shutdown();
             }
         }
-        return Collections.unmodifiableCollection(mcsSolutions);
+        return unmodifiableCollection(mcsSolutions);
     }
 
     /**
@@ -307,13 +317,13 @@ public class GraphMatcher extends Debugger {
 
             if (DEBUG) {
                 if (diff1 != 0 && diff2 != 0) {
-                    System.out.println("\n\n " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
-                    System.out.println(solution.getColIndex() + ", Diff in ac2 " + diff2);
-                    System.out.println("\nac1 " + q.getAtomCount());
-                    System.out.println("\nac2 " + t.getAtomCount());
+                    out.println("\n\n " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
+                    out.println(solution.getColIndex() + ", Diff in ac2 " + diff2);
+                    out.println("\nac1 " + q.getAtomCount());
+                    out.println("\nac2 " + t.getAtomCount());
 
-                    System.out.println("\nmac1 " + mcs.getQueryContainer().getAtomCount());
-                    System.out.println("\nmac2 " + mcs.getTargetContainer().getAtomCount());
+                    out.println("\nmac1 " + mcs.getQueryContainer().getAtomCount());
+                    out.println("\nmac2 " + mcs.getTargetContainer().getAtomCount());
                 }
             }
 
@@ -324,17 +334,17 @@ public class GraphMatcher extends Debugger {
                 IAtom b = atomAtomMapping.getMappingsByAtoms().get(a);
                 IAtom atomByID2 = getAtomByID(t, b);
                 if (DEBUG) {
-                    System.out.println("atomByID1 " + atomByID1.getID() + " atomByID2 " + atomByID2.getID());
+                    out.println("atomByID1 " + atomByID1.getID() + " atomByID2 " + atomByID2.getID());
                 }
                 if (atomByID1 != null && atomByID2 != null) {
                     atomAtomMappingNew.put(atomByID1, atomByID2);
                 } else {
-                    logger.error(Level.WARNING, "UnExpected NULL ATOM FOUND");
+                    logger.error(WARNING, "UnExpected NULL ATOM FOUND");
                 }
             }
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
         } catch (IOException | CDKException ex) {
-            Logger.getLogger(GraphMatcher.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(GraphMatcher.class.getName()).log(SEVERE, null, ex);
         }
         return null;
     }

@@ -23,18 +23,21 @@
 package org.openscience.smsd.algorithm.mcsplus;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.filters.PostFilter;
+import static org.openscience.smsd.filters.PostFilter.filter;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -47,7 +50,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
 public class MCSPlusHandler implements IResults {
-    private static final Logger LOG = Logger.getLogger(MCSPlusHandler.class.getName());
+    private static final Logger LOG = getLogger(MCSPlusHandler.class.getName());
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<Map<Integer, Integer>> allMCS;
@@ -75,8 +78,8 @@ public class MCSPlusHandler implements IResults {
         this.shouldMatchRings = shouldMatchRings;
         this.shouldMatchBonds = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        allAtomMCS = synchronizedList(new ArrayList<AtomAtomMapping>());
+        allMCS = synchronizedList(new ArrayList<Map<Integer, Integer>>());
         this.timeout = searchMCS();
     }
 
@@ -92,8 +95,8 @@ public class MCSPlusHandler implements IResults {
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
         this.matchAtomType = true;
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        allAtomMCS = synchronizedList(new ArrayList<AtomAtomMapping>());
+        allMCS = synchronizedList(new ArrayList<Map<Integer, Integer>>());
         this.timeout = searchMCS();
     }
 
@@ -109,20 +112,20 @@ public class MCSPlusHandler implements IResults {
         if (source instanceof IQueryAtomContainer) {
             mcsplus = new MCSPlus((IQueryAtomContainer) source, target);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mappings = synchronizedList(overlaps);
 
         } else if (!(source instanceof IQueryAtomContainer) && source.getAtomCount() < target.getAtomCount()) {
             mcsplus = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mappings = synchronizedList(overlaps);
 
         } else {
             flagExchange = true;
             mcsplus = new MCSPlus(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mappings = synchronizedList(overlaps);
         }
-        List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
+        List<Map<Integer, Integer>> solutions = filter(mappings);
         setAllMapping(solutions);
         setAllAtomMapping();
         return mcsplus.isTimeout();
@@ -134,7 +137,7 @@ public class MCSPlusHandler implements IResults {
             int bestSolSize = 0;
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCS solution: " + solution);
-                Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+                Map<Integer, Integer> validSolution = synchronizedSortedMap(new TreeMap<Integer, Integer>());
                 if (!flagExchange) {
                     for (Map.Entry<Integer, Integer> map : solution.entrySet()) {
                         validSolution.put(map.getKey(), map.getValue());
@@ -193,7 +196,7 @@ public class MCSPlusHandler implements IResults {
     @Override
     @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return Collections.unmodifiableList(allAtomMCS);
+        return unmodifiableList(allAtomMCS);
     }
 
     /**

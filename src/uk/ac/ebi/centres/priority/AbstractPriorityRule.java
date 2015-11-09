@@ -17,10 +17,12 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import static java.lang.Boolean.FALSE;
 import java.util.Iterator;
 import java.util.List;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.ASYMMETRIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.LigandComparison;
 import uk.ac.ebi.centres.LigandSorter;
@@ -37,7 +39,7 @@ public abstract class AbstractPriorityRule<A>
         implements PriorityRule<A> {
 
     private LigandSorter<A> sorter;
-    private boolean halted = Boolean.FALSE;
+    private boolean halted = FALSE;
     /**
      * The type is store here and appended with the {@link
      * #compareLigands(uk.ac.ebi.centres.Ligand, uk.ac.ebi.centres.Ligand)}
@@ -49,7 +51,7 @@ public abstract class AbstractPriorityRule<A>
      * Default constructor creates an {@link Descriptor.Type#ASYMMETRIC} comparator.
      */
     public AbstractPriorityRule(Type ordering) {
-        this(Descriptor.Type.ASYMMETRIC, ordering);
+        this(ASYMMETRIC, ordering);
     }
 
     /**
@@ -97,7 +99,7 @@ public abstract class AbstractPriorityRule<A>
      */
     public LigandSorter<A> getSorter() {
         if (sorter == null) {
-            sorter = new InsertionSorter<A>(this);
+            sorter = new InsertionSorter<>(this);
         }
         return sorter;
     }

@@ -18,13 +18,14 @@
 package uk.ac.ebi.centres.cdk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.centres.DefaultPerceptor;
 import uk.ac.ebi.centres.priority.AtomicNumberRule;
 import uk.ac.ebi.centres.priority.CombinedRule;
@@ -45,9 +46,9 @@ import uk.ac.ebi.centres.priority.descriptor.ZERule;
 public class CDKPerceptor extends DefaultPerceptor<IAtom> {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(CDKPerceptor.class);
+            = createLoggingTool(CDKPerceptor.class);
 
-    private static final Logger LOG = Logger.getLogger(CDKPerceptor.class.getName());
+    private static final Logger LOG = getLogger(CDKPerceptor.class.getName());
 
     public CDKPerceptor() {
         super(new CombinedRule<>(
@@ -92,7 +93,7 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                                                 return atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber();
                                             }
                                         })),
-                        new MassNumberRule<IAtom>(new MassNumberAccessor<IAtom>() {
+                        new MassNumberRule<>(new MassNumberAccessor<IAtom>() {
 
                             @Override
                             public int getMassNumber(IAtom atom) {
@@ -100,8 +101,8 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                             }
                         }),
                         new ZERule<IAtom>(),
-                        new PairRule<IAtom>(new AuxiliaryDescriptor<IAtom>()),
-                        new RSRule<IAtom>(new AuxiliaryDescriptor<IAtom>())),
+                        new PairRule<>(new AuxiliaryDescriptor<IAtom>()),
+                        new RSRule<>(new AuxiliaryDescriptor<IAtom>())),
                 new CDK2DSignCalculator());
     }
 
@@ -110,7 +111,7 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
             /*
             Check for 2D co-ordinates for EC-BLAST, must else it will fail!
             */
-            if (!GeometryTools.has2DCoordinates(container)) {
+            if (!has2DCoordinates(container)) {
                 try {
                     /*
                     Clone it else it will loose mol ID

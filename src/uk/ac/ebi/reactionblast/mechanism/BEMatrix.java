@@ -20,18 +20,25 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
-import java.util.Collections;
+import static java.lang.System.getProperty;
+import static java.util.Collections.unmodifiableList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.E_OR_Z;
+import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
 
 /**
@@ -43,7 +50,7 @@ import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
  */
 public class BEMatrix extends EBIMatrix implements Serializable {
     private static final long serialVersionUID = -1420740601548197863L;
-    private static final Logger LOG = Logger.getLogger(BEMatrix.class.getName());
+    private static final Logger LOG = getLogger(BEMatrix.class.getName());
 
     private IAtomContainerSet myMoleculeSet = null;
     private List<IBond> bonds = null;
@@ -253,7 +260,7 @@ public class BEMatrix extends EBIMatrix implements Serializable {
     public void setAromaticBond() throws CDKException, CDKException {
         for (int i = 0; i < myMoleculeSet.getAtomContainerCount(); i++) {
             IAtomContainer m = myMoleculeSet.getAtomContainer(i);
-            ExtAtomContainerManipulator.aromatizeMolecule(m);
+            aromatizeMolecule(m);
         }
     }
 
@@ -263,7 +270,7 @@ public class BEMatrix extends EBIMatrix implements Serializable {
      * @return An ArrayList containing the atoms of the BEMatrix
      */
     public List<IAtom> getAtoms() {
-        return Collections.unmodifiableList(atomArray);
+        return unmodifiableList(atomArray);
     }
 
     /**
@@ -386,23 +393,23 @@ public class BEMatrix extends EBIMatrix implements Serializable {
      * @return
      */
     public IBond.Stereo convertStereo(int stereoValue) {
-        IBond.Stereo stereo = IBond.Stereo.NONE;
+        IBond.Stereo stereo = NONE;
 
         if (stereoValue == 1) {
             // up bond
-            stereo = IBond.Stereo.UP;
+            stereo = UP;
         } else if (stereoValue == 6) {
             // down bond
-            stereo = IBond.Stereo.DOWN;
+            stereo = DOWN;
         } else if (stereoValue == 0) {
             // bond has no stereochemistry
-            stereo = IBond.Stereo.NONE;
+            stereo = NONE;
         } else if (stereoValue == 4) {
             //up or down bond
-            stereo = IBond.Stereo.UP_OR_DOWN;
+            stereo = UP_OR_DOWN;
         } else if (stereoValue == 3) {
             //e or z undefined
-            stereo = IBond.Stereo.E_OR_Z;
+            stereo = E_OR_Z;
         }
 
         return stereo;
@@ -412,13 +419,13 @@ public class BEMatrix extends EBIMatrix implements Serializable {
      * @return the bonds
      */
     public List<IBond> getBonds() {
-        return Collections.unmodifiableList(bonds);
+        return unmodifiableList(bonds);
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         result.append(atomArray.size()).append(NEW_LINE);
         for (IAtom atom : atomArray) {
             result.append(atom.getSymbol()).append(atom.getID()).append("\t");

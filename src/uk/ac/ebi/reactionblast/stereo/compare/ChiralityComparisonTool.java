@@ -18,12 +18,14 @@
  */
 package uk.ac.ebi.reactionblast.stereo.compare;
 
+import static java.lang.System.out;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.interfaces.Algorithm;
+import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
 import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
@@ -37,7 +39,7 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
  */
 public class ChiralityComparisonTool {
 
-    private static final Logger LOG = Logger.getLogger(ChiralityComparisonTool.class.getName());
+    private static final Logger LOG = getLogger(ChiralityComparisonTool.class.getName());
 
     /**
      *
@@ -60,7 +62,7 @@ public class ChiralityComparisonTool {
             chiralityMapB = new Chirality2DTool().getTetrahedralChiralities(atomContainerB);
         }
 
-        Isomorphism isomorphism = new Isomorphism(atomContainerA, atomContainerB, Algorithm.DEFAULT, true, false, false);
+        Isomorphism isomorphism = new Isomorphism(atomContainerA, atomContainerB, DEFAULT, true, false, false);
         Map<IAtom, IAtom> atomMap = isomorphism.getFirstAtomMapping().getMappingsByAtoms();
         for (IAtom atomA : atomMap.keySet()) {
             IAtom atomB = atomMap.get(atomA);
@@ -69,7 +71,7 @@ public class ChiralityComparisonTool {
             if (isStereoA && isStereoB) {
                 IStereoAndConformation stereoA = chiralityMapA.get(atomA);
                 IStereoAndConformation stereoB = chiralityMapB.get(atomB);
-                System.out.println(stereoA + " " + stereoB);
+                out.println(stereoA + " " + stereoB);
             }
         }
     }

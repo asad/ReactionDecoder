@@ -19,6 +19,7 @@
 package uk.ac.ebi.centres;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Simple holder for a ligand comparison. The comparison holds the value
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  * @author John May
  */
 public class LigandComparison implements Comparison {
-    private static final Logger LOG = Logger.getLogger(LigandComparison.class.getName());
+    private static final Logger LOG = getLogger(LigandComparison.class.getName());
 
     private final Integer         order;
     private final Descriptor.Type type;

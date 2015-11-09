@@ -18,19 +18,22 @@
  */
 package uk.ac.ebi.reactionblast.mapping;
 
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collection;
+import static java.util.Collections.sort;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org._3pq.jgrapht.graph.SimpleGraph;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.graph.BFSShortestPath;
-import org.openscience.cdk.graph.MoleculeGraphs;
-import org.openscience.cdk.graph.PathTools;
-import org.openscience.cdk.graph.matrix.AdjacencyMatrix;
+import static org.openscience.cdk.CDKConstants.VISITED;
+import static org.openscience.cdk.graph.BFSShortestPath.findPathBetween;
+import static org.openscience.cdk.graph.MoleculeGraphs.getMoleculeGraph;
+import static org.openscience.cdk.graph.PathTools.computeFloydAPSP;
+import static org.openscience.cdk.graph.matrix.AdjacencyMatrix.getMatrix;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
@@ -41,20 +44,20 @@ import uk.ac.ebi.reactionblast.tools.labelling.SignatureMoleculeLabeller;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CanonicalNumberingGenerator {
-    private static final Logger LOG = Logger.getLogger(CanonicalNumberingGenerator.class.getName());
+    private static final Logger LOG = getLogger(CanonicalNumberingGenerator.class.getName());
 
     private static synchronized void resetFlags(IAtomContainer atomContainer) {
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {
-            atomContainer.getAtom(f).setFlag(CDKConstants.VISITED, false);
+            atomContainer.getAtom(f).setFlag(VISITED, false);
         }
         for (int f = 0; f < atomContainer.getBondCount(); f++) {
-            atomContainer.getBond(f).setFlag(CDKConstants.VISITED, false);
+            atomContainer.getBond(f).setFlag(VISITED, false);
         }
     }
 
     private static synchronized <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-        List<T> list = new ArrayList<T>(c);
-        java.util.Collections.sort(list);
+        List<T> list = new ArrayList<>(c);
+        sort(list);
         return list;
     }
 
@@ -72,9 +75,9 @@ public class CanonicalNumberingGenerator {
      */
     public CanonicalNumberingGenerator(IAtomContainer atomContainer) {
         this.atomContainer = new AtomContainer(atomContainer);
-        this.costMatrix = AdjacencyMatrix.getMatrix(this.atomContainer);
-        this.distanceMatrix = PathTools.computeFloydAPSP(costMatrix);
-        this.simpleGraph = MoleculeGraphs.getMoleculeGraph(atomContainer);
+        this.costMatrix = getMatrix(this.atomContainer);
+        this.distanceMatrix = computeFloydAPSP(costMatrix);
+        this.simpleGraph = getMoleculeGraph(atomContainer);
 
         resetFlags(this.atomContainer);
 
@@ -136,7 +139,7 @@ public class CanonicalNumberingGenerator {
         int[] val = new int[canonicalPermutationList.size()];
         int index = 0;
         for (Integer i : canonicalPermutationList) {
-            val[index++] = i.intValue();
+            val[index++] = i;
         }
         return val;
     }
@@ -163,7 +166,7 @@ public class CanonicalNumberingGenerator {
         @Override
         public synchronized String toString() {
             StringBuilder result = new StringBuilder();
-            String NEW_LINE = System.getProperty("line.separator");
+            String NEW_LINE = getProperty("line.separator");
             result.append("Atom: ").append(atom.getSymbol()).append(", Rank: ").append(this.rank);
             result.append(NEW_LINE);
             return result.toString();
@@ -181,7 +184,7 @@ public class CanonicalNumberingGenerator {
         @Override
         public synchronized int compare(Label t1, Label t2) {
             List<org._3pq.jgrapht.Edge> sp
-                    = BFSShortestPath.findPathBetween(simpleGraph, t1.atom, t2.atom);
+                    = findPathBetween(simpleGraph, t1.atom, t2.atom);
             if (t1.atom == t2.atom) {
                 return 0;
             } else if (sp.isEmpty()) {

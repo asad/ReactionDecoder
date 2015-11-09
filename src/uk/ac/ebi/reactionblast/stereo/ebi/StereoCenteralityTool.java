@@ -31,7 +31,7 @@ import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.descriptor.Trigonal;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  * Tool for comparing chiralities.
@@ -64,7 +64,7 @@ public abstract class StereoCenteralityTool extends Utility {
         Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
         CDKPerceptor perceptor = new CDKPerceptor();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-            IAtomContainer containerWithoutH = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(ac);
+            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
 //            System.err.println("R 2D CDK based stereo perception for " + ac.getID());
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
 //            System.err.println("R 2D CDK based stereo " + chirality2D.size());
@@ -79,7 +79,7 @@ public abstract class StereoCenteralityTool extends Utility {
             }
         }
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            IAtomContainer containerWithoutH = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(ac);
+            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
 //            System.err.println("P 2D CDK based stereo perception for " + ac.getID());
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
 //            System.err.println("P 2D CDK based stereo " + chirality2D.size());

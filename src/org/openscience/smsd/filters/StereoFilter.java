@@ -22,19 +22,23 @@
  */
 package org.openscience.smsd.filters;
 
+import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.CDKConstants;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.graph.Cycles;
+import static org.openscience.cdk.graph.Cycles.all;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -51,7 +55,7 @@ import org.openscience.smsd.AtomAtomMapping;
  * 
  */
 public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
-    private static final Logger LOG = Logger.getLogger(StereoFilter.class.getName());
+    private static final Logger LOG = getLogger(StereoFilter.class.getName());
 
     /**
      * Get stereo value as integer
@@ -121,7 +125,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
 
     StereoFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        stereoScore = Collections.synchronizedList(new ArrayList<Double>());
+        stereoScore = synchronizedList(new ArrayList<Double>());
     }
 
     @Override
@@ -140,7 +144,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
 
     @Override
     public synchronized List<Double> getScores() {
-        return Collections.unmodifiableList(stereoScore);
+        return unmodifiableList(stereoScore);
     }
 
     @Override
@@ -192,7 +196,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
                 }
                 stereoScoreMap.put(Key, score);
             } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(StereoFilter.class.getName()).log(SEVERE, null, ex);
             }
         }
         return stereoMatchFlag;
@@ -201,7 +205,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
     private synchronized Map<IBond, IBond> makeBondMapsOfAtomMaps(IAtomContainer ac1, IAtomContainer ac2,
             AtomAtomMapping mappings) {
 
-        Map<IBond, IBond> bondbondMappingMap = new HashMap<IBond, IBond>();
+        Map<IBond, IBond> bondbondMappingMap = new HashMap<>();
 
         for (Map.Entry<IAtom, IAtom> map1 : mappings.getMappingsByAtoms().entrySet()) {
             for (Map.Entry<IAtom, IAtom> map2 : mappings.getMappingsByAtoms().entrySet()) {
@@ -237,8 +241,8 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
                 pHCount = pAtom.getImplicitHydrogenCount();
             }
 
-            int HScore = Math.abs(rHCount - pHCount);
-            double BOScore = Math.abs(rBO - pBO);
+            int HScore = abs(rHCount - pHCount);
+            double BOScore = abs(rBO - pBO);
 
             if (rHCount != pHCount) {
                 score -= HScore;
@@ -308,17 +312,17 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
             int productBondType = convertBondOrder(targetBond);
             int rStereo = convertBondStereo(queryBond);
             int pStereo = convertBondStereo(targetBond);
-            if ((queryBond.getFlag(CDKConstants.ISAROMATIC) == targetBond.getFlag(CDKConstants.ISAROMATIC))
+            if ((queryBond.getFlag(ISAROMATIC) == targetBond.getFlag(ISAROMATIC))
                     && (reactantBondType == productBondType)) {
                 score += 8;
-            } else if (queryBond.getFlag(CDKConstants.ISAROMATIC) && targetBond.getFlag(CDKConstants.ISAROMATIC)) {
+            } else if (queryBond.getFlag(ISAROMATIC) && targetBond.getFlag(ISAROMATIC)) {
                 score += 4;
             }
 
             if (reactantBondType == productBondType) {
                 score += productBondType;
             } else {
-                score -= 4 * Math.abs(reactantBondType - productBondType);
+                score -= 4 * abs(reactantBondType - productBondType);
             }
 
             if (rStereo != 4 || pStereo != 4 || rStereo != 3 || pStereo != 3) {
@@ -338,10 +342,10 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         IAtomContainer listMap = list.get(0).clone();
         IAtomContainer subGraph = list.get(1).clone();
         try {
-            Cycles cycles = Cycles.all(subGraph);
+            Cycles cycles = all(subGraph);
             lScore = getRingMatch(cycles.toRingSet(), listMap);
         } catch (Intractable ex) {
-            Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(StereoFilter.class.getName()).log(SEVERE, null, ex);
         }
         return lScore;
     }
@@ -366,9 +370,9 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         if (molecule instanceof IAtomContainer) {
             subgraphContainer = molecule.getBuilder().newInstance(IAtomContainer.class, molecule);
         } else {
-            return new ArrayList<IAtomContainer>(2);
+            return new ArrayList<>(2);
         }
-        List<IAtom> list = new ArrayList<IAtom>(atomsMCS.size());
+        List<IAtom> list = new ArrayList<>(atomsMCS.size());
         for (IAtom atom : atomsMCS) {
             int post = molecule.getAtomNumber(atom);
             list.add(subgraphContainer.getAtom(post));
@@ -384,7 +388,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         for (IAtom atoms : rlist.atoms()) {
             subgraphContainer.removeAtomAndConnectedElectronContainers(atoms);
         }
-        List<IAtomContainer> l = new ArrayList<IAtomContainer>(2);
+        List<IAtomContainer> l = new ArrayList<>(2);
         l.add(rlist);
         l.add(subgraphContainer);
         return l;

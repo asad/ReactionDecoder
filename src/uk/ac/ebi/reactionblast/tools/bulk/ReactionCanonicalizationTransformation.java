@@ -20,8 +20,10 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
 /**
@@ -31,7 +33,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  *
  */
 public class ReactionCanonicalizationTransformation implements ITransformation<IReaction> {
-    private static final Logger LOG = Logger.getLogger(ReactionCanonicalizationTransformation.class.getName());
+    private static final Logger LOG = getLogger(ReactionCanonicalizationTransformation.class.getName());
 
     private final ICanonicalReactionLabeller canonicalReactionLabeller;
 
@@ -42,7 +44,7 @@ public class ReactionCanonicalizationTransformation implements ITransformation<I
 
     @Override
     public TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override

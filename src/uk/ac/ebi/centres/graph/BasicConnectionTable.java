@@ -22,16 +22,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.ConnectionTable;
 
 /**
  * @author John May
  */
 public class BasicConnectionTable<A> implements ConnectionTable<A> {
-    private static final Logger LOG = Logger.getLogger(BasicConnectionTable.class.getName());
+    private static final Logger LOG = getLogger(BasicConnectionTable.class.getName());
 
-    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
-    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<A, Map<A, Map.Entry<Integer, Integer>>>();
+    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<>();
+    private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<>();
 
     public void addConnection(A first, A second, int order) {
         addConnection(first, second, order, 0);
@@ -49,7 +50,7 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
         if (!connections.containsKey(first)) {
             connections.put(first, new HashMap<A, Map.Entry<Integer, Integer>>());
         }
-        connections.get(first).put(second, new AbstractMap.SimpleEntry<Integer, Integer>(order, sign));
+        connections.get(first).put(second, new AbstractMap.SimpleEntry<>(order, sign));
     }
 
     @Override

@@ -18,13 +18,15 @@
  */
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
+import static java.lang.String.format;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class DefinedMapping {
-    private static final Logger LOG = Logger.getLogger(DefinedMapping.class.getName());
+    private static final Logger LOG = getLogger(DefinedMapping.class.getName());
 
     private final IAtomContainer rAtomContainer;
 
@@ -90,7 +92,7 @@ public class DefinedMapping {
 
     @Override
     public String toString() {
-        return String.format("rI:%s pI:%s i:%s rID:%s pID:%s", getrIndex(), getpIndex(), getIndex(), getrAtomContainer().getID(), getpAtomContainer().getID());
+        return format("rI:%s pI:%s i:%s rID:%s pID:%s", getrIndex(), getpIndex(), getIndex(), getrAtomContainer().getID(), getpAtomContainer().getID());
     }
 
     /**

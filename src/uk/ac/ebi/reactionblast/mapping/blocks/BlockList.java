@@ -19,9 +19,10 @@
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * The list of blocks in an atom container.
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  *
  */
 public class BlockList implements Comparable<BlockList> {
-    private static final Logger LOG = Logger.getLogger(BlockList.class.getName());
+    private static final Logger LOG = getLogger(BlockList.class.getName());
 
     private final List<Block> blocks;
     private String signatureString;
@@ -58,7 +59,7 @@ public class BlockList implements Comparable<BlockList> {
         }
 
         // bucket sort
-        Collections.sort(signatureToBlockIndexMap);
+        sort(signatureToBlockIndexMap);
 
         int index = 0;
         int[] blockPermutation = new int[blocks.size()];
@@ -103,7 +104,7 @@ public class BlockList implements Comparable<BlockList> {
         for (Block block : blocks) {
             signatures.add(block.getSignatureString());
         }
-        Collections.sort(signatures);
+        sort(signatures);
         StringBuilder sb = new StringBuilder();
         for (String s : signatures) {
             sb.append(s).append("|");

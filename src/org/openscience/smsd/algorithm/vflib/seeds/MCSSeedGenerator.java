@@ -20,26 +20,29 @@ package org.openscience.smsd.algorithm.vflib.seeds;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcsplus.BKKCKCF;
 import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraph;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.algorithm.vflib.Map1ValueComparator;
-import org.openscience.smsd.algorithm.vflib.SortOrder;
+import static org.openscience.smsd.algorithm.vflib.SortOrder.DESCENDING;
 import org.openscience.smsd.interfaces.Algorithm;
+import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
+import static org.openscience.smsd.interfaces.Algorithm.MCSPlus;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
@@ -56,7 +59,7 @@ import org.openscience.smsd.interfaces.Algorithm;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
-    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(MCSSeedGenerator.class);
+    private static final ILoggingTool Logger = createLoggingTool(MCSSeedGenerator.class);
 
     private final IAtomContainer source;
     private final IAtomContainer target;
@@ -99,18 +102,18 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
     public List<AtomAtomMapping> call() throws Exception {
 //        System.out.println("ac1: " + this.source.getAtomCount());
 //        System.out.println("ac2: " + this.target.getAtomCount());
-        if (algorithm.equals(Algorithm.CDKMCS)) {
+        if (algorithm.equals(CDKMCS)) {
 //            System.out.println("Calling CDKMCS " + bondMatch + " " + ringMatch);
             List<AtomAtomMapping> addUIT = addUIT();
 //            System.out.println("addUIT " + addUIT.iterator().next().getCount());
             return addUIT;
-        } else if (algorithm.equals(Algorithm.MCSPlus)) {
+        } else if (algorithm.equals(MCSPlus)) {
 //            System.out.println("Calling MCSPLUS " + bondMatch + " " + ringMatch + " " + matchAtomType);
             List<AtomAtomMapping> addKochCliques = addKochCliques();
 //            System.out.println("MCSPLUS " + addKochCliques.iterator().next().getCount());
             return addKochCliques;
         } else {
-            return Collections.unmodifiableList(allCliqueAtomMCS);
+            return unmodifiableList(allCliqueAtomMCS);
         }
     }
 
@@ -139,7 +142,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
         Stack<List<Integer>> maxCliqueSet = new Stack<>();
         maxCliqueSet.addAll(init.getMaxCliqueSet());
-        Collections.sort(maxCliqueSet, new Comparator<List<Integer>>() {
+        sort(maxCliqueSet, new Comparator<List<Integer>>() {
             @Override
             public int compare(List<Integer> a1, List<Integer> a2) {
                 return a2.size() - a1.size(); // assumes you want biggest to smallest
@@ -150,7 +153,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
 
             for (Integer value : peek) {
-                int[] index = getIndex(value.intValue(), comp_graph_nodes);
+                int[] index = getIndex(value, comp_graph_nodes);
                 Integer qIndex = index[0];
                 Integer tIndex = index[1];
                 if (qIndex != -1 && tIndex != -1) {
@@ -168,7 +171,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        Logger.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -179,7 +182,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             maxCliqueSet.pop();
         }
         gcg.clear();
-        return Collections.unmodifiableList(allCliqueAtomMCS);
+        return unmodifiableList(allCliqueAtomMCS);
     }
 
     /**
@@ -208,7 +211,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         /*
          * Sort biggest clique to smallest
          */
-        Collections.sort(sol, new Map1ValueComparator(SortOrder.DESCENDING));
+        sort(sol, new Map1ValueComparator(DESCENDING));
         for (Map<Integer, Integer> solution : sol) {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
 
@@ -234,7 +237,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        Logger.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -243,7 +246,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                 allCliqueAtomMCS.add(atomatomMapping);
             }
         }
-        return Collections.unmodifiableList(allCliqueAtomMCS);
+        return unmodifiableList(allCliqueAtomMCS);
     }
 
     private int[] getIndex(int cliqueIndex, List<Integer> comp_graph_nodes) {

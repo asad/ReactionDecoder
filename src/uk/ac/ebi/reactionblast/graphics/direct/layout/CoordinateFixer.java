@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IMapping;
@@ -26,7 +27,7 @@ import org.openscience.cdk.interfaces.IReaction;
 
 public class CoordinateFixer {
 
-    private static final Logger LOG = Logger.getLogger(CoordinateFixer.class.getName());
+    private static final Logger LOG = getLogger(CoordinateFixer.class.getName());
 
     public static void fixCoordinates(IReaction reaction) {
         for (IMapping mapping : reaction.mappings()) {

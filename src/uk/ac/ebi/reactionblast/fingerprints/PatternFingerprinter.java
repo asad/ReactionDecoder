@@ -20,20 +20,25 @@
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.io.Serializable;
+import static java.lang.String.valueOf;
+import static java.lang.System.getProperty;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedSet;
+import static java.util.Collections.unmodifiableCollection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
+import static uk.ac.ebi.reactionblast.fingerprints.PatternComparators.overallComparator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
@@ -48,7 +53,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         Serializable {
     
     private static final long serialVersionUID = 0156306561546552043757L;
-    private static final Logger LOG = Logger.getLogger(PatternFingerprinter.class.getName());
+    private static final Logger LOG = getLogger(PatternFingerprinter.class.getName());
 
     /**
      *
@@ -82,7 +87,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     private int fingerprintSize;
 
     public PatternFingerprinter() {
-        this(FingerprintGenerator.getFingerprinterSize());
+        this(getFingerprinterSize());
     }
 
     /**
@@ -91,7 +96,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     public PatternFingerprinter(
             Collection<IFeature> features) {
-        this(features, FingerprintGenerator.getFingerprinterSize());
+        this(features, getFingerprinterSize());
     }
 
     /**
@@ -100,7 +105,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     public PatternFingerprinter(int fingerprintSize) {
         this.fingerprintSize = fingerprintSize;
-        featureSet = Collections.synchronizedSortedSet(new TreeSet<IFeature>());
+        featureSet = synchronizedSortedSet(new TreeSet<IFeature>());
     }
 
     /**
@@ -114,8 +119,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
             if (!this.featureSet.contains(feature)) {
                 this.featureSet.add(new Feature(feature.getPattern()));
             } else {
-                for (Iterator<IFeature> it = featureSet.iterator(); it.hasNext();) {
-                    IFeature localFeature = it.next();
+                for (IFeature localFeature : featureSet) {
                     if (localFeature.getPattern().equals(feature.getPattern())) {
                         double newWeight = localFeature.getWeight() + feature.getWeight();
                         localFeature.setValue(newWeight);
@@ -138,7 +142,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         for (int i = 0; i < fingerprint.size(); i++) {
             if (fingerprint.get(i)) {
-                add(new Feature(String.valueOf(i), 1.0));
+                add(new Feature(valueOf(i), 1.0));
             }
         }
     }
@@ -156,8 +160,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         if (!this.featureSet.contains(feature)) {
             this.featureSet.add(new Feature(feature.getPattern(), feature.getWeight()));
         } else {
-            for (Iterator<IFeature> it = featureSet.iterator(); it.hasNext();) {
-                IFeature localFeature = it.next();
+            for (IFeature localFeature : featureSet) {
                 if (localFeature.getPattern().equals(feature.getPattern())) {
                     double newWeight = localFeature.getWeight() + feature.getWeight();
                     localFeature.setValue(newWeight);
@@ -199,8 +202,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     public double[] getValuesAsArray() {
         int pos = 0;
         double[] res = new double[featureSet.size()];
-        for (Iterator<IFeature> it = featureSet.iterator(); it.hasNext();) {
-            IFeature feature = it.next();
+        for (IFeature feature : featureSet) {
             res[pos] = feature.getWeight();
             pos += 1;
         }
@@ -209,7 +211,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     
     @Override
     public Collection<IFeature> getFeatures() {
-        return Collections.unmodifiableCollection(featureSet);
+        return unmodifiableCollection(featureSet);
     }
     
     @Override
@@ -261,7 +263,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         DecimalFormat df = new DecimalFormat();
         result.append(NEW_LINE);
         result.append("ID=").append(this.fingerprintID);
@@ -297,7 +299,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
                 i++;
             }
         }
-        return new Double(-1.0);
+        return -1.0;
     }
     
     @Override
@@ -311,7 +313,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
                 i++;
             }
         }
-        return new Double(-1.0);
+        return -1.0;
     }
 
     /**
@@ -340,7 +342,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     @Override
     public synchronized int compare(IPatternFingerprinter o1, IPatternFingerprinter o2) {
-        Comparator<IPatternFingerprinter> comparator = PatternComparators.overallComparator();
+        Comparator<IPatternFingerprinter> comparator = overallComparator();
         return comparator.compare(o1, o2);
     }
 
@@ -405,7 +407,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         try {
             p.add(this);
         } catch (CDKException ex) {
-            Logger.getLogger(PatternFingerprinter.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(PatternFingerprinter.class.getName()).log(SEVERE, null, ex);
         }
         return p;
     }

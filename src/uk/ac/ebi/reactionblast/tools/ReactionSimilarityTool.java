@@ -19,14 +19,17 @@
 
 package uk.ac.ebi.reactionblast.tools;
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Math.log;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility;
+import static uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility.append;
 
 /**
  * This tool finds reaction similarity and distance based on our in-house scoring functions The similarity score can be
@@ -37,7 +40,7 @@ import uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionSimilarityTool {
-    private static final Logger LOG = Logger.getLogger(ReactionSimilarityTool.class.getName());
+    private static final Logger LOG = getLogger(ReactionSimilarityTool.class.getName());
 
     /**
      *
@@ -72,7 +75,7 @@ public class ReactionSimilarityTool {
         DecimalFormat df = new DecimalFormat("0.00");
         df.setMaximumFractionDigits(2);
         String a = df.format(score);
-        score = Double.parseDouble(a);
+        score = parseDouble(a);
         return score;
     }
 
@@ -116,7 +119,7 @@ public class ReactionSimilarityTool {
         DecimalFormat df = new DecimalFormat("0.00");
         df.setMaximumFractionDigits(2);
         String a = df.format(score);
-        score = Double.parseDouble(a);
+        score = parseDouble(a);
         return score;
     }
 
@@ -206,9 +209,9 @@ public class ReactionSimilarityTool {
             throw new CDKException("both alpha and beta can't =< be zero");
         } else {
 
-            double[] bondFeatures1 = EBIDoubleUtility.append(BondsCF1.getWeightedHashedFingerPrint(),
+            double[] bondFeatures1 = append(BondsCF1.getWeightedHashedFingerPrint(),
                     BondsOC1.getWeightedHashedFingerPrint(), BondsST1.getWeightedHashedFingerPrint());
-            double[] bondFeatures2 = EBIDoubleUtility.append(BondsCF2.getWeightedHashedFingerPrint(),
+            double[] bondFeatures2 = append(BondsCF2.getWeightedHashedFingerPrint(),
                     BondsOC2.getWeightedHashedFingerPrint(), BondsST2.getWeightedHashedFingerPrint());
             double similarityOfBondChanges = getSimilarity(bondFeatures1, bondFeatures2);
 
@@ -264,9 +267,9 @@ public class ReactionSimilarityTool {
             throw new CDKException("both alpha and beta can't =< be zero");
         } else {
 
-            double[] bondFeatures1 = EBIDoubleUtility.append(BondsCF1.getWeightedHashedFingerPrint(),
+            double[] bondFeatures1 = append(BondsCF1.getWeightedHashedFingerPrint(),
                     BondsOC1.getWeightedHashedFingerPrint());
-            double[] bondFeatures2 = EBIDoubleUtility.append(BondsCF2.getWeightedHashedFingerPrint(),
+            double[] bondFeatures2 = append(BondsCF2.getWeightedHashedFingerPrint(),
                     BondsOC2.getWeightedHashedFingerPrint());
             double similarityOfBondChanges = getSimilarity(bondFeatures1, bondFeatures2);
             double similarityOfStereoChanges = getSimilarity(BondsST1.getWeightedHashedFingerPrint(), BondsST2.getWeightedHashedFingerPrint());
@@ -325,9 +328,9 @@ public class ReactionSimilarityTool {
 
 //            double similarityOfBondChanges = new Float(getBondChangeDistance(BondsCF1, BondsCF2, BondsOC1, BondsOC2)).floatValue();
 //
-            double[] bondFeatures1 = EBIDoubleUtility.append(BondsCF1.getWeightedHashedFingerPrint(),
+            double[] bondFeatures1 = append(BondsCF1.getWeightedHashedFingerPrint(),
                     BondsOC1.getWeightedHashedFingerPrint(), BondsST1.getWeightedHashedFingerPrint());
-            double[] bondFeatures2 = EBIDoubleUtility.append(BondsCF2.getWeightedHashedFingerPrint(),
+            double[] bondFeatures2 = append(BondsCF2.getWeightedHashedFingerPrint(),
                     BondsOC2.getWeightedHashedFingerPrint(), BondsST2.getWeightedHashedFingerPrint());
             double similarityOfBondChanges = getPointWiseMutualInformation(bondFeatures1, bondFeatures2);
 
@@ -415,8 +418,8 @@ public class ReactionSimilarityTool {
      */
     public static boolean isSubset(double[] BondsCF1, double[] BondsOC1, double[] BondsST1, double[] BondsCF2,
             double[] BondsOC2, double[] BondsST2) throws CDKException, Exception {
-        double[] bondFeatures1 = EBIDoubleUtility.append(BondsCF1, BondsOC1, BondsST1);
-        double[] bondFeatures2 = EBIDoubleUtility.append(BondsCF2, BondsOC2, BondsST2);
+        double[] bondFeatures1 = append(BondsCF1, BondsOC1, BondsST1);
+        double[] bondFeatures2 = append(BondsCF2, BondsOC2, BondsST2);
         return isSubset(bondFeatures1, bondFeatures2);
     }
 
@@ -527,17 +530,17 @@ public class ReactionSimilarityTool {
 
     // log2:  Logarithm base 2
     private static double log2(double d) {
-        return Math.log(d) / Math.log(2.0);
+        return log(d) / log(2.0);
     }
 
     // log10: Logarithm base 10
     private static double log10(double d) {
-        return Math.log(d) / Math.log(10.0);
+        return log(d) / log(10.0);
     }
 
     // logx: Logarithm base 10
     private static double logX(double value, double base) {
-        return Math.log(value) / Math.log(base);
+        return log(value) / log(base);
     }
 
     private static double getPointWiseMutualInformation(double[] bondFeatures1, double[] bondFeatures2) {

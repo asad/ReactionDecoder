@@ -22,8 +22,10 @@ package uk.ac.ebi.reactionblast.tools.bulk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 
 /**
  * Transform a reaction by applying a sequence of transformations, for example 
@@ -33,7 +35,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  *
  */
 public class ReactionTransformationSequence implements ITransformation<IReaction> {
-    private static final Logger LOG = Logger.getLogger(ReactionTransformationSequence.class.getName());
+    private static final Logger LOG = getLogger(ReactionTransformationSequence.class.getName());
 
     private final List<ITransformation<IReaction>> transformations;
 
@@ -47,7 +49,7 @@ public class ReactionTransformationSequence implements ITransformation<IReaction
 
     @Override
     public TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override

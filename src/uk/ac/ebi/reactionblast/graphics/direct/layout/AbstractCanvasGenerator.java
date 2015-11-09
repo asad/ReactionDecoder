@@ -30,7 +30,7 @@ public abstract class AbstractCanvasGenerator implements CanvasGenerator {
     protected Map<IAtomContainer, Rectangle2D> canvasMap;
 
     public AbstractCanvasGenerator() {
-        canvasMap = new HashMap<IAtomContainer, Rectangle2D>();
+        canvasMap = new HashMap<>();
     }
 
     @Override

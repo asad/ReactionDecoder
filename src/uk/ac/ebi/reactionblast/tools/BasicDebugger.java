@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
+import static java.lang.System.out;
 import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,10 +38,10 @@ public abstract class BasicDebugger {
      * @param mappings
      */
     public void printAtomAtomMapping(Map<IAtom, IAtom> mappings) {
-        System.out.println();
+        out.println();
         for (Map.Entry<IAtom, IAtom> m : mappings.entrySet()) {
-            System.out.println("e:" + m.getKey().getID());
-            System.out.println("p:" + m.getValue().getID());
+            out.println("e:" + m.getKey().getID());
+            out.println("p:" + m.getValue().getID());
         }
     }
 
@@ -52,40 +53,40 @@ public abstract class BasicDebugger {
         IAtomContainerSet Educt = reaction.getReactants();
         IAtomContainerSet Product = reaction.getProducts();
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
-        System.out.println("Educt Mol Count: " + Educt.getAtomContainerCount());
+        out.println("Educt Mol Count: " + Educt.getAtomContainerCount());
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
         for (int j = 0; j < Educt.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Educt.getAtomContainer(j);
-            System.out.println("Mol ID: " + M.getID());
-            System.out.println("SingleElectron: " + M.getSingleElectronCount());
-            System.out.println("Stoic: " + reaction.getReactantCoefficient(M));
-            System.out.println("Split Mol Atom Count: " + M.getAtomCount());
+            out.println("Mol ID: " + M.getID());
+            out.println("SingleElectron: " + M.getSingleElectronCount());
+            out.println("Stoic: " + reaction.getReactantCoefficient(M));
+            out.println("Split Mol Atom Count: " + M.getAtomCount());
             printAtoms(M);
         }
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
-        System.out.println("Product Mol Count: " + Product.getAtomContainerCount());
+        out.println("Product Mol Count: " + Product.getAtomContainerCount());
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
         for (int j = 0; j < Product.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Product.getAtomContainer(j);
-            System.out.println("Mol ID: " + M.getID());
-            System.out.println("SingleElectron: " + M.getSingleElectronCount());
-            System.out.println("Stoic: " + reaction.getProductCoefficient(M));
-            System.out.println("Split Mol Atom Count: " + M.getAtomCount());
+            out.println("Mol ID: " + M.getID());
+            out.println("SingleElectron: " + M.getSingleElectronCount());
+            out.println("Stoic: " + reaction.getProductCoefficient(M));
+            out.println("Split Mol Atom Count: " + M.getAtomCount());
             printAtoms(M);
 
         }
 
-        System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n");
+        out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n");
     }
 
     /**
@@ -94,17 +95,17 @@ public abstract class BasicDebugger {
      * @param mol
      */
     protected void printAtoms(IAtomContainer mol) {
-        System.out.print("Atom: ");
+        out.print("Atom: ");
         for (IAtom a : mol.atoms()) {
 
-            System.out.print(a.getSymbol());
+            out.print(a.getSymbol());
             if (a.getID() != null) {
-                System.out.print("[" + a.getID() + "]");
+                out.print("[" + a.getID() + "]");
             }
 
         }
-        System.out.println();
-        System.out.println();
+        out.println();
+        out.println();
     }
 
     /**
@@ -114,14 +115,14 @@ public abstract class BasicDebugger {
      */
     protected void printMolecule(IAtomContainer molecule) {
 
-        System.out.println("AtomContainer " + molecule.getID() + ": " + molecule.getAtomCount());
+        out.println("AtomContainer " + molecule.getID() + ": " + molecule.getAtomCount());
 
         for (int i = 0; i < molecule.getAtomCount(); i++) {
 
-            System.out.print(molecule.getAtom(i).getSymbol() + " : " + molecule.getAtom(i).getID() + ",  ");
+            out.print(molecule.getAtom(i).getSymbol() + " : " + molecule.getAtom(i).getID() + ",  ");
         }
 
-        System.out.println();
+        out.println();
 
     }
 }

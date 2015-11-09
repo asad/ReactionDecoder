@@ -18,7 +18,9 @@
 package uk.ac.ebi.centres.priority;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Ligand;
+import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
 
 /**
@@ -30,7 +32,7 @@ import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
  */
 public class MassNumberRule<A>
         extends AbstractPriorityRule<A> {
-    private static final Logger LOG = Logger.getLogger(MassNumberRule.class.getName());
+    private static final Logger LOG = getLogger(MassNumberRule.class.getName());
 
     /**
      * Accessor used to get the atomic number from an atom.
@@ -43,7 +45,7 @@ public class MassNumberRule<A>
      * @param accessor an accessor for the atom's mass number
      */
     public MassNumberRule(MassNumberAccessor<A> accessor) {
-        super(Type.CONSTITUTIONAL);
+        super(CONSTITUTIONAL);
         this.accessor = accessor;
     }
 

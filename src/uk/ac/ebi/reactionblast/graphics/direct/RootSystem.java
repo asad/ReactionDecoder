@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 
@@ -33,7 +34,7 @@ import org.openscience.cdk.interfaces.IBond;
  *
  */
 public class RootSystem {
-    private static final Logger LOG = Logger.getLogger(RootSystem.class.getName());
+    private static final Logger LOG = getLogger(RootSystem.class.getName());
     
     /**
      * The atom roots of the trees that make up the system.

@@ -22,9 +22,11 @@
  */
 package org.openscience.smsd.tools;
 
+import static java.lang.System.currentTimeMillis;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
+import static java.util.TimeZone.getTimeZone;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 
@@ -42,7 +44,7 @@ import org.openscience.cdk.annotations.TestMethod;
  */
 @TestClass("org.openscience.cdk.smsd.tools.TimeManagerTest")
 public class TimeManager {
-    private static final Logger LOG = Logger.getLogger(TimeManager.class.getName());
+    private static final Logger LOG = getLogger(TimeManager.class.getName());
 
     private final double startTime;
     private final SimpleDateFormat dateFormat;
@@ -54,8 +56,8 @@ public class TimeManager {
     public TimeManager() {
 
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        startTime = System.currentTimeMillis();
+        dateFormat.setTimeZone(getTimeZone("GMT"));
+        startTime = currentTimeMillis();
     }
 
     /**
@@ -65,7 +67,7 @@ public class TimeManager {
      */
     @TestMethod("testGetElapsedTimeInHours")
     public synchronized double getElapsedTimeInHours() {
-        double currentTime = System.currentTimeMillis();
+        double currentTime = currentTimeMillis();
         return (currentTime - startTime) / (60 * 60 * 1000);
 
 
@@ -78,7 +80,7 @@ public class TimeManager {
      */
     @TestMethod("testGetElapsedTimeInMinutes")
     public synchronized double getElapsedTimeInMinutes() {
-        double currentTime = System.currentTimeMillis();
+        double currentTime = currentTimeMillis();
         return (currentTime - startTime) / (60 * 1000);
 
     }
@@ -90,7 +92,7 @@ public class TimeManager {
      */
     @TestMethod("testGetElapsedTimeInSeconds")
     public synchronized double getElapsedTimeInSeconds() {
-        double currentTime = System.currentTimeMillis();
+        double currentTime = currentTimeMillis();
         return ((currentTime - startTime) / 1000);
 
     }
@@ -102,7 +104,7 @@ public class TimeManager {
      */
     @TestMethod("testGetElapsedTimeInMilliSeconds")
     public synchronized double getElapsedTimeInMilliSeconds() {
-        double currentTime = System.currentTimeMillis();
+        double currentTime = currentTimeMillis();
         return (currentTime - startTime);
 
     }

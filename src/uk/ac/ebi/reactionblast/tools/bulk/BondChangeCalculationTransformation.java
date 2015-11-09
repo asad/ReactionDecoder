@@ -20,17 +20,19 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 
 public class BondChangeCalculationTransformation implements ITransformation<IReaction> {
 
-    private static final Logger LOG = Logger.getLogger(BondChangeCalculationTransformation.class.getName());
+    private static final Logger LOG = getLogger(BondChangeCalculationTransformation.class.getName());
 
     @Override
     public TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override

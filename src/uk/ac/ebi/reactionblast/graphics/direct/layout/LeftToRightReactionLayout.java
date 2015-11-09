@@ -18,11 +18,13 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import static java.lang.Math.max;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.graphics.direct.Axis;
+import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 
 /**
  * Layout atoms containers by modifying the points in the molecules.
@@ -31,7 +33,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Axis;
  *
  */
 public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
-    private static final Logger LOG = Logger.getLogger(LeftToRightReactionLayout.class.getName());
+    private static final Logger LOG = getLogger(LeftToRightReactionLayout.class.getName());
 
     public LeftToRightReactionLayout() {
         this(true);
@@ -43,7 +45,7 @@ public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
 
     public LeftToRightReactionLayout(boolean shouldLayout, Vector2d moleculeAxis) {
         super(shouldLayout, moleculeAxis);
-        arrowAxis = Axis.X;
+        arrowAxis = X;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
         double rbH = reactantBoundsTree.getHeight();
         double pbH = productBoundsTree.getHeight();
         double rbW = reactantBoundsTree.getWidth();
-        double maxH = Math.max(rbH, pbH);
+        double maxH = max(rbH, pbH);
 
         double dx = borderX;
         double dy = borderY + (maxH / 2);

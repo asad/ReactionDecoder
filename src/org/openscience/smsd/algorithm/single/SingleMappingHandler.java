@@ -23,10 +23,10 @@
 package org.openscience.smsd.algorithm.single;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -34,7 +34,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.interfaces.IResults;
 
@@ -50,7 +50,7 @@ import org.openscience.smsd.interfaces.IResults;
 public class SingleMappingHandler implements IResults {
 
     private final ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(SingleMappingHandler.class);
+            = createLoggingTool(SingleMappingHandler.class);
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;
     private final IAtomContainer target;
@@ -107,7 +107,7 @@ public class SingleMappingHandler implements IResults {
                 mappings = singleMapping.getOverLaps((IQueryAtomContainer) source, target);
             }
         } catch (CDKException ex) {
-            Logger.error(Level.SEVERE, null, ex);
+            Logger.error(SEVERE, null, ex);
         }
         setAllAtomMapping(mappings);
         //setStereoScore();
@@ -139,7 +139,7 @@ public class SingleMappingHandler implements IResults {
     @Override
     @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return Collections.unmodifiableList(allAtomMCS);
+        return unmodifiableList(allAtomMCS);
     }
 
     /**

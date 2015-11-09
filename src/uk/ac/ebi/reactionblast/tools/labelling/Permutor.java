@@ -18,8 +18,11 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
+import static java.lang.Math.max;
+import static java.lang.System.arraycopy;
 import java.util.Random;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * General permutation generator, that uses orderly generation by ranking and unranking. The basic idea is that all
@@ -41,7 +44,7 @@ import java.util.logging.Logger;
  *
  */
 public class Permutor {
-    private static final Logger LOG = Logger.getLogger(Permutor.class.getName());
+    private static final Logger LOG = getLogger(Permutor.class.getName());
 
     /**
      * The current rank of the permutation to use
@@ -110,7 +113,7 @@ public class Permutor {
     public int[] getRandomNextPermutation() {
         int d = maxRank - currentRank;
         int r = this.random.nextInt(d);
-        this.currentRank += Math.max(1, r);
+        this.currentRank += max(1, r);
         return this.getCurrentPermutation();
     }
 
@@ -163,7 +166,7 @@ public class Permutor {
         int rank = 0;
         int n = permutation.length;
         int[] counter = new int[n + 1];
-        System.arraycopy(permutation, 0, counter, 1, n);
+        arraycopy(permutation, 0, counter, 1, n);
         for (int j = 1; j <= n; j++) {
             rank += ((counter[j] - 1) * factorial(n - j));
             for (int i = j + 1; i < n; i++) {

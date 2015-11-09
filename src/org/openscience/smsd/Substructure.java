@@ -25,17 +25,18 @@ package org.openscience.smsd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2Sub;
 import org.openscience.smsd.algorithm.vflib.substructure.VF2;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
 
 /**
  * This is an ultra fast method to report if query is a substructure for target
@@ -71,11 +72,11 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Substructure extends BaseMapping {
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(Substructure.class.getName());
+    private static final java.util.logging.Logger LOG = getLogger(Substructure.class.getName());
 
     private int vfMappingSize = -1;
     private final ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(Substructure.class);
+            = createLoggingTool(Substructure.class);
 
     /**
      * Constructor for VF Substructure Algorithm
@@ -98,8 +99,8 @@ public class Substructure extends BaseMapping {
         super(query, target, shouldMatchBonds, matchRings, matchAtomType);
         if (isMatchRings()) {
             try {
-                MoleculeInitializer.initializeMolecule(getQuery());
-                MoleculeInitializer.initializeMolecule(getTarget());
+                initializeMolecule(getQuery());
+                initializeMolecule(getTarget());
             } catch (CDKException ex) {
             }
         }
@@ -242,7 +243,7 @@ public class Substructure extends BaseMapping {
                     try {
                         throw new CDKException("Atom index pointing to NULL");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        Logger.error(SEVERE, null, ex);
                     }
                 }
             }

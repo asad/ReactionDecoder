@@ -18,6 +18,7 @@
 package uk.ac.ebi.centres.priority.access.descriptor;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 
@@ -29,7 +30,7 @@ import uk.ac.ebi.centres.Ligand;
 public class PrimaryDescriptor<A> implements
         uk.ac.ebi.centres.priority.access.DescriptorAccessor<A> {
 
-    private static final Logger LOG = Logger.getLogger(PrimaryDescriptor.class.getName());
+    private static final Logger LOG = getLogger(PrimaryDescriptor.class.getName());
 
     @Override
     public Descriptor getDescriptor(Ligand<A> ligand) {

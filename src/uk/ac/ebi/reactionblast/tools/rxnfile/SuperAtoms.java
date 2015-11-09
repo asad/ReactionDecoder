@@ -23,6 +23,7 @@
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -32,7 +33,7 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperAtoms {
-    private static final Logger LOG = Logger.getLogger(SuperAtoms.class.getName());
+    private static final Logger LOG = getLogger(SuperAtoms.class.getName());
 
     private String sgroupType;
     private IPseudoAtom pseudoAtom;

@@ -27,6 +27,7 @@ package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.io.Serializable;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -39,7 +40,7 @@ import org.openscience.cdk.annotations.TestMethod;
 public class RandomNumber implements Serializable {
 
     private static final long serialVersionUID = 23345464573453571L;
-    private static final Logger LOG = Logger.getLogger(RandomNumber.class.getName());
+    private static final Logger LOG = getLogger(RandomNumber.class.getName());
     private transient final RandomGenerator rg = new RandomAdaptor(new MersenneTwister());
 
     /**

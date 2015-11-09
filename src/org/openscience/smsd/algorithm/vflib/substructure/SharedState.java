@@ -45,8 +45,9 @@
  ******************************************************************************/
 package org.openscience.smsd.algorithm.vflib.substructure;
 
-import java.util.Arrays;
+import static java.util.Arrays.fill;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * This class keeps track of shared states
@@ -59,7 +60,7 @@ import java.util.logging.Logger;
 // the two graphs and the terminal sets. It is shared between all the states
 // in each isomorphism test.
 class SharedState {
-    private static final Logger LOG = Logger.getLogger(SharedState.class.getName());
+    private static final Logger LOG = getLogger(SharedState.class.getName());
 
     int[] sourceMapping;
     int[] targetMapping;
@@ -68,15 +69,15 @@ class SharedState {
 
     SharedState(int sourceSize, int targetSize) {
         sourceMapping = new int[sourceSize];
-        Arrays.fill(sourceMapping, -1);
+        fill(sourceMapping, -1);
 
         targetMapping = new int[targetSize];
-        Arrays.fill(targetMapping, -1);
+        fill(targetMapping, -1);
 
         sourceTerminalSet = new int[sourceSize];
-        Arrays.fill(sourceTerminalSet, 0);
+        fill(sourceTerminalSet, 0);
 
         targetTerminalSet = new int[targetSize];
-        Arrays.fill(targetTerminalSet, 0);
+        fill(targetTerminalSet, 0);
     }
 }

@@ -23,13 +23,15 @@
 package org.openscience.smsd.filters;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
+import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -42,14 +44,14 @@ import org.openscience.smsd.AtomAtomMapping;
  * 
  */
 public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
-    private static final Logger LOG = Logger.getLogger(FragmentFilter.class.getName());
+    private static final Logger LOG = getLogger(FragmentFilter.class.getName());
 
     private final List<Integer> fragmentSize;
     private final ChemicalFilters chemfilter;
 
     FragmentFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        fragmentSize = new ArrayList<Integer>();
+        fragmentSize = new ArrayList<>();
     }
 
     @Override
@@ -72,7 +74,7 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     @Override
     public synchronized List<Integer> getScores() {
-        return Collections.unmodifiableList(fragmentSize);
+        return unmodifiableList(fragmentSize);
     }
 
     @Override
@@ -96,8 +98,8 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     private synchronized int getMappedMoleculeFragmentSize(AtomAtomMapping mcsAtomSolution) {
 
-        IAtomContainer Educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
-        IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
+        IAtomContainer Educt = getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
+        IAtomContainer product = getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
 
         if (mcsAtomSolution != null) {
@@ -113,13 +115,13 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     private synchronized int getFragmentCount(IAtomContainer molecule) {
         boolean fragmentFlag = true;
-        IAtomContainerSet fragmentMolSet = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
+        IAtomContainerSet fragmentMolSet = getInstance().newInstance(IAtomContainerSet.class);
         int countFrag = 0;
         if (molecule.getAtomCount()
                 > 0) {
-            fragmentFlag = ConnectivityChecker.isConnected(molecule);
+            fragmentFlag = isConnected(molecule);
             if (!fragmentFlag) {
-                fragmentMolSet.add(ConnectivityChecker.partitionIntoMolecules(molecule));
+                fragmentMolSet.add(partitionIntoMolecules(molecule));
             } else {
                 fragmentMolSet.addAtomContainer(molecule);
             }

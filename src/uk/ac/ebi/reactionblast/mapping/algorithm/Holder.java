@@ -20,13 +20,16 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.System.arraycopy;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.HydrogenFreeFingerPrintContainer;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
@@ -43,7 +46,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
 
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 18989786786L;
-    private static final Logger LOG = Logger.getLogger(Holder.class.getName());
+    private static final Logger LOG = getLogger(Holder.class.getName());
     /*
      Final methods
      */
@@ -90,11 +93,11 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.bestMatchContainer = bestMatchContainer;
         this.hydFPFree = hydFPFree;
         if (DEBUG) {
-            System.out.println("setFingerprint");
+            out.println("setFingerprint");
         }
         setFingerprint();
         if (DEBUG) {
-            System.out.println("setMolMapping");
+            out.println("setMolMapping");
         }
         setMolMapping();
     }
@@ -109,9 +112,9 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.fpSimMatrixWithoutHydrogen
                 = new EBIMatrix(row, coloumn);
         this.energyMatrix = new EBIMatrix(row, coloumn);
-        this.mappingMolPair = Collections.synchronizedList(new ArrayList<MolMapping>());
+        this.mappingMolPair = synchronizedList(new ArrayList<MolMapping>());
         if (DEBUG) {
-            System.out.println("initialize the Matrix");
+            out.println("initialize the Matrix");
         }
         initialize();
     }
@@ -170,13 +173,13 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     String productName = productCounter.get(j).trim();
                     BitSet hydrogenEductFP = hydFPFree.getFingerPrint(eductName);
                     BitSet hydrogenProductFP = hydFPFree.getFingerPrint(productName);
-                    float hydrogenSimVal = Similarity.getTanimotoSimilarity(hydrogenEductFP, hydrogenProductFP);
+                    float hydrogenSimVal = getTanimotoSimilarity(hydrogenEductFP, hydrogenProductFP);
                     if (DEBUG) {
-                        System.out.println("FP " + hydrogenSimVal);
+                        out.println("FP " + hydrogenSimVal);
                     }
                     fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
                 } catch (Exception ex) {
-                    Logger.getLogger(Holder.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(Holder.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -191,7 +194,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     MolMapping m = new MolMapping(eductName, productName, i, j);
                     getMappingMolPair().add(m);
                 } catch (Exception ex) {
-                    Logger.getLogger(Holder.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(Holder.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -269,7 +272,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     private void setData(double[][] sourceData, EBIMatrix sinkMatrix, int rows, int coloumns) {
         double[][] newDataMatrix = sinkMatrix.getArray();
         for (int i = 0; i < rows; i++) {
-            System.arraycopy(sourceData[i], 0, newDataMatrix[i], 0, coloumns);
+            arraycopy(sourceData[i], 0, newDataMatrix[i], 0, coloumns);
         }
     }
 

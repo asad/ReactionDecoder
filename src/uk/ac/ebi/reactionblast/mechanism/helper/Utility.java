@@ -19,10 +19,14 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.lang.System.err;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.sort;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,27 +35,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.QUADRUPLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
-import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *
@@ -81,7 +92,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
         }
         return sb.toString();
     }
@@ -117,7 +128,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         try {
             return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
         }
         return smiles;
     }
@@ -193,7 +204,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws CloneNotSupportedException
      */
     protected static String getSignature(IAtomContainer mol, IAtom atom, int height) throws CloneNotSupportedException {
-        IAtomContainer molWithoutH = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
+        IAtomContainer molWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         int atomIndex = getAtomIndexByID(molWithoutH, atom);
         RBlastMoleculeSignature moleculeSignature = new RBlastMoleculeSignature(molWithoutH);
         moleculeSignature.setUseCharge(true);
@@ -220,7 +231,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
                 try {
                     hit = countSubstructures.substructureSize(pattern);
                 } catch (CDKException ex) {
-                    Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(Utility.class.getName()).log(SEVERE, null, ex);
                 }
                 int val = hit == 0 ? 0 : atomRCChangesMap.get(pattern) + 1;
                 atomRCChangesMap.put(pattern, val);
@@ -238,7 +249,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             try {
                 atomRCChangesMap.add(new Feature(fragment, 1.0));
             } catch (CDKException ex) {
-                Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(Utility.class.getName()).log(SEVERE, null, ex);
             }
         }
     }
@@ -288,7 +299,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         pattern.add(0, concatE);
         pattern.add(1, concatP);
 
-        Collections.sort(pattern, String.CASE_INSENSITIVE_ORDER);
+        sort(pattern, CASE_INSENSITIVE_ORDER);
         return pattern.get(0).concat("*").concat(pattern.get(1));
 
     }
@@ -298,7 +309,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         List<String> atoms = new ArrayList<>(2);
         atoms.add(0, bond.getAtom(0).getSymbol());
         atoms.add(1, bond.getAtom(1).getSymbol());
-        Collections.sort(atoms, String.CASE_INSENSITIVE_ORDER);
+        sort(atoms, CASE_INSENSITIVE_ORDER);
         String concatenatedSymbols = atoms.get(0).concat(symbol).concat(atoms.get(1));
         return concatenatedSymbols.trim();
     }
@@ -310,17 +321,17 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      */
     public static String getBondOrderSign(IBond bond) {
         String bondSymbol = "";
-        if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+        if (bond.getFlag(ISAROMATIC)) {
             bondSymbol += "@";
-        } else if (bond.getFlag(CDKConstants.ISINRING)) {
+        } else if (bond.getFlag(ISINRING)) {
             bondSymbol += "%";
-        } else if (bond.getOrder() == IBond.Order.SINGLE) {
+        } else if (bond.getOrder() == SINGLE) {
             bondSymbol += "-";
-        } else if (bond.getOrder() == IBond.Order.DOUBLE) {
+        } else if (bond.getOrder() == DOUBLE) {
             bondSymbol += "=";
-        } else if (bond.getOrder() == IBond.Order.TRIPLE) {
+        } else if (bond.getOrder() == TRIPLE) {
             bondSymbol += "#";
-        } else if (bond.getOrder() == IBond.Order.QUADRUPLE) {
+        } else if (bond.getOrder() == QUADRUPLE) {
             return "$";
         }
 
@@ -400,7 +411,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws Exception
      */
     public static IAtomContainer getCircularFragment(IAtomContainer mol, int startAtomIndex, int radius) throws Exception {
-        IAtomContainer fragment = ExtAtomContainerManipulator.cloneWithIDs(mol);
+        IAtomContainer fragment = cloneWithIDs(mol);
         Set<IAtom> removeList = new HashSet<>();
         Collection<IAtom> solutionSphereList = circularFragment(fragment, startAtomIndex, radius);
 
@@ -415,7 +426,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         }
 
         IAtomContainer canonicalise = canonicalise(fragment);
-        ExtAtomContainerManipulator.aromatizeDayLight(canonicalise);
+        aromatizeDayLight(canonicalise);
 
         return fragment;
     }
@@ -429,7 +440,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      */
     public static IAtomContainer canonicalise(IAtomContainer org_mol) throws CloneNotSupportedException, CDKException {
 
-        IAtomContainer cloneMolecule = ExtAtomContainerManipulator.cloneWithIDs(org_mol);
+        IAtomContainer cloneMolecule = cloneWithIDs(org_mol);
 
         int[] p = new int[cloneMolecule.getAtomCount()];
 //        /*
@@ -443,7 +454,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         IMP: Suggested by John May
         */
         try {
-            SmilesGenerator.unique().create(cloneMolecule, p);
+            unique().create(cloneMolecule, p);
         } catch (CDKException e) {
             e.printStackTrace();
         }
@@ -475,8 +486,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         }
         atomContainer.setAtoms(permutedAtoms);
 
-        IBond[] bonds = AtomContainerManipulator.getBondArray(atomContainer);
-        Arrays.sort(bonds, new Comparator<IBond>() {
+        IBond[] bonds = getBondArray(atomContainer);
+        sort(bonds, new Comparator<IBond>() {
 
             @Override
             public int compare(IBond o1, IBond o2) {
@@ -484,10 +495,10 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
                 int v = o1.getAtom(1).getProperty("label");
                 int x = o2.getAtom(0).getProperty("label");
                 int y = o2.getAtom(1).getProperty("label");
-                int min1 = Math.min(u, v);
-                int min2 = Math.min(x, y);
-                int max1 = Math.max(u, v);
-                int max2 = Math.max(x, y);
+                int min1 = min(u, v);
+                int min2 = min(x, y);
+                int max1 = max(u, v);
+                int max2 = max(x, y);
 
                 int minCmp = Integer.compare(min1, min2);
                 if (minCmp != 0) {
@@ -497,7 +508,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
                 if (maxCmp != 0) {
                     return maxCmp;
                 }
-                System.err.println("pokemon!");
+                err.println("pokemon!");
                 throw new InternalError();
             }
 

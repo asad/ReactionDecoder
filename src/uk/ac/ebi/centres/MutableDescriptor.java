@@ -18,7 +18,8 @@
 package uk.ac.ebi.centres;
 
 import java.util.logging.Logger;
-import uk.ac.ebi.centres.descriptor.General;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
  * Holds a mutable descriptor value that can be passed around and set. This allows centralisation and sharing of the
@@ -28,9 +29,9 @@ import uk.ac.ebi.centres.descriptor.General;
  * @author John May
  */
 public class MutableDescriptor {
-    private static final Logger LOG = Logger.getLogger(MutableDescriptor.class.getName());
+    private static final Logger LOG = getLogger(MutableDescriptor.class.getName());
 
-    private Descriptor descriptor = General.UNKNOWN;
+    private Descriptor descriptor = UNKNOWN;
 
     public synchronized Descriptor get() {
         return descriptor;

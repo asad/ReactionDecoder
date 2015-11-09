@@ -21,16 +21,19 @@ package generic;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
@@ -43,7 +46,7 @@ public class UnblancedReactionChecker {
     private static final boolean DEBUG = false;
     private static final File dir = new File("rxn/rhea");
 
-    private static final Logger LOG = Logger.getLogger(UnblancedReactionChecker.class.getName());
+    private static final Logger LOG = getLogger(UnblancedReactionChecker.class.getName());
 
     /**
      * @param args the command line arguments
@@ -60,13 +63,13 @@ public class UnblancedReactionChecker {
                         reader.close();
                         rxnReactions.setID(f.split(".rxn")[0]);
                         if (!isBalanced(rxnReactions)) {
-                            System.out.println("Unbalanced Reaction " + f);
+                            out.println("Unbalanced Reaction " + f);
                         }
                     } catch (IOException | CDKException ex) {
-                        System.err.println("ERROR in Reading Reaction file " + f + "\n" + ex);
+                        err.println("ERROR in Reading Reaction file " + f + "\n" + ex);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(UnblancedReactionChecker.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(UnblancedReactionChecker.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -92,9 +95,9 @@ public class UnblancedReactionChecker {
             }
             if (DEBUG) {
                 try {
-                    System.out.println("Q=mol " + SmilesGenerator.generic().create(q));
+                    out.println("Q=mol " + generic().create(q));
                 } catch (CDKException ex) {
-                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
@@ -115,63 +118,63 @@ public class UnblancedReactionChecker {
             }
             if (DEBUG) {
                 try {
-                    System.out.println("T=mol " + SmilesGenerator.generic().create(t));
+                    out.println("T=mol " + generic().create(t));
                 } catch (CDKException ex) {
-                    Logger.getLogger(ReactionMechanismTool.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
                 }
             }
         }
 
         if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
+            out.println("atomUniqueCounter1 " + leftHandAtomCount);
+            out.println("atomUniqueCounter2 " + rightHandAtomCount);
         }
 
         if (leftHandAtomCount != rightHandAtomCount) {
-            System.err.println();
-            System.err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+            err.println();
+            err.println("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
             for (String s : atomUniqueCounter1.keySet()) {
                 if (atomUniqueCounter2.containsKey(s)) {
                     if (atomUniqueCounter1.get(s) != atomUniqueCounter2.get(s).intValue()) {
-                        System.err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
+                        err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
                     }
                 }
                 if (!atomUniqueCounter2.containsKey(s)) {
-                    System.err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + 0 + ")");
+                    err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + 0 + ")");
                 }
             }
             for (String s : atomUniqueCounter2.keySet()) {
                 if (!atomUniqueCounter1.containsKey(s)) {
-                    System.err.println(s + "(" + 0 + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
+                    err.println(s + "(" + 0 + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
                 }
             }
             return false;
         } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            System.err.println();
-            System.err.println("Number of unique atom types(s) on the Left side " + atomUniqueCounter1.size()
+            err.println();
+            err.println("Number of unique atom types(s) on the Left side " + atomUniqueCounter1.size()
                     + " =/= Number of unique atom types(s)on the Right side " + atomUniqueCounter2.size());
             for (String s : atomUniqueCounter1.keySet()) {
                 if (atomUniqueCounter2.containsKey(s)) {
                     if (atomUniqueCounter1.get(s) != atomUniqueCounter2.get(s).intValue()) {
-                        System.err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
+                        err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
                     }
                 }
                 if (!atomUniqueCounter2.containsKey(s)) {
-                    System.err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + 0 + ")");
+                    err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + 0 + ")");
                 }
             }
             for (String s : atomUniqueCounter2.keySet()) {
                 if (!atomUniqueCounter1.containsKey(s)) {
-                    System.err.println("Number of reactant Atom: " + s + "(" + 0 + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
+                    err.println("Number of reactant Atom: " + s + "(" + 0 + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
                 }
             }
             return false;
         }
 
         if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
         }
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }

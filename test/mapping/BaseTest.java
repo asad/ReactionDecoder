@@ -24,19 +24,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import static java.util.logging.Logger.getLogger;
+import static javax.imageio.ImageIO.write;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImageSmall;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImageSmall;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 
@@ -46,7 +52,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  */
 public class BaseTest extends TestUtility {
 
-    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
+    private static final Logger LOG = getLogger(BaseTest.class.getName());
 
     /**
      *
@@ -145,7 +151,7 @@ public class BaseTest extends TestUtility {
         if (!outfile.exists()) {
             outfile.createNewFile();
         }
-        ImageIO.write((RenderedImage) image, "PNG", outfile);
+        write((RenderedImage) image, "PNG", outfile);
     }
 
     /**
@@ -158,11 +164,11 @@ public class BaseTest extends TestUtility {
      */
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
-        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
-        System.out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
+        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
+        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
         ReactionMechanismTool annotation = getAnnotation(cdkReaction);
         MappingSolution s = annotation.getSelectedSolution();
-        System.out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+        out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
         return annotation;
 
     }
@@ -174,7 +180,7 @@ public class BaseTest extends TestUtility {
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();
 
-        System.out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
+        out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
 //        System.out.println("Cleaved/Formed " + s.getBondChangeCalculator().getFormedCleavedWFingerprint().toString());
 //        System.out.println("Order Changed " + s.getBondChangeCalculator().getOrderChangesWFingerprint().toString());
 //        System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
@@ -182,21 +188,21 @@ public class BaseTest extends TestUtility {
 //        System.out.println("BE " + s.getBondEnergyChange() + ", Fragment " + s.getTotalFragmentChanges());
         IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
-        ImageGenerator.LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-        ImageGenerator.TopToBottomReactionLayoutImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+        LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+        TopToBottomReactionLayoutImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
         int i = 1;
         for (MappingSolution m : rmt.getAllSolutions()) {
-            System.out.println("--------------------------------------");
+            out.println("--------------------------------------");
             BondChangeCalculator bcc = m.getBondChangeCalculator();
-            System.out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
+            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
 //            System.out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
 
-            System.out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
+            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
             new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
             i++;
-            System.out.println();
-            System.out.println("--------------------------------------");
+            out.println();
+            out.println("--------------------------------------");
         }
         return rmt;
     }
@@ -210,7 +216,7 @@ public class BaseTest extends TestUtility {
      * @throws Exception
      */
     public BondChangeCalculator testRCReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();
@@ -233,7 +239,7 @@ public class BaseTest extends TestUtility {
         sb.append(NEW_LINE);
         sb.append("//");
         sb.append(NEW_LINE);
-        System.out.println(sb.toString());
+        out.println(sb.toString());
 
         StringBuilder rcSteps = new StringBuilder();
         rcSteps.append("Formed Cleaved");
@@ -264,7 +270,7 @@ public class BaseTest extends TestUtility {
             rcSteps.append(m.getValue());
         }
         rcSteps.append(NEW_LINE);
-        System.out.println(rcSteps.toString());
+        out.println(rcSteps.toString());
         return s.getBondChangeCalculator();
     }
 
@@ -277,7 +283,7 @@ public class BaseTest extends TestUtility {
      * @throws Exception
      */
     public BondChangeCalculator map(String reactionID, String directory) throws FileNotFoundException, Exception {
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();

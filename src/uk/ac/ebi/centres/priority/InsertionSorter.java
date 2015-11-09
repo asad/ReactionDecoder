@@ -17,12 +17,16 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.NON_STEREOGENIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.LigandSorter;
 import uk.ac.ebi.centres.Priority;
@@ -35,9 +39,9 @@ import uk.ac.ebi.centres.PriorityRule;
  * @author John May
  */
 public class InsertionSorter<A> implements LigandSorter<A> {
-    private static final Logger LOG = Logger.getLogger(InsertionSorter.class.getName());
+    private static final Logger LOG = getLogger(InsertionSorter.class.getName());
 
-    private final List<PriorityRule<A>> rules = new ArrayList<PriorityRule<A>>(5);
+    private final List<PriorityRule<A>> rules = new ArrayList<>(5);
 
     public InsertionSorter(PriorityRule<A> comparator) {
         this.rules.add(comparator);
@@ -63,8 +67,8 @@ public class InsertionSorter<A> implements LigandSorter<A> {
     @Override
     public Priority prioritise(List<Ligand<A>> ligands) {
 
-        Boolean unique = Boolean.TRUE;
-        Descriptor.Type type = Descriptor.Type.NON_STEREOGENIC;
+        Boolean unique = TRUE;
+        Descriptor.Type type = NON_STEREOGENIC;
 //        Set<Set<Integer>> duplicates = null;
 
         for (int i = 0; i < ligands.size(); i++) {
@@ -80,7 +84,7 @@ public class InsertionSorter<A> implements LigandSorter<A> {
                     swap(ligands, j, j - 1);
                 } else {
                     if (comparison.getOrder() == 0) {
-                        unique = Boolean.FALSE;
+                        unique = FALSE;
                     }
                     break;
                 }
@@ -107,7 +111,7 @@ public class InsertionSorter<A> implements LigandSorter<A> {
 
             @Override
             public Descriptor.Type getType() {
-                return Descriptor.Type.NON_STEREOGENIC;
+                return NON_STEREOGENIC;
             }
         };
     }
@@ -122,7 +126,7 @@ public class InsertionSorter<A> implements LigandSorter<A> {
 
         // would be nice to have this integrated whilst sorting - may provide a small speed increase
         // but as most of our lists are small we take use ugly sort then group approach
-        LinkedList<List<Ligand<A>>> groups = new LinkedList<List<Ligand<A>>>();
+        LinkedList<List<Ligand<A>>> groups = new LinkedList<>();
 
         for (Ligand<A> ligand : sorted) {
 

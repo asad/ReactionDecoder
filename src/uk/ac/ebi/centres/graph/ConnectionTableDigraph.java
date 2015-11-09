@@ -19,6 +19,7 @@ package uk.ac.ebi.centres.graph;
 
 import java.util.Collection;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.ConnectionTable;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.Ligand;
@@ -28,7 +29,7 @@ import uk.ac.ebi.centres.Ligand;
  */
 public class ConnectionTableDigraph<A>
         extends AbstractDigraph<A> {
-    private static final Logger LOG = Logger.getLogger(ConnectionTableDigraph.class.getName());
+    private static final Logger LOG = getLogger(ConnectionTableDigraph.class.getName());
 
     private final ConnectionTable<A> table;
 

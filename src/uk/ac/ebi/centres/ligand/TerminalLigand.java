@@ -17,10 +17,13 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import java.util.Collections;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.util.Collections.emptyList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
@@ -29,22 +32,22 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @author John May
  */
 public class TerminalLigand<A> extends NonterminalLigand<A> {
-    private static final Logger LOG = Logger.getLogger(TerminalLigand.class.getName());
+    private static final Logger LOG = getLogger(TerminalLigand.class.getName());
 
     public TerminalLigand(ConnectionProvider<A> provider, MutableDescriptor descriptor, A atom, A parent, int distance) {
         super(provider, descriptor, atom, parent, distance);
-        setDuplicate(Boolean.TRUE);
+        setDuplicate(TRUE);
     }
 
     public TerminalLigand(ConnectionProvider<A> provider, MutableDescriptor descriptor, Set<A> visited, A atom, A parent, int distance) {
         super(provider, descriptor, visited, atom, parent, distance);
-        setDuplicate(Boolean.TRUE);
+        setDuplicate(TRUE);
     }
 
     @Override
     public List<Ligand<A>> getLigands() {
         // suppress use of connection provider
-        return Collections.emptyList();
+        return emptyList();
     }
 
     @Override
@@ -54,11 +57,11 @@ public class TerminalLigand<A> extends NonterminalLigand<A> {
 
     @Override
     public boolean isTerminal() {
-        return Boolean.TRUE;
+        return TRUE;
     }
 
     @Override
     public boolean isBranching() {
-        return Boolean.FALSE;
+        return FALSE;
     }
 }

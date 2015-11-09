@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Holds some properties that are determined when sorting/prioritising ligands.
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  * @author John May
  */
 public class Priority {
-    private static final Logger LOG = Logger.getLogger(Priority.class.getName());
+    private static final Logger LOG = getLogger(Priority.class.getName());
 
     private Boolean unique;
     private Descriptor.Type type;
@@ -71,16 +72,16 @@ public class Priority {
             throw new IllegalArgumentException("No duplicates stored at time of sort!");
         }
 
-        List<List<Ligand<A>>> bins = new ArrayList<List<Ligand<A>>>(ligands.size());
+        List<List<Ligand<A>>> bins = new ArrayList<>(ligands.size());
 
         // now need to place in bins
-        for (int i = 0; i < ligands.size(); i++) {
-            List<Ligand<A>> bin = new ArrayList<Ligand<A>>();
+        for (Ligand<A> ligand : ligands) {
+            List<Ligand<A>> bin = new ArrayList<>();
             bin.add(ligands.get(0));
             bins.add(bin);
         }
 
-        Set<Integer> removed = new HashSet<Integer>();
+        Set<Integer> removed = new HashSet<>();
         // and compact (could be doing something wrong
         for (Set<Integer> pair : duplicates) {
             Iterator<Integer> it = pair.iterator();

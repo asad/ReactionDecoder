@@ -20,15 +20,20 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
@@ -41,9 +46,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
 public class IsomorphismMin extends Selector implements IResult {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(IsomorphismMin.class);
+            = createLoggingTool(IsomorphismMin.class);
     private static final long serialVersionUID = 1908987778L;
-    private static final Logger LOG = Logger.getLogger(IsomorphismMin.class.getName());
+    private static final Logger LOG = getLogger(IsomorphismMin.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean isSubstructure;
@@ -70,7 +75,7 @@ public class IsomorphismMin extends Selector implements IResult {
             PhaseOneMatcher();
             isSubstructure = PhaseTwoMatcher();
         } catch (IOException | CDKException ex) {
-            Logger.getLogger(IsomorphismMin.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(IsomorphismMin.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -116,12 +121,12 @@ public class IsomorphismMin extends Selector implements IResult {
                             this.flagMatrix[i][j] = true;
                         } else {
                             this.flagMatrix[i][j] = false;
-                            this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
-                            this.updatedHolder.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
-                            this.updatedHolder.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
-                            this.updatedHolder.getFragmentMatrix().setValue(i, j, Double.MAX_VALUE);
-                            this.updatedHolder.getEnergyMatrix().setValue(i, j, Double.MAX_VALUE);
-                            this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
+                            this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
+                            this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
+                            this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                            this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
+                            this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
+                            this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
                         }
                     }
                 }
@@ -161,8 +166,8 @@ public class IsomorphismMin extends Selector implements IResult {
                                 this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, updatedFPSimScore);
                                 flag = true;
                             } else {
-                                this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
-                                this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
+                                this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
+                                this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
                             }
                         }
                     }
@@ -181,7 +186,7 @@ public class IsomorphismMin extends Selector implements IResult {
     }
 
     private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
-        return new Double(educt.getAtomCount()).doubleValue() == mcsSize;
+        return new Double(educt.getAtomCount()) == mcsSize;
     }
 
     /**
@@ -199,31 +204,31 @@ public class IsomorphismMin extends Selector implements IResult {
      */
     protected void printSimMatrix(Holder mh) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
-            System.out.println("Similarity Matrix");
-            System.out.print("\t\t");
+            out.println("Similarity Matrix");
+            out.print("\t\t");
             for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                System.out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            System.out.println();
+            out.println();
             double val = 0;
             for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
-                System.out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
                     val = mh.getGraphSimilarityMatrix().getValue(i, j);
                     result = format.format(val);
-                    System.out.print("   " + result);
+                    out.print("   " + result);
                 }
-                System.out.println();
+                out.println();
             }
         } catch (IOException | CDKException e) {
-            System.err.println(" Parser Error: ");
+            err.println(" Parser Error: ");
         }
-        System.out.println();
+        out.println();
 
     }
 
@@ -234,28 +239,28 @@ public class IsomorphismMin extends Selector implements IResult {
      */
     protected void printFLAGMatrix(Holder mh) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
         try {
             String result;
-            System.out.println("Flag Matrix");
-            System.out.print("\t\t");
+            out.println("Flag Matrix");
+            out.print("\t\t");
             for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                System.out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            System.out.println();
+            out.println();
             boolean val;
             for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
-                System.out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                    System.out.print("   " + flagMatrix[i][j]);
+                    out.print("   " + flagMatrix[i][j]);
                 }
-                System.out.println();
+                out.println();
             }
         } catch (Exception e) {
             logger.error("Parser Error", e);
         }
-        System.out.println();
+        out.println();
 
     }
 }

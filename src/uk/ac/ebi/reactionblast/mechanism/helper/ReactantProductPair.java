@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -32,7 +33,7 @@ public class ReactantProductPair implements Serializable,
         Comparable<ReactantProductPair>, Comparator<ReactantProductPair> {
 
     private static final long serialVersionUID = 19876565735478L;
-    private static final Logger LOG = Logger.getLogger(ReactantProductPair.class.getName());
+    private static final Logger LOG = getLogger(ReactantProductPair.class.getName());
     private final String query;
     private final String target;
 

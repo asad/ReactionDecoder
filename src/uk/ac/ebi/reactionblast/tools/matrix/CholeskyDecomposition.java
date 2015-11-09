@@ -1,6 +1,9 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import static java.lang.Math.max;
+import static java.lang.Math.sqrt;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -16,7 +19,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class CholeskyDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 78619981017L;
-    private static final Logger LOG = Logger.getLogger(CholeskyDecomposition.class.getName());
+    private static final Logger LOG = getLogger(CholeskyDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -71,7 +74,7 @@ public class CholeskyDecomposition implements java.io.Serializable {
             }
             d = A[j][j] - d;
             isspd &= (d > 0.0);
-            L[j][j] = Math.sqrt(Math.max(d, 0.0));
+            L[j][j] = sqrt(max(d, 0.0));
             for (int k = j + 1; k < n; k++) {
                 L[j][k] = 0.0;
             }

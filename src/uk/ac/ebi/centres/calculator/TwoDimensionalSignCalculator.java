@@ -17,6 +17,8 @@
  */
 package uk.ac.ebi.centres.calculator;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 import uk.ac.ebi.centres.Ligand;
 
 /**
@@ -39,7 +41,7 @@ public abstract class TwoDimensionalSignCalculator<A>
             {getX(a3.getAtom()), getY(a3.getAtom()), 1, a3.getDepth()},
             {getX(a4.getAtom()), getY(a4.getAtom()), 1, a4.getDepth()},};
 
-        return (int) Math.signum(determinant(matrix));
+        return (int) signum(determinant(matrix));
 
 
     }
@@ -63,6 +65,6 @@ public abstract class TwoDimensionalSignCalculator<A>
             {getX(a2), getY(a2), 1},
             {getX(a3), getY(a3), 1}};
         double determinant = determinant(matrix);
-        return Math.abs(determinant) < 0.2 ? 0 : (int) Math.signum(determinant);
+        return abs(determinant) < 0.2 ? 0 : (int) signum(determinant);
     }
 }

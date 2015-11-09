@@ -28,22 +28,28 @@
 package org.openscience.smsd;
 
 import com.google.common.collect.HashBiMap;
+import static com.google.common.collect.HashBiMap.create;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSortedMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 /**
  * Holds atom-atom mappings information between source and target molecules
@@ -55,7 +61,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class AtomAtomMapping implements Serializable {
 
     private static final long serialVersionUID = 1223637237262778L;
-    private static final Logger LOG = Logger.getLogger(AtomAtomMapping.class.getName());
+    private static final Logger LOG = getLogger(AtomAtomMapping.class.getName());
     private final IAtomContainer query;
     private final IAtomContainer target;
     private final HashBiMap<IAtom, IAtom> mapping;
@@ -69,8 +75,8 @@ public class AtomAtomMapping implements Serializable {
     public AtomAtomMapping(IAtomContainer query, IAtomContainer target) {
         this.query = query;
         this.target = target;
-        this.mapping = HashBiMap.create(new HashMap<IAtom, IAtom>());
-        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        this.mapping = create(new HashMap<IAtom, IAtom>());
+        this.mappingIndex = synchronizedSortedMap(new TreeMap<Integer, Integer>());
     }
 
     @Override
@@ -164,7 +170,7 @@ public class AtomAtomMapping implements Serializable {
      * @return atom-atom mappings
      */
     public synchronized Map<IAtom, IAtom> getMappingsByAtoms() {
-        return Collections.unmodifiableMap(new HashMap<>(mapping));
+        return unmodifiableMap(new HashMap<>(mapping));
     }
 
     /**
@@ -173,7 +179,7 @@ public class AtomAtomMapping implements Serializable {
      * @return atom-atom index mappings
      */
     public synchronized Map<Integer, Integer> getMappingsByIndex() {
-        return Collections.unmodifiableSortedMap(new TreeMap<>(mappingIndex));
+        return unmodifiableSortedMap(new TreeMap<>(mappingIndex));
     }
 
     /**
@@ -222,7 +228,7 @@ public class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -245,7 +251,7 @@ public class AtomAtomMapping implements Serializable {
     public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
 
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
                 uniqueAtoms.add(ac.getAtom(getTargetIndex(atom)));
@@ -266,7 +272,7 @@ public class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -298,14 +304,14 @@ public class AtomAtomMapping implements Serializable {
          o/p i.e. atom type + CDKHydrogenManipulator
          */
         try {
-            CDKHydrogenAdder.getInstance(ac.getBuilder()).addImplicitHydrogens(ac);
+            getInstance(ac.getBuilder()).addImplicitHydrogens(ac);
         } catch (CDKException ex) {
-            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(AtomAtomMapping.class.getName()).log(SEVERE, null, ex);
         }
         try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
+            percieveAtomTypesAndConfigureAtoms(ac);
         } catch (CDKException ex) {
-            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(AtomAtomMapping.class.getName()).log(SEVERE, null, ex);
         }
 
         return ac;
@@ -319,7 +325,7 @@ public class AtomAtomMapping implements Serializable {
      * @throws CDKException
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
-        SmilesGenerator aromatic = SmilesGenerator.unique().withAtomClasses();
+        SmilesGenerator aromatic = unique().withAtomClasses();
         return aromatic.create(getCommonFragment());
     }
 }

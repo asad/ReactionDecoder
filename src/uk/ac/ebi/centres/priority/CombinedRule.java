@@ -17,15 +17,19 @@
  */
 package uk.ac.ebi.centres.priority;
 
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.NON_STEREOGENIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.LigandComparison;
 import uk.ac.ebi.centres.LigandSorter;
 import uk.ac.ebi.centres.PriorityRule;
+import static uk.ac.ebi.centres.PriorityRule.Type.COMBINED;
+import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 
 /**
  * A priority rule made up of other rules. Each sub-rule is used exhaustively on the digraph before the next one is
@@ -34,7 +38,7 @@ import uk.ac.ebi.centres.PriorityRule;
  * @author John May
  */
 public class CombinedRule<A> extends AbstractPriorityRule<A> {
-    private static final Logger LOG = Logger.getLogger(CombinedRule.class.getName());
+    private static final Logger LOG = getLogger(CombinedRule.class.getName());
 
     /**
      * Rule storage
@@ -45,8 +49,8 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
      * Default constructor creates a combined rule with no sub-rules.
      */
     public CombinedRule() {
-        super(Type.COMBINED);
-        rules = Lists.newArrayListWithExpectedSize(8);
+        super(COMBINED);
+        rules = newArrayListWithExpectedSize(8);
     }
 
     /**
@@ -55,8 +59,8 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
      * @param rules the rules to combined
      */
     public CombinedRule(PriorityRule<A>... rules) {
-        super(Type.COMBINED);
-        this.rules = Lists.newArrayListWithExpectedSize(rules.length);
+        super(COMBINED);
+        this.rules = newArrayListWithExpectedSize(rules.length);
         for (PriorityRule<A> rule : rules) {
             add(rule);
         }
@@ -77,7 +81,7 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
     }
 
     public LigandSorter<A> createSorter(List<PriorityRule<A>> rules) {
-        return new InsertionSorter<A>(rules, Type.CONSTITUTIONAL); // restriction should be configurable
+        return new InsertionSorter<>(rules, CONSTITUTIONAL); // restriction should be configurable
     }
 
     /**
@@ -129,7 +133,7 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
         for (PriorityRule<A> rule : rules) {
 
             if (isHalted()) {
-                return new LigandComparison(0, Descriptor.Type.NON_STEREOGENIC);
+                return new LigandComparison(0, NON_STEREOGENIC);
             }
 
             // compare expands exhaustively across the whole graph
@@ -142,7 +146,7 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
         }
 
         // can't really give a rule type here...
-        return new LigandComparison(0, Descriptor.Type.NON_STEREOGENIC);
+        return new LigandComparison(0, NON_STEREOGENIC);
     }
 
     @Override

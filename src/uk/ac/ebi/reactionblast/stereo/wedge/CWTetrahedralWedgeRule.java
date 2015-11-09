@@ -19,19 +19,20 @@
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
 import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
-import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
+import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.CLOCKWISE;
 
 /**
  * 
  * @author Gilleain Torrance
  */
 public class CWTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
-    private static final Logger LOG = Logger.getLogger(CWTetrahedralWedgeRule.class.getName());
+    private static final Logger LOG = getLogger(CWTetrahedralWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {UP, DOWN, NONE, NONE};
 
@@ -42,6 +43,6 @@ public class CWTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
 
     @Override
     public ITetrahedralChirality.Stereo getStereo() {
-        return Stereo.CLOCKWISE;
+        return CLOCKWISE;
     }
 }

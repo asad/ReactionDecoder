@@ -23,13 +23,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer;
 
 public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
-    private static final Logger LOG = Logger.getLogger(FilesystemMoleculeDataStore.class.getName());
+    private static final Logger LOG = getLogger(FilesystemMoleculeDataStore.class.getName());
     
     private File moleculeDir;
     

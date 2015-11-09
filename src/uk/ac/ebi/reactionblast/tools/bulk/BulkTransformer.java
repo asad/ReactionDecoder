@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataSource;
@@ -32,7 +33,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  *
  */
 public class BulkTransformer {
-    private static final Logger LOG = Logger.getLogger(BulkTransformer.class.getName());
+    private static final Logger LOG = getLogger(BulkTransformer.class.getName());
 
     /**
      * The transformation, or series of transformations, to apply.

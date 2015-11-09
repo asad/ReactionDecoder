@@ -19,17 +19,19 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
+import static java.lang.String.format;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 public class BoundsPrinter {
 
-    private static final Logger LOG = Logger.getLogger(BoundsPrinter.class.getName());
+    private static final Logger LOG = getLogger(BoundsPrinter.class.getName());
 
     /**
      * DEBUG method for printing readable rectangle 2Ds
      */
     public static String toString(Rectangle2D b) {
-        return String.format("[(%2.0f, %2.0f), (%2.0f, %2.0f)] "
+        return format("[(%2.0f, %2.0f), (%2.0f, %2.0f)] "
                 + "= (%2.0f x %2.0f) @ [%2.0f, %2.0f]",
                 b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY(),
                 b.getWidth(), b.getHeight(), b.getCenterX(), b.getCenterY());

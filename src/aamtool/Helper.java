@@ -20,12 +20,15 @@ package aamtool;
 
 import static aamtool.Annotator.NEW_LINE;
 import java.io.File;
+import static java.io.File.separator;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import static java.lang.System.out;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.openscience.cdk.exception.CDKException;
@@ -39,7 +42,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  */
 class Helper extends ChemicalFormatParser {
 
-    private static final Logger LOG = Logger.getLogger(Helper.class.getName());
+    private static final Logger LOG = getLogger(Helper.class.getName());
 
     protected static void getHeader() {
         StringBuilder sb = new StringBuilder();
@@ -72,7 +75,7 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         sb.append("!--------------------------------------------------------");
         sb.append(NEW_LINE);
-        System.out.println(sb.toString());
+        out.println(sb.toString());
 
     }
 
@@ -164,7 +167,7 @@ class Helper extends ChemicalFormatParser {
 
     protected File writeRXNMappedFile(String canonicalRootPath, IReaction mappedReaction, String name) throws IOException, CDKException {
 //        printReaction(mappedReaction);
-        File f = new File(canonicalRootPath + File.separator + name + ".rxn");
+        File f = new File(canonicalRootPath + separator + name + ".rxn");
         try (MDLV2000RXNWriter writer = new MDLV2000RXNWriter(new FileWriter(f))) {
             writer.write(mappedReaction);
             writer.close();

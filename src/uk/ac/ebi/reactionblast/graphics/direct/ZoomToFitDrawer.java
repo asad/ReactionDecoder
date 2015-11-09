@@ -23,16 +23,21 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
+import static org.openscience.cdk.geometry.GeometryTools.translate2DCenterTo;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.CanvasGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
 
 public class ZoomToFitDrawer {
-    private static final Logger LOG = Logger.getLogger(ZoomToFitDrawer.class.getName());
+    private static final Logger LOG = getLogger(ZoomToFitDrawer.class.getName());
     
     private DirectMoleculeDrawer moleculeDrawer;
     
@@ -80,15 +85,15 @@ public class ZoomToFitDrawer {
     }
     
     private double calculateZoom(IAtomContainer ac, Rectangle2D canvas) {
-        double scaleFactor = GeometryTools.getScaleFactor(ac, params.bondLength);
-        GeometryTools.translate2DCenterTo(ac, new Point2d(0,0));
-        GeometryTools.scaleMolecule(ac, scaleFactor);
-        Rectangle2D r2D = GeometryTools.getRectangle2D(ac);
+        double scaleFactor = getScaleFactor(ac, params.bondLength);
+        translate2DCenterTo(ac, new Point2d(0,0));
+        scaleMolecule(ac, scaleFactor);
+        Rectangle2D r2D = getRectangle2D(ac);
         double canvasWidth = canvas.getWidth();
         double canvasHeight = canvas.getHeight();
         double objectWidth = r2D.getWidth() + (params.borderX * 2);
         double objectHeight = r2D.getHeight() + (params.borderY * 2);
-        return Math.min(canvasWidth / objectWidth, canvasHeight / objectHeight);
+        return min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
 
 }

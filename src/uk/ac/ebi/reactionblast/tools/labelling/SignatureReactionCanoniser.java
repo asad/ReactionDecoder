@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 /**
  * 
@@ -29,7 +30,7 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class SignatureReactionCanoniser
         extends AbstractReactionLabeller implements ICanonicalReactionLabeller {
-    private static final Logger LOG = Logger.getLogger(SignatureReactionCanoniser.class.getName());
+    private static final Logger LOG = getLogger(SignatureReactionCanoniser.class.getName());
 
     private final SignatureMoleculeLabeller labeller
             = new SignatureMoleculeLabeller();

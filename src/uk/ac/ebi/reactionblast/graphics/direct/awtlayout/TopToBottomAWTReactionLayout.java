@@ -19,15 +19,17 @@
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Graphics2D;
+import static java.lang.Math.max;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.graphics.direct.Axis;
+import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
-    private static final Logger LOG = Logger.getLogger(TopToBottomAWTReactionLayout.class.getName());
+    private static final Logger LOG = getLogger(TopToBottomAWTReactionLayout.class.getName());
 
     public TopToBottomAWTReactionLayout() {
         this(new Params());
@@ -37,7 +39,7 @@ public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
         super.params = params;
         super.reactantLayout = new LinearAtomContainerSetLayout(new Vector2d(1, 0));
         super.productLayout = new LinearAtomContainerSetLayout(new Vector2d(1, 0));
-        super.arrowAxis = Axis.Y;
+        super.arrowAxis = Y;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
 
         double rbH = reactantBoundsTree.getHeight();
         double pbH = productBoundsTree.getHeight();
-        double maxH = Math.max(rbH, pbH);
+        double maxH = max(rbH, pbH);
 
         double dx = borderX;
         double dy = borderY + (maxH / 2);

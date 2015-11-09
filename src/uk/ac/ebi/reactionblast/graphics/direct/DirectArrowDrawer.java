@@ -20,7 +20,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
+import static java.awt.Color.BLACK;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -30,15 +30,22 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
+import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BIDIRECTIONAL;
 
 public class DirectArrowDrawer extends AbstractDirectDrawer {
     
     private final static Vector2d X_AXIS = new Vector2d(1, 0);
     private final static Vector2d Y_AXIS = new Vector2d(0, 1);
-    private static final Logger LOG = Logger.getLogger(DirectArrowDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectArrowDrawer.class.getName());
     
     private final Params params;
 
@@ -50,7 +57,7 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         Stroke savedStroke = g.getStroke();
         g.setStroke(new BasicStroke());
         if (params.drawFatArrow) {
-            if (params.arrowType == Params.ArrowType.BIDIRECTIONAL) {
+            if (params.arrowType == BIDIRECTIONAL) {
                 drawDoubleHeadedFatArrow(g, c, v, null);
             } else {
                 drawFatArrow(g, c, v, null);
@@ -67,17 +74,17 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         int arrowHeadIndent = params.arrowHeadIndent;
         int arrowBodyWidth = params.arrowBodyWidth;
         
-        double arrowHeadAngleRad = Math.toRadians(params.arrowHeadAngle);
-        double arrowHeadAngleRadPrime = Math.toRadians(360 - params.arrowHeadAngle);
-        double cosA = Math.cos(arrowHeadAngleRad);
-        double sinA = Math.sin(arrowHeadAngleRad);
-        double cosAPrime = Math.cos(arrowHeadAngleRadPrime);
-        double sinAPrime = Math.sin(arrowHeadAngleRadPrime);
+        double arrowHeadAngleRad = toRadians(params.arrowHeadAngle);
+        double arrowHeadAngleRadPrime = toRadians(360 - params.arrowHeadAngle);
+        double cosA = cos(arrowHeadAngleRad);
+        double sinA = sin(arrowHeadAngleRad);
+        double cosAPrime = cos(arrowHeadAngleRadPrime);
+        double sinAPrime = sin(arrowHeadAngleRadPrime);
             
         int halfLength = arrowLength / 2;
         int halfBodyWidth = arrowBodyWidth / 2;
         
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         
         Vector2d nV = new Vector2d(v);
         nV.negate();
@@ -138,16 +145,16 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         int arrowHeadLength = params.arrowHeadLength;
         int arrowHeadIndent = params.arrowHeadIndent;
         
-        double arrowHeadAngleRad = Math.toRadians(params.arrowHeadAngle);
-        double arrowHeadAngleRadPrime = Math.toRadians(360 - params.arrowHeadAngle);
-        double cosA = Math.cos(arrowHeadAngleRad);
-        double sinA = Math.sin(arrowHeadAngleRad);
-        double cosAPrime = Math.cos(arrowHeadAngleRadPrime);
-        double sinAPrime = Math.sin(arrowHeadAngleRadPrime);
+        double arrowHeadAngleRad = toRadians(params.arrowHeadAngle);
+        double arrowHeadAngleRadPrime = toRadians(360 - params.arrowHeadAngle);
+        double cosA = cos(arrowHeadAngleRad);
+        double sinA = sin(arrowHeadAngleRad);
+        double cosAPrime = cos(arrowHeadAngleRadPrime);
+        double sinAPrime = sin(arrowHeadAngleRadPrime);
             
         int halfLength = arrowLength / 2;
         
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         
         Vector2d nV = new Vector2d(v);
         nV.negate();
@@ -221,16 +228,16 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
     public void drawThinArrow(Graphics2D g, Point2d c, Vector2d v, String text) {
         int arrowLength = params.arrowLength;
         int arrowHeadLength = params.arrowHeadLength;
-        double arrowHeadAngleRad = Math.toRadians(params.arrowHeadAngle);
-        double arrowHeadAngleRadPrime = Math.toRadians(360 - params.arrowHeadAngle);
-        double cosA = Math.cos(arrowHeadAngleRad);
-        double sinA = Math.sin(arrowHeadAngleRad);
-        double cosAPrime = Math.cos(arrowHeadAngleRadPrime);
-        double sinAPrime = Math.sin(arrowHeadAngleRadPrime);
+        double arrowHeadAngleRad = toRadians(params.arrowHeadAngle);
+        double arrowHeadAngleRadPrime = toRadians(360 - params.arrowHeadAngle);
+        double cosA = cos(arrowHeadAngleRad);
+        double sinA = sin(arrowHeadAngleRad);
+        double cosAPrime = cos(arrowHeadAngleRadPrime);
+        double sinAPrime = sin(arrowHeadAngleRadPrime);
             
         int halfLength = arrowLength / 2;
         
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         
         Vector2d nV = new Vector2d(v);
         nV.negate();
@@ -265,12 +272,12 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         Rectangle2D textBounds = getTextBounds(g, text);
         double distance = textBounds.getWidth() / 2;
         Point2d start = new Point2d(c.x, c.y);
-        if (angle < Math.toRadians(90) || angle > Math.toRadians(270)) {
+        if (angle < toRadians(90) || angle > toRadians(270)) {
             start.scaleAdd(distance, nV, c);
         } else {
             start.scaleAdd(distance, v, c);
-            double angDeg = (180 + Math.toDegrees(angle)) % 360;
-            angle = Math.toRadians(angDeg);
+            double angDeg = (180 + toDegrees(angle)) % 360;
+            angle = toRadians(angDeg);
         }
         
         g.translate(start.x, start.y);
@@ -284,21 +291,21 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
             g.fill(gv.getGlyphOutline(i));
         }
         
-        g.rotate((2 * Math.PI) - angle);
+        g.rotate((2 * PI) - angle);
         g.setTransform(originalTransform);
     }
     
     private double getAngle(Vector2d v) {
         double xAngle = X_AXIS.angle(v);
         double yAngle = Y_AXIS.angle(v);
-        if (xAngle < Math.toRadians(90)) {          // Q1 or Q2
-            if (yAngle < Math.toRadians(90)) {      // Q2
+        if (xAngle < toRadians(90)) {          // Q1 or Q2
+            if (yAngle < toRadians(90)) {      // Q2
                 return xAngle;
             } else {                                // Q1
-                return Math.toRadians(360) - xAngle;
+                return toRadians(360) - xAngle;
             }
         } else {                                    // Q3 or Q4
-            return Math.toRadians(90) + yAngle;
+            return toRadians(90) + yAngle;
 //            if (yAngle < Math.toRadians(90)) {      // Q3
 //                
 //            } else {                                // Q4

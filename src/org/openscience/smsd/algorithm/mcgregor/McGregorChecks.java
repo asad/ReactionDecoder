@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -34,7 +35,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import static org.openscience.smsd.algorithm.matchers.DefaultMatcher.matches;
 import org.openscience.smsd.helper.BinaryTree;
 
 /**
@@ -46,7 +47,7 @@ import org.openscience.smsd.helper.BinaryTree;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McGregorChecksTest")
 public class McGregorChecks {
-    private static final Logger LOG = Logger.getLogger(McGregorChecks.class.getName());
+    private static final Logger LOG = getLogger(McGregorChecks.class.getName());
 
     /**
      *
@@ -164,7 +165,7 @@ public class McGregorChecks {
             }
             return false;
         } else {
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
@@ -182,10 +183,10 @@ public class McGregorChecks {
 
         int corresponding_atom = 0;
         for (int a = 0; a < mappedAtomsSize; a++) {
-            if ((molecule == 1) && (mapped_atoms.get(a * 2 + 0).intValue() == atomFromOtherMolecule)) {
+            if ((molecule == 1) && (mapped_atoms.get(a * 2 + 0) == atomFromOtherMolecule)) {
                 corresponding_atom = mapped_atoms.get(a * 2 + 1);
             }
-            if ((molecule == 2) && (mapped_atoms.get(a * 2 + 1).intValue() == atomFromOtherMolecule)) {
+            if ((molecule == 2) && (mapped_atoms.get(a * 2 + 1) == atomFromOtherMolecule)) {
                 corresponding_atom = mapped_atoms.get(a * 2 + 0);
             }
         }
@@ -292,7 +293,7 @@ public class McGregorChecks {
                 int column_atom3 = iBondNeighborAtomsB.get(y * 3 + 0);
                 int column_atom4 = iBondNeighborAtomsB.get(y * 3 + 1);
 
-                if (McGregorChecks.cases(G1_atom, G2_atom, G3_atom, G4_atom, row_atom1, row_atom2, column_atom3, column_atom4)) {
+                if (cases(G1_atom, G2_atom, G3_atom, G4_atom, row_atom1, row_atom2, column_atom3, column_atom4)) {
                     MARCS.set(x * neighborBondNumB + y, 0);
                 }
 
@@ -464,7 +465,7 @@ public class McGregorChecks {
                 String G1B = cBondNeighborsB.get(column * 4 + 0);
                 String G2B = cBondNeighborsB.get(column * 4 + 1);
 
-                if (McGregorChecks.isAtomMatch(G1A, G2A, G1B, G2B)) {
+                if (isAtomMatch(G1A, G2A, G1B, G2B)) {
 
                     int Index_I = i_bond_neighbor_atoms_A.get(row * 3 + 0);
                     int Index_IPlus1 = i_bond_neighbor_atoms_A.get(row * 3 + 1);
@@ -643,7 +644,7 @@ public class McGregorChecks {
     }
 
     static List<Integer> markUnMappedAtoms(boolean flag, IAtomContainer container, Map<Integer, Integer> present_Mapping) {
-        List<Integer> unmappedMolAtoms = new ArrayList<Integer>();
+        List<Integer> unmappedMolAtoms = new ArrayList<>();
 
         int unmapped_num = 0;
         boolean atom_is_unmapped = true;
@@ -664,7 +665,7 @@ public class McGregorChecks {
     }
 
     static List<Integer> markUnMappedAtoms(boolean flag, IAtomContainer container, List<Integer> mapped_atoms, int clique_siz) {
-        List<Integer> unmappedMolAtoms = new ArrayList<Integer>();
+        List<Integer> unmappedMolAtoms = new ArrayList<>();
         int unmapped_num = 0;
         boolean atom_is_unmapped = true;
         for (int a = 0; a < container.getAtomCount(); a++) {

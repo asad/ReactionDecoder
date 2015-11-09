@@ -20,13 +20,14 @@ package aamtool;
 
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SimilarityResult {
-    private static final Logger LOG = Logger.getLogger(SimilarityResult.class.getName());
+    private static final Logger LOG = getLogger(SimilarityResult.class.getName());
 
     private final String query;
     private final String target;

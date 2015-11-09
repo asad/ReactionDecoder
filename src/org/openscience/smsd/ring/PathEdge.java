@@ -49,9 +49,11 @@
 package org.openscience.smsd.ring;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.reverse;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 
 /**
@@ -62,7 +64,7 @@ import org.openscience.cdk.interfaces.IAtom;
  *         Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class PathEdge {
-    private static final Logger LOG = Logger.getLogger(PathEdge.class.getName());
+    private static final Logger LOG = getLogger(PathEdge.class.getName());
 
     private final List<IAtom> atoms;
 
@@ -71,7 +73,7 @@ public class PathEdge {
     }
 
     public List<IAtom> getAtoms() {
-        return Collections.unmodifiableList(atoms);
+        return unmodifiableList(atoms);
     }
 
     public IAtom getSource() {
@@ -88,10 +90,10 @@ public class PathEdge {
 
     public PathEdge splice(PathEdge other) {
         IAtom intersection = getIntersection(other.atoms);
-        List<IAtom> newAtoms = new ArrayList<IAtom>(atoms);
+        List<IAtom> newAtoms = new ArrayList<>(atoms);
 
         if (atoms.get(0) == intersection) {
-            Collections.reverse(newAtoms);
+            reverse(newAtoms);
         }
 
         if (other.atoms.get(0) == intersection) {

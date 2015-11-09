@@ -49,11 +49,12 @@
 package org.openscience.smsd.algorithm.vflib.builder;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
@@ -71,7 +72,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFQueryBuilder implements IQuery {
-    private static final Logger LOG = Logger.getLogger(VFQueryBuilder.class.getName());
+    private static final Logger LOG = getLogger(VFQueryBuilder.class.getName());
 
     private final List<INode> nodesList;
     private final List<IEdge> edgesList;
@@ -81,9 +82,9 @@ public class VFQueryBuilder implements IQuery {
      * Constructor for VF Query Builder
      */
     public VFQueryBuilder() {
-        nodesList = new ArrayList<INode>();
-        edgesList = new ArrayList<IEdge>();
-        nodeBondMap = new HashMap<INode, IAtom>();
+        nodesList = new ArrayList<>();
+        edgesList = new ArrayList<>();
+        nodeBondMap = new HashMap<>();
     }
 
     /**
@@ -91,7 +92,7 @@ public class VFQueryBuilder implements IQuery {
      */
     @Override
     public synchronized Iterable<IEdge> edges() {
-        return Collections.unmodifiableList(edgesList);
+        return unmodifiableList(edgesList);
     }
 
     /**
@@ -99,7 +100,7 @@ public class VFQueryBuilder implements IQuery {
      */
     @Override
     public synchronized Iterable<INode> nodes() {
-        return Collections.unmodifiableList(nodesList);
+        return unmodifiableList(nodesList);
     }
 
     /**

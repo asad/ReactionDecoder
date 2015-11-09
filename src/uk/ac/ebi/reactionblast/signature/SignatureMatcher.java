@@ -18,13 +18,15 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 
 /**
  * Finds atoms in a molecule or reaction that have signatures matching one of a
@@ -34,7 +36,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class SignatureMatcher {
-    private static final Logger LOG = Logger.getLogger(SignatureMatcher.class.getName());
+    private static final Logger LOG = getLogger(SignatureMatcher.class.getName());
 
     private int minHeight;
 
@@ -79,8 +81,8 @@ public class SignatureMatcher {
      * @return a list of atoms
      */
     public List<IAtom> getMatchingRootAtoms(List<String> signatureStrings, IReaction reaction) {
-        List<IAtom> roots = new ArrayList<IAtom>();
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        List<IAtom> roots = new ArrayList<>();
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             getMatchingRootAtoms(roots, signatureStrings, atomContainer);
         }
 
@@ -98,7 +100,7 @@ public class SignatureMatcher {
      * @return a list of atoms
      */
     public List<IAtom> getMatchingRootAtoms(List<String> signatureStrings, IAtomContainer atomContainer) {
-        List<IAtom> roots = new ArrayList<IAtom>();
+        List<IAtom> roots = new ArrayList<>();
         getMatchingRootAtoms(roots, signatureStrings, atomContainer);
         return roots;
     }
@@ -135,7 +137,7 @@ public class SignatureMatcher {
             String signatureStringOfHAtI = sigOfHAtI.toCanonicalString();
             for (String querySignatureString : signatureStrings) {
                 if (querySignatureString.equals(signatureStringOfHAtI)) {
-                    System.out.println("match of height " + height + " at " + atomIndex + " to " + querySignatureString);
+                    out.println("match of height " + height + " at " + atomIndex + " to " + querySignatureString);
                     return sigOfHAtI;
                 }
             }

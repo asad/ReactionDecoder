@@ -19,11 +19,14 @@
 
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,7 +40,7 @@ import org.openscience.cdk.interfaces.IStereoElement;
  *
  */
 public class WedgeStereoLifter {
-    private static final Logger LOG = Logger.getLogger(WedgeStereoLifter.class.getName());
+    private static final Logger LOG = getLogger(WedgeStereoLifter.class.getName());
 
     private final List<WedgeRule> rules;
 
@@ -74,13 +77,13 @@ public class WedgeStereoLifter {
         IAtom reference = referenceBond.getConnectedAtom(atom);
 
         // calculate the full angle between the reference bond and the others
-        SortedMap<Double, IBond> angleMap = new TreeMap<Double, IBond>();
+        SortedMap<Double, IBond> angleMap = new TreeMap<>();
         angleMap.put(0.0, referenceBond);
         for (int index = 1; index < bonds.size(); index++) {
             IBond bond = bonds.get(index);
             IAtom bondAtom = bond.getConnectedAtom(atom);
             double angle = getFullAngle(atom, reference, bondAtom);
-            angleMap.put((2 * Math.PI) - angle, bond);
+            angleMap.put((2 * PI) - angle, bond);
         }
 
         // now, sort the bonds by these angles and get the IBond.Stereo array
@@ -113,17 +116,17 @@ public class WedgeStereoLifter {
         Point2d partner1P = partner1.getPoint2d();
         Point2d partner2P = partner2.getPoint2d();
 
-        double angle1 = Math.atan2((partner1P.y - atomP.y), (partner1P.x - atomP.x));
-        double angle2 = Math.atan2((partner2P.y - atomP.y), (partner2P.x - atomP.x));
+        double angle1 = atan2((partner1P.y - atomP.y), (partner1P.x - atomP.x));
+        double angle2 = atan2((partner2P.y - atomP.y), (partner2P.x - atomP.x));
         double angle = angle2 - angle1;
-        if (angle2 < 0 && angle1 > 0 && angle2 < -(Math.PI / 2)) {
-            angle = Math.PI + angle2 + Math.PI - angle1;
+        if (angle2 < 0 && angle1 > 0 && angle2 < -(PI / 2)) {
+            angle = PI + angle2 + PI - angle1;
         }
-        if (angle2 > 0 && angle1 < 0 && angle1 < -(Math.PI / 2)) {
-            angle = -Math.PI + angle2 - Math.PI - angle1;
+        if (angle2 > 0 && angle1 < 0 && angle1 < -(PI / 2)) {
+            angle = -PI + angle2 - PI - angle1;
         }
         if (angle < 0) {
-            return (2 * Math.PI + angle);
+            return (2 * PI + angle);
         } else {
             return (angle);
         }

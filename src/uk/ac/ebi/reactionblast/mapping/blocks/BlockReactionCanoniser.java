@@ -18,13 +18,15 @@
  */
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
+import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -36,7 +38,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerPrinter;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
-    private static final Logger LOG = Logger.getLogger(BlockReactionCanoniser.class.getName());
+    private static final Logger LOG = getLogger(BlockReactionCanoniser.class.getName());
 
     private IChemObjectBuilder builder;
 
@@ -94,7 +96,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         List<Integer> keys = new ArrayList<>(mappingMap.keySet());
 
 //        System.out.println("presorted keys = " + keys);
-        Collections.sort(keys);
+        sort(keys);
 //        System.out.println("sorted keys = " + keys);
         for (Integer key : keys) {
             permutedReaction.addMapping(mappingMap.get(key));
@@ -125,7 +127,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         IAtomContainerSet permutedContainers = builder.newInstance(IAtomContainerSet.class);
         // System.out.println("REACTANTS --------------------");
 
-        List<IAtomContainer> unusedContainers = new ArrayList<IAtomContainer>();
+        List<IAtomContainer> unusedContainers = new ArrayList<>();
         for (IAtomContainer ac : original.atomContainers()) {
             unusedContainers.add(ac);
         }
@@ -135,7 +137,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             BlockList blockList = mapping.getBlockListForReactant(container);
 
             if (blockList == null) {
-                System.out.println("blocklist null for " + i
+                out.println("blocklist null for " + i
                         + new AtomContainerPrinter().toString(container)
                         + " in " + java.util.Arrays.toString(reactantPermutation));
                 continue;
@@ -166,7 +168,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         int[] productPermutation = mapping.getPermutationOfProducts();
         // System.out.println("PRODUCTS --------------------");
 
-        List<IAtomContainer> unusedContainers = new ArrayList<IAtomContainer>();
+        List<IAtomContainer> unusedContainers = new ArrayList<>();
         for (IAtomContainer ac : original.atomContainers()) {
             unusedContainers.add(ac);
         }
@@ -175,7 +177,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             IAtomContainer container = original.getAtomContainer(pi);
             BlockList blockList = mapping.getBlockListForProduct(container);
             if (blockList == null) {
-                System.out.println("blocklist null for " + i
+                out.println("blocklist null for " + i
                         + new AtomContainerPrinter().toString(container)
                         + " in " + java.util.Arrays.toString(productPermutation));
                 continue;
@@ -199,7 +201,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     }
 
     private void bucketSort(List<IAtom> atoms, IAtomContainer ac) {
-        final Map<IAtom, Integer> indexMap = new HashMap<IAtom, Integer>();
+        final Map<IAtom, Integer> indexMap = new HashMap<>();
 
         for (IAtom atom : atoms) {
             indexMap.put(atom, ac.getAtomNumber(atom));
@@ -211,7 +213,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
                 return indexMap.get(o1).compareTo(indexMap.get(o2));
             }
         };
-        Collections.sort(atoms, sorter);
+        sort(atoms, sorter);
     }
 
     private IAtom[] getPermutedAtomsForReactant(BlockList blockList,
@@ -222,7 +224,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         IAtom[] atoms = new IAtom[container.getAtomCount()];
 
         // keeps track of atoms added to the permutation
-        List<IAtom> unusedAtoms = new ArrayList<IAtom>();
+        List<IAtom> unusedAtoms = new ArrayList<>();
 
         for (IAtom atom : container.atoms()) {
             unusedAtoms.add(atom);
@@ -315,18 +317,18 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     private void printReaction(IReaction reaction) {
         for (IAtomContainer atomContainer : reaction.getReactants().atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
-                System.out.println("PRINTING ATOM " + atom.getID());
+                out.println("PRINTING ATOM " + atom.getID());
             }
         }
         for (IAtomContainer atomContainer : reaction.getProducts().atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
-                System.out.println("PRINTING ATOM " + atom.getID());
+                out.println("PRINTING ATOM " + atom.getID());
             }
         }
     }
 
     private void printAtomIndices(List<IAtom> atoms, IAtomContainer container) {
-        List<Integer> indices = new ArrayList<Integer>();
+        List<Integer> indices = new ArrayList<>();
 
         for (int i = 0; i < atoms.size(); i++) {
             IAtom atom = atoms.get(i);
@@ -341,19 +343,19 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     }
 
     private void printAtomIndices(IAtom[] atoms, IAtomContainer container) {
-        List<Integer> indices = new ArrayList<Integer>();
+        List<Integer> indices = new ArrayList<>();
 
         for (int i = 0; i < container.getAtomCount(); i++) {
             IAtom atom = atoms[i];
 
             if (atom == null) {
-                System.out.println("atom " + i + " is null");
+                out.println("atom " + i + " is null");
             }
             int index = container.getAtomNumber(atom);
             indices.add(index);
 
         }
-        System.out.println("array atoms " + indices);
+        out.println("array atoms " + indices);
 
     }
 

@@ -18,25 +18,35 @@
  */
 package mapping;
 
-import java.awt.Color;
+import static java.awt.Color.WHITE;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.image.BufferedImage;
+import static java.awt.image.BufferedImage.TYPE_INT_BGR;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import static java.io.File.separator;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.lang.System.err;
+import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import static java.util.logging.Logger.getLogger;
+import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -45,8 +55,8 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
-import org.openscience.cdk.tools.CDKHydrogenAdder;
-import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
@@ -63,7 +73,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  */
 
 public class Reader {
-    private static final Logger LOG = Logger.getLogger(Reader.class.getName());
+    private static final Logger LOG = getLogger(Reader.class.getName());
 
     public IAtomContainer layout(IAtomContainer AtomContainer) {
         try {
@@ -77,11 +87,10 @@ public class Reader {
     }
 
     public BufferedImage makeBlankImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.WHITE);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
         return image;
     }
@@ -112,11 +121,11 @@ public class Reader {
             String fileName = f[0].trim() + ".rxn";
             File filepath = new File(fileName);
             if (!filepath.isFile()) {
-                Logger.getLogger(Reader.class.getName()).log(Level.WARNING, String.format("RXN file not found! %s", filepath.getName()));
-                System.exit(1);
+                getLogger(Reader.class.getName()).log(WARNING, format("RXN file not found! %s", filepath.getName()));
+                exit(1);
             }
             try {
-                Logger.getLogger(Reader.class.getName()).log(Level.INFO, "Annotating Reaction {0}", filepath.getName());
+                getLogger(Reader.class.getName()).log(INFO, "Annotating Reaction {0}", filepath.getName());
                 IReaction rxnReactions;
                 try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath));) {
                     try {
@@ -125,12 +134,12 @@ public class Reader {
                         rxnReactions.setID(filepath.getName().split(".rxn")[0]);
                         reactions.add(rxnReactions);
                     } catch (IOException | CDKException ex) {
-                        System.err.println("ERROR in Reading Reaction file " + filepath + "\n" + ex);
+                        err.println("ERROR in Reading Reaction file " + filepath + "\n" + ex);
                     }
                 }
             } catch (IOException ex) {
-                System.err.println("Failed to Read and Annotate RXN File ");
-                Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
+                err.println("Failed to Read and Annotate RXN File ");
+                getLogger(Reader.class.getName()).log(SEVERE, null, ex);
             }
         }
         return reactions;
@@ -146,7 +155,7 @@ public class Reader {
      * @throws IOException
      */
     public IReaction readReaction(String name, String dir, boolean reMap, boolean removeHydrogens) throws IOException {
-        String filepath = dir + File.separator + name + ".rxn";
+        String filepath = dir + separator + name + ".rxn";
 
         List<IReaction> parseRXN = parseRXN(filepath);
         IReaction rxnReactions = parseRXN.iterator().hasNext() ? parseRXN.iterator().next() : null;
@@ -208,7 +217,7 @@ public class Reader {
                     reaction, true, false, false, new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reader.class.getName()).log(SEVERE, null, e);
             return reaction;
         }
     }
@@ -222,7 +231,7 @@ public class Reader {
         if (!outfile.exists()) {
             outfile.createNewFile();
         }
-        ImageIO.write((RenderedImage) image, "PNG", outfile);
+        write((RenderedImage) image, "PNG", outfile);
     }
 
     public void addImplicitHydrogens(IReaction reaction) {
@@ -238,20 +247,19 @@ public class Reader {
 
     public void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
-            CDKHydrogenAdder.getInstance(
-                    DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
+            getInstance(getInstance()).addImplicitHydrogens(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reader.class.getName()).log(SEVERE, null, e);
         }
     }
 
     public void typeAtoms(IAtomContainer atomContainer) {
         try {
-            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            percieveAtomTypesAndConfigureAtoms(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, e);
+            getLogger(Reader.class.getName()).log(SEVERE, null, e);
         }
     }
 
@@ -260,9 +268,9 @@ public class Reader {
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
             IAtom a1 = (IAtom) mapping.getChemObject(1);
-            a0.setID(String.valueOf(i));
-            a1.setID(String.valueOf(i));
-            mapping.setID(String.valueOf(i));
+            a0.setID(valueOf(i));
+            a1.setID(valueOf(i));
+            mapping.setID(valueOf(i));
             i++;
         }
     }
@@ -286,6 +294,6 @@ public class Reader {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        ImageIO.write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
+        write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
     }
 }

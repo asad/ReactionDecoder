@@ -16,16 +16,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.io.IChemObjectReader.Mode;
-import uk.ac.ebi.reactionblast.tools.EBIMolSplitter;
+import static org.openscience.cdk.io.IChemObjectReader.Mode.STRICT;
+import static uk.ac.ebi.reactionblast.tools.EBIMolSplitter.splitMolecules;
 
 /**
  * @author Syed Asad Rahman, EBI, Cambridge, UK
@@ -34,7 +37,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMolSplitter;
  */
 public class RXNFileImporter {
     public static final String RXN = "$RXN";
-    private static final Logger LOG = Logger.getLogger(RXNFileImporter.class.getName());
+    private static final Logger LOG = getLogger(RXNFileImporter.class.getName());
 
     private IReaction reaction;
     protected IAtomContainer atomContainer;
@@ -57,17 +60,17 @@ public class RXNFileImporter {
         try {
 
             InputStream RXNFile = new BufferedInputStream(new FileInputStream(File));
-            reaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+            reaction = getInstance().newInstance(IReaction.class);
 
-            try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, Mode.STRICT)) {
+            try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, STRICT)) {
                 reaction = reader.read(reaction);
             }
         } catch (CDKException cdkerr) {
-            System.out.println("Error: only RXN V2000 file format is "
+            out.println("Error: only RXN V2000 file format is "
                     + "supported by this Software");
-            System.err.println("Error: " + cdkerr);
+            err.println("Error: " + cdkerr);
         } catch (FileNotFoundException e) {
-            System.err.println("Error: RXN File not found" + e);
+            err.println("Error: RXN File not found" + e);
         }
     }
 
@@ -98,13 +101,13 @@ public class RXNFileImporter {
 
     private IAtomContainerSet getMolecules(IAtomContainerSet BigMol) {
 
-        IAtomContainerSet SplitMoleculeList = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
+        IAtomContainerSet SplitMoleculeList = getInstance().newInstance(IAtomContainerSet.class);
 
         for (int j = 0; j < BigMol.getAtomContainerCount(); j++) {
             IAtomContainer molecules = BigMol.getAtomContainer(j);
 //            System.out.println("Big Mol: " + BigMol.getAtomContainerCount() + " Big Mol Atom Cont:" + molecules.getAtomCount());
-            if (!ConnectivityChecker.isConnected(molecules)) {
-                IAtomContainerSet splitMol = EBIMolSplitter.splitMolecules(molecules);
+            if (!isConnected(molecules)) {
+                IAtomContainerSet splitMol = splitMolecules(molecules);
                 for (int i = 0; i < splitMol.getAtomContainerCount(); i++) {
                     IAtomContainer mol = splitMol.getAtomContainer(i);
 //                System.out.println("Split Mol Atom Count: " + mol.getAtomCount());
@@ -120,21 +123,21 @@ public class RXNFileImporter {
     }
 
     private void printAtoms(IAtomContainer mol) {
-        System.out.print("Atom: ");
+        out.print("Atom: ");
         for (IAtom a : mol.atoms()) {
-            System.out.print(a.getSymbol());
+            out.print(a.getSymbol());
         }
-        System.out.println();
-        System.out.println();
+        out.println();
+        out.println();
     }
 
     private void printRadicalAtoms(IAtomContainer mol) {
-        System.out.print("Atom: ");
+        out.print("Atom: ");
         for (Integer a = 0; a < mol.getSingleElectronCount(); a++) {
-            System.out.print(mol.getSingleElectron(a).getAtom().getSymbol());
-            System.out.print(mol.getSingleElectron(a).getElectronCount());
+            out.print(mol.getSingleElectron(a).getAtom().getSymbol());
+            out.print(mol.getSingleElectron(a).getElectronCount());
         }
-        System.out.println();
-        System.out.println();
+        out.println();
+        out.println();
     }
 }

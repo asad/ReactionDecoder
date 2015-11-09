@@ -24,11 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
 
@@ -41,7 +42,7 @@ import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
  *
  */
 public class SignatureRootFinder {
-    private static final Logger LOG = Logger.getLogger(SignatureRootFinder.class.getName());
+    private static final Logger LOG = getLogger(SignatureRootFinder.class.getName());
 
     public static Map<IAtomContainer, List<RootSystem>> findRootSystems(
             RBlastReaction rblReaction) {
@@ -57,7 +58,7 @@ public class SignatureRootFinder {
         atomChanges.addAll(rblReaction.getAtomStereoProductMap().keySet());
         atomChanges.addAll(rblReaction.getAtomStereoReactantMap().keySet());
 
-        return SignatureRootFinder.findRootSystems(
+        return findRootSystems(
                 rblReaction.getReaction(), allBondChanges, atomChanges);
     }
 
@@ -68,7 +69,7 @@ public class SignatureRootFinder {
                 = new HashMap<>();
 
         // separate bond and atom changes by atomContainer
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             List<IBond> bonds = new ArrayList<>();
             for (IBond bond : bondChanges) {
                 if (atomContainer.contains(bond)) {
@@ -82,7 +83,7 @@ public class SignatureRootFinder {
                 }
             }
             rootSystems.put(atomContainer,
-                    SignatureRootFinder.findRootSystems(
+                    findRootSystems(
                             atomContainer, bonds, atoms));
         }
         return rootSystems;
@@ -106,7 +107,7 @@ public class SignatureRootFinder {
                 int currentSystemLabel = maxSystemLabel;
                 for (int rLabel = 1; rLabel <= rootSystems.size(); rLabel++) {
                     RootSystem rootSystem = rootSystems.get(rLabel - 1);
-                    if (SignatureRootFinder.adjacent(bond, rootSystem, atomContainer)) {
+                    if (adjacent(bond, rootSystem, atomContainer)) {
                         currentSystemLabel = rLabel;
                         rootSystem.addRootsFromBond(bond);
                         break;
@@ -139,7 +140,7 @@ public class SignatureRootFinder {
                 int currentSystemLabel = maxSystemLabel;
                 for (int rLabel = 1; rLabel <= rootSystems.size(); rLabel++) {
                     RootSystem rootSystem = rootSystems.get(rLabel - 1);
-                    if (SignatureRootFinder.adjacent(atom, rootSystem, atomContainer)) {
+                    if (adjacent(atom, rootSystem, atomContainer)) {
                         currentSystemLabel = rLabel;
                         rootSystem.addRoot(atom);
                         break;
@@ -244,10 +245,10 @@ public class SignatureRootFinder {
 
         // find the root atoms for each container, and connect them
         SignatureMatcher matcher = new SignatureMatcher();
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             List<IAtom> roots
                     = matcher.getMatchingRootAtoms(signatureStrings, atomContainer);
-            rootSystems.addAll(SignatureRootFinder.find(atomContainer, roots));
+            rootSystems.addAll(find(atomContainer, roots));
         }
         return rootSystems;
     }
@@ -262,7 +263,7 @@ public class SignatureRootFinder {
 
         for (IAtom root : roots) {
             List<IAtom> component = new ArrayList<>();
-            SignatureRootFinder.dfs(
+            dfs(
                     null, root, currentLabel, labels, atomContainer, roots, component);
 
             // for non-empty components, add all the atoms as roots
@@ -308,7 +309,7 @@ public class SignatureRootFinder {
             component.add(atomU);
             for (IAtom atomW : atomContainer.getConnectedAtomsList(atomU)) {
                 if (atomW != atomV) {
-                    SignatureRootFinder.dfs(
+                    dfs(
                             atomU, atomW, cLabel, labels, atomContainer, roots, component);
                 }
             }

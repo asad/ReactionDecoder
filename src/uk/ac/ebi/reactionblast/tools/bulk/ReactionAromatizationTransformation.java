@@ -20,28 +20,30 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 
 public class ReactionAromatizationTransformation implements
         ITransformation<IReaction> {
 
-    private static final Logger LOG = Logger.getLogger(ReactionAromatizationTransformation.class.getName());
+    private static final Logger LOG = getLogger(ReactionAromatizationTransformation.class.getName());
 
     @Override
     public ITransformation.TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override
     public IReaction transform(IReaction reaction) {
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             try {
-                ExtAtomContainerManipulator.aromatizeDayLight(atomContainer);
+                aromatizeDayLight(atomContainer);
             } catch (CDKException e) {
                 e.printStackTrace();
             }

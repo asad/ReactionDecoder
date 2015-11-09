@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -30,7 +31,7 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
 public class BlockMapper {
-    private static final Logger LOG = Logger.getLogger(BlockMapper.class.getName());
+    private static final Logger LOG = getLogger(BlockMapper.class.getName());
 
     public List<BlockPair> createBlockPairs(IReaction reaction) {
         List<BlockPair> blockPairs = new ArrayList<>();
@@ -71,7 +72,7 @@ public class BlockMapper {
         IAtomContainerSet reactants = reaction.getReactants();
         IAtomContainerSet products = reaction.getProducts();
 
-        List<DefinedMapping> definedMappings = new ArrayList<DefinedMapping>();
+        List<DefinedMapping> definedMappings = new ArrayList<>();
         int i = 0;
         for (IMapping mapping : reaction.mappings()) {
             String id = mapping.getChemObject(0).getID();
@@ -127,7 +128,7 @@ public class BlockMapper {
 
         private List<DefinedMapping>[] makeAdjacencyTable() {
             Map<IAtom, DefinedMapping> lookup
-                    = new HashMap<IAtom, DefinedMapping>();
+                    = new HashMap<>();
 
             for (DefinedMapping mapping : vertices) {
                 lookup.put(mapping.getRAtom(), mapping);

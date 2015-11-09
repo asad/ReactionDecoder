@@ -23,13 +23,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 public class FilesystemReactionDataStore implements IDataStore<IReaction> {
-    private static final Logger LOG = Logger.getLogger(FilesystemReactionDataStore.class.getName());
+    private static final Logger LOG = getLogger(FilesystemReactionDataStore.class.getName());
     
     private File reactionDir;
     

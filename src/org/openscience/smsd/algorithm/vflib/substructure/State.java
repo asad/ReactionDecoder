@@ -48,6 +48,7 @@ package org.openscience.smsd.algorithm.vflib.substructure;
 
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -69,7 +70,7 @@ import org.openscience.smsd.algorithm.matchers.DefaultBondMatcher;
 // The State class represents a single state in the isomorphism detection
 // algorithm. Every state uses and modifies the same SharedState object.
 class State {
-    private static final Logger LOG = Logger.getLogger(State.class.getName());
+    private static final Logger LOG = getLogger(State.class.getName());
 
     private final boolean shouldMatchBonds;
     private final boolean shouldMatchRings;

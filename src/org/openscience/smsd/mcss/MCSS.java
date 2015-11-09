@@ -18,25 +18,29 @@
  */
 package org.openscience.smsd.mcss;
 
+import static java.lang.Math.ceil;
+import static java.lang.Runtime.getRuntime;
+import static java.lang.System.gc;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableCollection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.tools.AtomContainerComparator;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
  * 
@@ -47,8 +51,8 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class MCSS {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MCSS.class);
-    private static final Logger LOG = Logger.getLogger(MCSS.class.getName());
+            = createLoggingTool(MCSS.class);
+    private static final Logger LOG = getLogger(MCSS.class.getName());
     private final Collection<IAtomContainer> calculateMCSS;
     private final boolean matchBonds;
     private final boolean matchRings;
@@ -80,7 +84,7 @@ public class MCSS {
             boolean matchBonds,
             boolean matchRings,
             boolean matchAtomType) {
-        int threadsAvailable = Runtime.getRuntime().availableProcessors() - 1;
+        int threadsAvailable = getRuntime().availableProcessors() - 1;
 
         logger.debug("Demand threads: " + numberOfThreads);
         logger.debug(", Available threads: " + threadsAvailable);
@@ -95,13 +99,13 @@ public class MCSS {
          **/
         List<IAtomContainer> selectedJobs = new ArrayList<>(jobList.size());
         for (IAtomContainer ac : jobList) {
-            selectedJobs.add(ExtAtomContainerManipulator.removeHydrogens(ac));
+            selectedJobs.add(removeHydrogens(ac));
         }
         /*
          * Sort the molecules in the ascending order of atom size and atom type
          */
         Comparator<IAtomContainer> comparator = new AtomContainerComparator();
-        Collections.sort(selectedJobs, comparator);
+        sort(selectedJobs, comparator);
         this.matchBonds = matchBonds;
         this.matchRings = matchRings;
         this.matchAtomType = matchAtomType;
@@ -142,7 +146,7 @@ public class MCSS {
      * @return the calculateMCSS
      */
     public synchronized Collection<IAtomContainer> getCalculateMCSS() {
-        return Collections.unmodifiableCollection(calculateMCSS);
+        return unmodifiableCollection(calculateMCSS);
     }
 
     private synchronized LinkedBlockingQueue<IAtomContainer> submitSingleThreadedJob(List<IAtomContainer> mcssList, JobType jobType, int nThreads) {
@@ -159,8 +163,8 @@ public class MCSS {
         int taskNumber = 1;
         LinkedBlockingQueue<IAtomContainer> solutions = new LinkedBlockingQueue<>();
         LinkedBlockingQueue<Callable<LinkedBlockingQueue<IAtomContainer>>> callablesQueue = new LinkedBlockingQueue<>();
-        ExecutorService threadPool = Executors.newFixedThreadPool(nThreads);
-        int step = (int) Math.ceil(mcssList.size() / nThreads);
+        ExecutorService threadPool = newFixedThreadPool(nThreads);
+        int step = (int) ceil(mcssList.size() / nThreads);
         if (step < 2) {
             step = 2; // Can't have a step size of less than 2
         }
@@ -187,8 +191,7 @@ public class MCSS {
             /*
              * Collect the results
              */
-            for (Iterator<Future<LinkedBlockingQueue<IAtomContainer>>> it = futureList.iterator(); it.hasNext();) {
-                Future<LinkedBlockingQueue<IAtomContainer>> callable = it.next();
+            for (Future<LinkedBlockingQueue<IAtomContainer>> callable : futureList) {
                 LinkedBlockingQueue<IAtomContainer> mapping = callable.get();
                 if (callable.isDone() && mapping != null) {
                     solutions.addAll(mapping);
@@ -200,7 +203,7 @@ public class MCSS {
             // Wait until all threads are finish
             while (!threadPool.isTerminated()) {
             }
-            System.gc();
+            gc();
         } catch (InterruptedException | ExecutionException e) {
             logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             logger.error(e);

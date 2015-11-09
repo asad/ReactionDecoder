@@ -21,18 +21,24 @@ package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-import java.util.Collections;
+import static java.lang.System.err;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.interfaces.IMolContainer;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -72,7 +78,7 @@ public class MolContainer implements IMolContainer {
      */
     private static MolContainer _instance = null;
     private static Map<String, IAtomContainer> molContainer = null;
-    private static final Logger LOG = Logger.getLogger(MolContainer.class.getName());
+    private static final Logger LOG = getLogger(MolContainer.class.getName());
 
     /**
      *
@@ -88,7 +94,7 @@ public class MolContainer implements IMolContainer {
     //~--- constructors -------------------------------------------------------
 
      private MolContainer() {
-         molContainer = Collections.synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+         molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -100,7 +106,7 @@ public class MolContainer implements IMolContainer {
     @Override
     public synchronized void Clear() throws IOException {
         molContainer.clear();
-        molContainer = Collections.synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+        molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
     }
 
     /**
@@ -148,7 +154,7 @@ public class MolContainer implements IMolContainer {
      */
     @Override
     public synchronized Map<String, IAtomContainer> getAtomContainerMap() throws IOException {
-        return Collections.unmodifiableMap(molContainer);
+        return unmodifiableMap(molContainer);
     }
 
     /**
@@ -184,7 +190,7 @@ public class MolContainer implements IMolContainer {
      */
     public synchronized boolean isIdentical(IAtomContainer _queryMol, IAtomContainer _targetMol, boolean removeHydrogen) throws Exception {
 
-        _targetMol = ExtAtomContainerManipulator.cloneWithIDs(_targetMol);
+        _targetMol = cloneWithIDs(_targetMol);
         if (_queryMol.getAtomCount() == 1 && _targetMol.getAtomCount() == 1) {
             IAtom a = _queryMol.atoms().iterator().next();
             IAtom b = _targetMol.atoms().iterator().next();
@@ -214,7 +220,7 @@ public class MolContainer implements IMolContainer {
      */
     @Override
     public synchronized boolean compareAtomContainer(String key, IAtomContainer mol) throws Exception {
-        mol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
+        mol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         try {
             boolean flag = molContainer.containsKey(key);
             if (flag && mol.getAtomCount() > 0) {
@@ -222,25 +228,25 @@ public class MolContainer implements IMolContainer {
                 return isIdentical(mol, molFromContainer, true);
             }
         } catch (Exception ex) {
-            Logger.getLogger(MolContainer.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(MolContainer.class.getName()).log(SEVERE, null, ex);
         }
         return false;
     }
 
     @Override
     public synchronized String getMoleculeID(IAtomContainer mol) throws Exception {
-        IAtomContainer queryMol = ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
-        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(queryMol);
+        IAtomContainer queryMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
+        percieveAtomTypesAndConfigureAtoms(queryMol);
         CDKHydrogenAdder instance = CDKHydrogenAdder.getInstance(queryMol.getBuilder());
         for (IAtom atom : queryMol.atoms()) {
             try {
                 instance.addImplicitHydrogens(queryMol, atom);
             } catch (CDKException e) {
-                System.err.println("WARNING: Error in adding H to the molecule");
+                err.println("WARNING: Error in adding H to the molecule");
             }
         }
 
-        ExtAtomContainerManipulator.aromatizeMolecule(queryMol);
+        aromatizeMolecule(queryMol);
 
         for (Map.Entry<String, IAtomContainer> map : molContainer.entrySet()) {
             String key = map.getKey();

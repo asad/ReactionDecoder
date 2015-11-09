@@ -22,6 +22,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import static java.lang.System.err;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -30,13 +33,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +52,7 @@ import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.mechanism.helper.MoleculeMoleculePair;
-import uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool;
+import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 /**
@@ -55,9 +60,9 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Annotator extends Helper {
-    static final String NEW_LINE = System.getProperty("line.separator");
+    static final String NEW_LINE = getProperty("line.separator");
     static final String TAB = "\t";
-    private static final Logger LOG = Logger.getLogger(Annotator.class.getName());
+    private static final Logger LOG = getLogger(Annotator.class.getName());
 
     protected boolean REPORT_ALL_MAPPINGS;
     protected boolean GENERATE_IMAGE;
@@ -90,10 +95,10 @@ public class Annotator extends Helper {
         /*
          Check if the reaction is already mapped
          */
-        if (AtomContainerSetManipulator.getAtomCount(cdkReaction.getReactants()) == cdkReaction.getMappingCount()) {
-            cdkReaction.setFlag(CDKConstants.MAPPED, true);
+        if (getAtomCount(cdkReaction.getReactants()) == cdkReaction.getMappingCount()) {
+            cdkReaction.setFlag(MAPPED, true);
         } else {
-            cdkReaction.setFlag(CDKConstants.MAPPED, false);
+            cdkReaction.setFlag(MAPPED, false);
         }
         rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, new StandardizeReaction());
         return rmt;
@@ -115,20 +120,20 @@ public class Annotator extends Helper {
             return false;
         }
         File writeRXNMappedFile = writeRXNMappedFile(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReaction(), reactionID);
-        System.out.println("Mapped RXN File " + writeRXNMappedFile.getAbsolutePath());
+        out.println("Mapped RXN File " + writeRXNMappedFile.getAbsolutePath());
         if (GENERATE_IMAGE) {
             try {
                 File generateImage = generateImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
-                System.out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
+                out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                Logger.getLogger(Annotator.class.getName()).log(Level.SEVERE, "Unable to generate AAM image", e);
+                getLogger(Annotator.class.getName()).log(SEVERE, "Unable to generate AAM image", e);
             }
         } else if (!GENERATE_IMAGE && GENERATE_AAMIMAGE) {
             try {
                 File generateImage = generateAAMImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
-                System.out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
+                out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                Logger.getLogger(Annotator.class.getName()).log(Level.SEVERE, "Unable to generate AAM image", e);
+                getLogger(Annotator.class.getName()).log(SEVERE, "Unable to generate AAM image", e);
             }
         }
         return true;
@@ -458,7 +463,7 @@ public class Annotator extends Helper {
         try {
             MappingSolution s = rmt.getSelectedSolution();
             if (s == null) {
-                System.out.println("No valid solution found");
+                out.println("No valid solution found");
                 return;
             }
 
@@ -505,7 +510,7 @@ public class Annotator extends Helper {
                 }
             }
 
-            SmilesGenerator smiles = SmilesGenerator.unique().aromatic().withAtomClasses();
+            SmilesGenerator smiles = unique().aromatic().withAtomClasses();
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
             sb.append("//");
@@ -538,8 +543,8 @@ public class Annotator extends Helper {
                 }
             }
         } catch (CDKException ex) {
-            System.err.println("Invalid RXN File " + reactionID);
-            Logger.getLogger(Annotator.class.getName()).log(Level.SEVERE, null, ex);
+            err.println("Invalid RXN File " + reactionID);
+            getLogger(Annotator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -563,7 +568,7 @@ public class Annotator extends Helper {
         try {
             MappingSolution s = rmt.getSelectedSolution();
             if (s == null) {
-                System.out.println("No valid solution found");
+                out.println("No valid solution found");
                 return;
             }
 
@@ -615,7 +620,7 @@ public class Annotator extends Helper {
                     printRPAIRPatternAsXML(s, doc, annot);
                 }
             }
-            SmilesGenerator smiles = SmilesGenerator.unique().aromatic().withAtomClasses();
+            SmilesGenerator smiles = unique().aromatic().withAtomClasses();
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
@@ -663,8 +668,8 @@ public class Annotator extends Helper {
                 }
             }
         } catch (CDKException ex) {
-            System.err.println("Invalid RXN File " + reactionID);
-            Logger.getLogger(Annotator.class.getName()).log(Level.SEVERE, null, ex);
+            err.println("Invalid RXN File " + reactionID);
+            getLogger(Annotator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -702,7 +707,7 @@ public class Annotator extends Helper {
         fpT.add(bondChangeCalculatorT.getFormedCleavedWFingerprint());
         fpT.add(bondChangeCalculatorT.getOrderChangesWFingerprint());
         fpT.add(bondChangeCalculatorT.getStereoChangesWFingerprint());
-        double similarityBondChanges = ReactionSimilarityTool.getSimilarity(fpQ, fpT);
+        double similarityBondChanges = getSimilarity(fpQ, fpT);
         //Start of Fingerprint elements
         Element sim = doc.createElement("SIMILARITY");
         element.appendChild(sim);
@@ -714,7 +719,7 @@ public class Annotator extends Helper {
         Element score = doc.createElement("SCORE");
         score.appendChild(doc.createTextNode(myFormatter.format(similarityBondChanges)));
         sim.appendChild(score);
-        double similarityReactionCentres = ReactionSimilarityTool.getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
+        double similarityReactionCentres = getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
         //Start of Fingerprint elements
         sim = doc.createElement("SIMILARITY");
         element.appendChild(sim);
@@ -728,7 +733,7 @@ public class Annotator extends Helper {
         sim.appendChild(score);
         ReactionFingerprinter rfQ = new ReactionFingerprinter(bondChangeCalculatorQ.getReaction());
         ReactionFingerprinter rfT = new ReactionFingerprinter(bondChangeCalculatorT.getReaction());
-        double similarityReactionStructure = ReactionSimilarityTool.getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
+        double similarityReactionStructure = getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
         //Start of Fingerprint elements
         sim = doc.createElement("SIMILARITY");
         element.appendChild(sim);
@@ -768,13 +773,13 @@ public class Annotator extends Helper {
         fpT.add(bondChangeCalculatorT.getFormedCleavedWFingerprint());
         fpT.add(bondChangeCalculatorT.getOrderChangesWFingerprint());
         fpT.add(bondChangeCalculatorT.getStereoChangesWFingerprint());
-        double similarityBondChanges = ReactionSimilarityTool.getSimilarity(fpQ, fpT);
+        double similarityBondChanges = getSimilarity(fpQ, fpT);
         scores.put("BC", myFormatter.format(similarityBondChanges));
-        double similarityReactionCentres = ReactionSimilarityTool.getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
+        double similarityReactionCentres = getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
         scores.put("RC", myFormatter.format(similarityReactionCentres));
         ReactionFingerprinter rfQ = new ReactionFingerprinter(bondChangeCalculatorQ.getReaction());
         ReactionFingerprinter rfT = new ReactionFingerprinter(bondChangeCalculatorT.getReaction());
-        double similarityReactionStructure = ReactionSimilarityTool.getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
+        double similarityReactionStructure = getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
         scores.put("ST", myFormatter.format(similarityReactionStructure));
 
         return scores;
@@ -815,15 +820,15 @@ public class Annotator extends Helper {
         sb.append("//");
         sb.append(NEW_LINE).append("REACTION SIMILARITY METRICS (Min:0, Max:1.0)");
         sb.append(NEW_LINE);
-        double similarityBondChanges = ReactionSimilarityTool.getSimilarity(fpQ, fpT);
+        double similarityBondChanges = getSimilarity(fpQ, fpT);
         sb.append("Bond Change Similarity (BC): ").append(myFormatter.format(similarityBondChanges));
         sb.append(NEW_LINE);
-        double similarityReactionCentres = ReactionSimilarityTool.getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
+        double similarityReactionCentres = getSimilarity(bondChangeCalculatorQ.getReactionCenterWFingerprint(), bondChangeCalculatorT.getReactionCenterWFingerprint());
         sb.append("Reaction Centre Similarity (RC): ").append(myFormatter.format(similarityReactionCentres));
         sb.append(NEW_LINE);
         ReactionFingerprinter rfQ = new ReactionFingerprinter(bondChangeCalculatorQ.getReaction());
         ReactionFingerprinter rfT = new ReactionFingerprinter(bondChangeCalculatorT.getReaction());
-        double similarityReactionStructure = ReactionSimilarityTool.getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
+        double similarityReactionStructure = getSimilarity(rfQ.getReactionStruturalFingerprint(), rfT.getReactionStruturalFingerprint());
         sb.append("Reaction Structure Similarity (ST): ").append(myFormatter.format(similarityReactionStructure));
         sb.append(NEW_LINE);
     }

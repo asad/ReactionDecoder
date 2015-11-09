@@ -22,12 +22,13 @@ package uk.ac.ebi.reactionblast.mapping.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -70,7 +71,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     //depth search is set to 6, if not given explicitly as a parameter to Fingerprinter
     private static final int DEPTH_SEARCH = 8;
     private static final long serialVersionUID = 987987606869669691L;
-    private static final Logger LOG = Logger.getLogger(HydrogenFreeFingerPrintContainer.class.getName());
+    private static final Logger LOG = getLogger(HydrogenFreeFingerPrintContainer.class.getName());
 
     /**
      *
@@ -94,7 +95,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * HydrogenFreeFingerPrintContainer container
      */
     public HydrogenFreeFingerPrintContainer() {
-        fingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
+        fingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
     }
 
     @Override
@@ -161,12 +162,12 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
         for (Map.Entry<String, BitSet> map : fingerPrintMap.entrySet()) {
             String key = map.getKey();
             try {
-                if (Similarity.getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
+                if (getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
                     Key = key;
                     break;
                 }
             } catch (Exception ex) {
-                Logger.getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(SEVERE, null, ex);
             }
 
         }
@@ -182,7 +183,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     @Override
     synchronized public Map<String, BitSet> getFingerPrintMap()
             throws IOException {
-        return Collections.synchronizedSortedMap(new TreeMap<>(fingerPrintMap));
+        return synchronizedSortedMap(new TreeMap<>(fingerPrintMap));
     }
 
     /**
@@ -219,11 +220,11 @@ public synchronized void setValue(String Key, BitSet Value) throws IOException {
     public synchronized boolean isValuePresent(BitSet value) throws IOException {
         for (BitSet bitset : fingerPrintMap.values()) {
             try {
-                if (Similarity.getTanimotoSimilarity(value, bitset) == 1.0) {
+                if (getTanimotoSimilarity(value, bitset) == 1.0) {
                     return true;
                 }
             } catch (Exception ex) {
-                Logger.getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(SEVERE, null, ex);
             }
 
         }

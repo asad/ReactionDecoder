@@ -26,19 +26,21 @@ package org.openscience.smsd.algorithm.vflib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import static org.openscience.smsd.algorithm.vflib.SortOrder.DESCENDING;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
 
@@ -57,7 +59,7 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BaseMCS {
-    private static final ILoggingTool Logger = LoggingToolFactory.createLoggingTool(BaseMCS.class);
+    private static final ILoggingTool Logger = createLoggingTool(BaseMCS.class);
 
     protected int countR;
     protected int countP;
@@ -176,7 +178,7 @@ public class BaseMCS {
         /*
          * Sort biggest clique to smallest
          */
-        Collections.sort(vfLibSolutions, new Map2ValueComparator(SortOrder.DESCENDING));
+        sort(vfLibSolutions, new Map2ValueComparator(DESCENDING));
         for (Map<INode, IAtom> solution : vfLibSolutions) {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
             Map<Integer, Integer> indexindexMapping = new TreeMap<>();
@@ -206,7 +208,7 @@ public class BaseMCS {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        Logger.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -296,14 +298,14 @@ public class BaseMCS {
      * @return the allLocalMCS
      */
     private synchronized List<Map<Integer, Integer>> getLocalMCSSolution() {
-        return Collections.synchronizedList(allLocalMCS);
+        return synchronizedList(allLocalMCS);
     }
 
     /**
      * @return the allLocalAtomAtomMapping
      */
     private synchronized List<AtomAtomMapping> getLocalAtomMCSSolution() {
-        return Collections.synchronizedList(allLocalAtomAtomMapping);
+        return synchronizedList(allLocalAtomAtomMapping);
     }
 
     protected synchronized boolean isExtensionRequired(List<Map<Integer, Integer>> mcsSeeds) {

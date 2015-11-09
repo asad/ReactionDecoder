@@ -19,12 +19,15 @@
 
 package uk.ac.ebi.reactionblast.fingerprints;
 
+import static java.lang.System.err;
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.CircularFingerprinter;
-import org.openscience.cdk.geometry.GeometryTools;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.fingerprint.CircularFingerprinter.CLASS_ECFP4;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
@@ -34,7 +37,7 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintGenerator implements IFingerprintGenerator {
-    private static final Logger LOG = Logger.getLogger(FingerprintGenerator.class.getName());
+    private static final Logger LOG = getLogger(FingerprintGenerator.class.getName());
 
     /**
      * Size of the fingerprint
@@ -42,7 +45,7 @@ public class FingerprintGenerator implements IFingerprintGenerator {
      * @return
      */
     public static int getFingerprinterSize() {
-        return new CircularFingerprinter(CircularFingerprinter.CLASS_ECFP4).getSize();
+        return new CircularFingerprinter(CLASS_ECFP4).getSize();
     }
 
     //define the FINGERPRINT_SIZE of the fingerprint
@@ -55,7 +58,7 @@ public class FingerprintGenerator implements IFingerprintGenerator {
      *
      */
     public FingerprintGenerator() {
-        fingerprinter = new CircularFingerprinter(CircularFingerprinter.CLASS_ECFP4);
+        fingerprinter = new CircularFingerprinter(CLASS_ECFP4);
     }
 
     /**
@@ -66,14 +69,14 @@ public class FingerprintGenerator implements IFingerprintGenerator {
      */
     @Override
     public synchronized BitSet getFingerprint(IAtomContainer mol) throws CDKException {
-        if (!GeometryTools.has2DCoordinates(mol)) {
+        if (!has2DCoordinates(mol)) {
             StructureDiagramGenerator structureDiagramGenerator = new StructureDiagramGenerator();
             structureDiagramGenerator.setMolecule(mol, true);
-            if (ConnectivityChecker.isConnected(mol)) {
+            if (isConnected(mol)) {
                 structureDiagramGenerator.generateCoordinates();
                 mol = structureDiagramGenerator.getMolecule();
             } else {
-                System.err.println("Disconnected components needs to be layout separately");
+                err.println("Disconnected components needs to be layout separately");
             }
         }
         return fingerprinter.getBitFingerprint(mol).asBitSet();

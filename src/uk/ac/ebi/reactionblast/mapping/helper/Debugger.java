@@ -18,14 +18,18 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
-import java.io.File;
+import static java.io.File.separator;
 import java.io.IOException;
+import static java.lang.System.err;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import static java.text.NumberFormat.getInstance;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -57,27 +61,27 @@ public abstract class Debugger extends BasicDebugger {
     protected void printMatrixAtomContainer(Holder mh, List<String> EdMap, List<String> PdMap) {
         try {
             ReactionContainer _rSTMap = mh.getReactionContainer();
-            System.out.println("<--------Atom Size in the Container-------->");
+            out.println("<--------Atom Size in the Container-------->");
             for (int i = 0; i < EdMap.size(); i++) {
-                System.out.println("Educt " + EdMap.get(i) + " : " + _rSTMap.getEduct(i).getAtomCount());
+                out.println("Educt " + EdMap.get(i) + " : " + _rSTMap.getEduct(i).getAtomCount());
                 if (!_rSTMap.getEduct(i).isEmpty()) {
                     CDKSMILES sm = new CDKSMILES(_rSTMap.getEduct(i), true, false);
-                    System.out.println("SMILES: " + sm.getCanonicalSMILES());
+                    out.println("SMILES: " + sm.getCanonicalSMILES());
                 }
                 printAtoms(_rSTMap.getEduct(i));
             }
-            System.out.println();
+            out.println();
             for (int i = 0; i < PdMap.size(); i++) {
-                System.out.println("Product " + PdMap.get(i) + " : " + _rSTMap.getProduct(i).getAtomCount());
+                out.println("Product " + PdMap.get(i) + " : " + _rSTMap.getProduct(i).getAtomCount());
                 if (!_rSTMap.getProduct(i).isEmpty()) {
                     CDKSMILES sm = new CDKSMILES(_rSTMap.getProduct(i), true, false);
-                    System.out.println("SMILES: " + sm.getCanonicalSMILES());
+                    out.println("SMILES: " + sm.getCanonicalSMILES());
                 }
                 printAtoms(_rSTMap.getProduct(i));
             }
-            System.out.println();
+            out.println();
         } catch (IOException | CDKException | CloneNotSupportedException ex) {
-            Logger.getLogger(BaseGameTheory.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(BaseGameTheory.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -91,32 +95,32 @@ public abstract class Debugger extends BasicDebugger {
     protected void printCliqueMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
 
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
-            System.out.println("Clique Matrix");
-            System.out.print("\t\t");
+            out.println("Clique Matrix");
+            out.print("\t\t");
             for (int j = 0; j < PdMap.size(); j++) {
-                System.out.print(" " + PdMap.get(j) + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                out.print(" " + PdMap.get(j) + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            System.out.println();
+            out.println();
             double val;
             for (int i = 0; i < EdMap.size(); i++) {
-                System.out.print(" " + EdMap.get(i) + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                out.print(" " + EdMap.get(i) + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < PdMap.size(); j++) {
                     val = mh.getCliqueMatrix().getValue(i, j);
                     result = format.format(val);
-                    System.out.print("   " + result);
+                    out.print("   " + result);
                 }
-                System.out.println();
+                out.println();
             }
         } catch (IOException | CDKException e) {
-            System.err.println("Parser Error");
+            err.println("Parser Error");
             e.printStackTrace();
         }
-        System.out.println();
+        out.println();
     }
 
     /**
@@ -128,32 +132,32 @@ public abstract class Debugger extends BasicDebugger {
      */
     protected void printSimMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
-            System.out.println("Similarity Matrix");
-            System.out.print("\t\t");
+            out.println("Similarity Matrix");
+            out.print("\t\t");
             for (int j = 0; j < PdMap.size(); j++) {
-                System.out.print(" " + PdMap.get(j) + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                out.print(" " + PdMap.get(j) + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            System.out.println();
+            out.println();
             double val;
             for (int i = 0; i < EdMap.size(); i++) {
-                System.out.print(" " + EdMap.get(i) + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                out.print(" " + EdMap.get(i) + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < PdMap.size(); j++) {
                     val = mh.getGraphSimilarityMatrix().getValue(i, j);
                     result = format.format(val);
-                    System.out.print("   " + result);
+                    out.print("   " + result);
                 }
-                System.out.println();
+                out.println();
             }
         } catch (IOException | CDKException e) {
-            System.err.println("Parser Error");
+            err.println("Parser Error");
             e.printStackTrace();
         }
-        System.out.println();
+        out.println();
 
     }
 
@@ -165,27 +169,27 @@ public abstract class Debugger extends BasicDebugger {
      */
     protected void printFlagMatrix(ChooseWinner Max, List<String> EdMap, List<String> PdMap) {
 
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
         boolean[][] FlagMatrix = Max.getFlagMatrix();
-        System.out.println("Flag Matrix");
-        System.out.print("\t\t");
+        out.println("Flag Matrix");
+        out.print("\t\t");
         for (String PdMap1 : PdMap) {
-            System.out.print("  " + PdMap1 + " ");
+            out.print("  " + PdMap1 + " ");
         }
 
-        System.out.println();
+        out.println();
         for (int i = 0; i < EdMap.size(); i++) {
-            System.out.print(" " + EdMap.get(i));
+            out.print(" " + EdMap.get(i));
             for (int j = 0; j < PdMap.size(); j++) {
                 if (FlagMatrix[i][j]) {
-                    System.out.print("      " + 1 + "  ");
+                    out.print("      " + 1 + "  ");
                 } else {
-                    System.out.print("      " + 0 + "  ");
+                    out.print("      " + 0 + "  ");
                 }
 
             }
-            System.out.println();
+            out.println();
         }
 
     }
@@ -199,42 +203,42 @@ public abstract class Debugger extends BasicDebugger {
     protected void printStereoMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
         EBIMatrix StereoMatrix = mh.getStereoMatrix();
 
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
 
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
 
-            System.out.println("Stereo Matrix");
-            System.out.print("\t\t");
+            out.println("Stereo Matrix");
+            out.print("\t\t");
 
             for (String PdMap1 : PdMap) {
-                System.out.print(" " + PdMap1);
+                out.print(" " + PdMap1);
             }
 
-            System.out.println();
+            out.println();
             double val;
             for (int i = 0; i
                     < EdMap.size(); i++) {
-                System.out.print(" " + EdMap.get(i));
+                out.print(" " + EdMap.get(i));
                 for (int j = 0; j
                         < PdMap.size(); j++) {
                     val = StereoMatrix.getValue(i, j);
                     result
                             = format.format(val);
-                    System.out.print("   " + result);
+                    out.print("   " + result);
                 }
 
-                System.out.println();
+                out.println();
             }
 
         } catch (Exception e) {
-            System.err.println("Parser Error");
+            err.println("Parser Error");
             e.printStackTrace();
         }
 
-        System.out.println();
+        out.println();
     }
 
     /**
@@ -246,42 +250,42 @@ public abstract class Debugger extends BasicDebugger {
     protected void printFragmentMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
         EBIMatrix FragmentMatrix = mh.getFragmentMatrix();
 
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
 
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
 
-            System.out.println("Fragment Matrix");
-            System.out.print("\t\t");
+            out.println("Fragment Matrix");
+            out.print("\t\t");
 
             for (String PdMap1 : PdMap) {
-                System.out.print(" " + PdMap1);
+                out.print(" " + PdMap1);
             }
 
-            System.out.println();
+            out.println();
             double val;
             for (int i = 0; i
                     < EdMap.size(); i++) {
-                System.out.print(" " + EdMap.get(i));
+                out.print(" " + EdMap.get(i));
                 for (int j = 0; j
                         < PdMap.size(); j++) {
                     val = FragmentMatrix.getValue(i, j);
                     result
                             = format.format(val);
-                    System.out.print("   " + result);
+                    out.print("   " + result);
                 }
 
-                System.out.println();
+                out.println();
             }
 
         } catch (Exception e) {
-            System.err.println("Parser Error");
+            err.println("Parser Error");
             e.printStackTrace();
         }
 
-        System.out.println();
+        out.println();
     }
 
     /**
@@ -293,42 +297,42 @@ public abstract class Debugger extends BasicDebugger {
     protected void printEnergyMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
         EBIMatrix energyMatrixProfile = mh.getEnergyMatrix();
 
-        System.out.println();
-        System.out.println("********* MATRIX **********");
+        out.println();
+        out.println("********* MATRIX **********");
 
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
 
-            System.out.println("Energy Matrix");
-            System.out.print("\t\t");
+            out.println("Energy Matrix");
+            out.print("\t\t");
 
             for (String PdMap1 : PdMap) {
-                System.out.print("\t" + PdMap1);
+                out.print("\t" + PdMap1);
             }
 
-            System.out.println();
+            out.println();
             double val;
             for (int i = 0; i
                     < EdMap.size(); i++) {
-                System.out.print("\t" + EdMap.get(i));
+                out.print("\t" + EdMap.get(i));
                 for (int j = 0; j
                         < PdMap.size(); j++) {
                     val = energyMatrixProfile.getValue(i, j);
                     result
                             = format.format(val);
-                    System.out.print("\t" + result);
+                    out.print("\t" + result);
                 }
 
-                System.out.println();
+                out.println();
             }
 
         } catch (Exception e) {
-            System.err.println("Parser Error");
+            err.println("Parser Error");
             e.printStackTrace();
         }
 
-        System.out.println();
+        out.println();
     }
 
     /**
@@ -340,34 +344,34 @@ public abstract class Debugger extends BasicDebugger {
      */
     protected void printGraphMatching(IAtomMapping comparison, IAtomContainer mol1, IAtomContainer mol2) {
         int count_final_sol = 0;
-        System.out.println("Output of the final Mappings: ");
-        System.out.println("Mol1: " + mol1.getID());
-        System.out.println("Mol2: " + mol2.getID());
+        out.println("Output of the final Mappings: ");
+        out.println("Mol1: " + mol1.getID());
+        out.println("Mol2: " + mol2.getID());
         try {
             if (comparison.getMappingCount() > 0) {
 
                 for (AtomAtomMapping final_solution : comparison.getAllAtomMapping()) {
                     int final_solution_size = final_solution.getCount();
-                    System.out.println("Final mapping Nr. " + ++count_final_sol
+                    out.println("Final mapping Nr. " + ++count_final_sol
                             + " Size:" + final_solution_size);
 
                     for (Map.Entry<IAtom, IAtom> mapping : final_solution.getMappingsByAtoms().entrySet()) {
                         IAtom eAtom = mapping.getKey();
                         IAtom pAtom = mapping.getValue();
 
-                        System.out.println((mol1.getAtomNumber(eAtom) + 1) + " " + (mol2.getAtomNumber(pAtom) + 1));
+                        out.println((mol1.getAtomNumber(eAtom) + 1) + " " + (mol2.getAtomNumber(pAtom) + 1));
 
-                        System.out.println(eAtom.getSymbol() + " "
+                        out.println(eAtom.getSymbol() + " "
                                 + pAtom.getSymbol());
                     }
-                    System.out.println("");
+                    out.println("");
 
-                    System.out.println("Stereo Match: " + comparison.getStereoScore(count_final_sol - 1));
-                    System.out.println("Stereo different: " + comparison.isStereoMisMatch());
-                    System.out.println("Fragment Size: " + comparison.getFragmentSize(count_final_sol - 1));
+                    out.println("Stereo Match: " + comparison.getStereoScore(count_final_sol - 1));
+                    out.println("Stereo different: " + comparison.isStereoMisMatch());
+                    out.println("Fragment Size: " + comparison.getFragmentSize(count_final_sol - 1));
                 }
 
-                System.out.println("");
+                out.println("");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -386,10 +390,10 @@ public abstract class Debugger extends BasicDebugger {
         ImageGenerator imageGenerator = new ImageGenerator();
 
         ////set the format right for the Tanimoto score (only two digits printed)
-        NumberFormat nf = NumberFormat.getInstance();
+        NumberFormat nf = getInstance();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-        System.out.println("Output of the final Mappings: ");
+        out.println("Output of the final Mappings: ");
         int counter = 1;
         for (AtomAtomMapping mapping : smsd.getAllAtomMapping()) {
 
@@ -402,11 +406,11 @@ public abstract class Debugger extends BasicDebugger {
             try {
                 imageGenerator.addImages(query, target, label, mapping);
             } catch (Exception ex) {
-                Logger.getLogger(Debugger.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(Debugger.class.getName()).log(SEVERE, null, ex);
             }
             counter++;
         }
-        String filePNG = System.getProperty("user.dir") + File.separator + outPutFileName;
+        String filePNG = getProperty("user.dir") + separator + outPutFileName;
         imageGenerator.createImage(filePNG, "Query", "Target");
     }
 
@@ -425,13 +429,13 @@ public abstract class Debugger extends BasicDebugger {
         String cdkSmilesE = new CDKSMILES(reactionStructureInformation.getEduct(substrateIndex), false, false).getCanonicalSMILES();
         String cdkSmilesP = new CDKSMILES(reactionStructureInformation.getProduct(productIndex), false, false).getCanonicalSMILES();
 
-        System.out.println("A: " + reactionStructureInformation.getEduct(substrateIndex).getID() + " " + cdkSmilesE
+        out.println("A: " + reactionStructureInformation.getEduct(substrateIndex).getID() + " " + cdkSmilesE
                 + " B: " + reactionStructureInformation.getProduct(productIndex).getID() + " " + cdkSmilesP);
 
-        System.out.println("A: " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount()
+        out.println("A: " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount()
                 + " B: " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
 
-        System.out.println(
+        out.println(
                 " GetValue: " + mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex)
                 + ", " + mh.getStereoMatrix().getValue(substrateIndex, productIndex));
     }

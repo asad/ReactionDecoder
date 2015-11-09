@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -30,6 +31,7 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
 import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.ANTI_CLOCKWISE;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 
 /**
@@ -37,7 +39,7 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  * @author Gilleain Torrance
  */
 public class ExplicitHydrogenSingleDownWedgeRule extends WedgeRule {
-    private static final Logger LOG = Logger.getLogger(ExplicitHydrogenSingleDownWedgeRule.class.getName());
+    private static final Logger LOG = getLogger(ExplicitHydrogenSingleDownWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {DOWN, NONE, NONE, NONE};
 
@@ -57,7 +59,7 @@ public class ExplicitHydrogenSingleDownWedgeRule extends WedgeRule {
             IBond bond = bonds.get(permutation[index]);
             ligandAtoms[index] = bond.getConnectedAtom(centralAtom);
         }
-        ITetrahedralChirality.Stereo chirality = ITetrahedralChirality.Stereo.ANTI_CLOCKWISE;
+        ITetrahedralChirality.Stereo chirality = ANTI_CLOCKWISE;
         return new TetrahedralChirality(centralAtom, ligandAtoms, chirality);
     }
 }

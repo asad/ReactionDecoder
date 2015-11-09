@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.calculator;
 
+import static java.lang.Math.signum;
 import uk.ac.ebi.centres.Ligand;
 
 /**
@@ -48,7 +49,7 @@ public abstract class ThreeDimensionalSignCalculator<A>
             {getX(a3.getAtom()), getY(a3.getAtom()), getZ(a3.getAtom()), 1},
             {getX(a4.getAtom()), getY(a4.getAtom()), getZ(a4.getAtom()), 1},};
 
-        return (int) Math.signum(determinant(matrix));
+        return (int) signum(determinant(matrix));
 
 
     }
@@ -63,6 +64,6 @@ public abstract class ThreeDimensionalSignCalculator<A>
         // checking the size of the sign doesn't work for 3D as it does for 2D
         // instead we used the magnitude of the cross-product.
         double magnitude = magnitude(crossproduct(toVector(a2, a1), toVector(a2, a3)));
-        return magnitude < 0.2 ? 0 : (int) Math.signum(determinant(matrix));
+        return magnitude < 0.2 ? 0 : (int) signum(determinant(matrix));
     }
 }

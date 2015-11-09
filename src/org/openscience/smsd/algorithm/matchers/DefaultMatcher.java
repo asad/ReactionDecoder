@@ -24,6 +24,7 @@
 package org.openscience.smsd.algorithm.matchers;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -36,7 +37,7 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class DefaultMatcher {
 
-    private static final Logger LOG = Logger.getLogger(DefaultMatcher.class.getName());
+    private static final Logger LOG = getLogger(DefaultMatcher.class.getName());
 
     /**
      *

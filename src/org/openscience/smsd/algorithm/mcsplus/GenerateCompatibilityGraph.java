@@ -27,7 +27,8 @@ package org.openscience.smsd.algorithm.mcsplus;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,14 +36,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import static org.openscience.smsd.algorithm.matchers.DefaultMatcher.matches;
 import org.openscience.smsd.helper.LabelContainer;
+import static org.openscience.smsd.helper.LabelContainer.getInstance;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -57,7 +60,7 @@ import org.openscience.smsd.helper.LabelContainer;
 public class GenerateCompatibilityGraph implements Serializable {
 
     private static final long serialVersionUID = 96986606860861L;
-    private static final Logger LOG = Logger.getLogger(GenerateCompatibilityGraph.class.getName());
+    private static final Logger LOG = getLogger(GenerateCompatibilityGraph.class.getName());
     private List<Integer> compGraphNodes = null;
     private List<Integer> compGraphNodesCZero = null;
     private final List<Integer> cEdges;
@@ -93,8 +96,8 @@ public class GenerateCompatibilityGraph implements Serializable {
         this.target = target;
         compGraphNodes = new ArrayList<>();
         compGraphNodesCZero = new ArrayList<>();
-        cEdges = Collections.synchronizedList(new ArrayList<Integer>());
-        dEdges = Collections.synchronizedList(new ArrayList<Integer>());
+        cEdges = synchronizedList(new ArrayList<Integer>());
+        dEdges = synchronizedList(new ArrayList<Integer>());
 
         /*
          Generate all possible graphs when no ring match or atom type is required
@@ -322,7 +325,7 @@ public class GenerateCompatibilityGraph implements Serializable {
         int count_nodes = 1;
         List<String> list = new ArrayList<>();
         compGraphNodesCZero = new ArrayList<>(); //Initialize the compGraphNodesCZero List
-        LabelContainer labelContainer = LabelContainer.getInstance();
+        LabelContainer labelContainer = getInstance();
         compGraphNodes.clear();
 
         for (int i = 0; i < source.getAtomCount(); i++) {
@@ -444,20 +447,20 @@ public class GenerateCompatibilityGraph implements Serializable {
             /*
              This one also matches atom type, not just symbols
              */
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
     public synchronized List<Integer> getCEgdes() {
-        return Collections.synchronizedList(cEdges);
+        return synchronizedList(cEdges);
     }
 
     public synchronized List<Integer> getDEgdes() {
-        return Collections.synchronizedList(dEdges);
+        return synchronizedList(dEdges);
     }
 
     public synchronized List<Integer> getCompGraphNodes() {
-        return Collections.synchronizedList(compGraphNodes);
+        return synchronizedList(compGraphNodes);
     }
 
     protected synchronized int getCEdgesSize() {
@@ -469,7 +472,7 @@ public class GenerateCompatibilityGraph implements Serializable {
     }
 
     private List<Integer> getCompGraphNodesCZero() {
-        return Collections.unmodifiableList(compGraphNodesCZero);
+        return unmodifiableList(compGraphNodesCZero);
     }
 
     private void clearCEgdes() {

@@ -49,11 +49,12 @@
 package org.openscience.smsd.algorithm.vflib.map;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -74,7 +75,7 @@ import org.openscience.smsd.tools.IterationManager;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFMapper implements IMapper {
-    private static final Logger LOG = Logger.getLogger(VFMapper.class.getName());
+    private static final Logger LOG = getLogger(VFMapper.class.getName());
 
     private final IQuery query;
     private final List<Map<INode, IAtom>> maps;
@@ -87,7 +88,7 @@ public class VFMapper implements IMapper {
      */
     public VFMapper(IQuery query) {
         this.query = query;
-        this.maps = Collections.synchronizedList(new ArrayList<Map<INode, IAtom>>());
+        this.maps = synchronizedList(new ArrayList<Map<INode, IAtom>>());
     }
 
     /**

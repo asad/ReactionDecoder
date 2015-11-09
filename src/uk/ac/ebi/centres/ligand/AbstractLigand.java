@@ -17,8 +17,9 @@
  */
 package uk.ac.ebi.centres.ligand;
 
-import com.google.common.collect.Sets;
-import java.util.Collections;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Boolean.FALSE;
+import static java.util.Collections.EMPTY_SET;
 import java.util.List;
 import java.util.Set;
 import org.openscience.cdk.interfaces.IAtom;
@@ -28,7 +29,8 @@ import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
-import uk.ac.ebi.centres.descriptor.General;
+import static uk.ac.ebi.centres.descriptor.General.NONE;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 import uk.ac.ebi.centres.graph.Arc;
 
 /**
@@ -36,7 +38,7 @@ import uk.ac.ebi.centres.graph.Arc;
  */
 public abstract class AbstractLigand<A> implements Ligand<A> {
 
-    private Descriptor auxiliary = General.UNKNOWN;
+    private Descriptor auxiliary = UNKNOWN;
     private ConnectionProvider<A> provider;
     private final Set<A> visited;
     private final MutableDescriptor descriptor;
@@ -55,7 +57,7 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
         this.distance = distance;
 
         // optimise size for a load factor of 0.75
-        this.visited = Sets.newHashSet(visited);
+        this.visited = newHashSet(visited);
 
     }
 
@@ -67,7 +69,7 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
         this.distance = distance;
 
         // optimise size for a load factor of 0.75
-        this.visited = Sets.newHashSet(visited);
+        this.visited = newHashSet(visited);
 
     }
 
@@ -77,7 +79,7 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
         this.descriptor = descriptor;
         this.distance = distance;
 
-        this.visited = Collections.EMPTY_SET;
+        this.visited = EMPTY_SET;
 
     }
 
@@ -116,7 +118,7 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
     public Descriptor getDescriptor() {
         if (descriptorCache == null) {
             Descriptor descriptor = this.descriptor.get();
-            if (descriptor == General.NONE) // cache access to NONE descriptors
+            if (descriptor == NONE) // cache access to NONE descriptors
             {
                 descriptorCache = descriptor;
             }
@@ -188,11 +190,11 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
 
     @Override
     public boolean isBranching() {
-        return Boolean.FALSE;
+        return FALSE;
     }
 
     @Override
     public boolean isTerminal() {
-        return Boolean.FALSE;
+        return FALSE;
     }
 }

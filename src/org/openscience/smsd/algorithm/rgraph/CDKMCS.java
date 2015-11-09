@@ -6,20 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-import org.openscience.cdk.tools.manipulator.BondManipulator;
+import static org.openscience.cdk.tools.manipulator.BondManipulator.getAtomArray;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.DefaultAtomMatcher;
 import org.openscience.smsd.algorithm.matchers.DefaultAtomTypeMatcher;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import static org.openscience.smsd.algorithm.matchers.DefaultMatcher.matches;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -83,7 +87,7 @@ public class CDKMCS {
     protected final static int ID1 = 0;
     protected final static int ID2 = 1;
     private static IterationManager iterationManager = null;
-    private static final Logger LOG = Logger.getLogger(CDKMCS.class.getName());
+    private static final Logger LOG = getLogger(CDKMCS.class.getName());
 
     ///////////////////////////////////////////////////////////////////////////
     //                            Query Methods
@@ -489,7 +493,7 @@ public class CDKMCS {
         }
 
         // reset result
-        List<List<CDKRMap>> rMapsList = new ArrayList<List<CDKRMap>>();
+        List<List<CDKRMap>> rMapsList = new ArrayList<>();
 
         // build the CDKRGraph corresponding to this problem
         CDKRGraph rGraph = buildRGraph(g1, g2, shouldMatchBonds, shouldMatchRings, matchAtomType);
@@ -520,7 +524,7 @@ public class CDKMCS {
     public static IAtomContainer project(List<CDKRMap> rMapList, IAtomContainer g, int id) {
         IAtomContainer ac = g.getBuilder().newInstance(IAtomContainer.class);
 
-        Map<IAtom, IAtom> table = new HashMap<IAtom, IAtom>();
+        Map<IAtom, IAtom> table = new HashMap<>();
         IAtom a1;
         IAtom a2;
         IAtom a;
@@ -558,9 +562,8 @@ public class CDKMCS {
                 table.put(a, a2);
             }
             IBond newBond = g.getBuilder().newInstance(IBond.class, a1, a2, bond.getOrder());
-            newBond.setFlag(
-                    CDKConstants.ISAROMATIC,
-                    bond.getFlag(CDKConstants.ISAROMATIC));
+            newBond.setFlag(ISAROMATIC,
+                    bond.getFlag(ISAROMATIC));
             ac.addBond(newBond);
         }
         return ac;
@@ -575,7 +578,7 @@ public class CDKMCS {
      * @return a list of GraphAtomContainer
      */
     public static List<IAtomContainer> projectList(List<List<CDKRMap>> rMapsList, IAtomContainer g, int id) {
-        List<IAtomContainer> graphList = new ArrayList<IAtomContainer>();
+        List<IAtomContainer> graphList = new ArrayList<>();
 
         for (List<CDKRMap> rMapList : rMapsList) {
             IAtomContainer ac = project(rMapList, g, id);
@@ -633,7 +636,7 @@ public class CDKMCS {
         }
 
         if (g2.getAtomCount() == 1) {
-            List<CDKRMap> arrayList = new ArrayList<CDKRMap>();
+            List<CDKRMap> arrayList = new ArrayList<>();
             IAtom atom = g2.getAtom(0);
             if (atom instanceof IQueryAtom) {
                 IQueryAtom qAtom = (IQueryAtom) atom;
@@ -652,7 +655,7 @@ public class CDKMCS {
             }
             return arrayList;
         } else if (g1.getAtomCount() == 1) {
-            List<CDKRMap> arrayList = new ArrayList<CDKRMap>();
+            List<CDKRMap> arrayList = new ArrayList<>();
             IAtom atom = g1.getAtom(0);
             for (int i = 0; i < g2.getAtomCount(); i++) {
                 IAtom atom2 = g2.getAtom(i);
@@ -692,7 +695,7 @@ public class CDKMCS {
         if (g2.getAtomCount() == 1) {
             return l; // since the CDKRMap is already an atom-atom mapping
         }
-        List<List<CDKRMap>> result = new ArrayList<List<CDKRMap>>();
+        List<List<CDKRMap>> result = new ArrayList<>();
         for (List<CDKRMap> l2 : l) {
             result.add(makeAtomsMapOfBondsMap(l2, g1, g2));
         }
@@ -713,12 +716,12 @@ public class CDKMCS {
         if (l == null) {
             return (l);
         }
-        List<CDKRMap> result = new ArrayList<CDKRMap>();
+        List<CDKRMap> result = new ArrayList<>();
         for (int i = 0; i < l.size(); i++) {
             IBond bond1 = g1.getBond(l.get(i).getId1());
             IBond bond2 = g2.getBond(l.get(i).getId2());
-            IAtom[] atom1 = BondManipulator.getAtomArray(bond1);
-            IAtom[] atom2 = BondManipulator.getAtomArray(bond2);
+            IAtom[] atom1 = getAtomArray(bond1);
+            IAtom[] atom2 = getAtomArray(bond2);
             for (int j = 0; j < 2; j++) {
                 List<IBond> bondsConnectedToAtom1j = g1.getConnectedBondsList(atom1[j]);
                 for (int k = 0; k < bondsConnectedToAtom1j.size(); k++) {
@@ -823,7 +826,7 @@ public class CDKMCS {
             }
             return false;
         } else {
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
@@ -1051,13 +1054,13 @@ public class CDKMCS {
         IAtom atom;
         for (int i = 0; i < ac1.getBondCount(); i++) {
             bond = ac1.getBond(i);
-            if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+            if (bond.getFlag(ISAROMATIC)) {
                 ac1AromaticBondCount++;
-            } else if (bond.getOrder() == IBond.Order.SINGLE) {
+            } else if (bond.getOrder() == SINGLE) {
                 ac1SingleBondCount++;
-            } else if (bond.getOrder() == IBond.Order.DOUBLE) {
+            } else if (bond.getOrder() == DOUBLE) {
                 ac1DoubleBondCount++;
-            } else if (bond.getOrder() == IBond.Order.TRIPLE) {
+            } else if (bond.getOrder() == TRIPLE) {
                 ac1TripleBondCount++;
             }
         }
@@ -1066,13 +1069,13 @@ public class CDKMCS {
             if (bond instanceof IQueryBond) {
                 continue;
             }
-            if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+            if (bond.getFlag(ISAROMATIC)) {
                 ac2AromaticBondCount++;
-            } else if (bond.getOrder() == IBond.Order.SINGLE) {
+            } else if (bond.getOrder() == SINGLE) {
                 ac2SingleBondCount++;
-            } else if (bond.getOrder() == IBond.Order.DOUBLE) {
+            } else if (bond.getOrder() == DOUBLE) {
                 ac2DoubleBondCount++;
-            } else if (bond.getOrder() == IBond.Order.TRIPLE) {
+            } else if (bond.getOrder() == TRIPLE) {
                 ac2TripleBondCount++;
             }
         }

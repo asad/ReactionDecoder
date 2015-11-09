@@ -23,17 +23,22 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Level;
+import static java.lang.System.err;
+import static java.lang.System.exit;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
-import org.openscience.cdk.io.IChemObjectReader;
+import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.MDLV2000Reader;
 import org.openscience.cdk.io.Mol2Reader;
 import org.openscience.cdk.smiles.SmilesParser;
@@ -45,14 +50,14 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 class ChemicalFormatParser {
 
-    final static String NEW_LINE = System.getProperty("line.separator");
-    private static final Logger LOG = Logger.getLogger(ChemicalFormatParser.class.getName());
+    final static String NEW_LINE = getProperty("line.separator");
+    private static final Logger LOG = getLogger(ChemicalFormatParser.class.getName());
 
     protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            System.err.println("CML file not found! " + f.getName());
-            System.exit(1);
+            err.println("CML file not found! " + f.getName());
+            exit(1);
         }
         String[] split = f.getName().split(".cml");
         CMLReader cmlReader = new CMLReader(new FileInputStream(input));
@@ -67,12 +72,12 @@ class ChemicalFormatParser {
     protected IReaction parseRXN(String fileName) {
         File filepath = new File(fileName);
         if (!filepath.isFile()) {
-            System.err.println("RXN file not found! " + filepath.getName());
-            System.exit(1);
+            err.println("RXN file not found! " + filepath.getName());
+            exit(1);
         }
         String[] split = filepath.getName().split(".rxn");
         try {
-            System.out.println(NEW_LINE + "Annotating Reaction " + split[0] + NEW_LINE);
+            out.println(NEW_LINE + "Annotating Reaction " + split[0] + NEW_LINE);
             IReaction rxnReactions;
             try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath));) {
                 try {
@@ -81,49 +86,49 @@ class ChemicalFormatParser {
                     rxnReactions.setID(split[0]);
                     return rxnReactions;
                 } catch (IOException | CDKException ex) {
-                    System.err.println("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
+                    err.println("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
                 }
             }
         } catch (IOException ex) {
-            System.err.println("Failed to Read and Annotate RXN File ");
-            Logger.getLogger(ChemicalFormatParser.class.getName()).log(Level.SEVERE, null, ex);
+            err.println("Failed to Read and Annotate RXN File ");
+            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
         }
         return null;
     }
 
     protected IReaction parseReactionSMILES(String reactionSmiles) {
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(getInstance());
         try {
             IReaction parseReactionSmiles = sp.parseReactionSmiles(reactionSmiles);
             try {
-                System.out.println(NEW_LINE + "Annotating Reaction " + "smiles" + NEW_LINE);
+                out.println(NEW_LINE + "Annotating Reaction " + "smiles" + NEW_LINE);
                 parseReactionSmiles.setID("smiles");
                 return parseReactionSmiles;
             } catch (Exception ex) {
-                Logger.getLogger(ChemicalFormatParser.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
             }
         } catch (InvalidSmilesException ex) {
-            Logger.getLogger(ChemicalFormatParser.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
         }
         return null;
     }
 
     protected IReaction parseSMILES(String smiles) {
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(getInstance());
         try {
             IAtomContainer mol = sp.parseSmiles(smiles);
             try {
-                IReaction parseReactionSmiles = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+                IReaction parseReactionSmiles = getInstance().newInstance(IReaction.class);
                 parseReactionSmiles.addReactant(mol, 1.0);
 //                parseReactionSmiles.addProduct(mol, 1.0);
-                System.out.println(NEW_LINE + "Annotating Reaction " + "smiles" + NEW_LINE);
+                out.println(NEW_LINE + "Annotating Reaction " + "smiles" + NEW_LINE);
                 parseReactionSmiles.setID("smiles");
                 return parseReactionSmiles;
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(ChemicalFormatParser.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
             }
         } catch (InvalidSmilesException ex) {
-            Logger.getLogger(ChemicalFormatParser.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
         }
         return null;
     }
@@ -131,13 +136,13 @@ class ChemicalFormatParser {
     protected IReaction parseMOL2(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            System.err.println("Mol2 file not found! " + f.getName());
-            System.exit(1);
+            err.println("Mol2 file not found! " + f.getName());
+            exit(1);
         }
 
         String[] split = f.getName().split(".mol");
         MDLV2000Reader mdlV2000Reader = new MDLV2000Reader(
-                new FileReader(input), IChemObjectReader.Mode.RELAXED);
+                new FileReader(input), RELAXED);
         AtomContainer ac = mdlV2000Reader.read(new AtomContainer());
         IReaction r = new Reaction();
         r.addReactant(ac, 1.0);
@@ -149,8 +154,8 @@ class ChemicalFormatParser {
     protected IReaction parseSDF(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            System.err.println("SDF file not found! " + f.getName());
-            System.exit(1);
+            err.println("SDF file not found! " + f.getName());
+            exit(1);
         }
         String[] split = f.getName().split(".sdf");
         Mol2Reader mol2Reader = new Mol2Reader(new FileReader(input));

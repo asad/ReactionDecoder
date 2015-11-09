@@ -23,6 +23,7 @@
 package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -30,7 +31,7 @@ import org.openscience.cdk.interfaces.IBond;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SuperBonds {
-    private static final Logger LOG = Logger.getLogger(SuperBonds.class.getName());
+    private static final Logger LOG = getLogger(SuperBonds.class.getName());
 
     final private IBond superBond;
     final private int bondIndex;

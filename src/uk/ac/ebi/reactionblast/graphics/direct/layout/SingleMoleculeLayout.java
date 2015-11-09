@@ -19,19 +19,24 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
+import static java.lang.System.err;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.geometry.GeometryTools;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
+import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = Logger.getLogger(SingleMoleculeLayout.class.getName());
+    private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
@@ -51,21 +56,21 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
         // XXX axis is used here to mean center point! :( bad design....
         Point2d center = new Point2d(axis);
 
-        if (forceRelayout || !GeometryTools.has2DCoordinates(atomContainer)) {
+        if (forceRelayout || !has2DCoordinates(atomContainer)) {
             sdg.setMolecule(new AtomContainer(atomContainer), false);
             try {
-                if (ConnectivityChecker.isConnected(atomContainer)) {
+                if (isConnected(atomContainer)) {
                     sdg.generateCoordinates();
                 } else {
-                    System.err.println("Disconnected components needs to be layout separately");
+                    err.println("Disconnected components needs to be layout separately");
                 }
             } catch (CDKException e) {
                 e.printStackTrace();
             }
         }
-        double scale = GeometryTools.getScaleFactor(atomContainer, params.bondLength);
-        Rectangle2D bounds = GeometryTools.getRectangle2D(atomContainer);
-        GeometryTools.scaleMolecule(atomContainer, scale);
+        double scale = getScaleFactor(atomContainer, params.bondLength);
+        Rectangle2D bounds = getRectangle2D(atomContainer);
+        scaleMolecule(atomContainer, scale);
         translateTo(atomContainer, center.x, center.y, bounds);
         String label = atomContainer.getID();
         return new BoundsTree(label, label, bounds);

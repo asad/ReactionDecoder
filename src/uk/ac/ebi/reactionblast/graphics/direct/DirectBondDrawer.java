@@ -20,25 +20,37 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
+import static java.awt.Color.BLACK;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IBond.Stereo;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
+import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN_INVERTED;
+import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
+import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
@@ -46,7 +58,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
 public class DirectBondDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(DirectBondDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());
 
     private final LabelManager labelManager;
     private final Stroke dashedWedgeStroke;
@@ -84,7 +96,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         addRingCentersToAtomAnnotationPositions(molecule, ringSet);
         Map<IBond, IAtomContainer> bondRingMap = fillBondRingMap(ringSet);
 
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         for (IBond bond : molecule.bonds()) {
             if (shouldDraw(bond)) {
                 drawBond(bond, bondRingMap, g);
@@ -101,7 +113,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         }
         List<IBond> drawnRingBonds = new ArrayList<>();
         for (IAtomContainer ring : ringSet.atomContainers()) {
-            Point2d c = GeometryTools.get2DCenter(ring);
+            Point2d c = get2DCenter(ring);
             for (IBond bond : ring.bonds()) {
                 if (drawnRingBonds.contains(bond)) {
                 } else if (bond.getFlag(ISAROMATIC) && params.drawAromaticCircles) {
@@ -109,7 +121,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
                     Point2d p2 = bond.getAtom(1).getPoint2d();
                     drawOffsetBond(p1, p2, c, g);
                     drawnRingBonds.add(bond);
-                } else if (bond.getOrder() == IBond.Order.SINGLE) {
+                } else if (bond.getOrder() == SINGLE) {
                 } else {
                     Point2d p1 = bond.getAtom(0).getPoint2d();
                     Point2d p2 = bond.getAtom(1).getPoint2d();
@@ -154,18 +166,18 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         Point2d p2 = bond.getAtom(1).getPoint2d();
         IBond.Order order = bond.getOrder();
         IBond.Stereo stereo = bond.getStereo();
-        if (stereo == IBond.Stereo.NONE
-                && (order == IBond.Order.SINGLE || bond.getFlag(ISAROMATIC))) {
+        if (stereo == NONE
+                && (order == SINGLE || bond.getFlag(ISAROMATIC))) {
             drawLine(p1, p2, g);
-        } else if (order == IBond.Order.DOUBLE) {
+        } else if (order == DOUBLE) {
             if (bondRingMap.containsKey(bond)) {
                 drawLine(p1, p2, g);
             } else {
                 drawDoubleBond(p1, p2, g);
             }
-        } else if (order == IBond.Order.TRIPLE) {
+        } else if (order == TRIPLE) {
             drawTripleBond(p1, p2, g);
-        } else if (stereo != IBond.Stereo.NONE) {
+        } else if (stereo != NONE) {
             drawStereo(p1, p2, stereo, g);
         }
     }
@@ -182,18 +194,25 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
     }
 
     private void drawStereo(Point2d p1, Point2d p2, Stereo stereo, Graphics2D g) {
-        if (stereo == IBond.Stereo.UP_OR_DOWN) {
-            drawWigglyLine(p1, p2, g);
-        } else if (stereo == IBond.Stereo.DOWN) {
-            drawWedge(p1, p2, false, g);
-        } else if (stereo == IBond.Stereo.DOWN_INVERTED) {
-            drawWedge(p2, p1, false, g);
-        } else if (stereo == IBond.Stereo.UP) {
-            drawWedge(p1, p2, true, g);
-        } else if (stereo == IBond.Stereo.UP_INVERTED) {
-            drawWedge(p2, p1, true, g);
-        } else {
-            // ?
+        if (null != stereo) switch (stereo) {
+            case UP_OR_DOWN:
+                drawWigglyLine(p1, p2, g);
+                break;
+            case DOWN:
+                drawWedge(p1, p2, false, g);
+                break;
+            case DOWN_INVERTED:
+                drawWedge(p2, p1, false, g);
+                break;
+            case UP:
+                drawWedge(p1, p2, true, g);
+                break;
+            case UP_INVERTED:
+                drawWedge(p2, p1, true, g);
+                break;
+        // ?
+            default:
+                break;
         }
     }
 
@@ -370,9 +389,9 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
     }
 
     private void drawRingCircle(IAtomContainer ring, Graphics2D g) {
-        Point2d center = GeometryTools.get2DCenter(ring);
-        Rectangle2D bounds = GeometryTools.getRectangle2D(ring);
-        double diameter = Math.min(bounds.getWidth(), bounds.getHeight());
+        Point2d center = get2DCenter(ring);
+        Rectangle2D bounds = getRectangle2D(ring);
+        double diameter = min(bounds.getWidth(), bounds.getHeight());
         diameter *= params.ringProportion;
         double radius = diameter / 2;
         g.draw(new Ellipse2D.Double(center.x - radius, center.y - radius, diameter, diameter));

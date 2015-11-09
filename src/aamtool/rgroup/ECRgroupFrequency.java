@@ -22,15 +22,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
@@ -44,7 +46,7 @@ public class ECRgroupFrequency {
 
     protected final static boolean DEBUG = false;
 
-    private static final Logger LOG = Logger.getLogger(ECRgroupFrequency.class.getName());
+    private static final Logger LOG = getLogger(ECRgroupFrequency.class.getName());
 
     /**
      * @param args the command line arguments
@@ -56,7 +58,7 @@ public class ECRgroupFrequency {
     }
 
     public ECRgroupFrequency(String[] args) {
-        System.out.println("------------------------------------------------------");
+        out.println("------------------------------------------------------");
         Map<String, MultiReactionContainer> reactionMap = new TreeMap<>();
         for (String dir : args) {
             File f = new File(dir);
@@ -65,7 +67,7 @@ public class ECRgroupFrequency {
                 //
                 if (DEBUG) {
                     List<File> l = new ArrayList<>();
-                    l.addAll(Arrays.asList(files));
+                    l.addAll(asList(files));
                     List<File> subList = l.subList(1, 100);
                     files = subList.toArray(new File[subList.size()]);
                 }
@@ -88,9 +90,9 @@ public class ECRgroupFrequency {
                                     reactionMap.put(ecNumber, r);
                                 }
                             } catch (FileNotFoundException ex) {
-                                Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                             } catch (CDKException | IOException ex) {
-                                Logger.getLogger(ECRgroupFrequency.class.getName()).log(Level.SEVERE, null, ex);
+                                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                             }
                         }
                     }
@@ -99,7 +101,7 @@ public class ECRgroupFrequency {
         }
 
         if (DEBUG) {
-            System.out.println("Number of EC parsed " + reactionMap.size());
+            out.println("Number of EC parsed " + reactionMap.size());
         }
 
         int ec1Counter = 0;
@@ -129,7 +131,7 @@ public class ECRgroupFrequency {
         for (String ec : reactionMap.keySet()) {
             if (DEBUG) {
                 if (reactionMap.get(ec).isRGroup()) {
-                    System.out.println("Processing EC: " + ec
+                    out.println("Processing EC: " + ec
                             + ", R-found: " + reactionMap.get(ec).isRGroup()
                             + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP().size()
                             + ", reaction count: " + reactionMap.get(ec).getReactionCount());
@@ -145,7 +147,7 @@ public class ECRgroupFrequency {
                     && !reactionMap.get(ec).isRGroup()) {
                 no_common_fragment_in_non_r_group++;
                 if (DEBUG) {
-                    System.out.println("Processing EC: " + ec
+                    out.println("Processing EC: " + ec
                             + ", R-found: " + reactionMap.get(ec).isRGroup()
                             + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
                             + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
@@ -158,7 +160,7 @@ public class ECRgroupFrequency {
                 no_common_fragment_in_r_group++;
                 if (DEBUG) {
 
-                    System.out.println("Processing EC: " + ec
+                    out.println("Processing EC: " + ec
                             + ", R-found: " + reactionMap.get(ec).isRGroup()
                             + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
                             + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
@@ -170,7 +172,7 @@ public class ECRgroupFrequency {
                     && reactionMap.get(ec).getCommonDifferenceFP().isEmpty()) {
                 no_common_fragment_in_either++;
                 if (DEBUG) {
-                    System.out.println("Processing EC: " + ec
+                    out.println("Processing EC: " + ec
                             + ", R-found: " + reactionMap.get(ec).isRGroup()
                             + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
                             + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
@@ -234,7 +236,7 @@ public class ECRgroupFrequency {
                     }
                     break;
                 default:
-                    System.out.println("UNKNOW EC CLASS");
+                    out.println("UNKNOW EC CLASS");
                     break;
 
             }
@@ -246,36 +248,36 @@ public class ECRgroupFrequency {
                 + ec3_RGroupReactionCounter + ec4_RGroupReactionCounter
                 + ec5_RGroupReactionCounter + ec6_RGroupReactionCounter;
 
-        System.out.println("------------------------------------------------------");
-        System.out.println("R-group EC numbers");
-        System.out.println(r_group_ec);
+        out.println("------------------------------------------------------");
+        out.println("R-group EC numbers");
+        out.println(r_group_ec);
 
-        System.out.println("------------------------------------------------------");
-        System.out.println("# EC 1 Numbers " + ec1Counter);
-        System.out.println("# R-Group EC 1 Numbers " + ec1_RGroupReactionCounter);
+        out.println("------------------------------------------------------");
+        out.println("# EC 1 Numbers " + ec1Counter);
+        out.println("# R-Group EC 1 Numbers " + ec1_RGroupReactionCounter);
 
-        System.out.println("# EC 2 Numbers " + ec2Counter);
-        System.out.println("# R-Group EC 2 Numbers " + ec2_RGroupReactionCounter);
+        out.println("# EC 2 Numbers " + ec2Counter);
+        out.println("# R-Group EC 2 Numbers " + ec2_RGroupReactionCounter);
 
-        System.out.println("# EC 3 Numbers " + ec3Counter);
-        System.out.println("# R-Group EC 3 Numbers " + ec3_RGroupReactionCounter);
+        out.println("# EC 3 Numbers " + ec3Counter);
+        out.println("# R-Group EC 3 Numbers " + ec3_RGroupReactionCounter);
 
-        System.out.println("# EC 4 Numbers " + ec4Counter);
-        System.out.println("# R-Group EC 4 Numbers " + ec4_RGroupReactionCounter);
+        out.println("# EC 4 Numbers " + ec4Counter);
+        out.println("# R-Group EC 4 Numbers " + ec4_RGroupReactionCounter);
 
-        System.out.println("# EC 5 Numbers " + ec5Counter);
-        System.out.println("# R-Group EC 5 Numbers " + ec5_RGroupReactionCounter);
+        out.println("# EC 5 Numbers " + ec5Counter);
+        out.println("# R-Group EC 5 Numbers " + ec5_RGroupReactionCounter);
 
-        System.out.println("# EC 6 Numbers " + ec6Counter);
-        System.out.println("# R-Group EC 6 Numbers " + ec6_RGroupReactionCounter);
+        out.println("# EC 6 Numbers " + ec6Counter);
+        out.println("# R-Group EC 6 Numbers " + ec6_RGroupReactionCounter);
 
-        System.out.println("# EC Numbers " + total_EC);
-        System.out.println("# R-Group EC Numbers " + total_r_group_counter);
-        System.out.println("# EC with No Common Fragment in Non R-Groups " + no_common_fragment_in_non_r_group);
-        System.out.println("# EC with No Common Fragment in R-Groups " + no_common_fragment_in_r_group);
-        System.out.println("# EC with No Common Fragment in Either R-Groups " + no_common_fragment_in_either);
+        out.println("# EC Numbers " + total_EC);
+        out.println("# R-Group EC Numbers " + total_r_group_counter);
+        out.println("# EC with No Common Fragment in Non R-Groups " + no_common_fragment_in_non_r_group);
+        out.println("# EC with No Common Fragment in R-Groups " + no_common_fragment_in_r_group);
+        out.println("# EC with No Common Fragment in Either R-Groups " + no_common_fragment_in_either);
 
-        System.out.println("------------------------------------------------------");
+        out.println("------------------------------------------------------");
         /*
         EC Third Level Signature
         */
@@ -289,7 +291,7 @@ public class ECRgroupFrequency {
         for (String ec : commonCommonMap.keySet()) {
             if (DEBUG) {
                 if (commonUnionMap.get(ec).isEmpty()) {
-                    System.out.println("EC: " + ec
+                    out.println("EC: " + ec
                             + ", Common Signature: " + commonCommonMap.get(ec)
                             + ", Difference Signature " + commonDifferenceMap.get(ec)
                             + ", Union Common Signature " + commonUnionMap.get(ec));
@@ -325,17 +327,17 @@ public class ECRgroupFrequency {
             }
 
         }
-        System.out.println("------------------------------------------------------");
-        System.out.println("# 3rd level EC Count " + commonCommonMap.size());
-        System.out.println("# 3rd level EC with No Common Fragment " + empty_signature);
-        System.out.println("# 3rd level EC with One Common Fragment " + one_signature_common);
-        System.out.println("# 3rd level EC with more than One Common Fragment " + more_than_one_signature_common);
+        out.println("------------------------------------------------------");
+        out.println("# 3rd level EC Count " + commonCommonMap.size());
+        out.println("# 3rd level EC with No Common Fragment " + empty_signature);
+        out.println("# 3rd level EC with One Common Fragment " + one_signature_common);
+        out.println("# 3rd level EC with more than One Common Fragment " + more_than_one_signature_common);
 
-        System.out.println("# 3rd level EC Count " + commonUnionMap.size());
-        System.out.println("# 3rd level EC with No Common Union Fragment " + empty_union_common);
-        System.out.println("# 3rd level EC with One Common Union Fragment " + one_union_common);
-        System.out.println("# 3rd level EC with more than One Common Union Fragment " + more_than_one_union_common);
-        System.out.println("------------------------------------------------------");
+        out.println("# 3rd level EC Count " + commonUnionMap.size());
+        out.println("# 3rd level EC with No Common Union Fragment " + empty_union_common);
+        out.println("# 3rd level EC with One Common Union Fragment " + one_union_common);
+        out.println("# 3rd level EC with more than One Common Union Fragment " + more_than_one_union_common);
+        out.println("------------------------------------------------------");
     }
 
 }

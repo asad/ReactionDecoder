@@ -18,32 +18,42 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.System.nanoTime;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
-import org.openscience.cdk.aromaticity.ElectronDonation;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.Cycles;
+import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.or;
+import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.Substructure;
-import org.openscience.smsd.interfaces.Algorithm;
+import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
+import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 
@@ -54,7 +64,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 public class MCSThread implements Callable<MCSSolution> {
     private static final boolean DEBUG1 = false;
     private static final boolean DEBUG2 = false;
-    private static final Logger LOG = Logger.getLogger(MCSThread.class.getName());
+    private static final Logger LOG = getLogger(MCSThread.class.getName());
 
     private boolean stereoFlag;
     private boolean fragmentFlag;
@@ -96,7 +106,7 @@ public class MCSThread implements Callable<MCSSolution> {
         this.fragmentFlag = true;
         this.energyFlag = true;
 
-        this.startTime = System.currentTimeMillis();
+        this.startTime = currentTimeMillis();
 
         this.compound1 = getNewContainerWithIDs(educt);
         this.compound2 = getNewContainerWithIDs(product);
@@ -109,9 +119,9 @@ public class MCSThread implements Callable<MCSSolution> {
         this.labeller = new SmilesMoleculeLabeller();
 
         if (DEBUG1) {
-            aromaticity = new Aromaticity(ElectronDonation.daylight(),
-                    Cycles.or(Cycles.all(), Cycles.relevant()));
-            smiles = SmilesGenerator.unique().aromatic();
+            aromaticity = new Aromaticity(daylight(),
+                    or(all(), relevant()));
+            smiles = unique().aromatic();
         }
 
     }
@@ -120,7 +130,7 @@ public class MCSThread implements Callable<MCSSolution> {
         int overlap = isomorphism.getFirstAtomMapping().isEmpty() ? 0
                 : isomorphism.getFirstAtomMapping().getCount();
 
-        System.out.println("Q: " + isomorphism.getQuery().getID()
+        out.println("Q: " + isomorphism.getQuery().getID()
                 + " T: " + isomorphism.getTarget().getID()
                 + " atoms: " + isomorphism.getQuery().getAtomCount()
                 + " atoms: " + isomorphism.getTarget().getAtomCount()
@@ -130,9 +140,9 @@ public class MCSThread implements Callable<MCSSolution> {
     @Override
     public synchronized MCSSolution call() throws Exception {
         try {
-            if (!theory.equals(IMappingAlgorithm.RINGS)) {
+            if (!theory.equals(RINGS)) {
                 if (DEBUG1) {
-                    System.out.println("Q: " + getCompound1().getID()
+                    out.println("Q: " + getCompound1().getID()
                             + " T: " + getCompound2().getID()
                             + " molQ: " + smiles.create(compound1)
                             + " molT: " + smiles.create(compound2)
@@ -148,24 +158,24 @@ public class MCSThread implements Callable<MCSSolution> {
                  */
                 boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
                 if (DEBUG1) {
-                    System.out.println("VF Matcher " + possibleVFmatch12);
-                    System.out.println("Compound1 " + "A: " + getCompound1().getAtomCount()
+                    out.println("VF Matcher " + possibleVFmatch12);
+                    out.println("Compound1 " + "A: " + getCompound1().getAtomCount()
                             + " B: " + getCompound1().getBondCount());
 
-                    System.out.println("Compound2 " + "A: " + getCompound2().getAtomCount()
+                    out.println("Compound2 " + "A: " + getCompound2().getAtomCount()
                             + " B: " + getCompound2().getBondCount());
                 }
 
                 boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
                 if (DEBUG1) {
-                    System.out.println("VF Matcher " + possibleVFmatch21);
+                    out.println("VF Matcher " + possibleVFmatch21);
                 }
 
                 if (possibleVFmatch12
                         && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
                         && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
                     if (DEBUG1) {
-                        System.out.println("Substructure 5");
+                        out.println("Substructure 5");
                     }
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
@@ -179,21 +189,21 @@ public class MCSThread implements Callable<MCSSolution> {
                         mcs.setFragmentSize(substructure.getFragmentSize(0));
                         mcs.setStereoScore(substructure.getStereoScore(0));
                         if (DEBUG1) {
-                            long stopTime = System.currentTimeMillis();
+                            long stopTime = currentTimeMillis();
                             long time = stopTime - startTime;
                             printMatch(substructure);
-                            System.out.println("\" Time:\" " + time);
+                            out.println("\" Time:\" " + time);
                         }
                         return mcs;
                     } else {
                         if (DEBUG1) {
-                            System.out.println("not a Substructure 5");
+                            out.println("not a Substructure 5");
                         }
                     }
                 } else if (possibleVFmatch21) {
 
                     if (DEBUG1) {
-                        System.out.println("Substructure 6");
+                        out.println("Substructure 6");
                     }
 
                     IAtomContainer ac1 = duplicate(getCompound1());
@@ -216,22 +226,22 @@ public class MCSThread implements Callable<MCSSolution> {
                         mcs.setStereoScore(substructure.getStereoScore(0));
 
                         if (DEBUG1) {
-                            long stopTime = System.currentTimeMillis();
+                            long stopTime = currentTimeMillis();
                             long time = stopTime - startTime;
                             printMatch(substructure);
-                            System.out.println("\" Time:\" " + time);
+                            out.println("\" Time:\" " + time);
                         }
                         return mcs;
                     } else {
                         if (DEBUG1) {
-                            System.out.println("not a Substructure 6");
+                            out.println("not a Substructure 6");
                         }
                     }
                 }
 
                 if (DEBUG1) {
-                    System.out.println("calling mcs");
-                    System.out.println("Q: " + getCompound1().getID()
+                    out.println("calling mcs");
+                    out.println("Q: " + getCompound1().getID()
                             + " T: " + getCompound2().getID()
                             + " molQ: " + smiles.create(compound1)
                             + " molT: " + smiles.create(compound2)
@@ -249,7 +259,7 @@ public class MCSThread implements Callable<MCSSolution> {
             }
 
         } catch (CDKException | CloneNotSupportedException ex) {
-            Logger.getLogger(MCSThread.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(MCSThread.class.getName()).log(SEVERE, null, ex);
         }
         return null;
     }
@@ -264,10 +274,10 @@ public class MCSThread implements Callable<MCSSolution> {
         ac = mol.clone();
         for (int i = 0; i < ac.getAtomCount(); i++) {
             String atomID = mol.getAtom(i).getID() == null
-                    ? String.valueOf(i) : mol.getAtom(i).getID();
+                    ? valueOf(i) : mol.getAtom(i).getID();
             ac.getAtom(i).setID(atomID);
         }
-        String containerID = mol.getID() == null ? String.valueOf(System.nanoTime()) : mol.getID();
+        String containerID = mol.getID() == null ? valueOf(nanoTime()) : mol.getID();
         ac.setID(containerID);
 
         return ac;
@@ -322,9 +332,9 @@ public class MCSThread implements Callable<MCSSolution> {
         difference.removeAll(atomUniqueCounter2.keySet());
 
         if (DEBUG2) {
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            System.out.println("diff " + difference.size());
+            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            out.println("diff " + difference.size());
         }
 
         if (difference.isEmpty()) {
@@ -350,19 +360,19 @@ public class MCSThread implements Callable<MCSSolution> {
         List<String> atomUniqueCounter2 = new ArrayList<>();
 
         for (IAtom a : q.atoms()) {
-            String hyb = a.getHybridization() == CDKConstants.UNSET
+            String hyb = a.getHybridization() == UNSET
                     ? a.getSymbol() : a.getAtomTypeName();
             atomUniqueCounter1.add(hyb);
         }
 
         for (IAtom b : t.atoms()) {
-            String hyb = b.getHybridization() == CDKConstants.UNSET
+            String hyb = b.getHybridization() == UNSET
                     ? b.getSymbol() : b.getAtomTypeName();
             atomUniqueCounter2.add(hyb);
         }
 
-        Collections.sort(atomUniqueCounter1);
-        Collections.sort(atomUniqueCounter2);
+        sort(atomUniqueCounter1);
+        sort(atomUniqueCounter2);
 
         if (atomUniqueCounter1.isEmpty()) {
             return 0;
@@ -371,9 +381,9 @@ public class MCSThread implements Callable<MCSSolution> {
         common.retainAll(atomUniqueCounter2);
 
         if (DEBUG2) {
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            System.out.println("common " + common.size());
+            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            out.println("common " + common.size());
         }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
@@ -392,22 +402,22 @@ public class MCSThread implements Callable<MCSSolution> {
                 /*
                  This handles large aliphatics to ring system (ex: R09907)
                  */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), false);
             } else if (expectedMaxGraphmatch > 30) {
                 /*
                  This handles large aliphatics to ring system (ex: R06466)
                  */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.VFLibMCS,
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), VFLibMCS,
                         false, ringMatcher, !isHasPerfectRings());
             } else {
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             }
 
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
             if (DEBUG1) {
-                System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
+                out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
             }      /*
              * In case of Complete subgraph, don't use Energy filter
              *
@@ -420,15 +430,15 @@ public class MCSThread implements Callable<MCSSolution> {
             mcs.setStereoScore(isomorphism.getStereoScore(0));
 
             if (DEBUG1) {
-                long stopTime = System.currentTimeMillis();
+                long stopTime = currentTimeMillis();
                 long time = stopTime - startTime;
                 printMatch(isomorphism);
-                System.out.println("\" Time:\" " + time);
+                out.println("\" Time:\" " + time);
 
             }
             return mcs;
         } catch (Exception e) {
-            Logger.getLogger(MCSThread.class.getName()).log(Level.SEVERE, "Error in computing MCS ", e);
+            getLogger(MCSThread.class.getName()).log(SEVERE, "Error in computing MCS ", e);
         }
         return null;
     }
@@ -445,7 +455,7 @@ public class MCSThread implements Callable<MCSSolution> {
          */
         Isomorphism isomorphism;
 
-        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, true, ringMatcher, true);
+        isomorphism = new Isomorphism(ac1, ac2, DEFAULT, true, ringMatcher, true);
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
         Map<IAtom, IAtom> acceptedSolution = new HashMap<>();
@@ -467,12 +477,12 @@ public class MCSThread implements Callable<MCSSolution> {
         if (ac1.getAtomCount() > 0 && ac2.getAtomCount() > 0) {
 
             if (DEBUG2) {
-                System.out.println(smiles.create(getCompound1()) + "ac1 reduced by "
+                out.println(smiles.create(getCompound1()) + "ac1 reduced by "
                         + (getCompound1().getAtomCount() - ac1.getAtomCount())
                         + ", " + smiles.create(getCompound2()) + " ac2 reduced by "
                         + (getCompound2().getAtomCount() - ac2.getAtomCount()));
             }
-            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, false, ringMatcher, true);
+            isomorphism = new Isomorphism(ac1, ac2, VFLibMCS, false, ringMatcher, true);
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
             List<AtomAtomMapping> allAtomMapping = isomorphism.getAllAtomMapping();
             int solIndex = 0;
@@ -522,10 +532,10 @@ public class MCSThread implements Callable<MCSSolution> {
         mcs.setStereoScore(isomorphism.getStereoScore(0));
 
         if (DEBUG1) {
-            long stopTime = System.currentTimeMillis();
+            long stopTime = currentTimeMillis();
             long time = stopTime - startTime;
             printMatch(isomorphism);
-            System.out.println("\" Time:\" " + time);
+            out.println("\" Time:\" " + time);
 
         }
 

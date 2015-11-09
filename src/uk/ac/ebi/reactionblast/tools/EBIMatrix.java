@@ -21,19 +21,32 @@ package uk.ac.ebi.reactionblast.tools;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
+import static java.io.StreamTokenizer.TT_EOF;
+import static java.io.StreamTokenizer.TT_EOL;
+import static java.io.StreamTokenizer.TT_WORD;
+import static java.lang.Double.valueOf;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
+import static java.lang.Math.sqrt;
+import static java.lang.System.arraycopy;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
+import static java.util.Locale.US;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.tools.matrix.CholeskyDecomposition;
 import uk.ac.ebi.reactionblast.tools.matrix.EigenvalueDecomposition;
 import uk.ac.ebi.reactionblast.tools.matrix.LUDecomposition;
-import uk.ac.ebi.reactionblast.tools.matrix.Maths;
+import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 import uk.ac.ebi.reactionblast.tools.matrix.QRDecomposition;
 import uk.ac.ebi.reactionblast.tools.matrix.SingularValueDecomposition;
 
@@ -82,7 +95,7 @@ import uk.ac.ebi.reactionblast.tools.matrix.SingularValueDecomposition;
 public class EBIMatrix extends Object implements Cloneable, java.io.Serializable {
 
     private static final long serialVersionUID = 19787786981017786L;
-    private static final Logger LOG = Logger.getLogger(EBIMatrix.class.getName());
+    private static final Logger LOG = getLogger(EBIMatrix.class.getName());
 
     /**
      * Solves a linear equation system with Gauss elimination.
@@ -101,12 +114,12 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         EBIMatrix a = matrix.duplicate();
         List<Double> b = new ArrayList<>(vector);
         for (j = 0; j < (n - 1); j++) {
-            c = Math.abs(a.matrix[j][j]);
+            c = abs(a.matrix[j][j]);
             pivot[j] = j;
             ipvt = j;
             for (i = j + 1; i < n; i++) {
-                if (Math.abs(a.matrix[i][j]) > c) {
-                    c = Math.abs(a.matrix[i][j]);
+                if (abs(a.matrix[i][j]) > c) {
+                    c = abs(a.matrix[i][j]);
                     ipvt = i;
                 }
             }
@@ -219,15 +232,15 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         ArrayList v = new ArrayList();
         
         // Ignore initial empty lines
-        while (tokenizer.nextToken() == StreamTokenizer.TT_EOL) {
+        while (tokenizer.nextToken() == TT_EOL) {
             ;
         }
-        if (tokenizer.ttype == StreamTokenizer.TT_EOF) {
+        if (tokenizer.ttype == TT_EOF) {
             throw new java.io.IOException("Unexpected EOF on matrix read.");
         }
         do {
-            v.add(Double.valueOf(tokenizer.sval)); // Read & store 1st row.
-        } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
+            v.add(valueOf(tokenizer.sval)); // Read & store 1st row.
+        } while (tokenizer.nextToken() == TT_WORD);
         
         int n = v.size();  // Now we've got the number of columns!
         double row[] = new double[n];
@@ -237,7 +250,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         }
         v.removeAll(v);
         v.add(row);  // Start storing rows instead of columns.
-        while (tokenizer.nextToken() == StreamTokenizer.TT_WORD) {
+        while (tokenizer.nextToken() == TT_WORD) {
             // While non-empty lines
             v.add(row = new double[n]);
             int j = 0;
@@ -245,8 +258,8 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 if (j >= n) {
                     throw new java.io.IOException("Row " + v.size() + " is too long.");
                 }
-                Double.valueOf(tokenizer.sval).doubleValue();
-            } while (tokenizer.nextToken() == StreamTokenizer.TT_WORD);
+                valueOf(tokenizer.sval);
+            } while (tokenizer.nextToken() == TT_WORD);
             if (j < n) {
                 throw new java.io.IOException("Row " + v.size() + " is too short.");
             }
@@ -276,7 +289,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             if (A[i].length != n) {
                 throw new IllegalArgumentException("All rows must have the same length.");
             }
-            System.arraycopy(A[i], 0, C[i], 0, n);
+            arraycopy(A[i], 0, C[i], 0, n);
         }
         return X;
     }
@@ -328,7 +341,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         }
         matrix = new double[rows][columns];
         for (int i = 0; i < rows; i++) {
-            System.arraycopy(A[i], 0, matrix[i], 0, columns);
+            arraycopy(A[i], 0, matrix[i], 0, columns);
         }
     }
 
@@ -414,7 +427,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             val = matrix[i][j];
         } else {
 
-            System.err.println("Error: Array of out bound");
+            err.println("Error: Array of out bound");
         }
         return val;
     }
@@ -428,7 +441,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         EBIMatrix result = new EBIMatrix(rows, columns);
         double[][] data = result.getArray();
         for (int i = 0; i < rows; i++) {
-            System.arraycopy(matrix[i], 0, data[i], 0, columns);
+            arraycopy(matrix[i], 0, data[i], 0, columns);
         }
         return result;
     }
@@ -452,7 +465,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     public synchronized double[][] getArrayCopy() {
         double[][] C = new double[rows][columns];
         for (int i = 0; i < rows; i++) {
-            System.arraycopy(matrix[i], 0, C[i], 0, columns);
+            arraycopy(matrix[i], 0, C[i], 0, columns);
         }
         return C;
     }
@@ -480,7 +493,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     public synchronized double[] getRowPackedCopy() {
         double[] vals = new double[rows * columns];
         for (int i = 0; i < rows; i++) {
-            System.arraycopy(matrix[i], 0, vals, i * columns, columns);
+            arraycopy(matrix[i], 0, vals, i * columns, columns);
         }
         return vals;
     }
@@ -555,7 +568,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
 
                 throw new CDKException("Array out of Bound");
             } catch (CDKException ex) {
-                Logger.getLogger(EBIMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(EBIMatrix.class.getName()).log(SEVERE, null, ex);
             }
         }
 
@@ -601,7 +614,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             }
         } else {
 
-            System.out.println("Row =/= Columns");
+            out.println("Row =/= Columns");
         }
 
         return val;
@@ -973,7 +986,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 }
             }
 
-            length = Math.sqrt(length);
+            length = sqrt(length);
 
             // Normalizes the vector
             if (length != 0d) {
@@ -981,7 +994,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     result.matrix[q][p] /= length;
                 }
             } else {
-                System.out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
+                out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
             }
         }
         return result;
@@ -1017,7 +1030,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             return null;
         }
 
-        List<Double> result = new ArrayList<Double>(rows);
+        List<Double> result = new ArrayList<>(rows);
         int i, j;
         double sum;
         for (i = 0; i < rows; i++) {
@@ -1348,7 +1361,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      */
     public synchronized double trace() {
         double t = 0;
-        for (int i = 0; i < Math.min(rows, columns); i++) {
+        for (int i = 0; i < min(rows, columns); i++) {
             t += matrix[i][i];
         }
         return t;
@@ -1364,7 +1377,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     public synchronized EBIMatrix diagonalize(int nrot) {
         EBIMatrix m = duplicate();
         if (m.getRowDimension() != m.getColumnDimension()) {
-            System.err.println("EBIMatrix.diagonal: Sizes mismatched");
+            err.println("EBIMatrix.diagonal: Sizes mismatched");
             return null;
         }
         int n = m.getRowDimension();
@@ -1375,7 +1388,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         double[] b, z;
 
         EBIMatrix v = new EBIMatrix(columns, columns);
-        List<Double> d = new ArrayList<Double>(columns);
+        List<Double> d = new ArrayList<>(columns);
 
         b = new double[n + 1];
         z = new double[n + 1];
@@ -1398,7 +1411,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             sm = 0.0;
             for (ip = 0; ip < n - 1; ip++) {
                 for (iq = ip + 1; iq < n; iq++) {
-                    sm += Math.abs(m.matrix[ip][iq]);
+                    sm += abs(m.matrix[ip][iq]);
                 }
             }
 
@@ -1415,22 +1428,22 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
 
             for (ip = 0; ip < n - 1; ip++) {
                 for (iq = ip + 1; iq < n; iq++) {
-                    g = 100.0 * Math.abs(m.matrix[ip][iq]);
-                    if ((i > 4) && (Math.abs(d.get(ip) + g) == Math.abs(d.get(ip)))
-                            && (Math.abs(d.get(ip) + g) == Math.abs(d.get(ip)))) {
+                    g = 100.0 * abs(m.matrix[ip][iq]);
+                    if ((i > 4) && (abs(d.get(ip) + g) == abs(d.get(ip)))
+                            && (abs(d.get(ip) + g) == abs(d.get(ip)))) {
                         m.matrix[ip][iq] = 0.0;
-                    } else if (Math.abs(m.matrix[ip][iq]) > tresh) {
+                    } else if (abs(m.matrix[ip][iq]) > tresh) {
                         h = d.get(iq) - d.get(ip);
-                        if (Math.abs(h) + g == Math.abs(h)) {
+                        if (abs(h) + g == abs(h)) {
                             t = (m.matrix[ip][iq]) / h;
                         } else {
                             theta = 0.5 * h / (m.matrix[ip][iq]);
-                            t = 1.0 / (Math.abs(theta) + Math.sqrt(1.0 + theta * theta));
+                            t = 1.0 / (abs(theta) + sqrt(1.0 + theta * theta));
                             if (theta < 0.0) {
                                 t = -t;
                             }
                         }
-                        c = 1.0 / Math.sqrt(1 + t * t);
+                        c = 1.0 / sqrt(1 + t * t);
                         s = t * c;
                         tau = s / (1.0 + c);
                         h = t * m.matrix[ip][iq];
@@ -1478,7 +1491,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 z[ip] = 0.0;
             }
         }
-        System.out.println("Too many iterations in routine JACOBI");
+        out.println("Too many iterations in routine JACOBI");
         return v;
     }
 
@@ -1529,7 +1542,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 }
             }
 
-            length = Math.sqrt(length);
+            length = sqrt(length);
 
             // Normalizes the vector
             if (length != 0d) {
@@ -1537,7 +1550,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     result.matrix[q][p] /= length;
                 }
             } else {
-                System.out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
+                out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
             }
         }
         return result;
@@ -1554,7 +1567,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @see java.text.DecimalFormat#setDecimalFormatSymbols
      */
     public synchronized void print(NumberFormat format, int width) {
-        print(new PrintWriter(System.out, true), format, width);
+        print(new PrintWriter(out, true), format, width);
     }
 
     /**
@@ -1565,7 +1578,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param d Number of digits after the decimal.
      */
     public synchronized void print(int w, int d) {
-        print(new PrintWriter(System.out, true), w, d);
+        print(new PrintWriter(out, true), w, d);
     }
 
     /**
@@ -1578,7 +1591,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      */
     public synchronized void print(PrintWriter output, int w, int d) {
         DecimalFormat format = new DecimalFormat();
-        format.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+        format.setDecimalFormatSymbols(new DecimalFormatSymbols(US));
         format.setMinimumIntegerDigits(1);
         format.setMaximumFractionDigits(d);
         format.setMinimumFractionDigits(d);
@@ -1607,7 +1620,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 String s = format.format(matrix[i][j]); // format the number
-                int padding = Math.max(1, width - s.length()); // At _least_ 1 space
+                int padding = max(1, width - s.length()); // At _least_ 1 space
                 for (int k = 0; k < padding; k++) {
                     output.print(' ');
                 }
@@ -1635,26 +1648,26 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         StringBuilder str = new StringBuilder();
         for (i = 0; i < (rows - 1); i++) {
             for (j = 0; j < (columns - 1); j++) {
-                if (Math.round(matrix[i][j] * 10000) != 0) {
+                if (round(matrix[i][j] * 10000) != 0) {
                     str.append(format.format(matrix[i][j])).append(" ");
                 } else {
                     str.append("-------- ");
                 }
             }
-            if (Math.round(matrix[i][columns - 1] * 10000) != 0) {
+            if (round(matrix[i][columns - 1] * 10000) != 0) {
                 str.append(format.format(matrix[i][columns - 1])).append("\n");
             } else {
                 str.append("--------\n");
             }
         }
         for (j = 0; j < (columns - 1); j++) {
-            if (Math.round(matrix[rows - 1][j] * 10000) != 0) {
+            if (round(matrix[rows - 1][j] * 10000) != 0) {
                 str.append(format.format(matrix[rows - 1][j])).append(" ");
             } else {
                 str.append("-------- ");
             }
         }
-        if (Math.round(matrix[rows - 1][columns - 1] * 10000) != 0) {
+        if (round(matrix[rows - 1][columns - 1] * 10000) != 0) {
             str.append(format.format(matrix[rows - 1][columns - 1]));
         } else {
             str.append("-------- ");
@@ -1708,9 +1721,9 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         for (int j = 0; j < columns; j++) {
             double s = 0;
             for (int i = 0; i < rows; i++) {
-                s += Math.abs(matrix[i][j]);
+                s += abs(matrix[i][j]);
             }
-            f = Math.max(f, s);
+            f = max(f, s);
         }
         return f;
     }
@@ -1734,9 +1747,9 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         for (int i = 0; i < rows; i++) {
             double s = 0;
             for (int j = 0; j < columns; j++) {
-                s += Math.abs(matrix[i][j]);
+                s += abs(matrix[i][j]);
             }
-            f = Math.max(f, s);
+            f = max(f, s);
         }
         return f;
     }
@@ -1750,7 +1763,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         double f = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                f = Maths.hypot(f, matrix[i][j]);
+                f = hypot(f, matrix[i][j]);
             }
         }
         return f;

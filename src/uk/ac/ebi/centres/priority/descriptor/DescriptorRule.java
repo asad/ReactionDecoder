@@ -17,10 +17,12 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
-import com.google.common.collect.Maps;
+import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.ASYMMETRIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.priority.AbstractPriorityRule;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
@@ -35,7 +37,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  * @author John May
  */
 public class DescriptorRule<A> extends AbstractPriorityRule<A> {
-    private static final Logger LOG = Logger.getLogger(DescriptorRule.class.getName());
+    private static final Logger LOG = getLogger(DescriptorRule.class.getName());
 
     private DescriptorAccessor<A> accessor;
     private Map<Descriptor, Integer> ranking;
@@ -50,7 +52,7 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
     public DescriptorRule(DescriptorAccessor<A> accessor,
             Type ordering,
             Descriptor... descriptors) {
-        this(Descriptor.Type.ASYMMETRIC, ordering, accessor, descriptors);
+        this(ASYMMETRIC, ordering, accessor, descriptors);
     }
 
     /**
@@ -68,7 +70,7 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
         super(type, ordering);
         this.accessor = accessor;
 
-        ranking = Maps.newHashMapWithExpectedSize(descriptors.length);
+        ranking = newHashMapWithExpectedSize(descriptors.length);
 
         for (int i = 0; i < descriptors.length; i++) {
             ranking.put(descriptors[i], i + 1);

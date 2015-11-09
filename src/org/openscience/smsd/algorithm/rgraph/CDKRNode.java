@@ -30,6 +30,7 @@ package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -48,7 +49,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRNodeTest")
 public class CDKRNode {
-    private static final Logger LOG = Logger.getLogger(CDKRNode.class.getName());
+    private static final Logger LOG = getLogger(CDKRNode.class.getName());
     // G1/G2 mapping
 
     private CDKRMap rMap = null;

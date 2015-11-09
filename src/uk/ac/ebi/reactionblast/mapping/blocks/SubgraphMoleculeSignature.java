@@ -19,11 +19,12 @@
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -39,7 +40,7 @@ import signature.AbstractVertexSignature;
  *
  */
 public class SubgraphMoleculeSignature extends AbstractGraphSignature {
-    private static final Logger LOG = Logger.getLogger(SubgraphMoleculeSignature.class.getName());
+    private static final Logger LOG = getLogger(SubgraphMoleculeSignature.class.getName());
 
     private final int vertexCount;
 
@@ -71,7 +72,7 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
             sortedAtoms[atomNumber] = atom;
             debugList.add(atom.getSymbol() + atomNumber);
         }
-        Collections.sort(debugList);
+        sort(debugList);
 //        System.out.println("atoms of " + fullContainer.getID() + " " + debugList);
 
         List<Integer> debugList2 = new ArrayList<>();

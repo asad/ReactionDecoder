@@ -1,10 +1,13 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 public class Maths {
 
-    private static final Logger LOG = Logger.getLogger(Maths.class.getName());
+    private static final Logger LOG = getLogger(Maths.class.getName());
 
     /**
      * sqrt(a^2 + b^2) without under/overflow. * * @param a
@@ -16,12 +19,12 @@ public class Maths {
      */
     public static Double hypot(Double a, Double b) {
         Double r;
-        if (Math.abs(a) > Math.abs(b)) {
+        if (abs(a) > abs(b)) {
             r = b / a;
-            r = Math.abs(a) * Math.sqrt(1 + r * r);
+            r = abs(a) * sqrt(1 + r * r);
         } else if (b != 0) {
             r = a / b;
-            r = Math.abs(b) * Math.sqrt(1 + r * r);
+            r = abs(b) * sqrt(1 + r * r);
         } else {
             r = 0.0;
         }

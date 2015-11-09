@@ -20,15 +20,20 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
+import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class CircularCanvasGenerator extends 
                  AbstractCanvasGenerator implements CanvasGenerator {
-    private static final Logger LOG = Logger.getLogger(CircularCanvasGenerator.class.getName());
+    private static final Logger LOG = getLogger(CircularCanvasGenerator.class.getName());
     
     private Vector2d vectorToStart;
     
@@ -66,11 +71,11 @@ public class CircularCanvasGenerator extends
             return;
         }
         
-        double maxDim = Math.max(cellCanvas.width, cellCanvas.height);
-        double alpha = Math.toRadians(360 / n);
-        double cosA = Math.cos(alpha);
-        double sinA = Math.sin(alpha);
-        double circleRadius = (maxDim / 2) / Math.sin(alpha / 2);
+        double maxDim = max(cellCanvas.width, cellCanvas.height);
+        double alpha = toRadians(360 / n);
+        double cosA = cos(alpha);
+        double sinA = sin(alpha);
+        double circleRadius = (maxDim / 2) / sin(alpha / 2);
         
         double totalDim = (2 * circleRadius) + maxDim;
         size = new Dimension((int)totalDim, (int)totalDim);

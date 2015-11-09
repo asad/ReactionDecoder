@@ -19,13 +19,16 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
 import java.util.List;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
@@ -38,9 +41,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
 public class IsomorphismMax extends Selector implements IResult {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(IsomorphismMax.class);
+            = createLoggingTool(IsomorphismMax.class);
     private static final long serialVersionUID = 0x192aa60a59L;
-    private static final Logger LOG = Logger.getLogger(IsomorphismMax.class.getName());
+    private static final Logger LOG = getLogger(IsomorphismMax.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean SubAndCompleteFlag;
@@ -73,7 +76,7 @@ public class IsomorphismMax extends Selector implements IResult {
             PhaseOneMatcher();
             SubAndCompleteFlag = PhaseTwoMatcher();
         } catch (CDKException ex) {
-            Logger.getLogger(IsomorphismMax.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(IsomorphismMax.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -123,22 +126,22 @@ public class IsomorphismMax extends Selector implements IResult {
                                 this.flagMatrix[i][j] = true;
                             } else {
                                 this.flagMatrix[i][j] = false;
-                                this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
-                                this.updatedHolder.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
-                                this.updatedHolder.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
-                                this.updatedHolder.getFragmentMatrix().setValue(i, j, Double.MAX_VALUE);
-                                this.updatedHolder.getEnergyMatrix().setValue(i, j, Double.MAX_VALUE);
-                                this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
+                                this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
+                                this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
+                                this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                                this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
+                                this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
+                                this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
                             }
                         }
                     } else {
                         this.flagMatrix[i][j] = false;
-                        this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
-                        this.updatedHolder.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
-                        this.updatedHolder.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
-                        this.updatedHolder.getFragmentMatrix().setValue(i, j, Double.MAX_VALUE);
-                        this.updatedHolder.getEnergyMatrix().setValue(i, j, Double.MAX_VALUE);
-                        this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
+                        this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                        this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
+                        this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
+                        this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
                     }
                 }
             }
@@ -160,12 +163,12 @@ public class IsomorphismMax extends Selector implements IResult {
                     if (flagMatrix[i][j]) {
                         flag = true;
                     } else {
-                        this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
-                        this.updatedHolder.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
-                        this.updatedHolder.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
-                        this.updatedHolder.getFragmentMatrix().setValue(i, j, Double.MAX_VALUE);
-                        this.updatedHolder.getEnergyMatrix().setValue(i, j, Double.MAX_VALUE);
-                        this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
+                        this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                        this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
+                        this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
+                        this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
                     }
                 }
 
@@ -188,7 +191,7 @@ public class IsomorphismMax extends Selector implements IResult {
                 return s.isSubgraph();
             }
         } catch (CDKException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            logger.error(SEVERE, null, ex);
         }
         return false;
     }

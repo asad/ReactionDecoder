@@ -50,11 +50,12 @@ package org.openscience.smsd.ring;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -82,7 +83,7 @@ import org.openscience.cdk.interfaces.IRingSet;
  */
 public class HanserRingFinder {
 
-    private static final Logger LOG = Logger.getLogger(HanserRingFinder.class.getName());
+    private static final Logger LOG = getLogger(HanserRingFinder.class.getName());
 
     /**
      * Returns Collection of atoms in Rings based on Hanser Ring Finding method
@@ -90,7 +91,7 @@ public class HanserRingFinder {
      * @return report collected the rings
      */
     public static synchronized Collection<List<IAtom>> findRings(IAtomContainer molecule) {
-        List<List<IAtom>> rings = new ArrayList<List<IAtom>>();
+        List<List<IAtom>> rings = new ArrayList<>();
         PathGraph graph = new PathGraph(molecule);
 
         for (int i = 0; i < molecule.getAtomCount(); i++) {
@@ -101,7 +102,7 @@ public class HanserRingFinder {
                 rings.add(ring);
             }
         }
-        return Collections.synchronizedList(new ArrayList<List<IAtom>>(rings));
+        return synchronizedList(new ArrayList<>(rings));
     }
 
     /**
@@ -111,18 +112,18 @@ public class HanserRingFinder {
      * @throws CDKException 
      */
     public static IRingSet getRingSet(IAtomContainer molecule) throws CDKException {
-        IRingSet ringSet = DefaultChemObjectBuilder.getInstance().newInstance(IRingSet.class);
+        IRingSet ringSet = getInstance().newInstance(IRingSet.class);
         Collection<List<IAtom>> cycles = findRings(molecule);
         for (List<IAtom> ringAtoms : cycles) {
             IRing ring = molecule.getBuilder().newInstance(IRing.class);
             for (IAtom atom : ringAtoms) {
-                atom.setFlag(CDKConstants.ISINRING, true);
+                atom.setFlag(ISINRING, true);
                 ring.addAtom(atom);
                 for (IAtom atomNext : ringAtoms) {
                     if (!atom.equals(atomNext)) {
                         IBond bond = molecule.getBond(atom, atomNext);
                         if (bond != null) {
-                            bond.setFlag(CDKConstants.ISINRING, true);
+                            bond.setFlag(ISINRING, true);
                             ring.addElectronContainer(bond);
                         }
                     }

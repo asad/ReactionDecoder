@@ -23,9 +23,13 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
+import static java.lang.System.gc;
+import static java.lang.System.nanoTime;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,8 +41,9 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -49,15 +54,17 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
+import static org.openscience.smsd.algorithm.vflib.SortOrder.DESCENDING;
 import org.openscience.smsd.algorithm.vflib.interfaces.IMapper;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
 import org.openscience.smsd.algorithm.vflib.map.VFMCSMapper;
 import org.openscience.smsd.algorithm.vflib.query.QueryCompiler;
 import org.openscience.smsd.algorithm.vflib.seeds.MCSSeedGenerator;
-import org.openscience.smsd.interfaces.Algorithm;
+import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
+import static org.openscience.smsd.interfaces.Algorithm.MCSPlus;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -79,8 +86,8 @@ import org.openscience.smsd.interfaces.IResults;
 public class VF2MCS extends BaseMCS implements IResults {
 
     private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(VF2MCS.class);
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(VF2MCS.class.getName());
+            = createLoggingTool(VF2MCS.class);
+    private static final java.util.logging.Logger LOG = getLogger(VF2MCS.class.getName());
     private final List<AtomAtomMapping> allAtomMCS;
     private final boolean DEBUG = false;
 
@@ -98,7 +105,7 @@ public class VF2MCS extends BaseMCS implements IResults {
         boolean timeoutVF = searchVFMappings();
 
         if (DEBUG) {
-            System.out.println("time for VF search " + timeoutVF);
+            out.println("time for VF search " + timeoutVF);
         }
 
         /*
@@ -128,9 +135,9 @@ public class VF2MCS extends BaseMCS implements IResults {
             allLocalMCS.clear();
             allLocalAtomAtomMapping.clear();
 
-            long startTimeSeeds = System.nanoTime();
+            long startTimeSeeds = nanoTime();
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+            ExecutorService executor = newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -169,7 +176,7 @@ public class VF2MCS extends BaseMCS implements IResults {
                         }
                     }
                     if (DEBUG) {
-                        System.out.println("Bond to be removed " + bondRemovedT.size());
+                        out.println("Bond to be removed " + bondRemovedT.size());
                     }
                     for (IBond b : bondRemovedT) {
                         targetClone.removeBond(b);
@@ -177,22 +184,22 @@ public class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(VF2MCS.class.getName()).log(SEVERE, null, ex);
             }
 
             int jobCounter = 0;
 
             if (DEBUG) {
-                System.out.println(" CALLING UIT ");
+                out.println(" CALLING UIT ");
             }
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, Algorithm.CDKMCS);
+            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, CDKMCS);
             cs.submit(mcsSeedGeneratorUIT);
             jobCounter++;
 
             if (DEBUG) {
-                System.out.println(" CALLING MCSPLUS ");
+                out.println(" CALLING MCSPLUS ");
             }
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, Algorithm.MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, MCSPlus);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 
@@ -213,7 +220,7 @@ public class VF2MCS extends BaseMCS implements IResults {
                         mcsSeeds.add(map);
                     }
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(Level.SEVERE, null, ex);
+                    logger.error(SEVERE, null, ex);
                 }
             }
             executor.shutdown();
@@ -223,11 +230,11 @@ public class VF2MCS extends BaseMCS implements IResults {
 
             while (!executor.isTerminated()) {
             }
-            System.gc();
+            gc();
 
-            long stopTimeSeeds = System.nanoTime();
+            long stopTimeSeeds = nanoTime();
             if (DEBUG) {
-                System.out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
+                out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
             }
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT
@@ -237,13 +244,13 @@ public class VF2MCS extends BaseMCS implements IResults {
             Set<Map<Integer, Integer>> cleanedMCSSeeds = new LinkedHashSet<>();
 
             if (DEBUG) {
-                System.out.println("merging  UIT & KochCliques");
+                out.println("merging  UIT & KochCliques");
             }
 
             if (!mcsSeeds.isEmpty()) {
                 for (Map<Integer, Integer> map : mcsSeeds) {
                     if (DEBUG) {
-                        System.out.println("potential seed MCS, UIT " + map.size());
+                        out.println("potential seed MCS, UIT " + map.size());
                     }
                     if (map.size() > solutionSize) {
                         solutionSize = map.size();
@@ -254,7 +261,7 @@ public class VF2MCS extends BaseMCS implements IResults {
                             && map.size() == solutionSize
                             && !isCliquePresent(map, cleanedMCSSeeds)) {
                         if (DEBUG) {
-                            System.out.println("seed MCS, UIT " + map.size());
+                            out.println("seed MCS, UIT " + map.size());
                         }
                         cleanedMCSSeeds.add(map);
                         counter++;
@@ -266,7 +273,7 @@ public class VF2MCS extends BaseMCS implements IResults {
                         && map.size() >= solutionSize
                         && !isCliquePresent(map, cleanedMCSSeeds)) {
                     if (DEBUG) {
-                        System.out.println("seed VF " + map.size());
+                        out.println("seed VF " + map.size());
                     }
                     cleanedMCSSeeds.add(map);
                     counter++;
@@ -276,7 +283,7 @@ public class VF2MCS extends BaseMCS implements IResults {
              * Sort biggest clique to smallest
              */
             List<Map<Integer, Integer>> sortedList = new ArrayList<>(cleanedMCSSeeds);
-            Collections.sort(sortedList, new Map1ValueComparator(SortOrder.DESCENDING));
+            sort(sortedList, new Map1ValueComparator(DESCENDING));
 
             /*
              * Extend the seeds using McGregor
@@ -284,11 +291,11 @@ public class VF2MCS extends BaseMCS implements IResults {
             try {
                 sortedList = reduceMatches(sortedList);
                 if (DEBUG) {
-                    System.out.println(" Calling McGregor " + sortedList.size());
+                    out.println(" Calling McGregor " + sortedList.size());
                 }
                 extendCliquesWithMcGregor(sortedList);
             } catch (CDKException | IOException ex) {
-                logger.error(Level.SEVERE, null, ex);
+                logger.error(SEVERE, null, ex);
             }
 
             /*
@@ -390,9 +397,9 @@ public class VF2MCS extends BaseMCS implements IResults {
             allLocalMCS.clear();
             allLocalAtomAtomMapping.clear();
 
-            long startTimeSeeds = System.nanoTime();
+            long startTimeSeeds = nanoTime();
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+            ExecutorService executor = newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -423,11 +430,11 @@ public class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(VF2MCS.class.getName()).log(SEVERE, null, ex);
             }
 
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, CDKMCS);
+            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, MCSPlus);
 
             int jobCounter = 0;
             cs.submit(mcsSeedGeneratorUIT);
@@ -452,16 +459,16 @@ public class VF2MCS extends BaseMCS implements IResults {
                         mcsSeeds.add(map);
                     }
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(Level.SEVERE, null, ex);
+                    logger.error(SEVERE, null, ex);
                 }
             }
             executor.shutdown();
             // Wait until all threads are finish
             while (!executor.isTerminated()) {
             }
-            System.gc();
+            gc();
 
-            long stopTimeSeeds = System.nanoTime();
+            long stopTimeSeeds = nanoTime();
 //            System.out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT
@@ -496,7 +503,7 @@ public class VF2MCS extends BaseMCS implements IResults {
             /*
              * Sort biggest clique to smallest
              */
-            Collections.sort(cleanedMCSSeeds, new Map1ValueComparator(SortOrder.DESCENDING));
+            sort(cleanedMCSSeeds, new Map1ValueComparator(DESCENDING));
 
             /*
              * Extend the seeds using McGregor
@@ -505,7 +512,7 @@ public class VF2MCS extends BaseMCS implements IResults {
                 reduceMatches(cleanedMCSSeeds);
                 extendCliquesWithMcGregor(cleanedMCSSeeds);
             } catch (CDKException | IOException ex) {
-                logger.error(Level.SEVERE, null, ex);
+                logger.error(SEVERE, null, ex);
             }
 
             /*
@@ -632,7 +639,7 @@ public class VF2MCS extends BaseMCS implements IResults {
     @Override
     @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return Collections.unmodifiableList(allAtomMCS);
+        return unmodifiableList(allAtomMCS);
     }
 
     /**
@@ -661,7 +668,7 @@ public class VF2MCS extends BaseMCS implements IResults {
         }
         removeRedundantKeys(m);
         if (DEBUG) {
-            System.out.println("Keys " + m.keySet().size());
+            out.println("Keys " + m.keySet().size());
         }
         return new ArrayList<>(m.values());
     }
@@ -671,7 +678,7 @@ public class VF2MCS extends BaseMCS implements IResults {
 //            if (key.length() < s.length() && s.contains(key)) {
             if (key.length() < s.length()) {
                 if (DEBUG) {
-                    System.out.println("k " + key);
+                    out.println("k " + key);
                 }
                 return true;
             }

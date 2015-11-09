@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.descriptors;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -36,7 +37,7 @@ public class LipinskiRuleOfFiveDescriptor {
     private static int donorsLipinski = 5;
     private static double mwvalueLipinski = 500.0;
     private static double rotatablebondsLipinski = 10.0;
-    private static final Logger LOG = Logger.getLogger(LipinskiRuleOfFiveDescriptor.class.getName());
+    private static final Logger LOG = getLogger(LipinskiRuleOfFiveDescriptor.class.getName());
     /**
      * *********Value from the User***********
      */
@@ -65,11 +66,11 @@ public class LipinskiRuleOfFiveDescriptor {
      * lipinski rule
      */
     public void resetRuleOfFiveDescriptor(double xlogPvalue, int acceptors, int donors, double mwvalue, double rotatablebonds) {
-        LipinskiRuleOfFiveDescriptor.xlogPvalueLipinski = xlogPvalue;
-        LipinskiRuleOfFiveDescriptor.acceptorsLipinski = acceptors;
-        LipinskiRuleOfFiveDescriptor.donorsLipinski = donors;
-        LipinskiRuleOfFiveDescriptor.mwvalueLipinski = mwvalue;
-        LipinskiRuleOfFiveDescriptor.rotatablebondsLipinski = rotatablebonds;
+        xlogPvalueLipinski = xlogPvalue;
+        acceptorsLipinski = acceptors;
+        donorsLipinski = donors;
+        mwvalueLipinski = mwvalue;
+        rotatablebondsLipinski = rotatablebonds;
     }
 
     /**

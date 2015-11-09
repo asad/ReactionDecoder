@@ -20,13 +20,14 @@ package aamtool.rgroup;
 
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintType {
-    private static final Logger LOG = Logger.getLogger(FingerprintType.class.getName());
+    private static final Logger LOG = getLogger(FingerprintType.class.getName());
 
     private final Set<String> commonCommonFP;
     private final Set<String> commonDifferenceFP;

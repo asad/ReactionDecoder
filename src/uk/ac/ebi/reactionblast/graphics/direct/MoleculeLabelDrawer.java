@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
@@ -34,7 +35,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  */
 public class MoleculeLabelDrawer extends AbstractDirectDrawer {
 
-    private static final Logger LOG = Logger.getLogger(MoleculeLabelDrawer.class.getName());
+    private static final Logger LOG = getLogger(MoleculeLabelDrawer.class.getName());
 
     // TODO: remove axis
     public MoleculeLabelDrawer(Axis axis, Params params) {

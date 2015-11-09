@@ -19,8 +19,10 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 
 /**
  * A trivial 'transformation' that does nothing to the reaction - 
@@ -31,11 +33,11 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
  */
 public class ReactionIdentityTransformation implements ITransformation<IReaction> {
 
-    private static final Logger LOG = Logger.getLogger(ReactionIdentityTransformation.class.getName());
+    private static final Logger LOG = getLogger(ReactionIdentityTransformation.class.getName());
 
     @Override
     public TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override

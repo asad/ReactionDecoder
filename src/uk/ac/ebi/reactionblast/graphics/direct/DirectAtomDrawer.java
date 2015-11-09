@@ -21,33 +21,53 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.DARK_GRAY;
+import static java.awt.Color.WHITE;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.PseudoAtom;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabel;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabelXY;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.N;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.S;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SE;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.SW;
+import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.W;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 public class DirectAtomDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = Logger.getLogger(DirectAtomDrawer.class.getName());
+    private static final Logger LOG = getLogger(DirectAtomDrawer.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -62,8 +82,8 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         setParams(params);
         this.labelManager = labelManager;
         atomColorer = new CDK2DAtomColors();
-        drawnAtomBounds = new HashMap<IAtom, Rectangle2D>();
-        chiralMap = new HashMap<IAtom, IStereoAndConformation>();
+        drawnAtomBounds = new HashMap<>();
+        chiralMap = new HashMap<>();
     }
 
     public void setChirals(Map<IAtom, IStereoAndConformation> chiralMap) {
@@ -113,9 +133,9 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
             if (params.drawLonePairs) {
                 Integer lonePairCountInteger = lonePairMap.get(atom);
                 if (lonePairCountInteger == null) {
-                    lonePairCount = Integer.valueOf(0);
+                    lonePairCount = 0;
                 } else {
-                    lonePairCount = lonePairCountInteger.intValue();
+                    lonePairCount = lonePairCountInteger;
                 }
             }
             drawnAtomBounds.put(atom, drawAtom(atom, molecule, lonePairCount, g));
@@ -135,16 +155,16 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
             if (params.drawImplicitHydrogens) {
                 Integer implicitHydrogenCount = atom.getImplicitHydrogenCount();
                 if (implicitHydrogenCount != null
-                        && implicitHydrogenCount.intValue() > 0) {
+                        && implicitHydrogenCount > 0) {
                     int align =
-                            GeometryTools.getBestAlignmentForLabel(molecule, atom);
+                            getBestAlignmentForLabel(molecule, atom);
                     AnnotationPosition suggestedPosition =
                             labelManager.alignmentToAnnotationPosition(align);
 
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
                             && molecule.getConnectedAtomsCount(atom) == 0) {
-                        suggestedPosition = AnnotationPosition.W;
+                        suggestedPosition = W;
                     }
 
                     if (labelManager.isUsed(atom, suggestedPosition)) {
@@ -182,23 +202,29 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     }
 
     private Rectangle2D drawChiralSymbol(IAtom atom, IStereoAndConformation chirality, Graphics2D g) {
-        String text;
+        String text = "(-)";
         Point2d p = atom.getPoint2d();
-        if (chirality == IStereoAndConformation.NONE) {
-            return new Rectangle2D.Double(p.x, p.y, 0, 0);
-        } else if (chirality == IStereoAndConformation.R) {
-            text = "(R)";
-        } else if (chirality == IStereoAndConformation.S) {
-            text = "(S)";
-        } else if (chirality == IStereoAndConformation.E) {
-            text = "(E)";
-        } else if (chirality == IStereoAndConformation.Z) {
-            text = "(Z)";
-        } else {
-            text = "(-)";
+        if (null != chirality) switch (chirality) {
+            case NONE:
+                return new Rectangle2D.Double(p.x, p.y, 0, 0);
+            case R:
+                text = "(R)";
+                break;
+            case S:
+                text = "(S)";
+                break;
+            case E:
+                text = "(E)";
+                break;
+            case Z:
+                text = "(Z)";
+                break;
+            default:
+                text = "(-)";
+                break;
         }
         g.setFont(chiralSymbolFont);
-        Color color = Color.DARK_GRAY;
+        Color color = DARK_GRAY;
         return drawText(text, p, color, g);
     }
 
@@ -245,14 +271,14 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                         cy - (subscriptHeight / 2),
                         subscriptWidth,
                         subscriptHeight);
-                g.setColor(Color.WHITE);
+                g.setColor(WHITE);
                 g.fill(finalHBounds);
-                g.setColor(Color.BLACK);
+                g.setColor(BLACK);
                 g.drawString(hCount, sP.x, sP.y);
                 g.setFont(atomSymbolFont);
                 totalHBounds.add(finalHBounds);
             }
-        } else if (pos == AnnotationPosition.W) {
+        } else if (pos == W) {
 
             float x;
             float y;
@@ -280,9 +306,9 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                     p.x - (atomSymbolWidth / 2) - subscriptWidth - hWidth,
                     p.y - (hBounds.getHeight() / 2),
                     hWidth, hHeight);
-            g.setColor(Color.WHITE);
+            g.setColor(WHITE);
             g.fill(hDrawnBounds);
-            g.setColor(Color.BLACK);
+            g.setColor(BLACK);
             g.drawString(hString, x, y);
             if (totalHBounds == null) {
                 totalHBounds = hDrawnBounds;
@@ -310,7 +336,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         double sH2 = stringBounds.getHeight() / 2;
         double x = p.x - sW2;
         double y = p.y - sH2;
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         Rectangle2D bounds = new Rectangle2D.Double(x, y, sW2 * 2, sH2 * 2);
         g.fill(bounds);
         g.setColor(color);
@@ -336,8 +362,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         Rectangle2D bounds = getTextBounds(g, atomID);
         Point2d pID = new Point2d(p);
         AnnotationPosition suggestedPosition =
-                labelManager.alignmentToAnnotationPosition(
-                GeometryTools.getBestAlignmentForLabelXY(container, atom));
+                labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
         AnnotationPosition pos;
         if (labelManager.isUsed(atom, suggestedPosition)) {
             pos = labelManager.getNextSparePosition(atom);
@@ -354,28 +379,38 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         double aH2 = atomSymbolBounds.getHeight() / 2;
         double bH2 = bounds.getHeight() / 2;
 
-        if (pos == AnnotationPosition.N) {
-            pID.y -= aH2 + bH2;
-        } else if (pos == AnnotationPosition.NE) {
-            pID.x += aW2 + bW2;
-            pID.y -= aH2 + bH2;
-        } else if (pos == AnnotationPosition.E) {
-            pID.x += aW2 + bW2;
-        } else if (pos == AnnotationPosition.SE) {
-            pID.x += aW2 + bW2;
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.S) {
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.SW) {
-            pID.x -= aW2 + bW2;
-            pID.y += aH2 + bH2;
-        } else if (pos == AnnotationPosition.W) {
-            pID.x -= aW2 + bW2;
-        } else if (pos == AnnotationPosition.NW) {
-            pID.x -= aW2 + bW2;
-            pID.y -= aH2 + bH2;
-        } else {
-            pID.x += aW2 + bW2;
+        if (null != pos) switch (pos) {
+            case N:
+                pID.y -= aH2 + bH2;
+                break;
+            case NE:
+                pID.x += aW2 + bW2;
+                pID.y -= aH2 + bH2;
+                break;
+            case E:
+                pID.x += aW2 + bW2;
+                break;
+            case SE:
+                pID.x += aW2 + bW2;
+                pID.y += aH2 + bH2;
+                break;
+            case S:
+                pID.y += aH2 + bH2;
+                break;
+            case SW:
+                pID.x -= aW2 + bW2;
+                pID.y += aH2 + bH2;
+                break;
+            case W:
+                pID.x -= aW2 + bW2;
+                break;
+            case NW:
+                pID.x -= aW2 + bW2;
+                pID.y -= aH2 + bH2;
+                break;
+            default:
+                pID.x += aW2 + bW2;
+                break;
         }
 
         if (pos != null) {
@@ -385,7 +420,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         }
 
         Point2f tp = getTextPoint(g, atomID, pID.x, pID.y);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         g.drawString(atomID, tp.x, tp.y);
         g.setFont(atomSymbolFont);
 
@@ -453,7 +488,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
             IAtom atom, IAtomContainer atomContainer) {
         int count = 0;
         for (IBond bond : atomContainer.getConnectedBondsList(atom)) {
-            if (bond.getOrder() != IBond.Order.SINGLE) {
+            if (bond.getOrder() != SINGLE) {
                 count++;
             }
         }
@@ -482,17 +517,17 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         String chargeText = getChargeString(formalCharge);
         Rectangle2D atomBounds = getTextBounds(g, atom.getSymbol());
         Rectangle2D chargeBounds = getTextBounds(g, chargeText);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
 
         Point2d atomPoint = atom.getPoint2d();
         Point2d chargePoint = new Point2d(atomPoint);
-        double chargeDim = Math.min(chargeBounds.getWidth(),
+        double chargeDim = min(chargeBounds.getWidth(),
                 chargeBounds.getHeight());
 
         // preferred position for charge is NE (superscript)
         chargePoint.x += (atomBounds.getWidth() / 2) + (chargeDim / 2);
         chargePoint.y -= (atomBounds.getHeight() / 2);
-        annotationPositions.set(AnnotationPosition.NE.ordinal());
+        annotationPositions.set(NE.ordinal());
 
         Point2f sp = getTextPoint(g, chargeText, chargePoint.x, chargePoint.y);
         Rectangle2D chargeBox = new Rectangle2D.Double(
@@ -500,9 +535,9 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 chargePoint.y - (chargeBounds.getHeight() / 2),
                 chargeBounds.getWidth(),
                 chargeBounds.getHeight());
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fill(chargeBox);
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         g.drawString(chargeText, sp.x, sp.y);
         return chargeBox;
     }
@@ -522,7 +557,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     }
 
     private Map<IAtom, Integer> getLonePairCounts(IAtomContainer atomContainer) {
-        Map<IAtom, Integer> lonePairMap = new HashMap<IAtom, Integer>();
+        Map<IAtom, Integer> lonePairMap = new HashMap<>();
         for (ILonePair lonePair : atomContainer.lonePairs()) {
             IAtom atom = lonePair.getAtom();
             int lonePairCount;

@@ -22,16 +22,19 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
+import static java.lang.Integer.valueOf;
+import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainerSet;
-import org.openscience.cdk.CDKConstants;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.ChemObject;
 import org.openscience.cdk.Mapping;
 import org.openscience.cdk.Reaction;
@@ -41,7 +44,7 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 
 /**
  * 
@@ -51,7 +54,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  *
  */
 public class AbstractReactionLabeller {
-    private static final Logger LOG = Logger.getLogger(AbstractReactionLabeller.class.getName());
+    private static final Logger LOG = getLogger(AbstractReactionLabeller.class.getName());
 
     /**
      * A nasty hack necessary to get around a bug in the CDK
@@ -60,10 +63,9 @@ public class AbstractReactionLabeller {
 
     private void fixAtomMapping(IAtomContainer canonicalForm) {
         for (IAtom a : canonicalForm.atoms()) {
-            String v = (String) a.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
+            String v = (String) a.getProperty(ATOM_ATOM_MAPPING);
             if (v != null) {
-                a.setProperty(
-                        CDKConstants.ATOM_ATOM_MAPPING, Integer.valueOf(v));
+                a.setProperty(ATOM_ATOM_MAPPING, valueOf(v));
             }
         }
     }
@@ -86,7 +88,7 @@ public class AbstractReactionLabeller {
             Map<IAtomContainer, int[]> permutationMap) {
         // create a Map of corresponding atoms for molecules 
         // (key: original Atom, value: clone Atom)
-        Map<IAtom, IAtom> atomAtom = new Hashtable<IAtom, IAtom>();
+        Map<IAtom, IAtom> atomAtom = new Hashtable<>();
         IAtomContainerSet reactants = reaction.getReactants();
         IAtomContainerSet clonedReactants = clone.getReactants();
         atomAtomMap(reactants, clonedReactants, permutationMap, atomAtom);
@@ -102,7 +104,7 @@ public class AbstractReactionLabeller {
             IReaction reaction, Map<IAtom, IAtom> atomAtomMap) {
         // clone the mappings
         int numberOfMappings = reaction.getMappingCount();
-        List<IMapping> map = new ArrayList<IMapping>();
+        List<IMapping> map = new ArrayList<>();
         for (int mappingIndex = 0; mappingIndex < numberOfMappings; mappingIndex++) {
             IMapping mapping = reaction.getMapping(mappingIndex);
             map.add(cloneMapping(mapping, atomAtomMap));
@@ -130,9 +132,9 @@ public class AbstractReactionLabeller {
 
     protected Map<IChemObject, Integer> makeIndexMap(IReaction reaction) {
         Map<IChemObject, Integer> indexMap
-                = new HashMap<IChemObject, Integer>();
+                = new HashMap<>();
         List<IAtomContainer> all
-                = ReactionManipulator.getAllAtomContainers(reaction);
+                = getAllAtomContainers(reaction);
         int globalIndex = 0;
         for (IAtomContainer ac : all) {
             for (IAtom atom : ac.atoms()) {
@@ -181,16 +183,16 @@ public class AbstractReactionLabeller {
                 return o10i.compareTo(o20i);
             }
         };
-        Collections.sort(map, mappingSorter);
+        sort(map, mappingSorter);
         int mappingIndex = 0;
         for (IMapping mapping : map) {
             IChemObject o0 = mapping.getChemObject(0);
             if (o0 != null) {
-                o0.setProperty(CDKConstants.ATOM_ATOM_MAPPING, mappingIndex);
+                o0.setProperty(ATOM_ATOM_MAPPING, mappingIndex);
             }
             IChemObject o1 = mapping.getChemObject(1);
             if (o1 != null) {
-                o1.setProperty(CDKConstants.ATOM_ATOM_MAPPING, mappingIndex);
+                o1.setProperty(ATOM_ATOM_MAPPING, mappingIndex);
             }
             reaction.addMapping(mapping);
             mappingIndex++;
@@ -219,10 +221,10 @@ public class AbstractReactionLabeller {
 
     public IReaction labelReaction(
             IReaction reaction, ICanonicalMoleculeLabeller labeller) {
-        System.out.println("labelling " + reaction.getID());
+        out.println("labelling " + reaction.getID());
         IReaction canonReaction = new Reaction();
 
-        Map<IAtomContainer, int[]> permutationMap = new HashMap<IAtomContainer, int[]>();
+        Map<IAtomContainer, int[]> permutationMap = new HashMap<>();
 
         canonReaction.setProducts(
                 canoniseAtomContainerSet(

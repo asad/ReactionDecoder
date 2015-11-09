@@ -12,28 +12,37 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Integer.parseInt;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import java.util.regex.Pattern;
+import static java.util.regex.Pattern.compile;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.interfaces.IReaction.Direction;
+import static org.openscience.cdk.interfaces.IReaction.Direction.BACKWARD;
+import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
+import static org.openscience.cdk.interfaces.IReaction.Direction.FORWARD;
 import uk.ac.ebi.reactionblast.containers.FingerPrintContainer;
 import uk.ac.ebi.reactionblast.containers.MolContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *
@@ -43,7 +52,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class RXNFileManipulator extends BasicDebugger {
 
     private static FingerPrintContainer FPC = FingerPrintContainer.getInstance();
-    private static final Logger LOG = Logger.getLogger(RXNFileManipulator.class.getName());
+    private static final Logger LOG = getLogger(RXNFileManipulator.class.getName());
     private MolContainer atomContainer = MolContainer.getInstance();
     private Integer moleculeCounter = 0;
 
@@ -58,12 +67,12 @@ public class RXNFileManipulator extends BasicDebugger {
         try {
             FPC.Clear();
         } catch (IOException ex) {
-            Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
         }
         try {
             atomContainer.Clear();
         } catch (IOException ex) {
-            Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
         }
     }
 
@@ -76,12 +85,12 @@ public class RXNFileManipulator extends BasicDebugger {
     public IReaction process(File rxnFile) throws Exception {
 
         IReaction cleanedReaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
-        Map<String, Double> _Stoichiometry = new HashMap<String, Double>();
-        Set<IAtomContainer> _Metabolites = new HashSet<IAtomContainer>();
+        Map<String, Double> _Stoichiometry = new HashMap<>();
+        Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();
         try {
             if (FileName.endsWith(".rxn")) {
-                System.out.println("Reading the input RXN File");
+                out.println("Reading the input RXN File");
                 String RXNFileName = rxnFile.getCanonicalPath();
 
                 RXNFileImporter rxn = new RXNFileImporter();
@@ -89,7 +98,7 @@ public class RXNFileManipulator extends BasicDebugger {
 
                 String REGEX = "\\.";
                 String ReactionID = "";
-                Pattern p = Pattern.compile(REGEX);
+                Pattern p = compile(REGEX);
                 String[] fields = p.split(FileName);
 
                 ReactionID += fields[0];
@@ -100,8 +109,8 @@ public class RXNFileManipulator extends BasicDebugger {
                 IAtomContainerSet _imoledu = rxn.getReactants();
                 IAtomContainerSet _imolpro = rxn.getProducts();
 
-                System.out.println("Number of Reactant " + _imoledu.getAtomContainerCount());
-                System.out.println("Number of Product " + _imolpro.getAtomContainerCount());
+                out.println("Number of Reactant " + _imoledu.getAtomContainerCount());
+                out.println("Number of Product " + _imolpro.getAtomContainerCount());
                 cleanedReaction.setID(ReactionID);
                 _Stoichiometry.clear();
 
@@ -150,18 +159,18 @@ public class RXNFileManipulator extends BasicDebugger {
 
                 setProductMolecule(cleanedReaction, _Stoichiometry, _Metabolites);
                 //As per CDK BIDIRECTION 1, Forward 2, Backward 0
-                cleanedReaction.setDirection(Direction.BIDIRECTIONAL);
+                cleanedReaction.setDirection(BIDIRECTIONAL);
             }//end of if
 
         } catch (IOException ex) {
-            System.err.println("Error: Generation of FingerPrint Failed the AtomContainer: ");
+            err.println("Error: Generation of FingerPrint Failed the AtomContainer: ");
             ex.printStackTrace();
         }
 
         FPC.Clear();
         atomContainer.Clear();
 
-        System.out.println("Reaction is read and initialized");
+        out.println("Reaction is read and initialized");
         return cleanedReaction;
 
     }
@@ -175,8 +184,8 @@ public class RXNFileManipulator extends BasicDebugger {
     public IReaction processMACiE(File rxnFile) throws Exception {
 
         IReaction IR = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
-        Map<String, Double> _Stoichiometry = new HashMap<String, Double>();
-        Set<IAtomContainer> _Metabolites = new HashSet<IAtomContainer>();
+        Map<String, Double> _Stoichiometry = new HashMap<>();
+        Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();
         if (FileName.endsWith(".rxn")) {
             try {
@@ -188,14 +197,14 @@ public class RXNFileManipulator extends BasicDebugger {
                 rxn.readFile(RXNFileName);
                 String REGEX = "\\.";
                 String ReactionID = "R";
-                Pattern p = Pattern.compile(REGEX);
+                Pattern p = compile(REGEX);
                 String[] fields = p.split(FileName);
 //                System.out.println(fields);
                 if (!FileName.endsWith(".ov.rxn")) {
-                    System.out.println("Reading the input MACiE rxn (stage reaction) File");
+                    out.println("Reading the input MACiE rxn (stage reaction) File");
                     ReactionID = ReactionID + fields[0] + fields[1].replace("stg", ".");
                 } else {
-                    System.out.println("Reading the input MACiE rxn (overall reaction) File");
+                    out.println("Reading the input MACiE rxn (overall reaction) File");
                     ReactionID = fields[0] + fields[1].replace("ov", "");
                 }
 //                System.out.println("****************************");
@@ -248,17 +257,17 @@ public class RXNFileManipulator extends BasicDebugger {
                 }
                 setProductMolecule(IR, _Stoichiometry, _Metabolites);
                 //As per CDK BIDIRECTION 1, Forward 2, Backward 0
-                IR.setDirection(Direction.BIDIRECTIONAL);
+                IR.setDirection(BIDIRECTIONAL);
                 //Print the reaction
 //                printReaction(cleanedReaction);
             } catch (IOException ex) {
-                Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
             }
         }//end of if
 
         FPC.Clear();
         atomContainer.Clear();
-        System.out.println("Reaction is read and initialized");
+        out.println("Reaction is read and initialized");
         return IR;
     }
 
@@ -271,21 +280,21 @@ public class RXNFileManipulator extends BasicDebugger {
     public IReaction processIntEnz(File rxnFile) throws Exception {
 
         IReaction IR = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
-        Map<String, Double> _Stoichiometry = new HashMap<String, Double>();
-        Set<IAtomContainer> _Metabolites = new HashSet<IAtomContainer>();
+        Map<String, Double> _Stoichiometry = new HashMap<>();
+        Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();
         try {
             if (FileName.endsWith(".rxn")) {
-                System.out.println("Reading the input RehA rxn File");
+                out.println("Reading the input RehA rxn File");
                 String RXNFileName = rxnFile.getCanonicalPath();
                 RXNFileImporter rxn = new RXNFileImporter();
                 rxn.readFile(RXNFileName);
                 String REGEX = "\\.";
                 String ReactionID = "";
-                Pattern p = Pattern.compile(REGEX);
+                Pattern p = compile(REGEX);
                 String[] fields = p.split(FileName);
                 ReactionID += fields[0];
-                int direction = Integer.parseInt(fields[1]);
+                int direction = parseInt(fields[1]);
 //                System.out.println("****************************");
 //                System.out.println("Processing: " + ReactionID);
 //                System.out.println("****************************");
@@ -333,20 +342,20 @@ public class RXNFileManipulator extends BasicDebugger {
                 //As per IntEnz 0 for undefined direction, 1 for LR, 2 for RL and 3 for bidirectional
                 //As per CDK BIDIRECTION 1, Forward 2, Backward 0
                 if (direction == 1) {
-                    IR.setDirection(Direction.FORWARD);
+                    IR.setDirection(FORWARD);
                 } else if (direction == 2) {
-                    IR.setDirection(Direction.BACKWARD);
+                    IR.setDirection(BACKWARD);
                 } else if (direction == 3 || direction == 0) {
-                    IR.setDirection(Direction.BIDIRECTIONAL);
+                    IR.setDirection(BIDIRECTIONAL);
                 }
 
             } //end of if
         } catch (IOException ex) {
-            Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
         }
         FPC.Clear();
         atomContainer.Clear();
-        System.out.println("Reaction is read and initialized");
+        out.println("Reaction is read and initialized");
         return IR;
 //
     }
@@ -397,9 +406,9 @@ public class RXNFileManipulator extends BasicDebugger {
 //        System.out.println(CDKChemaxonIOConveter.getChemAxonMolecule(mol).exportToFormat("mol:V2"));
 
         IAtomContainer molecule = new AtomContainer(mol);
-        ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID(mol);
-        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
-        ExtAtomContainerManipulator.aromatizeMolecule(molecule);
+        removeHydrogensExceptSingleAndPreserveAtomID(mol);
+        percieveAtomTypesAndConfigureAtoms(molecule);
+        aromatizeMolecule(molecule);
         molecule.setID(molID);
 
         try {
@@ -454,10 +463,10 @@ public class RXNFileManipulator extends BasicDebugger {
 //                            System.out.println("Mol  " + molecule.getID());
                         }
                     } else {
-                        System.err.println("error: Fingerprint can't be generated for this molecules");
+                        err.println("error: Fingerprint can't be generated for this molecules");
                     }
                 } else {
-                    System.err.println("error: Mol file should contain atleast one atom!");
+                    err.println("error: Mol file should contain atleast one atom!");
                 }
             } catch (CDKException ex) {
                 ex.printStackTrace();
@@ -470,12 +479,12 @@ public class RXNFileManipulator extends BasicDebugger {
                 try {
                     throw new CDKException("Mol ID is NULL");
                 } catch (CDKException ex) {
-                    Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+                    getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
                 }
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(RXNFileManipulator.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
         }
 //        printAtoms(molecule);
 //        System.out.println(molecule.getID());

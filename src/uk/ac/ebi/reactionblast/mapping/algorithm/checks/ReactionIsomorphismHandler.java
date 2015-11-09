@@ -19,12 +19,15 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.Serializable;
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getTotalFormalCharge;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -33,7 +36,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 public class ReactionIsomorphismHandler implements Serializable {
 
     private static final long serialVersionUID = 0x1bfce07abac99fL;
-    private static final Logger LOG = Logger.getLogger(ReactionIsomorphismHandler.class.getName());
+    private static final Logger LOG = getLogger(ReactionIsomorphismHandler.class.getName());
     private int rowSize = -1;
     private int colSize = -1;
     private boolean[][] flagSimilarityMatrix = null;
@@ -122,20 +125,20 @@ public class ReactionIsomorphismHandler implements Serializable {
             stSimilarity = true;
             for (int i = 0; i < rowSize; i++) {
 
-                matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -Double.MAX_VALUE);
-                matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, Double.MAX_VALUE);
-                matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, Double.MAX_VALUE);
+                matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
+                matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
         } else if (ColT) {
             stSimilarity = true;
             for (int i = rowSize - 1; i >= 0; i--) {
-                matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -Double.MAX_VALUE);
-                matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, Double.MAX_VALUE);
-                matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, Double.MAX_VALUE);
+                matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
+                matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
         }
 
@@ -170,20 +173,20 @@ public class ReactionIsomorphismHandler implements Serializable {
         if (RowT) {
             fpFlag = true;
             for (int i = 0; i < rowSize; i++) {
-                matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -Double.MAX_VALUE);
-                matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, Double.MAX_VALUE);
-                matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, Double.MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
         } else if (ColT) {
             fpFlag = true;
             for (int i = rowSize - 1; i >= 0; i--) {
-                matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, Double.MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -Double.MAX_VALUE);
-                matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, Double.MAX_VALUE);
-                matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, Double.MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
         }
         return fpFlag;
@@ -207,8 +210,8 @@ public class ReactionIsomorphismHandler implements Serializable {
                 IAtomContainer ac2 = matrixHolder.getReactionContainer().getProduct(j);
                 //matrix.
                 if (matrixHolder.getFPSimilarityMatrix().getValue(i, j) == 1.
-                        && ExtAtomContainerManipulator.getTotalFormalCharge(ac1)
-                        == ExtAtomContainerManipulator.getTotalFormalCharge(ac2)) {
+                        && getTotalFormalCharge(ac1)
+                        == getTotalFormalCharge(ac2)) {
 
                     try {
 

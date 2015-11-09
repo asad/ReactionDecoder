@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -38,7 +39,7 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class MappingGraph {
-    private static final Logger LOG = Logger.getLogger(MappingGraph.class.getName());
+    private static final Logger LOG = getLogger(MappingGraph.class.getName());
     public List<DefinedMapping> vertices;
     public List<DefinedMapping>[] adjacencyTable;
 

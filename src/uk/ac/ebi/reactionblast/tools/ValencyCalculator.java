@@ -18,19 +18,23 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.tools.periodictable.PeriodicTable;
-import uk.ac.ebi.reactionblast.mechanism.helper.BondChange;
+import static org.openscience.cdk.tools.periodictable.PeriodicTable.getElementCount;
+import static org.openscience.cdk.tools.periodictable.PeriodicTable.getGroup;
+import static org.openscience.cdk.tools.periodictable.PeriodicTable.getSymbol;
+import static uk.ac.ebi.reactionblast.mechanism.helper.BondChange.convertBondOrder;
 
 /**
  * @refer for valency http://en.wikipedia.org/wiki/Periodic_table_(valence)
@@ -41,19 +45,19 @@ public class ValencyCalculator {
 
     private static Map<String, Integer> valencElectronMap = null;
     private static boolean isInitialized = false;
-    private static final Logger LOG = Logger.getLogger(ValencyCalculator.class.getName());
+    private static final Logger LOG = getLogger(ValencyCalculator.class.getName());
 
     private static void initialize() {
         if (isInitialized) {
             return;
         }
-        valencElectronMap = Collections.synchronizedSortedMap(new TreeMap<String, Integer>());
-        for (int i = 1; i < PeriodicTable.getElementCount(); i++) {
-            String symbol = PeriodicTable.getSymbol(i);
-            if (PeriodicTable.getGroup(symbol) != null
-                    && (PeriodicTable.getGroup(symbol) < 3 || PeriodicTable.getGroup(symbol) > 12)) {
+        valencElectronMap = synchronizedSortedMap(new TreeMap<String, Integer>());
+        for (int i = 1; i < getElementCount(); i++) {
+            String symbol = getSymbol(i);
+            if (getGroup(symbol) != null
+                    && (getGroup(symbol) < 3 || getGroup(symbol) > 12)) {
 
-                switch (PeriodicTable.getGroup(symbol)) {
+                switch (getGroup(symbol)) {
                     case 1:
                         valencElectronMap.put(symbol, 1);
                         break;
@@ -126,7 +130,7 @@ public class ValencyCalculator {
         if (valencElectronMap.containsKey(symbol)) {
             atomValence = valencElectronMap.get(symbol);
         } else {
-            Logger.getLogger(ValencyCalculator.class.getName()).log(Level.WARNING, "Element {0} not found. Valence assigned 99.", symbol);
+            getLogger(ValencyCalculator.class.getName()).log(WARNING, "Element {0} not found. Valence assigned 99.", symbol);
             atomValence = 99;
         }
         return atomValence;
@@ -150,9 +154,9 @@ public class ValencyCalculator {
                 counterH++;
             }
             IBond bond = m.getBond(atom, connAtom);
-            totalConnectedBondOrder += BondChange.convertBondOrder(bond);
+            totalConnectedBondOrder += convertBondOrder(bond);
         }
-        Integer charge = atom.getFormalCharge() == CDKConstants.UNSET ? 0 : atom.getFormalCharge();
+        Integer charge = atom.getFormalCharge() == UNSET ? 0 : atom.getFormalCharge();
         return skipHydrogen ? (getValenceElectron(atom) - totalConnectedBondOrder + counterH - charge)
                 : (getValenceElectron(atom) - totalConnectedBondOrder - charge);
     }
@@ -175,7 +179,7 @@ public class ValencyCalculator {
      */
     public static Map<String, Integer> getElementMap() {
         initialize();
-        return Collections.unmodifiableMap(valencElectronMap);
+        return unmodifiableMap(valencElectronMap);
     }
 
     public static int getSize() {

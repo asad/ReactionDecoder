@@ -23,10 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.EITHER;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 /**
  * This class creates a Stereo matrix for a set of molecules loosely based on a
@@ -84,7 +91,7 @@ public class StereogenicCenterCalculator implements Serializable {
 //        return false;
 //    }
 //
-    private static final Logger LOG = Logger.getLogger(StereogenicCenterCalculator.class.getName());
+    private static final Logger LOG = getLogger(StereogenicCenterCalculator.class.getName());
 
     /**
      *
@@ -242,35 +249,35 @@ public class StereogenicCenterCalculator implements Serializable {
      * @return
      */
     public synchronized boolean isStereogenicChange(IStereoAndConformation a, IStereoAndConformation b) {
-        if (a.equals(IStereoAndConformation.S) && b.equals(IStereoAndConformation.NONE)) {
+        if (a.equals(S) && b.equals(NONE)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.R) && b.equals(IStereoAndConformation.NONE)) {
+        } else if (a.equals(R) && b.equals(NONE)) {
             return true;
-        } else if (b.equals(IStereoAndConformation.S) && a.equals(IStereoAndConformation.NONE)) {
+        } else if (b.equals(S) && a.equals(NONE)) {
             return true;
-        } else if (b.equals(IStereoAndConformation.R) && a.equals(IStereoAndConformation.NONE)) {
+        } else if (b.equals(R) && a.equals(NONE)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.R) && b.equals(IStereoAndConformation.S)) {
+        } else if (a.equals(R) && b.equals(S)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.S) && b.equals(IStereoAndConformation.R)) {
+        } else if (a.equals(S) && b.equals(R)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.S) && b.equals(IStereoAndConformation.EITHER)) {
+        } else if (a.equals(S) && b.equals(EITHER)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.R) && b.equals(IStereoAndConformation.EITHER)) {
+        } else if (a.equals(R) && b.equals(EITHER)) {
             return true;
-        } else if (b.equals(IStereoAndConformation.S) && a.equals(IStereoAndConformation.EITHER)) {
+        } else if (b.equals(S) && a.equals(EITHER)) {
             return true;
-        } else if (b.equals(IStereoAndConformation.R) && a.equals(IStereoAndConformation.EITHER)) {
+        } else if (b.equals(R) && a.equals(EITHER)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.EITHER) && b.equals(IStereoAndConformation.EITHER)) {
+        } else if (a.equals(EITHER) && b.equals(EITHER)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.NONE) && b.equals(IStereoAndConformation.EITHER)) {
+        } else if (a.equals(NONE) && b.equals(EITHER)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.EITHER) && b.equals(IStereoAndConformation.NONE)) {
+        } else if (a.equals(EITHER) && b.equals(NONE)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.Z) && b.equals(IStereoAndConformation.E)) {
+        } else if (a.equals(Z) && b.equals(E)) {
             return true;
-        } else if (a.equals(IStereoAndConformation.E) && b.equals(IStereoAndConformation.Z)) {
+        } else if (a.equals(E) && b.equals(Z)) {
             return true;
         }
         return false;

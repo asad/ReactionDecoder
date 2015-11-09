@@ -20,7 +20,9 @@ package uk.ac.ebi.reactionblast.signature;
 
 import java.util.List;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -34,7 +36,7 @@ import signature.AbstractVertexSignature;
 public class RBlastAtomSignature extends AbstractVertexSignature {
 
     public static final String CHARGE_SEPARATOR = ":";
-    private static final Logger LOG = Logger.getLogger(RBlastAtomSignature.class.getName());
+    private static final Logger LOG = getLogger(RBlastAtomSignature.class.getName());
     private final IAtomContainer atomContainer;
     private boolean useAromatics = true;
     private boolean useCharge = true;
@@ -129,9 +131,9 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         IAtom atomA = atomContainer.getAtom(atomIndexA);
         IAtom atomB = atomContainer.getAtom(atomIndexB);
         IBond bond = atomContainer.getBond(atomA, atomB);
-        if (useAromatics && bond.getFlag(CDKConstants.ISAROMATIC)) {
+        if (useAromatics && bond.getFlag(ISAROMATIC)) {
             return "@";
-        } else if (useAromatics && bond.getFlag(CDKConstants.ISINRING)) {
+        } else if (useAromatics && bond.getFlag(ISINRING)) {
             return "%";
         }
         if (!isBondSensitive) {

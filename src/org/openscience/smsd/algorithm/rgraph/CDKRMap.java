@@ -30,6 +30,7 @@
 package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -44,7 +45,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRMapTest")
 class CDKRMap extends Object {
-    private static final Logger LOG = Logger.getLogger(CDKRMap.class.getName());
+    private static final Logger LOG = getLogger(CDKRMap.class.getName());
 
     private int id1 = 0;
     private int id2 = 0;

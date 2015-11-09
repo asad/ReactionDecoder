@@ -19,9 +19,12 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -39,7 +42,7 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
 public class AtomAtomMappingContainer extends Object implements Serializable {
 
     private static final long serialVersionUID = 17879096958755L;
-    private static final Logger LOG = Logger.getLogger(AtomAtomMappingContainer.class.getName());
+    private static final Logger LOG = getLogger(AtomAtomMappingContainer.class.getName());
 
     private List<IAtom> reactantAtomArray = new ArrayList<>();
     private List<IAtom> productAtomArray = new ArrayList<>();
@@ -93,7 +96,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                 if (withoutH && at.getSymbol().equalsIgnoreCase("H")) {
                     continue;
                 }
-                int atomID = (new Integer(at.getID())).intValue();
+                int atomID = (new Integer(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }
@@ -116,12 +119,12 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
             }
         }
         if (error) {
-            System.out.print("ERROR in AtomAtomMapping-found hole in the mapping (reactants atomIDs)");
+            out.print("ERROR in AtomAtomMapping-found hole in the mapping (reactants atomIDs)");
             for (int i = 0; i < reactants.getAtomContainerCount(); i++) {
-                System.out.println("Mol:" + reactants.getAtomContainer(i).getID());
+                out.println("Mol:" + reactants.getAtomContainer(i).getID());
                 for (int j = 0; j < reactants.getAtomContainer(i).getAtomCount(); j++) {
                     IAtom at = reactants.getAtomContainer(i).getAtom(j);
-                    System.out.println(at.getSymbol() + at.getID());
+                    out.println(at.getSymbol() + at.getID());
                 }
             }
         }
@@ -154,7 +157,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                     continue;
                 }
 
-                int atomID = (new Integer(at.getID())).intValue();
+                int atomID = (new Integer(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }
@@ -180,13 +183,13 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
             error = true;
         }
         if (error) {
-            System.out.print("ERROR in AtomAtomMapping-found hole in the mapping (products atomIDs)");
-            System.out.print("mapped reactants atoms: " + mappedAtomsR + ", mapped products atoms: " + mappedAtomsP);
+            out.print("ERROR in AtomAtomMapping-found hole in the mapping (products atomIDs)");
+            out.print("mapped reactants atoms: " + mappedAtomsR + ", mapped products atoms: " + mappedAtomsP);
             for (int i = 0; i < products.getAtomContainerCount(); i++) {
-                System.out.println("Mol:" + products.getAtomContainer(i).getID());
+                out.println("Mol:" + products.getAtomContainer(i).getID());
                 for (int j = 0; j < products.getAtomContainer(i).getAtomCount(); j++) {
                     IAtom at = products.getAtomContainer(i).getAtom(j);
-                    System.out.println(at.getSymbol() + at.getID());
+                    out.println(at.getSymbol() + at.getID());
                 }
             }
         }
@@ -219,7 +222,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
+        String NEW_LINE = getProperty("line.separator");
         result.append(reactantAtomArray.size()).append(NEW_LINE);
         for (int i = 0; i < reactantAtomArray.size(); i++) {
             result.append(i).append("\t");

@@ -20,21 +20,23 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
+import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 public class MappingTransformation implements ITransformation<IReaction> {
 private final static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MappingTransformation.class);
-    private static final Logger LOG = Logger.getLogger(MappingTransformation.class.getName());
+            = createLoggingTool(MappingTransformation.class);
+    private static final Logger LOG = getLogger(MappingTransformation.class.getName());
 
     @Override
     public TargetType getTargetType() {
-        return TargetType.REACTION;
+        return REACTION;
     }
 
     @Override

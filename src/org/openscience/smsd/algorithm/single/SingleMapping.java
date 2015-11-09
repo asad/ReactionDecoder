@@ -23,7 +23,7 @@
 package org.openscience.smsd.algorithm.single;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
@@ -44,6 +45,7 @@ import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.tools.BondEnergies;
+import static org.openscience.smsd.tools.BondEnergies.getInstance;
 
 /**
  * This class handles single atom mapping. Either query and/or target molecule
@@ -56,7 +58,7 @@ import org.openscience.smsd.tools.BondEnergies;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.single.SingleMappingTest")
 public class SingleMapping {
-    private static final Logger LOG = Logger.getLogger(SingleMapping.class.getName());
+    private static final Logger LOG = getLogger(SingleMapping.class.getName());
 
     private IAtomContainer source = null;
     private IAtomContainer target = null;
@@ -124,7 +126,7 @@ public class SingleMapping {
 
     private synchronized void setSourceSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
         int counter = 0;
-        BondEnergies be = BondEnergies.getInstance();
+        BondEnergies be = getInstance();
         for (IAtom sourceAtom : source.atoms()) {
             for (IAtom targetAtom : target.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
@@ -177,7 +179,7 @@ public class SingleMapping {
 
     private synchronized void setTargetSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
         int counter = 0;
-        BondEnergies be = BondEnergies.getInstance();
+        BondEnergies be = getInstance();
         for (IAtom targetAtom : target.atoms()) {
             for (IAtom sourceAtoms : source.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
@@ -243,7 +245,7 @@ public class SingleMapping {
 
     private <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List list = new LinkedList(map.entrySet());
-        Collections.sort(list, new Comparator() {
+        sort(list, new Comparator() {
             @Override
             public int compare(Object object1, Object object2) {
                 return ((Comparable) ((Map.Entry<K, V>) (object1)).getValue()).compareTo(

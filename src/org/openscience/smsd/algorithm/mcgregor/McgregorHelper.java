@@ -23,9 +23,10 @@
  */
 package org.openscience.smsd.algorithm.mcgregor;
 
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 
 /**
@@ -39,7 +40,7 @@ import org.openscience.cdk.annotations.TestClass;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McgregorHelperTest")
 public class McgregorHelper {
-    private static final Logger LOG = Logger.getLogger(McgregorHelper.class.getName());
+    private static final Logger LOG = getLogger(McgregorHelper.class.getName());
 
     private final List<String> c_bond_setA;
     private final List<String> c_bond_setB;
@@ -112,14 +113,14 @@ public class McgregorHelper {
      * @return the c_bond_setA
      */
     protected List<String> getCBondSetA() {
-        return Collections.unmodifiableList(c_bond_setA);
+        return unmodifiableList(c_bond_setA);
     }
 
     /**
      * @return the c_bond_setB
      */
     protected List<String> getCBondSetB() {
-        return Collections.unmodifiableList(c_bond_setB);
+        return unmodifiableList(c_bond_setB);
     }
 
     /**
@@ -140,7 +141,7 @@ public class McgregorHelper {
      * @return the mappedAtomsOrg
      */
     protected List<Integer> getMappedAtomsOrg() {
-        return Collections.unmodifiableList(mappedAtomsOrg);
+        return unmodifiableList(mappedAtomsOrg);
     }
 
     /**
@@ -161,28 +162,28 @@ public class McgregorHelper {
      * @return the iBondNeighborAtomsA
      */
     protected List<Integer> getiBondNeighborAtomsA() {
-        return Collections.unmodifiableList(iBondNeighborAtomsA);
+        return unmodifiableList(iBondNeighborAtomsA);
     }
 
     /**
      * @return the iBondNeighborAtomsB
      */
     protected List<Integer> getiBondNeighborAtomsB() {
-        return Collections.unmodifiableList(iBondNeighborAtomsB);
+        return unmodifiableList(iBondNeighborAtomsB);
     }
 
     /**
      * @return the cBondNeighborsA
      */
     protected List<String> getcBondNeighborsA() {
-        return Collections.unmodifiableList(cBondNeighborsA);
+        return unmodifiableList(cBondNeighborsA);
     }
 
     /**
      * @return the cBondNeighborsB
      */
     protected List<String> getcBondNeighborsB() {
-        return Collections.unmodifiableList(cBondNeighborsB);
+        return unmodifiableList(cBondNeighborsB);
     }
 
     /**
@@ -196,14 +197,14 @@ public class McgregorHelper {
      * @return the i_bond_setA
      */
     protected List<Integer> getIBondSetA() {
-        return Collections.unmodifiableList(i_bond_setA);
+        return unmodifiableList(i_bond_setA);
     }
 
     /**
      * @return the i_bond_setB
      */
     protected List<Integer> getIBondSetB() {
-        return Collections.unmodifiableList(i_bond_setB);
+        return unmodifiableList(i_bond_setB);
     }
 
     int getsetNumB() {

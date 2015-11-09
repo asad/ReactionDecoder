@@ -20,19 +20,29 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
+import static java.lang.Double.MAX_VALUE;
+import static java.lang.Double.MIN_VALUE;
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.min;
+import static java.lang.Math.sin;
+import static java.lang.String.format;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.sort;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class ConvexHull implements Iterable<Point2d> {
-    private static final Logger LOG = Logger.getLogger(ConvexHull.class.getName());
+    private static final Logger LOG = getLogger(ConvexHull.class.getName());
     
     private Point2d[] hull;
     
@@ -49,9 +59,9 @@ public class ConvexHull implements Iterable<Point2d> {
         if (i < atomContainer.getAtomCount()) {
             Point2d[] nonNullPoints = new Point2d[i];
             int k = 0;
-            for (int j = 0; j < points.length; j++) {
-                if (points[j] != null) {
-                    nonNullPoints[k] = points[j];
+            for (Point2d point : points) {
+                if (point != null) {
+                    nonNullPoints[k] = point;
                     k++;
                 }
             }
@@ -145,9 +155,9 @@ public class ConvexHull implements Iterable<Point2d> {
         Vector2d caliperA = new Vector2d(1, 0);
         Vector2d caliperB = new Vector2d(-1, 0);
         double rotatedAngle = 0;
-        double minArea = Double.MAX_VALUE;
+        double minArea = MAX_VALUE;
         Rectangle minRect = null;
-        while (rotatedAngle < Math.PI) {
+        while (rotatedAngle < PI) {
             if (indexA == hull.length - 1) {
                 indexA = 0;
             }
@@ -158,7 +168,7 @@ public class ConvexHull implements Iterable<Point2d> {
             Vector2d edgeB = edgeVector(hull[indexB], hull[indexB + 1]);
             double angleA = edgeA.angle(caliperA);
             double angleB = edgeB.angle(caliperB);
-            double minAngle = Math.min(angleA, angleB);
+            double minAngle = min(angleA, angleB);
             caliperA = rotate(caliperA, minAngle);
             caliperB = rotate(caliperB, minAngle);
             Rectangle rectangle;
@@ -195,7 +205,7 @@ public class ConvexHull implements Iterable<Point2d> {
         Point2d vMax = null;
         Point2d thirdPoint = null;
         double thirdPointDist = 0.0;
-        double minAngle = Math.PI * 2;
+        double minAngle = PI * 2;
         double maxAngle = 0;
         Vector2d vN = new Vector2d(vector);
         vN.normalize();
@@ -343,7 +353,7 @@ public class ConvexHull implements Iterable<Point2d> {
     public String toString(Point2d... points) {
         String str = "[";
         for (Point2d point : points) {
-            str += String.format("(%2.0f, %2.0f)", point.x, point.y);
+            str += format("(%2.0f, %2.0f)", point.x, point.y);
         }
         return str + "]";
     }
@@ -388,8 +398,8 @@ public class ConvexHull implements Iterable<Point2d> {
     
     private Vector2d rotate(Vector2d vector, double angle) {
         Vector2d rotatedVector = new Vector2d();
-        double cosTh = Math.cos(angle);
-        double sinTh = Math.sin(angle);
+        double cosTh = cos(angle);
+        double sinTh = sin(angle);
         rotatedVector.x = cosTh * vector.x - sinTh * vector.y;
         rotatedVector.y = sinTh * vector.x + cosTh * vector.y;
         return rotatedVector;
@@ -402,10 +412,10 @@ public class ConvexHull implements Iterable<Point2d> {
     }
     
     public Rectangle2D getAxisAlignedMinimumBoundingRectangle() {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double maxY = Double.MIN_VALUE;
+        double minX = MAX_VALUE;
+        double minY = MAX_VALUE;
+        double maxX = MIN_VALUE;
+        double maxY = MIN_VALUE;
         for (Point2d point : hull) {
             if (point.x < minX) {
                 minX = point.x;
@@ -456,7 +466,7 @@ public class ConvexHull implements Iterable<Point2d> {
             swap(points, m, i);
         }
         hull = new Point2d[m];
-        System.arraycopy(points, 0, hull, 0, m);
+        arraycopy(points, 0, hull, 0, m);
     }
     
     // allegedly, book 'Computational Geometry' has info on this
@@ -482,14 +492,14 @@ public class ConvexHull implements Iterable<Point2d> {
     
     private Point2d[] sortByPolarAngle(Point2d[] points) {
         Point2d ref = points[0];
-        final Map<Point2d, Double> angles = new HashMap<Point2d, Double>();
+        final Map<Point2d, Double> angles = new HashMap<>();
         angles.put(ref, 0.0);
         for (int pointIndex = 1; pointIndex < points.length; pointIndex++) {
             Point2d point = points[pointIndex];
             double angle = getAngle(ref, point);
             angles.put(point, angle);
         }
-        Arrays.sort(points, new Comparator<Point2d>() {
+        sort(points, new Comparator<Point2d>() {
 
             @Override
             public int compare(Point2d p0, Point2d p1) {
@@ -499,7 +509,7 @@ public class ConvexHull implements Iterable<Point2d> {
         });
         Point2d[] sortedPoints = new Point2d[points.length + 1];
         sortedPoints[0] = points[points.length - 1];
-        System.arraycopy(points, 0, sortedPoints, 1, points.length);
+        arraycopy(points, 0, sortedPoints, 1, points.length);
         return sortedPoints;
     }
     
@@ -525,7 +535,7 @@ public class ConvexHull implements Iterable<Point2d> {
 
     @Override
     public Iterator<Point2d> iterator() {
-        return Arrays.asList(hull).iterator();
+        return asList(hull).iterator();
     }
 
     /**
@@ -569,7 +579,7 @@ public class ConvexHull implements Iterable<Point2d> {
         }
 
         public String toString() {
-            return String.format("[(%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f)]",
+            return format("[(%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f), (%2.0f, %2.0f)]",
                     cornerA.x, cornerA.y, cornerB.x, cornerB.y, cornerC.x, cornerC.y, cornerD.x, cornerD.y);
         }
 

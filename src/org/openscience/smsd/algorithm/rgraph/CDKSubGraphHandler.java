@@ -23,20 +23,22 @@
 package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
+import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
+import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getSubgraphAtomsMaps;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -48,7 +50,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKMCSHandlerTest")
 public class CDKSubGraphHandler implements IResults {
-    private static final Logger LOG = Logger.getLogger(CDKSubGraphHandler.class.getName());
+    private static final Logger LOG = getLogger(CDKSubGraphHandler.class.getName());
 
 //    //~--- fields -------------------------------------------------------------
     private final IAtomContainer source;
@@ -143,7 +145,7 @@ public class CDKSubGraphHandler implements IResults {
     protected IAtomContainerSet getUncommon(IAtomContainer mol, IAtomContainer mcss) throws CDKException {
         ArrayList<Integer> atomSerialsToDelete = new ArrayList<>();
 
-        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        List<List<CDKRMap>> matches = getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
         List<CDKRMap> mapList = matches.get(0);
         for (Object o : mapList) {
             CDKRMap rmap = (CDKRMap) o;
@@ -165,7 +167,7 @@ public class CDKSubGraphHandler implements IResults {
         // now we probably have a set of disconnected components
         // so lets get a set of individual atom containers for
         // corresponding to each component
-        return ConnectivityChecker.partitionIntoMolecules(mol);
+        return partitionIntoMolecules(mol);
     }
 
     //~--- get methods --------------------------------------------------------
@@ -179,8 +181,8 @@ public class CDKSubGraphHandler implements IResults {
                 TreeMap<Integer, Integer> atomMappings = new TreeMap<>();
                 for (Map.Entry<Integer, Integer> Solutions : final_solution.entrySet()) {
 
-                    int IIndex = Solutions.getKey().intValue();
-                    int JIndex = Solutions.getValue().intValue();
+                    int IIndex = Solutions.getKey();
+                    int JIndex = Solutions.getValue();
 
                     if (rOnPFlag) {
                         atomMappings.put(IIndex, JIndex);
@@ -207,8 +209,8 @@ public class CDKSubGraphHandler implements IResults {
             AtomAtomMapping atomMappings = new AtomAtomMapping(source, target);
             for (Map.Entry<Integer, Integer> Solutions : final_solution.entrySet()) {
 
-                int IIndex = Solutions.getKey().intValue();
-                int JIndex = Solutions.getValue().intValue();
+                int IIndex = Solutions.getKey();
+                int JIndex = Solutions.getValue();
 
                 IAtom sourceAtom = null;
                 IAtom targetAtom = null;
@@ -230,7 +232,7 @@ public class CDKSubGraphHandler implements IResults {
     @Override
     @TestMethod("testGetAllAtomMapping")
     public List<AtomAtomMapping> getAllAtomMapping() {
-        return Collections.unmodifiableList(allAtomMCS);
+        return unmodifiableList(allAtomMCS);
     }
 
     /**

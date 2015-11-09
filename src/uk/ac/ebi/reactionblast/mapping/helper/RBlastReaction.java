@@ -19,11 +19,13 @@
 package uk.ac.ebi.reactionblast.mapping.helper;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -32,11 +34,21 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockPair;
 import uk.ac.ebi.reactionblast.mapping.blocks.MappingGraph;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
-import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED_OR_CLEAVED;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 public class RBlastReaction {
-    private static final Logger LOG = Logger.getLogger(RBlastReaction.class.getName());
+    private static final Logger LOG = getLogger(RBlastReaction.class.getName());
 
     private IReaction reaction;
     private List<BlockPair> blockPairs;
@@ -92,33 +104,33 @@ public class RBlastReaction {
     private void setupAtomChangeLists(IAtomContainerSet molSet, Map<IAtom, IStereoAndConformation> mapToAddTo) {
         for (IAtomContainer atomContainer : molSet.atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
-                if (atom.getProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION) != null) {
-                    IStereoAndConformation flag = (IStereoAndConformation) atom.getProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION);
-                    if (flag == IStereoAndConformation.R) {
-                        mapToAddTo.put(atom, IStereoAndConformation.R);
-                    } else if (flag == IStereoAndConformation.S) {
-                        mapToAddTo.put(atom, IStereoAndConformation.S);
+                if (atom.getProperty(ATOM_STEREO_CHANGE_INFORMATION) != null) {
+                    IStereoAndConformation flag = (IStereoAndConformation) atom.getProperty(ATOM_STEREO_CHANGE_INFORMATION);
+                    if (flag == R) {
+                        mapToAddTo.put(atom, R);
+                    } else if (flag == S) {
+                        mapToAddTo.put(atom, S);
                     }
-                    if (flag == IStereoAndConformation.Z) {
-                        mapToAddTo.put(atom, IStereoAndConformation.Z);
-                    } else if (flag == IStereoAndConformation.E) {
-                        mapToAddTo.put(atom, IStereoAndConformation.E);
+                    if (flag == Z) {
+                        mapToAddTo.put(atom, Z);
+                    } else if (flag == E) {
+                        mapToAddTo.put(atom, E);
                     }
                 }
             }
             for (IBond bond : atomContainer.bonds()) {
                 for (IAtom atom : bond.atoms()) {
-                    if (atom.getProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION) != null) {
-                        IStereoAndConformation flag = (IStereoAndConformation) atom.getProperty(ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION);
-                        if (flag == IStereoAndConformation.R) {
-                            mapToAddTo.put(atom, IStereoAndConformation.R);
-                        } else if (flag == IStereoAndConformation.S) {
-                            mapToAddTo.put(atom, IStereoAndConformation.S);
+                    if (atom.getProperty(ATOM_STEREO_CHANGE_INFORMATION) != null) {
+                        IStereoAndConformation flag = (IStereoAndConformation) atom.getProperty(ATOM_STEREO_CHANGE_INFORMATION);
+                        if (flag == R) {
+                            mapToAddTo.put(atom, R);
+                        } else if (flag == S) {
+                            mapToAddTo.put(atom, S);
                         }
-                        if (flag == IStereoAndConformation.Z) {
-                            mapToAddTo.put(atom, IStereoAndConformation.Z);
-                        } else if (flag == IStereoAndConformation.E) {
-                            mapToAddTo.put(atom, IStereoAndConformation.E);
+                        if (flag == Z) {
+                            mapToAddTo.put(atom, Z);
+                        } else if (flag == E) {
+                            mapToAddTo.put(atom, E);
                         }
                     }
                 }
@@ -134,25 +146,25 @@ public class RBlastReaction {
 
     private void setupBondChangeLists(IAtomContainer atomContainer, boolean isReactant) {
         for (IBond bond : atomContainer.bonds()) {
-            if (bond.getProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION) != null) {
-                ECBLAST_BOND_CHANGE_FLAGS bondChangeType = (ECBLAST_BOND_CHANGE_FLAGS) bond.getProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION);
-                if (bondChangeType == ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED) {
+            if (bond.getProperty(BOND_CHANGE_INFORMATION) != null) {
+                ECBLAST_BOND_CHANGE_FLAGS bondChangeType = (ECBLAST_BOND_CHANGE_FLAGS) bond.getProperty(BOND_CHANGE_INFORMATION);
+                if (bondChangeType == BOND_CLEAVED) {
                     bondsCleavedInReactant.add(bond);
-                } else if (bondChangeType == ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED) {
+                } else if (bondChangeType == BOND_FORMED) {
                     bondsFormedInProduct.add(bond);
-                } else if (bondChangeType == ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER) {
+                } else if (bondChangeType == BOND_ORDER) {
                     if (isReactant) {
                         bondsOrderChangedInReactant.add(bond);
                     } else {
                         bondsOrderChangedInProduct.add(bond);
                     }
-                } else if (bondChangeType == ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO) {
+                } else if (bondChangeType == BOND_STEREO) {
                     if (isReactant) {
                         bondsStereoChangedInReactant.add(bond);
                     } else {
                         bondsStereoChangedInProduct.add(bond);
                     }
-                } else if (bondChangeType == ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED_OR_CLEAVED) {
+                } else if (bondChangeType == BOND_FORMED_OR_CLEAVED) {
                     if (isReactant) {
                         bondsCleavedInReactant.add(bond);
                     } else {
@@ -168,7 +180,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsStereoChangedInProduct() {
-        return Collections.unmodifiableList(bondsStereoChangedInProduct);
+        return unmodifiableList(bondsStereoChangedInProduct);
     }
 
     /**
@@ -176,7 +188,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsStereoChangedInReactant() {
-        return Collections.unmodifiableList(bondsStereoChangedInReactant);
+        return unmodifiableList(bondsStereoChangedInReactant);
     }
 
     /**
@@ -200,7 +212,7 @@ public class RBlastReaction {
      * @return
      */
     public List<BlockPair> getMappedSubgraphs() {
-        return Collections.unmodifiableList(blockPairs);
+        return unmodifiableList(blockPairs);
     }
 
     /**
@@ -208,7 +220,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsCleavedInReactant() {
-        return Collections.unmodifiableList(bondsCleavedInReactant);
+        return unmodifiableList(bondsCleavedInReactant);
     }
 
     /**
@@ -216,7 +228,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsFormedInProduct() {
-        return Collections.unmodifiableList(bondsFormedInProduct);
+        return unmodifiableList(bondsFormedInProduct);
     }
 
     /**
@@ -224,7 +236,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsOrderChangedInProduct() {
-        return Collections.unmodifiableList(bondsOrderChangedInProduct);
+        return unmodifiableList(bondsOrderChangedInProduct);
     }
 
     /**
@@ -232,7 +244,7 @@ public class RBlastReaction {
      * @return
      */
     public List<IBond> getBondsOrderChangedInReactant() {
-        return Collections.unmodifiableList(bondsOrderChangedInReactant);
+        return unmodifiableList(bondsOrderChangedInReactant);
     }
 
     /**
@@ -240,7 +252,7 @@ public class RBlastReaction {
      * @return
      */
     public Map<IAtom, IStereoAndConformation> getAtomStereoProductMap() {
-        return Collections.unmodifiableMap(atomStereoProductMap);
+        return unmodifiableMap(atomStereoProductMap);
     }
 
     /**
@@ -248,6 +260,6 @@ public class RBlastReaction {
      * @return
      */
     public Map<IAtom, IStereoAndConformation> getAtomStereoReactantMap() {
-        return Collections.unmodifiableMap(atomStereoReactantMap);
+        return unmodifiableMap(atomStereoReactantMap);
     }
 }

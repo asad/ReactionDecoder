@@ -19,6 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.descriptors;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -32,7 +33,7 @@ public class CXlogP {
 
     private static final IAtomContainer molecule = null;
     private static final IAtomContainer eminMol = null;
-    private static final Logger LOG = Logger.getLogger(CXlogP.class.getName());
+    private static final Logger LOG = getLogger(CXlogP.class.getName());
 
     /**
      *

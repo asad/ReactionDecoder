@@ -20,8 +20,8 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
 
 import java.io.IOException;
 import java.util.BitSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -39,9 +39,9 @@ public abstract class IGraphMatching {
             reactionStructureInformation.setEductModified(substrateIndex, true);
             reactionStructureInformation.setProductModified(productIndex, true);
         } catch (IOException ex) {
-            Logger.getLogger(IGraphMatching.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(IGraphMatching.class.getName()).log(SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(IGraphMatching.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(IGraphMatching.class.getName()).log(SEVERE, null, ex);
         }
     }
 

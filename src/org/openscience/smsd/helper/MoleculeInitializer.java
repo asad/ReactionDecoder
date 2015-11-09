@@ -23,16 +23,27 @@
 package org.openscience.smsd.helper;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.openscience.cdk.CDKConstants;
+import static org.openscience.cdk.CDKConstants.ISALIPHATIC;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
+import static org.openscience.cdk.CDKConstants.RING_SIZES;
+import static org.openscience.cdk.CDKConstants.SMALLEST_RINGS;
+import static org.openscience.cdk.CDKConstants.TOTAL_CONNECTIONS;
+import static org.openscience.cdk.CDKConstants.TOTAL_H_COUNT;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
+import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
+import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -40,8 +51,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 
 /**
  *
@@ -111,7 +122,7 @@ public class MoleculeInitializer {
      * finding code.
      */
     private static final ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(MoleculeInitializer.class);
+            = createLoggingTool(MoleculeInitializer.class);
 
     /**
      *
@@ -184,8 +195,8 @@ public class MoleculeInitializer {
                 // Integers, indicating what size ring the given atom belongs to
                 // Add SSSR ring counts
                 if (allRings != null && allRings.contains(atom)) { // it's in a ring
-                    atom.setFlag(CDKConstants.ISINRING, true);
-                    atom.setFlag(CDKConstants.ISALIPHATIC, false);
+                    atom.setFlag(ISINRING, true);
+                    atom.setFlag(ISALIPHATIC, false);
                     // lets find which ring sets it is a part of
                     List<Integer> ringsizes = new ArrayList<>();
                     IRingSet currentRings = allRings.getRings(atom);
@@ -197,19 +208,19 @@ public class MoleculeInitializer {
                         }
                         ringsizes.add(size);
                     }
-                    Collections.sort(ringsizes);
-                    atom.setProperty(CDKConstants.RING_SIZES, ringsizes);
-                    atom.setProperty(CDKConstants.SMALLEST_RINGS, sssr.getRings(atom));
+                    sort(ringsizes);
+                    atom.setProperty(RING_SIZES, ringsizes);
+                    atom.setProperty(SMALLEST_RINGS, sssr.getRings(atom));
                     atom.setProperty(SMALLEST_RING_SIZE, min);
                 } else {
-                    atom.setFlag(CDKConstants.ISINRING, false);
-                    atom.setFlag(CDKConstants.ISALIPHATIC, true);
+                    atom.setFlag(ISINRING, false);
+                    atom.setFlag(ISALIPHATIC, true);
                     atom.setProperty(SMALLEST_RING_SIZE, 0);
                 }
 
                 // determine how many rings bonds each atom is a part of
                 int hCount;
-                if (Objects.equals(atom.getImplicitHydrogenCount(), CDKConstants.UNSET)) {
+                if (Objects.equals(atom.getImplicitHydrogenCount(), UNSET)) {
                     hCount = 0;
                 } else {
                     hCount = atom.getImplicitHydrogenCount();
@@ -222,19 +233,19 @@ public class MoleculeInitializer {
                         hCount++;
                     }
                 }
-                atom.setProperty(CDKConstants.TOTAL_CONNECTIONS, total);
-                atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
+                atom.setProperty(TOTAL_CONNECTIONS, total);
+                atom.setProperty(TOTAL_H_COUNT, hCount);
 
                 if (valencesTable.get(atom.getSymbol()) != null) {
-                    int formalCharge = Objects.equals(atom.getFormalCharge(), CDKConstants.UNSET) ? 0 : atom.getFormalCharge();
+                    int formalCharge = Objects.equals(atom.getFormalCharge(), UNSET) ? 0 : atom.getFormalCharge();
                     atom.setValency(valencesTable.get(atom.getSymbol()) - formalCharge);
                 }
             }
 
             for (IBond bond : atomContainer.bonds()) {
                 if (allRings != null && allRings.getRings(bond).getAtomContainerCount() > 0) {
-                    bond.setFlag(CDKConstants.ISINRING, true);
-                    bond.setFlag(CDKConstants.ISALIPHATIC, false);
+                    bond.setFlag(ISINRING, true);
+                    bond.setFlag(ISALIPHATIC, false);
                 }
             }
 
@@ -245,14 +256,14 @@ public class MoleculeInitializer {
                 IAtom any;
                 for (IAtom connectedAtom : connectedAtoms) {
                     any = connectedAtom;
-                    if (any.getFlag(CDKConstants.ISINRING)) {
+                    if (any.getFlag(ISINRING)) {
                         counter++;
                     }
                 }
-                atom.setProperty(CDKConstants.RING_CONNECTIONS, counter);
+                atom.setProperty(RING_CONNECTIONS, counter);
             }
 
-            ExtAtomContainerManipulator.aromatizeMolecule(atomContainer);
+            aromatizeMolecule(atomContainer);
         }
 
     }
@@ -289,25 +300,25 @@ public class MoleculeInitializer {
                 if (bond instanceof IQueryBond) {
                     continue;
                 }
-                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+                if (bond.getFlag(ISAROMATIC)) {
                     ac1AromaticBondCount++;
-                } else if (bond.getOrder() == IBond.Order.SINGLE) {
+                } else if (bond.getOrder() == SINGLE) {
                     ac1SingleBondCount++;
-                } else if (bond.getOrder() == IBond.Order.DOUBLE) {
+                } else if (bond.getOrder() == DOUBLE) {
                     ac1DoubleBondCount++;
-                } else if (bond.getOrder() == IBond.Order.TRIPLE) {
+                } else if (bond.getOrder() == TRIPLE) {
                     ac1TripleBondCount++;
                 }
             }
             for (int indexI = 0; indexI < ac2.getBondCount(); indexI++) {
                 bond = ac2.getBond(indexI);
-                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+                if (bond.getFlag(ISAROMATIC)) {
                     ac2AromaticBondCount++;
-                } else if (bond.getOrder() == IBond.Order.SINGLE) {
+                } else if (bond.getOrder() == SINGLE) {
                     ac2SingleBondCount++;
-                } else if (bond.getOrder() == IBond.Order.DOUBLE) {
+                } else if (bond.getOrder() == DOUBLE) {
                     ac2DoubleBondCount++;
-                } else if (bond.getOrder() == IBond.Order.TRIPLE) {
+                } else if (bond.getOrder() == TRIPLE) {
                     ac2TripleBondCount++;
                 }
             }

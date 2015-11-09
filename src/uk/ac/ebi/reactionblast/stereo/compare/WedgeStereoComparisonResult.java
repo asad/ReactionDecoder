@@ -18,7 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.stereo.compare;
 
+import static java.lang.String.valueOf;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult;
@@ -32,7 +34,7 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult;
  *
  */
 public class WedgeStereoComparisonResult {
-    private static final Logger LOG = Logger.getLogger(WedgeStereoComparisonResult.class.getName());
+    private static final Logger LOG = getLogger(WedgeStereoComparisonResult.class.getName());
 
     private final IAtom firstAtom;
     private final IAtomContainer firstAtomContainer;
@@ -87,13 +89,13 @@ public class WedgeStereoComparisonResult {
     public String toString() {
         String firstID;
         if (firstAtom.getID() == null) {
-            firstID = String.valueOf(firstAtomContainer.getAtomNumber(firstAtom));
+            firstID = valueOf(firstAtomContainer.getAtomNumber(firstAtom));
         } else {
             firstID = firstAtom.getID();
         }
         String secondID;
         if (secondAtom.getID() == null) {
-            secondID = String.valueOf(secondAtomContainer.getAtomNumber(secondAtom));
+            secondID = valueOf(secondAtomContainer.getAtomNumber(secondAtom));
         } else {
             secondID = secondAtom.getID();
         }

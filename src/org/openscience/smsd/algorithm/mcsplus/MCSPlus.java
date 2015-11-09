@@ -24,18 +24,20 @@ package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import static org.openscience.smsd.algorithm.mcsplus.ExactMapping.extractMapping;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -49,7 +51,7 @@ import org.openscience.smsd.tools.IterationManager;
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
 public class MCSPlus {
-    private static final Logger LOG = Logger.getLogger(MCSPlus.class.getName());
+    private static final Logger LOG = getLogger(MCSPlus.class.getName());
 
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
@@ -152,7 +154,7 @@ public class MCSPlus {
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExactMapping.extractMapping(comp_graph_nodes, maxCliqueSet.peek());
+                indexindexMapping = extractMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
                 }
@@ -170,7 +172,7 @@ public class MCSPlus {
 //            int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
 //            System.out.println("extendMappings: " + size);
         } catch (IOException ex) {
-            Logger.getLogger(MCSPlus.class.getName()).log(Level.SEVERE, null, ex);
+            getLogger(MCSPlus.class.getName()).log(SEVERE, null, ex);
         }
         return extendMappings;
     }
@@ -305,7 +307,7 @@ public class MCSPlus {
      * @return the overlaps
      */
     public synchronized List<List<Integer>> getOverlaps() {
-        return Collections.unmodifiableList(overlaps);
+        return unmodifiableList(overlaps);
     }
 
     /**

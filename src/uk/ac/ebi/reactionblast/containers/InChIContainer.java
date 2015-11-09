@@ -21,10 +21,12 @@ package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -58,7 +60,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
 
     private static InChIContainer _instance = null;
     private static Map<String, String> InChIMap = null;
-    private static final Logger LOG = Logger.getLogger(InChIContainer.class.getName());
+    private static final Logger LOG = getLogger(InChIContainer.class.getName());
 
     /**
      *
@@ -82,7 +84,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
     //~--- constructors -------------------------------------------------------
 
      private InChIContainer() {
-         InChIMap = Collections.synchronizedSortedMap(new TreeMap<String, String>());
+         InChIMap = synchronizedSortedMap(new TreeMap<String, String>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -169,7 +171,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      */
     @Override
     public synchronized Map<String, String> getInChIMap() throws IOException {
-        return Collections.unmodifiableMap(InChIMap);
+        return unmodifiableMap(InChIMap);
     }
 
     /**

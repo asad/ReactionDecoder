@@ -22,13 +22,15 @@ package uk.ac.ebi.reactionblast.containers;
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
 import java.util.BitSet;
-import java.util.Collections;
+import static java.util.Collections.synchronizedSortedMap;
+import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import uk.ac.ebi.reactionblast.fingerprints.tools.Similarity;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -65,7 +67,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
 
     private static FingerPrintContainer _instance = null;
     private static Map<String, BitSet> FingerPrintMap = null;
-    private static final Logger LOG = Logger.getLogger(FingerPrintContainer.class.getName());
+    private static final Logger LOG = getLogger(FingerPrintContainer.class.getName());
 
     /**
      *
@@ -81,7 +83,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     //~--- constructors -------------------------------------------------------
 
      private FingerPrintContainer() {
-         FingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
+         FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -93,7 +95,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     @Override
     public synchronized void Clear() throws IOException {
         FingerPrintMap.clear();
-        FingerPrintMap = Collections.synchronizedSortedMap(new TreeMap<String, BitSet>());
+        FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
     }
 
     /**
@@ -152,12 +154,12 @@ public class FingerPrintContainer implements IFingerPrintContainer {
         for (Map.Entry<String, BitSet> map : FingerPrintMap.entrySet()) {
             String key = map.getKey();
             try {
-                if (Similarity.getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
+                if (getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
                     Key = key;
                     break;
                 }
             } catch (Exception ex) {
-                Logger.getLogger(FingerPrintContainer.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(FingerPrintContainer.class.getName()).log(SEVERE, null, ex);
             }
         }
         //System.err.println("Error: Unable to Find AtomContainer ID!!!");
@@ -171,7 +173,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      */
     @Override
     public synchronized Map<String, BitSet> getFingerPrintMap() throws IOException {
-        return Collections.unmodifiableMap(FingerPrintMap);
+        return unmodifiableMap(FingerPrintMap);
     }
 
     /**
@@ -214,11 +216,11 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     public synchronized boolean isValuePresent(BitSet value) throws IOException {
         for (BitSet bitset : FingerPrintMap.values()) {
             try {
-                if (Similarity.getTanimotoSimilarity(value, bitset) == 1.0) {
+                if (getTanimotoSimilarity(value, bitset) == 1.0) {
                     return true;
                 }
             } catch (Exception ex) {
-                Logger.getLogger(FingerPrintContainer.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(FingerPrintContainer.class.getName()).log(SEVERE, null, ex);
             }
         }
         return false;

@@ -25,7 +25,10 @@ package org.openscience.smsd.algorithm.matchers;
 
 import java.util.List;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ISALIPHATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.CDKConstants.RING_SIZES;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
@@ -42,7 +45,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 public class DefaultAtomTypeMatcher implements AtomMatcher {
 
     static final long serialVersionUID = -7861469841127327812L;
-    private static final Logger LOG = Logger.getLogger(DefaultAtomTypeMatcher.class.getName());
+    private static final Logger LOG = getLogger(DefaultAtomTypeMatcher.class.getName());
     private final String symbol;
     private final IAtom qAtom;
     private final boolean shouldMatchRings;
@@ -127,8 +130,8 @@ public class DefaultAtomTypeMatcher implements AtomMatcher {
     }
 
     private boolean isRingSizeMatch(IAtom atom) {
-        List<Integer> ringsizesQ = qAtom.getProperty(CDKConstants.RING_SIZES);
-        List<Integer> ringsizesT = atom.getProperty(CDKConstants.RING_SIZES);
+        List<Integer> ringsizesQ = qAtom.getProperty(RING_SIZES);
+        List<Integer> ringsizesT = atom.getProperty(RING_SIZES);
         if (ringsizesQ != null && ringsizesT != null) {
             for (int i : ringsizesQ) {
                 if (ringsizesT.contains(i)) {
@@ -140,11 +143,11 @@ public class DefaultAtomTypeMatcher implements AtomMatcher {
     }
 
     private boolean isAliphaticAtom(IAtom atom) {
-        return atom.getFlag(CDKConstants.ISALIPHATIC);
+        return atom.getFlag(ISALIPHATIC);
     }
 
     private boolean isRingAtom(IAtom atom) {
-        return atom.getFlag(CDKConstants.ISINRING);
+        return atom.getFlag(ISINRING);
     }
 
     /**

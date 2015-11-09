@@ -22,8 +22,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import uk.ac.ebi.reactionblast.mechanism.BEMatrix;
@@ -35,7 +38,7 @@ import uk.ac.ebi.reactionblast.mechanism.RMatrix;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MatrixPrinter extends Object {
-    private static final Logger LOG = Logger.getLogger(MatrixPrinter.class.getName());
+    private static final Logger LOG = getLogger(MatrixPrinter.class.getName());
 
     /**
      * This method prints the matrix to the standard output
@@ -45,35 +48,35 @@ public class MatrixPrinter extends Object {
     public static void printReactionMatrix(RMatrix rMatrix) {
         try {
             for (int i = 0; i < rMatrix.getRowDimension(); i++) {
-                System.out.print("\t\t" + i);
+                out.print("\t\t" + i);
             }
-            System.out.println();
+            out.println();
             for (int i = 0; i < rMatrix.getRowDimension() - 1; i++) {
-                System.out.print("\t\t" + rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
+                out.print("\t\t" + rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
                         + rMatrix.getReactantBEMatrix().getAtom(i).getID());
             }
-            System.out.println();
+            out.println();
             for (int i = 0; i < rMatrix.getRowDimension() - 1; i++) {
-                System.out.print("\t\t" + rMatrix.getProductBEMatrix().getAtom(i).getSymbol()
+                out.print("\t\t" + rMatrix.getProductBEMatrix().getAtom(i).getSymbol()
                         + rMatrix.getProductBEMatrix().getAtom(i).getID());
             }
-            System.out.println();
+            out.println();
             for (int i = 0; i < rMatrix.getRowDimension(); i++) {
                 if (i == rMatrix.getRowDimension() - 1) {
-                    System.out.print("\t");
+                    out.print("\t");
                 } else {
-                    System.out.print(rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
+                    out.print(rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
                             + rMatrix.getReactantBEMatrix().getAtom(i).getID()
                             + "\t" + rMatrix.getProductBEMatrix().getAtom(i).getSymbol()
                             + rMatrix.getProductBEMatrix().getAtom(i).getID());
                 }
                 for (int j = 0; j < rMatrix.getColumnDimension(); j++) {
-                    System.out.print("\t" + rMatrix.getValue(i, j));
+                    out.print("\t" + rMatrix.getValue(i, j));
                 }
-                System.out.println();
+                out.println();
             }
         } catch (CDKException ex) {
-            System.err.println("A CDKException has been arisen while printing the RMatrix");
+            err.println("A CDKException has been arisen while printing the RMatrix");
         }
     }
 
@@ -119,7 +122,7 @@ public class MatrixPrinter extends Object {
                 matrixFileWriter.close();
 
             } catch (CDKException ex) {
-                System.err.println("A CDKException has been arisen while printing the RMatrix");
+                err.println("A CDKException has been arisen while printing the RMatrix");
             }
         }
     }
@@ -132,16 +135,16 @@ public class MatrixPrinter extends Object {
      */
     public static void printBEMatrix(BEMatrix beMatrix) {
         List<IAtom> atomArray = beMatrix.getAtoms();
-        System.out.println(atomArray.size());
+        out.println(atomArray.size());
         for (int i = 0; i < atomArray.size(); i++) {
-            System.out.print(atomArray.get(i).getSymbol() + atomArray.get(i).getID() + "\t");
+            out.print(atomArray.get(i).getSymbol() + atomArray.get(i).getID() + "\t");
         }
-        System.out.println();
+        out.println();
         for (int i = 0; i < beMatrix.getRowDimension(); i++) {
             for (int j = 0; j < beMatrix.getColumnDimension(); j++) {
-                System.out.print(beMatrix.getValue(i, j) + "\t");
+                out.print(beMatrix.getValue(i, j) + "\t");
             }
-            System.out.println();
+            out.println();
         }
     }
 

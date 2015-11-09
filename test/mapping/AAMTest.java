@@ -19,16 +19,20 @@
 package mapping;
 
 import java.io.File;
+import static java.io.File.separator;
 import java.io.FileNotFoundException;
+import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import static mapping.TestUtility.INFORCHEM_RXN;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
@@ -37,14 +41,14 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class AAMTest extends TestUtility {
-    private static final Logger LOG = Logger.getLogger(AAMTest.class.getName());
+    private static final Logger LOG = getLogger(AAMTest.class.getName());
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        String RXN_DIR = INFORCHEM_RXN + "rxn" + File.separator + "all" + File.separator;
+        String RXN_DIR = INFORCHEM_RXN + "rxn" + separator + "all" + separator;
         /*
          Call AAM Class
          */
@@ -125,11 +129,11 @@ public class AAMTest extends TestUtility {
      * @param RXN_DIR Directory with RXN Files
      */
     public AAMTest(String RXN_DIR) {
-        System.out.println("RXN File Directory: " + RXN_DIR);
+        out.println("RXN File Directory: " + RXN_DIR);
         /*
         Instance of SMILES with AAM
         */
-        SmilesGenerator smilesAAM = SmilesGenerator.generic().withAtomClasses();
+        SmilesGenerator smilesAAM = generic().withAtomClasses();
         File dir = new File(RXN_DIR);
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -138,12 +142,12 @@ public class AAMTest extends TestUtility {
             try {
                 readReaction = readReactionFile(file.getName().split("\\.")[0], RXN_DIR, true, false);
                 IReaction mapReaction = mapReaction(readReaction, true);
-                System.out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
+                out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
                         + smilesAAM.createReactionSMILES(mapReaction));
             } catch (CDKException ex) {
-                Logger.getLogger(AAMTest.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(AAMTest.class.getName()).log(SEVERE, null, ex);
             } catch (Exception ex) {
-                Logger.getLogger(AAMTest.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger(AAMTest.class.getName()).log(SEVERE, null, ex);
             }
         }
     }

@@ -18,15 +18,17 @@
 package uk.ac.ebi.centres.priority;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Ligand;
+import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 
 public class DuplicateAtomRule<A>
         extends AbstractPriorityRule<A> {
 
-    private static final Logger LOG = Logger.getLogger(DuplicateAtomRule.class.getName());
+    private static final Logger LOG = getLogger(DuplicateAtomRule.class.getName());
 
     public DuplicateAtomRule() {
-        super(Type.CONSTITUTIONAL);
+        super(CONSTITUTIONAL);
     }
 
     @Override

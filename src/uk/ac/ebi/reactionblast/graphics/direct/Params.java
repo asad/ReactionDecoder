@@ -20,12 +20,18 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
+import static java.awt.Color.BLUE;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.FORWARD;
+import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap.BUTT;
+import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin.MITRE;
+import static uk.ac.ebi.reactionblast.graphics.direct.Params.MoleculeAlignMethod.MAX_AXIS;
 
 public class Params {
-    private static final Logger LOG = Logger.getLogger(Params.class.getName());
-    public BondStrokeCap bondStrokeCap = BondStrokeCap.BUTT;
-    public BondStrokeJoin bondStrokeJoin = BondStrokeJoin.MITRE;
+    private static final Logger LOG = getLogger(Params.class.getName());
+    public BondStrokeCap bondStrokeCap = BUTT;
+    public BondStrokeJoin bondStrokeJoin = MITRE;
 
     
     public XAlign leftRightAlignment = XAlign.CENTER;
@@ -71,7 +77,7 @@ public class Params {
     public int lonePairSeparation = 4;
     public boolean drawHighlights = true;
     public double highlightRadius = 8;
-    public Color highlightColor = Color.BLUE;
+    public Color highlightColor = BLUE;
     public boolean highlightsAbove = true;
     public boolean highlightsBelow = false;
     public float highlightAlpha = 0.15f;
@@ -100,9 +106,9 @@ public class Params {
     public int arrowBodyWidth = 5;
     public boolean drawFatArrow = false;
     public boolean drawArrowFilled = false;
-    public ArrowType arrowType = ArrowType.FORWARD;
+    public ArrowType arrowType = FORWARD;
     public boolean alignMolecules = false;
-    public MoleculeAlignMethod moleculeAlignMethod = MoleculeAlignMethod.MAX_AXIS;
+    public MoleculeAlignMethod moleculeAlignMethod = MAX_AXIS;
     public boolean circularHighlightShowAtoms = true;
     public boolean drawBondFormedCleavedMarks = true;
     public boolean drawBondOrderChangedMarks = true;

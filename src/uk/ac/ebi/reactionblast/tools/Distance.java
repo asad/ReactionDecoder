@@ -18,8 +18,10 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
+import static java.lang.Math.sqrt;
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -72,7 +74,7 @@ public class Distance {
 
     private static BitSet A;
     private static BitSet B;
-    private static final Logger LOG = Logger.getLogger(Distance.class.getName());
+    private static final Logger LOG = getLogger(Distance.class.getName());
 
     /**
      *
@@ -99,7 +101,7 @@ public class Distance {
         BitSet one_and_two = (BitSet) A.clone();
         one_and_two.and(B);
         float _common_bit_count = one_and_two.cardinality();
-        double Val = Math.sqrt((_bitset1_cardinality + _bitset2_cardinality - _common_bit_count) - _common_bit_count);
+        double Val = sqrt((_bitset1_cardinality + _bitset2_cardinality - _common_bit_count) - _common_bit_count);
 
         return Val;
     }
@@ -129,7 +131,7 @@ public class Distance {
         BitSet one_and_two = (BitSet) A.clone();
         one_and_two.and(B);
         float _common_bit_count = one_and_two.cardinality();
-        double Val = Math.sqrt((_bitset1_cardinality + _bitset2_cardinality - _common_bit_count) - _common_bit_count);
+        double Val = sqrt((_bitset1_cardinality + _bitset2_cardinality - _common_bit_count) - _common_bit_count);
 
         float N1 = (_bitset1_cardinality + _bitset2_cardinality - _common_bit_count);
         float N2 = (1 - _bitset1_cardinality - _bitset2_cardinality + _common_bit_count);

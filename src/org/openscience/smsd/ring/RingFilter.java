@@ -50,13 +50,15 @@ package org.openscience.smsd.ring;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import static org.openscience.smsd.ring.HanserRingFinder.findRings;
 
 /**
  *
@@ -66,7 +68,7 @@ import org.openscience.smsd.algorithm.matchers.AtomMatcher;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk> 2009-2015
  */
 public class RingFilter {
-    private static final Logger LOG = Logger.getLogger(RingFilter.class.getName());
+    private static final Logger LOG = getLogger(RingFilter.class.getName());
 
     private final Comparator comparator;
     private final AtomMatcher filter;
@@ -91,8 +93,8 @@ public class RingFilter {
 
     public void filterAtoms(IAtomContainer molecule, Collection<IAtom> atoms) {
         this.mol = molecule;
-        List<List<IAtom>> rings = new ArrayList<List<IAtom>>(HanserRingFinder.findRings(molecule));
-        Collections.sort(rings, comparator);
+        List<List<IAtom>> rings = new ArrayList<>(findRings(molecule));
+        sort(rings, comparator);
 
         for (List<IAtom> ring : rings) {
             if (atoms.size() == molecule.getAtomCount()) {

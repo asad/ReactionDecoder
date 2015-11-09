@@ -18,7 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
+import static java.lang.System.out;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -32,57 +34,57 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class IOReaction {
 
-    private static final Logger LOG = Logger.getLogger(IOReaction.class.getName());
+    private static final Logger LOG = getLogger(IOReaction.class.getName());
 
     private static void printReaction(IReaction reaction) {
         IAtomContainerSet Educt = reaction.getReactants();
         IAtomContainerSet Product = reaction.getProducts();
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
-        System.out.println("Educt Mol Count: " + Educt.getAtomContainerCount());
+        out.println("Educt Mol Count: " + Educt.getAtomContainerCount());
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
         for (int j = 0; j < Educt.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Educt.getAtomContainer(j);
-            System.out.println("Mol ID: " + M.getID());
-            System.out.println("Stoic: " + reaction.getReactantCoefficient(M));
-            System.out.println("Split Mol Atom Count: " + M.getAtomCount());
+            out.println("Mol ID: " + M.getID());
+            out.println("Stoic: " + reaction.getReactantCoefficient(M));
+            out.println("Split Mol Atom Count: " + M.getAtomCount());
 
             printAtoms(M);
 
         }
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
-        System.out.println("Product Mol Count: " + Product.getAtomContainerCount());
+        out.println("Product Mol Count: " + Product.getAtomContainerCount());
 
-        System.out.println("*******************************");
+        out.println("*******************************");
 
         for (int j = 0; j < Product.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Product.getAtomContainer(j);
-            System.out.println("Mol ID: " + M.getID());
-            System.out.println("Stoic: " + reaction.getProductCoefficient(M));
-            System.out.println("Split Mol Atom Count: " + M.getAtomCount());
+            out.println("Mol ID: " + M.getID());
+            out.println("Stoic: " + reaction.getProductCoefficient(M));
+            out.println("Split Mol Atom Count: " + M.getAtomCount());
 
             printAtoms(M);
 
         }
 
-        System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n");
+        out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n");
     }
 
     private static void printAtoms(IAtomContainer mol) {
-        System.out.print("Atom: ");
+        out.print("Atom: ");
         for (IAtom a : mol.atoms()) {
 
-            System.out.print(a.getSymbol());
+            out.print(a.getSymbol());
 
         }
-        System.out.println();
-        System.out.println();
+        out.println();
+        out.println();
     }
 }

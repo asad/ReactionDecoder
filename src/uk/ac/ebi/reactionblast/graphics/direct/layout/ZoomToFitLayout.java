@@ -23,9 +23,13 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Math.min;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
@@ -41,7 +45,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  *
  */
 public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = Logger.getLogger(ZoomToFitLayout.class.getName());
+    private static final Logger LOG = getLogger(ZoomToFitLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -78,16 +82,16 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         double canvasWidth = w;
         double canvasHeight = h;
         double scaleFactor
-                = GeometryTools.getScaleFactor(ac, drawer.getParams().bondLength);
-        Rectangle2D r2D = GeometryTools.getRectangle2D(ac);
+                = getScaleFactor(ac, drawer.getParams().bondLength);
+        Rectangle2D r2D = getRectangle2D(ac);
 //        Rectangle2D tmp = new Rectangle2D.Double(r2D.getMinX(), r2D.getMinY(), r2D.getWidth(), r2D.getHeight());
         translateTo(ac, 0, 0, r2D);
 //        translateTo(ac, 0, 0, tmp);
-        GeometryTools.scaleMolecule(ac, scaleFactor);
+        scaleMolecule(ac, scaleFactor);
         double objectWidth = r2D.getWidth() + (borderX * 2);
         double objectHeight = r2D.getHeight() + (borderY * 2);
 
-        return Math.min(canvasWidth / objectWidth, canvasHeight / objectHeight);
+        return min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
 
     @Override

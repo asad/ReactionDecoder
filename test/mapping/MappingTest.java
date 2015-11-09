@@ -19,12 +19,16 @@
 package mapping;
 
 import java.io.FileNotFoundException;
+import static java.lang.String.valueOf;
+import static java.lang.System.out;
 import java.util.logging.Logger;
-import junit.framework.Assert;
+import static java.util.logging.Logger.getLogger;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static mapping.TestUtility.KEGG_RXN_DIR;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -34,8 +38,8 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
-import uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularSMILES;
+import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -43,11 +47,11 @@ import uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool;
  */
 public class MappingTest extends BaseTest {
 
-    private static final Logger LOG = Logger.getLogger(MappingTest.class.getName());
+    private static final Logger LOG = getLogger(MappingTest.class.getName());
 
     @Before
     public void setup() {
-        System.out.println("USING : ECBLAST TO MAP FROM RXN DIR: " + KEGG_RXN_DIR);
+        out.println("USING : ECBLAST TO MAP FROM RXN DIR: " + KEGG_RXN_DIR);
     }
     /*
      * Test case for Reaction SMILES
@@ -57,7 +61,7 @@ public class MappingTest extends BaseTest {
     public void Test() throws Exception {
         setup();
         String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
-        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser smilesParser = new SmilesParser(getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         parseReactionSmiles.setID("TestReaction");
         ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
@@ -66,21 +70,21 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        System.out.println("FC " + formedCleavedWFingerprint);
+        out.println("FC " + formedCleavedWFingerprint);
 
         IPatternFingerprinter OCWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getOrderChangesWFingerprint();
 
-        System.out.println("OC " + OCWFingerprint);
+        out.println("OC " + OCWFingerprint);
 
         IPatternFingerprinter STWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getStereoChangesWFingerprint();
 
-        System.out.println("ST " + STWFingerprint);
+        out.println("ST " + STWFingerprint);
 
         /*
          * Expected Solution
@@ -90,7 +94,7 @@ public class MappingTest extends BaseTest {
          *
          * BE 682.0, Fragment 0
          */
-        Assert.assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -122,7 +126,7 @@ public class MappingTest extends BaseTest {
          * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  H-O:2; O-P:2; 
          * BE 670.0, Fragment 2
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -140,7 +144,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
 
@@ -163,7 +167,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R01081:Bond Cleaved and Formed (3)  C%O:2;  C-H:2;  H-O:2; 
          * BE 706.0, Fragment 0
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -186,7 +190,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -209,7 +213,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
 
@@ -234,7 +238,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R06466:Bond Cleaved and Formed (5)  C%C:6;  C%O:1;  C-C:5;  C-H:9;  H-O:1; 
          * BE 4129.0, Fragment 6
          */
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -265,7 +269,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R04459:Bond Cleaved and Formed (3)  H-O:2;  O%P:1;  O-P:1; 
          * BE 665.0, Fragment 1
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -296,7 +300,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -319,7 +323,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -340,7 +344,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -362,7 +366,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -383,7 +387,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -404,7 +408,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -426,7 +430,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -442,7 +446,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -463,7 +467,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -485,7 +489,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -505,7 +509,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -524,7 +528,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
     /*
      * MAX, fp 
@@ -543,7 +547,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -562,7 +566,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -582,7 +586,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -610,8 +614,8 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getStereoChangesWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-        Assert.assertEquals(1, stereoFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, stereoFingerprint.getFeatureCount());
     }
 
     /*
@@ -631,7 +635,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -651,7 +655,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -675,8 +679,8 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getOrderChangesWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-        Assert.assertEquals(2, orderChangesWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, orderChangesWFingerprint.getFeatureCount());
     }
 
     /*
@@ -695,7 +699,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -714,7 +718,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -733,7 +737,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
     /*
      * MIN, fp 
@@ -752,7 +756,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -771,7 +775,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -790,7 +794,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -810,7 +814,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -830,7 +834,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -850,7 +854,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -871,7 +875,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -890,7 +894,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -909,7 +913,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -928,7 +932,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -955,7 +959,7 @@ public class MappingTest extends BaseTest {
          * 
          *   BE 692.0, Fragment 0
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -975,7 +979,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -996,7 +1000,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R03020:Bond Cleaved and Formed (4)  C-C:1;  C-H:1;  C-N:1;  H-N:1; 
          * BE 651.0, Fragment 2
          */
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1017,7 +1021,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R03332:Bond Cleaved and Formed (2)  H-O:2;  O-P:2; 
          * BE 670.0, Fragment 2
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1038,7 +1042,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R01903:Bond Cleaved and Formed (3)  C%O:1;  C-H:2;  H-O:1; 
          * BE 353.0, Fragment 0
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1059,7 +1063,7 @@ public class MappingTest extends BaseTest {
          * ID=R04538:Bond Stereo Change (1)  C(E/Z):2; 
          * BE 0.0, Fragment 0
          */
-        Assert.assertEquals(1, fp.getFeatureCount());
+        assertEquals(1, fp.getFeatureCount());
     }
 
     /*
@@ -1080,7 +1084,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R03187:Bond Cleaved and Formed (5)  C%N:1;  C-O:1;  H-N:1;  H-O:3;  O-P:2; 
          * BE 1328.0, Fragment 3
          */
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1104,7 +1108,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R02718:Bond Cleaved and Formed (3)  C-O:2;  H-O:2;  O-P:2; 
          * BE 1386.0, Fragment 4
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1128,7 +1132,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R01561:Bond Cleaved and Formed (4)  C-N:1;  C-O:1;  H-N:1;  H-O:1; 
          * BE 663.0, Fragment 2
          */
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1147,7 +1151,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1170,7 +1174,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
          * BE 682.0, Fragment 0
          */
-        Assert.assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1193,7 +1197,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R00011:Bond Cleaved and Formed (2)  H-O:2;  O-O:1; 
          * BE 142.0, Fragment 1
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1216,7 +1220,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R03364:Bond Cleaved and Formed (3)  H-O:2;  O%P:1;  O-P:1; 
          * BE 665.0, Fragment 1
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1236,7 +1240,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(6, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(6, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1256,7 +1260,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1283,7 +1287,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R05645:Bond Cleaved and Formed (3)  C%O:1;  C-H:2;  H-O:2; 
          * BE 353.0, Fragment 0
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1305,7 +1309,7 @@ public class MappingTest extends BaseTest {
          * MAX, fp ID=R06361:Bond Cleaved and Formed (5)  C-N:2;  C-O:1;  C-S:1;  H-O:1;  H-S:1; 
          * BE 1240.0, Fragment 4
          */
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1328,7 +1332,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R00093:Bond Cleaved and Formed (5)  C-H:2;  C-N:2;  C-O:1;  C=O:1;  H-O:1; 
          * BE 1767.0, Fragment 4 
          */
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     @Test
@@ -1346,7 +1350,7 @@ public class MappingTest extends BaseTest {
          * MIN, fp ID=R07635:Bond Cleaved and Formed (3)  H-O:2;  O%P:1;  O-P:1; 
          * BE 665.0, Fragment 
          */
-        Assert.assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1367,7 +1371,7 @@ public class MappingTest extends BaseTest {
          * MIXTURE, fp ID=R05071:Bond Cleaved and Formed (2)  C-C:2;  H-O:2; 
          * BE 692.0, Fragment 2
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1388,7 +1392,7 @@ public class MappingTest extends BaseTest {
          * MAX, fp ID=R02707:Bond Cleaved and Formed (2)  C-O:2;  H-O:2; 
          * BE 716.0, Fragment 2
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1409,7 +1413,7 @@ public class MappingTest extends BaseTest {
          * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  H-O:2;  O-P:2; 
          * BE 670.0, Fragment 2
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1428,7 +1432,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1450,7 +1454,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1471,7 +1475,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(6, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(6, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1492,12 +1496,12 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
         /*
          Check for the presence of O-P bond
          */
         if (!formedCleavedWFingerprint.getFeatures().contains(new Feature("O-P"))) {
-            Assert.fail();
+            fail();
         }
     }
 
@@ -1519,12 +1523,12 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
         /*
          Check for the presence of O-P bond
          */
         if (!formedCleavedWFingerprint.getFeatures().contains(new Feature("O-P"))) {
-            Assert.fail();
+            fail();
         }
     }
 
@@ -1545,7 +1549,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     @Test
@@ -1557,7 +1561,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1570,7 +1574,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1583,7 +1587,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1596,7 +1600,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1609,7 +1613,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1622,7 +1626,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1635,7 +1639,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1648,7 +1652,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1661,7 +1665,7 @@ public class MappingTest extends BaseTest {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
 
     }
 
@@ -1698,12 +1702,12 @@ public class MappingTest extends BaseTest {
         for (IAtomContainer ac : cdkReaction.getReactants().atomContainers()) {
             int index = 1;
             for (IAtom a : ac.atoms()) {
-                a.setID(String.valueOf(index));
+                a.setID(valueOf(index));
                 index++;
             }
             IAtom top = ac.getFirstAtom();
-            String circularSMILES = Utility.getCircularSMILES(ac, top, 0, true);
-            System.out.println("O: " + circularSMILES);
+            String circularSMILES = getCircularSMILES(ac, top, 0, true);
+            out.println("O: " + circularSMILES);
         }
     }
 
@@ -1778,10 +1782,10 @@ public class MappingTest extends BaseTest {
         fp2.add(testRCReactions2.getOrderChangesWFingerprint());
         fp2.add(testRCReactions2.getStereoChangesWFingerprint());
 
-        double similarityBC = ReactionSimilarityTool.getSimilarity(fp1, fp2);
-        double similarityRC = ReactionSimilarityTool.getSimilarity(testRCReactions1.getReactionCenterWFingerprint(), testRCReactions2.getReactionCenterWFingerprint());
-        System.out.println("RC SIM: " + similarityRC);
-        System.out.println("BC SIM: " + similarityBC);
+        double similarityBC = getSimilarity(fp1, fp2);
+        double similarityRC = getSimilarity(testRCReactions1.getReactionCenterWFingerprint(), testRCReactions2.getReactionCenterWFingerprint());
+        out.println("RC SIM: " + similarityRC);
+        out.println("BC SIM: " + similarityBC);
     }
 
     /*
@@ -1805,7 +1809,7 @@ public class MappingTest extends BaseTest {
          {C-H:1.0, H-O:1.0}
 
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1832,9 +1836,9 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getStereoChangesWFingerprint();
 
-        System.out.println("FP FC" + formedCleavedWFingerprint);
-        System.out.println("FP OC" + orderChangedWFingerprint);
-        System.out.println("FP ST" + stereoChangesWFingerprint);
+        out.println("FP FC" + formedCleavedWFingerprint);
+        out.println("FP OC" + orderChangedWFingerprint);
+        out.println("FP ST" + stereoChangesWFingerprint);
 
         /*
          * Expected Solution
@@ -1843,7 +1847,7 @@ public class MappingTest extends BaseTest {
          [H-O:2.0, O-S:2.0]
 
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1867,7 +1871,7 @@ public class MappingTest extends BaseTest {
          {C-H:1.0, H-O:1.0}
 
          */
-        Assert.assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
 
@@ -1893,7 +1897,7 @@ public class MappingTest extends BaseTest {
          * BE 2087.0, Fragment 0
 
          */
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     @Test
@@ -1913,7 +1917,7 @@ public class MappingTest extends BaseTest {
          * BE 2409.0, Fragment 0
          * 
          */
-        Assert.assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
 }

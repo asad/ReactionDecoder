@@ -35,12 +35,16 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
+import static java.text.NumberFormat.getNumberInstance;
 import java.util.Iterator;
-import java.util.Locale;
+import static java.util.Locale.ENGLISH;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.openscience.cdk.CDKConstants;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import static org.openscience.cdk.CDKConstants.REMARK;
+import static org.openscience.cdk.CDKConstants.TITLE;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -51,9 +55,9 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.io.DefaultChemObjectWriter;
 import org.openscience.cdk.io.formats.IResourceFormat;
-import org.openscience.cdk.io.formats.MDLFormat;
+import static org.openscience.cdk.io.formats.MDLFormat.getInstance;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  * Writes a reaction to a MDL rxn or SDF file. Attention: Stoichiometric
@@ -78,8 +82,8 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
 
     private static ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(MDLV2000RXNWriter.class);
-    private static final Logger LOG = Logger.getLogger(MDLV2000RXNWriter.class.getName());
+            = createLoggingTool(MDLV2000RXNWriter.class);
+    private static final Logger LOG = getLogger(MDLV2000RXNWriter.class.getName());
     private BufferedWriter writer;
     private int reactionNumber;
     public Map rdFields = null;
@@ -119,7 +123,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
-        return MDLFormat.getInstance();
+        return getInstance();
     }
 
     @Override
@@ -243,7 +247,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
             writer.newLine();
 
             // reaction name
-            String line = (String) reaction.getProperty(CDKConstants.TITLE);
+            String line = (String) reaction.getProperty(TITLE);
             if (line == null) {
                 String rid = reaction.getID() == null ? "" : reaction.getID();
                 line = "  " + "EC-BLAST" + "     " + rid;
@@ -256,7 +260,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
             // user/program/date&time/reaction registry no. line
             writer.newLine();
             // comment line
-            line = (String) reaction.getProperty(CDKConstants.REMARK);
+            line = (String) reaction.getProperty(REMARK);
             if (line == null) {
                 line = "";
             }
@@ -279,9 +283,9 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
                  Do not overwrite the existing labels
                  */
 
-                if (it.next().getProperty(CDKConstants.ATOM_ATOM_MAPPING) == null) {
-                    it.next().setProperty(CDKConstants.ATOM_ATOM_MAPPING, i + 1);
-                    it.next().setProperty(CDKConstants.ATOM_ATOM_MAPPING, i + 1);
+                if (it.next().getProperty(ATOM_ATOM_MAPPING) == null) {
+                    it.next().setProperty(ATOM_ATOM_MAPPING, i + 1);
+                    it.next().setProperty(ATOM_ATOM_MAPPING, i + 1);
                     i++;
                 }
             }
@@ -355,7 +359,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      */
     private String formatMDLInt(int i, int l) {
         String s = "", fs = "";
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        NumberFormat nf = getNumberInstance(ENGLISH);
         nf.setParseIntegerOnly(true);
         nf.setMinimumIntegerDigits(1);
         nf.setMaximumIntegerDigits(l);

@@ -19,15 +19,25 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import java.awt.Color;
+import static java.awt.Color.BLACK;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.RED;
+import static java.awt.Color.WHITE;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import static java.awt.GraphicsEnvironment.isHeadless;
 import java.awt.Image;
-import java.awt.RenderingHints;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import static java.lang.String.valueOf;
+import static java.lang.System.err;
+import static java.lang.System.setProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,9 +45,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import static java.util.logging.Logger.getLogger;
+import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -46,9 +57,10 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import static org.openscience.cdk.interfaces.IReaction.Direction.FORWARD;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import org.openscience.smsd.AtomAtomMapping;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectRBLastReactionDrawer;
@@ -56,7 +68,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Highlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.OutlineHighlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.RootSystem;
-import uk.ac.ebi.reactionblast.graphics.direct.SignatureRootFinder;
+import static uk.ac.ebi.reactionblast.graphics.direct.SignatureRootFinder.findRootSystems;
 import uk.ac.ebi.reactionblast.graphics.direct.SimpleHighlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.AbstractAWTReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.LeftToRightAWTReactionLayout;
@@ -70,15 +82,16 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitGridLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
+import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutCheck;
 
 public class ImageGenerator {
 
     private static final ILoggingTool logger
-            = LoggingToolFactory.createLoggingTool(ImageGenerator.class);
+            = createLoggingTool(ImageGenerator.class);
 
     public final static int SUB_IMAGE_WIDTH = 300;
     public final static int SUB_IMAGE_HEIGHT = 300;
-    private static final Logger LOG = Logger.getLogger(ImageGenerator.class.getName());
+    private static final Logger LOG = getLogger(ImageGenerator.class.getName());
 
     static {
         /* works fine! ! */
@@ -86,8 +99,8 @@ public class ImageGenerator {
          This makes the awt headless
          */
 
-        System.setProperty("java.awt.headless", "true");
-        logger.info("Headless enabled: " + java.awt.GraphicsEnvironment.isHeadless());
+        setProperty("java.awt.headless", "true");
+        logger.info("Headless enabled: " + isHeadless());
         /* ---> prints true */
     }
     private final List<QueryTargetPair> queryTargetPairs;
@@ -101,16 +114,16 @@ public class ImageGenerator {
     private IReaction layoutReaction(
             IReaction mappedReaction, String reactionID) {
         IReaction reactionWithLayout = new Reaction();
-        reactionWithLayout.setDirection(IReaction.Direction.FORWARD);
+        reactionWithLayout.setDirection(FORWARD);
         reactionWithLayout.setID(reactionID);
 
         for (IAtomContainer ac : mappedReaction.getReactants().atomContainers()) {
-            IAtomContainer moleculeWithLayoutCheck = LayoutCheck.getMoleculeWithLayoutCheck(ac);
+            IAtomContainer moleculeWithLayoutCheck = getMoleculeWithLayoutCheck(ac);
             moleculeWithLayoutCheck.setID(ac.getID());
             reactionWithLayout.addReactant(ac, mappedReaction.getReactantCoefficient(ac));
         }
         for (IAtomContainer ac : mappedReaction.getProducts().atomContainers()) {
-            IAtomContainer moleculeWithLayoutCheck = LayoutCheck.getMoleculeWithLayoutCheck(ac);
+            IAtomContainer moleculeWithLayoutCheck = getMoleculeWithLayoutCheck(ac);
             moleculeWithLayoutCheck.setID(ac.getID());
             reactionWithLayout.addProduct(ac, mappedReaction.getProductCoefficient(ac));
         }
@@ -183,8 +196,8 @@ public class ImageGenerator {
         for (Map.Entry<IAtom, IAtom> aMaps : maxac.getMappingsByAtoms().entrySet()) {
             IAtom qAtom = aMaps.getKey();
             IAtom tAtom = aMaps.getValue();
-            qAtom.setID(String.valueOf(maxac.getQueryIndex(qAtom)));
-            tAtom.setID(String.valueOf(maxac.getQueryIndex(tAtom)));
+            qAtom.setID(valueOf(maxac.getQueryIndex(qAtom)));
+            tAtom.setID(valueOf(maxac.getQueryIndex(tAtom)));
             n1.add(qAtom);
             n2.add(tAtom);
         }
@@ -210,7 +223,7 @@ public class ImageGenerator {
 
         // layout, and set the highlight subgraphs
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
-        IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
+        IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         for (QueryTargetPair pair : queryTargetPairs) {
@@ -227,7 +240,7 @@ public class ImageGenerator {
         // make the image, and draw the molecules on it
         Image image = moleculeDrawer.makeBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
         for (QueryTargetPair pair : queryTargetPairs) {
             mols.add(pair.query);
@@ -238,7 +251,7 @@ public class ImageGenerator {
 
         float labelX = SUB_IMAGE_WIDTH / 2;
         float labelY = 15;
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         for (QueryTargetPair pair : queryTargetPairs) {
             g.drawString(pair.label, labelX, labelY);
             labelY += SUB_IMAGE_HEIGHT;
@@ -246,7 +259,7 @@ public class ImageGenerator {
         g.dispose();
 
         try {
-            ImageIO.write((RenderedImage) image, "PNG", new File(outImageFileName + ".png"));
+            write((RenderedImage) image, "PNG", new File(outImageFileName + ".png"));
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -257,7 +270,7 @@ public class ImageGenerator {
 
         // layout, and set the highlight subgraphs
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
-        IChemObjectBuilder builder = DefaultChemObjectBuilder.getInstance();
+        IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         for (QueryTargetPair pair : queryTargetPairs) {
@@ -274,7 +287,7 @@ public class ImageGenerator {
         // make the image, and draw the molecules on it
         Image image = moleculeDrawer.makeBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
         for (QueryTargetPair pair : queryTargetPairs) {
             mols.add(pair.query);
@@ -285,7 +298,7 @@ public class ImageGenerator {
 
         float labelX = SUB_IMAGE_WIDTH / 2;
         float labelY = 15;
-        g.setColor(Color.BLACK);
+        g.setColor(BLACK);
         for (QueryTargetPair pair : queryTargetPairs) {
             g.drawString(pair.label, labelX, labelY);
             labelY += SUB_IMAGE_HEIGHT;
@@ -334,12 +347,12 @@ public class ImageGenerator {
 //        layout.translateTo(molecule, centerX, centerY);   // TODO check and FIXME
         Image image = moleculeDrawer.makeBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         moleculeDrawer.drawMolecule(molecule, g);
         File outFile = new File(outputDirName, molID + ".png");
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     public synchronized void directMoleculeImageZoomedToFit(
@@ -367,14 +380,14 @@ public class ImageGenerator {
 
         Image image = moleculeDrawer.makeBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         ZoomToFitLayout layout = new ZoomToFitLayout(moleculeDrawer);
         layout.invert(molecule);
         layout.layout(molecule, new Dimension(width, height), g);
         File outFile = new File(outputDirName, molID + ".png");
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     /**
@@ -429,7 +442,7 @@ public class ImageGenerator {
 
         Image image = drawer.drawRBlastReaction(rbReaction, width, height);
         File outFile = new File(outputDirName, rmrID + ".png");
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     /**
@@ -500,7 +513,7 @@ public class ImageGenerator {
 
         Image image = drawer.drawRBlastReaction(rbReaction, width, height);
         File outFile = new File(outputDirName, reactionID + ".png");
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     /**
@@ -555,12 +568,12 @@ public class ImageGenerator {
         Image image = reactionDrawer.getReactionDrawer().getMoleculeDrawer().makeBlankImage(width, height);
 
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
         reactionDrawer.drawRBlastReaction(rblReaction, width, height, g);
         g.dispose();
         File file = new File(outputDir, reactionID + ".png");
-        ImageIO.write((RenderedImage) image, "PNG", file);
+        write((RenderedImage) image, "PNG", file);
     }
 
     private void setHighightsFromSignatures(DirectRBLastReactionDrawer drawer, RBlastReaction rblReaction, List<String> signatures) {
@@ -584,8 +597,8 @@ public class ImageGenerator {
         filterByAtoms(roots, filteredRoots, rblReaction.getAtomStereoReactantMap().keySet());
 
         Map<IAtom, IAtomContainer> atomToAtomContainerMap = getAtomToAtomContainerMap(reaction);
-        Color rootColor = Color.RED;
-        Color neighbourColor = Color.GREEN;
+        Color rootColor = RED;
+        Color neighbourColor = GREEN;
         DirectMoleculeDrawer moleculeDrawer = drawer.getReactionDrawer().getMoleculeDrawer();
         moleculeDrawer.getHighlighters().clear();   // XXX HACK
         for (IAtom atom : filteredRoots) {
@@ -608,7 +621,7 @@ public class ImageGenerator {
 
     private Map<IAtom, IAtomContainer> getAtomToAtomContainerMap(IReaction reaction) {
         Map<IAtom, IAtomContainer> map = new HashMap<>();
-        for (IAtomContainer atomContainer : ReactionManipulator.getAllAtomContainers(reaction)) {
+        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
             for (IAtom atom : atomContainer.atoms()) {
                 map.put(atom, atomContainer);
             }
@@ -650,7 +663,7 @@ public class ImageGenerator {
     }
 
     public synchronized static Image getBlankImage(int width, int height) {
-        return new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+        return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
     }
 
     /**
@@ -702,12 +715,12 @@ public class ImageGenerator {
 
         RBlastReaction rblReaction = new RBlastReaction(reaction, true);
         Map<IAtomContainer, List<RootSystem>> rootSystems
-                = SignatureRootFinder.findRootSystems(rblReaction);
+                = findRootSystems(rblReaction);
 
         DirectRBLastReactionDrawer reactionDrawer
                 = new DirectRBLastReactionDrawer(params, layout, awtLayout);
-        Color rootColor = Color.RED;
-        Color neighbourColor = Color.GREEN;
+        Color rootColor = RED;
+        Color neighbourColor = GREEN;
         DirectMoleculeDrawer moleculeDrawer
                 = reactionDrawer.getReactionDrawer().getMoleculeDrawer();
         moleculeDrawer.getHighlighters().clear();   // XXX HACK
@@ -733,7 +746,7 @@ public class ImageGenerator {
 
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
         Rectangle2D finalBounds
                 = reactionDrawer.drawRBlastReaction(rblReaction, width, height, g);
@@ -746,7 +759,7 @@ public class ImageGenerator {
                     (int) finalBounds.getHeight());
         }
         g.dispose();
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     /**
@@ -803,7 +816,7 @@ public class ImageGenerator {
         drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
 
         Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
-        ImageIO.write((RenderedImage) drawRBlastReaction, "PNG", outFile);
+        write((RenderedImage) drawRBlastReaction, "PNG", outFile);
     }
 
     /**
@@ -860,7 +873,7 @@ public class ImageGenerator {
          */
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, width, height);
         Rectangle2D finalBounds
                 = drawer.drawRBlastReaction(rbReaction, width, height, g);
@@ -874,7 +887,7 @@ public class ImageGenerator {
         }
         g.dispose();
 
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
 
     }
 
@@ -922,7 +935,7 @@ public class ImageGenerator {
         drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
 
         java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
-        ImageIO.write((RenderedImage) image, "PNG", outFile);
+        write((RenderedImage) image, "PNG", outFile);
     }
 
     /**
@@ -1026,7 +1039,7 @@ public class ImageGenerator {
         if (!file.exists()) {
             boolean success = file.mkdirs();
             if (!success) {
-                System.err.println("Could not make dir " + file);
+                err.println("Could not make dir " + file);
             }
         }
         return file;

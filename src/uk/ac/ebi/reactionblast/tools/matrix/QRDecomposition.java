@@ -1,7 +1,9 @@
 package uk.ac.ebi.reactionblast.tools.matrix;
 
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
+import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 
 /**
  * QR Decomposition.
@@ -17,7 +19,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class QRDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 199810878617L;
-    private static final Logger LOG = Logger.getLogger(QRDecomposition.class.getName());
+    private static final Logger LOG = getLogger(QRDecomposition.class.getName());
 
     /* ------------------------
      Class variables
@@ -64,7 +66,7 @@ public class QRDecomposition implements java.io.Serializable {
             // Compute 2-norm of k-th column without under/overflow.
             double nrm = 0.0;
             for (int i = k; i < m; i++) {
-                nrm = Maths.hypot(nrm, QR[i][k]);
+                nrm = hypot(nrm, QR[i][k]);
             }
 
             if (nrm != 0.0) {

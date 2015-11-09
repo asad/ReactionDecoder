@@ -30,8 +30,11 @@ package uk.ac.ebi.reactionblast.tools;
 //~--- JDK imports ------------------------------------------------------------
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Thread.sleep;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.utility.Suffix;
+import static uk.ac.ebi.reactionblast.tools.utility.Suffix.getInstance;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -43,7 +46,7 @@ public class CreateDirectory {
 
     private static final int MKDIR_RETRY_SLEEP_MILLIS = 10;
     private static String suffix = null;
-    private static final Logger LOG = Logger.getLogger(CreateDirectory.class.getName());
+    private static final Logger LOG = getLogger(CreateDirectory.class.getName());
 
     public static String getSuffix() {
         return suffix;
@@ -90,7 +93,7 @@ public class CreateDirectory {
 
         if (!f.mkdirs()) {
             try {
-                Thread.sleep(MKDIR_RETRY_SLEEP_MILLIS);
+                sleep(MKDIR_RETRY_SLEEP_MILLIS);
                 status = f.mkdirs();
             } catch (InterruptedException ex) {
                 status = f.mkdirs();
@@ -101,7 +104,7 @@ public class CreateDirectory {
     }
 
     private void setSuffix() throws IOException {
-        Suffix init = Suffix.getInstance();
+        Suffix init = getInstance();
         suffix = init.getSuffix();
     }
     //~--- get methods --------------------------------------------------------

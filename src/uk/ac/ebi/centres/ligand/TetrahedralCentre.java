@@ -18,21 +18,28 @@
 package uk.ac.ebi.centres.ligand;
 
 import java.util.Collection;
-import java.util.Collections;
+import static java.util.Collections.singleton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.Descriptor;
+import static uk.ac.ebi.centres.Descriptor.Type.PSEUDO_ASYMMETRIC;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
 import uk.ac.ebi.centres.Priority;
 import uk.ac.ebi.centres.PriorityRule;
 import uk.ac.ebi.centres.SignCalculator;
-import uk.ac.ebi.centres.descriptor.General;
-import uk.ac.ebi.centres.descriptor.Tetrahedral;
+import static uk.ac.ebi.centres.descriptor.General.NONE;
+import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
+import static uk.ac.ebi.centres.descriptor.General.UNSPECIFIED;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.R;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.S;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.r;
+import static uk.ac.ebi.centres.descriptor.Tetrahedral.s;
 
 /**
  * @author John May
@@ -40,7 +47,7 @@ import uk.ac.ebi.centres.descriptor.Tetrahedral;
 public class TetrahedralCentre<A>
         extends AbstractLigand<A>
         implements Centre<A> {
-    private static final Logger LOG = Logger.getLogger(TetrahedralCentre.class.getName());
+    private static final Logger LOG = getLogger(TetrahedralCentre.class.getName());
 
     private final A atom;
     private A parent;
@@ -70,7 +77,7 @@ public class TetrahedralCentre<A>
 
     @Override
     public Set<A> getAtoms() {
-        return Collections.singleton(atom);
+        return singleton(atom);
     }
 
     @Override
@@ -78,7 +85,7 @@ public class TetrahedralCentre<A>
             PriorityRule<A> rule,
             SignCalculator<A> calculator) {
 
-        Map<Ligand<A>, Descriptor> auxiliary = new HashMap<Ligand<A>, Descriptor>(centres.size());
+        Map<Ligand<A>, Descriptor> auxiliary = new HashMap<>(centres.size());
 
         getProvider().build();
 
@@ -100,7 +107,7 @@ public class TetrahedralCentre<A>
                             rule,
                             calculator);
 
-                    if (descriptor != General.UNKNOWN) {
+                    if (descriptor != UNKNOWN) {
                         auxiliary.put(ligand, descriptor);
                     }
 
@@ -124,7 +131,7 @@ public class TetrahedralCentre<A>
     public Descriptor perceive(List<Ligand<A>> proximal, PriorityRule<A> rule, SignCalculator<A> calculator) {
 
         if (proximal.size() < 3) {
-            return General.NONE;
+            return NONE;
         }
 
         Priority priority = rule.prioritise(proximal);
@@ -140,19 +147,19 @@ public class TetrahedralCentre<A>
                     proximal.get(2),
                     proximal.get(3));
 
-            boolean pseudo = priority.getType().equals(Descriptor.Type.PSEUDO_ASYMMETRIC);
+            boolean pseudo = priority.getType().equals(PSEUDO_ASYMMETRIC);
 
-            return sign > 0 ? pseudo ? Tetrahedral.s
-                    : Tetrahedral.S
+            return sign > 0 ? pseudo ? s
+                    : S
                     : sign < 0
-                    ? pseudo ? Tetrahedral.r
-                    : Tetrahedral.R
-                    : General.UNSPECIFIED;
+                    ? pseudo ? r
+                    : R
+                    : UNSPECIFIED;
 
 
         }
 
-        return General.UNKNOWN;
+        return UNKNOWN;
     }
 
     @Override

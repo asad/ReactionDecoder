@@ -18,8 +18,10 @@
  */
 package uk.ac.ebi.reactionblast.fingerprints.tools;
 
+import static java.lang.Math.sqrt;
 import java.util.BitSet;
 import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -72,7 +74,7 @@ import java.util.logging.Logger;
  */
 public class Similarity {
 
-    private static final Logger LOG = Logger.getLogger(Similarity.class.getName());
+    private static final Logger LOG = getLogger(Similarity.class.getName());
 
     /**
      *
@@ -121,7 +123,7 @@ public class Similarity {
         one_and_two.and(bitset2);
         float _common_bit_count = one_and_two.cardinality();
 
-        return _common_bit_count / (Math.sqrt(_bitset1_cardinality * _bitset2_cardinality));
+        return _common_bit_count / (sqrt(_bitset1_cardinality * _bitset2_cardinality));
     }
 
     /**
