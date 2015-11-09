@@ -87,4 +87,7 @@ public class IOReaction {
         out.println();
         out.println();
     }
+
+    private IOReaction() {
+    }
 }

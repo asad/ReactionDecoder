@@ -85,4 +85,7 @@ public class DefaultMatcher {
         }
         return isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2);
     }
+
+    private DefaultMatcher() {
+    }
 }

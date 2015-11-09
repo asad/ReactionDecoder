@@ -84,4 +84,7 @@ public class WedgeStereoAnalyser {
                 return NONE;
         }
     }
+
+    private WedgeStereoAnalyser() {
+    }
 }

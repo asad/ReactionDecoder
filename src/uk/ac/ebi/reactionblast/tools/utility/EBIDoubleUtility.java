@@ -222,4 +222,7 @@ public class EBIDoubleUtility {
 
         return flag;
     }
+
+    private EBIDoubleUtility() {
+    }
 }

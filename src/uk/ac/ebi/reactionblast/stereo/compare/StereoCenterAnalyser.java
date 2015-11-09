@@ -101,4 +101,7 @@ public class StereoCenterAnalyser {
         order(ligands);
         return checkIfAllLigandsAreDifferent(ligands);
     }
+
+    private StereoCenterAnalyser() {
+    }
 }

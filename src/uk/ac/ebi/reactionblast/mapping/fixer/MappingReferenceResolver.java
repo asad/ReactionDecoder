@@ -133,4 +133,7 @@ public class MappingReferenceResolver {
         }
         out.println("}");
     }
+
+    private MappingReferenceResolver() {
+    }
 }

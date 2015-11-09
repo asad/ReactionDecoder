@@ -178,4 +178,7 @@ public class SortMap {
         }
         return result;
     }
+
+    private SortMap() {
+    }
 }

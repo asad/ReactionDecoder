@@ -316,4 +316,7 @@ public class SignatureRootFinder {
         } else {
         }
     }
+
+    private SignatureRootFinder() {
+    }
 }

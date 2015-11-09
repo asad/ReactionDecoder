@@ -119,4 +119,7 @@ public class ExactMapping {
         }
         return clique_mapping;
     }
+
+    private ExactMapping() {
+    }
 }

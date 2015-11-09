@@ -97,4 +97,7 @@ public class PostFilter {
         }
         return newMap;
     }
+
+    private PostFilter() {
+    }
 }

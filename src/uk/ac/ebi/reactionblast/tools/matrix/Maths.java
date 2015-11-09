@@ -30,4 +30,7 @@ public class Maths {
         }
         return r;
     }
+
+    private Maths() {
+    }
 }

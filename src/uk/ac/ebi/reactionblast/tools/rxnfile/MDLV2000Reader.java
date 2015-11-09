@@ -151,13 +151,9 @@ import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLValence.implicitValence;
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
     private static final HashMap<IBond, Integer> special_bond_map = new HashMap<>();
-    BufferedReader input = null;
     private static ILoggingTool logger
             = createLoggingTool(MDLV2000Reader.class);
 
-    private BooleanIOSetting forceReadAs3DCoords;
-    private BooleanIOSetting interpretHydrogenIsotopes;
-    private BooleanIOSetting addStereoElements;
 
     // Pattern to remove trailing space (String.trim() will remove leading space, which we don't want)
     private static final Pattern TRAILING_SPACE = compile("\\s+$");
@@ -179,6 +175,396 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             .add("R") // XXX: not in spec
             .add("R#")
             .build();
+    private static final Logger LOG = getLogger(MDLV2000Reader.class.getName());
+    /**
+     * Create a new chem model for a single {@link IAtomContainer}.
+     *
+     * @param container the container to create the model for
+     * @return a new {@link IChemModel}
+     */
+    private static IChemModel newModel(final IAtomContainer container) {
+        
+        if (container == null) {
+            throw new NullPointerException("cannot create chem model for a null container");
+        }
+        
+        final IChemObjectBuilder builder = container.getBuilder();
+        final IChemModel model = builder.newInstance(IChemModel.class);
+        final IAtomContainerSet containers = builder.newInstance(IAtomContainerSet.class);
+        
+        containers.addAtomContainer(container);
+        model.setMoleculeSet(containers);
+        
+        return model;
+    }
+    /**
+     * Determine the length of the line excluding trailing whitespace.
+     *
+     * @param str a string
+     * @return the length when trailing white space is removed
+     */
+    static int length(final String str) {
+        int i = str.length() - 1;
+        while (i >= 0 && str.charAt(i) == ' ') {
+            i--;
+        }
+        return i + 1;
+    }
+    /**
+     * Is the symbol a periodic element.
+     *
+     * @param symbol a symbol from the input
+     * @return the symbol is a pseudo atom
+     */
+    private static boolean isPeriodicElement(final String symbol) {
+        // XXX: PeriodicTable is slow - switch without file IO would be optimal
+        Integer elem = getAtomicNumber(symbol);
+        return elem != null && elem > 0;
+    }
+    /**
+     * Is the atom symbol a non-periodic element (i.e. pseudo). Valid pseudo
+     * atoms are 'R#', 'A', 'Q', '*', 'L' and 'LP'. We also accept 'R' but this
+     * is not listed in the specification.
+     *
+     * @param symbol a symbol from the input
+     * @return the symbol is a valid pseudo element
+     */
+    static boolean isPseudoElement(final String symbol) {
+        return PSUEDO_LABELS.contains(symbol);
+    }
+    /**
+     * Read a coordinate from an MDL input. The MDL V2000 input coordinate has
+     * 10 characters, 4 significant figures and is prefixed with whitespace for
+     * padding: 'xxxxx.xxxx'. Knowing the format allows us to use an optimised
+     * parser which does not consider exponents etc.
+     *
+     * @param line input line
+     * @param offset first character of the coordinate
+     * @return the specified value
+     * @throws CDKException the coordinates specification was not valid
+     */
+    static double readMDLCoordinate(final String line, int offset) throws CDKException {
+        // to be valid the decimal should be at the fifth index (4 sig fig)
+        if (line.charAt(offset + 5) != '.') {
+            throw new CDKException("invalid coordinate specification");
+        }
+        
+        int start = offset;
+        while (line.charAt(start) == ' ') {
+            start++;
+        }
+        
+        int sign = sign(line.charAt(start));
+        if (sign < 0) {
+            start++;
+        }
+        
+        int integral = readUInt(line, start, (offset + 5) - start);
+        int fraction = readUInt(line, offset + 6, 4);
+        
+        return sign * (integral * 10000l + fraction) / 10000d;
+    }
+    /**
+     * Convert the a character (from an MDL V2000 input) to a charge value: 1 =
+     * +1, 2 = +2, 3 = +3, 4 = doublet radical, 5 = -1, 6 = -2, 7 = -3.
+     *
+     * @param c a character
+     * @return formal charge
+     */
+    private static int toCharge(final char c) {
+        switch (c) {
+            case '1':
+                return +3;
+            case '2':
+                return +2;
+            case '3':
+                return +1;
+            case '4':
+                return 0; // doublet radical - superseded by M  RAD
+            case '5':
+                return -1;
+            case '6':
+                return -2;
+            case '7':
+                return -3;
+        }
+        return 0;
+    }
+    /**
+     * Obtain the sign of the character, -1 if the character is '-', +1
+     * otherwise.
+     *
+     * @param c a character
+     * @return the sign
+     */
+    private static int sign(final char c) {
+        return c == '-' ? -1 : +1;
+    }
+    /**
+     * Convert a character (ASCII code points) to an integer. If the character
+     * was not a digit (i.e. space) the value defaults to 0.
+     *
+     * @param c a character
+     * @return the numerical value
+     */
+    private static int toInt(final char c) {
+        // Character.getNumericalValue allows all of unicode which we don't want
+        // or need it - imagine an MDL file with roman numerals!
+        return c >= '0' && c <= '9' ? c - '0' : 0;
+    }
+    /**
+     * Read an unsigned int value from the given index with the expected number
+     * of digits.
+     *
+     * @param line input line
+     * @param index start index
+     * @param digits number of digits (max)
+     * @return an unsigned int
+     */
+    private static int readUInt(final String line, int index, int digits) {
+        int result = 0;
+        while (digits-- > 0) {
+            result = (result * 10) + toInt(line.charAt(index++));
+        }
+        return result;
+    }
+    /**
+     * Optimised method for reading a integer from 3 characters in a string at a
+     * specified index. MDL V2000 Molfile make heavy use of the 3 character ints
+     * in the atom/bond and property blocks. The integer may be signed and
+     * pre/post padded with white space.
+     *
+     * @param line input
+     * @param index start index
+     * @return the value specified in the string
+     */
+    private static int readMolfileInt(final String line, final int index) {
+        int sign = 1;
+        int result = 0;
+        char c;
+        switch ((c = line.charAt(index))) {
+            case ' ':
+                break;
+            case '-':
+                sign = -1;
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                result = (c - '0');
+                break;
+            default:
+                return 0;
+        }
+        switch ((c = line.charAt(index + 1))) {
+            case ' ':
+                if (result > 0) {
+                    return sign * result;
+                }
+                break;
+            case '-':
+                if (result > 0) {
+                    return sign * result;
+                }
+                sign = -1;
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                result = (result * 10) + (c - '0');
+                break;
+            default:
+                return sign * result;
+        }
+        switch ((c = line.charAt(index + 2))) {
+            case ' ':
+                if (result > 0) {
+                    return sign * result;
+                }
+                break;
+            case '-':
+                if (result > 0) {
+                    return sign * result;
+                }
+                sign = -1;
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                result = (result * 10) + (c - '0');
+                break;
+            default:
+                return sign * result;
+        }
+        return sign * result;
+    }
+    /**
+     * Labels the atom at the specified index with the provide label. If the
+     * atom was not already a pseudo atom then the original atom is replaced.
+     *
+     * @param container structure
+     * @param index atom index to replace
+     * @param label the label for the atom
+     * @see IPseudoAtom#setLabel(String)
+     */
+    static void label(final IAtomContainer container, final int index, final String label) {
+        final IAtom atom = container.getAtom(index);
+        final IPseudoAtom pseudoAtom = atom instanceof IPseudoAtom ? (IPseudoAtom) atom
+                : container.getBuilder().newInstance(IPseudoAtom.class);
+        if (atom == pseudoAtom) {
+            pseudoAtom.setLabel(label);
+        } else {
+            pseudoAtom.setSymbol(label);
+            pseudoAtom.setAtomicNumber(0);
+            pseudoAtom.setPoint2d(atom.getPoint2d());
+            pseudoAtom.setPoint3d(atom.getPoint3d());
+            pseudoAtom.setMassNumber(atom.getMassNumber());
+            pseudoAtom.setFormalCharge(atom.getFormalCharge());
+            pseudoAtom.setValency(atom.getValency());
+            pseudoAtom.setLabel(label);
+            // XXX: would be faster to track all replacements and do it all in one
+            replaceAtomByAtom(container, atom, pseudoAtom);
+        }
+    }
+    /**
+     * Read non-structural data from input and store as properties the provided
+     * 'container'. Non-structural data appears in a structure data file (SDF)
+     * after an Molfile and before the record deliminator ('$$$$'). The data
+     * consists of one or more Data Header and Data blocks, an example is seen
+     * below.
+     *
+     * <pre>{@code
+     * > 29 <DENSITY>
+     * 0.9132 - 20.0
+     *
+     * > 29 <BOILING.POINT>
+     * 63.0 (737 MM)
+     * 79.0 (42 MM)
+     *
+     * > 29 <ALTERNATE.NAMES>
+     * SYLVAN
+     *
+     * > 29 <DATE>
+     * 09-23-1980
+     *
+     * > 29 <CRC.NUMBER>
+     * F-0213
+     *
+     * }</pre>
+     *
+     *
+     * @param input input source
+     * @param container the container
+     * @throws IOException an error occur whilst reading the input
+     */
+    @TestMethod("readNonStructuralData")
+    static void readNonStructuralData(final BufferedReader input,
+            final IAtomContainer container) throws IOException {
+        
+        final String newline = getProperty("line.separator");
+        
+        String line, header = null;
+        boolean wrap = false;
+        
+        final StringBuilder data = new StringBuilder(80);
+        
+        while (!endOfRecord(line = input.readLine())) {
+            
+            final String newHeader = dataHeader(line);
+            
+            if (newHeader != null) {
+                
+                if (header != null) {
+                    container.setProperty(header, data.toString());
+                }
+                
+                header = newHeader;
+                wrap = false;
+                data.setLength(0);
+                
+            } else {
+                
+                if (data.length() > 0 || !line.equals(" ")) {
+                    line = line.trim();
+                }
+                
+                if (line.isEmpty()) {
+                    continue;
+                }
+                
+                if (!wrap && data.length() > 0) {
+                    data.append(newline);
+                }
+                data.append(line);
+                
+                wrap = line.length() == 80;
+            }
+        }
+        
+        if (header != null) {
+            container.setProperty(header, data.toString());
+        }
+    }
+    /**
+     * Obtain the field name from a potential SD data header. If the header does
+     * not contain a field name, then null is returned. The method does not
+     * currently return field numbers (e.g. DT&lt;n&gt;).
+     *
+     * @param line an input line
+     * @return the field name
+     */
+    @TestMethod("dataHeader_1")
+    static String dataHeader(final String line) {
+        if (line.length() > 2
+                && line.charAt(0) != '>'
+                && line.charAt(1) != ' ') {
+            return null;
+        }
+        int i = line.indexOf('<', 2);
+        if (i < 0) {
+            return null;
+        }
+        int j = line.indexOf('>', i);
+        if (j < 0) {
+            return null;
+        }
+        return line.substring(i + 1, j);
+    }
+    /**
+     * Is the line the end of a record. A line is the end of a record if it is
+     * 'null' or is the SDF deliminator, '$$$$'.
+     *
+     * @param line a line from the input
+     * @return the line indicates the end of a record was reached
+     */
+    private static boolean endOfRecord(final String line) {
+        return line == null || line.equals(RECORD_DELIMITER);
+    }
+    BufferedReader input = null;
+    private BooleanIOSetting forceReadAs3DCoords;
+    private BooleanIOSetting interpretHydrogenIsotopes;
+    private BooleanIOSetting addStereoElements;
 
     public MDLV2000Reader() {
         this(new StringReader(""));
@@ -337,27 +723,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         return chemFile;
     }
 
-    /**
-     * Create a new chem model for a single {@link IAtomContainer}.
-     *
-     * @param container the container to create the model for
-     * @return a new {@link IChemModel}
-     */
-    private static IChemModel newModel(final IAtomContainer container) {
-
-        if (container == null) {
-            throw new NullPointerException("cannot create chem model for a null container");
-        }
-
-        final IChemObjectBuilder builder = container.getBuilder();
-        final IChemModel model = builder.newInstance(IChemModel.class);
-        final IAtomContainerSet containers = builder.newInstance(IAtomContainerSet.class);
-
-        containers.addAtomContainer(container);
-        model.setMoleculeSet(containers);
-
-        return model;
-    }
 
     /**
      * Read an IAtomContainer from a file in MDL sd format
@@ -1066,19 +1431,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         return IBond.Stereo.NONE;
     }
 
-    /**
-     * Determine the length of the line excluding trailing whitespace.
-     *
-     * @param str a string
-     * @return the length when trailing white space is removed
-     */
-    static int length(final String str) {
-        int i = str.length() - 1;
-        while (i >= 0 && str.charAt(i) == ' ') {
-            i--;
-        }
-        return i + 1;
-    }
 
     /**
      * Create an atom for the provided symbol. If the atom symbol is a periodic
@@ -1119,251 +1471,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         return atom;
     }
 
-    /**
-     * Is the symbol a periodic element.
-     *
-     * @param symbol a symbol from the input
-     * @return the symbol is a pseudo atom
-     */
-    private static boolean isPeriodicElement(final String symbol) {
-        // XXX: PeriodicTable is slow - switch without file IO would be optimal
-        Integer elem = getAtomicNumber(symbol);
-        return elem != null && elem > 0;
-    }
-
-    /**
-     * Is the atom symbol a non-periodic element (i.e. pseudo). Valid pseudo
-     * atoms are 'R#', 'A', 'Q', '*', 'L' and 'LP'. We also accept 'R' but this
-     * is not listed in the specification.
-     *
-     * @param symbol a symbol from the input
-     * @return the symbol is a valid pseudo element
-     */
-    static boolean isPseudoElement(final String symbol) {
-        return PSUEDO_LABELS.contains(symbol);
-    }
-
-    /**
-     * Read a coordinate from an MDL input. The MDL V2000 input coordinate has
-     * 10 characters, 4 significant figures and is prefixed with whitespace for
-     * padding: 'xxxxx.xxxx'. Knowing the format allows us to use an optimised
-     * parser which does not consider exponents etc.
-     *
-     * @param line input line
-     * @param offset first character of the coordinate
-     * @return the specified value
-     * @throws CDKException the coordinates specification was not valid
-     */
-    static double readMDLCoordinate(final String line, int offset) throws CDKException {
-        // to be valid the decimal should be at the fifth index (4 sig fig)
-        if (line.charAt(offset + 5) != '.') {
-            throw new CDKException("invalid coordinate specification");
-        }
-
-        int start = offset;
-        while (line.charAt(start) == ' ') {
-            start++;
-        }
-
-        int sign = sign(line.charAt(start));
-        if (sign < 0) {
-            start++;
-        }
-
-        int integral = readUInt(line, start, (offset + 5) - start);
-        int fraction = readUInt(line, offset + 6, 4);
-
-        return sign * (integral * 10000l + fraction) / 10000d;
-    }
-
-    /**
-     * Convert the a character (from an MDL V2000 input) to a charge value: 1 =
-     * +1, 2 = +2, 3 = +3, 4 = doublet radical, 5 = -1, 6 = -2, 7 = -3.
-     *
-     * @param c a character
-     * @return formal charge
-     */
-    private static int toCharge(final char c) {
-        switch (c) {
-            case '1':
-                return +3;
-            case '2':
-                return +2;
-            case '3':
-                return +1;
-            case '4':
-                return 0; // doublet radical - superseded by M  RAD
-            case '5':
-                return -1;
-            case '6':
-                return -2;
-            case '7':
-                return -3;
-        }
-        return 0;
-    }
-
-    /**
-     * Obtain the sign of the character, -1 if the character is '-', +1
-     * otherwise.
-     *
-     * @param c a character
-     * @return the sign
-     */
-    private static int sign(final char c) {
-        return c == '-' ? -1 : +1;
-    }
-
-    /**
-     * Convert a character (ASCII code points) to an integer. If the character
-     * was not a digit (i.e. space) the value defaults to 0.
-     *
-     * @param c a character
-     * @return the numerical value
-     */
-    private static int toInt(final char c) {
-        // Character.getNumericalValue allows all of unicode which we don't want
-        // or need it - imagine an MDL file with roman numerals!
-        return c >= '0' && c <= '9' ? c - '0' : 0;
-    }
-
-    /**
-     * Read an unsigned int value from the given index with the expected number
-     * of digits.
-     *
-     * @param line input line
-     * @param index start index
-     * @param digits number of digits (max)
-     * @return an unsigned int
-     */
-    private static int readUInt(final String line, int index, int digits) {
-        int result = 0;
-        while (digits-- > 0) {
-            result = (result * 10) + toInt(line.charAt(index++));
-        }
-        return result;
-    }
-
-    /**
-     * Optimised method for reading a integer from 3 characters in a string at a
-     * specified index. MDL V2000 Molfile make heavy use of the 3 character ints
-     * in the atom/bond and property blocks. The integer may be signed and
-     * pre/post padded with white space.
-     *
-     * @param line input
-     * @param index start index
-     * @return the value specified in the string
-     */
-    private static int readMolfileInt(final String line, final int index) {
-        int sign = 1;
-        int result = 0;
-        char c;
-        switch ((c = line.charAt(index))) {
-            case ' ':
-                break;
-            case '-':
-                sign = -1;
-                break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                result = (c - '0');
-                break;
-            default:
-                return 0;
-        }
-        switch ((c = line.charAt(index + 1))) {
-            case ' ':
-                if (result > 0) {
-                    return sign * result;
-                }
-                break;
-            case '-':
-                if (result > 0) {
-                    return sign * result;
-                }
-                sign = -1;
-                break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                result = (result * 10) + (c - '0');
-                break;
-            default:
-                return sign * result;
-        }
-        switch ((c = line.charAt(index + 2))) {
-            case ' ':
-                if (result > 0) {
-                    return sign * result;
-                }
-                break;
-            case '-':
-                if (result > 0) {
-                    return sign * result;
-                }
-                sign = -1;
-                break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                result = (result * 10) + (c - '0');
-                break;
-            default:
-                return sign * result;
-        }
-        return sign * result;
-    }
-
-    /**
-     * Labels the atom at the specified index with the provide label. If the
-     * atom was not already a pseudo atom then the original atom is replaced.
-     *
-     * @param container structure
-     * @param index atom index to replace
-     * @param label the label for the atom
-     * @see IPseudoAtom#setLabel(String)
-     */
-    static void label(final IAtomContainer container, final int index, final String label) {
-        final IAtom atom = container.getAtom(index);
-        final IPseudoAtom pseudoAtom = atom instanceof IPseudoAtom ? (IPseudoAtom) atom
-                : container.getBuilder().newInstance(IPseudoAtom.class);
-        if (atom == pseudoAtom) {
-            pseudoAtom.setLabel(label);
-        } else {
-            pseudoAtom.setSymbol(label);
-            pseudoAtom.setAtomicNumber(0);
-            pseudoAtom.setPoint2d(atom.getPoint2d());
-            pseudoAtom.setPoint3d(atom.getPoint3d());
-            pseudoAtom.setMassNumber(atom.getMassNumber());
-            pseudoAtom.setFormalCharge(atom.getFormalCharge());
-            pseudoAtom.setValency(atom.getValency());
-            pseudoAtom.setLabel(label);
-            // XXX: would be faster to track all replacements and do it all in one
-            replaceAtomByAtom(container, atom, pseudoAtom);
-        }
-    }
 
     /**
      * Reads an atom from the input allowing for non-standard formatting (i.e
@@ -1856,122 +1963,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
     }
 
-    /**
-     * Read non-structural data from input and store as properties the provided
-     * 'container'. Non-structural data appears in a structure data file (SDF)
-     * after an Molfile and before the record deliminator ('$$$$'). The data
-     * consists of one or more Data Header and Data blocks, an example is seen
-     * below.
-     *
-     * <pre>{@code
-     * > 29 <DENSITY>
-     * 0.9132 - 20.0
-     *
-     * > 29 <BOILING.POINT>
-     * 63.0 (737 MM)
-     * 79.0 (42 MM)
-     *
-     * > 29 <ALTERNATE.NAMES>
-     * SYLVAN
-     *
-     * > 29 <DATE>
-     * 09-23-1980
-     *
-     * > 29 <CRC.NUMBER>
-     * F-0213
-     *
-     * }</pre>
-     *
-     *
-     * @param input input source
-     * @param container the container
-     * @throws IOException an error occur whilst reading the input
-     */
-    @TestMethod("readNonStructuralData")
-    static void readNonStructuralData(final BufferedReader input,
-            final IAtomContainer container) throws IOException {
-
-        final String newline = getProperty("line.separator");
-
-        String line, header = null;
-        boolean wrap = false;
-
-        final StringBuilder data = new StringBuilder(80);
-
-        while (!endOfRecord(line = input.readLine())) {
-
-            final String newHeader = dataHeader(line);
-
-            if (newHeader != null) {
-
-                if (header != null) {
-                    container.setProperty(header, data.toString());
-                }
-
-                header = newHeader;
-                wrap = false;
-                data.setLength(0);
-
-            } else {
-
-                if (data.length() > 0 || !line.equals(" ")) {
-                    line = line.trim();
-                }
-
-                if (line.isEmpty()) {
-                    continue;
-                }
-
-                if (!wrap && data.length() > 0) {
-                    data.append(newline);
-                }
-                data.append(line);
-
-                wrap = line.length() == 80;
-            }
-        }
-
-        if (header != null) {
-            container.setProperty(header, data.toString());
-        }
-    }
-
-    /**
-     * Obtain the field name from a potential SD data header. If the header does
-     * not contain a field name, then null is returned. The method does not
-     * currently return field numbers (e.g. DT&lt;n&gt;).
-     *
-     * @param line an input line
-     * @return the field name
-     */
-    @TestMethod("dataHeader_1")
-    static String dataHeader(final String line) {
-        if (line.length() > 2
-                && line.charAt(0) != '>'
-                && line.charAt(1) != ' ') {
-            return null;
-        }
-        int i = line.indexOf('<', 2);
-        if (i < 0) {
-            return null;
-        }
-        int j = line.indexOf('>', i);
-        if (j < 0) {
-            return null;
-        }
-        return line.substring(i + 1, j);
-    }
-
-    /**
-     * Is the line the end of a record. A line is the end of a record if it is
-     * 'null' or is the SDF deliminator, '$$$$'.
-     *
-     * @param line a line from the input
-     * @return the line indicates the end of a record was reached
-     */
-    private static boolean endOfRecord(final String line) {
-        return line == null || line.equals(RECORD_DELIMITER);
-    }
 
     /**
      * Enumeration of property keys that can be specified in the V2000 property
@@ -2226,6 +2217,5 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             return UNSPECIFIED;
         }
     }
-    private static final Logger LOG = getLogger(MDLV2000Reader.class.getName());
 
 }

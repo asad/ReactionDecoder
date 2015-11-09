@@ -90,4 +90,7 @@ public class WedgeStereoComparisonTool {
         return new WedgeStereoComparisonResult(
                 atomA, atomContainerA, resultForA, atomB, atomContainerB, resultForB);
     }
+
+    private WedgeStereoComparisonTool() {
+    }
 }

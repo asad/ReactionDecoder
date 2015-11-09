@@ -125,75 +125,80 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
     private final static ILoggingTool logger
             = createLoggingTool(MDLV2000Writer.class);
 
-    // regular expression to capture R groups with attached numbers
-    private final Pattern NUMERED_R_GROUP = compile("R(\\d+)");
-
-    /**
-     * Enumeration of all valid radical values.
-     */
-    public enum SPIN_MULTIPLICITY {
-
-        NONE(0, 0),
-        SINGLET(2, 1),
-        DOUBLET(1, 2),
-        TRIPLET(3, 2);
-
-        // the radical SDF value
-        private final int value;
-        // the corresponding number of single electrons
-        private final int singleElectrons;
-
-        private SPIN_MULTIPLICITY(int value, int singleElectrons) {
-            this.value = value;
-            this.singleElectrons = singleElectrons;
-        }
-
-        /**
-         * Radical value for the spin multiplicity in the properties block.
-         *
-         * @return the radical value
-         */
-        public int getValue() {
-            return value;
-        }
-
-        /**
-         * The number of single electrons that correspond to the spin
-         * multiplicity.
-         *
-         * @return the number of single electrons
-         */
-        public int getSingleElectrons() {
-            return singleElectrons;
-        }
-
-        /**
-         * Create a SPIN_MULTIPLICITY instance for the specified value.
-         *
-         * @param value input value (in the property block)
-         * @return instance
-         * @throws CDKException unknown spin multiplicity value
-         */
-        public static SPIN_MULTIPLICITY ofValue(int value) throws CDKException {
-            switch (value) {
-                case 0:
-                    return NONE;
-                case 1:
-                    return DOUBLET;
-                case 2:
-                    return SINGLET;
-                case 3:
-                    return TRIPLET;
-                default:
-                    throw new CDKException("unknown spin multiplicity: " + value);
-            }
-        }
-    }
 
     // number of entries on line; value = 1 to 8
     private static final int NN8 = 8;
     // spacing between entries on line
     private static final int WIDTH = 3;
+    private static final Logger LOG = getLogger(MDLV2000Writer.class.getName());
+    /**
+     * Formats an integer to fit into the connection table and changes it to a
+     * String.
+     *
+     * @param i The int to be formated
+     * @param l Length of the String
+     * @return The String to be written into the connectiontable
+     */
+    protected static String formatMDLInt(int i, int l) {
+        String s = "", fs = "";
+        NumberFormat nf = getNumberInstance(ENGLISH);
+        nf.setParseIntegerOnly(true);
+        nf.setMinimumIntegerDigits(1);
+        nf.setMaximumIntegerDigits(l);
+        nf.setGroupingUsed(false);
+        s = nf.format(i);
+        l -= s.length();
+        for (int f = 0; f < l; f++) {
+            fs += " ";
+        }
+        fs += s;
+        return fs;
+    }
+    /**
+     * Formats a float to fit into the connectiontable and changes it to a
+     * String.
+     *
+     * @param fl The float to be formated
+     * @return The String to be written into the connectiontable
+     */
+    protected static String formatMDLFloat(float fl) {
+        String s = "", fs = "";
+        int l;
+        NumberFormat nf = getNumberInstance(ENGLISH);
+        nf.setMinimumIntegerDigits(1);
+        nf.setMaximumIntegerDigits(4);
+        nf.setMinimumFractionDigits(4);
+        nf.setMaximumFractionDigits(4);
+        nf.setGroupingUsed(false);
+        s = nf.format(fl);
+        l = 10 - s.length();
+        for (int f = 0; f < l; f++) {
+            fs += " ";
+        }
+        fs += s;
+        return fs;
+    }
+    /**
+     * Formats a String to fit into the connectiontable.
+     *
+     * @param s The String to be formated
+     * @param le The length of the String
+     * @return The String to be written in the connectiontable
+     */
+    protected static String formatMDLString(String s, int le) {
+        s = s.trim();
+        if (s.length() > le) {
+            return s.substring(0, le);
+        }
+        int l;
+        l = le - s.length();
+        for (int f = 0; f < l; f++) {
+            s += " ";
+        }
+        return s;
+    }
+    // regular expression to capture R groups with attached numbers
+    private final Pattern NUMERED_R_GROUP = compile("R(\\d+)");
 
     private BooleanIOSetting forceWriteAs2DCoords;
 
@@ -851,80 +856,12 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         writer.write(" ");
         writer.write(formatMDLInt(entry.getValue().getValue(), WIDTH));
 
-        i = i + 1;
+        i += 1;
         if (i < NN8 && iterator.hasNext()) {
             writeRadicalPattern(iterator, i);
         }
     }
 
-    /**
-     * Formats an integer to fit into the connection table and changes it to a
-     * String.
-     *
-     * @param i The int to be formated
-     * @param l Length of the String
-     * @return The String to be written into the connectiontable
-     */
-    protected static String formatMDLInt(int i, int l) {
-        String s = "", fs = "";
-        NumberFormat nf = getNumberInstance(ENGLISH);
-        nf.setParseIntegerOnly(true);
-        nf.setMinimumIntegerDigits(1);
-        nf.setMaximumIntegerDigits(l);
-        nf.setGroupingUsed(false);
-        s = nf.format(i);
-        l = l - s.length();
-        for (int f = 0; f < l; f++) {
-            fs += " ";
-        }
-        fs += s;
-        return fs;
-    }
-
-    /**
-     * Formats a float to fit into the connectiontable and changes it to a
-     * String.
-     *
-     * @param fl The float to be formated
-     * @return The String to be written into the connectiontable
-     */
-    protected static String formatMDLFloat(float fl) {
-        String s = "", fs = "";
-        int l;
-        NumberFormat nf = getNumberInstance(ENGLISH);
-        nf.setMinimumIntegerDigits(1);
-        nf.setMaximumIntegerDigits(4);
-        nf.setMinimumFractionDigits(4);
-        nf.setMaximumFractionDigits(4);
-        nf.setGroupingUsed(false);
-        s = nf.format(fl);
-        l = 10 - s.length();
-        for (int f = 0; f < l; f++) {
-            fs += " ";
-        }
-        fs += s;
-        return fs;
-    }
-
-    /**
-     * Formats a String to fit into the connectiontable.
-     *
-     * @param s The String to be formated
-     * @param le The length of the String
-     * @return The String to be written in the connectiontable
-     */
-    protected static String formatMDLString(String s, int le) {
-        s = s.trim();
-        if (s.length() > le) {
-            return s.substring(0, le);
-        }
-        int l;
-        l = le - s.length();
-        for (int f = 0; f < l; f++) {
-            s += " ";
-        }
-        return s;
-    }
 
     /**
      * Initializes IO settings.<br>
@@ -955,6 +892,66 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
             fireIOSettingQuestion(setting);
         }
     }
-    private static final Logger LOG = getLogger(MDLV2000Writer.class.getName());
+    /**
+     * Enumeration of all valid radical values.
+     */
+    public enum SPIN_MULTIPLICITY {
+        
+        NONE(0, 0),
+        SINGLET(2, 1),
+        DOUBLET(1, 2),
+        TRIPLET(3, 2);
+        
+        // the radical SDF value
+        private final int value;
+        // the corresponding number of single electrons
+        private final int singleElectrons;
+        
+        private SPIN_MULTIPLICITY(int value, int singleElectrons) {
+            this.value = value;
+            this.singleElectrons = singleElectrons;
+        }
+        
+        /**
+         * Radical value for the spin multiplicity in the properties block.
+         *
+         * @return the radical value
+         */
+        public int getValue() {
+            return value;
+        }
+        
+        /**
+         * The number of single electrons that correspond to the spin
+         * multiplicity.
+         *
+         * @return the number of single electrons
+         */
+        public int getSingleElectrons() {
+            return singleElectrons;
+        }
+        
+        /**
+         * Create a SPIN_MULTIPLICITY instance for the specified value.
+         *
+         * @param value input value (in the property block)
+         * @return instance
+         * @throws CDKException unknown spin multiplicity value
+         */
+        public static SPIN_MULTIPLICITY ofValue(int value) throws CDKException {
+            switch (value) {
+                case 0:
+                    return NONE;
+                case 1:
+                    return DOUBLET;
+                case 2:
+                    return SINGLET;
+                case 3:
+                    return TRIPLET;
+                default:
+                    throw new CDKException("unknown spin multiplicity: " + value);
+            }
+        }
+    }
 
 }

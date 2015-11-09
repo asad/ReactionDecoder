@@ -76,4 +76,7 @@ public class GameTheoryFactory implements Serializable {
                 return null;
         }
     }
+
+    private GameTheoryFactory() {
+    }
 }

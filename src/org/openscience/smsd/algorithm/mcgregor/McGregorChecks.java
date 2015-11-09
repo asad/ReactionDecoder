@@ -684,4 +684,7 @@ public class McGregorChecks {
         }
         return unmappedMolAtoms;
     }
+
+    private McGregorChecks() {
+    }
 }

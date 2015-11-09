@@ -39,4 +39,7 @@ public class CoordinateFixer {
         }
     }
 
+    private CoordinateFixer() {
+    }
+
 }

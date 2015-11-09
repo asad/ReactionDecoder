@@ -97,4 +97,7 @@ class PatternComparators {
             }
         };
     }
+
+    private PatternComparators() {
+    }
 }

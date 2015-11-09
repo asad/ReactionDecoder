@@ -35,6 +35,9 @@ public class CXlogP {
     private static final IAtomContainer eminMol = null;
     private static final Logger LOG = getLogger(CXlogP.class.getName());
 
+    private CXlogP() {
+    }
+
     /**
      *
      * @param Mol

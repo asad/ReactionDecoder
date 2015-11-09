@@ -83,4 +83,7 @@ public class ChiralityComparisonTool {
         }
         return false;
     }
+
+    private ChiralityComparisonTool() {
+    }
 }

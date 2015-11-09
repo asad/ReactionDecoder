@@ -1182,4 +1182,7 @@ public class CDKMCS {
     private static void setIterationManager(IterationManager aIterationManager) {
         iterationManager = aIterationManager;
     }
+
+    private CDKMCS() {
+    }
 }

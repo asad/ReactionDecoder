@@ -63,51 +63,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatiz
  */
 public class MoleculeInitializer {
 
-    /**
-     * Defines which set of rings to define rings in the target.
-     */
-    private enum RingSet {
-
-        /**
-         * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
-         * strictly the same). Defines what is typically thought of as a 'ring'
-         * however the non-uniqueness leads to ambiguous matching.
-         */
-        SmallestSetOfSmallestRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findSSSR();
-                    }
-                },
-        /**
-         * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
-         * The set is unique but may excludes rings (e.g. from bridged systems).
-         */
-        EssentialRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findEssentialRings();
-                    }
-                },
-        /**
-         * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
-         * The set is unique but may include more rings then is necessary.
-         */
-        RelevantRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findRelevantRings();
-                    }
-                };
-
-        /**
-         * Compute a ring set for a molecule.
-         *
-         * @param m molecule
-         * @return the ring set for the molecule
-         */
-        abstract IRingSet ringSet(IAtomContainer m);
-    }
 
     /**
      * Prepare the molecule for analysis.
@@ -363,5 +318,53 @@ public class MoleculeInitializer {
             }
         }
         return map.isEmpty();
+    }
+    /**
+     * Defines which set of rings to define rings in the target.
+     */
+    private enum RingSet {
+        
+        /**
+         * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
+         * strictly the same). Defines what is typically thought of as a 'ring'
+         * however the non-uniqueness leads to ambiguous matching.
+         */
+        SmallestSetOfSmallestRings {
+            @Override
+                            IRingSet ringSet(IAtomContainer m) {
+                                return new SSSRFinder(m).findSSSR();
+                            }
+        },
+        /**
+         * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
+         * The set is unique but may excludes rings (e.g. from bridged systems).
+         */
+        EssentialRings {
+            @Override
+                            IRingSet ringSet(IAtomContainer m) {
+                                return new SSSRFinder(m).findEssentialRings();
+                            }
+        },
+        /**
+         * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
+         * The set is unique but may include more rings then is necessary.
+         */
+        RelevantRings {
+            @Override
+                            IRingSet ringSet(IAtomContainer m) {
+                                return new SSSRFinder(m).findRelevantRings();
+                            }
+        };
+        
+        /**
+         * Compute a ring set for a molecule.
+         *
+         * @param m molecule
+         * @return the ring set for the molecule
+         */
+        abstract IRingSet ringSet(IAtomContainer m);
+    }
+
+    public MoleculeInitializer() {
     }
 }

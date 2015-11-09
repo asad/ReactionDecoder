@@ -103,6 +103,377 @@ public class ImageGenerator {
         logger.info("Headless enabled: " + isHeadless());
         /* ---> prints true */
     }
+    public synchronized static Image getBlankImage(int width, int height) {
+        return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
+    }
+    /**
+     *
+     * @param reaction
+     * @param layout
+     * @param awtLayout
+     * @param width
+     * @param height
+     * @param outFile
+     * @throws IOException
+     */
+    protected static synchronized void makeReactionCenterHighlightedReactionToFile(
+            IReaction reaction,
+            AbstractDirectReactionLayout layout,
+            AbstractAWTReactionLayout awtLayout,
+            int width, int height,
+            File outFile) throws IOException {
+        Params params = new Params();
+        
+        params.leftToRightMoleculeLabelFontSize = 10;
+        
+        params.drawMappings = false;
+        params.drawHighlights = true;
+        params.highlightsAbove = true;
+        
+        params.drawAtomID = false;
+        
+        params.drawMoleculeID = false;
+        params.drawLabelPanel = true;
+        params.drawAromaticCircles = true;
+        
+        params.useCircularHighlight = false;
+        
+        params.drawSubgraphBoxes = false;
+        params.drawBondStereoChanges = false;
+        params.drawBondFormedCleavedMarks = true;
+        params.drawBondOrderChangedMarks = true;
+        
+        params.arrowGap = 30;
+        params.arrowLength = 60;
+        params.drawFatArrow = true;
+        params.drawArrowFilled = true;
+        
+        params.borderY = 40;
+        
+        params.drawRS = true;
+        params.shouldCrop = true;
+        
+        RBlastReaction rblReaction = new RBlastReaction(reaction, true);
+        Map<IAtomContainer, List<RootSystem>> rootSystems
+                = findRootSystems(rblReaction);
+        
+        DirectRBLastReactionDrawer reactionDrawer
+                = new DirectRBLastReactionDrawer(params, layout, awtLayout);
+        Color rootColor = RED;
+        Color neighbourColor = GREEN;
+        DirectMoleculeDrawer moleculeDrawer
+                = reactionDrawer.getReactionDrawer().getMoleculeDrawer();
+        moleculeDrawer.getHighlighters().clear();   // XXX HACK
+        for (IAtomContainer atomContainer : rootSystems.keySet()) {
+            List<RootSystem> rootSystemList = rootSystems.get(atomContainer);
+            for (RootSystem rootSystem : rootSystemList) {
+                IAtomContainer rootContainer
+                        = reaction.getBuilder().newInstance(IAtomContainer.class);
+                for (IAtom root : rootSystem.getRoots()) {
+                    rootContainer.addAtom(root);
+                }
+                IAtomContainer neighbourContainer
+                        = reaction.getBuilder().newInstance(IAtomContainer.class);
+                for (IAtom leaf : rootSystem.getLeaves()) {
+                    neighbourContainer.addAtom(leaf);
+                }
+                Highlighter highlighter = new SimpleHighlighter(params);
+                highlighter.addHighlights(rootContainer, rootColor);
+                highlighter.addHighlights(neighbourContainer, neighbourColor);
+                moleculeDrawer.addHighlighter(highlighter);
+            }
+        }
+        
+        BufferedImage image = (BufferedImage) getBlankImage(width, height);
+        Graphics2D g = (Graphics2D) image.getGraphics();
+        g.setColor(WHITE);
+        g.fillRect(0, 0, width, height);
+        Rectangle2D finalBounds
+                = reactionDrawer.drawRBlastReaction(rblReaction, width, height, g);
+        if (params.shouldCrop
+                && (finalBounds.getWidth() != width
+                || finalBounds.getHeight() != height)) {
+            image = image.getSubimage((int) finalBounds.getX(),
+                    (int) finalBounds.getY(),
+                    (int) finalBounds.getWidth(),
+                    (int) finalBounds.getHeight());
+        }
+        g.dispose();
+        write(image, "PNG", outFile);
+    }
+    /**
+     *
+     * @param reaction
+     * @param layout
+     * @param awtLayout
+     * @param width
+     * @param height
+     * @param shouldCrop
+     * @param outFile
+     * @throws IOException
+     */
+    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
+            IReaction reaction,
+            AbstractDirectReactionLayout layout,
+            AbstractAWTReactionLayout awtLayout,
+            int width, int height,
+            boolean shouldCrop,
+            File outFile) throws IOException {
+        
+        RBlastReaction rblReaction = new RBlastReaction(reaction, true);
+        DirectRBLastReactionDrawer drawer
+                = new DirectRBLastReactionDrawer(
+                        new Params(),
+                        layout,
+                        awtLayout);
+        
+        drawer.getParams().drawMappings = false;
+        drawer.getParams().drawAromaticCircles = false;
+        /*
+        * set ids to false
+        */
+        drawer.getParams().drawAtomID = false;
+        drawer.getParams().drawLonePairs = false;
+        drawer.getParams().drawMoleculeID = true;
+        //Make this false
+        drawer.getParams().drawSubgraphBoxes = false;
+        drawer.getParams().highlightSubgraphs = true;
+        drawer.getParams().drawSubgraphMappingLines = false;
+        drawer.getParams().highlightsBelow = false;
+        drawer.getParams().highlightsAbove = true;
+        drawer.getParams().drawAromaticCircles = true;
+        drawer.getParams().highlightAlpha = 0.25f;
+        drawer.getParams().drawRS = true;
+        drawer.getParams().labelYGap = 25;
+        drawer.getParams().borderY = 40;
+        drawer.getParams().borderX = 40;
+        drawer.getParams().arrowGap = 30;
+        drawer.getParams().arrowLength = 60;
+        drawer.getParams().drawArrowFilled = true;
+        drawer.getParams().drawFatArrow = true;
+        drawer.getParams().shouldCrop = shouldCrop;
+        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
+        
+        Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
+        write((RenderedImage) drawRBlastReaction, "PNG", outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param width
+     * @param height
+     * @param shouldCrop
+     * @param outFile
+     * @throws IOException
+     */
+    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
+            IReaction cdkReaction,
+            int width, int height,
+            boolean shouldCrop,
+            File outFile) throws IOException {
+        
+        RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
+        
+        DirectRBLastReactionDrawer drawer
+                = new DirectRBLastReactionDrawer(new Params(),
+                        new LeftToRightReactionLayout(),
+                        new LeftToRightAWTReactionLayout());
+        
+        drawer.getParams().drawMappings = false;
+        drawer.getParams().drawAromaticCircles = false;
+        /*
+        * set ids to false
+        */
+        drawer.getParams().drawAtomID = false;
+        drawer.getParams().drawLonePairs = false;
+        drawer.getParams().drawMoleculeID = true;
+        //Make this false
+        drawer.getParams().drawSubgraphBoxes = false;
+        drawer.getParams().highlightSubgraphs = true;
+        drawer.getParams().drawSubgraphMappingLines = false;
+        drawer.getParams().highlightsBelow = false;
+        drawer.getParams().highlightsAbove = true;
+        drawer.getParams().drawAromaticCircles = true;
+        drawer.getParams().highlightAlpha = 0.25f;
+        drawer.getParams().drawRS = true;
+        drawer.getParams().labelYGap = 25;
+        drawer.getParams().borderY = 40;
+        drawer.getParams().arrowGap = 30;
+        drawer.getParams().arrowLength = 60;
+        drawer.getParams().drawFatArrow = true;
+        drawer.getParams().shouldCrop = shouldCrop;
+        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
+        
+        
+        /*
+        * Hack the code to crop by Asad else use //java.awt.Image image =
+        * drawer.drawRBlastReaction(rbReaction, width, height); for usual image
+        */
+        BufferedImage image = (BufferedImage) getBlankImage(width, height);
+        Graphics2D g = (Graphics2D) image.getGraphics();
+        g.setColor(WHITE);
+        g.fillRect(0, 0, width, height);
+        Rectangle2D finalBounds
+                = drawer.drawRBlastReaction(rbReaction, width, height, g);
+        if (shouldCrop
+                && (finalBounds.getWidth() != width
+                || finalBounds.getHeight() != height)) {
+            image = image.getSubimage((int) finalBounds.getX(),
+                    (int) finalBounds.getY(),
+                    (int) finalBounds.getWidth(),
+                    (int) finalBounds.getHeight());
+        }
+        g.dispose();
+        
+        write(image, "PNG", outFile);
+        
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param width
+     * @param height
+     * @param outFile
+     * @throws IOException
+     */
+    protected static synchronized void makeTopToBottomRHighlightedReactionToFile(
+            IReaction cdkReaction,
+            int width, int height,
+            File outFile) throws IOException {
+        
+        RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
+        
+        DirectRBLastReactionDrawer drawer
+                = new DirectRBLastReactionDrawer(
+                        new Params(),
+                        new TopToBottomReactionLayout(),
+                        new TopToBottomAWTReactionLayout());
+        drawer.getParams().drawMappings = false;
+        drawer.getParams().drawAromaticCircles = false;
+        drawer.getParams().drawAtomID = true;
+        drawer.getParams().drawLonePairs = false;
+        //Make this false
+        drawer.getParams().drawSubgraphBoxes = false;
+        drawer.getParams().highlightSubgraphs = true;
+        drawer.getParams().drawSubgraphMappingLines = false;
+        drawer.getParams().highlightsBelow = false;
+        drawer.getParams().highlightsAbove = true;
+        drawer.getParams().drawAromaticCircles = true;
+        drawer.getParams().highlightAlpha = 0.25f;
+        drawer.getParams().drawRS = true;
+        drawer.getParams().labelYGap = 25;
+        drawer.getParams().borderY = 40;
+        drawer.getParams().arrowGap = 30;
+        drawer.getParams().arrowLength = 60;
+        drawer.getParams().drawFatArrow = true;
+        drawer.getParams().drawArrowFilled = true;
+        drawer.getParams().drawLabelPanel = false;
+        drawer.getParams().drawMoleculeID = true;
+        drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
+        
+        java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
+        write((RenderedImage) image, "PNG", outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void LeftToRightReactionLayoutImageSmall(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        int width = 600;
+        int height = 400;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, true, outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void LeftToRightReactionCenterImageSmall(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        int width = 600;
+        int height = 400;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeReactionCenterHighlightedReactionToFile(cdkReaction,
+                new LeftToRightReactionLayout(),
+                new LeftToRightAWTReactionLayout(), width, height, outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void TopToBottomReactionLayoutImageSmall(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        
+        int height = 400;
+        int width = 600;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
+        
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void LeftToRightReactionLayoutImage(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        int height = 800;
+        int width = 1200;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, false, outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void LeftToRightReactionCenterImage(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        int height = 800;
+        int width = 1200;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeReactionCenterHighlightedReactionToFile(cdkReaction,
+                new LeftToRightReactionLayout(),
+                new LeftToRightAWTReactionLayout(), width, height, outFile);
+    }
+    /**
+     *
+     * @param cdkReaction
+     * @param rmrID
+     * @param outputDir
+     * @throws Exception
+     */
+    public synchronized static void TopToBottomReactionLayoutImage(
+            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
+        int height = 800;
+        int width = 1200;
+        File outFile = new File(getDir(outputDir), rmrID + ".png");
+        makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
+    }
+    private synchronized static File getDir(String outputDir) {
+        File file = new File(outputDir);
+        if (!file.exists()) {
+            boolean success = file.mkdirs();
+            if (!success) {
+                err.println("Could not make dir " + file);
+            }
+        }
+        return file;
+    }
     private final List<QueryTargetPair> queryTargetPairs;
     private final Params params;
 
@@ -662,387 +1033,5 @@ public class ImageGenerator {
         }
     }
 
-    public synchronized static Image getBlankImage(int width, int height) {
-        return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
-    }
-
-    /**
-     *
-     * @param reaction
-     * @param layout
-     * @param awtLayout
-     * @param width
-     * @param height
-     * @param outFile
-     * @throws IOException
-     */
-    protected static synchronized void makeReactionCenterHighlightedReactionToFile(
-            IReaction reaction,
-            AbstractDirectReactionLayout layout,
-            AbstractAWTReactionLayout awtLayout,
-            int width, int height,
-            File outFile) throws IOException {
-        Params params = new Params();
-        
-        params.leftToRightMoleculeLabelFontSize = 10;
-        
-        params.drawMappings = false;
-        params.drawHighlights = true;
-        params.highlightsAbove = true;
-
-        params.drawAtomID = false;
-
-        params.drawMoleculeID = false;
-        params.drawLabelPanel = true;
-        params.drawAromaticCircles = true;
-
-        params.useCircularHighlight = false;
-
-        params.drawSubgraphBoxes = false;
-        params.drawBondStereoChanges = false;
-        params.drawBondFormedCleavedMarks = true;
-        params.drawBondOrderChangedMarks = true;
-
-        params.arrowGap = 30;
-        params.arrowLength = 60;
-        params.drawFatArrow = true;
-        params.drawArrowFilled = true;
-
-        params.borderY = 40;
-
-        params.drawRS = true;
-        params.shouldCrop = true;
-
-        RBlastReaction rblReaction = new RBlastReaction(reaction, true);
-        Map<IAtomContainer, List<RootSystem>> rootSystems
-                = findRootSystems(rblReaction);
-
-        DirectRBLastReactionDrawer reactionDrawer
-                = new DirectRBLastReactionDrawer(params, layout, awtLayout);
-        Color rootColor = RED;
-        Color neighbourColor = GREEN;
-        DirectMoleculeDrawer moleculeDrawer
-                = reactionDrawer.getReactionDrawer().getMoleculeDrawer();
-        moleculeDrawer.getHighlighters().clear();   // XXX HACK
-        for (IAtomContainer atomContainer : rootSystems.keySet()) {
-            List<RootSystem> rootSystemList = rootSystems.get(atomContainer);
-            for (RootSystem rootSystem : rootSystemList) {
-                IAtomContainer rootContainer
-                        = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom root : rootSystem.getRoots()) {
-                    rootContainer.addAtom(root);
-                }
-                IAtomContainer neighbourContainer
-                        = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom leaf : rootSystem.getLeaves()) {
-                    neighbourContainer.addAtom(leaf);
-                }
-                Highlighter highlighter = new SimpleHighlighter(params);
-                highlighter.addHighlights(rootContainer, rootColor);
-                highlighter.addHighlights(neighbourContainer, neighbourColor);
-                moleculeDrawer.addHighlighter(highlighter);
-            }
-        }
-
-        BufferedImage image = (BufferedImage) getBlankImage(width, height);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(WHITE);
-        g.fillRect(0, 0, width, height);
-        Rectangle2D finalBounds
-                = reactionDrawer.drawRBlastReaction(rblReaction, width, height, g);
-        if (params.shouldCrop
-                && (finalBounds.getWidth() != width
-                || finalBounds.getHeight() != height)) {
-            image = image.getSubimage((int) finalBounds.getX(),
-                    (int) finalBounds.getY(),
-                    (int) finalBounds.getWidth(),
-                    (int) finalBounds.getHeight());
-        }
-        g.dispose();
-        write((RenderedImage) image, "PNG", outFile);
-    }
-
-    /**
-     *
-     * @param reaction
-     * @param layout
-     * @param awtLayout
-     * @param width
-     * @param height
-     * @param shouldCrop
-     * @param outFile
-     * @throws IOException
-     */
-    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
-            IReaction reaction,
-            AbstractDirectReactionLayout layout,
-            AbstractAWTReactionLayout awtLayout,
-            int width, int height,
-            boolean shouldCrop,
-            File outFile) throws IOException {
-
-        RBlastReaction rblReaction = new RBlastReaction(reaction, true);
-        DirectRBLastReactionDrawer drawer
-                = new DirectRBLastReactionDrawer(
-                        new Params(),
-                        layout,
-                        awtLayout);
-
-        drawer.getParams().drawMappings = false;
-        drawer.getParams().drawAromaticCircles = false;
-        /*
-         * set ids to false
-         */
-        drawer.getParams().drawAtomID = false;
-        drawer.getParams().drawLonePairs = false;
-        drawer.getParams().drawMoleculeID = true;
-        //Make this false
-        drawer.getParams().drawSubgraphBoxes = false;
-        drawer.getParams().highlightSubgraphs = true;
-        drawer.getParams().drawSubgraphMappingLines = false;
-        drawer.getParams().highlightsBelow = false;
-        drawer.getParams().highlightsAbove = true;
-        drawer.getParams().drawAromaticCircles = true;
-        drawer.getParams().highlightAlpha = 0.25f;
-        drawer.getParams().drawRS = true;
-        drawer.getParams().labelYGap = 25;
-        drawer.getParams().borderY = 40;
-        drawer.getParams().borderX = 40;
-        drawer.getParams().arrowGap = 30;
-        drawer.getParams().arrowLength = 60;
-        drawer.getParams().drawArrowFilled = true;
-        drawer.getParams().drawFatArrow = true;
-        drawer.getParams().shouldCrop = shouldCrop;
-        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-
-        Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
-        write((RenderedImage) drawRBlastReaction, "PNG", outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param width
-     * @param height
-     * @param shouldCrop
-     * @param outFile
-     * @throws IOException
-     */
-    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
-            IReaction cdkReaction,
-            int width, int height,
-            boolean shouldCrop,
-            File outFile) throws IOException {
-
-        RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-
-        DirectRBLastReactionDrawer drawer
-                = new DirectRBLastReactionDrawer(new Params(),
-                        new LeftToRightReactionLayout(),
-                        new LeftToRightAWTReactionLayout());
-
-        drawer.getParams().drawMappings = false;
-        drawer.getParams().drawAromaticCircles = false;
-        /*
-         * set ids to false
-         */
-        drawer.getParams().drawAtomID = false;
-        drawer.getParams().drawLonePairs = false;
-        drawer.getParams().drawMoleculeID = true;
-        //Make this false
-        drawer.getParams().drawSubgraphBoxes = false;
-        drawer.getParams().highlightSubgraphs = true;
-        drawer.getParams().drawSubgraphMappingLines = false;
-        drawer.getParams().highlightsBelow = false;
-        drawer.getParams().highlightsAbove = true;
-        drawer.getParams().drawAromaticCircles = true;
-        drawer.getParams().highlightAlpha = 0.25f;
-        drawer.getParams().drawRS = true;
-        drawer.getParams().labelYGap = 25;
-        drawer.getParams().borderY = 40;
-        drawer.getParams().arrowGap = 30;
-        drawer.getParams().arrowLength = 60;
-        drawer.getParams().drawFatArrow = true;
-        drawer.getParams().shouldCrop = shouldCrop;
-        drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-        
-
-        /*
-         * Hack the code to crop by Asad else use //java.awt.Image image =
-         * drawer.drawRBlastReaction(rbReaction, width, height); for usual image
-         */
-        BufferedImage image = (BufferedImage) getBlankImage(width, height);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(WHITE);
-        g.fillRect(0, 0, width, height);
-        Rectangle2D finalBounds
-                = drawer.drawRBlastReaction(rbReaction, width, height, g);
-        if (shouldCrop
-                && (finalBounds.getWidth() != width
-                || finalBounds.getHeight() != height)) {
-            image = image.getSubimage((int) finalBounds.getX(),
-                    (int) finalBounds.getY(),
-                    (int) finalBounds.getWidth(),
-                    (int) finalBounds.getHeight());
-        }
-        g.dispose();
-
-        write((RenderedImage) image, "PNG", outFile);
-
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param width
-     * @param height
-     * @param outFile
-     * @throws IOException
-     */
-    protected static synchronized void makeTopToBottomRHighlightedReactionToFile(
-            IReaction cdkReaction,
-            int width, int height,
-            File outFile) throws IOException {
-
-        RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-
-        DirectRBLastReactionDrawer drawer
-                = new DirectRBLastReactionDrawer(
-                        new Params(),
-                        new TopToBottomReactionLayout(),
-                        new TopToBottomAWTReactionLayout());
-        drawer.getParams().drawMappings = false;
-        drawer.getParams().drawAromaticCircles = false;
-        drawer.getParams().drawAtomID = true;
-        drawer.getParams().drawLonePairs = false;
-        //Make this false
-        drawer.getParams().drawSubgraphBoxes = false;
-        drawer.getParams().highlightSubgraphs = true;
-        drawer.getParams().drawSubgraphMappingLines = false;
-        drawer.getParams().highlightsBelow = false;
-        drawer.getParams().highlightsAbove = true;
-        drawer.getParams().drawAromaticCircles = true;
-        drawer.getParams().highlightAlpha = 0.25f;
-        drawer.getParams().drawRS = true;
-        drawer.getParams().labelYGap = 25;
-        drawer.getParams().borderY = 40;
-        drawer.getParams().arrowGap = 30;
-        drawer.getParams().arrowLength = 60;
-        drawer.getParams().drawFatArrow = true;
-        drawer.getParams().drawArrowFilled = true;
-        drawer.getParams().drawLabelPanel = false;
-        drawer.getParams().drawMoleculeID = true;
-        drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
-
-        java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
-        write((RenderedImage) image, "PNG", outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void LeftToRightReactionLayoutImageSmall(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        int width = 600;
-        int height = 400;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, true, outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void LeftToRightReactionCenterImageSmall(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        int width = 600;
-        int height = 400;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeReactionCenterHighlightedReactionToFile(cdkReaction,
-                new LeftToRightReactionLayout(),
-                new LeftToRightAWTReactionLayout(), width, height, outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void TopToBottomReactionLayoutImageSmall(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-
-        int height = 400;
-        int width = 600;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
-
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void LeftToRightReactionLayoutImage(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        int height = 800;
-        int width = 1200;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, false, outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void LeftToRightReactionCenterImage(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        int height = 800;
-        int width = 1200;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeReactionCenterHighlightedReactionToFile(cdkReaction,
-                new LeftToRightReactionLayout(),
-                new LeftToRightAWTReactionLayout(), width, height, outFile);
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param rmrID
-     * @param outputDir
-     * @throws Exception
-     */
-    public synchronized static void TopToBottomReactionLayoutImage(
-            IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        int height = 800;
-        int width = 1200;
-        File outFile = new File(getDir(outputDir), rmrID + ".png");
-        makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
-    }
-
-    private synchronized static File getDir(String outputDir) {
-        File file = new File(outputDir);
-        if (!file.exists()) {
-            boolean success = file.mkdirs();
-            if (!success) {
-                err.println("Could not make dir " + file);
-            }
-        }
-        return file;
-    }
 
 }

@@ -189,4 +189,7 @@ public class MoleculeAligner {
             atom.setPoint2d(p);
         }
     }
+
+    private MoleculeAligner() {
+    }
 }

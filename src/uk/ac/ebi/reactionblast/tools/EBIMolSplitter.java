@@ -121,4 +121,7 @@ public class EBIMolSplitter {
         }
         return molecules;
     }
+
+    private EBIMolSplitter() {
+    }
 }

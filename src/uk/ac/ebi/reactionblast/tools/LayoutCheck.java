@@ -78,4 +78,7 @@ public class LayoutCheck {
         }
         return chemModel;
     }
+
+    private LayoutCheck() {
+    }
 }

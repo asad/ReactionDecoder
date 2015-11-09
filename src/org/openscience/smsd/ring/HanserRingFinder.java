@@ -133,4 +133,7 @@ public class HanserRingFinder {
         }
         return ringSet;
     }
+
+    private HanserRingFinder() {
+    }
 }

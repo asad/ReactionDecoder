@@ -231,4 +231,7 @@ public class Distance {
         return Val;
 
     }
+
+    private Distance() {
+    }
 }

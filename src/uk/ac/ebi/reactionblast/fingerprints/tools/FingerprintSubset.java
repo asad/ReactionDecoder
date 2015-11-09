@@ -99,4 +99,7 @@ public class FingerprintSubset implements Serializable {
             throw new CDKException("Null object used in set operation");
         }
     }
+
+    private FingerprintSubset() {
+    }
 }

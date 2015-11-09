@@ -606,4 +606,7 @@ public class ReactionSimilarityTool {
 
         return MI;
     }
+
+    private ReactionSimilarityTool() {
+    }
 }

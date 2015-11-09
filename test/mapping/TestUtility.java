@@ -301,4 +301,7 @@ public class TestUtility {
         }
     }
 
+    TestUtility() {
+    }
+
 }

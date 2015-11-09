@@ -152,4 +152,7 @@ public class Similarity {
 
         return 2 * _common_bit_count / (_bitset1_cardinality + _bitset2_cardinality);
     }
+
+    private Similarity() {
+    }
 }

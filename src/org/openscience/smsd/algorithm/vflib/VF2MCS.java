@@ -433,8 +433,8 @@ public class VF2MCS extends BaseMCS implements IResults {
                 getLogger(VF2MCS.class.getName()).log(SEVERE, null, ex);
             }
 
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, CDKMCS);
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, CDKMCS);
+            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, MCSPlus);
 
             int jobCounter = 0;
             cs.submit(mcsSeedGeneratorUIT);

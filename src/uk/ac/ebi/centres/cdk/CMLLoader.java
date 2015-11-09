@@ -73,4 +73,7 @@ public class CMLLoader {
         }
         return new AtomContainer();
     }
+
+    private CMLLoader() {
+    }
 }

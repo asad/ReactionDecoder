@@ -143,4 +143,7 @@ public class CanonSmiAdapter {
         }
         return 0;
     }
+
+    private CanonSmiAdapter() {
+    }
 }

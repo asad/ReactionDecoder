@@ -35,10 +35,10 @@ import org.openscience.cdk.annotations.TestMethod;
 /**
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
- * 
+ *
  */
 public class Sotter {
-    
+
     private static final Logger LOG = getLogger(Sotter.class.getName());
 
     @TestMethod(value = "testSortMapByValueInAscendingOrder")
@@ -78,5 +78,8 @@ public class Sotter {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+
+    Sotter() {
     }
 }

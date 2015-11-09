@@ -37,4 +37,7 @@ public class BoundsPrinter {
                 b.getWidth(), b.getHeight(), b.getCenterX(), b.getCenterY());
     }
 
+    private BoundsPrinter() {
+    }
+
 }

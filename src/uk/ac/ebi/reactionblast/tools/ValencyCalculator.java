@@ -201,4 +201,7 @@ public class ValencyCalculator {
         initialize();
         return valencElectronMap.get(key);
     }
+
+    private ValencyCalculator() {
+    }
 }

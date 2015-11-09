@@ -94,4 +94,7 @@ public class ColorRamp {
         }
     }
 
+    private ColorRamp() {
+    }
+
 }
