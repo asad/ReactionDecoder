@@ -45,8 +45,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BaseTest extends TestUtility {
-    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
 
+    private static final Logger LOG = Logger.getLogger(BaseTest.class.getName());
 
     /**
      *
@@ -112,8 +112,6 @@ public class BaseTest extends TestUtility {
         return AtomContainer;
     }
 
-   
-
     /**
      *
      * @param reaction
@@ -150,8 +148,6 @@ public class BaseTest extends TestUtility {
         ImageIO.write((RenderedImage) image, "PNG", outfile);
     }
 
-
-
     /**
      *
      * @param reactionID
@@ -164,22 +160,30 @@ public class BaseTest extends TestUtility {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
         System.out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
+        ReactionMechanismTool annotation = getAnnotation(cdkReaction);
+        MappingSolution s = annotation.getSelectedSolution();
+        System.out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+        return annotation;
+
+    }
+
+    public ReactionMechanismTool getAnnotation(IReaction cdkReaction) throws AssertionError, Exception {
         /*
          RMT for the reaction mapping
          */
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();
 
-        System.out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
-
-        System.out.println("Reaction ID: " + reactionID + ", Selected Algorithm: " + s.getAlgorithmID());
+        System.out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
 //        System.out.println("Cleaved/Formed " + s.getBondChangeCalculator().getFormedCleavedWFingerprint().toString());
 //        System.out.println("Order Changed " + s.getBondChangeCalculator().getOrderChangesWFingerprint().toString());
 //        System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
 //        System.out.println("RC Changed " + s.getBondChangeCalculator().getReactionCenterWFingerprint().toString());
 //        System.out.println("BE " + s.getBondEnergyChange() + ", Fragment " + s.getTotalFragmentChanges());
         IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
-        new ImageGenerator().drawTopToBottomReactionLayout("Output", reactionWithCompressUnChangedHydrogens, (reactionID + s.getAlgorithmID()));
+
+        ImageGenerator.LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+        ImageGenerator.TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
         int i = 1;
         for (MappingSolution m : rmt.getAllSolutions()) {
@@ -189,14 +193,12 @@ public class BaseTest extends TestUtility {
 //            System.out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
 
             System.out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
-            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + reactionID + m.getAlgorithmID()));
-//            ImageGenerator.drawTopToBottomReactionLayout(bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + reactionID + m.getAlgorithmID()));
+            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
             i++;
             System.out.println();
             System.out.println("--------------------------------------");
         }
         return rmt;
-
     }
 
     /**

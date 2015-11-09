@@ -24,9 +24,11 @@ import junit.framework.Assert;
 import static mapping.TestUtility.KEGG_RXN_DIR;
 import org.junit.Before;
 import org.junit.Test;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
@@ -40,11 +42,55 @@ import uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MappingTest extends BaseTest {
+
     private static final Logger LOG = Logger.getLogger(MappingTest.class.getName());
 
     @Before
     public void setup() {
         System.out.println("USING : ECBLAST TO MAP FROM RXN DIR: " + KEGG_RXN_DIR);
+    }
+    /*
+     * Test case for Reaction SMILES
+     */
+
+    @Test
+    public void Test() throws Exception {
+        setup();
+        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        parseReactionSmiles.setID("TestReaction");
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        System.out.println("FC " + formedCleavedWFingerprint);
+
+        IPatternFingerprinter OCWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getOrderChangesWFingerprint();
+
+        System.out.println("OC " + OCWFingerprint);
+
+        IPatternFingerprinter STWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getStereoChangesWFingerprint();
+
+        System.out.println("ST " + STWFingerprint);
+
+        /*
+         * Expected Solution
+         *MIN, fp 
+         *ID=TestReaction:Bond Cleaved and Formed (1)
+         *[C%C:2.0]
+         *
+         * BE 682.0, Fragment 0
+         */
+        Assert.assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -229,6 +275,7 @@ public class MappingTest extends BaseTest {
      *
      * *******************************************************************
      *
+     * @throws java.lang.Exception
      */
     /*
      *@Ring Breaking
