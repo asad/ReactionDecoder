@@ -68,7 +68,7 @@ class Helper extends ChemicalFormatParser {
 
         sb.append("Reference: Rahman, S.A. et.al.(2015) Reaction Decoder Tool (RTD):");
         sb.append(NEW_LINE);
-        sb.append("Extracting Chemical Features from Chemical Reactions (submitted)");
+        sb.append("Extracting Features from Chemical Reactions (submitted)");
         sb.append(NEW_LINE);
         sb.append("!--------------------------------------------------------");
         sb.append(NEW_LINE);
