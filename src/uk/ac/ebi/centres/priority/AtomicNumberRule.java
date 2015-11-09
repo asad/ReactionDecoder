@@ -22,13 +22,15 @@ import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
 
 /**
- * An abstract class for constitutional priority based on atomic number. An atomic number accessor
- * ({@link AtomicNumberAccessor}) can be provided to allow the comparator to work on a custom atom type.
+ * An abstract class for constitutional priority based on atomic number. An
+ * atomic number accessor ({@link AtomicNumberAccessor}) can be provided to
+ * allow the comparator to work on a custom atom type.
  *
  * @author John May
  */
 public class AtomicNumberRule<A>
         extends AbstractPriorityRule<A> {
+
     private static final Logger LOG = Logger.getLogger(AtomicNumberRule.class.getName());
 
     /**
@@ -37,8 +39,8 @@ public class AtomicNumberRule<A>
     private final AtomicNumberAccessor<A> accessor;
 
     /**
-     * Constructs an atomic number comparator that uses the provided accessor to fetch the atomic number for a given
-     * atom.
+     * Constructs an atomic number comparator that uses the provided accessor to
+     * fetch the atomic number for a given atom.
      *
      * @param accessor an accessor for the atom's atomic number
      */
