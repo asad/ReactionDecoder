@@ -26,9 +26,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -444,75 +441,6 @@ public class ReactionDecoder extends Annotator {
                 printHelp(System.out, createCompareOptions);
             }
         }
-    }
-
-    private void SimilarityTask(CommandLine similarityLine, Options createSimilarityOptions)
-            throws ParserConfigurationException, Exception {
-        if (similarityLine.hasOption('p')) {
-            PREFIX = similarityLine.getOptionValue("p");
-        }
-
-        if (similarityLine.hasOption('u')) {
-            REMAP = false;
-        }
-
-        String optionValueQ = similarityLine.getOptionValue("q");
-        System.out.println("SimilarityTask");
-        List<IReaction> reactions = new ArrayList<>();
-
-        switch (similarityLine.getOptionValue("Q")) {
-
-            case "SMI":
-                reactions = parseReactionSMILES(optionValueQ);
-                break;
-            case "RXN":
-                reactions = parseRXN(optionValueQ);
-                break;
-            default:
-                displayBlankLines(2, System.out);
-                System.out.println("-- USAGE --");
-                printHelp(System.out, createSimilarityOptions);
-                break;
-        }
-
-        if (reactions.isEmpty()) {
-            displayBlankLines(2, System.out);
-            System.out.println("-- USAGE --");
-            printHelp(System.out, createSimilarityOptions);
-            return;
-        }
-
-        String jobFileName;
-        if (!PREFIX.isEmpty()) {
-            jobFileName = PREFIX + "_ECBLAST_" + "SIMILARITY";
-        } else {
-            jobFileName = "ECBLAST_" + "SIMILARITY";
-        }
-
-        List<SimilarityResult> results = new ArrayList<>();
-        Map<IReaction, ReactionMechanismTool> mech = new HashMap<>();
-        for (IReaction q : reactions) {
-            ReactionMechanismTool annotateReactionQ;
-            annotateReactionQ = getReactionMechanismTool(q, REMAP);
-            mech.put(q, annotateReactionQ);
-        }
-
-        List<IReaction> names = new LinkedList<>(mech.keySet());
-
-        for (int i = 0; i < names.size(); i++) {
-            ReactionMechanismTool annotateReactionQ = mech.get(names.get(i));
-            for (int j = 0; j < names.size(); j++) {
-                ReactionMechanismTool annotateReactionT = mech.get(names.get(j));
-                Map<String, String> similarityReactions = similarityReactions(annotateReactionQ, names.get(i).getID(), annotateReactionT, names.get(j).getID());
-                SimilarityResult similarityResult = new SimilarityResult(names.get(i).getID(), names.get(j).getID(), similarityReactions);
-                results.add(similarityResult);
-                Logger.getLogger(ReactionDecoder.class.getName()).log(Level.INFO, ("Scoring: " + names.get(i).getID() + "_" + names.get(j).getID()));
-            }
-            i++;
-        }
-        mech.clear();
-        writeSimilarityMatrix(results, jobFileName);
-        System.out.println("MATRIX files (.mat) saved with prefix " + jobFileName + "!");
     }
 
     private void AnnotateTask(CommandLine annotateLine, Options createAnnotateOptions)
