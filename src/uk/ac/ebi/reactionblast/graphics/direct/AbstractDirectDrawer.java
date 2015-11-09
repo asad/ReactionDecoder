@@ -35,11 +35,22 @@ import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 
+/**
+ *
+ * @author asad
+ */
 public class AbstractDirectDrawer {
     private static final Logger LOG = getLogger(AbstractDirectDrawer.class.getName());
     
+    /**
+     *
+     */
     protected Params params;
     
+    /**
+     *
+     * @return
+     */
     public Params getParams() {
         return params;
     }
@@ -81,6 +92,12 @@ public class AbstractDirectDrawer {
         return new Point2f(x, y);
     }
     
+    /**
+     *
+     * @param g
+     * @param text
+     * @return
+     */
     public Rectangle2D getTextBounds(Graphics g, String text) {
         FontMetrics metrics = g.getFontMetrics();
         return metrics.getStringBounds(text, g);

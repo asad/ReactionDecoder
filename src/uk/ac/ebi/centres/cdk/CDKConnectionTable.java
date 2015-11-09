@@ -57,6 +57,10 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
         depths.put(DOWN_INVERTED, -1);
     }
 
+    /**
+     *
+     * @param container
+     */
     public CDKConnectionTable(IAtomContainer container) {
         for (int i = 0; i < container.getAtomCount(); i++) {
             container.getAtom(i).setProperty("number", i + 1);

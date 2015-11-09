@@ -29,6 +29,7 @@ import java.util.List;
  * All digraphs are acyclic with ghost atoms being created for cyclic graphs.
  *
  * @author John May
+ * @param <A>
  * @see Centre
  */
 public interface Digraph<A> {

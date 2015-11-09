@@ -84,12 +84,23 @@ import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
 import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutCheck;
 
+/**
+ *
+ * @author asad
+ */
 public class ImageGenerator {
 
     private static final ILoggingTool logger
             = createLoggingTool(ImageGenerator.class);
 
+    /**
+     *
+     */
     public final static int SUB_IMAGE_WIDTH = 300;
+
+    /**
+     *
+     */
     public final static int SUB_IMAGE_HEIGHT = 300;
     private static final Logger LOG = getLogger(ImageGenerator.class.getName());
 
@@ -103,6 +114,13 @@ public class ImageGenerator {
         logger.info("Headless enabled: " + isHeadless());
         /* ---> prints true */
     }
+
+    /**
+     *
+     * @param width
+     * @param height
+     * @return
+     */
     public synchronized static Image getBlankImage(int width, int height) {
         return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
     }
@@ -477,6 +495,9 @@ public class ImageGenerator {
     private final List<QueryTargetPair> queryTargetPairs;
     private final Params params;
 
+    /**
+     *
+     */
     public ImageGenerator() {
         queryTargetPairs = new ArrayList<>();
         params = new Params();
@@ -509,6 +530,15 @@ public class ImageGenerator {
 
     }
 
+    /**
+     *
+     * @param query
+     * @param target
+     * @param label
+     * @param maxac
+     * @throws IOException
+     * @throws Exception
+     */
     public void addImages(
             IAtomContainer query, IAtomContainer target, String label, Map<Integer, Integer> maxac) throws IOException, Exception {
 
@@ -550,6 +580,15 @@ public class ImageGenerator {
                         cloneOfQuery, cloneOfTarget, querySubgraph, targetSubgraph, label));
     }
 
+    /**
+     *
+     * @param query
+     * @param target
+     * @param label
+     * @param maxac
+     * @throws IOException
+     * @throws Exception
+     */
     public void addImages(IAtomContainer query, IAtomContainer target, String label, AtomAtomMapping maxac) throws IOException, Exception {
 
         SingleMoleculeLayout msl = new SingleMoleculeLayout(params);
@@ -590,6 +629,12 @@ public class ImageGenerator {
                         cloneOfQuery, cloneOfTarget, querySubgraph, targetSubgraph, label));
     }
 
+    /**
+     *
+     * @param outImageFileName
+     * @param qName
+     * @param tName
+     */
     public void createImage(String outImageFileName, String qName, String tName) {
 
         // layout, and set the highlight subgraphs
@@ -637,6 +682,10 @@ public class ImageGenerator {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public RenderedImage createImage() {
 
         // layout, and set the highlight subgraphs
@@ -726,6 +775,13 @@ public class ImageGenerator {
         write((RenderedImage) image, "PNG", outFile);
     }
 
+    /**
+     *
+     * @param outputDirName
+     * @param molecule
+     * @param molID
+     * @throws IOException
+     */
     public synchronized void directMoleculeImageZoomedToFit(
             File outputDirName, IAtomContainer molecule, String molID) throws IOException {
         int width = 800;
@@ -733,6 +789,15 @@ public class ImageGenerator {
         directMoleculeImageZoomedToFit(outputDirName, molecule, molID, width, height);
     }
 
+    /**
+     *
+     * @param outputDirName
+     * @param molecule
+     * @param molID
+     * @param width
+     * @param height
+     * @throws IOException
+     */
     public synchronized void directMoleculeImageZoomedToFit(File outputDirName, IAtomContainer molecule, String molID, int width, int height) throws IOException {
 
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();

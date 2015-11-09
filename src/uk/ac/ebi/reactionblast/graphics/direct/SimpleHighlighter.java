@@ -34,18 +34,31 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
+/**
+ *
+ * @author asad
+ */
 public class SimpleHighlighter extends AbstractHighlightDrawer implements Highlighter {
     private static final Logger LOG = getLogger(SimpleHighlighter.class.getName());
     
     private Map<IAtom, Color> atomColorMap;
     private final Map<IBond, Color> bondColorMap;
     
+    /**
+     *
+     * @param params
+     */
     public SimpleHighlighter(Params params) {
         super(params);
         atomColorMap = new HashMap<>();
         bondColorMap = new HashMap<>();
     }
     
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     @Override
     public void drawHighlights(IAtomContainer molecule, Graphics2D g) {
         for (IAtom atom : atomColorMap.keySet()) {
@@ -116,6 +129,11 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         this.atomColorMap = atomColorMap;
     }
     
+    /**
+     *
+     * @param atom
+     * @param g
+     */
     public void drawHighlight(IAtom atom, Graphics2D g) {
         if (params.highlightsAbove) {
             drawHighlight(atom, translucentHighlightColor, g);
@@ -124,6 +142,12 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         } 
     }
     
+    /**
+     *
+     * @param atom
+     * @param color
+     * @param g
+     */
     public void drawHighlight(IAtom atom, Color color, Graphics2D g) {
         Color actualColor;
         if (params.highlightsAbove) {
@@ -138,6 +162,12 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         g.fill(new Ellipse2D.Double(p.x - r, p.y - r, d, d));
     }
     
+    /**
+     *
+     * @param bond
+     * @param color
+     * @param g
+     */
     public void drawHighlight(IBond bond, Color color, Graphics2D g) {
         Stroke stroke = g.getStroke();
         g.setStroke(new BasicStroke(params.highlightBondStroke));
@@ -147,6 +177,11 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         g.setStroke(stroke);
     }
 
+    /**
+     *
+     * @param highlightContainer
+     * @param g
+     */
     public void drawHighlightContainer(IAtomContainer highlightContainer, Graphics2D g) {
         if (params.highlightsAbove) {
             drawHighlightContainer(highlightContainer, translucentHighlightColor, g);
@@ -155,6 +190,12 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         }
     }
     
+    /**
+     *
+     * @param highlightContainer
+     * @param color
+     * @param g
+     */
     public void drawHighlightContainer(
                 IAtomContainer highlightContainer, Color color, Graphics2D g) {
         Color actualColor;
@@ -182,6 +223,9 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         g.setStroke(stroke);
     }
 
+    /**
+     *
+     */
     @Override
     public void clearHighlights() {
         atomColorMap.clear();

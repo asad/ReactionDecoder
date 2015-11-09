@@ -30,6 +30,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import signature.AbstractVertexSignature;
 
+/**
+ *
+ * @author asad
+ */
 public class SubgraphAtomSignature extends AbstractVertexSignature {
     private static final Logger LOG = getLogger(SubgraphAtomSignature.class.getName());
 
@@ -38,12 +42,23 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
     // XXX - tmp fix to get around the architectural bugs of using adj lists.
     private boolean useAdjLists = false;
 
+    /**
+     *
+     * @param atomContainer
+     * @param atomIndex
+     */
     public SubgraphAtomSignature(IAtomContainer atomContainer, int atomIndex) {
         super();
         this.atomContainer = atomContainer;
         super.createMaximumHeight(atomIndex, atomContainer.getAtomCount());
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param atomIndex
+     * @param subgraphAdjacencyLists
+     */
     public SubgraphAtomSignature(IAtomContainer atomContainer, int atomIndex,
             Map<Integer, int[]> subgraphAdjacencyLists) {
         super();
@@ -56,6 +71,11 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         super.createMaximumHeight(atomIndex, graphVertexCount);
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     protected int[] getConnected(int atomIndex) {
         if (useAdjLists) {
@@ -79,6 +99,12 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         }
     }
 
+    /**
+     *
+     * @param atomIndexA
+     * @param atomIndexB
+     * @return
+     */
     @Override
     protected String getEdgeLabel(int atomIndexA, int atomIndexB) {
         IAtom atomA = atomContainer.getAtom(atomIndexA);
@@ -103,12 +129,22 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         }
     }
 
+    /**
+     *
+     * @param arg0
+     * @return
+     */
     @Override
     protected int getIntLabel(int arg0) {
         // TODO Auto-generated method stub
         return 0;
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     protected String getVertexSymbol(int atomIndex) {
         IAtom atom = atomContainer.getAtom(atomIndex);
@@ -128,6 +164,11 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
         }
     }
 
+    /**
+     *
+     * @param edgeLabel
+     * @return
+     */
     @Override
     protected int convertEdgeLabelToColor(String edgeLabel) {
         switch (edgeLabel) {

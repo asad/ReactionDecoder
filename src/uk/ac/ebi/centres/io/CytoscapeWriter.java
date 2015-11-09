@@ -32,6 +32,7 @@ import uk.ac.ebi.centres.Ligand;
  * Allows a digraph to be created
  *
  * @author John May
+ * @param <A>
  */
 public abstract class CytoscapeWriter<A> implements Closeable {
 
@@ -40,6 +41,12 @@ public abstract class CytoscapeWriter<A> implements Closeable {
     private File folder;
     private final Map<String, Map<String, String>> attributes = new HashMap<>();
 
+    /**
+     *
+     * @param folder
+     * @param digraph
+     * @throws IOException
+     */
     public CytoscapeWriter(File folder, Digraph<A> digraph) throws IOException {
 
         this.digraph = digraph;
@@ -57,10 +64,18 @@ public abstract class CytoscapeWriter<A> implements Closeable {
 
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void writeSif() throws IOException {
         write(digraph.getProximal(), "1");
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void writeAttributes() throws IOException {
         // do nothing
         for (Map.Entry<String, Map<String, String>> entry : attributes.entrySet()) {
@@ -99,6 +114,11 @@ public abstract class CytoscapeWriter<A> implements Closeable {
 
     }
 
+    /**
+     *
+     * @param atom
+     * @param map
+     */
     public abstract void mapAttributes(A atom, Map<String, String> map);
 
     @Override

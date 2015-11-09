@@ -37,11 +37,19 @@ public class ACWTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
 
     private final IBond.Stereo[] pattern = {DOWN, UP, NONE, NONE};
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IBond.Stereo[] getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ITetrahedralChirality.Stereo getStereo() {
         return ANTI_CLOCKWISE;

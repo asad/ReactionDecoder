@@ -32,29 +32,56 @@ import signature.AbstractVertexSignature;
 public class BaseMoleculeSignature extends AbstractGraphSignature {
     private static final Logger LOG = getLogger(BaseMoleculeSignature.class.getName());
 
+    /**
+     *
+     */
     protected IAtomContainer atomContainer;
 
+    /**
+     *
+     * @param atomContainer
+     */
     public BaseMoleculeSignature(IAtomContainer atomContainer) {
         this.atomContainer = atomContainer;
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     public AbstractVertexSignature signatureForVertex(int atomIndex) {
         return new RBlastAtomSignature(atomIndex, atomContainer);
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     public String signatureStringForVertex(int atomIndex) {
         return new RBlastAtomSignature(
                 atomIndex, atomContainer).toCanonicalString();
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @param height
+     * @return
+     */
     @Override
     public String signatureStringForVertex(int atomIndex, int height) {
         return new RBlastAtomSignature(
                 atomIndex, atomContainer, height).toCanonicalString();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected int getVertexCount() {
         return atomContainer.getAtomCount();

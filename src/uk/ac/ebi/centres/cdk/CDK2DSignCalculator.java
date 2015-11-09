@@ -29,11 +29,21 @@ public class CDK2DSignCalculator extends TwoDimensionalSignCalculator<IAtom> {
 
     private static final Logger LOG = getLogger(CDK2DSignCalculator.class.getName());
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public double getX(IAtom atom) {
         return atom.getPoint2d().x;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public double getY(IAtom atom) {
         return atom.getPoint2d().y;

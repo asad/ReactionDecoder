@@ -22,11 +22,19 @@ import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Ligand;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 
+/**
+ *
+ * @author asad
+ * @param <A>
+ */
 public class DuplicateAtomRule<A>
         extends AbstractPriorityRule<A> {
 
     private static final Logger LOG = getLogger(DuplicateAtomRule.class.getName());
 
+    /**
+     *
+     */
     public DuplicateAtomRule() {
         super(CONSTITUTIONAL);
     }

@@ -22,10 +22,16 @@ import uk.ac.ebi.centres.Ligand;
 
 /**
  * @author John May
+ * @param <A>
  */
 public abstract class ThreeDimensionalSignCalculator<A>
         extends AbstractSignCalculator<A> {
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract double getZ(A atom);
 
     @Override

@@ -31,6 +31,7 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class DefaultPerceptor<A> implements Perceptor<A> {
     private static final Logger LOG = getLogger(DefaultPerceptor.class.getName());
@@ -40,6 +41,12 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
     private ExecutorService executor = newSingleThreadExecutor();
     private long timeout = 250;
 
+    /**
+     *
+     * @param rule
+     * @param auxRule
+     * @param calculator
+     */
     public DefaultPerceptor(final PriorityRule<A> rule,
             final PriorityRule<A> auxRule,
             final SignCalculator<A> calculator) {
@@ -99,6 +106,11 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
 
     }
 
+    /**
+     *
+     * @param provider
+     * @param manager
+     */
     @Override
     public void perceive(final CentreProvider<A> provider, final DescriptorManager<A> manager) {
 

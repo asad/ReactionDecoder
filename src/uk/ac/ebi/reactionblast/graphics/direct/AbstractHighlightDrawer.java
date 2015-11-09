@@ -25,15 +25,29 @@ import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 
+/**
+ *
+ * @author asad
+ */
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(AbstractHighlightDrawer.class.getName());
     
+    /**
+     *
+     */
     protected Color opaqueHighlightColor;
     
+    /**
+     *
+     */
     protected Color translucentHighlightColor;
     
     private final Map<Color, Color> opaqueToTranslucentColorMap;
     
+    /**
+     *
+     * @param params
+     */
     public AbstractHighlightDrawer(Params params) {
         setParams(params);
         opaqueToTranslucentColorMap = new HashMap<>();
@@ -41,6 +55,10 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
         translucentHighlightColor = getTranslucentColor(opaqueHighlightColor);
     }
     
+    /**
+     *
+     * @param color
+     */
     public void registerColor(Color color) {
         if (opaqueToTranslucentColorMap.containsKey(color)) {
         } else {
@@ -48,6 +66,11 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param color
+     * @return
+     */
     protected Color getTranslucentColor(Color color) {
         if (opaqueToTranslucentColorMap.containsKey(color)) {
             return opaqueToTranslucentColorMap.get(color);

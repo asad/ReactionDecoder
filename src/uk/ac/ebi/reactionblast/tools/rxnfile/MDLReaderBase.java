@@ -53,6 +53,12 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
     private static final ILoggingTool logger
             = createLoggingTool(MDLReaderBase.class);
 
+    /**
+     *
+     * @param molecule
+     * @param prevAtom
+     * @param pseudoAtom
+     */
     public static void replaceAtom(IAtomContainer molecule, IAtom prevAtom, IPseudoAtom pseudoAtom) {
         if (prevAtom.getPoint2d() != null) {
             pseudoAtom.setPoint2d(prevAtom.getPoint2d());
@@ -62,6 +68,10 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         }
         replaceAtomByAtom(molecule, prevAtom, pseudoAtom);
     }
+
+    /**
+     *
+     */
     protected SuperAtomContainer superAtomContainer;
 
     /*
@@ -72,6 +82,15 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
      * M SMT (Sgroup SubScript)
      * M SBV
      */
+
+    /**
+     *
+     * @param molecule
+     * @param line
+     * @param linecount
+     * @throws CDKException
+     */
+
     protected void createAtomProperty(IAtomContainer molecule, String line, int linecount) throws CDKException {
         if (line.startsWith("M  CHG")) {
             // FIXME: if this is encountered for the first time, all
@@ -128,6 +147,16 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     * @param input
+     * @param outputContainer
+     * @param molecule
+     * @param line
+     * @param linecount
+     * @throws IOException
+     * @throws CDKException
+     */
     protected void createGroupOldVersion(BufferedReader input, IAtomContainer outputContainer, IAtomContainer molecule, String line, int linecount) throws IOException, CDKException {
         try {
             String atomNumberString = extractString(line, 3, 6);
@@ -161,6 +190,16 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
      * M SMT (Sgroup SubScript)
      * M SBV
      */
+
+    /**
+     *
+     * @param molecule
+     * @param outputContainer
+     * @param line
+     * @param linecount
+     * @throws CDKException
+     */
+
     protected void createSgroupProperty(IAtomContainer molecule, IAtomContainer outputContainer, String line, int linecount) throws CDKException {
         try {
             String property = extractString(line, 0, 6);
@@ -251,6 +290,14 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     * @param molecule
+     * @param outputContainer
+     * @param line
+     * @param RGroupCounter
+     * @param aliasAtomNumber
+     */
     protected void createPseudoAtomProperty(IAtomContainer molecule, IAtomContainer outputContainer, String line, int RGroupCounter, int aliasAtomNumber) {
         // Reads the pseudo atom property from the mol file
         String[] aliasArray = line.split("\\\\");
@@ -287,6 +334,12 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         RGroupCounter++;
     }
 
+    /**
+     *
+     * @param line
+     * @param rAtoms
+     * @param Rnumber
+     */
     protected void createRGroupAtomProperties(String line, Map<Integer, IPseudoAtom> rAtoms, int Rnumber) {
         StringTokenizer st = new StringTokenizer(line);
         //Ignore first 3 tokens (overhead).
@@ -304,6 +357,9 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     */
     public abstract void customizeJob();
 
     /**

@@ -43,6 +43,15 @@ public class WedgeStereoComparisonResult {
     private final IAtomContainer secondAtomContainer;
     private final WedgeStereoAnalysisResult resultForSecond;
 
+    /**
+     *
+     * @param firstAtom
+     * @param firstAtomContainer
+     * @param resultForFirst
+     * @param secondAtom
+     * @param secondAtomContainer
+     * @param resultForSecond
+     */
     public WedgeStereoComparisonResult(
             IAtom firstAtom, IAtomContainer firstAtomContainer, WedgeStereoAnalysisResult resultForFirst,
             IAtom secondAtom, IAtomContainer secondAtomContainer, WedgeStereoAnalysisResult resultForSecond) {
@@ -54,34 +63,66 @@ public class WedgeStereoComparisonResult {
         this.resultForSecond = resultForSecond;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getIndexOfFirst() {
         return firstAtomContainer.getAtomNumber(firstAtom);
     }
 
+    /**
+     *
+     * @return
+     */
     public WedgeStereoAnalysisResult getResultForFirst() {
         return resultForFirst;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getIndexOfSecond() {
         return secondAtomContainer.getAtomNumber(secondAtom);
     }
 
+    /**
+     *
+     * @return
+     */
     public WedgeStereoAnalysisResult getResultForSecond() {
         return resultForSecond;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getFirst() {
         return firstAtom;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtomContainer getFirstContainer() {
         return firstAtomContainer;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getSecond() {
         return secondAtom;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtomContainer getSecondContainer() {
         return secondAtomContainer;
     }

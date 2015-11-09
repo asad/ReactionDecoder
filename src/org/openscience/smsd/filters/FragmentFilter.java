@@ -72,21 +72,37 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
         return _minFragmentScore;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<Integer> getScores() {
         return unmodifiableList(fragmentSize);
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void clearScores() {
         fragmentSize.clear();
     }
 
+    /**
+     *
+     * @param counter
+     * @param value
+     */
     @Override
     public synchronized void addScore(int counter, Integer value) {
         fragmentSize.add(counter, value);
     }
 
+    /**
+     *
+     * @param fragmentScoreMap
+     */
     @Override
     public synchronized void fillMap(Map<Integer, Integer> fragmentScoreMap) {
         int Index = 0;

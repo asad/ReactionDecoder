@@ -37,11 +37,22 @@ public class Priority {
     private Descriptor.Type type;
     private Set<Set<Integer>> duplicates;
 
+    /**
+     *
+     * @param unique
+     * @param type
+     */
     public Priority(Boolean unique, Descriptor.Type type) {
         this.unique = unique;
         this.type = type;
     }
 
+    /**
+     *
+     * @param unique
+     * @param type
+     * @param duplicates
+     */
     public Priority(Boolean unique, Descriptor.Type type, Set<Set<Integer>> duplicates) {
         this.unique = unique;
         this.type = type;
@@ -67,6 +78,12 @@ public class Priority {
         return type;
     }
 
+    /**
+     *
+     * @param <A>
+     * @param ligands
+     * @return
+     */
     public <A> List<List<Ligand<A>>> createBins(List<Ligand<A>> ligands) {
         if (duplicates == null) {
             throw new IllegalArgumentException("No duplicates stored at time of sort!");

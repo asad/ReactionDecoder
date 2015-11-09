@@ -30,6 +30,10 @@ import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class Block implements Comparable<Block> {
     private static final Logger LOG = getLogger(Block.class.getName());
 
@@ -48,11 +52,19 @@ public class Block implements Comparable<Block> {
 
     private Block partner;
 
+    /**
+     *
+     * @param atomContainer
+     */
     public Block(IAtomContainer atomContainer) {
         this.atomContainer = atomContainer;
         this.atomMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getMappingPermutation() {
         int[] mappingPermutation = new int[atomMap.size()];
 
@@ -89,22 +101,43 @@ public class Block implements Comparable<Block> {
         return compactMap;
     }
 
+    /**
+     *
+     * @param partner
+     */
     public void setPartner(Block partner) {
         this.partner = partner;
     }
 
+    /**
+     *
+     * @return
+     */
     public Block getPartner() {
         return this.partner;
     }
 
+    /**
+     *
+     * @param atom
+     * @param partner
+     */
     public void addMapping(IAtom atom, IAtom partner) {
         atomMap.put(atom, partner);
     }
 
+    /**
+     *
+     * @param centerPoint
+     */
     public void setCenterPoint(Point2d centerPoint) {
         this.centerPoint = centerPoint;
     }
 
+    /**
+     *
+     * @return
+     */
     public Point2d getCenterPoint() {
         if (centerPoint == null) {
             Rectangle2D b = getBounds();
@@ -113,6 +146,10 @@ public class Block implements Comparable<Block> {
         return centerPoint;
     }
 
+    /**
+     *
+     * @return
+     */
     public Rectangle2D getBounds() {
         if (bounds == null) {
             IAtomContainer tmp
@@ -141,14 +178,26 @@ public class Block implements Comparable<Block> {
         return getSignatureString().compareTo(o.getSignatureString());
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAtomCount() {
         return atomMap.size();
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getLabels() {
         return getSubgraphSignature().getCanonicalLabels();
     }
 
+    /**
+     *
+     * @return
+     */
     public SubgraphMoleculeSignature getSubgraphSignature() {
         if (subgraphSignature == null) {
             subgraphSignature
@@ -157,6 +206,10 @@ public class Block implements Comparable<Block> {
         return subgraphSignature;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSignatureString() {
         if (signatureString == null) {
             signatureString = getSubgraphSignature().toCanonicalString();
@@ -164,10 +217,18 @@ public class Block implements Comparable<Block> {
         return signatureString;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtomContainer getAtomContainer() {
         return atomContainer;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getAtoms() {
         return new ArrayList<>(atomMap.keySet());
     }

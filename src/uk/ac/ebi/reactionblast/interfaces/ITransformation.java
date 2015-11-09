@@ -24,6 +24,7 @@ package uk.ac.ebi.reactionblast.interfaces;
  * A generic transformation of a reaction or molecule.
  * 
  * @author maclean
+ * @param <T>
  *
  */
 public interface ITransformation<T> {
@@ -33,11 +34,28 @@ public interface ITransformation<T> {
      *
      */
     public enum TargetType {
+
+        /**
+         *
+         */
         MOLECULE,
+
+        /**
+         *
+         */
         REACTION
     }
     
+    /**
+     *
+     * @return
+     */
     TargetType getTargetType();
     
+    /**
+     *
+     * @param obj
+     * @return
+     */
     T transform(T obj);
 }

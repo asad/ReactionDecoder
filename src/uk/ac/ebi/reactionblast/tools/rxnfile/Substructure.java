@@ -59,18 +59,35 @@ public class Substructure {
         this.superBondIndex = 0;
     }
 
+    /**
+     *
+     * @param superAtom
+     */
     public void add(SuperAtoms superAtom) {
         this.superAtoms.add(count++, superAtom);
     }
 
+    /**
+     *
+     * @param superAtoms
+     * @return
+     */
     public boolean remove(SuperAtoms superAtoms) {
         return this.superAtoms.remove(superAtoms);
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSuperAtomCount() {
         return this.superAtoms.size();
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSuperBondCount() {
         return this.superBonds.size();
     }
@@ -110,10 +127,20 @@ public class Substructure {
         return unmodifiableCollection(superBonds);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public SuperBonds getSuperBond(int i) {
         return superBonds.get(i);
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public SuperAtoms getSuperAtom(int i) {
         return superAtoms.get(i);
     }

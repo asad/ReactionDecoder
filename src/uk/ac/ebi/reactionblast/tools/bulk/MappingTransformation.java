@@ -29,16 +29,29 @@ import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REAC
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
+/**
+ *
+ * @author asad
+ */
 public class MappingTransformation implements ITransformation<IReaction> {
 private final static ILoggingTool logger
             = createLoggingTool(MappingTransformation.class);
     private static final Logger LOG = getLogger(MappingTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         try {

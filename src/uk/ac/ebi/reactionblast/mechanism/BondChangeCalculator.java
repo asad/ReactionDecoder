@@ -486,66 +486,116 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         setEnergyDelta(rEnergy - pEnergy);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized BEMatrix getEductBEMatrix() {
         return bondChangeAnnotator.getEductBEMatrix();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized BEMatrix getProductBEMatrix() {
         return bondChangeAnnotator.getProductBEMatrix();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized RMatrix getRMatrix() {
         return bondChangeAnnotator.getRMatrix();
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printBMatrix() {
         bondChangeAnnotator.printBMatrix();
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printEMatrix() {
         bondChangeAnnotator.printEMatrix();
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printRMatrix() {
         bondChangeAnnotator.printRMatrix();
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeBMatrix(File outputFile) {
         bondChangeAnnotator.writeBMatrix(outputFile);
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeEMatrix(File outputFile) {
         bondChangeAnnotator.writeEMatrix(outputFile);
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeRMatrix(File outputFile) {
         bondChangeAnnotator.writeRMatrix(outputFile);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized boolean hasRMatrix() {
         return bondChangeAnnotator.hasRMatrix();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Map<IAtom, IAtom> getMappingMap() {
         return synchronizedMap(bondChangeAnnotator.getMappingMap());
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<BondChange> getBondChangeList() {
         return bondChangeAnnotator.getBondChangeList();
     }
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     @Override
     public synchronized IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException {
         return orderChangesWFingerprint;
@@ -556,6 +606,11 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         return stereoChangesWFingerprint;
     }
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     @Override
     public synchronized IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException {
         return formedCleavedWFingerprint;
@@ -1100,16 +1155,29 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         return mappedReactionWithBondChanges;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Map<IAtom, IAtom> getAtomAtomMappings() {
         return bondChangeAnnotator.getMappingMap();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized AtomAtomMappingContainer getMappingContainer() {
         return bondChangeAnnotator.getMappingContainer();
     }
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     public synchronized int getTotalBondBreakingEnergy() throws CDKException {
         return this.energySum;
     }
@@ -1128,11 +1196,19 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         this.energyDelta = energyDelta;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<AtomStereoChangeInformation> getStereoChangeList() {
         return bondChangeAnnotator.getStereoChangeList();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Iterable<AtomStereoChangeInformation> getConformationChangeList() {
         return bondChangeAnnotator.getConformationChangeList();
@@ -1208,6 +1284,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         return synchronizedMap(reactionCenterStereoChangeFingerprint);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Collection<IAtom> getReactionCenterSet() {
         return bondChangeAnnotator.getReactionCenterSet();
@@ -1226,6 +1306,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         return unmodifiableCollection(reactionMoleculeMoleculePairList);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Map<String, Collection<String>> getMoleculeMoleculeTransformationPairs() {
         Map<String, Collection<String>> uniqueRPAIRS = new TreeMap<>();

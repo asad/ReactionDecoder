@@ -156,6 +156,11 @@ public class RBlastSmilesGenerator {
         this.useAromaticityFlag = useAromaticityFlag;
     }
 
+    /**
+     *
+     * @param useAromaticityFlag
+     * @param labeller
+     */
     public RBlastSmilesGenerator(boolean useAromaticityFlag, ICanonicalMoleculeLabeller labeller) {
         this.useAromaticityFlag = useAromaticityFlag;
         this.labeller = labeller;

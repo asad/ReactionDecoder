@@ -27,16 +27,33 @@ import uk.ac.ebi.centres.graph.Arc;
  * determination of parent and visited atoms.
  *
  * @author John May
+ * @param <A>
  * @see Digraph
  */
 public interface Ligand<A> {
 
+    /**
+     *
+     * @return
+     */
     public boolean isTerminal();
 
+    /**
+     *
+     * @return
+     */
     public boolean isBranching();
 
+    /**
+     *
+     * @return
+     */
     public boolean isDuplicate();
 
+    /**
+     *
+     * @return
+     */
     public A getAtom();
 
     /**
@@ -104,11 +121,13 @@ public interface Ligand<A> {
      * ligands
      *
      * @param atom
-     *
-     * @return
      */
     public void setParent(A atom);
 
+    /**
+     *
+     * @return
+     */
     public A getParent();
 
     /**
@@ -134,8 +153,16 @@ public interface Ligand<A> {
      */
     public Descriptor getAuxiliary();
 
+    /**
+     *
+     * @return
+     */
     public List<Arc<A>> getArcs();
 
+    /**
+     *
+     * @return
+     */
     public Arc<A> getParentArc();
 
     /**

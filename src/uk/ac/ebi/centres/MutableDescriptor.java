@@ -33,10 +33,18 @@ public class MutableDescriptor {
 
     private Descriptor descriptor = UNKNOWN;
 
+    /**
+     *
+     * @return
+     */
     public synchronized Descriptor get() {
         return descriptor;
     }
 
+    /**
+     *
+     * @param descriptor
+     */
     public synchronized void set(Descriptor descriptor) {
         if (descriptor == null) {
             throw new IllegalArgumentException("Provided descriptor was null");

@@ -27,6 +27,7 @@ import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 import org.openscience.cdk.annotations.TestClass;
 import org.openscience.cdk.annotations.TestMethod;
 import org.openscience.cdk.exception.CDKException;

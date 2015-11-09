@@ -57,7 +57,7 @@ import org.openscience.smsd.tools.IterationManager;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McGregorTest")
-public class McGregor {
+public final class McGregor {
 
     private static final Logger LOG = getLogger(McGregor.class.getName());
 

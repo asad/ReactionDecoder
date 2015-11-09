@@ -57,5 +57,9 @@ public interface IFeature extends Comparable<IFeature> {
     @Override
     String toString();
 
+    /**
+     *
+     * @param newValue
+     */
     public void setValue(double newValue);
 }

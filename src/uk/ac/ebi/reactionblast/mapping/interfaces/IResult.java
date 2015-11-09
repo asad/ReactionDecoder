@@ -31,5 +31,9 @@ public interface IResult {
      */
     abstract Holder getUpdatedHolder();
 
+    /**
+     *
+     * @return
+     */
     abstract boolean isSubAndCompleteMatchFlag();
 }

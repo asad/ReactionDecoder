@@ -23,6 +23,7 @@ import static java.lang.Math.signum;
 
 /**
  * @author John May
+ * @param <A>
  */
 public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
 
@@ -54,8 +55,18 @@ public abstract class Abstract2DSignCalculator<A> implements SignCalculator<A> {
         return (int) signum(determinant(matrix));
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract double getX(A atom);
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract double getY(A atom);
 
     /**

@@ -43,6 +43,7 @@ import static uk.ac.ebi.centres.descriptor.Tetrahedral.s;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class TetrahedralCentre<A>
         extends AbstractLigand<A>
@@ -52,6 +53,11 @@ public class TetrahedralCentre<A>
     private final A atom;
     private A parent;
 
+    /**
+     *
+     * @param descriptor
+     * @param atom
+     */
     public TetrahedralCentre(MutableDescriptor descriptor,
             A atom) {
         super(descriptor, 0);
@@ -59,6 +65,10 @@ public class TetrahedralCentre<A>
         this.parent = atom;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getAtom() {
         return atom;
@@ -70,6 +80,10 @@ public class TetrahedralCentre<A>
         this.parent = atom;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getParent() {
         return this.parent;
@@ -80,6 +94,13 @@ public class TetrahedralCentre<A>
         return singleton(atom);
     }
 
+    /**
+     *
+     * @param centres
+     * @param rule
+     * @param calculator
+     * @return
+     */
     @Override
     public int perceiveAuxiliary(Collection<Centre<A>> centres,
             PriorityRule<A> rule,
@@ -127,6 +148,13 @@ public class TetrahedralCentre<A>
 
     }
 
+    /**
+     *
+     * @param proximal
+     * @param rule
+     * @param calculator
+     * @return
+     */
     @Override
     public Descriptor perceive(List<Ligand<A>> proximal, PriorityRule<A> rule, SignCalculator<A> calculator) {
 

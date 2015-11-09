@@ -36,8 +36,9 @@ import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
  * applied.
  *
  * @author John May
+ * @param <A>
  */
-public class CombinedRule<A> extends AbstractPriorityRule<A> {
+public final class CombinedRule<A> extends AbstractPriorityRule<A> {
     private static final Logger LOG = getLogger(CombinedRule.class.getName());
 
     /**
@@ -80,6 +81,11 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
         rule.setSorter(createSorter(rules));
     }
 
+    /**
+     *
+     * @param rules
+     * @return
+     */
     public LigandSorter<A> createSorter(List<PriorityRule<A>> rules) {
         return new InsertionSorter<>(rules, CONSTITUTIONAL); // restriction should be configurable
     }
@@ -88,6 +94,7 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
      * Iteratively compares ligands using the given priority rules. Each rule is applied exhaustively. If a difference
      * is found for a rule the comparison is returned along without the rule type.
      *
+     * @return 
      * @see LigandComparison
      * @see uk.ac.ebi.centres.PriorityRule#getType()
      * @see Descriptor.Type
@@ -121,6 +128,7 @@ public class CombinedRule<A> extends AbstractPriorityRule<A> {
      * is found for a rule the comparison is returned along with the rule type
      * {@link uk.ac.ebi.centres.PriorityRule#getType()}
      *
+     * @return 
      * @see LigandComparison
      * @see uk.ac.ebi.centres.PriorityRule#getType()
      * @see Descriptor.Type

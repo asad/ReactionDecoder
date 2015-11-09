@@ -33,11 +33,21 @@ public class IdentityLabellingAdaptor
 
     private static final Logger LOG = getLogger(IdentityLabellingAdaptor.class.getName());
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return container;
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
         int n = container.getAtomCount();

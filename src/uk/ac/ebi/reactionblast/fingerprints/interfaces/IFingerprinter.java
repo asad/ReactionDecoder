@@ -55,9 +55,21 @@ public interface IFingerprinter extends org.openscience.cdk.fingerprint.IFingerp
     @Override
     IBitFingerprint getBitFingerprint(IAtomContainer container) throws CDKException;
 
+    /**
+     *
+     * @param iac
+     * @return
+     * @throws CDKException
+     */
     @Override
     ICountFingerprint getCountFingerprint(IAtomContainer iac) throws CDKException;
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     * @throws CDKException
+     */
     @Override
     Map<String, Integer> getRawFingerprint(IAtomContainer atomContainer) throws CDKException;
 
@@ -68,6 +80,10 @@ public interface IFingerprinter extends org.openscience.cdk.fingerprint.IFingerp
     @TestMethod(value = "testGetSearchDepth")
     int getSearchDepth();
 
+    /**
+     *
+     * @return
+     */
     @TestMethod(value = "testGetSize")
     int getSize();
 

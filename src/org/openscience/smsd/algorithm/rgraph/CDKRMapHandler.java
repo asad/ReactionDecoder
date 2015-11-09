@@ -63,6 +63,9 @@ public class CDKRMapHandler {
     private IAtomContainer target;
     private boolean timeout;
 
+    /**
+     *
+     */
     public CDKRMapHandler() {
         this.timeout = false;
     }

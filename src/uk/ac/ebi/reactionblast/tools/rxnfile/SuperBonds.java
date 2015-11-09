@@ -38,6 +38,11 @@ public class SuperBonds {
     private double x;
     private double y;
 
+    /**
+     *
+     * @param bondIndex
+     * @param superBond
+     */
     public SuperBonds(int bondIndex, IBond superBond) {
         this.superBond = superBond;
         this.bondIndex = bondIndex;

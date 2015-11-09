@@ -37,11 +37,18 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerPrinter;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
+/**
+ *
+ * @author asad
+ */
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     private static final Logger LOG = getLogger(BlockReactionCanoniser.class.getName());
 
     private IChemObjectBuilder builder;
 
+    /**
+     *
+     */
     public BlockReactionCanoniser() {
         builder = null;
     }

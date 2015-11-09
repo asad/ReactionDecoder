@@ -36,10 +36,18 @@ import static uk.ac.ebi.reactionblast.tools.EBIMolSplitter.splitMolecules;
  *
  */
 public class RXNFileImporter {
+
+    /**
+     *
+     */
     public static final String RXN = "$RXN";
     private static final Logger LOG = getLogger(RXNFileImporter.class.getName());
 
     private IReaction reaction;
+
+    /**
+     *
+     */
     protected IAtomContainer atomContainer;
     int nProducts;
     int nReactants;

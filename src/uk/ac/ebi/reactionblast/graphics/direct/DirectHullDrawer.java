@@ -40,16 +40,30 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectHullDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectHullDrawer.class.getName());
     
     private final DirectMoleculeDrawer moleculeDrawer;
     
+    /**
+     *
+     */
     public DirectHullDrawer() {
         moleculeDrawer = new DirectMoleculeDrawer();
         setParams(moleculeDrawer.getParams());
     }
     
+    /**
+     *
+     * @param atomContainer
+     * @param w
+     * @param h
+     * @return
+     */
     public Image drawHull(IAtomContainer atomContainer, int w, int h) {
         Image image = super.makeBlankImage(w, h);
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -64,6 +78,11 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         return image;
     }
     
+    /**
+     *
+     * @param atomContainer
+     * @param g
+     */
     public void drawHull(IAtomContainer atomContainer, Graphics2D g) {
         DirectArrowDrawer arrowDrawer = new DirectArrowDrawer(getParams());
         ConvexHull hull = new ConvexHull(atomContainer);

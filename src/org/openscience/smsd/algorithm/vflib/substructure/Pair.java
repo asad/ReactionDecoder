@@ -66,6 +66,11 @@ public class Pair<T, S> {
     private T source;
     private S target;
 
+    /**
+     *
+     * @param a
+     * @param b
+     */
     public Pair(T a, S b) {
         this.source = a;
         this.target = b;
@@ -84,6 +89,7 @@ public class Pair<T, S> {
     }
 
     /**
+     * @param first
      * @param source the source to set
      */
     public synchronized void setSourceAtom(T first) {
@@ -98,6 +104,7 @@ public class Pair<T, S> {
     }
 
     /**
+     * @param second
      * @param target the target to set
      */
     public synchronized void setTargetAtom(S second) {

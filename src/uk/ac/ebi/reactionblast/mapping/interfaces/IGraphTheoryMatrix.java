@@ -36,6 +36,10 @@ public interface IGraphTheoryMatrix {
      */
     void Clear() throws IOException;
 
+    /**
+     *
+     * @return
+     */
     int getDelta();
 
     /**
@@ -55,7 +59,15 @@ public interface IGraphTheoryMatrix {
      */
     List<String> getProductCounter();
 
+    /**
+     *
+     * @return
+     */
     MoleculeMoleculeMapping getReactionMolMapping();
 
+    /**
+     *
+     * @param reactionMolMapping
+     */
     void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
 }

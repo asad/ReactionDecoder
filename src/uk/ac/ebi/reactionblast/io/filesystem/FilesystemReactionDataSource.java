@@ -35,6 +35,10 @@ import uk.ac.ebi.reactionblast.interfaces.IDataSource;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
+/**
+ *
+ * @author asad
+ */
 public class FilesystemReactionDataSource implements IDataSource<IReaction> {
     private static final Logger LOG = getLogger(FilesystemReactionDataSource.class.getName());
     
@@ -44,6 +48,10 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
     
     private ITransformation<IReaction> transformation;
     
+    /**
+     *
+     * @param reactionPath
+     */
     public FilesystemReactionDataSource(String reactionPath) {
         if (reactionPath != null) {
             this.reactionDir = new File(reactionPath);

@@ -72,6 +72,7 @@ public class CDKSubGraphHandler implements IResults {
      * @param target
      * @param shouldMatchBonds
      * @param shouldMatchRings
+     * @param matchAtomType
      */
     public CDKSubGraphHandler(IAtomContainer source, IAtomContainer target,
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {

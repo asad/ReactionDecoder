@@ -21,14 +21,36 @@ import java.util.Collection;
 
 /**
  * @author John May
+ * @param <A>
  */
 public interface ConnectionTable<A> {
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public Collection<A> getConnected(A atom);
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public Integer getDepth(A first, A second);
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public int getOrder(A first, A second);
 
+    /**
+     *
+     * @return
+     */
     public Integer getAtomCount();
 }

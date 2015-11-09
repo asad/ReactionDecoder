@@ -30,6 +30,7 @@ import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
  * allow the comparator to work on a custom atom type.
  *
  * @author John May
+ * @param <A>
  */
 public class AtomicNumberRule<A>
         extends AbstractPriorityRule<A> {

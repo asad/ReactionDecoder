@@ -37,16 +37,26 @@ import uk.ac.ebi.centres.PriorityRule;
  * would have little benefit.
  *
  * @author John May
+ * @param <A>
  */
 public class InsertionSorter<A> implements LigandSorter<A> {
     private static final Logger LOG = getLogger(InsertionSorter.class.getName());
 
     private final List<PriorityRule<A>> rules = new ArrayList<>(5);
 
+    /**
+     *
+     * @param comparator
+     */
     public InsertionSorter(PriorityRule<A> comparator) {
         this.rules.add(comparator);
     }
 
+    /**
+     *
+     * @param comparators
+     * @param restrict
+     */
     public InsertionSorter(List<PriorityRule<A>> comparators, PriorityRule.Type restrict) {
         for (PriorityRule<A> rule : comparators) {
             if (rule.getRuleType().equals(restrict)) {
@@ -55,6 +65,10 @@ public class InsertionSorter<A> implements LigandSorter<A> {
         }
     }
 
+    /**
+     *
+     * @param comparators
+     */
     public InsertionSorter(List<PriorityRule<A>> comparators) {
         rules.addAll(comparators);
     }
@@ -96,6 +110,12 @@ public class InsertionSorter<A> implements LigandSorter<A> {
 
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public Comparison compareLigands(Ligand<A> first, Ligand<A> second) {
         for (PriorityRule<A> rule : rules) {
             Comparison comparison = rule.compareLigands(first, second);
@@ -116,12 +136,23 @@ public class InsertionSorter<A> implements LigandSorter<A> {
         };
     }
 
+    /**
+     *
+     * @param list
+     * @param i
+     * @param j
+     */
     public void swap(List list, int i, int j) {
         Object tmp = list.get(i);
         list.set(i, list.get(j));
         list.set(j, tmp);
     }
 
+    /**
+     *
+     * @param sorted
+     * @return
+     */
     public List<List<Ligand<A>>> getGroups(List<Ligand<A>> sorted) {
 
         // would be nice to have this integrated whilst sorting - may provide a small speed increase

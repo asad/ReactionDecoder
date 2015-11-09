@@ -138,6 +138,10 @@ public class MoleculeMoleculeMapping implements Serializable{
         return reactant_product_mapping_map.size();
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized Set<String> getKeySet() {
         return reactant_product_mapping_map.keySet();
     }

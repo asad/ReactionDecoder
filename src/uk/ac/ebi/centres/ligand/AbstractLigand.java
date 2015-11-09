@@ -35,6 +35,7 @@ import uk.ac.ebi.centres.graph.Arc;
 
 /**
  * @author John May
+ * @param <A>
  */
 public abstract class AbstractLigand<A> implements Ligand<A> {
 
@@ -47,6 +48,13 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
     private List<Ligand<A>> ligands;
     private Descriptor descriptorCache;
 
+    /**
+     *
+     * @param provider
+     * @param visited
+     * @param descriptor
+     * @param distance
+     */
     public AbstractLigand(ConnectionProvider<A> provider,
             Set<A> visited,
             MutableDescriptor descriptor,
@@ -61,6 +69,12 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
 
     }
 
+    /**
+     *
+     * @param visited
+     * @param descriptor
+     * @param distance
+     */
     public AbstractLigand(Set<A> visited,
             MutableDescriptor descriptor,
             int distance) {
@@ -73,6 +87,11 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
 
     }
 
+    /**
+     *
+     * @param descriptor
+     * @param distance
+     */
     public AbstractLigand(MutableDescriptor descriptor,
             int distance) {
 
@@ -83,18 +102,34 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDuplicate() {
         return duplicate;
     }
 
+    /**
+     *
+     * @param duplicate
+     */
     public void setDuplicate(boolean duplicate) {
         this.duplicate = duplicate;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConnectionProvider<A> getProvider() {
         return provider;
     }
 
+    /**
+     *
+     * @param provider
+     */
     public void setProvider(ConnectionProvider<A> provider) {
         this.provider = provider;
     }
@@ -151,11 +186,19 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
         return "Non CDK Atom";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<Arc<A>> getArcs() {
         return provider.getArcs(this);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Arc<A> getParentArc() {
         return provider.getParentArc(this);
@@ -188,11 +231,19 @@ public abstract class AbstractLigand<A> implements Ligand<A> {
         return arc == null ? 0 : arc.getDepth();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isBranching() {
         return FALSE;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isTerminal() {
         return FALSE;

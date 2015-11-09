@@ -37,15 +37,28 @@ public class MoleculeCanonicalizationTransformation implements ITransformation<I
 
     private final ICanonicalMoleculeLabeller canonicalMoleculeLabeller;
 
+    /**
+     *
+     * @param labeller
+     */
     public MoleculeCanonicalizationTransformation(ICanonicalMoleculeLabeller labeller) {
         canonicalMoleculeLabeller = labeller;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return MOLECULE;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     @Override
     public IAtomContainer transform(IAtomContainer atomContainer) {
         return canonicalMoleculeLabeller.getCanonicalMolecule(atomContainer);

@@ -34,6 +34,13 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  */
 public abstract class AbstractTetrahedralWedgeRule extends WedgeRule {
 
+    /**
+     *
+     * @param centralAtom
+     * @param atomContainer
+     * @param angleMap
+     * @return
+     */
     @Override
     public IStereoElement execute(IAtom centralAtom,
             IAtomContainer atomContainer,
@@ -48,5 +55,9 @@ public abstract class AbstractTetrahedralWedgeRule extends WedgeRule {
         return new TetrahedralChirality(centralAtom, ligandAtoms, getStereo());
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract ITetrahedralChirality.Stereo getStereo();
 }

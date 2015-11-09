@@ -43,7 +43,9 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 public class ECRgroupFrequency {
 
-
+    /**
+     *
+     */
     protected final static boolean DEBUG = false;
 
     private static final Logger LOG = getLogger(ECRgroupFrequency.class.getName());
@@ -57,6 +59,10 @@ public class ECRgroupFrequency {
         ECRgroupFrequency ecRgroupFrequency = new ECRgroupFrequency(args);
     }
 
+    /**
+     *
+     * @param args
+     */
     public ECRgroupFrequency(String[] args) {
         out.println("------------------------------------------------------");
         Map<String, MultiReactionContainer> reactionMap = new TreeMap<>();

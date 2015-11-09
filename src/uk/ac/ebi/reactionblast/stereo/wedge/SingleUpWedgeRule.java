@@ -44,11 +44,22 @@ public class SingleUpWedgeRule extends WedgeRule {
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE};
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Stereo[] getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @param centralAtom
+     * @param atomContainer
+     * @param angleMap
+     * @return
+     */
     @Override
     public IStereoElement execute(IAtom centralAtom,
             IAtomContainer atomContainer,

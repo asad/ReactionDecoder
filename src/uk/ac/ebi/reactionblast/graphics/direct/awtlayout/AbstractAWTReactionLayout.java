@@ -31,22 +31,54 @@ import uk.ac.ebi.reactionblast.graphics.direct.Axis;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
+/**
+ *
+ * @author asad
+ */
 public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReaction> {
     
+    /**
+     *
+     */
     protected BoundsTree reactantBoundsTree;
     
+    /**
+     *
+     */
     protected BoundsTree productBoundsTree;
     
+    /**
+     *
+     */
     protected Vector2d axis;
     
+    /**
+     *
+     */
     protected Axis arrowAxis;
     
+    /**
+     *
+     */
     protected double arrowPos;
     
+    /**
+     *
+     */
     protected LinearAtomContainerSetLayout reactantLayout;
     
+    /**
+     *
+     */
     protected LinearAtomContainerSetLayout productLayout;
    
+    /**
+     *
+     * @param molSet
+     * @param molSetBoundsTree
+     * @param dx
+     * @param dy
+     */
     public void shiftMoleculeSet(IAtomContainerSet molSet, 
             BoundsTree molSetBoundsTree, double dx, double dy) {
 //        System.out.println(molSetBoundsTree);
@@ -63,14 +95,26 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
         }
     }
     
+    /**
+     *
+     * @return
+     */
     public Axis getArrowAxis() {
         return arrowAxis;
     }
     
+    /**
+     *
+     * @param pos
+     */
     public void setArrowPos(double pos) {
         arrowPos = pos;
     }
     
+    /**
+     *
+     * @return
+     */
     public Point2d getArrowCenter() {
         Rectangle2D bounds = getBoundsTree().getRoot();
         if (arrowAxis == X) {
@@ -80,6 +124,10 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract Vector2d getAxis();
   
 }

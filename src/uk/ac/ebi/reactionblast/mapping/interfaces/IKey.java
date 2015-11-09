@@ -33,9 +33,17 @@ public interface IKey extends Comparable<Key>, Comparator<Key> {
     @Override
     boolean equals(Object o);
 
+    /**
+     *
+     * @return
+     */
     @Override
     int hashCode();
 
+    /**
+     *
+     * @return
+     */
     @Override
     String toString();
 

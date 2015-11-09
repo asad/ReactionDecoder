@@ -26,6 +26,7 @@ import uk.ac.ebi.centres.Ligand;
  * Access the primary descriptor on a ligand
  *
  * @author John May
+ * @param <A>
  */
 public class PrimaryDescriptor<A> implements
         uk.ac.ebi.centres.priority.access.DescriptorAccessor<A> {

@@ -27,39 +27,91 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import static uk.ac.ebi.reactionblast.graphics.direct.layout.MoleculeAligner.alignToMaxWidth;
 import static uk.ac.ebi.reactionblast.graphics.direct.layout.MoleculeAligner.alignToMinAreaBox;
 
+/**
+ *
+ * @author asad
+ * @param <T>
+ */
 public abstract class AbstractDirectLayout<T> {
     
+    /**
+     *
+     */
     public static final String INVERTED = "Coordinates Inverted";
     
+    /**
+     *
+     */
     protected Params params;
     
+    /**
+     *
+     */
     protected BoundsTree boundsTree;
     
-    
+    /**
+     *
+     */
     public boolean shouldInvert;
     
+    /**
+     *
+     */
     public AbstractDirectLayout() {
         this(true);
     }
     
+    /**
+     *
+     * @param shouldInvert
+     */
     public AbstractDirectLayout(boolean shouldInvert) {
         this.shouldInvert = shouldInvert;
     }
     
+    /**
+     *
+     * @param obj
+     * @param axis
+     * @return
+     */
     public abstract BoundsTree layout(T obj, Vector2d axis);
 
+    /**
+     *
+     * @return
+     */
     public abstract Vector2d getAxis();
     
+    /**
+     *
+     * @return
+     */
     public abstract double getAxisPosition();
     
+    /**
+     *
+     * @return
+     */
     public Params getParams() {
         return params;
     }
 
+    /**
+     *
+     * @param params
+     */
     public void setParams(Params params) {
         this.params = params;
     }
     
+    /**
+     *
+     * @param ac
+     * @param x
+     * @param y
+     * @param bounds
+     */
     public void translateTo(IAtomContainer ac, double x, double y, Rectangle2D bounds) {
         double dx = x - bounds.getCenterX();
         double dy = y - bounds.getCenterY();
@@ -73,6 +125,10 @@ public abstract class AbstractDirectLayout<T> {
 //        System.out.println(" After: " + BoundsPrinter.toString(bounds) + " " + dx + " " + dy);
     }
     
+    /**
+     *
+     * @param ac
+     */
     public void invert(IAtomContainer ac) {
         if (shouldInvert && 
                 ac.getProperty(INVERTED) == null ||
@@ -85,6 +141,11 @@ public abstract class AbstractDirectLayout<T> {
         shouldInvert = false;
     }
     
+    /**
+     *
+     * @param atomContainer
+     * @param molAxis
+     */
     public void align(IAtomContainer atomContainer, Vector2d molAxis) {
         switch (params.moleculeAlignMethod) {
             case MAX_AXIS: alignToMaxWidth(atomContainer, molAxis);

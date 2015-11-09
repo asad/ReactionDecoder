@@ -78,6 +78,10 @@ public class Permutor {
         this.random = new Random();
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasNext() {
         return this.currentRank < this.maxRank;
     }
@@ -91,6 +95,10 @@ public class Permutor {
         this.currentRank = rank;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRank() {
         return this.currentRank;
     }

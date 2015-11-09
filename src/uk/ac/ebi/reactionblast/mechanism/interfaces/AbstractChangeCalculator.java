@@ -48,6 +48,12 @@ public abstract class AbstractChangeCalculator extends Utility {
     /*
      * Return KEGG like RPAIRS
      */
+
+    /**
+     *
+     * @return
+     */
+
     public abstract Map<String, Collection<String>> getMoleculeMoleculeTransformationPairs();
 
     /**
@@ -82,12 +88,31 @@ public abstract class AbstractChangeCalculator extends Utility {
      */
     public abstract Map<IAtom, String> getStereoCenterAtomsReactant();
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     public abstract IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException;
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     public abstract IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException;
 
+    /**
+     *
+     * @return
+     * @throws CDKException
+     */
     public abstract IPatternFingerprinter getReactionCenterWFingerprint() throws CDKException;
 
+    /**
+     *
+     * @return
+     */
     public abstract Collection<ReactionCenterFragment> getReactionCenterFragmentList();
 
     /**
@@ -114,6 +139,12 @@ public abstract class AbstractChangeCalculator extends Utility {
      * 
      * @return atom-atom mapping 
      */
+
+    /**
+     *
+     * @return
+     */
+
     public abstract Map<IAtom, IAtom> getAtomAtomMappings();
 
     /**

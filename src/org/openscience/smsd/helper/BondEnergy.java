@@ -105,6 +105,11 @@ public class BondEnergy {
         return energy;
     }
 
+    /**
+     *
+     * @param bond
+     * @return
+     */
     public synchronized boolean matches(IBond bond) {
         IAtom atom1 = bond.getAtom(0);
         IAtom atom2 = bond.getAtom(1);

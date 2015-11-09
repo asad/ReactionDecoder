@@ -114,6 +114,9 @@ public class BondEnergies {
         return instance;
     }
 
+    /**
+     *
+     */
     protected BondEnergies() {
 
         int key = 1;

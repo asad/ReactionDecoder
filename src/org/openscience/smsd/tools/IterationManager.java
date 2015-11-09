@@ -90,6 +90,10 @@ public class IterationManager implements Serializable {
         counter--;
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized boolean isMaxIteration() {
         return getCounter() > limit;
     }

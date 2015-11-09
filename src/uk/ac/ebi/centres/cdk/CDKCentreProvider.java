@@ -56,16 +56,29 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
     private final ConnectionTable<IAtom> table;
     private IAtomContainer cyclicFragments;
 
+    /**
+     *
+     * @param container
+     */
     public CDKCentreProvider(IAtomContainer container) {
         this.container = container;
         this.table = new CDKConnectionTable(container);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getAtomCount() {
         return container.getAtomCount();
     }
 
+    /**
+     *
+     * @param manager
+     * @return
+     */
     @Override
     public Collection<Centre<IAtom>> getCentres(DescriptorManager<IAtom> manager) {
 

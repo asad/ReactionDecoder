@@ -173,6 +173,13 @@ public class BaseTest extends TestUtility {
 
     }
 
+    /**
+     *
+     * @param cdkReaction
+     * @return
+     * @throws AssertionError
+     * @throws Exception
+     */
     public ReactionMechanismTool getAnnotation(IReaction cdkReaction) throws AssertionError, Exception {
         /*
          RMT for the reaction mapping

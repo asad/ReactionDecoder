@@ -59,10 +59,18 @@ public class MolMapping extends Object implements Serializable {
         this.rBLASTMapping = false;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuery() {
         return mol1;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTarget() {
         return mol2;
     }

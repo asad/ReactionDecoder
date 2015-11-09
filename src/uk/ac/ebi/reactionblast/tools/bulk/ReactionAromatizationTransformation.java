@@ -29,16 +29,29 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 
+/**
+ *
+ * @author asad
+ */
 public class ReactionAromatizationTransformation implements
         ITransformation<IReaction> {
 
     private static final Logger LOG = getLogger(ReactionAromatizationTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ITransformation.TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {

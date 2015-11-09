@@ -101,6 +101,10 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized IReaction getMappedReaction() {
         return reaction;
     }

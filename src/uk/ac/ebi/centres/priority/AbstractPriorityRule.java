@@ -34,6 +34,7 @@ import uk.ac.ebi.centres.PriorityRule;
  * the actual comparison of ligands.
  *
  * @author John May
+ * @param <A>
  */
 public abstract class AbstractPriorityRule<A>
         implements PriorityRule<A> {
@@ -49,6 +50,7 @@ public abstract class AbstractPriorityRule<A>
 
     /**
      * Default constructor creates an {@link Descriptor.Type#ASYMMETRIC} comparator.
+     * @param ordering
      */
     public AbstractPriorityRule(Type ordering) {
         this(ASYMMETRIC, ordering);
@@ -56,6 +58,7 @@ public abstract class AbstractPriorityRule<A>
 
     /**
      * Constructor creates a comparator with the specified type.
+     * @param ordering
      */
     public AbstractPriorityRule(Descriptor.Type reflection, Type ordering) {
         this.ordering = ordering;
@@ -68,6 +71,12 @@ public abstract class AbstractPriorityRule<A>
         this.halted = halt;
     }
 
+    /**
+     *
+     * @param o1
+     * @param o2
+     * @return
+     */
     public int recursiveCompare(Ligand<A> o1, Ligand<A> o2) {
 
         int value = compare(o1, o2);
@@ -175,6 +184,10 @@ public abstract class AbstractPriorityRule<A>
         return 0;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isHalted() {
         return halted;
     }

@@ -205,6 +205,10 @@ public class GraphMatching extends IGraphMatching implements Serializable {
         return product;
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized Map<IAtom, IAtom> getFirstAtomMapping() {
         return unmodifiableMap(bestAtomMappingList);
     }

@@ -51,7 +51,16 @@ public class CDKInChI {
     /*
     On suggestion from D. Schomburg as 'At' a radioactive halogen that never appears in nature
      */
+
+    /**
+     *
+     */
+
     public static final String R_Group_replacement_String = "At";
+
+    /**
+     *
+     */
     public static final String[] metals = {"At", "Th", "Pa", "U", "Np", "Pu", "Am",
         "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"};
     private static final Logger LOG = getLogger(CDKInChI.class.getName());
@@ -59,6 +68,10 @@ public class CDKInChI {
     private InChIGenerator _genInchi;
     private final InChIToStructure _intostruct;
     private final InChIGeneratorFactory factory;
+
+    /**
+     *
+     */
     protected IAtomContainer molecule;
 
     /**

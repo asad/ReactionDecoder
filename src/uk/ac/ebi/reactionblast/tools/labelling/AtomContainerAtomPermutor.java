@@ -39,6 +39,12 @@ public class AtomContainerAtomPermutor extends Permutor
     private static boolean clone = false;
     private static final Logger LOG = getLogger(AtomContainerAtomPermutor.class.getName());
 
+    /**
+     *
+     * @param p
+     * @param atomContainer
+     * @return
+     */
     public static IAtomContainer permute(int[] p, IAtomContainer atomContainer) {
 //        if (useA) {
 //            return permuteA(p, atomContainer);
@@ -122,11 +128,21 @@ public class AtomContainerAtomPermutor extends Permutor
     }
     private IAtomContainer original;
     
+    /**
+     *
+     * @param atomContainer
+     */
     public AtomContainerAtomPermutor(IAtomContainer atomContainer) {
         super(atomContainer.getAtomCount());
         original = atomContainer;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param useA
+     * @param clone
+     */
     public AtomContainerAtomPermutor(IAtomContainer atomContainer, boolean useA, boolean clone) {
         this(atomContainer);
         useA = useA;

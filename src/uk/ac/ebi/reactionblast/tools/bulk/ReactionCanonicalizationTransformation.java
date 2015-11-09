@@ -37,16 +37,29 @@ public class ReactionCanonicalizationTransformation implements ITransformation<I
 
     private final ICanonicalReactionLabeller canonicalReactionLabeller;
 
+    /**
+     *
+     * @param canonicalReactionLabeller
+     */
     public ReactionCanonicalizationTransformation(
             ICanonicalReactionLabeller canonicalReactionLabeller) {
         this.canonicalReactionLabeller = canonicalReactionLabeller;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         return canonicalReactionLabeller.getCanonicalReaction(reaction);

@@ -34,6 +34,10 @@ import static org.openscience.cdk.geometry.GeometryTools.translate2DCenterTo;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 
+/**
+ *
+ * @author asad
+ */
 public class ZoomToFitGridLayout {
     private static final Logger LOG = getLogger(ZoomToFitGridLayout.class.getName());
 
@@ -43,20 +47,40 @@ public class ZoomToFitGridLayout {
 
     private int cols;
 
+    /**
+     *
+     */
     public ZoomToFitGridLayout() {
         drawer = new DirectMoleculeDrawer();
     }
 
+    /**
+     *
+     * @param rows
+     * @param cols
+     */
     public ZoomToFitGridLayout(int rows, int cols) {
         this(new DirectMoleculeDrawer(), rows, cols);
     }
 
+    /**
+     *
+     * @param drawer
+     * @param rows
+     * @param cols
+     */
     public ZoomToFitGridLayout(DirectMoleculeDrawer drawer, int rows, int cols) {
         this.drawer = drawer;
         this.rows = rows;
         this.cols = cols;
     }
 
+    /**
+     *
+     * @param mols
+     * @param cellCanvas
+     * @param g
+     */
     public void layout(
             List<IAtomContainer> mols, Dimension cellCanvas, Graphics2D g) {
         AffineTransform originalTransform = g.getTransform();

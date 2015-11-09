@@ -36,11 +36,21 @@ import static org.openscience.smsd.algorithm.vflib.SortOrder.ASCENDING;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
+
+/**
+ *
+ * @author asad
+ */
+
 public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
     private static final Logger LOG = getLogger(Map1ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
+    /**
+     *
+     * @param sortOrder
+     */
     public Map1ValueComparator(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }

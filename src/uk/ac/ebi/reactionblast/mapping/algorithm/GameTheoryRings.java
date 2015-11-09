@@ -72,7 +72,7 @@ import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 
-class GameTheoryRings extends BaseGameTheory {
+final class GameTheoryRings extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x152ec264bc2L;

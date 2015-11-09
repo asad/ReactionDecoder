@@ -37,6 +37,11 @@ public class AtomContainerPrinter {
     
     private static final Logger LOG = getLogger(AtomContainerPrinter.class.getName());
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     public String toString(IAtomContainer atomContainer) {
         StringBuilder sb = new StringBuilder();
         for (IAtom atom : atomContainer.atoms()) {

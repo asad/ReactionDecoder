@@ -86,6 +86,9 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     private String fingerprintID = "?";
     private int fingerprintSize;
 
+    /**
+     *
+     */
     public PatternFingerprinter() {
         this(getFingerprinterSize());
     }
@@ -244,6 +247,10 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         return binary;
     }
     
+    /**
+     *
+     * @return
+     */
     @Override
     public double[] getWeightedHashedFingerPrint() {
         RandomNumber randomNumberGen = new RandomNumber();
@@ -396,6 +403,11 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         return fingerprintSize;
     }
     
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     public boolean hasFeature(IFeature key) {
         return this.featureSet.contains(key);

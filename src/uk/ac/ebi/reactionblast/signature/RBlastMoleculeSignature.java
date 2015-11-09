@@ -52,6 +52,10 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
         builder = new RBlastMoleculeFromSignatureBuilder(atomContainer.getBuilder());
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAtomCount() {
         return this.getVertexCount();
     }
@@ -166,6 +170,12 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
         builder.setBondSensitive(isBondSensitive);
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @param height
+     * @return
+     */
     public String getSmilesForAtomSignature(int atomIndex, int height) {
         return getSmilesForAtomSignature(atomIndex, height, new RBlastMoleculeSignatureLabellingAdaptor());
     }

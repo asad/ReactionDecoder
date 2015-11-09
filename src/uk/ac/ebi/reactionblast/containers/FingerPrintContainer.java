@@ -108,6 +108,10 @@ public class FingerPrintContainer implements IFingerPrintContainer {
         FingerPrintMap.remove(Key);
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized Integer getCount() {
         return FingerPrintMap.size();
     }
@@ -202,6 +206,10 @@ public class FingerPrintContainer implements IFingerPrintContainer {
 //        System.out.println("FingerPrintMap " + FingerPrintMap.size() + " val: " + Value.cardinality());
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized Set<String> getCompoundIDSet() {
         return FingerPrintMap.keySet();
     }

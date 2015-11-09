@@ -42,6 +42,11 @@ public interface IInChIContainer {
      */
     void Erase(String Key) throws IOException;
 
+    /**
+     *
+     * @return
+     * @throws CloneNotSupportedException
+     */
     Object clone() throws CloneNotSupportedException;
 
     /**

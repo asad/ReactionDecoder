@@ -23,12 +23,30 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public interface CanvasGenerator {
 
+    /**
+     *
+     * @param atomContainers
+     * @param cellCanvas
+     */
     public void layout(List<IAtomContainer> atomContainers, Dimension cellCanvas);
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     public Rectangle2D getCanvasForAtomContainer(IAtomContainer atomContainer);
 
+    /**
+     *
+     * @return
+     */
     public Dimension getSize();
 
 }

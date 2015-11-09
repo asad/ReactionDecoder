@@ -80,6 +80,11 @@ public class Chirality2DTool implements ChiralityTool {
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     @Override
     public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
             IAtomContainer atomContainer) {

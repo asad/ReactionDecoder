@@ -40,20 +40,40 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class MappingGraph {
     private static final Logger LOG = getLogger(MappingGraph.class.getName());
+
+    /**
+     *
+     */
     public List<DefinedMapping> vertices;
+
+    /**
+     *
+     */
     public List<DefinedMapping>[] adjacencyTable;
 
+    /**
+     *
+     * @param reaction
+     */
     public MappingGraph(IReaction reaction) {
         vertices = createDefinedMappings(reaction);
 //        System.out.println(vertices.size() + " vertices");
         adjacencyTable = makeAdjacencyTable();
     }
 
+    /**
+     *
+     * @param mappings
+     */
     public MappingGraph(List<DefinedMapping> mappings) {
         vertices = mappings;
         adjacencyTable = makeAdjacencyTable();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<List<DefinedMapping>> calculateConnectedComponents() {
         int[] componentLabels = new int[vertices.size()];
         List<List<DefinedMapping>> components
@@ -101,6 +121,11 @@ public class MappingGraph {
         return definedMappings;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public List<BlockPair> createBlockPairs(IReaction reaction) {
         List<BlockPair> blockPairs = new ArrayList<>();
 

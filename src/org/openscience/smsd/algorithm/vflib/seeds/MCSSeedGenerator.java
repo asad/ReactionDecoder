@@ -88,6 +88,12 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         this.bondMatch = bondMatch;
     }
 
+    /**
+     *
+     * @param source
+     * @param target
+     * @param algorithm
+     */
     public MCSSeedGenerator(IQueryAtomContainer source, IAtomContainer target, Algorithm algorithm) {
         this.source = source;
         this.target = target;
@@ -117,6 +123,11 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     protected synchronized List<AtomAtomMapping> addKochCliques() throws IOException {
         IAtomContainer ac1;
         IAtomContainer ac2;
@@ -261,4 +272,5 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         }
         return v;
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MCSSeedGenerator.class.getName());
 }

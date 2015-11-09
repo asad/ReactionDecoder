@@ -72,6 +72,10 @@ public class PathGraph {
     private final List<IAtom> atoms;
     private final IAtomContainer mol;
 
+    /**
+     *
+     * @param molecule
+     */
     public PathGraph(IAtomContainer molecule) {
         edges = new ArrayList<>();
         atoms = new ArrayList<>();
@@ -81,6 +85,9 @@ public class PathGraph {
         loadNodes(molecule);
     }
 
+    /**
+     *
+     */
     public void printPaths() {
         for (PathEdge edge : edges) {
             if (edge.isCycle()) {
@@ -95,6 +102,11 @@ public class PathGraph {
         }
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public List<PathEdge> remove(IAtom atom) {
         List<PathEdge> oldEdges = getEdges(atom);
         List<PathEdge> result = new ArrayList<>();

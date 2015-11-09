@@ -33,22 +33,41 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
+/**
+ *
+ * @author asad
+ */
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
     private static final Logger LOG = getLogger(LinearAtomContainerSetLayout.class.getName());
 
     private Vector2d moleculeSetAxis;
     private MoleculeLayout moleculeLayout;
 
+    /**
+     *
+     * @param moleculeSetAxis
+     */
     public LinearAtomContainerSetLayout(Vector2d moleculeSetAxis) {
         this(moleculeSetAxis, new Params());
     }
 
+    /**
+     *
+     * @param moleculeSetAxis
+     * @param params
+     */
     public LinearAtomContainerSetLayout(Vector2d moleculeSetAxis, Params params) {
         this.params = params;
         moleculeLayout = new MoleculeLayout(params);
         this.moleculeSetAxis = moleculeSetAxis;
     }
 
+    /**
+     *
+     * @param atomContainerSet
+     * @param graphics
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainerSet atomContainerSet, Graphics2D graphics) {
         // TODO : plusBounds.getHeight() for T2B layout
@@ -95,6 +114,13 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         return boundsTree;
     }
 
+    /**
+     *
+     * @param obj
+     * @param rootLabel
+     * @param graphics
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainerSet obj, String rootLabel,
             Graphics2D graphics) {

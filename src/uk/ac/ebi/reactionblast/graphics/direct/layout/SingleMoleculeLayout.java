@@ -35,22 +35,41 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
+/**
+ *
+ * @author asad
+ */
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
     private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
 
+    /**
+     *
+     * @param params
+     */
     public SingleMoleculeLayout(Params params) {
         this(params, false);
     }
 
+    /**
+     *
+     * @param params
+     * @param forceRelayout
+     */
     public SingleMoleculeLayout(Params params, boolean forceRelayout) {
         setParams(params);
         sdg = new StructureDiagramGenerator();
         this.forceRelayout = forceRelayout;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param axis
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainer atomContainer, Vector2d axis) {
         // XXX axis is used here to mean center point! :( bad design....
@@ -76,12 +95,20 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
         return new BoundsTree(label, label, bounds);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         // TODO Auto-generated method stub

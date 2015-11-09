@@ -62,10 +62,17 @@ public class EBIBitSet extends BitSet {
         return append;
     }
     
+    /**
+     *
+     */
     public EBIBitSet() {
         super();
     }
 
+    /**
+     *
+     * @param nbits
+     */
     public EBIBitSet(int nbits) {
         super(nbits);
     }

@@ -257,6 +257,11 @@ public class BEMatrix extends EBIMatrix implements Serializable {
         return bondOrder;
     }
 
+    /**
+     *
+     * @throws CDKException
+     * @throws CDKException
+     */
     public void setAromaticBond() throws CDKException, CDKException {
         for (int i = 0; i < myMoleculeSet.getAtomContainerCount(); i++) {
             IAtomContainer m = myMoleculeSet.getAtomContainer(i);

@@ -59,6 +59,7 @@ public abstract class StereoCenteralityTool extends Utility {
      * @param reaction
      * @return
      * @throws CDKException
+     * @throws java.lang.CloneNotSupportedException
      */
     public static Map<IAtom, IStereoAndConformation> getChirality2D(IReaction reaction) throws CDKException, CloneNotSupportedException {
         Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
@@ -96,6 +97,12 @@ public abstract class StereoCenteralityTool extends Utility {
         return chiralityMap;
     }
 
+    /**
+     *
+     * @param ac
+     * @param perceptor
+     * @return
+     */
     public static Map<IAtom, IStereoAndConformation> getChirality2D(IAtomContainer ac, CDKPerceptor perceptor) {
         Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
         perceptor.perceive(ac);

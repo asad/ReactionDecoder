@@ -31,8 +31,19 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  */
 public interface ChiralityTool {
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(IAtomContainer atomContainer);
 
+    /**
+     *
+     * @param atomContainer
+     * @param getNoneAssignments
+     * @return
+     */
     public Map<IAtom, IStereoAndConformation> getTetrahedralChiralities(
             IAtomContainer atomContainer, boolean getNoneAssignments);
 }

@@ -70,6 +70,13 @@ public class AbstractReactionLabeller {
         }
     }
 
+    /**
+     *
+     * @param original
+     * @param clone
+     * @param permutationMap
+     * @param atomAtom
+     */
     protected void atomAtomMap(IAtomContainerSet original,
             IAtomContainerSet clone, Map<IAtomContainer, int[]> permutationMap,
             Map<IAtom, IAtom> atomAtom) {
@@ -83,6 +90,13 @@ public class AbstractReactionLabeller {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     * @param clone
+     * @param permutationMap
+     * @return
+     */
     protected Map<IAtom, IAtom> atomAtomMap(
             IReaction reaction, IReaction clone,
             Map<IAtomContainer, int[]> permutationMap) {
@@ -100,6 +114,12 @@ public class AbstractReactionLabeller {
         return atomAtom;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param atomAtomMap
+     * @return
+     */
     protected List<IMapping> cloneMappings(
             IReaction reaction, Map<IAtom, IAtom> atomAtomMap) {
         // clone the mappings
@@ -112,6 +132,12 @@ public class AbstractReactionLabeller {
         return map;
     }
 
+    /**
+     *
+     * @param mapping
+     * @param atomAtomMap
+     * @return
+     */
     protected IMapping cloneMapping(
             IMapping mapping, Map<IAtom, IAtom> atomAtomMap) {
         IChemObject keyChemObj0 = mapping.getChemObject(0);
@@ -130,6 +156,11 @@ public class AbstractReactionLabeller {
         return new Mapping(co0, co1);
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     protected Map<IChemObject, Integer> makeIndexMap(IReaction reaction) {
         Map<IChemObject, Integer> indexMap
                 = new HashMap<>();
@@ -163,6 +194,11 @@ public class AbstractReactionLabeller {
         sortMappings(copyOfReaction, map);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param map
+     */
     protected void sortMappings(IReaction reaction, List<IMapping> map) {
         // make a lookup for the indices of the atoms 
         final Map<IChemObject, Integer> indexMap = makeIndexMap(reaction);
@@ -199,6 +235,13 @@ public class AbstractReactionLabeller {
         }
     }
 
+    /**
+     *
+     * @param moleculeSet
+     * @param labeller
+     * @param permutationMap
+     * @return
+     */
     protected IAtomContainerSet canoniseAtomContainerSet(
             IAtomContainerSet moleculeSet,
             ICanonicalMoleculeLabeller labeller,
@@ -219,6 +262,12 @@ public class AbstractReactionLabeller {
         return canonicalMolecules;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param labeller
+     * @return
+     */
     public IReaction labelReaction(
             IReaction reaction, ICanonicalMoleculeLabeller labeller) {
         out.println("labelling " + reaction.getID());

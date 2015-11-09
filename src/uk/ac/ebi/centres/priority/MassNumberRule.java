@@ -29,6 +29,7 @@ import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
  * custom atom type.
  *
  * @author John May
+ * @param <A>
  */
 public class MassNumberRule<A>
         extends AbstractPriorityRule<A> {

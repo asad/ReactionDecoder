@@ -28,14 +28,49 @@ package uk.ac.ebi.reactionblast.mechanism.interfaces;
  */
 public enum EnumBondTypeChange {
 
+    /**
+     *
+     */
     SINGLE_BOND_BROKEN_FORMED(0, "SINGLE_BOND_BROKEN_FORMED"),
+
+    /**
+     *
+     */
     DOUBLE_BOND_BROKEN_FORMED(1, "DOUBLE_BOND_BROKEN_FORMED"),
+
+    /**
+     *
+     */
     TRIPLE_BOND_BROKEN_FORMED(2, "TRIPLE_BOND_BROKEN_FORMED"),
+
+    /**
+     *
+     */
     SINGLE_BOND_ORDER_CHANGE(3, "SINGLE_BOND_ORDER_CHANGE"),
+
+    /**
+     *
+     */
     DOUBLE_BOND_ORDER_CHANGE(4, "DOUBLE_BOND_ORDER_CHANGE"),
+
+    /**
+     *
+     */
     TRIPLE_BOND_ORDER_CHANGE(5, "TRIPLE_BOND_ORDER_CHANGE"),
+
+    /**
+     *
+     */
     BOND_STEREO_CHANGE(6, "BOND_STEREO_CHANGE"),
+
+    /**
+     *
+     */
     NO_CHANGE(7, "NO_CHANGE"),
+
+    /**
+     *
+     */
     UNKNOWN_CHANGE(8, "UNKNOWN_CHANGE");
     private final int type;
     private final String description;

@@ -49,7 +49,14 @@ import uk.ac.ebi.reactionblast.graphics.direct.ConvexHull;
  */
 public class MoleculeAligner {
 
+    /**
+     *
+     */
     public static final Vector2d X_AXIS = new Vector2d(1, 0);
+
+    /**
+     *
+     */
     public static final Vector2d Y_AXIS = new Vector2d(0, 1);
     private static final Logger LOG = getLogger(MoleculeAligner.class.getName());
 
@@ -67,6 +74,11 @@ public class MoleculeAligner {
         alignToAxis(atomContainer, hull.getMajorAxis(), axis, hull.getCenter());
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     public static Vector2d getMaxWidthVector(IAtomContainer atomContainer) {
         int nAtoms = atomContainer.getAtomCount();
         Vector2d widthVector = null;
@@ -104,6 +116,11 @@ public class MoleculeAligner {
         return widthVector;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param axis
+     */
     public static void alignToMaxWidth(IAtomContainer atomContainer, Vector2d axis) {
         Vector2d widthVector = getMaxWidthVector(atomContainer);
         Point2d center = get2DCenter(atomContainer);
@@ -170,6 +187,14 @@ public class MoleculeAligner {
 //    private static String toStr(double angle) {
 //        return String.format("%2.2f", Math.toDegrees(angle));
 //    }
+
+    /**
+     *
+     * @param atomContainer
+     * @param axisFrom
+     * @param axisTo
+     * @param center
+     */
     public static void alignToAxis(IAtomContainer atomContainer,
             Vector2d axisFrom,
             Vector2d axisTo,

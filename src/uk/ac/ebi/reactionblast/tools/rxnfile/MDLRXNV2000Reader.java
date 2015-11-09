@@ -92,6 +92,11 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
         this(in, RELAXED);
     }
 
+    /**
+     *
+     * @param in
+     * @param mode
+     */
     public MDLRXNV2000Reader(Reader in, Mode mode) {
         if (in instanceof BufferedReader) {
             input = (BufferedReader) in;
@@ -101,24 +106,45 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
         super.mode = mode;
     }
 
+    /**
+     *
+     * @param input
+     */
     public MDLRXNV2000Reader(InputStream input) {
         this(input, RELAXED);
     }
 
+    /**
+     *
+     * @param input
+     * @param mode
+     */
     public MDLRXNV2000Reader(InputStream input, Mode mode) {
         this(new InputStreamReader(input), mode);
     }
 
+    /**
+     *
+     */
     public MDLRXNV2000Reader() {
         this(new StringReader(""));
     }
 
+    /**
+     *
+     * @return
+     */
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return getInstance();
     }
 
+    /**
+     *
+     * @param input
+     * @throws CDKException
+     */
     @TestMethod("testSetReader_Reader")
     @Override
     public void setReader(Reader input) throws CDKException {
@@ -129,12 +155,22 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     * @param input
+     * @throws CDKException
+     */
     @TestMethod("testSetReader_InputStream")
     @Override
     public void setReader(InputStream input) throws CDKException {
         setReader(new InputStreamReader(input));
     }
 
+    /**
+     *
+     * @param classObject
+     * @return
+     */
     @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {
@@ -194,6 +230,11 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     * @param object
+     * @return
+     */
     @TestMethod("testAccepts")
     public boolean accepts(IChemObject object) {
         if (object instanceof IReaction) {

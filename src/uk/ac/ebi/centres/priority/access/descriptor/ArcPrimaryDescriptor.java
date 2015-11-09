@@ -27,6 +27,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  * Access a descriptor on the parent arc of a ligand.
  *
  * @author John May
+ * @param <A>
  */
 public class ArcPrimaryDescriptor<A> implements DescriptorAccessor<A> {
 

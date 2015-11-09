@@ -63,7 +63,7 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class BondChangeAnnotator extends DUModel {
+public final class BondChangeAnnotator extends DUModel {
 
     private static final long serialVersionUID = 988987678877861L;
     private static final Logger LOG = getLogger(BondChangeAnnotator.class.getName());
@@ -84,61 +84,108 @@ public class BondChangeAnnotator extends DUModel {
         markBondChanges();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized AtomAtomMappingContainer getMappingContainer() {
         return mapping;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized BEMatrix getEductBEMatrix() {
         return reactantBE;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<BondChange> getBondChangeList() {
         return bondChangeList;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Collection<IAtom> getReactionCenterSet() {
         return reactionCenterList;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<AtomStereoChangeInformation> getStereoChangeList() {
         return stereoChangeList;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized BEMatrix getProductBEMatrix() {
         return productBE;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized Map<IAtom, IAtom> getMappingMap() {
         return synchronizedMap(mappingMap);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized RMatrix getRMatrix() {
         return reactionMatrix;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized boolean hasRMatrix() {
         return reactionMatrix != null;
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printBMatrix() {
         printBEMatrix(reactantBE);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public List<AtomStereoChangeInformation> getConformationChangeList() {
         return conformationChangeList;
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeBMatrix(File outputFile) {
         try {
@@ -148,11 +195,18 @@ public class BondChangeAnnotator extends DUModel {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printEMatrix() {
         printBEMatrix(productBE);
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeEMatrix(File outputFile) {
         try {
@@ -162,11 +216,18 @@ public class BondChangeAnnotator extends DUModel {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void printRMatrix() {
         printReactionMatrix(reactionMatrix);
     }
 
+    /**
+     *
+     * @param outputFile
+     */
     @Override
     public synchronized void writeRMatrix(File outputFile) {
         try {

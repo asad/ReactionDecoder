@@ -57,7 +57,7 @@ import static org.openscience.smsd.helper.LabelContainer.getInstance;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
-public class GenerateCompatibilityGraph implements Serializable {
+public final class GenerateCompatibilityGraph implements Serializable {
 
     private static final long serialVersionUID = 96986606860861L;
     private static final Logger LOG = getLogger(GenerateCompatibilityGraph.class.getName());
@@ -451,22 +451,42 @@ public class GenerateCompatibilityGraph implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized List<Integer> getCEgdes() {
         return synchronizedList(cEdges);
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized List<Integer> getDEgdes() {
         return synchronizedList(dEdges);
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized List<Integer> getCompGraphNodes() {
         return synchronizedList(compGraphNodes);
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized int getCEdgesSize() {
         return cEdgesSize;
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized int getDEdgesSize() {
         return dEdgesSize;
     }
@@ -499,6 +519,9 @@ public class GenerateCompatibilityGraph implements Serializable {
         dEdgesSize = 0;
     }
 
+    /**
+     *
+     */
     public synchronized void clear() {
         cEdges.clear();
         dEdges.clear();

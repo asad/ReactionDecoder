@@ -44,6 +44,11 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
     private static final Logger LOG = getLogger(SmilesMoleculeLabeller.class.getName());
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         try {

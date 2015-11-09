@@ -133,6 +133,11 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return smiles;
     }
 
+    /**
+     *
+     * @param mol
+     * @return
+     */
     protected static List<IAtom> getAtoms(
             IAtomContainer mol) {
         List<IAtom> atoms = new ArrayList<>(mol.getAtomCount());
@@ -142,6 +147,12 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return atoms;
     }
 
+    /**
+     *
+     * @param bond
+     * @param molset
+     * @return
+     */
     protected static String getMoleculeID(IBond bond, IAtomContainerSet molset) {
         for (IAtomContainer mol : molset.atomContainers()) {
             if (mol.contains(bond)) {
@@ -151,6 +162,12 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return null;
     }
 
+    /**
+     *
+     * @param atom
+     * @param molset
+     * @return
+     */
     protected static String getMoleculeID(IAtom atom, IAtomContainerSet molset) {
         for (IAtomContainer mol : molset.atomContainers()) {
             if (mol.contains(atom)) {
@@ -160,6 +177,12 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return null;
     }
 
+    /**
+     *
+     * @param bond
+     * @param molset
+     * @return
+     */
     protected static IAtomContainer getAtomContainer(IBond bond, IAtomContainerSet molset) {
         for (IAtomContainer mol : molset.atomContainers()) {
             if (mol.contains(bond)) {
@@ -169,6 +192,12 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         return null;
     }
 
+    /**
+     *
+     * @param atom
+     * @param molset
+     * @return
+     */
     protected static IAtomContainer getAtomContainer(IAtom atom, IAtomContainerSet molset) {
         for (IAtomContainer mol : molset.atomContainers()) {
             if (mol.contains(atom)) {
@@ -304,6 +333,11 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
 
     }
 
+    /**
+     *
+     * @param bond
+     * @return
+     */
     protected static String getCanonicalisedBondChangePattern(IBond bond) {
         String symbol = getBondOrderSign(bond);
         List<String> atoms = new ArrayList<>(2);

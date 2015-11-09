@@ -57,6 +57,10 @@ import org.openscience.cdk.ringsearch.SSSRFinder;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectBondDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());
 
@@ -64,6 +68,11 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
     private final Stroke dashedWedgeStroke;
     private Stroke bondStroke;
 
+    /**
+     *
+     * @param params
+     * @param labelManager
+     */
     public DirectBondDrawer(Params params, LabelManager labelManager) {
         setParams(params);
         this.labelManager = labelManager;
@@ -87,6 +96,11 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         bondStroke = new BasicStroke(params.bondStrokeWidth, cap, join);
     }
 
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     public void drawBonds(IAtomContainer molecule, Graphics2D g) {
         setBondStroke();
         g.setStroke(bondStroke);
@@ -160,6 +174,12 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         return bondRingMap;
     }
 
+    /**
+     *
+     * @param bond
+     * @param bondRingMap
+     * @param g
+     */
     public void drawBond(
             IBond bond, Map<IBond, IAtomContainer> bondRingMap, Graphics2D g) {
         Point2d p1 = bond.getAtom(0).getPoint2d();
@@ -235,6 +255,13 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
 
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     * @param c
+     * @param g
+     */
     public void drawDashedWedge(Point2d a, Point2d b, Point2d c, Graphics2D g) {
         Stroke savedStroke = g.getStroke();
         g.setStroke(dashedWedgeStroke);
@@ -261,6 +288,13 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         g.setStroke(savedStroke);
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     * @param c
+     * @param g
+     */
     public void drawDashedWedge2(Point2d a, Point2d b, Point2d c, Graphics2D g) {
         Stroke savedStroke = g.getStroke();
         g.setStroke(dashedWedgeStroke);
@@ -307,6 +341,12 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         g.fill(path);
     }
 
+    /**
+     *
+     * @param p1
+     * @param p2
+     * @param g
+     */
     public void drawWigglyLine(Point2d p1, Point2d p2, Graphics2D g) {
         double gapProportion = 0.1;
         double wiggleWidth = params.wiggleLineWidth;

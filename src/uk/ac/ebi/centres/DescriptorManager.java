@@ -19,12 +19,27 @@ package uk.ac.ebi.centres;
 
 /**
  * @author John May
+ * @param <A>
  */
 public interface DescriptorManager<A> {
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public MutableDescriptor getDescriptor(A atom);
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public MutableDescriptor getDescriptor(A first, A second);
 
+    /**
+     *
+     */
     public void clear();
 }

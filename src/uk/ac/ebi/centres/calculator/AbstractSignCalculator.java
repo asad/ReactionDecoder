@@ -23,6 +23,7 @@ import uk.ac.ebi.centres.SignCalculator;
 
 /**
  * @author John May
+ * @param <A>
  */
 public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
 
@@ -30,8 +31,18 @@ public abstract class AbstractSignCalculator<A> implements SignCalculator<A> {
     private static final int y = 1;
     private static final int z = 2;
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract double getX(A atom);
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract double getY(A atom);
 
     double[] crossproduct(double[] v1, double[] v2) {

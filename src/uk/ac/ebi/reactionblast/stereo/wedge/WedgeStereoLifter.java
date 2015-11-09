@@ -44,6 +44,9 @@ public class WedgeStereoLifter {
 
     private final List<WedgeRule> rules;
 
+    /**
+     *
+     */
     public WedgeStereoLifter() {
         rules = new ArrayList<>();
         rules.add(new CWTetrahedralWedgeRule());
@@ -65,6 +68,12 @@ public class WedgeStereoLifter {
         return null;
     }
 
+    /**
+     *
+     * @param atom
+     * @param atomContainer
+     * @return
+     */
     public IStereoElement lift(IAtom atom, IAtomContainer atomContainer) {
         List<IBond> bonds = atomContainer.getConnectedBondsList(atom);
         if (bonds.size() < 3) {

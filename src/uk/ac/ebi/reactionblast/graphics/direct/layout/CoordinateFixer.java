@@ -25,10 +25,18 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
+/**
+ *
+ * @author asad
+ */
 public class CoordinateFixer {
 
     private static final Logger LOG = getLogger(CoordinateFixer.class.getName());
 
+    /**
+     *
+     * @param reaction
+     */
     public static void fixCoordinates(IReaction reaction) {
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);

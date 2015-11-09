@@ -35,6 +35,13 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
     private final A atom;
     private A parent;
 
+    /**
+     *
+     * @param descriptor
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public NonterminalLigand(MutableDescriptor descriptor,
             A atom,
             A parent,
@@ -42,6 +49,14 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
         this(descriptor, EMPTY_SET, atom, parent, distance);
     }
 
+    /**
+     *
+     * @param provider
+     * @param descriptor
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public NonterminalLigand(ConnectionProvider<A> provider,
             MutableDescriptor descriptor,
             A atom,
@@ -50,6 +65,15 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
         this(provider, descriptor, EMPTY_SET, atom, parent, distance);
     }
 
+    /**
+     *
+     * @param provider
+     * @param descriptor
+     * @param visited
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public NonterminalLigand(ConnectionProvider<A> provider,
             MutableDescriptor descriptor,
             Set<A> visited,
@@ -75,6 +99,14 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
         this.parent = parent;
     }
 
+    /**
+     *
+     * @param descriptor
+     * @param visited
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public NonterminalLigand(MutableDescriptor descriptor,
             Set<A> visited,
             A atom,
@@ -101,6 +133,10 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getParent() {
         return this.parent;
@@ -111,16 +147,28 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
         this.parent = atom;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getAtom() {
         return atom;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isTerminal() {
         return FALSE;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isBranching() {
         return FALSE;

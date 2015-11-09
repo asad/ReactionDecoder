@@ -214,6 +214,10 @@ public class MCSS {
         return solutions;
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized String getTitle() {
         return "Calculating Maximum Commmon Substrutures (MCSS) using SMSD";
     }

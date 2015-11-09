@@ -74,13 +74,44 @@ public class MCSThread implements Callable<MCSSolution> {
     private SmilesGenerator smiles;
     private Aromaticity aromaticity;
 
+    /**
+     *
+     */
     protected final IAtomContainer compound1;
+
+    /**
+     *
+     */
     protected final IAtomContainer compound2;
+
+    /**
+     *
+     */
     protected final int queryPosition;
+
+    /**
+     *
+     */
     protected final int targetPosition;
+
+    /**
+     *
+     */
     protected final boolean bondMatcher;
+
+    /**
+     *
+     */
     protected final boolean ringMatcher;
+
+    /**
+     *
+     */
     protected final IMappingAlgorithm theory;
+
+    /**
+     *
+     */
     protected final boolean atomMatcher;
     private final ICanonicalMoleculeLabeller labeller;
 

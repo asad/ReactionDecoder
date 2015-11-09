@@ -25,6 +25,13 @@ package uk.ac.ebi.reactionblast.mechanism.interfaces;
  */
 public enum EnumSubstrateProduct {
 
+    /**
+     *
+     */
     REACTANT,
+
+    /**
+     *
+     */
     PRODUCT;
 }

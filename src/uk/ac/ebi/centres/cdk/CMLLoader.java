@@ -42,6 +42,11 @@ public class CMLLoader {
 
     private static final Logger LOG = getLogger(CMLLoader.class.getName());
 
+    /**
+     *
+     * @param in
+     * @return
+     */
     public static IAtomContainer loadCML(InputStream in) {
         CMLReader reader = new CMLReader(in);
         try {

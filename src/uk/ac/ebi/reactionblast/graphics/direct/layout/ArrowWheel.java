@@ -30,6 +30,10 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectArrowDrawer;
 
+/**
+ *
+ * @author asad
+ */
 public class ArrowWheel {
     private static final Logger LOG = getLogger(ArrowWheel.class.getName());
 
@@ -41,11 +45,24 @@ public class ArrowWheel {
     
     private List<String> arrowLabels;
     
+    /**
+     *
+     * @param arrowDrawer
+     * @param hubMolecule
+     * @param rimMolecules
+     */
     public ArrowWheel(DirectArrowDrawer arrowDrawer,
             IAtomContainer hubMolecule, List<IAtomContainer> rimMolecules) {
         this(arrowDrawer, hubMolecule, rimMolecules, new ArrayList<String>());
     }
     
+    /**
+     *
+     * @param arrowDrawer
+     * @param hubMolecule
+     * @param rimMolecules
+     * @param arrowLabels
+     */
     public ArrowWheel(DirectArrowDrawer arrowDrawer, 
             IAtomContainer hubMolecule, List<IAtomContainer> rimMolecules,
                       List<String> arrowLabels) {
@@ -61,6 +78,11 @@ public class ArrowWheel {
         this.arrowLabels = arrowLabels;
     }
     
+    /**
+     *
+     * @param canvasGenerator
+     * @param g
+     */
     public void draw(CanvasGenerator canvasGenerator, Graphics2D g) {
         // layout the arrows
         for (Arrow arrow : arrows) {

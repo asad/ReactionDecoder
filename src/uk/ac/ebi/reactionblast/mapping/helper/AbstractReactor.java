@@ -30,6 +30,9 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public abstract class AbstractReactor extends MappingHandler {
 
+    /**
+     *
+     */
     public AbstractReactor() {
     }
 
@@ -68,6 +71,10 @@ public abstract class AbstractReactor extends MappingHandler {
      */
     public abstract IAtomContainerSet getExpandedReactants() throws IOException;
 
+    /**
+     *
+     * @return
+     */
     public abstract int getMappingCount();
 
     /**

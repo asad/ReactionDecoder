@@ -34,36 +34,89 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * than just using atom positions.
  *
  * @author maclean
+ * @param <T>
  *
  */
 public abstract class AbstractAWTLayout<T> {
 
+    /**
+     *
+     */
     protected Graphics2D graphics;
+
+    /**
+     *
+     */
     protected AbstractAWTLayout parent;
+
+    /**
+     *
+     */
     protected T currentObject;
+
+    /**
+     *
+     */
     protected Params params;
+
+    /**
+     *
+     */
     protected BoundsTree boundsTree;
 
+    /**
+     *
+     * @return
+     */
     public Params getParams() {
         return params;
     }
 
+    /**
+     *
+     * @param params
+     */
     public void setParams(Params params) {
         this.params = params;
     }
 
+    /**
+     *
+     * @param obj
+     * @param graphics
+     * @return
+     */
     public abstract BoundsTree layout(T obj, Graphics2D graphics);
 
+    /**
+     *
+     * @param obj
+     * @param rootLabel
+     * @param graphics
+     * @return
+     */
     public abstract BoundsTree layout(T obj, String rootLabel, Graphics2D graphics);
 
+    /**
+     *
+     * @return
+     */
     public BoundsTree getBoundsTree() {
         return boundsTree;
     }
 
+    /**
+     *
+     * @return
+     */
     public T getCurrentObject() {
         return currentObject;
     }
 
+    /**
+     *
+     * @return
+     */
     public Graphics2D getGraphics() {
         return graphics;
     }

@@ -35,6 +35,10 @@ import org.openscience.cdk.io.MDLV2000Reader;
 import uk.ac.ebi.reactionblast.interfaces.IDataSource;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
+/**
+ *
+ * @author asad
+ */
 public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer> {
     private static final Logger LOG = getLogger(FilesystemMoleculeDataSource.class.getName());
     
@@ -44,6 +48,10 @@ public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer>
     
     private ITransformation<IAtomContainer> transformation;
     
+    /**
+     *
+     * @param moleculePath
+     */
     public FilesystemMoleculeDataSource(String moleculePath) {
         if (moleculePath != null) {
             this.moleculeDir = new File(moleculePath);

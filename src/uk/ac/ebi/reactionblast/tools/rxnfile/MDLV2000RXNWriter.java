@@ -86,6 +86,10 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
     private static final Logger LOG = getLogger(MDLV2000RXNWriter.class.getName());
     private BufferedWriter writer;
     private int reactionNumber;
+
+    /**
+     *
+     */
     public Map rdFields = null;
 
     /**
@@ -116,16 +120,28 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         this(new OutputStreamWriter(output));
     }
 
+    /**
+     *
+     */
     public MDLV2000RXNWriter() {
         this(new StringWriter());
     }
 
+    /**
+     *
+     * @return
+     */
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return getInstance();
     }
 
+    /**
+     *
+     * @param out
+     * @throws CDKException
+     */
     @Override
     public void setWriter(Writer out) throws CDKException {
         if (out instanceof BufferedWriter) {
@@ -135,6 +151,11 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         }
     }
 
+    /**
+     *
+     * @param output
+     * @throws CDKException
+     */
     @Override
     public void setWriter(OutputStream output) throws CDKException {
         setWriter(new OutputStreamWriter(output));
@@ -164,6 +185,11 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         writer.close();
     }
 
+    /**
+     *
+     * @param classObject
+     * @return
+     */
     @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {

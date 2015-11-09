@@ -47,6 +47,10 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
+/**
+ *
+ * @author asad
+ */
 public class RBlastReaction {
     private static final Logger LOG = getLogger(RBlastReaction.class.getName());
 
@@ -61,6 +65,11 @@ public class RBlastReaction {
     private Map<IAtom, IStereoAndConformation> atomStereoProductMap;
     private Map<IAtom, IStereoAndConformation> atomStereoReactantMap;
 
+    /**
+     *
+     * @param reaction
+     * @param useMappingGraph
+     */
     public RBlastReaction(IReaction reaction, boolean useMappingGraph) {
         this.reaction = reaction;
         if (useMappingGraph) {
@@ -72,6 +81,11 @@ public class RBlastReaction {
         setupBondChangeLists(reaction);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param pair
+     */
     public RBlastReaction(IReaction reaction, BlockPair pair) {
         this.reaction = reaction;
         blockPairs = new ArrayList<>();
@@ -79,6 +93,11 @@ public class RBlastReaction {
         setupBondChangeLists(reaction);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param pairs
+     */
     public RBlastReaction(IReaction reaction, List<BlockPair> pairs) {
         this.reaction = reaction;
         blockPairs = new ArrayList<>();

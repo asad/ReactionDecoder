@@ -83,8 +83,19 @@ import org.openscience.smsd.tools.IterationManager;
  */
 public class CDKMCS {
 
+    /**
+     *
+     */
     protected static boolean timeout = false;
+
+    /**
+     *
+     */
     protected final static int ID1 = 0;
+
+    /**
+     *
+     */
     protected final static int ID2 = 1;
     private static IterationManager iterationManager = null;
     private static final Logger LOG = getLogger(CDKMCS.class.getName());
@@ -145,6 +156,7 @@ public class CDKMCS {
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
      * @param shouldMatchBonds
      * @param shouldMatchRings
+     * @param matchAtomType
      * @return the first isomorph mapping found projected of g1. This is a List
      * of CDKRMap objects containing Ids of matching bonds.
      * @throws CDKException
@@ -174,6 +186,7 @@ public class CDKMCS {
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
      * @param shouldMatchBonds
      * @param shouldMatchRings
+     * @param matchAtomType
      * @return the first isomorph atom mapping found projected on g1. This is a
      * List of CDKRMap objects containing Ids of matching atoms.
      * @throws CDKException if the first molecules is not an instance of

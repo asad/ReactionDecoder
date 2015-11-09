@@ -38,15 +38,30 @@ public class CDKManager implements DescriptorManager<IAtom> {
     private final IAtomContainer container;
     private final Map<IChemObject, MutableDescriptor> map = new HashMap<>();
 
+    /**
+     *
+     * @param container
+     */
     public CDKManager(IAtomContainer container) {
         this.container = container;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public MutableDescriptor getDescriptor(IAtom atom) {
         return _getDescriptor(atom);
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public MutableDescriptor getDescriptor(IAtom first, IAtom second) {
         return _getDescriptor(container.getBond(first, second));
@@ -61,7 +76,9 @@ public class CDKManager implements DescriptorManager<IAtom> {
         return mutator;
     }
 
-
+    /**
+     *
+     */
     @Override
     public void clear() {
         map.clear();

@@ -23,6 +23,7 @@ import uk.ac.ebi.centres.Ligand;
 
 /**
  * @author John May
+ * @param <A>
  */
 public abstract class TwoDimensionalSignCalculator<A>
         extends AbstractSignCalculator<A> {

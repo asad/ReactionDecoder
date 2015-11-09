@@ -37,6 +37,9 @@ public class ReactionFileData extends Object implements Serializable {
     private static final Logger LOG = getLogger(ReactionFileData.class.getName());
     private List<String> _data = null;
 
+    /**
+     *
+     */
     public ReactionFileData() {
         _data = synchronizedList(new ArrayList<String>());
     }

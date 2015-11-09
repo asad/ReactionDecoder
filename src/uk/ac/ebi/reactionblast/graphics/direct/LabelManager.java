@@ -41,6 +41,10 @@ import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPos
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.W;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.values;
 
+/**
+ *
+ * @author asad
+ */
 public class LabelManager {
 
 
@@ -67,10 +71,18 @@ public class LabelManager {
 
     private final Map<IAtom, BitSet> atomAnnotationPositions;
 
+    /**
+     *
+     */
     public LabelManager() {
         atomAnnotationPositions = new HashMap<>();
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public String getAnnotationPositionsAsString(IAtom atom) {
         StringBuilder sb = new StringBuilder("|");
         BitSet positions = getAtomAnnotationPositions(atom);
@@ -84,10 +96,20 @@ public class LabelManager {
         return sb.toString();
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public AnnotationPosition getNextSparePosition(IAtom atom) {
         return getNextSparePosition(getAtomAnnotationPositions(atom));
     }
 
+    /**
+     *
+     * @param positions
+     * @return
+     */
     public AnnotationPosition getNextSparePosition(BitSet positions) {
         for (int i = 0; i < values().length; i++) {
             if (positions.get(i)) {
@@ -98,6 +120,11 @@ public class LabelManager {
         return null;
     }
 
+    /**
+     *
+     * @param position
+     * @return
+     */
     public Vector2d getVectorFromPosition(AnnotationPosition position) {
         switch (position) {
             case N:     return vN;
@@ -112,6 +139,11 @@ public class LabelManager {
         }
     }
 
+    /**
+     *
+     * @param position
+     * @return
+     */
     public Vector2d getLeftPerpendicularFromPosition(AnnotationPosition position) {
         switch (position) {
             case N:     return vW;
@@ -126,6 +158,11 @@ public class LabelManager {
         }
     }
 
+    /**
+     *
+     * @param position
+     * @return
+     */
     public Vector2d getRightPerpendicularFromPosition(AnnotationPosition position) {
         switch (position) {
             case N:     return vE;
@@ -140,6 +177,11 @@ public class LabelManager {
         }
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public BitSet getAtomAnnotationPositions(IAtom atom) {
         if (atomAnnotationPositions.containsKey(atom)) {
             return atomAnnotationPositions.get(atom);
@@ -150,6 +192,11 @@ public class LabelManager {
         }
     }
 
+    /**
+     *
+     * @param atom
+     * @param position
+     */
     public void setUsedPosition(IAtom atom, AnnotationPosition position) {
         // TODO : restore to this line
 //        getAtomAnnotationPositions(atom).set(position.ordinal());
@@ -162,6 +209,11 @@ public class LabelManager {
         pos.set(position.ordinal());
     }
 
+    /**
+     *
+     * @param align
+     * @return
+     */
     public AnnotationPosition alignmentToAnnotationPosition(int align) {
         switch (align) {
             case 1: return E;
@@ -172,6 +224,10 @@ public class LabelManager {
         }
     }
 
+    /**
+     *
+     * @param bond
+     */
     public void addBondToAtomAnnotationPositions(IBond bond) {
         IAtom atom0 = bond.getAtom(0);
         IAtom atom1 = bond.getAtom(1);
@@ -188,12 +244,24 @@ public class LabelManager {
 
     }
 
+    /**
+     *
+     * @param atomFrom
+     * @param atomTo
+     * @return
+     */
     public AnnotationPosition calculateBondPosition(IAtom atomFrom, IAtom atomTo) {
         AnnotationPosition pos = calculateRelativePosition(atomFrom.getPoint2d(), atomTo.getPoint2d());
 //        System.out.println("Relative position for " + atomFrom.getID() + " and " + atomTo.getID() + " is " + pos);
         return pos;
     }
 
+    /**
+     *
+     * @param fromPoint
+     * @param toPoint
+     * @return
+     */
     public AnnotationPosition calculateRelativePosition(Point2d fromPoint, Point2d toPoint) {
         Vector2d bondVector = new Vector2d(toPoint);
         bondVector.sub(fromPoint);
@@ -271,7 +339,11 @@ public class LabelManager {
         return (a == c && b == d) || (a == d && b == c);
     }
 
-
+    /**
+     *
+     * @param atom
+     * @param connectedAtomsInRing
+     */
     public void addRingCenterToAtomAnnotationPosition(
             IAtom atom, List<IAtom> connectedAtomsInRing) {
         Point2d p1 = atom.getPoint2d();
@@ -283,18 +355,68 @@ public class LabelManager {
         blockRingSegment(atom, ringPositions);
     }
 
+    /**
+     *
+     * @param atom
+     * @param suggestedPosition
+     * @return
+     */
     public boolean isUsed(IAtom atom, AnnotationPosition suggestedPosition) {
         int index = suggestedPosition.ordinal();
         return getAtomAnnotationPositions(atom).get(index);
     }
 
+    /**
+     *
+     */
     public void reset() {
         atomAnnotationPositions.clear();
     }
 
+    /**
+     *
+     */
     public enum AnnotationPosition {
 
-        N, W, S, E, NW, NE, SW, SE
+        /**
+         *
+         */
+        N, 
+
+        /**
+         *
+         */
+        W, 
+
+        /**
+         *
+         */
+        S, 
+
+        /**
+         *
+         */
+        E, 
+
+        /**
+         *
+         */
+        NW, 
+
+        /**
+         *
+         */
+        NE, 
+
+        /**
+         *
+         */
+        SW, 
+
+        /**
+         *
+         */
+        SE
     }
 
 }

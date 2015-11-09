@@ -40,11 +40,20 @@ public class ReactionAtomIDTransformation implements ITransformation<IReaction> 
 
     private static final Logger LOG = getLogger(ReactionAtomIDTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ITransformation.TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {

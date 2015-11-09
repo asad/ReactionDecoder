@@ -41,6 +41,10 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BIDIRECTIONAL;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectArrowDrawer extends AbstractDirectDrawer {
     
     private final static Vector2d X_AXIS = new Vector2d(1, 0);
@@ -49,10 +53,20 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
     
     private final Params params;
 
+    /**
+     *
+     * @param params
+     */
     public DirectArrowDrawer(Params params) {
         this.params = params;
     }
     
+    /**
+     *
+     * @param g
+     * @param c
+     * @param v
+     */
     public void drawArrow(Graphics2D g, Point2d c, Vector2d v) {
         Stroke savedStroke = g.getStroke();
         g.setStroke(new BasicStroke());
@@ -68,6 +82,13 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         g.setStroke(savedStroke);
     }
     
+    /**
+     *
+     * @param g
+     * @param c
+     * @param v
+     * @param text
+     */
     public void drawFatArrow(Graphics2D g, Point2d c, Vector2d v, String text) {
         int arrowLength = params.arrowLength;
         int arrowHeadLength = params.arrowHeadLength;
@@ -140,6 +161,13 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         }
     }
     
+    /**
+     *
+     * @param g
+     * @param c
+     * @param v
+     * @param text
+     */
     public void drawDoubleHeadedFatArrow(Graphics2D g, Point2d c, Vector2d v, String text) {
         int arrowLength = params.arrowLength;
         int arrowHeadLength = params.arrowHeadLength;
@@ -225,6 +253,13 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
         
     }
     
+    /**
+     *
+     * @param g
+     * @param c
+     * @param v
+     * @param text
+     */
     public void drawThinArrow(Graphics2D g, Point2d c, Vector2d v, String text) {
         int arrowLength = params.arrowLength;
         int arrowHeadLength = params.arrowHeadLength;

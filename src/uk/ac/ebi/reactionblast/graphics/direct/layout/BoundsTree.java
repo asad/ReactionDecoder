@@ -36,7 +36,7 @@ import static java.util.logging.Logger.getLogger;
  * @author maclean
  *
  */
-public class BoundsTree implements Iterable<Rectangle2D> {
+public final class BoundsTree implements Iterable<Rectangle2D> {
     private static final Logger LOG = getLogger(BoundsTree.class.getName());
 
     private Rectangle2D root;
@@ -68,6 +68,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         add(firstLabel, firstBox);
     }
 
+    /**
+     *
+     * @param rootLabel
+     * @param boundsTrees
+     */
     public BoundsTree(String rootLabel, BoundsTree... boundsTrees) {
         this(rootLabel);
         for (BoundsTree tree : boundsTrees) {
@@ -75,6 +80,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
     }
 
+    /**
+     *
+     * @param prefix
+     * @return
+     */
     public BoundsTree getSubtree(String prefix) {
         BoundsTree subtree = new BoundsTree(rootLabel);
         for (String label : childMap.keySet()) {
@@ -85,6 +95,10 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         return subtree;
     }
 
+    /**
+     *
+     * @return
+     */
     public Rectangle2D getRoot() {
         return this.root;
     }
@@ -114,6 +128,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
     }
 
+    /**
+     *
+     * @param label
+     * @param point
+     */
     public void add(String label, Point2D point) {
         Rectangle2D bounds = new Rectangle2D.Double(point.getX(), point.getY(), 0, 0);
         childMap.put(label, bounds);
@@ -126,6 +145,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
     }
 
+    /**
+     *
+     * @param labels
+     * @return
+     */
     public Rectangle2D getBounds(List<String> labels) {
         Rectangle2D totalBounds = null;
         for (String label : labels) {
@@ -150,6 +174,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
     }
 
     // XXX - this method is dangerous, consider removing!
+
+    /**
+     *
+     * @param root
+     */
     public void setRoot(Rectangle2D root) {
         this.root = root;
     }
@@ -160,6 +189,7 @@ public class BoundsTree implements Iterable<Rectangle2D> {
      * and the tree had labels {'atom1', 'atom2'}, the resulting bounds would be
      * labeled {'mol1_atom1', 'mol2_atom2'}.
      *
+     * @param prefix
      * @param label
      * @param tree
      */
@@ -169,10 +199,19 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getBoundLabels() {
         return new ArrayList<>(childMap.keySet());
     }
 
+    /**
+     *
+     * @param dx
+     * @param dy
+     */
     public void shift(double dx, double dy) {
         for (String key : childMap.keySet()) {
             Rectangle2D bounds = childMap.get(key);
@@ -193,6 +232,10 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         return childMap.get(label);
     }
 
+    /**
+     *
+     * @return
+     */
     public double getWidth() {
         if (root == null) {
             return 0;
@@ -201,6 +244,10 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public double getHeight() {
         if (root == null) {
             return 0;
@@ -214,6 +261,11 @@ public class BoundsTree implements Iterable<Rectangle2D> {
         return childMap.values().iterator();
     }
 
+    /**
+     *
+     * @param transform
+     * @return
+     */
     public BoundsTree transform(AffineTransform transform) {
         BoundsTree transformedTree = new BoundsTree(rootLabel);
         for (String key : childMap.keySet()) {

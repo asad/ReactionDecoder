@@ -76,12 +76,25 @@ public interface IPatternFingerprinter extends Comparable<IPatternFingerprinter>
      */
     public abstract int getFingerprintSize();
 
+    /**
+     *
+     * @return
+     */
     @Override
     public abstract int hashCode();
 
+    /**
+     *
+     * @param feature
+     * @return
+     */
     @Override
     public abstract boolean equals(Object feature);
 
+    /**
+     *
+     * @return
+     */
     @Override
     public abstract String toString();
 
@@ -122,8 +135,17 @@ public interface IPatternFingerprinter extends Comparable<IPatternFingerprinter>
      */
     public abstract int getFeatureCount();
 
+    /**
+     *
+     * @param key
+     * @return
+     */
     public abstract boolean hasFeature(IFeature key);
 
+    /**
+     *
+     * @return
+     */
     public abstract double[] getWeightedHashedFingerPrint();
 
     /**
@@ -133,5 +155,10 @@ public interface IPatternFingerprinter extends Comparable<IPatternFingerprinter>
      */
     public abstract void add(IFeature feature) throws CDKException;
 
+    /**
+     *
+     * @return
+     * @throws CloneNotSupportedException
+     */
     public IPatternFingerprinter clone() throws CloneNotSupportedException;
 }

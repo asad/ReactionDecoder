@@ -18,7 +18,19 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct;
 
+/**
+ *
+ * @author asad
+ */
 public enum Axis {
 
-    X, Y
+    /**
+     *
+     */
+    X, 
+
+    /**
+     *
+     */
+    Y
 }

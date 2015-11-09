@@ -231,6 +231,10 @@ public synchronized void setValue(String Key, BitSet Value) throws IOException {
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSize() {
         return fingerPrintMap.size();
     }

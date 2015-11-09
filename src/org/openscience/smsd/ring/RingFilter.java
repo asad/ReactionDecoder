@@ -74,11 +74,21 @@ public class RingFilter {
     private final AtomMatcher filter;
     private IAtomContainer mol;
 
+    /**
+     *
+     * @param filter
+     */
     public RingFilter(AtomMatcher filter) {
         comparator = new RingSizeComparator();
         this.filter = filter;
     }
 
+    /**
+     *
+     * @param atomLimit
+     * @param rings
+     * @param atoms
+     */
     public void filterAtoms(int atomLimit, Collection<List<IAtom>> rings, Collection<IAtom> atoms) {
         for (List<IAtom> ring : rings) {
             if (atoms.size() >= atomLimit) {
@@ -91,6 +101,11 @@ public class RingFilter {
         }
     }
 
+    /**
+     *
+     * @param molecule
+     * @param atoms
+     */
     public void filterAtoms(IAtomContainer molecule, Collection<IAtom> atoms) {
         this.mol = molecule;
         List<List<IAtom>> rings = new ArrayList<>(findRings(molecule));

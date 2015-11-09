@@ -46,6 +46,7 @@ import static uk.ac.ebi.centres.descriptor.Planar.z;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
     private static final Logger LOG = getLogger(PlanarCentre.class.getName());
@@ -54,6 +55,12 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
     private final AbstractLigand<A> second;
     private final Set<A> atoms;
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @param descriptor
+     */
     @SuppressWarnings("unchecked")
     public PlanarCentre(A first, A second,
             MutableDescriptor descriptor) {
@@ -70,6 +77,10 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
 
     }
 
+    /**
+     *
+     * @param provider
+     */
     @Override
     public void setProvider(ConnectionProvider<A> provider) {
         super.setProvider(provider);
@@ -85,6 +96,10 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         return ligands;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getAtom() {
         // might need a rethink...
@@ -110,6 +125,10 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         return atoms;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public A getParent() {
         throw new UnsupportedOperationException("Can't get parent on a planar centre");
@@ -120,12 +139,26 @@ public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
         throw new UnsupportedOperationException("Can't set parent on a planar centre");
     }
 
+    /**
+     *
+     * @param centres
+     * @param rule
+     * @param calculator
+     * @return
+     */
     @Override
     public int perceiveAuxiliary(Collection<Centre<A>> centres, PriorityRule<A> rule, SignCalculator<A> calculator) {
         // System.err.println("Auxiliary perception is not currently supported on planar centres");
         return 0;
     }
 
+    /**
+     *
+     * @param proximal
+     * @param rule
+     * @param calculator
+     * @return
+     */
     @Override
     public Descriptor perceive(List<Ligand<A>> proximal, PriorityRule<A> rule, SignCalculator<A> calculator) {
         // can't do this type of perception for planar centres

@@ -25,6 +25,10 @@ import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class DefinedMapping {
     private static final Logger LOG = getLogger(DefinedMapping.class.getName());
 
@@ -57,18 +61,34 @@ public class DefinedMapping {
         this.pAtomContainer = pAtomContainer;
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getRAtom() {
         return getrAtomContainer().getAtom(getrIndex());
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getRAtomNeighbours() {
         return getrAtomContainer().getConnectedAtomsList(getRAtom());
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getPAtom() {
         return getpAtomContainer().getAtom(getpIndex());
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getPAtomNeighbours() {
         return getpAtomContainer().getConnectedAtomsList(getPAtom());
     }

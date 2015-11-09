@@ -180,6 +180,10 @@ public class IsomorphismMin extends Selector implements IResult {
         return flag;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized boolean isSubAndCompleteMatchFlag() {
         return isSubstructure;

@@ -47,7 +47,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
-public class RMatrix extends EBIMatrix implements Serializable {
+public final class RMatrix extends EBIMatrix implements Serializable {
     private static final long serialVersionUID = 7057060562283378684L;
     private static final ILoggingTool logger = createLoggingTool(RMatrix.class);
     private static final Logger LOG = getLogger(RMatrix.class.getName());

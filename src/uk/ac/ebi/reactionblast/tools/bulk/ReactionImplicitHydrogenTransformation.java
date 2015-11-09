@@ -32,16 +32,29 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
+/**
+ *
+ * @author asad
+ */
 public class ReactionImplicitHydrogenTransformation implements
         ITransformation<IReaction> {
 
     private static final Logger LOG = getLogger(ReactionImplicitHydrogenTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ITransformation.TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         CDKHydrogenAdder adder = getInstance(getInstance());

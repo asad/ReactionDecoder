@@ -39,19 +39,35 @@ public class ReactionTransformationSequence implements ITransformation<IReaction
 
     private final List<ITransformation<IReaction>> transformations;
 
+    /**
+     *
+     */
     public ReactionTransformationSequence() {
         transformations = new ArrayList<>();
     }
 
+    /**
+     *
+     * @param transformation
+     */
     public void add(ITransformation<IReaction> transformation) {
         transformations.add(transformation);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         IReaction transformedReaction = reaction;

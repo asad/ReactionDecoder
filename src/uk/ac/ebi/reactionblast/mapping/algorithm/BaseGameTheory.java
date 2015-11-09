@@ -82,6 +82,11 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         return false;
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     @Override
     public synchronized String getSuffix() throws IOException {
         Calendar cal = new GregorianCalendar();

@@ -30,15 +30,33 @@ import uk.ac.ebi.centres.MutableDescriptor;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class TerminalLigand<A> extends NonterminalLigand<A> {
     private static final Logger LOG = getLogger(TerminalLigand.class.getName());
 
+    /**
+     *
+     * @param provider
+     * @param descriptor
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public TerminalLigand(ConnectionProvider<A> provider, MutableDescriptor descriptor, A atom, A parent, int distance) {
         super(provider, descriptor, atom, parent, distance);
         setDuplicate(TRUE);
     }
 
+    /**
+     *
+     * @param provider
+     * @param descriptor
+     * @param visited
+     * @param atom
+     * @param parent
+     * @param distance
+     */
     public TerminalLigand(ConnectionProvider<A> provider, MutableDescriptor descriptor, Set<A> visited, A atom, A parent, int distance) {
         super(provider, descriptor, visited, atom, parent, distance);
         setDuplicate(TRUE);
@@ -55,11 +73,19 @@ public class TerminalLigand<A> extends NonterminalLigand<A> {
         return super.toString() + "'";
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isTerminal() {
         return TRUE;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isBranching() {
         return FALSE;

@@ -296,6 +296,9 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         return this.subgraph;
     }
 
+    /**
+     *
+     */
     public synchronized void clearMaps() {
         this.getMCSList().clear();
     }
@@ -375,4 +378,5 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(BaseMapping.class.getName());
 }

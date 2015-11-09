@@ -83,10 +83,18 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
     private DirectMoleculeDrawer moleculeDrawer;
     private DirectArrowDrawer arrowDrawer;
 
+    /**
+     *
+     * @param layout
+     */
     public DirectReactionDrawer(AbstractDirectReactionLayout layout) {
         this(new Params(), layout);
     }
 
+    /**
+     *
+     * @param params
+     */
     public DirectReactionDrawer(Params params) {
         setParams(params);
 
@@ -96,10 +104,21 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         arrowDrawer = new DirectArrowDrawer(params);
     }
 
+    /**
+     *
+     * @param params
+     * @param layout
+     */
     public DirectReactionDrawer(Params params, AbstractDirectReactionLayout layout) {
         this(params, layout, null);
     }
 
+    /**
+     *
+     * @param params
+     * @param layout
+     * @param exactReactionLayout
+     */
     public DirectReactionDrawer(Params params,
             AbstractDirectReactionLayout layout,
             AbstractAWTReactionLayout exactReactionLayout) {
@@ -116,6 +135,10 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         arrowDrawer = new DirectArrowDrawer(params);
     }
 
+    /**
+     *
+     * @return
+     */
     public AbstractDirectReactionLayout getLayout() {
         return reactionLayout;
     }
@@ -130,6 +153,11 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public Image drawReaction(IReaction reaction) {
         return drawReaction(reaction, true);
     }
@@ -146,6 +174,11 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         return drawReaction(reaction, w, h, true);
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public Map<String, String> makeLabelMap(IReaction reaction) {
         Map<String, String> labelMap = new HashMap<>();
 
@@ -357,6 +390,12 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         drawReaction(reaction, g, boundsTree, reactionAxis);
     }
 
+    /**
+     *
+     * @param labelMap
+     * @param labelBoundsTree
+     * @param g
+     */
     public void drawLabelPanel(Map<String, String> labelMap,
             BoundsTree labelBoundsTree, Graphics2D g) {
         MoleculeLabelDrawer molLabelDrawer
@@ -364,6 +403,13 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         molLabelDrawer.draw(labelMap, labelBoundsTree, g);
     }
 
+    /**
+     *
+     * @param tree
+     * @param labels
+     * @param g
+     * @return
+     */
     public double getMaxLabelHeight(BoundsTree tree, Map<String, String> labels, Graphics2D g) {
         double maxHeight = 0;
         Font font = new Font(params.labelPanelFont, PLAIN, params.labelPanelFontSize);
@@ -457,6 +503,11 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param tree
+     * @param labels
+     */
     public void printBoundsTree(BoundsTree tree, List<String> labels) {
         for (String label : labels) {
             Rectangle2D r = tree.get(label);
@@ -468,10 +519,24 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     * @param boundsTree
+     * @return
+     */
     public BoundsTree centerOnOrigin(IReaction reaction, BoundsTree boundsTree) {
         return centerOn(reaction, 0, 0, boundsTree);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param cx
+     * @param cy
+     * @param boundsTree
+     * @return
+     */
     public BoundsTree centerOn(IReaction reaction, double cx, double cy, BoundsTree boundsTree) {
         double boundsX = boundsTree.getRoot().getCenterX();
         double boundsY = boundsTree.getRoot().getCenterY();
@@ -481,6 +546,14 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         return shift(reaction, boundsTree, dx, dy);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param unshiftedTree
+     * @param dx
+     * @param dy
+     * @return
+     */
     public BoundsTree shift(
             IReaction reaction, BoundsTree unshiftedTree, double dx, double dy) {
         IAtomContainerSet reactants = reaction.getReactants();
@@ -597,6 +670,12 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     * @param w
+     * @param g
+     */
     public void drawReactionID(IReaction reaction, int w, Graphics2D g) {
         String id = reaction.getID();
         if (id == null) {
@@ -606,10 +685,21 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         g.drawString(id, w / 2, 10);
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public BoundsTree getReactionBounds(IReaction reaction) {
         return reactionLayout.layout(reaction, reactionLayout.getAxis());
     }
 
+    /**
+     *
+     * @param reaction
+     * @param g
+     * @return
+     */
     public BoundsTree getExactReactionBounds(IReaction reaction, Graphics2D g) {
         BoundsTree tree = reactionLayout.layout(reaction, reactionLayout.getAxis());
         if (exactReactionLayout != null) {
@@ -618,6 +708,13 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         return tree;
     }
 
+    /**
+     *
+     * @param targetWidth
+     * @param targetHeight
+     * @param totalBounds
+     * @return
+     */
     public double calculateZoom(
             int targetWidth, int targetHeight, Rectangle2D totalBounds) {
         int borderX = params.borderX;
@@ -636,14 +733,28 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
                 targetHeight / actualHeight);
     }
 
+    /**
+     *
+     * @param atoms
+     * @return
+     */
     public Rectangle2D getDrawnBounds(List<IAtom> atoms) {
         return moleculeDrawer.getDrawnBounds(atoms);
     }
 
+    /**
+     *
+     * @return
+     */
     public Vector2d getReactionAxis() {
         return reactionLayout.getAxis();
     }
 
+    /**
+     *
+     * @param reaction
+     * @param g
+     */
     public void drawMappings(IReaction reaction, Graphics2D g) {
         g.setColor(LIGHT_GRAY);
         for (IMapping mapping : reaction.mappings()) {
@@ -668,6 +779,14 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         return bounds;
     }
 
+    /**
+     *
+     * @param reactants
+     * @param reactionID
+     * @param yAxis
+     * @param boundsTree
+     * @param g
+     */
     public void drawMoleculeSet(IAtomContainerSet reactants, String reactionID, double yAxis, BoundsTree boundsTree, Graphics2D g) {
         if (params.layoutLeftToRight) {
             params.moleculeLabelFontSize = params.leftToRightMoleculeLabelFontSize;
@@ -688,6 +807,14 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param ac
+     * @param acLabel
+     * @param yAxis
+     * @param boundsTree
+     * @param g
+     */
     public void drawPlus(IAtomContainer ac, String acLabel, double yAxis, BoundsTree boundsTree, Graphics2D g) {
         int plusGap = params.plusGap;
 
@@ -720,11 +847,20 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         g.drawString("+", p.x, p.y);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Params getParams() {
         return params;
     }
 
+    /**
+     *
+     * @param atoms
+     * @param color
+     */
     public void highlightSubgraph(List<IAtom> atoms, Color color) {
         IAtomContainer highlightContainer = new AtomContainer();
         for (IAtom atom : atoms) {
@@ -733,6 +869,10 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         moleculeDrawer.addHighlights(highlightContainer, color);
     }
 
+    /**
+     *
+     * @return
+     */
     public DirectMoleculeDrawer getMoleculeDrawer() {
         return moleculeDrawer;
     }

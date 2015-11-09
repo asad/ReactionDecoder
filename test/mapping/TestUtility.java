@@ -79,12 +79,21 @@ public class TestUtility {
     static final String MACIE_RXN = "rxn/macie/";
     private static final Logger LOG = getLogger(TestUtility.class.getName());
 
+    /**
+     *
+     * @param reaction
+     */
     protected static void setLonePairs(IReaction reaction) {
         LonePairElectronChecker checker = new LonePairElectronChecker();
         setLonePairs(reaction.getReactants(), checker);
         setLonePairs(reaction.getProducts(), checker);
     }
 
+    /**
+     *
+     * @param AtomContainerSet
+     * @param checker
+     */
     protected static void setLonePairs(IAtomContainerSet AtomContainerSet, LonePairElectronChecker checker) {
         for (IAtomContainer atomContainer : AtomContainerSet.atomContainers()) {
             try {
@@ -95,11 +104,19 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     */
     protected static void detectAromaticity(IReaction reaction) {
         detectAromaticity(reaction.getReactants());
         detectAromaticity(reaction.getProducts());
     }
 
+    /**
+     *
+     * @param molSet
+     */
     protected static void detectAromaticity(IAtomContainerSet molSet) {
         for (IAtomContainer ac : molSet.atomContainers()) {
             try {
@@ -111,6 +128,10 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     */
     protected static void setMappingIDs(IReaction reaction) {
         int i = 0;
         for (IMapping mapping : reaction.mappings()) {
@@ -130,6 +151,10 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     */
     protected static void renumberMappingIDs(IReaction reaction) {
         int i = 1;
         for (IMapping mapping : reaction.mappings()) {
@@ -142,17 +167,29 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     */
     protected static void addImplicitHydrogens(IReaction reaction) {
         addImplicitHydrogens(reaction.getReactants());
         addImplicitHydrogens(reaction.getProducts());
     }
 
+    /**
+     *
+     * @param molSet
+     */
     protected static void addImplicitHydrogens(IAtomContainerSet molSet) {
         for (IAtomContainer atomContainer : molSet.atomContainers()) {
             addImplicitHydrogens(atomContainer);
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     */
     protected static void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
             getInstance(getInstance()).addImplicitHydrogens(atomContainer);
@@ -162,6 +199,10 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     */
     protected static void typeAtoms(IAtomContainer atomContainer) {
         try {
             percieveAtomTypesAndConfigureAtoms(atomContainer);
@@ -181,6 +222,11 @@ public class TestUtility {
         return labeller.getCanonicalReaction(reaction);
     }
 
+    /**
+     *
+     * @param AtomContainer
+     * @return
+     */
     protected static IAtomContainer layout(IAtomContainer AtomContainer) {
         try {
             StructureDiagramGenerator sdg = new StructureDiagramGenerator();
@@ -192,6 +238,12 @@ public class TestUtility {
         }
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @return
+     */
     protected static BufferedImage makeBlankImage(int width, int height) {
         BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -201,6 +253,14 @@ public class TestUtility {
         return image;
     }
 
+    /**
+     *
+     * @param molDrawer
+     * @param AtomContainer
+     * @param dirPath
+     * @param name
+     * @throws IOException
+     */
     protected static void draw(DirectMoleculeDrawer molDrawer, IAtomContainer AtomContainer,
             String dirPath, String name) throws IOException {
         int width = 700;

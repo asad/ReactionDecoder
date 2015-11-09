@@ -26,16 +26,42 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
+/**
+ *
+ * @author asad
+ */
 public interface Highlighter {
 
+    /**
+     *
+     * @param highlightContainer
+     * @param color
+     */
     public void addHighlights(IAtomContainer highlightContainer, Color color);
 
+    /**
+     *
+     * @param atoms
+     * @param bonds
+     */
     public void addHighlights(List<IAtom> atoms, List<IBond> bonds);
 
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     public void drawHighlights(IAtomContainer molecule, Graphics2D g);
 
+    /**
+     *
+     * @param colorMap
+     */
     public void addToHighlights(Map<IAtom, Color> colorMap);
 
+    /**
+     *
+     */
     public void clearHighlights();
 
 }

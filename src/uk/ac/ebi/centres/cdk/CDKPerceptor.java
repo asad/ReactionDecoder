@@ -50,6 +50,9 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
 
     private static final Logger LOG = getLogger(CDKPerceptor.class.getName());
 
+    /**
+     *
+     */
     public CDKPerceptor() {
         super(new CombinedRule<>(
                 new AtomicNumberRule<>(
@@ -106,6 +109,10 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
                 new CDK2DSignCalculator());
     }
 
+    /**
+     *
+     * @param container
+     */
     public void perceive(IAtomContainer container) {
         try {
             /*

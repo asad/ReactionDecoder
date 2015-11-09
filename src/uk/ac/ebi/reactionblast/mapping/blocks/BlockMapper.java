@@ -30,9 +30,18 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
+/**
+ *
+ * @author asad
+ */
 public class BlockMapper {
     private static final Logger LOG = getLogger(BlockMapper.class.getName());
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public List<BlockPair> createBlockPairs(IReaction reaction) {
         List<BlockPair> blockPairs = new ArrayList<>();
 
@@ -61,6 +70,12 @@ public class BlockMapper {
         return blockPairs;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param definedMappings
+     * @return
+     */
     public List<List<DefinedMapping>> findMappedConnectedComponents(
             IReaction reaction, List<DefinedMapping> definedMappings) {
 
@@ -68,6 +83,11 @@ public class BlockMapper {
         return mappingGraph.calculateConnectedComponents();
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public List<DefinedMapping> createDefinedMappings(IReaction reaction) {
         IAtomContainerSet reactants = reaction.getReactants();
         IAtomContainerSet products = reaction.getProducts();

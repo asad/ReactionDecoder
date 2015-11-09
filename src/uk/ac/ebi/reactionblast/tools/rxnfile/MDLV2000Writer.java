@@ -239,16 +239,28 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         this(new OutputStreamWriter(output));
     }
 
+    /**
+     *
+     */
     public MDLV2000Writer() {
         this(new StringWriter());
     }
 
+    /**
+     *
+     * @return
+     */
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return MDLFormat.getInstance();
     }
 
+    /**
+     *
+     * @param out
+     * @throws CDKException
+     */
     @Override
     public void setWriter(Writer out) throws CDKException {
         if (out instanceof BufferedWriter) {
@@ -258,6 +270,11 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         }
     }
 
+    /**
+     *
+     * @param output
+     * @throws CDKException
+     */
     @Override
     public void setWriter(OutputStream output) throws CDKException {
         setWriter(new OutputStreamWriter(output));
@@ -274,6 +291,11 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         writer.close();
     }
 
+    /**
+     *
+     * @param classObject
+     * @return
+     */
     @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {
@@ -887,6 +909,9 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         ));
     }
 
+    /**
+     *
+     */
     public void customizeJob() {
         for (IOSetting setting : getSettings()) {
             fireIOSettingQuestion(setting);
@@ -897,9 +922,24 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
      */
     public enum SPIN_MULTIPLICITY {
         
+        /**
+         *
+         */
         NONE(0, 0),
+
+        /**
+         *
+         */
         SINGLET(2, 1),
+
+        /**
+         *
+         */
         DOUBLET(1, 2),
+
+        /**
+         *
+         */
         TRIPLET(3, 2);
         
         // the radical SDF value

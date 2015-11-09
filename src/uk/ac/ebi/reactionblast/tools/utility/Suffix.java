@@ -74,6 +74,11 @@ public class Suffix {
 
     //~--- constructors -------------------------------------------------------
 
+    /**
+     *
+     * @throws IOException
+     */
+
     protected Suffix() throws IOException {
         Calendar cal = new GregorianCalendar();
         int ms = cal.get(YEAR);

@@ -66,6 +66,10 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectAtomDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectAtomDrawer.class.getName());
 
@@ -78,6 +82,11 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     private final LabelManager labelManager;
     private Map<IAtom, IStereoAndConformation> chiralMap;
 
+    /**
+     *
+     * @param params
+     * @param labelManager
+     */
     public DirectAtomDrawer(Params params, LabelManager labelManager) {
         setParams(params);
         this.labelManager = labelManager;
@@ -86,26 +95,51 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         chiralMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param chiralMap
+     */
     public void setChirals(Map<IAtom, IStereoAndConformation> chiralMap) {
         this.chiralMap = chiralMap;
     }
 
+    /**
+     *
+     * @param atomSymbolFont
+     */
     public void setAtomSymbolFont(Font atomSymbolFont) {
         this.atomSymbolFont = atomSymbolFont;
     }
 
+    /**
+     *
+     * @param subscriptFont
+     */
     public void setSubscriptFont(Font subscriptFont) {
         this.subscriptFont = subscriptFont;
     }
 
+    /**
+     *
+     * @param atomIDFont
+     */
     public void setAtomIDFont(Font atomIDFont) {
         this.atomIDFont = atomIDFont;
     }
 
+    /**
+     *
+     * @param chiralSymbolFont
+     */
     public void setChiralSymbolFont(Font chiralSymbolFont) {
         this.chiralSymbolFont = chiralSymbolFont;
     }
 
+    /**
+     *
+     * @param atoms
+     * @return
+     */
     public Rectangle2D getDrawnBounds(List<IAtom> atoms) {
         Rectangle2D totalBounds = null;
         for (IAtom atom : atoms) {
@@ -122,6 +156,11 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
 
     }
 
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     public void drawAtoms(IAtomContainer molecule, Graphics2D g) {
         Map<IAtom, Integer> lonePairMap = null;
         if (params.drawLonePairs) {
@@ -142,6 +181,14 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param atom
+     * @param molecule
+     * @param lonePairCount
+     * @param g
+     * @return
+     */
     public Rectangle2D drawAtom(
             IAtom atom, IAtomContainer molecule, int lonePairCount, Graphics2D g) {
         Rectangle2D symbolBounds;
@@ -230,6 +277,14 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         return drawText(text, p, color, g);
     }
 
+    /**
+     *
+     * @param atom
+     * @param implicitHydrogenCount
+     * @param pos
+     * @param g
+     * @return
+     */
     public Rectangle2D drawImplicitHydrogens(
             IAtom atom, int implicitHydrogenCount, AnnotationPosition pos, Graphics2D g) {
 
@@ -321,6 +376,12 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         return totalHBounds;
     }
 
+    /**
+     *
+     * @param atom
+     * @param g
+     * @return
+     */
     public Rectangle2D drawAtomSymbol(IAtom atom, Graphics2D g) {
         String text = atom.getSymbol();
         if (atom instanceof PseudoAtom) {
@@ -346,6 +407,13 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         return bounds;
     }
 
+    /**
+     *
+     * @param atom
+     * @param container
+     * @param g
+     * @return
+     */
     public Rectangle2D drawAtomID(IAtom atom, IAtomContainer container, Graphics2D g) {
         String atomID = atom.getID();
 
@@ -435,6 +503,14 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 bounds.getHeight());
     }
 
+    /**
+     *
+     * @param atom
+     * @param container
+     * @param lonePairCount
+     * @param g
+     * @return
+     */
     public Rectangle2D drawElectronPairs(
             IAtom atom, IAtomContainer container,
             int lonePairCount, Graphics2D g) {
@@ -499,6 +575,11 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         return count;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public boolean isCharged(IAtom atom) {
         Integer formalCharge = atom.getFormalCharge();
         return formalCharge != null && formalCharge != 0;
@@ -575,6 +656,11 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         return lonePairMap;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public Color colorForAtom(IAtom atom) {
         return atomColorer.getAtomColor(atom);
     }

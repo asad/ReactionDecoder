@@ -40,6 +40,10 @@ public class BulkTransformer {
      */
     private final ITransformation transformation;
 
+    /**
+     *
+     * @param transformation
+     */
     public BulkTransformer(ITransformation transformation) {
         this.transformation = transformation;
     }

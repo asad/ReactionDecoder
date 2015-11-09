@@ -33,6 +33,12 @@ import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
  */
 public abstract class IGraphMatching {
 
+    /**
+     *
+     * @param holder
+     * @param substrateIndex
+     * @param productIndex
+     */
     public static void setMCSUpdationFlags(Holder holder, int substrateIndex, int productIndex) {
         try {
             ReactionContainer reactionStructureInformation = holder.getReactionContainer();

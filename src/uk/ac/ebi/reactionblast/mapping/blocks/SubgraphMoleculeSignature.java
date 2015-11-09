@@ -56,6 +56,12 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
     // XXX FIXME : avoids the problem of subgraphs not working... :( 
     private final boolean useAdjLists;
 
+    /**
+     *
+     * @param fullContainer
+     * @param subgraphAtoms
+     * @param dummy
+     */
     public SubgraphMoleculeSignature(
             IAtomContainer fullContainer, List<IAtom> subgraphAtoms, int dummy) {
         this.atomContainer
@@ -101,6 +107,11 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         useAdjLists = false;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param subgraphAtoms
+     */
     public SubgraphMoleculeSignature(
             IAtomContainer atomContainer, List<IAtom> subgraphAtoms) {
 
@@ -138,11 +149,20 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         useAdjLists = true;// XXX!!
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     protected int getVertexCount() {
         return vertexCount;
     }
 
+    /**
+     *
+     * @param subgraphAtomIndex
+     * @return
+     */
     @Override
     public AbstractVertexSignature signatureForVertex(int subgraphAtomIndex) {
         if (useAdjLists) {
@@ -155,11 +175,22 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         }
     }
 
+    /**
+     *
+     * @param subgraphAtomIndex
+     * @return
+     */
     @Override
     public String signatureStringForVertex(int subgraphAtomIndex) {
         return signatureForVertex(subgraphAtomIndex).toCanonicalString();
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @param height
+     * @return
+     */
     @Override
     public String signatureStringForVertex(int atomIndex, int height) {
         // TODO Auto-generated method stub

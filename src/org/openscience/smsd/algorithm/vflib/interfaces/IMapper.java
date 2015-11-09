@@ -97,5 +97,11 @@ public interface IMapper {
     /*
      * Return true if there was a timeout else false
      */
+
+    /**
+     *
+     * @return
+     */
+
     public boolean isTimeout();
 }

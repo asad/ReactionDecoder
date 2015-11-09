@@ -41,6 +41,7 @@ import uk.ac.ebi.centres.ligand.TerminalLigand;
  * A digraph with a single immutable root.
  *
  * @author John May
+ * @param <A>
  */
 public abstract class AbstractDigraph<A> implements Digraph<A>,
         ConnectionProvider<A> {
@@ -50,10 +51,19 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
     private ListMultimap<A, Ligand<A>> ligandMap = create();
     private DescriptorManager<A> manager;
 
+    /**
+     *
+     * @param root
+     */
     public AbstractDigraph(Ligand<A> root) {
         this(root, new DefaultDescriptorManager<A>());
     }
 
+    /**
+     *
+     * @param root
+     * @param manager
+     */
     public AbstractDigraph(Ligand<A> root, DescriptorManager<A> manager) {
         if (root == null) {
             throw new IllegalArgumentException("Root cannot be null!");
@@ -129,16 +139,31 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
     }
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     @Override
     public List<Arc<A>> getArcs(Ligand<A> ligand) {
         return arcs.getForTail(ligand);
     }
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     @Override
     public Arc<A> getParentArc(Ligand<A> ligand) {
         return arcs.getForHead(ligand);
     }
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     @Override
     public List<Ligand<A>> getLigands(Ligand<A> ligand) {
 
@@ -207,10 +232,27 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public abstract Collection<A> getConnected(A atom);
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public abstract int getOrder(A first, A second);
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     public abstract int getDepth(A first, A second);
 
     private Arc<A> newArc(Ligand<A> tail, Ligand<A> head) {

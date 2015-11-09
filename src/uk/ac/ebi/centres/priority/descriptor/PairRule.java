@@ -43,6 +43,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  * priority over unlike descriptor pairs.
  *
  * @author John May
+ * @param <A>
  */
 public class PairRule<A>
         extends AbstractPriorityRule<A> {
@@ -155,6 +156,12 @@ public class PairRule<A>
         return generate(queue);
     }
 
+    /**
+     *
+     * @param o1
+     * @param o2
+     * @return
+     */
     @Override
     public int recursiveCompare(Ligand<A> o1, Ligand<A> o2) {
         // can't/don't need to do recursive on the pair rule

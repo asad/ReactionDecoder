@@ -86,6 +86,12 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     private final LabelManager labelManager;
     private Map<IAtom, IStereoAndConformation> chiralMap;
 
+    /**
+     *
+     * @param parent
+     * @param params
+     * @param labelManager
+     */
     public AtomLayout(AbstractAWTLayout parent, Params params, LabelManager labelManager) {
         super.parent = parent;
         setParams(params);
@@ -94,6 +100,12 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         chiralMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param atom
+     * @param g
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtom atom, Graphics2D g) {
         currentObject = atom;
@@ -173,6 +185,12 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return boundsTree;
     }
 
+    /**
+     *
+     * @param atom
+     * @param g
+     * @return
+     */
     public Rectangle2D layoutAtomSymbol(IAtom atom, Graphics2D g) {
         String text = atom.getSymbol();
         if (atom instanceof PseudoAtom) {
@@ -183,22 +201,42 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return layoutText(text, p, g);
     }
 
+    /**
+     *
+     * @param chiralMap
+     */
     public void setChirals(Map<IAtom, IStereoAndConformation> chiralMap) {
         this.chiralMap = chiralMap;
     }
 
+    /**
+     *
+     * @param atomSymbolFont
+     */
     public void setAtomSymbolFont(Font atomSymbolFont) {
         this.atomSymbolFont = atomSymbolFont;
     }
 
+    /**
+     *
+     * @param subscriptFont
+     */
     public void setSubscriptFont(Font subscriptFont) {
         this.subscriptFont = subscriptFont;
     }
 
+    /**
+     *
+     * @param atomIDFont
+     */
     public void setAtomIDFont(Font atomIDFont) {
         this.atomIDFont = atomIDFont;
     }
 
+    /**
+     *
+     * @param chiralSymbolFont
+     */
     public void setChiralSymbolFont(Font chiralSymbolFont) {
         this.chiralSymbolFont = chiralSymbolFont;
     }
@@ -231,6 +269,14 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return layoutText(text, p, g);
     }
 
+    /**
+     *
+     * @param atom
+     * @param implicitHydrogenCount
+     * @param pos
+     * @param g
+     * @return
+     */
     public Rectangle2D layoutImplicitHydrogens(
             IAtom atom, int implicitHydrogenCount, AnnotationPosition pos, Graphics2D g) {
 
@@ -314,6 +360,13 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return new Rectangle2D.Double(x, y, sW2 * 2, sH2 * 2);
     }
 
+    /**
+     *
+     * @param atom
+     * @param container
+     * @param g
+     * @return
+     */
     public Rectangle2D layoutAtomID(IAtom atom, IAtomContainer container, Graphics2D g) {
         String atomID = atom.getID();
 
@@ -399,6 +452,14 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                 bounds.getHeight());
     }
 
+    /**
+     *
+     * @param atom
+     * @param container
+     * @param lonePairCount
+     * @param g
+     * @return
+     */
     public Rectangle2D layoutElectronPairs(
             IAtom atom, IAtomContainer container,
             int lonePairCount, Graphics2D g) {
@@ -463,6 +524,11 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return count;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public boolean isCharged(IAtom atom) {
         Integer formalCharge = atom.getFormalCharge();
         return formalCharge != null && formalCharge != 0;
@@ -517,10 +583,22 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         }
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public Color colorForAtom(IAtom atom) {
         return atomColorer.getAtomColor(atom);
     }
 
+    /**
+     *
+     * @param obj
+     * @param rootLabel
+     * @param graphics
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtom obj, String rootLabel, Graphics2D graphics) {
         // TODO Auto-generated method stub
@@ -528,6 +606,9 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         return null;
     }
 
+    /**
+     *
+     */
     public void reset() {
         labelManager.reset();
     }

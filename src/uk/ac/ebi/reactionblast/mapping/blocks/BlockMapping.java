@@ -55,6 +55,10 @@ public class BlockMapping {
 
     private final List<BlockPair> blockPairs;
 
+    /**
+     *
+     * @param reaction
+     */
     public BlockMapping(IReaction reaction) {
         this.reaction = reaction;
         reactantBlocks = new ArrayList<>();
@@ -75,18 +79,34 @@ public class BlockMapping {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<BlockPair> getBlockPairs() {
         return blockPairs;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Block> getReactantBlocks() {
         return reactantBlocks;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Block> getProductBlocks() {
         return productBlocks;
     }
 
+    /**
+     *
+     * @return
+     */
     public IReaction getReaction() {
         return this.reaction;
     }
@@ -104,6 +124,10 @@ public class BlockMapping {
         blocksForContainer.add(block);
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getTotalPermutation() {
         int n = getAtomCount(reaction);
         int[] totalPermutation = new int[n];
@@ -156,6 +180,11 @@ public class BlockMapping {
         return getContainerPermutation(reaction.getReactants(), reactantBlockMap);
     }
 
+    /**
+     *
+     * @param reactant
+     * @return
+     */
     public int[] getContainerPermutationForReactant(IAtomContainer reactant) {
         return reactantBlockMap.get(reactant).getAtomContainerPermutation();
     }
@@ -169,6 +198,11 @@ public class BlockMapping {
         return getContainerPermutation(reaction.getProducts(), productBlockMap);
     }
 
+    /**
+     *
+     * @param product
+     * @return
+     */
     public int[] getContainerPermutationForProduct(IAtomContainer product) {
         return productBlockMap.get(product).getAtomContainerPermutation();
     }
@@ -206,10 +240,20 @@ public class BlockMapping {
         return containerPermutation;
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     public BlockList getBlockListForReactant(IAtomContainer container) {
         return reactantBlockMap.get(container);
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     public BlockList getBlockListForProduct(IAtomContainer container) {
         return productBlockMap.get(container);
     }

@@ -593,6 +593,10 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         return this.columns;
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized List<Double> getDiagonalElements() {
 
         List<Double> val = new ArrayList<>();
@@ -903,6 +907,11 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         return flag;
     }
 
+    /**
+     *
+     * @param coloumn1
+     * @param coloumn2
+     */
     public synchronized void swapColumns(int coloumn1, int coloumn2) {
 
         double tempValue;
@@ -1675,6 +1684,10 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         return str.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public double contraction() {
         int i, j;
         double result = 0d;

@@ -38,11 +38,21 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
+
+/**
+ *
+ * @author asad
+ */
+
 public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
     private static final Logger LOG = getLogger(Map2ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
+    /**
+     *
+     * @param sortOrder
+     */
     public Map2ValueComparator(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }

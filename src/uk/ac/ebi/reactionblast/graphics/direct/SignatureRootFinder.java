@@ -44,6 +44,11 @@ import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
 public class SignatureRootFinder {
     private static final Logger LOG = getLogger(SignatureRootFinder.class.getName());
 
+    /**
+     *
+     * @param rblReaction
+     * @return
+     */
     public static Map<IAtomContainer, List<RootSystem>> findRootSystems(
             RBlastReaction rblReaction) {
         // get all the bond changes
@@ -62,6 +67,13 @@ public class SignatureRootFinder {
                 rblReaction.getReaction(), allBondChanges, atomChanges);
     }
 
+    /**
+     *
+     * @param reaction
+     * @param bondChanges
+     * @param atomChanges
+     * @return
+     */
     public static Map<IAtomContainer, List<RootSystem>> findRootSystems(
             IReaction reaction, List<IBond> bondChanges, List<IAtom> atomChanges) {
 
@@ -89,6 +101,13 @@ public class SignatureRootFinder {
         return rootSystems;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param bondChanges
+     * @param atomChanges
+     * @return
+     */
     public static List<RootSystem> findRootSystems(
             IAtomContainer atomContainer, List<IBond> bondChanges, List<IAtom> atomChanges) {
 
@@ -239,6 +258,12 @@ public class SignatureRootFinder {
         return false;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param signatureStrings
+     * @return
+     */
     public static List<RootSystem> findRootSystems(
             IReaction reaction, List<String> signatureStrings) {
         List<RootSystem> rootSystems = new ArrayList<>();

@@ -40,6 +40,11 @@ public interface IGameTheory {
      */
     public abstract MoleculeMoleculeMapping getReactionMolMapping();
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     public String getSuffix() throws IOException;
 
     /**

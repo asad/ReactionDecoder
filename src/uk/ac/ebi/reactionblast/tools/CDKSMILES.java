@@ -64,6 +64,10 @@ public class CDKSMILES {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCanonicalSMILES() {
         String smiles = "NA";
         if (molecule.getAtomCount() == 0) {
@@ -111,6 +115,10 @@ public class CDKSMILES {
         return smiles;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getGenericSMILES() {
         String smiles = "NA";
         if (molecule.getAtomCount() == 0) {

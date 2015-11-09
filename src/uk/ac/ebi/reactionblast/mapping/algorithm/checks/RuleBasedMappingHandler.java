@@ -44,7 +44,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public class RuleBasedMappingHandler implements Serializable {
+public final class RuleBasedMappingHandler implements Serializable {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 88765671L;

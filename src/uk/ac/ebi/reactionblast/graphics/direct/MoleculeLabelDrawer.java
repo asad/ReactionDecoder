@@ -38,10 +38,22 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(MoleculeLabelDrawer.class.getName());
 
     // TODO: remove axis
+
+    /**
+     *
+     * @param axis
+     * @param params
+     */
     public MoleculeLabelDrawer(Axis axis, Params params) {
         setParams(params);
     }
 
+    /**
+     *
+     * @param labelMap
+     * @param labelBounds
+     * @param g
+     */
     public void draw(Map<String, String> labelMap, BoundsTree labelBounds, Graphics2D g) {
         // layout labels according to the positions in the moleculeBounds
         for (String boundsLabel : labelMap.keySet()) {

@@ -53,6 +53,11 @@ public class Fragment implements Comparable<Fragment>, Serializable {
     private final long fingerprintAsLong;
     private final IAtomContainer container;
 
+    /**
+     *
+     * @param container
+     * @throws CDKException
+     */
     public Fragment(IAtomContainer container) throws CDKException {
         if (container == null) {
             throw new CDKException("NULL container not supported");
@@ -62,6 +67,10 @@ public class Fragment implements Comparable<Fragment>, Serializable {
         this.fingerprintAsLong = convert(this.fingerprint);
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized IAtomContainer getContainer() {
         return container;
     }

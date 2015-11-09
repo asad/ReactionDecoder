@@ -35,6 +35,11 @@ public class Key implements IKey, Serializable {
     private final int sourceIndex;
     private final int targetIndex;
 
+    /**
+     *
+     * @param sourceIndex
+     * @param targetIndex
+     */
     public Key(int sourceIndex, int targetIndex) {
         this.sourceIndex = sourceIndex;
         this.targetIndex = targetIndex;

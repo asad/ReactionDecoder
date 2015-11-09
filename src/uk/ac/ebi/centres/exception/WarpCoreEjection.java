@@ -28,6 +28,9 @@ public class WarpCoreEjection extends RuntimeException {
 
     private static final Logger LOG = getLogger(WarpCoreEjection.class.getName());
 
+    /**
+     *
+     */
     public WarpCoreEjection() {
         super("Boy, that escalated quickly. I mean, that really got out of hand fast! - combinatorial explosion immanent");
     }

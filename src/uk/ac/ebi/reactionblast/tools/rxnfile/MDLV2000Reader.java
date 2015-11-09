@@ -566,6 +566,9 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     private BooleanIOSetting interpretHydrogenIsotopes;
     private BooleanIOSetting addStereoElements;
 
+    /**
+     *
+     */
     public MDLV2000Reader() {
         this(new StringReader(""));
     }
@@ -580,6 +583,11 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         this(new InputStreamReader(in));
     }
 
+    /**
+     *
+     * @param in
+     * @param mode
+     */
     public MDLV2000Reader(InputStream in, IChemObjectReader.Mode mode) {
         this(new InputStreamReader(in), mode);
     }
@@ -593,18 +601,32 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         this(in, RELAXED);
     }
 
+    /**
+     *
+     * @param in
+     * @param mode
+     */
     public MDLV2000Reader(Reader in, IChemObjectReader.Mode mode) {
         input = new BufferedReader(in);
         initIOSettings();
         super.mode = mode;
     }
 
+    /**
+     *
+     * @return
+     */
     @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return MDLV2000Format.getInstance();
     }
 
+    /**
+     *
+     * @param input
+     * @throws CDKException
+     */
     @TestMethod("testSetReader_Reader")
     @Override
     public void setReader(Reader input) throws CDKException {
@@ -615,12 +637,22 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
     }
 
+    /**
+     *
+     * @param input
+     * @throws CDKException
+     */
     @TestMethod("testSetReader_InputStream")
     @Override
     public void setReader(InputStream input) throws CDKException {
         setReader(new InputStreamReader(input));
     }
 
+    /**
+     *
+     * @param classObject
+     * @return
+     */
     @TestMethod("testAccepts")
     @SuppressWarnings("unchecked")
     @Override
@@ -1031,6 +1063,9 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 "true"));
     }
 
+    /**
+     *
+     */
     public void customizeJob() {
         for (IOSetting setting : getSettings()) {
             fireIOSettingQuestion(setting);

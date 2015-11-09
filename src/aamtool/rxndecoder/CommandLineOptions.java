@@ -30,9 +30,16 @@ import org.apache.commons.cli.Options;
 public class CommandLineOptions {
     private static final Logger LOG = getLogger(CommandLineOptions.class.getName());
 
+    /**
+     *
+     */
     public CommandLineOptions() {
     }
 
+    /**
+     *
+     * @return
+     */
     protected Options createAAMOptions() {
         Options optionsAAM = new Options();
         optionsAAM.addOption("h", "help", false, "Help page for command usage");
@@ -52,6 +59,10 @@ public class CommandLineOptions {
         return optionsAAM;
     }
 
+    /**
+     *
+     * @return
+     */
     protected Options createTransformationOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "Help page for command usage");
@@ -70,6 +81,10 @@ public class CommandLineOptions {
         return options;
     }
 
+    /**
+     *
+     * @return
+     */
     protected Options createCompareOptions() {
         Options optionsCompare = new Options();
         optionsCompare.addOption("h", "help", false, "Help page for command usage");

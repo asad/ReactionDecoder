@@ -34,15 +34,28 @@ public class Combination implements Serializable, Comparable<Combination>, Compa
     private final int row;
     private final int col;
 
+    /**
+     *
+     * @param row
+     * @param col
+     */
     public Combination(int row, int col) {
         this.row = row;
         this.col = col;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRowIndex() {
         return row;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getColIndex() {
         return col;
     }

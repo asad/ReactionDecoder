@@ -36,21 +36,39 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
+/**
+ *
+ * @author asad
+ */
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
     private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 
+    /**
+     *
+     * @param params
+     */
     public OutlineHighlighter(Params params) {
         super(params);
         colorMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param highlightContainer
+     * @param color
+     */
     @Override
     public void addHighlights(IAtomContainer highlightContainer, Color color) {
         colorMap.put(highlightContainer, color);
     }
 
+    /**
+     *
+     * @param atoms
+     * @param bonds
+     */
     @Override
     public void addHighlights(List<IAtom> atoms, List<IBond> bonds) {
         IAtomContainer highlightContainer = null;
@@ -74,6 +92,10 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
         addHighlights(highlightContainer, params.highlightColor);
     }
 
+    /**
+     *
+     * @param colorMap
+     */
     @Override
     public void addToHighlights(Map<IAtom, Color> colorMap) {
         // TODO Auto-generated method stub
@@ -82,6 +104,11 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
         // color each atom separately
     }
 
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     @Override
     public void drawHighlights(IAtomContainer molecule, Graphics2D g) {
         Point2d center = null;
@@ -160,6 +187,9 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void clearHighlights() {
         colorMap.clear();

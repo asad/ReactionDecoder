@@ -37,16 +37,26 @@ public class BlockList implements Comparable<BlockList> {
     private String signatureString;
     private int totalSize;
 
-
+    /**
+     *
+     */
     public BlockList() {
         blocks = new ArrayList<>();
         totalSize = 0;
     }
 
+    /**
+     *
+     * @param block
+     */
     public void add(Block block) {
         blocks.add(block);
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getBlockPermutation() {
         totalSize = 0;
         List<StringIntPair> signatureToBlockIndexMap;
@@ -70,6 +80,10 @@ public class BlockList implements Comparable<BlockList> {
         return blockPermutation;
     }
 
+    /**
+     *
+     * @return
+     */
     public int[] getAtomContainerPermutation() {
         int[] blockPermutation = getBlockPermutation();
 
@@ -112,6 +126,10 @@ public class BlockList implements Comparable<BlockList> {
         return sb.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSignatureString() {
         if (signatureString == null) {
             signatureString = calculateSignatureString();
@@ -119,6 +137,10 @@ public class BlockList implements Comparable<BlockList> {
         return signatureString;
     }
 
+    /**
+     *
+     * @return
+     */
     public int numberOfAtoms() {
         int total = 0;
         for (Block block : blocks) {
@@ -157,6 +179,11 @@ public class BlockList implements Comparable<BlockList> {
         return false;
     }
 
+    /**
+     *
+     * @param m
+     * @return
+     */
     public Block get(int m) {
         return blocks.get(m);
     }

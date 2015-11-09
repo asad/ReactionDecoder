@@ -26,6 +26,7 @@ import uk.ac.ebi.centres.Ligand;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class ConnectionTableDigraph<A>
         extends AbstractDigraph<A> {
@@ -33,6 +34,12 @@ public class ConnectionTableDigraph<A>
 
     private final ConnectionTable<A> table;
 
+    /**
+     *
+     * @param root
+     * @param manager
+     * @param table
+     */
     public ConnectionTableDigraph(Ligand<A> root,
             DescriptorManager<A> manager,
             ConnectionTable<A> table) {
@@ -40,16 +47,33 @@ public class ConnectionTableDigraph<A>
         this.table = table;
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public int getOrder(A first, A second) {
         return table.getOrder(first, second);
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public int getDepth(A first, A second) {
         return table.getDepth(first, second);
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public Collection<A> getConnected(A atom) {
         return table.getConnected(atom);

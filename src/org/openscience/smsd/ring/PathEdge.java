@@ -68,26 +68,51 @@ public class PathEdge {
 
     private final List<IAtom> atoms;
 
+    /**
+     *
+     * @param atoms
+     */
     public PathEdge(List<IAtom> atoms) {
         this.atoms = atoms;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getAtoms() {
         return unmodifiableList(atoms);
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getSource() {
         return atoms.get(0);
     }
 
+    /**
+     *
+     * @return
+     */
     public IAtom getTarget() {
         return atoms.get(atoms.size() - 1);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isCycle() {
         return (atoms.size() > 2) && atoms.get(0).equals(atoms.get(atoms.size() - 1));
     }
 
+    /**
+     *
+     * @param other
+     * @return
+     */
     public PathEdge splice(PathEdge other) {
         IAtom intersection = getIntersection(other.atoms);
         List<IAtom> newAtoms = new ArrayList<>(atoms);

@@ -27,6 +27,9 @@ import org.openscience.smsd.AtomAtomMapping;
  */
 public abstract class BestMatch {
 
+    /**
+     *
+     */
     public BestMatch() {
     }
 

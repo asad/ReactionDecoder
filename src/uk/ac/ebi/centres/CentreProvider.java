@@ -23,10 +23,20 @@ import java.util.Collection;
  * Provides the stereo-centres of a molecule.
  *
  * @author John May
+ * @param <A>
  */
 public interface CentreProvider<A> {
 
+    /**
+     *
+     * @param manager
+     * @return
+     */
     public Collection<Centre<A>> getCentres(DescriptorManager<A> manager);
 
+    /**
+     *
+     * @return
+     */
     public Integer getAtomCount();
 }

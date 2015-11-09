@@ -41,6 +41,10 @@ public interface IMolDescriptors {
      */
     double getCPSADescriptor() throws CDKException;
 
+    /**
+     *
+     * @return
+     */
     int getCovalentCount();
 
     /**

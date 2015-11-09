@@ -61,13 +61,32 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
 public class BaseMCS {
     private static final ILoggingTool Logger = createLoggingTool(BaseMCS.class);
 
+    /**
+     *
+     */
     protected int countR;
+
+    /**
+     *
+     */
     protected int countP;
+
+    /**
+     *
+     */
     protected final IAtomContainer source;
+
+    /**
+     *
+     */
     protected final IAtomContainer target;
     private final boolean shouldMatchRings;
     private final boolean matchBonds;
     private final boolean matchAtomType;
+
+    /**
+     *
+     */
     protected final List<Map<INode, IAtom>> vfLibSolutions;
     final List<Map<Integer, Integer>> allLocalMCS;
     final List<AtomAtomMapping> allLocalAtomAtomMapping;
@@ -272,10 +291,18 @@ public class BaseMCS {
 
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized IAtomContainer getReactantMol() {
         return source;
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized IAtomContainer getProductMol() {
         return target;
     }
@@ -308,6 +335,11 @@ public class BaseMCS {
         return synchronizedList(allLocalAtomAtomMapping);
     }
 
+    /**
+     *
+     * @param mcsSeeds
+     * @return
+     */
     protected synchronized boolean isExtensionRequired(List<Map<Integer, Integer>> mcsSeeds) {
         int maxSize = 0;
         for (Map<Integer, Integer> map : mcsSeeds) {
@@ -318,6 +350,10 @@ public class BaseMCS {
         return this.source.getAtomCount() > maxSize && this.target.getAtomCount() > maxSize;
     }
 
+    /**
+     *
+     * @return
+     */
     protected synchronized boolean isExtensionRequired() {
         int commonAtomCount = checkCommonAtomCount(getReactantMol(), getProductMol());
         int maxSize = 0;
@@ -352,4 +388,5 @@ public class BaseMCS {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(BaseMCS.class.getName());
 }

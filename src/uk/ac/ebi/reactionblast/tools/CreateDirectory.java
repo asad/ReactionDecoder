@@ -48,6 +48,10 @@ public class CreateDirectory {
     private static String suffix = null;
     private static final Logger LOG = getLogger(CreateDirectory.class.getName());
 
+    /**
+     *
+     * @return
+     */
     public static String getSuffix() {
         return suffix;
     }

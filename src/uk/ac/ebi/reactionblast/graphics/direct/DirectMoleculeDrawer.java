@@ -38,6 +38,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectMoleculeDrawer.class.getName());
 
@@ -48,6 +52,10 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     private DirectBondDrawer bondDrawer;
     private Map<IAtom, IStereoAndConformation> chiralMap;
 
+    /**
+     *
+     * @param params
+     */
     public DirectMoleculeDrawer(Params params) {
         setParams(params);
         params.bondLength = 20;
@@ -68,14 +76,26 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         chiralMap = new HashMap<>();
     }
 
+    /**
+     *
+     */
     public DirectMoleculeDrawer() {
         this(new Params());
     }
     
+    /**
+     *
+     * @param chirals
+     */
     public void addToChiralMap(Map<IAtom, IStereoAndConformation> chirals) {
         chiralMap.putAll(chirals);
     }
 
+    /**
+     *
+     * @param atoms
+     * @return
+     */
     public Rectangle2D getDrawnBounds(List<IAtom> atoms) {
         return atomDrawer.getDrawnBounds(atoms);
     }
@@ -139,6 +159,11 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         highlightDrawer.addHighlights(highlightContainer, color);
     }
 
+    /**
+     *
+     * @param atoms
+     * @param color
+     */
     public void addHighlights(List<IAtom> atoms, Color color) {
         Map<IAtom, Color> atomColorMap = new HashMap<>();
         for (IAtom atom : atoms) {
@@ -180,11 +205,20 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         addHighlights(atoms, new ArrayList<IBond>());
     }
 
+    /**
+     *
+     * @param colorMap
+     */
     public void addToHighlights(Map<IAtom, Color> colorMap) {
         Highlighter highlightDrawer = getFirstHighlighter();
         highlightDrawer.addToHighlights(colorMap);
     }
 
+    /**
+     *
+     * @param molecule
+     * @param g
+     */
     public void drawMolecule(IAtomContainer molecule, Graphics2D g) {
         // reset label manager
         labelManager.reset();
@@ -228,6 +262,12 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param g
+     * @return
+     */
     public Rectangle2D drawMoleculeID(IAtomContainer atomContainer, Graphics2D g) {
         String id = atomContainer.getID();
         if (id == null) {

@@ -182,11 +182,19 @@ public class ValencyCalculator {
         return unmodifiableMap(valencElectronMap);
     }
 
+    /**
+     *
+     * @return
+     */
     public static int getSize() {
         initialize();
         return valencElectronMap.size();
     }
 
+    /**
+     *
+     * @return
+     */
     public static Iterable<String> getKeySet() {
         initialize();
         return valencElectronMap.keySet();

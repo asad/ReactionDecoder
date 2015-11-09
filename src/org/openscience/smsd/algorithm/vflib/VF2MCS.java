@@ -83,7 +83,7 @@ import org.openscience.smsd.interfaces.IResults;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 @TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFlibMCSHandlerTest")
-public class VF2MCS extends BaseMCS implements IResults {
+public final class VF2MCS extends BaseMCS implements IResults {
 
     private final static ILoggingTool logger
             = createLoggingTool(VF2MCS.class);
@@ -591,6 +591,12 @@ public class VF2MCS extends BaseMCS implements IResults {
      * Note: VF MCS will search for cliques which will match the types. Mcgregor will extend the cliques depending of
      * the bond type (sensitive and insensitive).
      */
+
+    /**
+     *
+     * @return
+     */
+
     protected synchronized boolean searchVFMappings() {
 //        System.out.println("searchVFMappings ");
         IQuery queryCompiler;

@@ -34,6 +34,10 @@ public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
 
     private final AtomicNumberAccessor<A> accessor;
 
+    /**
+     *
+     * @param accessor
+     */
     public PsuedoAtomicNumberModifier(AtomicNumberAccessor<A> accessor) {
         this.accessor = accessor;
     }

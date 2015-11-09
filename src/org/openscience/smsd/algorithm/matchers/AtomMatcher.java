@@ -33,7 +33,16 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 public interface AtomMatcher {
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     boolean matches(IAtom atom);
 
+    /**
+     *
+     * @return
+     */
     IAtom getQueryAtom();
 }

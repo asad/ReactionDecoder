@@ -113,7 +113,7 @@ import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
  *
  */
 @TestClass("org.openscience.cdk.smsd.factory.SubStructureSearchAlgorithmsTest")
-public class Isomorphism extends BaseMapping implements Serializable {
+public final class Isomorphism extends BaseMapping implements Serializable {
 
     private final static ILoggingTool logger
             = createLoggingTool(Isomorphism.class);

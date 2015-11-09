@@ -43,6 +43,11 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
     private static final Logger LOG = getLogger(SignatureMoleculeLabeller.class.getName());
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         try {
@@ -70,6 +75,11 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
         return null;
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
         MoleculeSignature molSig = new MoleculeSignature(container);

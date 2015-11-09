@@ -33,6 +33,12 @@ public class FingerprintType {
     private final Set<String> commonDifferenceFP;
     private final Set<String> allPatternsFP;
 
+    /**
+     *
+     * @param commonCommonFP
+     * @param commonDifferenceFP
+     * @param allPatternsFP
+     */
     public FingerprintType(Set<String> commonCommonFP, Set<String> commonDifferenceFP, Set<String> allPatternsFP) {
         this.commonCommonFP = commonCommonFP;
         this.commonDifferenceFP = commonDifferenceFP;

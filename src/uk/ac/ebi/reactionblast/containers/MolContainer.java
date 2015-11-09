@@ -172,6 +172,7 @@ public class MolContainer implements IMolContainer {
     /**
      *
      * @param key
+     * @param value
      * @throws java.io.IOException
      */
     @Override
@@ -264,6 +265,10 @@ public class MolContainer implements IMolContainer {
         return molContainer.containsValue(Value);
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized boolean isEmpty() {
         return molContainer.isEmpty();
     }

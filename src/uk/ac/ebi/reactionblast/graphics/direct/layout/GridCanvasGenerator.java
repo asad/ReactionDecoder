@@ -26,6 +26,10 @@ import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class GridCanvasGenerator extends AbstractCanvasGenerator implements CanvasGenerator {
     private static final Logger LOG = getLogger(GridCanvasGenerator.class.getName());
 
@@ -35,16 +39,29 @@ public class GridCanvasGenerator extends AbstractCanvasGenerator implements Canv
 
     private Dimension size;
 
+    /**
+     *
+     */
     public GridCanvasGenerator() {
         this(1, 1); // hmmm...
     }
 
+    /**
+     *
+     * @param rows
+     * @param cols
+     */
     public GridCanvasGenerator(int rows, int cols) {
         super();
         this.rows = rows;
         this.cols = cols;
     }
 
+    /**
+     *
+     * @param atomContainers
+     * @param cellCanvas
+     */
     @Override
     public void layout(List<IAtomContainer> atomContainers, Dimension cellCanvas) {
         double w = cellCanvas.width;
@@ -72,6 +89,10 @@ public class GridCanvasGenerator extends AbstractCanvasGenerator implements Canv
         size = new Dimension(cols * cellCanvas.width, rows * cellCanvas.height);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Dimension getSize() {
         return size;

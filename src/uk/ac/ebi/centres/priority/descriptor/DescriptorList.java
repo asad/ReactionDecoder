@@ -38,7 +38,7 @@ import uk.ac.ebi.centres.Descriptor;
  * @author John May
  * @see Descriptor
  */
-public class DescriptorList implements Comparable<DescriptorList> {
+public final class DescriptorList implements Comparable<DescriptorList> {
     private static final Logger LOG = getLogger(DescriptorList.class.getName());
 
     private final List<Descriptor> descriptors = new ArrayList<>();

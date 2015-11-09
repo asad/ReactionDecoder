@@ -752,6 +752,10 @@ public class Reactor extends AbstractReactor implements Serializable {
         return unmodifiableList(pBonds);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized int getMappingCount() {
         return reactionWithUniqueSTOICHIOMETRY.getMappingCount();

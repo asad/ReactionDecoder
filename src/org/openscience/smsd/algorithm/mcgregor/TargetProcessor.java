@@ -94,6 +94,16 @@ public class TargetProcessor {
         this.newINeighborsA = newINeighborsA;
     }
 
+    /**
+     *
+     * @param target
+     * @param unmapped_atoms_molB
+     * @param mappingSize
+     * @param i_bond_setB
+     * @param c_bond_setB
+     * @param mapped_atoms
+     * @param counter
+     */
     protected void process(
             IAtomContainer target,
             List<Integer> unmapped_atoms_molB,

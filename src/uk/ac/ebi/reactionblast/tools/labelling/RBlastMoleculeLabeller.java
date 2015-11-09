@@ -42,12 +42,22 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
     private static final Logger LOG = getLogger(RBlastMoleculeLabeller.class.getName());
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return permute(
                 getCanonicalPermutation(container), container);
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
         int atomCount = container.getAtomCount();

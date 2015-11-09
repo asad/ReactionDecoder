@@ -35,19 +35,37 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
     private static final Logger LOG = getLogger(LeftToRightReactionLayout.class.getName());
 
+    /**
+     *
+     */
     public LeftToRightReactionLayout() {
         this(true);
     }
 
+    /**
+     *
+     * @param shouldLayout
+     */
     public LeftToRightReactionLayout(boolean shouldLayout) {
         this(shouldLayout, new Vector2d(0, 1));
     }
 
+    /**
+     *
+     * @param shouldLayout
+     * @param moleculeAxis
+     */
     public LeftToRightReactionLayout(boolean shouldLayout, Vector2d moleculeAxis) {
         super(shouldLayout, moleculeAxis);
         arrowAxis = X;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param axis
+     * @return
+     */
     @Override
     public BoundsTree layout(IReaction reaction, Vector2d axis) {
         IAtomContainerSet reactants = reaction.getReactants();
@@ -82,11 +100,19 @@ public class LeftToRightReactionLayout extends AbstractDirectReactionLayout {
         return boundsTree;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         return new Vector2d(1, 0);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         return (boundsTree.getHeight() / 2) + params.borderY;

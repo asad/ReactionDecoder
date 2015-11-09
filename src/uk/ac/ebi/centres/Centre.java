@@ -27,6 +27,7 @@ import java.util.Set;
  * molecular object which can then be transferred when all centres that can be perceived, have been perceived.
  *
  * @author John May
+ * @param <A>
  * @see Descriptor
  * @see uk.ac.ebi.centres.descriptor.General
  * @see uk.ac.ebi.centres.descriptor.Tetrahedral
@@ -55,8 +56,22 @@ public interface Centre<A> extends Ligand<A> {
      */
     public Descriptor perceive(PriorityRule<A> rule, SignCalculator<A> calculator);
 
+    /**
+     *
+     * @param proximal
+     * @param rule
+     * @param calculator
+     * @return
+     */
     public Descriptor perceive(List<Ligand<A>> proximal, PriorityRule<A> rule, SignCalculator<A> calculator);
 
+    /**
+     *
+     * @param centres
+     * @param rule
+     * @param calculator
+     * @return
+     */
     public int perceiveAuxiliary(Collection<Centre<A>> centres,
             PriorityRule<A> rule,
             SignCalculator<A> calculator);

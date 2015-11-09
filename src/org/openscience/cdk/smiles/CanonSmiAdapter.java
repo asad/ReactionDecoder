@@ -43,6 +43,13 @@ public class CanonSmiAdapter {
     static final CDKToBeam cdkToBeam = new CDKToBeam(false, false);
     private static final Logger LOG = getLogger(CanonSmiAdapter.class.getName());
 
+    /**
+     *
+     * @param ac
+     * @return
+     * @throws CDKException
+     * @throws IOException
+     */
     public static String create(IAtomContainer ac) throws CDKException, IOException {
 
         EdgeToBondMap bonds = withSpaceFor(ac);
@@ -65,6 +72,13 @@ public class CanonSmiAdapter {
         return cpy;
     }
 
+    /**
+     *
+     * @param container
+     * @param graph
+     * @param bonds
+     * @return
+     */
     public static long[] betterInvariants(IAtomContainer container, int[][] graph, EdgeToBondMap bonds) {
         long[] labels = new long[graph.length];
 

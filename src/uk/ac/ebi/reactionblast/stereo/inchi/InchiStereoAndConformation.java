@@ -46,10 +46,20 @@ public enum InchiStereoAndConformation {
     /*
      * as in Z-but-2-ene
      */
+
+    /**
+     *
+     */
+
     TOGETHER(4, "Z-but-2-ene atom"),
     /*
      * as in Z-but-2-ene atom
      */
+
+    /**
+     *
+     */
+
     OPPOSITE(5, "E-but-2-ene atom");  //  
     private final int type;
     private final String description;

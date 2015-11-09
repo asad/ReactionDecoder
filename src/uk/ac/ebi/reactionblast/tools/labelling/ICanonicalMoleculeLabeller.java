@@ -28,7 +28,17 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public interface ICanonicalMoleculeLabeller {
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     public IAtomContainer getCanonicalMolecule(IAtomContainer container);
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     public int[] getCanonicalPermutation(IAtomContainer container);
 }

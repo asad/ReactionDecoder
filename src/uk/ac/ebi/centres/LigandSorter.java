@@ -23,6 +23,7 @@ import java.util.List;
  * An injectable sorter for ligands.
  *
  * @author John May
+ * @param <A>
  */
 public interface LigandSorter<A> {
 
@@ -37,5 +38,10 @@ public interface LigandSorter<A> {
      */
     public Priority prioritise(List<Ligand<A>> ligands);
 
+    /**
+     *
+     * @param sorted
+     * @return
+     */
     public List<List<Ligand<A>>> getGroups(List<Ligand<A>> sorted);
 }

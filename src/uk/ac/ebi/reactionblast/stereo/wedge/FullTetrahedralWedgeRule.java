@@ -35,11 +35,19 @@ public class FullTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
 
     private final IBond.Stereo[] pattern = new IBond.Stereo[]{UP, DOWN, UP, DOWN};
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IBond.Stereo[] getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Stereo getStereo() {
         return CLOCKWISE;

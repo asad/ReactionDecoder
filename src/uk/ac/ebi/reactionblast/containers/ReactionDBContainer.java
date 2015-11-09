@@ -56,6 +56,11 @@ public class ReactionDBContainer implements Serializable {
     }
 
     //~--- constructors -------------------------------------------------------
+
+    /**
+     *
+     * @throws Exception
+     */
     protected  ReactionDBContainer() throws Exception {
         reactionsFingerprints = synchronizedMap(new HashMap<String, ReactionInfoCollector>());
 
@@ -71,10 +76,18 @@ public class ReactionDBContainer implements Serializable {
         return reactionsFingerprints.containsKey(Key);
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized public int size() {
         return reactionsFingerprints.size();
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized public boolean isEmpty() {
         return reactionsFingerprints.isEmpty();
     }
@@ -124,19 +137,34 @@ public class ReactionDBContainer implements Serializable {
         reactionsFingerprints.putAll(m);
     }
 
+    /**
+     *
+     */
     synchronized public void clear() {
         reactionsFingerprints.clear();
         ref = null;
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized public Set<String> keySet() {
         return reactionsFingerprints.keySet();
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized public Collection<ReactionInfoCollector> values() {
         return reactionsFingerprints.values();
     }
 
+    /**
+     *
+     * @return
+     */
     synchronized public Set<Entry<String, ReactionInfoCollector>> entrySet() {
         return reactionsFingerprints.entrySet();
     }

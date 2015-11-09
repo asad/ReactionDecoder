@@ -102,6 +102,11 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         setMolMapping();
     }
 
+    /**
+     *
+     * @param row
+     * @param coloumn
+     */
     public Holder(int row, int coloumn) {
         this.row = row;
         this.coloumn = coloumn;

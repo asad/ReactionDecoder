@@ -34,6 +34,9 @@ public class ZERule<A> extends DescriptorRule<A> {
 
     private static final Logger LOG = getLogger(ZERule.class.getName());
 
+    /**
+     *
+     */
     public ZERule() {
         super(new ArcPrimaryDescriptor<A>(), GEOMETRICAL, E, Z);
     }

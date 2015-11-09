@@ -36,6 +36,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.CanvasGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
 
+/**
+ *
+ * @author asad
+ */
 public class ZoomToFitDrawer {
     private static final Logger LOG = getLogger(ZoomToFitDrawer.class.getName());
     

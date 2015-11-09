@@ -25,6 +25,7 @@ import java.util.List;
  * A source of reactions or molecules, for example a database or filesystem.
  * 
  * @author maclean
+ * @param <T>
  *
  */
 public interface IDataSource<T> {

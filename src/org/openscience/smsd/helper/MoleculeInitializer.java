@@ -320,6 +320,9 @@ public class MoleculeInitializer {
         return map.isEmpty();
     }
 
+    /**
+     *
+     */
     public MoleculeInitializer() {
     }
     /**
@@ -367,5 +370,6 @@ public class MoleculeInitializer {
          */
         abstract IRingSet ringSet(IAtomContainer m);
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MoleculeInitializer.class.getName());
 
 }

@@ -46,11 +46,18 @@ public class RootSystem {
      */
     private final List<IAtom> leaves;
     
+    /**
+     *
+     */
     public RootSystem() {
         this.roots = new ArrayList<>();
         this.leaves = new ArrayList<>();
     }
     
+    /**
+     *
+     * @param root
+     */
     public void addRoot(IAtom root) {
         if (roots.contains(root)) {
         } else {
@@ -58,11 +65,19 @@ public class RootSystem {
         }
     }
     
+    /**
+     *
+     * @param bond
+     */
     public void addRootsFromBond(IBond bond) {
         addRoot(bond.getAtom(0));
         addRoot(bond.getAtom(1));
     }
 
+    /**
+     *
+     * @param leaf
+     */
     public void addLeaf(IAtom leaf) {
         if (leaves.contains(leaf)) {
         } else {
@@ -70,14 +85,27 @@ public class RootSystem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getRoots() {
         return roots;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<IAtom> getLeaves() {
         return leaves;
     }
 
+    /**
+     *
+     * @param otherRootSystem
+     * @return
+     */
     public RootSystem merge(RootSystem otherRootSystem) {
         RootSystem merged = new RootSystem();
         merged.roots.addAll(roots);

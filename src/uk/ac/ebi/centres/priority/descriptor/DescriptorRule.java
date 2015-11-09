@@ -35,6 +35,7 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  * descriptor a value 1 .. n. If a given descriptor is not found in the ranking is assign rank 0.
  *
  * @author John May
+ * @param <A>
  */
 public class DescriptorRule<A> extends AbstractPriorityRule<A> {
     private static final Logger LOG = getLogger(DescriptorRule.class.getName());
@@ -47,6 +48,7 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
      * preceedes that the higher index number the higher the priority.
      *
      * @param accessor a {@link DescriptorAccessor} for a descriptor label
+     * @param ordering
      * @param descriptors ranking of descriptors low .. high priority
      */
     public DescriptorRule(DescriptorAccessor<A> accessor,
@@ -60,6 +62,7 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
      * index number the higher the priority.
      *
      * @param type the type of priority rule
+     * @param ordering
      * @param accessor a {@link DescriptorAccessor} for a descriptor label
      * @param descriptors ranking of descriptors low .. high priority
      */

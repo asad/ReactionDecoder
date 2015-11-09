@@ -62,6 +62,14 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
         this.builder = builder;
     }
 
+    /**
+     *
+     * @param vertexIndex1
+     * @param vertexIndex2
+     * @param vertexSymbol1
+     * @param vertexSymbol2
+     * @param edgeLabel
+     */
     @Override
     /**
      * {@inheritDoc}
@@ -93,6 +101,9 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
         }
     }
 
+    /**
+     *
+     */
     @Override
     /**
      * {@inheritDoc}
@@ -101,6 +112,10 @@ public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
         this.container = this.builder.newInstance(IAtomContainer.class);
     }
 
+    /**
+     *
+     * @param label
+     */
     @Override
     /**
      * {@inheritDoc}

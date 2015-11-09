@@ -331,6 +331,10 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getCovalentCount() {
 

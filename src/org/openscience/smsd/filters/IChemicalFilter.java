@@ -51,11 +51,27 @@ public interface IChemicalFilter<T> {
             Map<Integer, AtomAtomMapping> allAtomMCS,
             Map<Integer, T> selectionMap) throws CDKException;
 
+    /**
+     *
+     * @return
+     */
     public List<T> getScores();
 
+    /**
+     *
+     */
     public void clearScores();
 
+    /**
+     *
+     * @param counter
+     * @param value
+     */
     public void addScore(int counter, T value);
 
+    /**
+     *
+     * @param map
+     */
     public void fillMap(Map<Integer, T> map);
 }

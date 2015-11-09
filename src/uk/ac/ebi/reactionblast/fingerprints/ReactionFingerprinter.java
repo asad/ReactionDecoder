@@ -92,6 +92,13 @@ public class ReactionFingerprinter implements Serializable {
      * @param reaction
      * @return
      */
+
+    /**
+     *
+     * @param reaction
+     * @return
+     */
+
     public static IReaction expandReactionAndRemoveHydrogens(IReaction reaction) {
         IReaction r = new Reaction();
         /*
@@ -142,6 +149,11 @@ public class ReactionFingerprinter implements Serializable {
     }
     private final IPatternFingerprinter reactionFingerprint;
 
+    /**
+     *
+     * @param reaction
+     * @throws CDKException
+     */
     public ReactionFingerprinter(IReaction reaction) throws CDKException {
         IReaction r = expandReactionAndRemoveHydrogens(reaction);
         IPatternFingerprinter fpr = null;

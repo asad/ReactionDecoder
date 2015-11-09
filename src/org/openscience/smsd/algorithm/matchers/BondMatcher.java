@@ -33,5 +33,10 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public interface BondMatcher {
 
+    /**
+     *
+     * @param bond
+     * @return
+     */
     boolean matches(IBond bond);
 }

@@ -25,6 +25,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class Arc<A> {
     private static final Logger LOG = getLogger(Arc.class.getName());
@@ -34,6 +35,12 @@ public class Arc<A> {
     private MutableDescriptor descriptor;
     private int depth = 0;
 
+    /**
+     *
+     * @param tail
+     * @param head
+     * @param descriptor
+     */
     public Arc(Ligand<A> tail, Ligand<A> head,
             MutableDescriptor descriptor) {
         this.tail = tail;
@@ -58,22 +65,41 @@ public class Arc<A> {
         this.depth = depth;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getDepth() {
         return depth;
     }
 
+    /**
+     *
+     * @return
+     */
     public Descriptor getDescriptor() {
         return descriptor.get();
     }
 
+    /**
+     *
+     * @return
+     */
     public Ligand<A> getHead() {
         return this.head;
     }
 
+    /**
+     *
+     * @return
+     */
     public Ligand<A> getTail() {
         return this.tail;
     }
 
+    /**
+     *
+     */
     public void transpose() {
         Ligand<A> tmp = tail;
         tail = head;

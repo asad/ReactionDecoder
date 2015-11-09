@@ -27,6 +27,7 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
     private static final Logger LOG = getLogger(DefaultDescriptorManager.class.getName());
@@ -34,6 +35,11 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
     private final Map<A, MutableDescriptor> atomMap = new HashMap<>();
     private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<>();
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public MutableDescriptor getDescriptor(A atom) {
         MutableDescriptor mutableDescriptor = atomMap.get(atom);
@@ -44,6 +50,12 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
         return mutableDescriptor;
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public MutableDescriptor getDescriptor(A first, A second) {
 
@@ -74,6 +86,9 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
         return sb.toString();
     }
 
+    /**
+     *
+     */
     @Override
     public void clear() {
         atomMap.clear();

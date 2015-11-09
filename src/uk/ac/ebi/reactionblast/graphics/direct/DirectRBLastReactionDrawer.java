@@ -49,6 +49,10 @@ import uk.ac.ebi.reactionblast.mapping.blocks.Block;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockPair;
 import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 
+/**
+ *
+ * @author asad
+ */
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectRBLastReactionDrawer.class.getName());
 
@@ -109,6 +113,14 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         return image;
     }
 
+    /**
+     *
+     * @param rBlastReaction
+     * @param w
+     * @param h
+     * @param g
+     * @return
+     */
     public Rectangle2D drawRBlastReaction(RBlastReaction rBlastReaction, int w, int h, Graphics2D g) {
         AffineTransform originalTransform = g.getTransform();
 
@@ -239,6 +251,10 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param rBlastReaction
+     */
     public void highlightSubgraphs(RBlastReaction rBlastReaction) {
         List<Color> colors = getColors(rBlastReaction.getMappedSubgraphs().size());
         int blockIndex = 0;
@@ -256,6 +272,12 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         reactionDrawer.highlightSubgraph(block.getAtoms(), color);
     }
 
+    /**
+     *
+     * @param colors
+     * @param index
+     * @return
+     */
     public Color getColorForBlock(List<Color> colors, int index) {
         if (colors.isEmpty() || index > colors.size() || !params.colorSubgraphBoxes) {
             return GRAY;
@@ -264,6 +286,11 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         }
     }
 
+    /**
+     *
+     * @param rBlastReaction
+     * @param g
+     */
     public void drawBondChangeMarks(RBlastReaction rBlastReaction, Graphics2D g) {
 
         if (params.drawBondFormedCleavedMarks) {

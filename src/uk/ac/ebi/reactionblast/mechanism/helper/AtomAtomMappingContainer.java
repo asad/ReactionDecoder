@@ -274,6 +274,11 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
         return ret;
     }
 
+    /**
+     *
+     * @param idx
+     * @return
+     */
     public synchronized IAtom getProductAtom(int idx) {
         IAtom ret = null;
         if ((idx < productAtomArray.size()) && (idx > -1)) {

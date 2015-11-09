@@ -24,6 +24,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IStereoElement;
 
+/**
+ *
+ * @author asad
+ */
 public abstract class WedgeRule {
 
     private int matchPoint;
@@ -108,8 +112,19 @@ public abstract class WedgeRule {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     public abstract IBond.Stereo[] getPattern();
 
+    /**
+     *
+     * @param centralAtom
+     * @param atomContainer
+     * @param angleMap
+     * @return
+     */
     public abstract IStereoElement execute(
             IAtom centralAtom,
             IAtomContainer atomContainer,

@@ -64,12 +64,39 @@ public class Annotator extends Helper {
     static final String TAB = "\t";
     private static final Logger LOG = getLogger(Annotator.class.getName());
 
+    /**
+     *
+     */
     protected boolean REPORT_ALL_MAPPINGS;
+
+    /**
+     *
+     */
     protected boolean GENERATE_IMAGE;
+
+    /**
+     *
+     */
     protected boolean GENERATE_AAMIMAGE;
+
+    /**
+     *
+     */
     protected boolean REPORT_MMP;
+
+    /**
+     *
+     */
     protected boolean REPORT_PATTERNS;
+
+    /**
+     *
+     */
     protected boolean REMAP;
+
+    /**
+     *
+     */
     protected String PREFIX;
 
 
@@ -139,6 +166,12 @@ public class Annotator extends Helper {
         return true;
     }
 
+    /**
+     *
+     * @param results
+     * @param jobID
+     * @throws IOException
+     */
     protected void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
         String rootPath = new File(".").getCanonicalPath();
         File bcMatrix = new File(rootPath, jobID + "_Bond_Change" + ".mat");

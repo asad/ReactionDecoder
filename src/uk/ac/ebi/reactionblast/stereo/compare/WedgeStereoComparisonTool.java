@@ -43,6 +43,11 @@ public class WedgeStereoComparisonTool {
 
     private static final Logger LOG = getLogger(WedgeStereoComparisonTool.class.getName());
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public static List<WedgeStereoComparisonResult> compare(IReaction reaction) {
         List<WedgeStereoComparisonResult> results
                 = new ArrayList<>();
@@ -83,6 +88,15 @@ public class WedgeStereoComparisonTool {
         return results;
     }
 
+    /**
+     *
+     * @param atomA
+     * @param atomContainerA
+     * @param atomB
+     * @param atomContainerB
+     * @param lifter
+     * @return
+     */
     public static WedgeStereoComparisonResult compare(IAtom atomA, IAtomContainer atomContainerA, IAtom atomB, IAtomContainer atomContainerB, WedgeStereoLifter lifter) {
         WedgeStereoAnalysisResult resultForA = getResult(atomA, atomContainerA, lifter);
         WedgeStereoAnalysisResult resultForB = getResult(atomB, atomContainerB, lifter);

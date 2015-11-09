@@ -401,6 +401,10 @@ public class BKKCKCF {
         return neighbor_vec;
     }
 
+    /**
+     *
+     * @return
+     */
     public synchronized int getBestCliqueSize() {
         return best_clique_size;
     }

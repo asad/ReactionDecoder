@@ -182,6 +182,12 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
         }
     }
 
+    /**
+     *
+     * @param writer
+     * @param container
+     * @throws IOException
+     */
     protected void writeFormalIsotope(BufferedWriter writer, IAtomContainer container) throws IOException {
         // write formal isotope information
         for (int i = 0; i < container.getAtomCount(); i++) {
@@ -247,6 +253,12 @@ public abstract class MDLWriterBase extends DefaultChemObjectWriter {
 
     }
 
+    /**
+     *
+     * @param molecule
+     * @param writer
+     * @throws IOException
+     */
     protected void writeSgroupProperty(IAtomContainer molecule, BufferedWriter writer) throws IOException {
         if (superAtomContainer.countSuperatoms() > 0) {
             writeSgroupCount(molecule, writer);

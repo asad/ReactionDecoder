@@ -222,6 +222,10 @@ public class MappingSolution implements Serializable {
         this.generate2D = generate2D;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalCarbonBondChanges() {
         return this.totalCarbonBondChanges;
     }

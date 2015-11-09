@@ -24,17 +24,33 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
 
+/**
+ *
+ * @author asad
+ */
 public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
     private static final Logger LOG = getLogger(TopToBottomReactionLayout.class.getName());
 
+    /**
+     *
+     */
     public TopToBottomReactionLayout() {
         this(true);
     }
 
+    /**
+     *
+     * @param shouldInvert
+     */
     public TopToBottomReactionLayout(boolean shouldInvert) {
         this(shouldInvert, new Vector2d(1, 0));
     }
 
+    /**
+     *
+     * @param shouldInvert
+     * @param moleculeAxis
+     */
     public TopToBottomReactionLayout(boolean shouldInvert, Vector2d moleculeAxis) {
         super(shouldInvert, moleculeAxis);
         arrowAxis = Y;
@@ -73,11 +89,19 @@ public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
         return boundsTree;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         return new Vector2d(0, 1);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;

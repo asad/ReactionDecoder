@@ -41,6 +41,10 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class ConvexHull implements Iterable<Point2d> {
     private static final Logger LOG = getLogger(ConvexHull.class.getName());
     
@@ -49,6 +53,10 @@ public class ConvexHull implements Iterable<Point2d> {
     private String[] hullIDs;
     private final Vector2d X_AXIS = new Vector2d(1, 0);
     
+    /**
+     *
+     * @param atomContainer
+     */
     public ConvexHull(IAtomContainer atomContainer) {
         Point2d[] points = new Point2d[atomContainer.getAtomCount()];
         int i = 0;
@@ -85,10 +93,18 @@ public class ConvexHull implements Iterable<Point2d> {
         }
     }
     
+    /**
+     *
+     * @param points
+     */
     public ConvexHull(Point2d[] points) {
         makeFromPoints(points);
     }
     
+    /**
+     *
+     * @return
+     */
     public Vector2d getMajorAxis() {
         Rectangle minimumAreaBoundingRectangle = 
 //            getMinimumAreaBoundingRectangle();
@@ -96,6 +112,10 @@ public class ConvexHull implements Iterable<Point2d> {
        return minimumAreaBoundingRectangle.getMajorAxis();
     }
     
+    /**
+     *
+     * @return
+     */
     public Point2d getCenter() {
         Point2d center = new Point2d();
         for (Point2d hullPoint : hull) {
@@ -107,6 +127,10 @@ public class ConvexHull implements Iterable<Point2d> {
         return center;
     }
     
+    /**
+     *
+     * @return
+     */
     public Rectangle getMinimumAreaBoundingRectangleBruteForce() {
         Rectangle minRect = null;
         double minArea = -1;
@@ -135,6 +159,10 @@ public class ConvexHull implements Iterable<Point2d> {
         return minRect;
     }
     
+    /**
+     *
+     * @return
+     */
     public Rectangle getMinimumAreaBoundingRectangle() {
         assert hull != null;
         Point2d minY = null;
@@ -350,6 +378,11 @@ public class ConvexHull implements Iterable<Point2d> {
                 pointLineDistance(tailPoint, headPoint, remainExPoint));
     }
     
+    /**
+     *
+     * @param points
+     * @return
+     */
     public String toString(Point2d... points) {
         String str = "[";
         for (Point2d point : points) {
@@ -411,6 +444,10 @@ public class ConvexHull implements Iterable<Point2d> {
         return edge;
     }
     
+    /**
+     *
+     * @return
+     */
     public Rectangle2D getAxisAlignedMinimumBoundingRectangle() {
         double minX = MAX_VALUE;
         double minY = MAX_VALUE;
@@ -544,14 +581,48 @@ public class ConvexHull implements Iterable<Point2d> {
      */
     public class Rectangle {
 
+        /**
+         *
+         */
         public Point2d pointX;
+
+        /**
+         *
+         */
         public Point2d pointY;
+
+        /**
+         *
+         */
         public Point2d pointZ;
+
+        /**
+         *
+         */
         public Point2d cornerA;
+
+        /**
+         *
+         */
         public Point2d cornerB;
+
+        /**
+         *
+         */
         public Point2d cornerC;
+
+        /**
+         *
+         */
         public Point2d cornerD;
 
+        /**
+         *
+         * @param pointOnAB
+         * @param cornerC
+         * @param cornerD
+         * @param distToCD
+         */
         public Rectangle(Point2d pointOnAB, Point2d cornerC, Point2d cornerD, double distToCD) {
             pointX = new Point2d(pointOnAB);
             this.cornerC = new Point2d(cornerC);
@@ -572,6 +643,10 @@ public class ConvexHull implements Iterable<Point2d> {
             cornerB.scaleAdd(distToCD, perp, cornerB);
         }
 
+        /**
+         *
+         * @return
+         */
         public double area() {
 //           return getWidth() * getHeight();
             return new Point2d(cornerA).distance(new Point2d(cornerC))
@@ -583,12 +658,20 @@ public class ConvexHull implements Iterable<Point2d> {
                     cornerA.x, cornerA.y, cornerB.x, cornerB.y, cornerC.x, cornerC.y, cornerD.x, cornerD.y);
         }
 
+        /**
+         *
+         * @return
+         */
         public double getWidth() {
             Vector2d cd = new Vector2d(cornerC);
             cd.sub(cornerD);
             return cd.length();
         }
 
+        /**
+         *
+         * @return
+         */
         public Vector2d getMajorAxis() {
             Vector2d cd = new Vector2d(cornerC);
             cd.sub(cornerD);
@@ -603,6 +686,10 @@ public class ConvexHull implements Iterable<Point2d> {
             }
         }
 
+        /**
+         *
+         * @return
+         */
         public double getHeight() {
             Vector2d ac = new Vector2d(cornerA);
             ac.sub(cornerC);

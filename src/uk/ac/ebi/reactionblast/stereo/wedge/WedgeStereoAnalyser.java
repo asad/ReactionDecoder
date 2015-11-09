@@ -42,6 +42,13 @@ public class WedgeStereoAnalyser {
 
     private static final Logger LOG = getLogger(WedgeStereoAnalyser.class.getName());
 
+    /**
+     *
+     * @param atom
+     * @param atomContainer
+     * @param lifter
+     * @return
+     */
     public static WedgeStereoAnalysisResult getResult(IAtom atom, IAtomContainer atomContainer, WedgeStereoLifter lifter) {
         boolean isPotentialStereoCenter
                 = hasPotentialStereoCenter(atom, atomContainer);

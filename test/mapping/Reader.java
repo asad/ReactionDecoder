@@ -75,6 +75,11 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 public class Reader {
     private static final Logger LOG = getLogger(Reader.class.getName());
 
+    /**
+     *
+     * @param AtomContainer
+     * @return
+     */
     public IAtomContainer layout(IAtomContainer AtomContainer) {
         try {
             StructureDiagramGenerator sdg = new StructureDiagramGenerator();
@@ -86,6 +91,12 @@ public class Reader {
         }
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @return
+     */
     public BufferedImage makeBlankImage(int width, int height) {
         BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -95,18 +106,44 @@ public class Reader {
         return image;
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     * @throws IOException
+     */
     public IReaction readReaction(String name) throws IOException {
         return readReaction(name, true);
     }
 
+    /**
+     *
+     * @param name
+     * @param reMap
+     * @return
+     * @throws IOException
+     */
     public IReaction readReaction(String name, boolean reMap) throws IOException {
         return readReaction(new File(name).getName().split(".rxn")[0], new File(name).getParent(), reMap, false);
     }
 
+    /**
+     *
+     * @param name
+     * @param dir
+     * @param reMap
+     * @return
+     * @throws IOException
+     */
     public IReaction readReaction(String name, String dir, boolean reMap) throws IOException {
         return readReaction(name, dir, reMap, false);
     }
 
+    /**
+     *
+     * @param fileNames
+     * @return
+     */
     protected List<IReaction> parseRXN(String fileNames) {
         /*
          split of file extension
@@ -194,10 +231,26 @@ public class Reader {
 //
 //        return rxnReactions;
 //    }
+
+    /**
+     *
+     * @param name
+     * @param dir
+     * @return
+     * @throws IOException
+     */
     public IReaction readReaction(String name, String dir) throws IOException {
         return readReaction(name, dir, false, false);
     }
 
+    /**
+     *
+     * @param name
+     * @param dir
+     * @return
+     * @throws FileNotFoundException
+     * @throws CDKException
+     */
     public IAtomContainer readMDLMolecule(String name, String dir) throws FileNotFoundException, CDKException {
         String filepath = dir + name + ".mol";
         MDLV2000Reader reader = new MDLV2000Reader(new FileReader(filepath));
@@ -206,11 +259,21 @@ public class Reader {
         return AtomContainer;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public IReaction canonise(IReaction reaction) {
         ICanonicalReactionLabeller labeller = new BlockReactionCanoniser();
         return labeller.getCanonicalReaction(reaction);
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     public IReaction map(IReaction reaction) {
         try {
             ReactionMechanismTool rmt = new ReactionMechanismTool(
@@ -222,6 +285,13 @@ public class Reader {
         }
     }
 
+    /**
+     *
+     * @param image
+     * @param outputDirPath
+     * @param name
+     * @throws IOException
+     */
     public void writeToFile(Image image, String outputDirPath, String name) throws IOException {
         File outputDir = new File(outputDirPath);
         if (!outputDir.exists()) {
@@ -234,17 +304,29 @@ public class Reader {
         write((RenderedImage) image, "PNG", outfile);
     }
 
+    /**
+     *
+     * @param reaction
+     */
     public void addImplicitHydrogens(IReaction reaction) {
         addImplicitHydrogens(reaction.getReactants());
         addImplicitHydrogens(reaction.getProducts());
     }
 
+    /**
+     *
+     * @param molSet
+     */
     public void addImplicitHydrogens(IAtomContainerSet molSet) {
         for (IAtomContainer atomContainer : molSet.atomContainers()) {
             addImplicitHydrogens(atomContainer);
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     */
     public void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
             getInstance(getInstance()).addImplicitHydrogens(atomContainer);
@@ -254,6 +336,10 @@ public class Reader {
         }
     }
 
+    /**
+     *
+     * @param atomContainer
+     */
     public void typeAtoms(IAtomContainer atomContainer) {
         try {
             percieveAtomTypesAndConfigureAtoms(atomContainer);
@@ -263,6 +349,10 @@ public class Reader {
         }
     }
 
+    /**
+     *
+     * @param reaction
+     */
     protected void renumberMappingIDs(IReaction reaction) {
         int i = 1;
         for (IMapping mapping : reaction.mappings()) {
@@ -275,6 +365,14 @@ public class Reader {
         }
     }
 
+    /**
+     *
+     * @param molDrawer
+     * @param AtomContainer
+     * @param dirPath
+     * @param name
+     * @throws IOException
+     */
     public void draw(DirectMoleculeDrawer molDrawer, IAtomContainer AtomContainer,
             String dirPath, String name) throws IOException {
         int width = 700;

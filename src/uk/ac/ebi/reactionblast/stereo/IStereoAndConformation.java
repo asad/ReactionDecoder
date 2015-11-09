@@ -52,10 +52,20 @@ public enum IStereoAndConformation implements Comparable<IStereoAndConformation>
     /*
      * as in Z-but-2-ene TOGETHER
      */
+
+    /**
+     *
+     */
+
     Z(6, "TOGETHER atom Configuration"),
     /*
      * as in E-but-2-ene OPPOSITE
      */
+
+    /**
+     *
+     */
+
     E(7, "OPPOSITE atom Configuration");  // 
     private final int type;
     private final String description;

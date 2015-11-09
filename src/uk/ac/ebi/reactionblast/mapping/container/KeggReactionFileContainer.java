@@ -80,6 +80,11 @@ public class KeggReactionFileContainer implements Serializable {
 
     //~--- constructors -------------------------------------------------------
 
+    /**
+     *
+     * @throws Exception
+     */
+
      protected KeggReactionFileContainer() throws Exception {
          reactionMap = new TreeMap<>();
     }

@@ -31,6 +31,10 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public class CircularCanvasGenerator extends 
                  AbstractCanvasGenerator implements CanvasGenerator {
     private static final Logger LOG = getLogger(CircularCanvasGenerator.class.getName());
@@ -42,23 +46,44 @@ public class CircularCanvasGenerator extends
     
     private Dimension size;
 
+    /**
+     *
+     */
     public CircularCanvasGenerator() {
         this(new Vector2d(-1, 0));
     }
     
+    /**
+     *
+     * @param vectorToStart
+     */
     public CircularCanvasGenerator(Vector2d vectorToStart) {
         this.vectorToStart = vectorToStart;
     }
     
+    /**
+     *
+     * @param putFirstInCenter
+     */
     public CircularCanvasGenerator(boolean putFirstInCenter) {
         this(new Vector2d(-1, 0), putFirstInCenter);
     }
     
+    /**
+     *
+     * @param vectorToStart
+     * @param putFirstInCenter
+     */
     public CircularCanvasGenerator(Vector2d vectorToStart, boolean putFirstInCenter) {
         this.vectorToStart = vectorToStart;
         this.putFirstInCenter = putFirstInCenter;
     }
     
+    /**
+     *
+     * @param atomContainers
+     * @param cellCanvas
+     */
     @Override
     public void layout(List<IAtomContainer> atomContainers, Dimension cellCanvas) {
         int n;
@@ -104,6 +129,10 @@ public class CircularCanvasGenerator extends
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Dimension getSize() {
         return size;

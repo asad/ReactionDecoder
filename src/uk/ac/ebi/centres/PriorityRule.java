@@ -26,21 +26,50 @@ import java.util.List;
  * Comparison}
  *
  * @author John May
+ * @param <A>
  * @see Comparison
  * @see Comparator
  */
 public interface PriorityRule<A> extends Comparator<Ligand<A>> {
 
+    /**
+     *
+     */
     public enum Type {
 
+        /**
+         *
+         */
         CONSTITUTIONAL,
+
+        /**
+         *
+         */
         GEOMETRICAL,
+
+        /**
+         *
+         */
         TOPOGRAPHICAL,
+
+        /**
+         *
+         */
         COMBINED
     }
 
+    /**
+     *
+     * @return
+     */
     public Type getRuleType();
 
+    /**
+     *
+     * @param o1
+     * @param o2
+     * @return
+     */
     public int recursiveCompare(Ligand<A> o1, Ligand<A> o2);
 
     /**

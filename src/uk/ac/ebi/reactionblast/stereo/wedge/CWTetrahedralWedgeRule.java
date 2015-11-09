@@ -36,11 +36,19 @@ public class CWTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
 
     private final IBond.Stereo[] pattern = {UP, DOWN, NONE, NONE};
 
+    /**
+     *
+     * @return
+     */
     @Override
     public IBond.Stereo[] getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ITetrahedralChirality.Stereo getStereo() {
         return CLOCKWISE;

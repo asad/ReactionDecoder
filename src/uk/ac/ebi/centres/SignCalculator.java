@@ -19,6 +19,7 @@ package uk.ac.ebi.centres;
 
 /**
  * @author John May
+ * @param <A>
  */
 public interface SignCalculator<A> {
 
@@ -32,7 +33,6 @@ public interface SignCalculator<A> {
      * @param a3
      * @param o3
      * @param a4
-     * @param o4
      *
      * @return
      */

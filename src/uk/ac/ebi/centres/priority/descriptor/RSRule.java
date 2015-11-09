@@ -35,6 +35,10 @@ public class RSRule<A> extends DescriptorRule<A> {
 
     private static final Logger LOG = getLogger(RSRule.class.getName());
 
+    /**
+     *
+     * @param accessor
+     */
     public RSRule(DescriptorAccessor<A> accessor) {
         super(PSEUDO_ASYMMETRIC, TOPOGRAPHICAL,
                 accessor, S, R);

@@ -22,6 +22,7 @@ package uk.ac.ebi.reactionblast.interfaces;
  * A store to put data into, for example a filesystem or database.
  *
  * @author maclean
+ * @param <T>
  *
  */
 public interface IDataStore<T> {
@@ -29,6 +30,7 @@ public interface IDataStore<T> {
     /**
      * Store a reaction by writing it out somehow.
      *
+     * @param obj
      * @param reaction the reaction to store.
      */
     void store(T obj);

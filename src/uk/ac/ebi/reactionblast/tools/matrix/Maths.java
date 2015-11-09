@@ -5,6 +5,10 @@ import static java.lang.Math.sqrt;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 
+/**
+ *
+ * @author asad
+ */
 public class Maths {
 
     private static final Logger LOG = getLogger(Maths.class.getName());

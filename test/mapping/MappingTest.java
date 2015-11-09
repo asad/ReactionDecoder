@@ -49,6 +49,9 @@ public class MappingTest extends BaseTest {
 
     private static final Logger LOG = getLogger(MappingTest.class.getName());
 
+    /**
+     *
+     */
     @Before
     public void setup() {
         out.println("USING : ECBLAST TO MAP FROM RXN DIR: " + KEGG_RXN_DIR);
@@ -57,6 +60,10 @@ public class MappingTest extends BaseTest {
      * Test case for Reaction SMILES
      */
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void Test() throws Exception {
         setup();
@@ -152,6 +159,12 @@ public class MappingTest extends BaseTest {
      * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
      * Ring rearrangment case
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01081() throws Exception {
         setup();
@@ -222,6 +235,12 @@ public class MappingTest extends BaseTest {
      Optimise MCS
      * @BUG
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R06466() throws Exception {
         setup();
@@ -314,6 +333,12 @@ public class MappingTest extends BaseTest {
      *
      * @throws java.lang.Exception
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R09087() throws Exception {
         setup();
@@ -357,6 +382,12 @@ public class MappingTest extends BaseTest {
      * 
      * @throws java.lang.Exception
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05219() throws Exception {
         setup();
@@ -378,6 +409,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 1767.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00114() throws Exception {
         setup();
@@ -437,6 +474,12 @@ public class MappingTest extends BaseTest {
      * @Flips
      * NAP and NAPH mapping is important, check if P flipping takes place
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00023() throws Exception {
         setup();
@@ -458,6 +501,12 @@ public class MappingTest extends BaseTest {
      *
      *BE 692.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00014() throws Exception {
         setup();
@@ -480,6 +529,12 @@ public class MappingTest extends BaseTest {
      *  BE 1333.0, Fragment 0
      *    
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05030() throws Exception {
         setup();
@@ -501,6 +556,12 @@ public class MappingTest extends BaseTest {
      * 
      BE 670.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void TestR00004_time() throws Exception {
         setup();
@@ -519,6 +580,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 1908.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00025() throws Exception {
         setup();
@@ -538,6 +605,10 @@ public class MappingTest extends BaseTest {
      *  BE 1996.0, Fragment 0
      */
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R08855() throws Exception {
         setup();
@@ -557,6 +628,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 0.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03627() throws Exception {
         setup();
@@ -626,6 +703,12 @@ public class MappingTest extends BaseTest {
      *  BE 353.0, Fragment 0
      * Ring match change missing in the reactant side
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05137() throws Exception {
         setup();
@@ -646,6 +729,12 @@ public class MappingTest extends BaseTest {
      *  BE 353.0, Fragment 0
      * 
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03673() throws Exception {
         setup();
@@ -666,6 +755,12 @@ public class MappingTest extends BaseTest {
      *  BE 494.0, Fragment 0
      * keuekal bond changes mapping misplaced
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00045() throws Exception {
         setup();
@@ -690,6 +785,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 694.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01068() throws Exception {
         setup();
@@ -709,6 +810,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 353.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03959() throws Exception {
         setup();
@@ -728,6 +835,12 @@ public class MappingTest extends BaseTest {
 
      BE 353.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R06989() throws Exception {
         setup();
@@ -747,6 +860,10 @@ public class MappingTest extends BaseTest {
      *  BE 706.0, Fragment 0
      */
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R01432() throws Exception {
         setup();
@@ -785,6 +902,12 @@ public class MappingTest extends BaseTest {
      * 
      *   BE 2208.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03063() throws Exception {
         setup();
@@ -805,6 +928,12 @@ public class MappingTest extends BaseTest {
      * 
      *   BE 0.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01015() throws Exception {
         setup();
@@ -885,6 +1014,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 716.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01717() throws Exception {
         setup();
@@ -904,6 +1039,12 @@ public class MappingTest extends BaseTest {
      * 
      *   BE 0.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R04165() throws Exception {
         setup();
@@ -923,6 +1064,12 @@ public class MappingTest extends BaseTest {
      * 
      *  BE 0.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01394() throws Exception {
         setup();
@@ -941,6 +1088,12 @@ public class MappingTest extends BaseTest {
      *  [C-C:2.0, H-O:2.0]
      *  BE 692.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05069() throws Exception {
         setup();
@@ -969,6 +1122,12 @@ public class MappingTest extends BaseTest {
 
      BE 1705.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R07322() throws Exception {
         setup();
@@ -985,6 +1144,12 @@ public class MappingTest extends BaseTest {
     /*
      * a single C-N bond and form a single C-C bond expected
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03020() throws Exception {
         setup();
@@ -1006,6 +1171,12 @@ public class MappingTest extends BaseTest {
     /*
      * water phophate bond interaction prefered
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03332() throws Exception {
         setup();
@@ -1027,6 +1198,12 @@ public class MappingTest extends BaseTest {
     /*
      * Stereo (R/S)
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01903() throws Exception {
         setup();
@@ -1048,6 +1225,12 @@ public class MappingTest extends BaseTest {
     /*
      * Stereo (E/Z)
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R04538() throws Exception {
         setup();
@@ -1069,6 +1252,12 @@ public class MappingTest extends BaseTest {
     /*
      * O-P bond changes with water then ATP-ADP prefered big small with water R03187
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03187() throws Exception {
         setup();
@@ -1140,6 +1329,7 @@ public class MappingTest extends BaseTest {
      * O=O:1.0]
      *
      * BE 852.0, Fragment 0
+     * @throws java.lang.Exception
      */
     @Test
     public void R08761() throws Exception {
@@ -1230,6 +1420,12 @@ public class MappingTest extends BaseTest {
 
      BE 2377.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R04558() throws Exception {
         setup();
@@ -1251,6 +1447,12 @@ public class MappingTest extends BaseTest {
 
      BE 2208.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01148() throws Exception {
         setup();
@@ -1272,6 +1474,12 @@ public class MappingTest extends BaseTest {
      * R05645	C-O*C=O	1 
      * R05645	H-O	2
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05645() throws Exception {
         setup();
@@ -1335,6 +1543,10 @@ public class MappingTest extends BaseTest {
         assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R07635() throws Exception {
         setup();
@@ -1356,6 +1568,12 @@ public class MappingTest extends BaseTest {
     /*
      System.out.println("CASE: Condition 11");
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R05071() throws Exception {
         setup();
@@ -1377,6 +1595,12 @@ public class MappingTest extends BaseTest {
     /*
      * Water on product should cleave oxygen attached to the ring
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R02707() throws Exception {
         setup();
@@ -1398,6 +1622,12 @@ public class MappingTest extends BaseTest {
     /*
      * phophate should be cleaved - attached to the ring
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00959() throws Exception {
         setup();
@@ -1422,6 +1652,12 @@ public class MappingTest extends BaseTest {
      * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  H-O:2; O-P:2; 
      * BE 670.0, Fragment 2
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01518() throws Exception {
         setup();
@@ -1445,6 +1681,12 @@ public class MappingTest extends BaseTest {
      * BE 692.0, Fragment 0
      *   
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void Rhea_25405() throws Exception {
         setup();
@@ -1465,6 +1707,12 @@ public class MappingTest extends BaseTest {
      BE 1598.0, Fragment 0
      * Phosphate mappings
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R07965() throws Exception {
         setup();
@@ -1486,6 +1734,12 @@ public class MappingTest extends BaseTest {
      BE 670.0, Fragment 0
      * Phosphate mappings
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R01569() throws Exception {
         setup();
@@ -1513,6 +1767,12 @@ public class MappingTest extends BaseTest {
      BE 670.0, Fragment 0
      * Phosphate mappings
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R02918() throws Exception {
         setup();
@@ -1539,6 +1799,12 @@ public class MappingTest extends BaseTest {
 
      BE 353.0, Fragment 0
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R02555() throws Exception {
         setup();
@@ -1552,6 +1818,10 @@ public class MappingTest extends BaseTest {
         assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R09688() throws Exception {
         setup();
@@ -1565,6 +1835,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void LinearToRingTest() throws Exception {
         setup();
@@ -1578,6 +1852,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R09709() throws Exception {
         setup();
@@ -1591,6 +1869,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R00630() throws Exception {
         setup();
@@ -1604,6 +1886,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R03979() throws Exception {
         setup();
@@ -1617,6 +1903,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R05421() throws Exception {
         setup();
@@ -1630,6 +1920,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R10106() throws Exception {
         setup();
@@ -1643,6 +1937,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R01145() throws Exception {
         setup();
@@ -1656,6 +1954,10 @@ public class MappingTest extends BaseTest {
 
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void aromaticity() throws Exception {
         setup();
@@ -1673,6 +1975,12 @@ public class MappingTest extends BaseTest {
     /*
      * rxn
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R02161() throws Exception {
         setup();
@@ -1683,6 +1991,12 @@ public class MappingTest extends BaseTest {
     /*
      * rxn
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00090() throws Exception {
         setup();
@@ -1694,6 +2008,12 @@ public class MappingTest extends BaseTest {
     /*
      * rxn
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R00090FP() throws Exception {
         setup();
@@ -1711,6 +2031,10 @@ public class MappingTest extends BaseTest {
         }
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R03627FP() throws Exception {
         setup();
@@ -1718,6 +2042,10 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, KEGG_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R01194FP() throws Exception {
         setup();
@@ -1725,6 +2053,10 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, KEGG_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R01188FP() throws Exception {
         setup();
@@ -1732,6 +2064,11 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, KEGG_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
     @Test
     public void R01123MissingRC() throws FileNotFoundException, Exception {
         setup();
@@ -1743,6 +2080,13 @@ public class MappingTest extends BaseTest {
      * R01529: Bond change should just report stereo changes
      * 
      */
+
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+
     @Test
     public void R01529() throws FileNotFoundException, Exception {
         setup();
@@ -1750,6 +2094,11 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, KEGG_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
     @Test
     public void R01467() throws FileNotFoundException, Exception {
         setup();
@@ -1757,6 +2106,11 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, KEGG_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
     @Test
     public void R204() throws FileNotFoundException, Exception {
         setup();
@@ -1764,6 +2118,10 @@ public class MappingTest extends BaseTest {
         testRCReactions(reactionID, Brenda_RXN_DIR);
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void SIM() throws Exception {
         setup();
@@ -1793,6 +2151,12 @@ public class MappingTest extends BaseTest {
      * TO DO 
      * Functional group regarrangment
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R07393() throws Exception {
         String reactionID = "R07393";//"R05069";
@@ -1817,6 +2181,12 @@ public class MappingTest extends BaseTest {
      * TO DO 
      * Functional group regarrangment
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R02996() throws Exception {
         String reactionID = "R02996";//"R05069";
@@ -1855,6 +2225,12 @@ public class MappingTest extends BaseTest {
      * TO DO 
      * Functional group regarrangment
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void R03775() throws Exception {
         String reactionID = "R03775";//"R05069";
@@ -1880,6 +2256,12 @@ public class MappingTest extends BaseTest {
      * TO DO 
      * Flip phosphate
      */
+
+    /**
+     *
+     * @throws Exception
+     */
+
     @Test
     public void GeneralBug() throws Exception {
         String reactionID = "reaction2";//"R05069";
@@ -1900,6 +2282,10 @@ public class MappingTest extends BaseTest {
         assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     @Test
     public void R09907() throws Exception {
         String reactionID = "R09907";//"R05069";

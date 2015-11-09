@@ -29,16 +29,31 @@ public class CDK3DSignCalculator extends ThreeDimensionalSignCalculator<IAtom> {
 
     private static final Logger LOG = getLogger(CDK3DSignCalculator.class.getName());
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public double getX(IAtom atom) {
         return atom.getPoint3d().x;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public double getY(IAtom atom) {
         return atom.getPoint3d().y;
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public double getZ(IAtom atom) {
         return atom.getPoint3d().z;

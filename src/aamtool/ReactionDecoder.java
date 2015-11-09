@@ -135,6 +135,9 @@ public class ReactionDecoder extends Annotator {
 
     }
 
+    /**
+     *
+     */
     public ReactionDecoder() {
         super();
     }

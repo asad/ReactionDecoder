@@ -34,15 +34,29 @@ public class FixedLabeller implements ICanonicalMoleculeLabeller {
 
     private final int[] labels;
 
+    /**
+     *
+     * @param labels
+     */
     public FixedLabeller(int[] labels) {
         this.labels = labels;
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return permute(labels, container);
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
         return labels;

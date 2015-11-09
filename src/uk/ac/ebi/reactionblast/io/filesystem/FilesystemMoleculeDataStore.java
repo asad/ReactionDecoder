@@ -29,6 +29,10 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer;
 
+/**
+ *
+ * @author asad
+ */
 public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
     private static final Logger LOG = getLogger(FilesystemMoleculeDataStore.class.getName());
     
@@ -36,6 +40,10 @@ public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
     
     private MDLV2000Writer molWriter;
     
+    /**
+     *
+     * @param moleculePath
+     */
     public FilesystemMoleculeDataStore(String moleculePath) {
         if (moleculePath != null) {
             this.moleculeDir = new File(moleculePath);

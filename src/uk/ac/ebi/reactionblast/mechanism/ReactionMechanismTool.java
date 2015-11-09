@@ -668,10 +668,18 @@ public class ReactionMechanismTool implements Serializable {
         return this.selectedMapping.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     public MappingSolution getSelectedSolution() {
         return this.selectedMapping;
     }
 
+    /**
+     *
+     * @return
+     */
     public Collection<MappingSolution> getAllSolutions() {
         return unmodifiableCollection(this.allSolutions);
     }

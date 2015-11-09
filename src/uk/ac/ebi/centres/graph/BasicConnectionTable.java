@@ -27,6 +27,7 @@ import uk.ac.ebi.centres.ConnectionTable;
 
 /**
  * @author John May
+ * @param <A>
  */
 public class BasicConnectionTable<A> implements ConnectionTable<A> {
     private static final Logger LOG = getLogger(BasicConnectionTable.class.getName());
@@ -34,10 +35,23 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<>();
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<>();
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @param order
+     */
     public void addConnection(A first, A second, int order) {
         addConnection(first, second, order, 0);
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @param order
+     * @param sign
+     */
     public void addConnection(A first, A second, int order, int sign) {
         newConnection(first, second, order,
                 sign >= 1 ? 1 : sign <= -1 ? -1 : 0);
@@ -53,21 +67,42 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
         connections.get(first).put(second, new AbstractMap.SimpleEntry<>(order, sign));
     }
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     @Override
     public Collection<A> getConnected(A atom) {
         return connections.get(atom).keySet();
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public int getOrder(A first, A second) {
         return connections.get(first).get(second).getKey();
     }
 
+    /**
+     *
+     * @param first
+     * @param second
+     * @return
+     */
     @Override
     public Integer getDepth(A first, A second) {
         return connections.get(first).get(second).getValue();
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Integer getAtomCount() {
         return connections.keySet().size();

@@ -22,19 +22,47 @@ import uk.ac.ebi.centres.graph.Arc;
 
 /**
  * @author John May
+ * @param <A>
  */
 public interface ConnectionProvider<A> {
 
+    /**
+     *
+     */
     public void build();
 
+    /**
+     *
+     * @param atom
+     * @return
+     */
     public List<Ligand<A>> getLigands(A atom);
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     public List<Ligand<A>> getLigands(Ligand<A> ligand);
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     public List<Arc<A>> getArcs(Ligand<A> ligand);
 
+    /**
+     *
+     * @param ligand
+     * @return
+     */
     public Arc<A> getParentArc(Ligand<A> ligand);
 
+    /**
+     *
+     * @param ligand
+     */
     public void reroot(Ligand<A> ligand);
 
     /**

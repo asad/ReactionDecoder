@@ -25,19 +25,40 @@ import java.util.Map;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+/**
+ *
+ * @author asad
+ */
 public abstract class AbstractCanvasGenerator implements CanvasGenerator {
 
+    /**
+     *
+     */
     protected Map<IAtomContainer, Rectangle2D> canvasMap;
 
+    /**
+     *
+     */
     public AbstractCanvasGenerator() {
         canvasMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @return
+     */
     @Override
     public Rectangle2D getCanvasForAtomContainer(IAtomContainer atomContainer) {
         return canvasMap.get(atomContainer);
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param center
+     * @param canvasDimensions
+     */
     public void createCanvas(
             IAtomContainer atomContainer, Point2d center, Dimension canvasDimensions) {
         double w = canvasDimensions.width;

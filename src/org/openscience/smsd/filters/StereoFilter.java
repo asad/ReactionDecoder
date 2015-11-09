@@ -142,21 +142,37 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         return highestStereoScore;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<Double> getScores() {
         return unmodifiableList(stereoScore);
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void clearScores() {
         stereoScore.clear();
     }
 
+    /**
+     *
+     * @param counter
+     * @param score
+     */
     @Override
     public synchronized void addScore(int counter, Double score) {
         stereoScore.add(counter, score);
     }
 
+    /**
+     *
+     * @param stereoScoreMap
+     */
     @Override
     public synchronized void fillMap(Map<Integer, Double> stereoScoreMap) {
         int Index = 0;

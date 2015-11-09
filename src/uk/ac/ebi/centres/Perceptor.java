@@ -21,11 +21,21 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * @author John May
+ * @param <A>
  */
 public interface Perceptor<A> {
 
+    /**
+     *
+     * @param provider
+     * @param manager
+     * @throws TimeoutException
+     */
     public void perceive(CentreProvider<A> provider,
             DescriptorManager<A> manager) throws TimeoutException;
 
+    /**
+     *
+     */
     public void shutdown();
 }

@@ -29,6 +29,10 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
+/**
+ *
+ * @author asad
+ */
 public class FilesystemReactionDataStore implements IDataStore<IReaction> {
     private static final Logger LOG = getLogger(FilesystemReactionDataStore.class.getName());
     
@@ -36,6 +40,10 @@ public class FilesystemReactionDataStore implements IDataStore<IReaction> {
     
     private MDLV2000RXNWriter rxnWriter;
     
+    /**
+     *
+     * @param reactionPath
+     */
     public FilesystemReactionDataStore(String reactionPath) {
         if (reactionPath != null) {
             this.reactionDir = new File(reactionPath);

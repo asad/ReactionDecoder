@@ -37,19 +37,36 @@ public class SuperAtomContainer {
     private final List<Substructure> list;
     private int counter;
 
+    /**
+     *
+     * @param size
+     */
     public SuperAtomContainer(int size) {
         this.counter = 0;
         list = new ArrayList<>(size);
     }
 
+    /**
+     *
+     * @param groupIndex
+     * @return
+     */
     public Substructure getSubstructures(int groupIndex) {
         return list.get(groupIndex);
     }
 
+    /**
+     *
+     * @param substructure
+     */
     public void add(Substructure substructure) {
         list.add(counter++, substructure);
     }
 
+    /**
+     *
+     * @return
+     */
     public int countSuperatoms() {
         return list.size();
     }

@@ -35,6 +35,9 @@ import signature.AbstractVertexSignature;
  */
 public class RBlastAtomSignature extends AbstractVertexSignature {
 
+    /**
+     *
+     */
     public static final String CHARGE_SEPARATOR = ":";
     private static final Logger LOG = getLogger(RBlastAtomSignature.class.getName());
     private final IAtomContainer atomContainer;
@@ -66,6 +69,10 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         super.create(atomIndex, atomContainer.getAtomCount(), height);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isUseAromatics() {
         return useAromatics;
     }
@@ -78,6 +85,10 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         this.useAromatics = useAromatics;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isUseCharge() {
         return useCharge;
     }
@@ -90,6 +101,10 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         this.useCharge = useCharge;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isBondSensitive() {
         return isBondSensitive;
     }
@@ -102,6 +117,11 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         this.isBondSensitive = isBondSensitive;
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     public String getVertexSymbol(int atomIndex) {
         IAtom atom = atomContainer.getAtom(atomIndex);
@@ -113,6 +133,11 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         }
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     protected int[] getConnected(int atomIndex) {
         List<IAtom> connectedAtoms = atomContainer.getConnectedAtomsList(
@@ -126,6 +151,12 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         return connected;
     }
 
+    /**
+     *
+     * @param atomIndexA
+     * @param atomIndexB
+     * @return
+     */
     @Override
     protected String getEdgeLabel(int atomIndexA, int atomIndexB) {
         IAtom atomA = atomContainer.getAtom(atomIndexA);
@@ -154,12 +185,22 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         }
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @return
+     */
     @Override
     protected int getIntLabel(int atomIndex) {
         // TODO Auto-generated method stub
         return 0;
     }
 
+    /**
+     *
+     * @param edgeLabel
+     * @return
+     */
     @Override
     protected int convertEdgeLabelToColor(String edgeLabel) {
         switch (edgeLabel) {

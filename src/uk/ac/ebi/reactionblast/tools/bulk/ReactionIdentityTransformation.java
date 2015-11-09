@@ -35,11 +35,20 @@ public class ReactionIdentityTransformation implements ITransformation<IReaction
 
     private static final Logger LOG = getLogger(ReactionIdentityTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         return reaction;

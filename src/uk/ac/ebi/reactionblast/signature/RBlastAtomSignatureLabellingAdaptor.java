@@ -36,22 +36,41 @@ public class RBlastAtomSignatureLabellingAdaptor
     private int atomIndex;
     private int height;
 
+    /**
+     *
+     * @param atomIndex
+     */
     public RBlastAtomSignatureLabellingAdaptor(int atomIndex) {
         this.atomIndex = atomIndex;
         this.height = -1;
     }
 
+    /**
+     *
+     * @param atomIndex
+     * @param height
+     */
     public RBlastAtomSignatureLabellingAdaptor(int atomIndex, int height) {
         this.atomIndex = atomIndex;
         this.height = height;
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         return permute(
                 getCanonicalPermutation(container), container);
     }
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public int[] getCanonicalPermutation(IAtomContainer container) {
         RBlastMoleculeSignature molSig

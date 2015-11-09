@@ -48,6 +48,10 @@ public interface ISPWalker extends Serializable {
      */
     Set<String> getPaths();
 
+    /**
+     *
+     * @return
+     */
     @Override
     String toString();
     

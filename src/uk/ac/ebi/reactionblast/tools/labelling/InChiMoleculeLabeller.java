@@ -39,6 +39,11 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
     private static final Logger LOG = getLogger(InChiMoleculeLabeller.class.getName());
 
+    /**
+     *
+     * @param container
+     * @return
+     */
     @Override
     public IAtomContainer getCanonicalMolecule(IAtomContainer container) {
         int[] canonicalPermutation = getCanonicalPermutation(container);
@@ -79,6 +84,9 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
         return permute;
     }
 
+    /**
+     *
+     */
     public void getCanonicalPermutation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

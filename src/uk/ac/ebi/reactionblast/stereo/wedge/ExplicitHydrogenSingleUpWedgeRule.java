@@ -43,11 +43,22 @@ public class ExplicitHydrogenSingleUpWedgeRule extends WedgeRule {
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE, NONE};
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Stereo[] getPattern() {
         return pattern;
     }
 
+    /**
+     *
+     * @param centralAtom
+     * @param atomContainer
+     * @param angleMap
+     * @return
+     */
     @Override
     public IStereoElement execute(IAtom centralAtom,
             IAtomContainer atomContainer,

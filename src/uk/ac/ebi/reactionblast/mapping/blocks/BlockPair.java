@@ -41,6 +41,11 @@ public class BlockPair {
 
     private final List<IMapping> mappings;
 
+    /**
+     *
+     * @param reactant
+     * @param product
+     */
     public BlockPair(IAtomContainer reactant, IAtomContainer product) {
         mappings = new ArrayList<>();
         reactantBlock = new Block(reactant);
@@ -49,16 +54,30 @@ public class BlockPair {
         productBlock.setPartner(reactantBlock);
     }
 
+    /**
+     *
+     * @param mapping
+     * @param rAtom
+     * @param pAtom
+     */
     public void addMapping(IMapping mapping, IAtom rAtom, IAtom pAtom) {
         mappings.add(mapping);
         reactantBlock.addMapping(rAtom, pAtom);
         productBlock.addMapping(pAtom, rAtom);
     }
 
+    /**
+     *
+     * @return
+     */
     public Block getReactantBlock() {
         return reactantBlock;
     }
 
+    /**
+     *
+     * @return
+     */
     public Block getProductBlock() {
         return productBlock;
     }

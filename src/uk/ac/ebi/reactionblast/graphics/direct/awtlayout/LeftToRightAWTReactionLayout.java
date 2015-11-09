@@ -29,13 +29,24 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
+/**
+ *
+ * @author asad
+ */
 public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
     private static final Logger LOG = getLogger(LeftToRightAWTReactionLayout.class.getName());
     
+    /**
+     *
+     */
     public LeftToRightAWTReactionLayout() {
         this(new Params());
     }
 
+    /**
+     *
+     * @param params
+     */
     public LeftToRightAWTReactionLayout(Params params) {
         super.params = params;
         super.reactantLayout = new LinearAtomContainerSetLayout(new Vector2d(1, 0));
@@ -43,6 +54,12 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
         super.arrowAxis = X;
     }
 
+    /**
+     *
+     * @param reaction
+     * @param graphics
+     * @return
+     */
     @Override
     public BoundsTree layout(IReaction reaction, Graphics2D graphics) {
         String rxnID = reaction.getID();
@@ -75,10 +92,21 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
         return boundsTree;
     }
     
+    /**
+     *
+     * @return
+     */
     public Vector2d getAxis() {
         return new Vector2d(1, 0);
     }
 
+    /**
+     *
+     * @param obj
+     * @param rootLabel
+     * @param g
+     * @return
+     */
     @Override
     public BoundsTree layout(IReaction obj, String rootLabel, Graphics2D g) {
         // TODO Auto-generated method stub

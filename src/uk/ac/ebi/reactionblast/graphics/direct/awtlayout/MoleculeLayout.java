@@ -40,15 +40,30 @@ public class MoleculeLayout extends AbstractAWTLayout<IAtomContainer> {
     
     private AtomLayout atomLayout;
     
+    /**
+     *
+     * @param params
+     */
     public MoleculeLayout(Params params) {
         atomLayout = new AtomLayout(this, params, new LabelManager());
     }
     
+    /**
+     *
+     * @param parent
+     * @param params
+     */
     public MoleculeLayout(AbstractAWTLayout parent, Params params) {
         this(params);
         super.parent = parent;
     }
 
+    /**
+     *
+     * @param atomContainer
+     * @param graphics
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainer atomContainer, Graphics2D graphics) {
         return layout(atomContainer, atomContainer.getID(), graphics);

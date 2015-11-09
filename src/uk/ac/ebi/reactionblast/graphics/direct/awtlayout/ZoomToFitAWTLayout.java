@@ -40,16 +40,30 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
+/**
+ *
+ * @author asad
+ */
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
     private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
+    /**
+     *
+     * @param drawer
+     */
     public ZoomToFitAWTLayout(DirectMoleculeDrawer drawer) {
         this.drawer = drawer;
         super.setParams(drawer.getParams());
     }
 
+    /**
+     *
+     * @param mol
+     * @param cellCanvas
+     * @param g
+     */
     public void layout(IAtomContainer mol, Dimension cellCanvas, Graphics2D g) {
         AffineTransform originalTransform = g.getTransform();
         double cW = cellCanvas.width;
@@ -146,18 +160,32 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
         return min(cw / rW, ch / rH);
     }
 
+    /**
+     *
+     * @param obj
+     * @param axis
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainer obj, Vector2d axis) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         // TODO Auto-generated method stub

@@ -210,6 +210,13 @@ public class McGregorChecks {
      * Modified function call by ASAD in Java have to check
      *
      */
+
+    /**
+     *
+     * @param cur_struc
+     * @return
+     */
+
     protected static int removeTreeStructure(BinaryTree cur_struc) {
 
         BinaryTree equal_struc = cur_struc.getEqual();

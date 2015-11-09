@@ -49,10 +49,20 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
 
     private final DirectMoleculeDrawer drawer;
 
+    /**
+     *
+     * @param drawer
+     */
     public ZoomToFitLayout(DirectMoleculeDrawer drawer) {
         this.drawer = drawer;
     }
 
+    /**
+     *
+     * @param mol
+     * @param cellCanvas
+     * @param g
+     */
     public void layout(IAtomContainer mol, Dimension cellCanvas, Graphics2D g) {
         AffineTransform originalTransform = g.getTransform();
         double w = cellCanvas.width;
@@ -94,18 +104,32 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         return min(canvasWidth / objectWidth, canvasHeight / objectHeight);
     }
 
+    /**
+     *
+     * @param obj
+     * @param axis
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainer obj, Vector2d axis) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         // TODO Auto-generated method stub

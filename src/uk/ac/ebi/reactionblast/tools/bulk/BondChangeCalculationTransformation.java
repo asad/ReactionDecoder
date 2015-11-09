@@ -26,15 +26,28 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 
+/**
+ *
+ * @author asad
+ */
 public class BondChangeCalculationTransformation implements ITransformation<IReaction> {
 
     private static final Logger LOG = getLogger(BondChangeCalculationTransformation.class.getName());
 
+    /**
+     *
+     * @return
+     */
     @Override
     public TargetType getTargetType() {
         return REACTION;
     }
 
+    /**
+     *
+     * @param reaction
+     * @return
+     */
     @Override
     public IReaction transform(IReaction reaction) {
         try {

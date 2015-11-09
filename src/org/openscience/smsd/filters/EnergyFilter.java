@@ -46,6 +46,9 @@ import org.openscience.smsd.tools.BondEnergies;
  */
 public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
+    /**
+     *
+     */
     public static final Double MAX_ENERGY = MAX_VALUE;
     private static final Logger LOG = getLogger(EnergyFilter.class.getName());
 
@@ -107,21 +110,37 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
         return lowestEnergyScore;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public synchronized List<Double> getScores() {
         return unmodifiableList(bEnergies);
     }
 
+    /**
+     *
+     */
     @Override
     public synchronized void clearScores() {
         bEnergies.clear();
     }
 
+    /**
+     *
+     * @param counter
+     * @param value
+     */
     @Override
     public synchronized void addScore(int counter, Double value) {
         bEnergies.add(counter, value);
     }
 
+    /**
+     *
+     * @param energySelectionMap
+     */
     @Override
     public synchronized void fillMap(Map<Integer, Double> energySelectionMap) {
         int Index = 0;

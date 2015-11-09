@@ -41,6 +41,11 @@ public class Sotter {
 
     private static final Logger LOG = getLogger(Sotter.class.getName());
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     @TestMethod(value = "testSortMapByValueInAscendingOrder")
     public static synchronized Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
@@ -60,6 +65,11 @@ public class Sotter {
         return result;
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     @TestMethod(value = "testSortMapByValueInDescendingOrder")
     public static synchronized Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());

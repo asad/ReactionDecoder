@@ -36,6 +36,10 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
+/**
+ *
+ * @author asad
+ */
 public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainerSet> {
     private static final Logger LOG = getLogger(LinearMoleculeSetLayout.class.getName());
 
@@ -44,14 +48,29 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
      */
     private Vector2d moleculeAxis;
 
+    /**
+     *
+     * @param params
+     */
     public LinearMoleculeSetLayout(Params params) {
         this(params, true);
     }
 
+    /**
+     *
+     * @param params
+     * @param shouldInvert
+     */
     public LinearMoleculeSetLayout(Params params, boolean shouldInvert) {
         this(params, shouldInvert, new Vector2d(1, 0));
     }
 
+    /**
+     *
+     * @param params
+     * @param shouldInvert
+     * @param moleculeAxis
+     */
     public LinearMoleculeSetLayout(
             Params params, boolean shouldInvert, Vector2d moleculeAxis) {
         super(shouldInvert);
@@ -59,6 +78,12 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
         setParams(params);
     }
 
+    /**
+     *
+     * @param atomContainerSet
+     * @param moleculeSetAxis
+     * @return
+     */
     @Override
     public BoundsTree layout(IAtomContainerSet atomContainerSet, Vector2d moleculeSetAxis) {
         int bondLength = params.bondLength;
@@ -116,11 +141,19 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
         return boundsTree;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Vector2d getAxis() {
         return new Vector2d(1, 0);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public double getAxisPosition() {
         return (boundsTree.getWidth() / 2) + params.borderX;

@@ -149,6 +149,15 @@ public class Distance {
      * <B>a+b-2c</B>
      * @throws Exception 
      */
+
+    /**
+     *
+     * @param Molecule1
+     * @param Molecule2
+     * @return
+     * @throws Exception
+     */
+
     public static double getHammingDistance(BitSet Molecule1, BitSet Molecule2) throws Exception {
 
         A = (BitSet) Molecule1.clone();
@@ -181,6 +190,15 @@ public class Distance {
      * <B>a+b-2c</B>
      * @throws Exception 
      */
+
+    /**
+     *
+     * @param Molecule1
+     * @param Molecule2
+     * @return
+     * @throws Exception
+     */
+
     public static double getNormalizedHammingDistance(BitSet Molecule1, BitSet Molecule2) throws Exception {
 
         A = (BitSet) Molecule1.clone();

@@ -26,6 +26,12 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public interface IStandardizer {
 
+    /**
+     *
+     * @param reaction
+     * @return
+     * @throws Exception
+     */
     public IReaction standardize(IReaction reaction) throws Exception;
 
 }
