@@ -25,7 +25,7 @@
 ####Compare Reactions using SMILES with precomputed AAM mappings
   
   ```
-  java -jar ReactionDecoder.jar -Q SMI -q -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+  java -jar ReactionDecoder.jar -q -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
   ```
 
 
