@@ -20,7 +20,7 @@ Compare Reactions
 -----------------
 Compare Reactions using SMILES with precomputed AAM mappings
 
-  java -jar ReactionDecoder.jar -Q SMI -q -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+  java -jar ReactionDecoder.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
 Compare Reactions using RXN files
 
   java -jar ReactionDecoder.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
