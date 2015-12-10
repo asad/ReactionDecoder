@@ -62,3 +62,7 @@ Extracting Features from Chemical Reactions (submitted)
 ```
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/asad/reactiondecoder/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
