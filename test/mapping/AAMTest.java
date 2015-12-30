@@ -48,7 +48,7 @@ public class AAMTest extends TestUtility {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        String RXN_DIR = INFORCHEM_RXN + "rxn" + separator + "all" + separator;
+        String RXN_DIR = INFORCHEM_RXN + "rxn" + separator + "balanced" + separator;
         /*
          Call AAM Class
          */
