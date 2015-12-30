@@ -164,6 +164,11 @@ Changes (08/11/2015)
 a) Set all null hydrogen counts in molecules to 0
 b) Cleanup and Optimisation
 
+-----------------------
+Changes (30/12/2015)
+-----------------------
+a) Missing libs added (CDK & commons-cli)
+b) Added build.xml (netbeans)
 
 
 -----------------------
