@@ -70,8 +70,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 public class TestUtility {
 
     static final String KEGG_RXN_DIR = "rxn/kegg/";
-    static final String Rhea_RXN_DIR = "rxn/rhea/";
-    static final String Brenda_RXN_DIR = "rxn/brenda/";
+    static final String RHEA_RXN_DIR = "rxn/rhea/";
+    static final String BRENDA_RXN_DIR = "rxn/brenda/";
     static final String BUG_RXN_DIR = "rxn/bug/";
     static final String OTHER_RXN = "rxn/other/";
     static final String METRXN_RXN = "rxn/metrxn/";

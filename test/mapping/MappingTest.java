@@ -1691,7 +1691,7 @@ public class MappingTest extends BaseTest {
     public void Rhea_25405() throws Exception {
         setup();
         String reactionID = "25405";
-        ReactionMechanismTool testReactions = testReactions(reactionID, Rhea_RXN_DIR);
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
@@ -2115,7 +2115,7 @@ public class MappingTest extends BaseTest {
     public void R204() throws FileNotFoundException, Exception {
         setup();
         String reactionID = "204";
-        testRCReactions(reactionID, Brenda_RXN_DIR);
+        testRCReactions(reactionID, BRENDA_RXN_DIR);
     }
 
     /**

@@ -41,6 +41,7 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class AAMTest extends TestUtility {
+
     private static final Logger LOG = getLogger(AAMTest.class.getName());
 
     /**
@@ -71,7 +72,7 @@ public class AAMTest extends TestUtility {
             IReaction mappedReaction = mapReaction(cdkReaction, remap);
             /*
             Add mapped reaction to the list
-            */ mappedReactionList.add(mappedReaction);
+             */ mappedReactionList.add(mappedReaction);
         }
         return mappedReactionList;
     }
@@ -90,21 +91,21 @@ public class AAMTest extends TestUtility {
         IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
         /*
         * RMT for the reaction mapping
-        */
+         */
         ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
 
         /*
         Reaction with hydrogens mapped but unchanged hydrogens suppressed
-        */
+         */
         //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         /*
         Reaction with hydrogens mapped
-        */
+         */
         IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
 
         /*
         optional step: Renumber the atoms as per mapping
-        */
+         */
         renumberMappingIDs(mappedReaction);
 
         return mappedReaction;
@@ -132,7 +133,7 @@ public class AAMTest extends TestUtility {
         out.println("RXN File Directory: " + RXN_DIR);
         /*
         Instance of SMILES with AAM
-        */
+         */
         SmilesGenerator smilesAAM = generic().withAtomClasses();
         File dir = new File(RXN_DIR);
         File[] files = dir.listFiles();
