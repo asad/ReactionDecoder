@@ -67,13 +67,13 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.USER_DEFINED;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
+
 /**
- 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionMechanismTool implements Serializable {
-
 
     private final static boolean DEBUG = false;
     private final static ILoggingTool logger
@@ -206,10 +206,10 @@ public class ReactionMechanismTool implements Serializable {
 
     private boolean isBalanced(
             IReaction r) {
-        
+
         Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
         Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
-        
+
         int leftHandAtomCount = 0;
         for (IAtomContainer q : r.getReactants().atomContainers()) {
             for (IAtom a : q.atoms()) {
@@ -232,7 +232,7 @@ public class ReactionMechanismTool implements Serializable {
                 }
             }
         }
-        
+
         int rightHandAtomCount = 0;
         for (IAtomContainer t : r.getProducts().atomContainers()) {
             for (IAtom b : t.atoms()) {
@@ -255,12 +255,12 @@ public class ReactionMechanismTool implements Serializable {
                 }
             }
         }
-        
+
         if (DEBUG) {
             out.println("atomUniqueCounter1 " + leftHandAtomCount);
             out.println("atomUniqueCounter2 " + rightHandAtomCount);
         }
-        
+
         if (leftHandAtomCount != rightHandAtomCount) {
             err.println();
             err.println("Number of atom(s) on the Left side " + leftHandAtomCount
@@ -274,7 +274,7 @@ public class ReactionMechanismTool implements Serializable {
             err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         }
-        
+
         if (DEBUG) {
             out.println("atomUniqueCounter1 " + atomUniqueCounter1);
             out.println("atomUniqueCounter2 " + atomUniqueCounter2);
@@ -283,7 +283,7 @@ public class ReactionMechanismTool implements Serializable {
     }
 
     private synchronized boolean isMappingSolutionAcceptable(Reactor reactor, IMappingAlgorithm ma, IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
-        
+
         boolean chosen = false;
         try {
             BondChangeCalculator bcc;
@@ -378,7 +378,7 @@ public class ReactionMechanismTool implements Serializable {
     /*
     * if bond changes are lesser than stored bond changes then update the flag or if stereo changes are lesser than
     * stores stereo changes
-    */
+     */
     private synchronized boolean isChangeFeasible(MappingSolution ms) {
 
         /*
@@ -386,7 +386,7 @@ public class ReactionMechanismTool implements Serializable {
         * assume a change if rest of the algorithm detects no change.
         *
         * TODO: check what is the impact if this logic if there are only stereo changes in a reaction.
-        */
+         */
         if (DEBUG) {
 
             if (this.selectedMapping != null) {
@@ -408,7 +408,7 @@ public class ReactionMechanismTool implements Serializable {
         /*
         This is to skip reaction where the no change is detected.
         Example: R02996
-        */
+         */
         if (this.selectedMapping != null
                 && ms.getTotalBondChanges() == 0
                 && ms.getTotalStereoChanges() == 0) {
@@ -417,7 +417,7 @@ public class ReactionMechanismTool implements Serializable {
 
         /*
         * if this is the first solution then accept it
-        */
+         */
         if (this.selectedMapping == null) {
             logger.info("Condition Default " + ms.getAlgorithmID().description());
             if (DEBUG) {
@@ -578,9 +578,9 @@ public class ReactionMechanismTool implements Serializable {
         double total = 0;
         for (IFeature key : fingerprint.getFeatures()) {
             if (key.getPattern().contains("C-C")
-                    || key.getPattern().contains("C=C")
-                    || key.getPattern().contains("C#C")
-                    || key.getPattern().contains("C%C")
+                || key.getPattern().contains("C=C")
+                || key.getPattern().contains("C#C")
+                || key.getPattern().contains("C%C")
                     || key.getPattern().contains("C@C")) {
                 double val = key.getWeight();
                 if (val > 0.) {//&& !key.contains("H")
@@ -616,7 +616,7 @@ public class ReactionMechanismTool implements Serializable {
                         if (energy > 0) {
                             /*
                             * Ring energy correction factor example:R01081
-                            */
+                             */
                             if (key.contains("%")) {
                                 total += val * (energy - 5.0);
 

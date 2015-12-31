@@ -44,6 +44,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.SignatureMoleculeLabeller;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CanonicalNumberingGenerator {
+
     private static final Logger LOG = getLogger(CanonicalNumberingGenerator.class.getName());
 
     private static synchronized void resetFlags(IAtomContainer atomContainer) {
@@ -112,7 +113,7 @@ public class CanonicalNumberingGenerator {
         orbitalCanonicalLabellingList = new ArrayList<>(canonicalPermutationList.size());
         for (List<Label> labels : subLabels.values()) {
             List<Integer> l = new ArrayList<>();
-//            Collections.sort(labels, new Distance());
+            //            Collections.sort(labels, new Distance());
             for (Label label : labels) {
                 l.add(label.rank);
             }
@@ -155,7 +156,6 @@ public class CanonicalNumberingGenerator {
         }
         return val;
     }
-
 
     class Label extends Object {
 

@@ -37,12 +37,12 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImageSmall;
-import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImageSmall;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -162,6 +162,7 @@ public class MappingUtility extends TestUtility{
      */
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
+        ExtReactionManipulatorTool.addExplicitH(cdkReaction);
         SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
 //        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
         ReactionMechanismTool annotation = getAnnotation(cdkReaction);
@@ -196,8 +197,8 @@ public class MappingUtility extends TestUtility{
         /*
          * Code for Image generation
          */
-        LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-        TopToBottomReactionLayoutImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {

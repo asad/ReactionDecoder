@@ -62,6 +62,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MCSThread implements Callable<MCSSolution> {
+
     private static final boolean DEBUG1 = false;
     private static final boolean DEBUG2 = false;
     private static final Logger LOG = getLogger(MCSThread.class.getName());
@@ -69,7 +70,6 @@ public class MCSThread implements Callable<MCSSolution> {
     private boolean stereoFlag;
     private boolean fragmentFlag;
     private boolean energyFlag;
-
 
     private SmilesGenerator smiles;
     private Aromaticity aromaticity;
@@ -210,8 +210,13 @@ public class MCSThread implements Callable<MCSSolution> {
                     }
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
-                    Substructure substructure = new Substructure(ac1, ac2,
-                            false, false, isHasPerfectRings(), true);
+                    Substructure substructure;
+                    substructure = new Substructure(ac1, ac2,
+                            true, false, isHasPerfectRings(), true);
+                    if (!substructure.isSubgraph()) {
+                        substructure = new Substructure(ac1, ac2,
+                                false, false, isHasPerfectRings(), true);
+                    }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
@@ -226,10 +231,8 @@ public class MCSThread implements Callable<MCSSolution> {
                             out.println("\" Time:\" " + time);
                         }
                         return mcs;
-                    } else {
-                        if (DEBUG1) {
-                            out.println("not a Substructure 5");
-                        }
+                    } else if (DEBUG1) {
+                        out.println("not a Substructure 5");
                     }
                 } else if (possibleVFmatch21) {
 
@@ -239,8 +242,13 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
-                    BaseMapping substructure = new Substructure(ac2, ac1,
-                            false, false, isHasPerfectRings(), true);
+                    Substructure substructure;
+                    substructure = new Substructure(ac2, ac1,
+                            true, false, isHasPerfectRings(), true);
+                    if (!substructure.isSubgraph()) {
+                        substructure = new Substructure(ac2, ac1,
+                                false, false, isHasPerfectRings(), true);
+                    }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
@@ -263,10 +271,8 @@ public class MCSThread implements Callable<MCSSolution> {
                             out.println("\" Time:\" " + time);
                         }
                         return mcs;
-                    } else {
-                        if (DEBUG1) {
-                            out.println("not a Substructure 6");
-                        }
+                    } else if (DEBUG1) {
+                        out.println("not a Substructure 6");
                     }
                 }
 
@@ -449,7 +455,8 @@ public class MCSThread implements Callable<MCSSolution> {
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
             if (DEBUG1) {
                 out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-            }      /*
+            }
+            /*
              * In case of Complete subgraph, don't use Energy filter
              *
              */
@@ -468,7 +475,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
             }
             return mcs;
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException | CDKException e) {
             getLogger(MCSThread.class.getName()).log(SEVERE, "Error in computing MCS ", e);
         }
         return null;

@@ -316,7 +316,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * @param subgraph the subgraph to set
      */
-    public synchronized void setSubgraph(boolean subgraph) {
+     synchronized void setSubgraph(boolean subgraph) {
         this.subgraph = subgraph;
     }
 
