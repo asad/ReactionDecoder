@@ -25,7 +25,6 @@ import static java.io.File.separator;
 import static java.lang.System.out;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Logger.getLogger;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
