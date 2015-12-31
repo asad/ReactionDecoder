@@ -48,7 +48,7 @@ import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLa
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class MappingUtility extends TestUtility{
+public class MappingUtility extends TestUtility {
 
     private static final Logger LOG = getLogger(MappingUtility.class.getName());
 
@@ -161,6 +161,7 @@ public class MappingUtility extends TestUtility{
      * @throws Exception
      */
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
+        System.out.println("Mapping Reaction " + reactionID);
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ExtReactionManipulatorTool.addExplicitH(cdkReaction);
         SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
