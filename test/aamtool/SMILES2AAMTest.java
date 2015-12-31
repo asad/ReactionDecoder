@@ -18,8 +18,6 @@
  */
 package aamtool;
 
-import example.TestUtility;
-import static example.TestUtility.INFORCHEM_RXN;
 import java.io.File;
 import static java.io.File.separator;
 import static java.lang.System.out;
@@ -35,14 +33,17 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
+import uk.ac.ebi.reactionblast.tools.TestUtility;
+import static java.util.logging.Logger.getLogger;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class ReactionDecoderTest extends TestUtility {
+public class SMILES2AAMTest extends TestUtility {
 
-    public ReactionDecoderTest() {
+    public SMILES2AAMTest() {
     }
 
     @BeforeClass
@@ -86,9 +87,9 @@ public class ReactionDecoderTest extends TestUtility {
                         + smilesAAM.createReactionSMILES(mapReaction));
                 assertEquals(true, mapReaction.getMappingCount() > 0);
             } catch (CDKException ex) {
-                getLogger(ReactionDecoderTest.class.getName()).log(SEVERE, null, ex);
+                getLogger(SMILES2AAMTest.class.getName()).log(SEVERE, null, ex);
             } catch (Exception ex) {
-                getLogger(ReactionDecoderTest.class.getName()).log(SEVERE, null, ex);
+                getLogger(SMILES2AAMTest.class.getName()).log(SEVERE, null, ex);
             }
         }
     }

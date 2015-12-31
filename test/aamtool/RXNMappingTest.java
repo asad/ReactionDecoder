@@ -16,14 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package mapping;
+package aamtool;
 
+import uk.ac.ebi.reactionblast.tools.MappingUtility;
 import java.io.FileNotFoundException;
 import static java.lang.System.out;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
@@ -33,15 +31,22 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
+import static java.util.logging.Logger.getLogger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
+import static java.util.logging.Logger.getLogger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class MappingTest extends BaseTest {
+public class RXNMappingTest extends MappingUtility {
 
-    private static final Logger LOG = getLogger(MappingTest.class.getName());
+    private static final Logger LOG = getLogger(RXNMappingTest.class.getName());
 
 
     /*
@@ -221,35 +226,6 @@ public class MappingTest extends BaseTest {
     /**
      * *******************************************************************
      *
-     * TEST CASES FOR MCS OPTIMISATION
-     *
-     * *******************************************************************
-     * @throws java.lang.Exception
-     *
-     * TO DO, optimise MCS Should break phosphate o-p bond not the c-o
-     *
-     */
-    @Test
-    public void R04459() throws Exception {
-
-        String reactionID = "R04459";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * MIN, fp ID=R04459:Bond Cleaved and Formed (3)  H-O:2;  O%P:1;  O-P:1; 
-         * BE 665.0, Fragment 1
-         */
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     * *******************************************************************
-     *
      * SUCESSFUL TEST CASES
      *
      * *******************************************************************
@@ -303,27 +279,6 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     *
-     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
-     * C-C:2.0, C-H:5.0, H-O:1.0]
-     *
-     * BE 2750.0, Fragment 0
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void R03200() throws Exception {
-
-        String reactionID = "R03200";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1098,7 +1053,12 @@ public class MappingTest extends BaseTest {
     }
 
     /*
-     * O-P bond changes with water then ATP-ADP prefered big small with water R03187
+     * O-P bond changes with water then ATP-ADP 
+     * prefered big small with water R03187
+     *
+     * Expected Solution
+     * MIN, fp ID=R03187:Bond Cleaved and Formed (5)  C%N:1;  C-O:1;  H-N:1;  H-O:3;  O-P:2; 
+     * BE 1328.0, Fragment 3
      * 
      *
      * @throws Exception
@@ -1113,35 +1073,7 @@ public class MappingTest extends BaseTest {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        /*
-         * Expected Solution
-         * MIN, fp ID=R03187:Bond Cleaved and Formed (5)  C%N:1;  C-O:1;  H-N:1;  H-O:3;  O-P:2; 
-         * BE 1328.0, Fragment 3
-         */
         assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     * Image generation failed
-     *
-     * @throws Exception
-     */
-    @Test
-    public void R08765() throws Exception {
-
-        String reactionID = "R08765";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
-         * BE 682.0, Fragment 0
-         */
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1335,8 +1267,7 @@ public class MappingTest extends BaseTest {
 
     /*
      System.out.println("CASE: Condition 11");
-     */
-    /**
+     *
      *
      * @throws Exception
      */
@@ -1360,8 +1291,7 @@ public class MappingTest extends BaseTest {
 
     /*
      * Water on product should cleave oxygen attached to the ring
-     */
-    /**
+     *
      *
      * @throws Exception
      */
@@ -1437,11 +1367,8 @@ public class MappingTest extends BaseTest {
      * MIXTURE, fp 
      * ID=25405:Bond Cleaved and Formed (2)
      * [C-C:2.0, H-O:2.0]
-
      * BE 692.0, Fragment 0
      *   
-     */
-    /**
      *
      * @throws Exception
      */
@@ -1830,33 +1757,6 @@ public class MappingTest extends BaseTest {
     }
 
     /*
-     * @BUG
-     * TO DO 
-     * Functional group regarrangment
-     *
-     *
-     * @throws Exception
-     */
-    @Test
-    public void R03775() throws Exception {
-        String reactionID = "R03775";//"R05069";
-        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * MIXTURE, fp 
-         ID=R07393:Bond Cleaved and Formed (2)
-         {C-H:1.0, H-O:1.0}
-
-         */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /*
      * MIN, fp 
      * ID=R09907:Bond Cleaved and Formed (5)
      * [C%C:4.0, C%O:1.0, C-C:2.0, C-H:5.0, H-O:1.0]
@@ -1868,7 +1768,7 @@ public class MappingTest extends BaseTest {
      */
     @Test
     public void R09907() throws Exception {
-        String reactionID = "R09907";//"R05069";
+        String reactionID = "R09907";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
@@ -1975,4 +1875,112 @@ public class MappingTest extends BaseTest {
         assertEquals(2, orderChangesWFingerprint.getFeatureCount());
     }
 
+    /**
+     * Image generation failed
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R08765() throws Exception {
+
+        String reactionID = "R08765";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
+         * BE 682.0, Fragment 0
+         */
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
+     ************************
+     * COMPLEX CASES
+     ************************
+     */
+    /**
+     * Complex case, linear to Ring system; Takes longer to Run
+     *
+     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
+     * C-C:2.0, C-H:5.0, H-O:1.0]
+     *
+     * BE 2750.0, Fragment 0
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void R03200() throws Exception {
+
+        String reactionID = "R03200";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+
+    /*
+     * Complex case,
+     * Takes longer to Run
+     * @BUG
+     * TO DO 
+     * Functional group regarrangment
+     *
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R03775() throws Exception {
+        String reactionID = "R03775";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIXTURE, fp 
+         ID=R07393:Bond Cleaved and Formed (2)
+         {C-H:1.0, H-O:1.0}
+
+         */
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * *******************************************************************
+     *
+     * TEST CASES FOR MCS OPTIMISATION
+     *
+     * *******************************************************************
+     * @throws java.lang.Exception
+     *
+     * TO DO, optimise MCS Should break phosphate o-p bond not the c-o
+     *
+     */
+    @Test
+    public void R04459() throws Exception {
+
+        String reactionID = "R04459";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * MIN, fp ID=R04459:Bond Cleaved and Formed (3)  H-O:2;  O%P:1;  O-P:1; 
+         * BE 665.0, Fragment 1
+         */
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+    }
 }
