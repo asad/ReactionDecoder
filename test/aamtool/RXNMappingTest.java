@@ -35,10 +35,6 @@ import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
-import static java.util.logging.Logger.getLogger;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -143,10 +139,10 @@ public class RXNMappingTest extends MappingUtility {
 
         /*
          * Expected Solution
-         * MIN, fp ID=R01081:Bond Cleaved and Formed (3)  C%O:2;  C-H:2;  H-O:2; 
+         * MIN, fp ID=R01081:Bond Cleaved and Formed (1)  C%O:2; 
          * BE 706.0, Fragment 0
          */
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -176,7 +172,8 @@ public class RXNMappingTest extends MappingUtility {
      * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
      *
      *
-     * MIN, fp ID=R02007:Bond Cleaved and Formed (3) [C%C:2.0, C-C:2.0, C-H:4.0]
+     * MIN, fp ID=R02007:Bond Cleaved and Formed (3) 
+     * [C%C:2.0, C-C:2.0, C-H:4.0]
      *
      * BE 1374.0, Fragment 0
      *
@@ -311,8 +308,8 @@ public class RXNMappingTest extends MappingUtility {
      * Deadlock Test
      *
      *  MIN
-     *  ID=R00114:Bond Cleaved and Formed (5)
-     *  [C-H:2.0, C-N:2.0, C-O:1.0, C=O:1.0, H-O:1.0]
+     *  ID=R00114:Bond Cleaved and Formed (3)
+     *  [C-N:2.0, C-O:1.0, C=O:1.0]
      * 
      *  BE 1767.0, Fragment 0
      */
@@ -329,7 +326,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -356,8 +353,8 @@ public class RXNMappingTest extends MappingUtility {
     /**
      * @Long Job
      *
-     * MIN, fp ID=R00097:Bond Cleaved and Formed (3) [C-H:1.0, Co-O:2.0,
-     * H-O:4.0]
+     * MIN, fp ID=R00097:Bond Cleaved and Formed (1) 
+     * [Co-O:2.0]
      *
      * BE 0.0, Fragment 0
      *
@@ -372,7 +369,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -390,7 +387,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -602,32 +599,25 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     *   MIN, fp 
-     *  ID=R05137:Bond Cleaved and Formed (2)
-     *   [C%O:1.0, H-O:2.0]
-     * 
-     *  BE 353.0, Fragment 0
-     * 
-     *
-     *
+     * Test for detecting Stereo Changes
      * @throws Exception
      */
     @Test
     public void R03673() throws Exception {
 
-        String reactionID = "R05137";
+        String reactionID = "R03673";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+                .getStereoChangesWFingerprint();
+        assertEquals(1, stereoChangesWFingerprint.getFeatureCount());
     }
 
     /*
-     * MIN, fp 
-     *  ID=R01068:Bond Cleaved and Formed (4)
-     *  [C%C:1.0, C%O:1.0, C-H:1.0, H-O:3.0]
+     *  MIN, fp 
+     *  ID=R01068:Bond Cleaved and Formed (2)
+     *  [C%C:1.0, C%O:1.0]
      * 
      *  BE 694.0, Fragment 0
      *
@@ -643,7 +633,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -713,7 +703,8 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * MIN, fp ID=R00307:Bond Cleaved and Formed (3) [C%O:2.0, C-H:2.0, H-O:2.0]
+     * MIN, fp ID=R00307:Bond Cleaved and Formed (3) 
+     * [C%O:2.0]
      *
      * BE 706.0, Fragment 0
      *
@@ -728,7 +719,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -777,10 +768,11 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
+     * @BUG TO DO
      * IMP reaction to test ring re-arrangement Unmapped atoms present
      *
-     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) [C%C:2.0, C-C:1.0, C-H:1.0,
-     * C-O:1.0, H-O:1.0]
+     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) 
+     * [C%C:2.0, C-C:1.0, C-H:1.0, C-O:1.0, H-O:1.0]
      *
      * BE 1386.0, Fragment 0
      *
@@ -797,8 +789,8 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * MIN, fp ID=R00344:Bond Cleaved and Formed (5) [C-C:1.0, C-H:1.0, C-O:1.0,
-     * H-O:2.0, O-P:2.0]
+     * MIN, fp ID=R00344:Bond Cleaved and Formed (5) 
+     * [C-C:1.0, C-H:1.0, C-O:1.0, H-O:2.0, O-P:2.0]
      *
      * BE 1374.0, Fragment 0
      *
@@ -1005,7 +997,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * Stereo (R/S)
+     * Expected Stereo (R/S) changes
      * 
      *
      * @throws Exception
@@ -1015,17 +1007,12 @@ public class RXNMappingTest extends MappingUtility {
 
         String reactionID = "R01903";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
+                .getStereoChangesWFingerprint();
 
-        /*
-         * Expected Solution
-         * MIN, fp ID=R01903:Bond Cleaved and Formed (3)  C%O:1;  C-H:2;  H-O:1; 
-         * BE 353.0, Fragment 0
-         */
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, stereoChangesWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1057,7 +1044,8 @@ public class RXNMappingTest extends MappingUtility {
      * prefered big small with water R03187
      *
      * Expected Solution
-     * MIN, fp ID=R03187:Bond Cleaved and Formed (5)  C%N:1;  C-O:1;  H-N:1;  H-O:3;  O-P:2; 
+     * MIN, fp ID=R03187:Bond Cleaved and Formed (5)  
+     * [C%N:1;  C-O:1;  H-N:1;  H-O:3;  O-P:2] 
      * BE 1328.0, Fragment 3
      * 
      *
@@ -1314,9 +1302,8 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * phophate should be cleaved - attached to the ring
-     */
-    /**
+     * Phophate should be cleaved - attached to the ring
+     *
      *
      * @throws Exception
      */
@@ -1332,10 +1319,10 @@ public class RXNMappingTest extends MappingUtility {
 
         /*
          * Expected Solution
-         * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  H-O:2;  O-P:2; 
+         * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  O-P:2; 
          * BE 670.0, Fragment 2
          */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -1906,8 +1893,8 @@ public class RXNMappingTest extends MappingUtility {
     /**
      * Complex case, linear to Ring system; Takes longer to Run
      *
-     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
-     * C-C:2.0, C-H:5.0, H-O:1.0]
+     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) 
+     * [C%C:5.0, C%O:1.0, C-C:2.0, C-H:5.0, H-O:1.0]
      *
      * BE 2750.0, Fragment 0
      *
@@ -1963,7 +1950,7 @@ public class RXNMappingTest extends MappingUtility {
      * *******************************************************************
      * @throws java.lang.Exception
      *
-     * TO DO, optimise MCS Should break phosphate o-p bond not the c-o
+     * TO DO, optimise MCS Should break phosphate O-P bond not the C-O
      *
      */
     @Test
