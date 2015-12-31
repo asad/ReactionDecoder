@@ -18,6 +18,7 @@
  */
 package generic;
 
+import example.TestUtility;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,10 +42,10 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class UnblancedReactionChecker {
+public class UnblancedReactionChecker extends TestUtility{
 
     private static final boolean DEBUG = false;
-    private static final File dir = new File("rxn/rhea");
+    private static final File DIR = new File(RHEA_RXN_DIR);
 
     private static final Logger LOG = getLogger(UnblancedReactionChecker.class.getName());
 
@@ -52,12 +53,12 @@ public class UnblancedReactionChecker {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        if (dir.isDirectory()) {
-            String[] list = dir.list();
+        if (DIR.isDirectory()) {
+            String[] list = DIR.list();
             for (String f : list) {
 //                System.out.println("F " + f);
                 IReaction rxnReactions;
-                try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(new File(dir, f)));) {
+                try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(new File(DIR, f)));) {
                     try {
                         rxnReactions = reader.read(new Reaction());
                         reader.close();

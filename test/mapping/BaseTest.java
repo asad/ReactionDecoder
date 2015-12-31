@@ -18,6 +18,7 @@
  */
 package mapping;
 
+import example.TestUtility;
 import java.awt.Image;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -50,7 +51,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class BaseTest extends TestUtility {
+public class BaseTest extends TestUtility{
 
     private static final Logger LOG = getLogger(BaseTest.class.getName());
 
@@ -74,7 +75,7 @@ public class BaseTest extends TestUtility {
      * @throws CDKException
      */
     public IReaction readReaction(String name, boolean reMap) throws FileNotFoundException, CDKException, Exception {
-        return readReactionFile(name, "Output/", reMap, false);
+        return TestUtility.readReactionFile(name, "Output/", reMap, false);
     }
 
     /**
@@ -165,10 +166,10 @@ public class BaseTest extends TestUtility {
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
-        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
+//        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
         ReactionMechanismTool annotation = getAnnotation(cdkReaction);
         MappingSolution s = annotation.getSelectedSolution();
-        out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+//        out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
         return annotation;
 
     }
@@ -195,22 +196,25 @@ public class BaseTest extends TestUtility {
 //        System.out.println("BE " + s.getBondEnergyChange() + ", Fragment " + s.getTotalFragmentChanges());
         IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
+        /*
+         * Code for Image generation
+         */
         LeftToRightReactionCenterImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
         TopToBottomReactionLayoutImageSmall(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
-        int i = 1;
-        for (MappingSolution m : rmt.getAllSolutions()) {
-            out.println("--------------------------------------");
-            BondChangeCalculator bcc = m.getBondChangeCalculator();
-            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
-//            System.out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
-
-            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
-            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
-            i++;
-            out.println();
-            out.println("--------------------------------------");
-        }
+//        int i = 1;
+//        for (MappingSolution m : rmt.getAllSolutions()) {
+//            out.println("--------------------------------------");
+//            BondChangeCalculator bcc = m.getBondChangeCalculator();
+//            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
+//            out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
+//
+//            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
+//            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
+//            i++;
+//            out.println();
+//            out.println("--------------------------------------");
+//        }
         return rmt;
     }
 
@@ -290,7 +294,6 @@ public class BaseTest extends TestUtility {
      * @throws Exception
      */
     public BondChangeCalculator map(String reactionID, String directory) throws FileNotFoundException, Exception {
-        String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();

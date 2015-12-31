@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package mapping;
+package example;
 
 import static java.awt.Color.WHITE;
 import java.awt.Dimension;
@@ -32,6 +32,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.String.valueOf;
+import java.util.ArrayList;
+import java.util.List;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
@@ -49,6 +51,7 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
 import org.openscience.cdk.tools.LonePairElectronChecker;
@@ -58,8 +61,10 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
 import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
+import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeCDK;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens;
+import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
@@ -69,14 +74,14 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 public class TestUtility {
 
-    static final String KEGG_RXN_DIR = "rxn/kegg/";
-    static final String RHEA_RXN_DIR = "rxn/rhea/";
-    static final String BRENDA_RXN_DIR = "rxn/brenda/";
-    static final String BUG_RXN_DIR = "rxn/bug/";
-    static final String OTHER_RXN = "rxn/other/";
-    static final String METRXN_RXN = "rxn/metrxn/";
-    static final String INFORCHEM_RXN = "rxn/infochem/";
-    static final String MACIE_RXN = "rxn/macie/";
+    public static final String KEGG_RXN_DIR = "rxn/kegg/";
+    public static final String RHEA_RXN_DIR = "rxn/rhea/";
+    public static final String BRENDA_RXN_DIR = "rxn/brenda/";
+    public static final String BUG_RXN_DIR = "rxn/bug/";
+    public static final String OTHER_RXN = "rxn/other/";
+    public static final String METRXN_RXN = "rxn/metrxn/";
+    public static final String INFORCHEM_RXN = "rxn/infochem/";
+    public static final String MACIE_RXN = "rxn/macie/";
     private static final Logger LOG = getLogger(TestUtility.class.getName());
 
     /**
@@ -301,7 +306,7 @@ public class TestUtility {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
         } catch (Exception ex) {
-            getLogger(BaseTest.class.getName()).log(SEVERE, null, ex);
+            getLogger(TestUtility.class.getName()).log(SEVERE, null, ex);
         }
 
         if (removeHydrogens) {
@@ -360,8 +365,74 @@ public class TestUtility {
             }
         }
     }
+    
+      
 
-    TestUtility() {
+    /**
+     *
+     * @param reactionSet
+     * @param remap override existing mappings
+     * @return
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    protected List<IReaction> mapReactions(IReactionSet reactionSet, boolean remap) throws FileNotFoundException, Exception {
+        List<IReaction> mappedReactionList = new ArrayList<>();
+        for (IReaction cdkReaction : reactionSet.reactions()) {
+
+            IReaction mappedReaction = mapReaction(cdkReaction, remap);
+            /*
+            Add mapped reaction to the list
+             */ mappedReactionList.add(mappedReaction);
+        }
+        return mappedReactionList;
     }
 
+    /**
+     *
+     * @param cdkReaction reaction for be mapped
+     * @param remap override existing mappings
+     * @return
+     * @throws FileNotFoundException
+     * @throws Exception
+     */
+    protected IReaction mapReaction(IReaction cdkReaction, boolean remap) throws FileNotFoundException, Exception {
+
+        String reactionName = cdkReaction.getID();
+        IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
+        /*
+        * RMT for the reaction mapping
+         */
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
+
+        /*
+        Reaction with hydrogens mapped but unchanged hydrogens suppressed
+         */
+        //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+        /*
+        Reaction with hydrogens mapped
+         */
+        IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
+
+        /*
+        optional step: Renumber the atoms as per mapping
+         */
+        renumberMappingIDs(mappedReaction);
+
+        return mappedReaction;
+    }
+
+    /**
+     *
+     * @param reaction
+     * @param reactionName
+     * @return
+     * @throws FileNotFoundException
+     */
+    protected IReaction cleanReaction(IReaction reaction, String reactionName) throws Exception {
+        //write code to fix reactions (Atom type , hydrogens etc.)
+        //TO DO
+        reaction.setID(reactionName);
+        return reaction;
+    }
 }
