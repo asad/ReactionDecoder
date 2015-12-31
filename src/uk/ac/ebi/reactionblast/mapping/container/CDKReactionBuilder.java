@@ -39,11 +39,13 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.interfaces.IReactionSet;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.smsd.Substructure;
@@ -312,6 +314,13 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
                 if (molecule.getAtomCount() > 0) {
                     IFingerprintGenerator fpr = new FingerprintGenerator();
                     BitSet fingerprint_Present_Mol = fpr.getFingerprint(molecule);
+                    /*
+                    Single Atom fingerprints
+                     */
+                    if (fingerprint_Present_Mol.isEmpty()) {
+                        Fingerprinter fingerprinter = new Fingerprinter();
+                        fingerprint_Present_Mol = fingerprinter.getBitFingerprint(molecule).asBitSet();
+                    }
                     //Loop for Unique Mol ID Creation
                     if (!fingerprint_Present_Mol.isEmpty()) {
                         if (!isValuePresent(fingerprint_Present_Mol)) {
@@ -342,10 +351,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
                             moleculeMap.put(molID, molecule);
                         }
                     } else {
-                        err.println("error: Fingerprint can't be generated for this molecules");
+                        err.println("error: Fingerprint can't be generated for this molecule " + SmilesGenerator.generic().create(molecule));
                     }
                 } else {
-                    err.println("error: Mol file should contain atleast one atom!");
+                    err.println("error: Mol file should contain atleast one atom! " + SmilesGenerator.generic().create(molecule));
                 }
             } catch (CDKException ex) {
                 getLogger(CDKReactionBuilder.class.getName()).log(SEVERE, null, ex);

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import static java.lang.System.err;
@@ -37,6 +36,7 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintGenerator implements IFingerprintGenerator {
+
     private static final Logger LOG = getLogger(FingerprintGenerator.class.getName());
 
     /**
