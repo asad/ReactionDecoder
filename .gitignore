@@ -13,3 +13,6 @@ hs_err_pid*
 
 #MAC files
 .DS_Store
+/nbproject/private/
+/dist/
+/Output/
