@@ -45,5 +45,26 @@ Citation
 
 References
 
-Rahman, S.A. et.al.(2015) Reaction Decoder Tool (RTD): 
+Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RTD): 
 Extracting Features from Chemical Reactions (submitted)
+
+
+------------------------
+How To Compile the code?
+------------------------
+
+Ant Build
+---------
+
+CLEAN:
+  ant clean
+BUILD:
+  ant compile
+DIST:
+  ant jar
+DOC:
+  ant javadoc
+TEST:
+  ant test
+HELP:
+  ant run
