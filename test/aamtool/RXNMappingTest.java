@@ -1466,7 +1466,12 @@ public class RXNMappingTest extends MappingUtility {
     public void R204() throws FileNotFoundException, Exception {
 
         String reactionID = "204";
-        testRCReactions(reactionID, BRENDA_RXN_DIR);
+        BondChangeCalculator bondChanges = testReactions(reactionID, BRENDA_RXN_DIR)
+                .getSelectedSolution().getBondChangeCalculator();
+        IPatternFingerprinter formedCleavedWFingerprint = bondChanges
+                .getFormedCleavedWFingerprint();
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+
     }
 
     /**
