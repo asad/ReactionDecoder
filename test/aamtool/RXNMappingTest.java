@@ -202,7 +202,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
+     * @COMPLEX CASE.
      * RINGS, fp 
      * ID=R05219:Bond Cleaved and Formed (4)
      * [C-C:2.0, C-O:1.0, C-S:1.0, H-O:2.0]
@@ -643,11 +643,12 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * @BUG TO DO IMP reaction to test ring re-arrangement Unmapped atoms
-     * present
+     * @COMPLEX Case TO DO IMP reaction to test ring re-arrangement Unmapped
+     * atoms present
      *
-     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) [C%C:2.0, C-C:1.0, C-H:1.0,
-     * C-O:1.0, H-O:1.0]
+     * MIN, fp ID=R03165:Bond Cleaved and Formed (5)
+     *
+     * [C%C:2.0, C-C:1.0, C-H:1.0, C-O:1.0, H-O:1.0]
      *
      * BE 1386.0, Fragment 0
      *
@@ -986,12 +987,16 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
-     * MAX, fp 
-     * ID=R04558:Bond Cleaved and Formed (6)
-     * [C-H:1.0, C-N:3.0, C-O:1.0, C=O:1.0, C@N:1.0, H-O:1.0]
+     * @COMPLEX CASE.
+     * MIN, fp 
+     * ID=R04558:Bond Cleaved and Formed (5)
+     * [C-N:1.0, C-O:1.0, C=N:1.0, C=O:1.0, C@N:2.0]
      * 
-     * BE 2377.0, Fragment 0
+     * MIN, fp 
+     * ID=R04558:Bond Order Change (1)
+     * [C-C*C@C:1.0]
+     * 
+     * BE 2687.0, Fragment 0
      * 
      *
      * @throws Exception
@@ -1006,7 +1011,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        assertEquals(6, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
