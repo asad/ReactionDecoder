@@ -72,36 +72,6 @@ public class RXNMappingTest extends MappingUtility {
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
-    /**
-     * *******************************************************************
-     *
-     * TEST CASES FOR WITH BUGS TO DO, mapping NOT SURE, COMPLEX CASE
-     *
-     * @ BUGS
-     * *******************************************************************
-     *
-     * @throws java.lang.Exception
-     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
-     *
-     * @BUG Needs V2000 files system Time taking
-     */
-    @Test
-    public void R06458() throws Exception {
-
-        String reactionID = "R06458";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * MAX, fp ID=R00959:Bond Cleaved and Formed (2)  H-O:2; O-P:2; 
-         * BE 670.0, Fragment 2
-         */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
 
     /*
      * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
@@ -129,7 +99,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
+     * 
      *
      * It should cleave the bonds between the ring systems (bridge)
      *
@@ -152,8 +122,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
-     *
+     * 
      *
      * MIN, fp ID=R02007:Bond Cleaved and Formed (3) [C%C:2.0, C-C:2.0, C-H:4.0]
      *
@@ -233,7 +202,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * 
+     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
      * RINGS, fp 
      * ID=R05219:Bond Cleaved and Formed (4)
      * [C-C:2.0, C-O:1.0, C-S:1.0, H-O:2.0]
@@ -241,8 +210,7 @@ public class RXNMappingTest extends MappingUtility {
      * BE 1322.0, Fragment 0
      * 
      * @throws java.lang.Exception
-     */
-    /**
+     *
      *
      * @throws Exception
      */
@@ -544,7 +512,8 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * MIN, fp 
+     * 
+     *  MIN, fp 
      *  ID=R03959:Bond Cleaved and Formed (3)
      *  [C%O:1.0, C-H:1.0, H-O:1.0]
      * 
@@ -677,8 +646,8 @@ public class RXNMappingTest extends MappingUtility {
      * @BUG TO DO IMP reaction to test ring re-arrangement Unmapped atoms
      * present
      *
-     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) [C%C:2.0, C-C:1.0, C-H:1.0,
-     * C-O:1.0, H-O:1.0]
+     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) 
+     * [C%C:2.0, C-C:1.0, C-H:1.0, C-O:1.0, H-O:1.0]
      *
      * BE 1386.0, Fragment 0
      *
@@ -1017,6 +986,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
+     * @BUG TO DO, NOT SURE ABOUT THE MAPPINGS, COMPLEX CASE.
      * MAX, fp 
      * ID=R04558:Bond Cleaved and Formed (6)
      * [C-H:1.0, C-N:3.0, C-O:1.0, C=O:1.0, C@N:1.0, H-O:1.0]
@@ -1160,7 +1130,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     System.out.println("CASE: Condition 11");
+     * System.out.println("CASE: Condition 11");
      *
      *
      * @throws Exception
@@ -1365,7 +1335,7 @@ public class RXNMappingTest extends MappingUtility {
      * MIN, fp 
      * ID=R02555:Bond Cleaved and Formed (3)
      * [C%O:1.0, C-H:2.0, H-O:1.0]
-
+     *
      * BE 353.0, Fragment 0
      * 
      *
@@ -1381,7 +1351,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1426,23 +1396,6 @@ public class RXNMappingTest extends MappingUtility {
     public void R05421() throws Exception {
 
         String reactionID = "R05421";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-
-    }
-
-    /**
-     *
-     * @throws Exception
-     */
-    @Test
-    public void R10106() throws Exception {
-
-        String reactionID = "R10106";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
@@ -1545,35 +1498,23 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * @BUG
-     * TO DO 
      * Functional group regarrangment
-     */
-    /**
      *
      * @throws Exception
      */
     @Test
     public void R07393() throws Exception {
-        String reactionID = "R07393";//"R05069";
+        String reactionID = "R07393";
         ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+        IPatternFingerprinter orderChangesWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
+                .getOrderChangesWFingerprint();
 
-        /*
-         * Expected Solution
-         * MIXTURE, fp 
-         ID=R07393:Bond Cleaved and Formed (2)
-         {C-H:1.0, H-O:1.0}
-
-         */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(2, orderChangesWFingerprint.getFeatureCount());
     }
 
     /*
-     * @BUG
      * TO DO 
      * Functional group regarrangment
      *
