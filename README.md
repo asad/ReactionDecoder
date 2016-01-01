@@ -57,12 +57,27 @@ and EMBL-European BioInformatics Institute (EBI).
 
 ####Reference
 ```
-Rahman, S.A. et.al.(2015) Reaction Decoder Tool (RTD): 
+Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RTD): 
 Extracting Features from Chemical Reactions (submitted)
 ```
 
+=================
+##Complie Code
+=================
+####Ant Build
 
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/asad/reactiondecoder/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+```
+CLEAN:
+  ant clean
+BUILD:
+  ant compile
+DIST:
+  ant jar
+DOC:
+  ant javadoc
+TEST:
+  ant test
+HELP:
+  ant run
+```
 
