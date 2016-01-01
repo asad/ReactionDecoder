@@ -99,7 +99,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * 
+     *
      *
      * It should cleave the bonds between the ring systems (bridge)
      *
@@ -122,7 +122,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /**
-     * 
+     *
      *
      * MIN, fp ID=R02007:Bond Cleaved and Formed (3) [C%C:2.0, C-C:2.0, C-H:4.0]
      *
@@ -646,8 +646,8 @@ public class RXNMappingTest extends MappingUtility {
      * @BUG TO DO IMP reaction to test ring re-arrangement Unmapped atoms
      * present
      *
-     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) 
-     * [C%C:2.0, C-C:1.0, C-H:1.0, C-O:1.0, H-O:1.0]
+     * MIN, fp ID=R03165:Bond Cleaved and Formed (5) [C%C:2.0, C-C:1.0, C-H:1.0,
+     * C-O:1.0, H-O:1.0]
      *
      * BE 1386.0, Fragment 0
      *
@@ -1477,9 +1477,11 @@ public class RXNMappingTest extends MappingUtility {
     public void SIM() throws Exception {
 
         String reactionID1 = "R01194";
-        BondChangeCalculator testRCReactions1 = map(reactionID1, KEGG_RXN_DIR);
+        BondChangeCalculator testRCReactions1 = testReactions(reactionID1, KEGG_RXN_DIR)
+                .getSelectedSolution().getBondChangeCalculator();
         String reactionID2 = "R01188";
-        BondChangeCalculator testRCReactions2 = map(reactionID2, KEGG_RXN_DIR);
+        BondChangeCalculator testRCReactions2 = testReactions(reactionID2, KEGG_RXN_DIR)
+                .getSelectedSolution().getBondChangeCalculator();
 
         IPatternFingerprinter fp1 = new PatternFingerprinter();
         fp1.add(testRCReactions1.getFormedCleavedWFingerprint());
@@ -1493,8 +1495,8 @@ public class RXNMappingTest extends MappingUtility {
 
         double similarityBC = getSimilarity(fp1, fp2);
         double similarityRC = getSimilarity(testRCReactions1.getReactionCenterWFingerprint(), testRCReactions2.getReactionCenterWFingerprint());
-        out.println("RC SIM: " + similarityRC);
-        out.println("BC SIM: " + similarityBC);
+        out.println("Reaction Centre SIM: " + Math.round(similarityRC * 100) + "%");
+        out.println("Bond Change SIM: " + Math.round(similarityBC * 100) + "%");
     }
 
     /*
