@@ -201,19 +201,19 @@ public class MappingUtility extends TestUtility {
         LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
         TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
-//        int i = 1;
-//        for (MappingSolution m : rmt.getAllSolutions()) {
-//            out.println("--------------------------------------");
-//            BondChangeCalculator bcc = m.getBondChangeCalculator();
-//            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
-//            out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
-//
-//            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
-//            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
-//            i++;
-//            out.println();
-//            out.println("--------------------------------------");
-//        }
+        int i = 1;
+        for (MappingSolution m : rmt.getAllSolutions()) {
+            out.println("--------------------------------------");
+            BondChangeCalculator bcc = m.getBondChangeCalculator();
+            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
+            out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
+
+            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
+            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
+            i++;
+            out.println();
+            out.println("--------------------------------------");
+        }
         return rmt;
     }
 

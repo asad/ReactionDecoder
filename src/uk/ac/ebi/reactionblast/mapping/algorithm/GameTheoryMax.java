@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 /**
  * @RCSfile: GameTheory.java
  *
@@ -128,11 +127,10 @@ final class GameTheoryMax extends BaseGameTheory {
 //            printEnergyMatrix(mh, eductList, productList);
         }
 
-        IsomorphismMax SMCM
-                = new IsomorphismMax(mh, eductList, productList);
-        if (SMCM.isSubAndCompleteMatchFlag()) {
+        IsomorphismMax omorphismMax = new IsomorphismMax(mh, eductList, productList);
+        if (omorphismMax.isSubAndCompleteMatchFlag()) {
 //                System.out.println("Subgraph/Exact Match");
-            mh = SMCM.getUpdatedHolder();
+            mh = omorphismMax.getUpdatedHolder();
         }
 
 //        printSimMatrix(mh, eductList, productList);

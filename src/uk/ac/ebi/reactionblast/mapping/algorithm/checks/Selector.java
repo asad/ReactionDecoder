@@ -20,8 +20,10 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.Double.MIN_VALUE;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
+import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -29,6 +31,44 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class Selector implements Serializable {
+
+    /**
+     * Refills Matrix with true similarity scores
+     *
+     * @param orignal
+     * @return
+     * @throws IOException
+     * @throws CDKException
+     * @throws CloneNotSupportedException
+     */
+    public static synchronized Holder modifyMatrix(Holder orignal)
+            throws IOException, CDKException, CloneNotSupportedException {
+        ReactionContainer reactionStructureInformationContainer = orignal.getReactionContainer();
+        Holder localHolder = (Holder) orignal.clone();
+
+        int inputRowSize = orignal.getCliqueMatrix().getRowDimension();
+        int inputColSize = orignal.getCliqueMatrix().getColumnDimension();
+        /*
+         * Flag matrix is assigned
+         */
+        for (int i = 0; i < inputRowSize; i++) {
+            for (int j = 0; j < inputColSize; j++) {
+                double totalAtomCount = (double) (reactionStructureInformationContainer.getProduct(j).getAtomCount() + reactionStructureInformationContainer.getEduct(i).getAtomCount());
+                double cliqueValue = orignal.getCliqueMatrix().getValue(i, j);
+                double simValue = cliqueValue / totalAtomCount;
+                /*
+                Modify the cloned matrix with real similarity values
+                 */
+                if (cliqueValue >= 1) {
+                    localHolder.getGraphSimilarityMatrix().set(i, j, simValue);
+                }
+            }
+        }
+
+//        System.out.println("**********Modified Min Input Matrix**************");
+//        printSimMatrix(localHolder);
+        return localHolder;
+    }
 
     int rowSize;
     int colSize;

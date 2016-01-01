@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 /**
  * @RCSfile: GameTheoryMixture.java
  *
@@ -63,6 +62,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
@@ -168,11 +168,10 @@ final class GameTheoryRings extends BaseGameTheory {
 //            printEnergyMatrix(mh, eductList, productList);
         }
 
-        RuleBasedMappingHandler ph
-                = new RuleBasedMappingHandler(mh, eductList, productList);
-        if (ph.isMatchFound()) {
+        RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
+        if (ruleBasedMappingHandler.isMatchFound()) {
 //            System.out.println("RuleBasedMappingHandler Match");
-            mh = ph.getMatrixHolder();
+            mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
 //            printSimMatrix(mh, eductList, productList);
         }
 

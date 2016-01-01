@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -37,6 +35,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -206,7 +205,7 @@ public class IsomorphismMin extends Selector implements IResult {
      *
      * @param mh
      */
-    protected void printSimMatrix(Holder mh) {
+    static void printSimMatrix(Holder mh) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
         out.println();
         out.println("********* MATRIX **********");
@@ -237,11 +236,46 @@ public class IsomorphismMin extends Selector implements IResult {
     }
 
     /**
+     * Prints Similarity Matrix
+     *
+     * @param mh
+     */
+    static void printCliqueMatrix(Holder mh) {
+        ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
+        out.println();
+        out.println("********* MATRIX **********");
+        try {
+            NumberFormat format = new DecimalFormat("0.00");
+            String result;
+            out.println("Clique Matrix");
+            out.print("\t\t");
+            for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
+                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+            }
+            out.println();
+            double val = 0;
+            for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
+                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
+                    val = mh.getCliqueMatrix().getValue(i, j);
+                    result = format.format(val);
+                    out.print("   " + result);
+                }
+                out.println();
+            }
+        } catch (IOException | CDKException e) {
+            err.println(" Parser Error: ");
+        }
+        out.println();
+
+    }
+
+    /**
      * Prints FLAG Matrix
      *
      * @param mh
      */
-    protected void printFLAGMatrix(Holder mh) {
+    static void printFLAGMatrix(Holder mh, boolean[][] flagMatrix) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
         out.println();
         out.println("********* MATRIX **********");

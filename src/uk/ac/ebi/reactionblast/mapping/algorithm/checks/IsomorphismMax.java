@@ -35,7 +35,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
 
 /**
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK 
+ * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
 public class IsomorphismMax extends Selector implements IResult {

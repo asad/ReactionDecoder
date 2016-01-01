@@ -51,11 +51,9 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 //~--- non-JDK imports --------------------------------------------------------
 import static java.lang.System.out;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
@@ -70,6 +68,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 
 final class GameTheoryMin extends BaseGameTheory {
 
@@ -156,13 +157,12 @@ final class GameTheoryMin extends BaseGameTheory {
         }
         boolean conditionmet = false;
         if (!ruleMatchingFlag) {
-            RuleBasedMappingHandler ph
-                    = new RuleBasedMappingHandler(mh, eductList, productList);
-            if (ph.isMatchFound()) {
+            RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
+            if (ruleBasedMappingHandler.isMatchFound()) {
                 if (DEBUG) {
-                    out.println("RuleBasedMappingHandler Match Found");
+                    out.println("Rule Based Mapping Handler Match Found");
                 }
-                mh = ph.getMatrixHolder();
+                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
                 conditionmet = true;
             }
             ruleMatchingFlag = true;
@@ -172,13 +172,13 @@ final class GameTheoryMin extends BaseGameTheory {
             if (DEBUG) {
                 out.println("Subgraph/Exact Match Test");
             }
-            IsomorphismMin SMCM
+            IsomorphismMin omorphismMin
                     = new IsomorphismMin(mh, eductList, productList);
-            if (SMCM.isSubAndCompleteMatchFlag()) {
+            if (omorphismMin.isSubAndCompleteMatchFlag()) {
                 if (DEBUG) {
                     out.println("Subgraph/Exact Match");
                 }
-                mh = SMCM.getUpdatedHolder();
+                mh = omorphismMin.getUpdatedHolder();
             }
         }
         if (DEBUG) {
