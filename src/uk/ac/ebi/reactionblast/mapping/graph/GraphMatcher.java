@@ -45,7 +45,6 @@ import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
-import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -166,17 +165,21 @@ public class GraphMatcher extends Debugger {
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
 
                 /*
-                 Ring matcher is set trie if both sides have rings else it set to false (IMP for MCS)
+                 Ring matcher is set true if both sides have rings else it set to false (IMP for MCS)
                  */
-                CycleFinder cycles = or(all(), relevant());
                 boolean ring = false;
                 boolean ringSizeEqual = false;
 
+                /*
+                 * Report All Cycles
+                 * or 
+                 * CycleFinder cycles = or(all(), relevant());
+                 */
+                CycleFinder cycles = or(all(), all());
                 Cycles rings = cycles.find(educt);
                 int numberOfCyclesEduct = rings.numberOfCycles();
                 rings = cycles.find(product);
                 int numberOfCyclesProduct = rings.numberOfCycles();
-
                 if (numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0) {
                     ring = true;
                 }
@@ -184,10 +187,13 @@ public class GraphMatcher extends Debugger {
                 if (numberOfCyclesEduct == numberOfCyclesProduct) {
                     ringSizeEqual = true;
                 }
-
                 if (DEBUG) {
                     out.println(educt.getID() + " ED: " + new SmilesGenerator().create(educt));
                     out.println(product.getID() + " PD: " + new SmilesGenerator().create(product));
+                    out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
+                    out.println("numberOfCyclesProduct " + numberOfCyclesProduct);
+                    out.println("ringSizeEqual " + ringSizeEqual);
+                    out.println("Ring " + ring);
                     out.println("----------------------------------");
                 }
 

@@ -177,10 +177,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             + " T: " + getCompound2().getID()
                             + " molQ: " + smiles.create(compound1)
                             + " molT: " + smiles.create(compound2)
-                            + " atoms: " + compound1.getAtomCount()
-                            + " atoms: " + compound2.getAtomCount()
+                            + " atomsE: " + compound1.getAtomCount()
+                            + " atomsP: " + compound2.getAtomCount()
                             + " [bonds: " + bondMatcher
                             + " rings: " + ringMatcher
+                            + " isHasPerfectRings: " + isHasPerfectRings()
                             + "]");
                 }
 
@@ -190,11 +191,6 @@ public class MCSThread implements Callable<MCSSolution> {
                 boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
                 if (DEBUG1) {
                     out.println("VF Matcher " + possibleVFmatch12);
-                    out.println("Compound1 " + "A: " + getCompound1().getAtomCount()
-                            + " B: " + getCompound1().getBondCount());
-
-                    out.println("Compound2 " + "A: " + getCompound2().getAtomCount()
-                            + " B: " + getCompound2().getBondCount());
                 }
 
                 boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
@@ -282,10 +278,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             + " T: " + getCompound2().getID()
                             + " molQ: " + smiles.create(compound1)
                             + " molT: " + smiles.create(compound2)
-                            + " atoms: " + compound1.getAtomCount()
-                            + " atoms: " + compound2.getAtomCount()
+                            + " atomsQ: " + compound1.getAtomCount()
+                            + " atomsT: " + compound2.getAtomCount()
                             + " [bonds: " + bondMatcher
                             + " rings: " + ringMatcher
+                            + " isHasPerfectRings: " + isHasPerfectRings()
                             + "]");
                 }
                 MCSSolution mcs = mcs();
@@ -446,7 +443,7 @@ public class MCSThread implements Callable<MCSSolution> {
                  This handles large aliphatics to ring system (ex: R06466)
                  */
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), VFLibMCS,
-                        false, ringMatcher, !isHasPerfectRings());
+                        false, isHasPerfectRings(), !isHasPerfectRings());
             } else {
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), !isHasPerfectRings());

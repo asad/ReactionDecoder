@@ -79,7 +79,7 @@ public class CallableAtomMappingTool implements Serializable {
             reactionID = valueOf(currentTimeMillis());
             reactor.getReactionWithAtomAtomMapping().setID(reactionID);
         }
-        
+
         String outputFile = outputDirectoryName;
         outputFile += separator + outFileName;
         try (MDLV2000RXNWriter rxnW = new MDLV2000RXNWriter(new FileWriter(new File(outputFile)))) {
