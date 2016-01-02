@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.File;
@@ -25,6 +24,7 @@ import static java.lang.Math.abs;
 import static java.lang.System.out;
 import java.util.Collection;
 import static java.util.Collections.synchronizedMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
@@ -67,6 +67,7 @@ public final class BondChangeAnnotator extends DUModel {
 
     private static final long serialVersionUID = 988987678877861L;
     private static final Logger LOG = getLogger(BondChangeAnnotator.class.getName());
+    private static final boolean DEBUG = false;
 
     /**
      *
@@ -81,7 +82,13 @@ public final class BondChangeAnnotator extends DUModel {
             boolean generate2D,
             boolean generate3D) throws Exception {
         super(reaction, withoutHydrogen, generate2D, generate3D);
+        if (DEBUG) {
+            System.out.println("MARK Bond Change START");
+        }
         markBondChanges();
+        if (DEBUG) {
+            System.out.println("MARK Bond Change END");
+        }
     }
 
     /**
@@ -247,9 +254,19 @@ public final class BondChangeAnnotator extends DUModel {
         BEMatrix substrateBEMatrix = reactantBE;
         BEMatrix productBEMatrix = productBE;
 
+        if (DEBUG) {
+            System.out.println("markBondChanges method start");
 //        System.out.println(reactantBE.toString());
 //        System.out.println(productBE.toString());
-//        System.out.println(this.reactionMatrix.toString());
+//        System.out.println(reactionMatrix.toString
+        }
+
+        /*
+         * Marking CDKConstants.ISINRING FLAGS
+         */
+        if (DEBUG) {
+            System.out.println("Marking Rings");
+        }
         for (IAtomContainer atomContainerQ : reactantSet.atomContainers()) {
             try {
                 /*
@@ -279,6 +296,9 @@ public final class BondChangeAnnotator extends DUModel {
          * Mining Stereo Atom Changes E/Z or R/S only
          */
 
+        if (DEBUG) {
+            System.out.println("Marking E/Z or R/S");
+        }
         for (StereoChange sc : stereogenicCenters) {
             IAtom atomE = sc.getReactantAtom();
             IAtom atomP = sc.getProductAtom();
@@ -316,11 +336,18 @@ public final class BondChangeAnnotator extends DUModel {
          * Mining bond cleaved formed, order change except stereo information
          *
          */
+
+        if (DEBUG) {
+            System.out.println("Marking Bond Changes");
+        }
         int sizeQ = reactionMatrix.getReactantsAtomArray().size();
         int sizeT = reactionMatrix.getProductsAtomArray().size();
 
         for (int i = 0; i < reactionMatrix.getRowDimension(); i++) {
             for (int j = i; j < reactionMatrix.getColumnDimension(); j++) {
+                if (DEBUG) {
+                    System.out.println("Marking Bond Changes-1");
+                }
                 if (i != j && reactionMatrix.getValue(i, j) == 0.) {
                     IBond affectedBondReactants = null;
                     IBond affectedBondProducts = null;
@@ -367,6 +394,9 @@ public final class BondChangeAnnotator extends DUModel {
                 /*
                  * R-Matrix with changes
                  */
+                if (DEBUG) {
+                    System.out.println("Marking Bond Changes-2");
+                }
                 if (reactionMatrix.getValue(i, j) != 0.) {
 
                     //Diagonal free valence electron changes 
@@ -399,7 +429,9 @@ public final class BondChangeAnnotator extends DUModel {
                     IBond affectedBondReactants;
                     IBond affectedBondProducts;
                     ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
-
+                    if (DEBUG) {
+                        System.out.println("Marking Bond Changes-2");
+                    }
                     try {
                         affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
                         affectedBondProducts = getBondOfProductsByRMatrix(reactionMatrix.getProductAtom(i), reactionMatrix.getProductAtom(j));
@@ -417,12 +449,19 @@ public final class BondChangeAnnotator extends DUModel {
                             continue;
                         }
 
+                        if (DEBUG) {
+                            System.out.println(i + "," + j + " reactionMatrix.getValue(i, j) " + reactionMatrix.getValue(i, j));
+                        }
+
                         /*
                          * Changes in the product
                          */
                         if (reactionMatrix.getValue(i, j) < 0.0d) {
-                            if (productBEMatrix.getValue(i, j) == 0.0d
-                                    && affectedBondProducts == null) {
+                            if (DEBUG) {
+                                System.out.println("Marking Bond Changes-2 product");
+                            }
+
+                            if (productBEMatrix.getValue(i, j) == 0.0d && affectedBondProducts == null) {
                                 /*
                                  * Here the bond is cleaved (Reduced)
                                  */
@@ -437,7 +476,17 @@ public final class BondChangeAnnotator extends DUModel {
                                 affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                                affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                try {
+                                    if (affectedBondReactants.getProperties().isEmpty()) {
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                        affectedBondReactants.addProperties(hashMap);
+                                    } else {
+                                        affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                             if (affectedBondProducts != null) {
 
@@ -445,20 +494,33 @@ public final class BondChangeAnnotator extends DUModel {
                                 affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                                affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+
+                                try {
+                                    if (affectedBondProducts.getProperties().isEmpty()) {
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                        affectedBondProducts.addProperties(hashMap);
+                                    } else {
+                                        affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         } /*
-                         * Changes in the educt
+                           * Changes in the educt
                          */ else if (reactionMatrix.getValue(i, j) > 0.d) {
 
-                            if (substrateBEMatrix.getValue(i, j) == 0.0d
-                                    && affectedBondReactants == null) {
+                            if (DEBUG) {
+                                System.out.println("Marking Bond Changes-2 educt");
+                            }
+
+                            if (substrateBEMatrix.getValue(i, j) == 0.0d && affectedBondReactants == null) {
                                 /*
                                  * Here the bond is Formed (Gained)
                                  */
                                 bondChangeInformation = BOND_FORMED;
                             } else {
-
                                 bondChangeInformation = BOND_ORDER;
                             }
 
@@ -468,7 +530,18 @@ public final class BondChangeAnnotator extends DUModel {
                                 affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                                 getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                                affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+
+                                try {
+                                    if (affectedBondReactants.getProperties().isEmpty()) {
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                        affectedBondReactants.addProperties(hashMap);
+                                    } else {
+                                        affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                             if (affectedBondProducts != null) {
 
@@ -476,12 +549,27 @@ public final class BondChangeAnnotator extends DUModel {
                                 affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                                 getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                                affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+
+                                try {
+                                    if (affectedBondProducts.getProperties().isEmpty()) {
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                        affectedBondProducts.addProperties(hashMap);
+                                    } else {
+                                        affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         /*
                          * Store the bond changes
                          */
+                        if (DEBUG) {
+                            System.out.println("Marking Bond Changes-2 STORED ");
+                        }
+
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
                         getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
@@ -489,8 +577,21 @@ public final class BondChangeAnnotator extends DUModel {
                 }
             }
         }
+        if (DEBUG) {
+            System.out.println("Marking Bond Changes-DONE");
+        }
+        /*
+         * Marking Missing Bond Changes
+         */
         markHydrogenDisplacementBondChanges();
+        /*
+         * Marking Un Mapped Atoms
+         */
         markUnMappedAtoms();
+
+        if (DEBUG) {
+            System.out.println("markBondChanges method END");
+        }
     }
 
     private synchronized void markHydrogenDisplacementBondChanges() {

@@ -89,6 +89,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
  */
 public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
+    private final boolean DEBUG = false;
     private static final long serialVersionUID = 98698690880809981L;
     private static final Logger LOG = getLogger(BondChangeCalculator.class.getName());
     private final BondChangeAnnotator bondChangeAnnotator;
@@ -120,6 +121,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @throws Exception
      */
     public BondChangeCalculator(IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+        if (DEBUG) {
+            System.out.println("Bond Change Calculator START");
+        }
         int rEnergy = 0;
         int pEnergy = 0;
 
@@ -127,7 +131,14 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         this.energyDelta = 0;
         this.totalSmallestFragmentSize = 0;
         this.mappedReaction = reaction;
+        if (DEBUG) {
+            System.out.println("Bond Change Annotator START");
+        }
         this.bondChangeAnnotator = new BondChangeAnnotator(this.mappedReaction, true, generate2D, generate3D);
+        if (DEBUG) {
+            System.out.println("Bond Change Annotator END");
+        }
+
         BondEnergies be = getInstance();
 
         this.formedCleavedWFingerprint = new PatternFingerprinter();
@@ -203,6 +214,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         setCircularFingerprints(reaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
                     }
                 }
+            }
+
+            if (DEBUG) {
+                System.out.println("Bond Change Calculator END");
             }
         }
 
@@ -593,8 +608,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     /**
      *
-     * @return
-     * @throws CDKException
+     * @return @throws CDKException
      */
     @Override
     public synchronized IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException {
@@ -608,8 +622,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     /**
      *
-     * @return
-     * @throws CDKException
+     * @return @throws CDKException
      */
     @Override
     public synchronized IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException {
@@ -1175,8 +1188,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     /**
      *
-     * @return
-     * @throws CDKException
+     * @return @throws CDKException
      */
     public synchronized int getTotalBondBreakingEnergy() throws CDKException {
         return this.energySum;
