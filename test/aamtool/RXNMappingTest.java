@@ -1230,7 +1230,7 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
-     * @25405	5.4.99.3
+     * @25405	5.4.99.3 KEGG R05069
      *  
      * MIXTURE, fp 
      * ID=25405:Bond Cleaved and Formed (2)
