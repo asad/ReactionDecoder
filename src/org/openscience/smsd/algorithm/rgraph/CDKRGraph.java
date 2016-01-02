@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getIterationManager;
 
@@ -111,7 +111,6 @@ import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getIterationManager;
  *
  *
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRGraphTest")
 public class CDKRGraph {
 
     private static final Logger LOG = getLogger(CDKRGraph.class.getName());

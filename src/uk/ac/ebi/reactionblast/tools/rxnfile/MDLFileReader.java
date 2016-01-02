@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
@@ -63,7 +63,6 @@ public class MDLFileReader {
      * @param mode
      * @throws IOException
      */
-    @TestMethod("MDLFileReaderTest")
     public MDLFileReader(InputStream inputStream, Mode mode) throws IOException {
 
         try {
@@ -103,7 +102,6 @@ public class MDLFileReader {
      * @throws IOException
      * @throws CDKException
      */
-    @TestMethod("MDLFileReaderTest")
     public MDLFileReader(InputStream inputStream) throws IOException, CDKException {
         this(inputStream, RELAXED);
     }
@@ -115,7 +113,6 @@ public class MDLFileReader {
      * @throws IOException
      * @throws CDKException
      */
-    @TestMethod("MDLFileReaderTest")
     public MDLFileReader(Reader reader) throws IOException, CDKException {
         this(reader, RELAXED);
     }
@@ -127,7 +124,6 @@ public class MDLFileReader {
      * @param mode
      * @throws IOException
      */
-    @TestMethod("MDLFileReaderTest")
     public MDLFileReader(Reader reader, Mode mode) throws IOException {
 
         try {
@@ -165,7 +161,6 @@ public class MDLFileReader {
      *
      * @return read molecule
      */
-    @TestMethod("testGetMolecule")
     public IAtomContainer getAtomContainer() {
         return molecule;
     }
@@ -175,7 +170,6 @@ public class MDLFileReader {
      *
      * @return cleaned Layout molecule
      */
-    @TestMethod("testGetMoleculeWithLayoutCheck")
     public IAtomContainer getMoleculeWithLayoutCheck() {
         if (!has2DCoordinates(molecule)) {
             try {
@@ -195,7 +189,6 @@ public class MDLFileReader {
      *
      * @return cleaned model
      */
-    @TestMethod("testGetChemModelWithMoleculeWithLayoutCheck")
     public IChemModel getChemModelWithMoleculeWithLayoutCheck() {
         IChemModel chemModel = new ChemModel();
         chemModel.setMoleculeSet(partitionIntoMolecules(molecule));

@@ -48,7 +48,7 @@ package org.openscience.smsd.algorithm.vflib.interfaces;
 
 import java.util.List;
 import java.util.Map;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -59,7 +59,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public interface IMapper {
 
     /**

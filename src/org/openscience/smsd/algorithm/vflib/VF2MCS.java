@@ -44,8 +44,8 @@ import java.util.concurrent.ExecutorService;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -82,7 +82,6 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFlibMCSHandlerTest")
 public final class VF2MCS extends BaseMCS implements IResults {
 
     private final static ILoggingTool logger
@@ -643,7 +642,6 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
         return unmodifiableList(allAtomMCS);
     }
@@ -654,7 +652,6 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetFirstAtomMapping")
     public synchronized AtomAtomMapping getFirstAtomMapping() {
         if (allAtomMCS.iterator().hasNext()) {
             return allAtomMCS.iterator().next();

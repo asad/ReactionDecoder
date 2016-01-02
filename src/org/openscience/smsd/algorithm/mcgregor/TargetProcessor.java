@@ -28,7 +28,7 @@ import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
@@ -42,7 +42,6 @@ import static org.openscience.smsd.algorithm.mcgregor.McGregorChecks.changeCharB
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.TargetProcessorTest")
 public class TargetProcessor {
     private static final Logger LOG = getLogger(TargetProcessor.class.getName());
 

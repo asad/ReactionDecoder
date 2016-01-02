@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -56,7 +56,6 @@ import static org.openscience.smsd.helper.LabelContainer.getInstance;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
 public final class GenerateCompatibilityGraph implements Serializable {
 
     private static final long serialVersionUID = 96986606860861L;

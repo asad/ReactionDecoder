@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
@@ -91,7 +91,6 @@ import org.openscience.smsd.helper.BondEnergy;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.tools.BondEnergiesTest")
 public class BondEnergies {
 
     private static Map<Integer, BondEnergy> bondEngergies = null;
@@ -104,7 +103,6 @@ public class BondEnergies {
      * @return instance
      * @throws CDKException
      */
-    @TestMethod("testGetInstance")
     public synchronized static BondEnergies getInstance()
             throws CDKException {
         if (null == instance) {
@@ -148,7 +146,6 @@ public class BondEnergies {
      * @param bondOrder (single, double etc)
      * @return bond energy
      */
-    @TestMethod("testGetEnergies")
     public synchronized int getEnergies(IAtom sourceAtom, IAtom targetAtom, Order bondOrder) {
         String sourceAtomSymbol;
         if (!(sourceAtom instanceof IQueryAtom)) {
@@ -168,7 +165,6 @@ public class BondEnergies {
      * @param bondOrder (single, double etc)
      * @return bond energy
      */
-    @TestMethod("testGetEnergies")
     public synchronized int getEnergies(String sourceAtom, String targetAtom, Order bondOrder) {
         int D_kJ_per_mol = -1;
         boolean pseudoAtom = false;
@@ -204,7 +200,6 @@ public class BondEnergies {
      * @param bond (single, double etc)
      * @return bond energy
      */
-    @TestMethod("testGetEnergies")
     public synchronized int getEnergies(IBond bond) {
         int D_kJ_per_mol = -1;
         for (Map.Entry<Integer, BondEnergy> entry : bondEngergies.entrySet()) {

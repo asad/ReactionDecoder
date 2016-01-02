@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.vflib.interfaces.IEdge;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
@@ -41,7 +41,6 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class NodeBuilder implements INode {
     private static final Logger LOG = getLogger(NodeBuilder.class.getName());
     private final List<INode> neighborsList;

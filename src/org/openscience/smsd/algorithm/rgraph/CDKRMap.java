@@ -31,7 +31,7 @@ package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  * An CDKRMap implements the association between an edge (bond) in G1 and an
@@ -43,7 +43,6 @@ import org.openscience.cdk.annotations.TestClass;
  * 
  * 
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKRMapTest")
 class CDKRMap extends Object {
     private static final Logger LOG = getLogger(CDKRMap.class.getName());
 

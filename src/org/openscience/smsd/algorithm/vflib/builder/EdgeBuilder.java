@@ -24,7 +24,7 @@ package org.openscience.smsd.algorithm.vflib.builder;
 
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.vflib.interfaces.IEdge;
 import org.openscience.smsd.algorithm.vflib.interfaces.INode;
@@ -37,7 +37,6 @@ import org.openscience.smsd.algorithm.vflib.interfaces.INode;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class EdgeBuilder implements IEdge {
     private static final Logger LOG = getLogger(EdgeBuilder.class.getName());
 

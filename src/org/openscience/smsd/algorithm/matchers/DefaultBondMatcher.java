@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.UNSET;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
@@ -39,7 +39,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class DefaultBondMatcher implements BondMatcher {
 
     static final long serialVersionUID = -7861469841127328812L;

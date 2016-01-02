@@ -39,8 +39,8 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.CDKConstants;
 import static org.openscience.cdk.CDKConstants.BONDORDER_SINGLE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import static org.openscience.cdk.aromaticity.ElectronDonation.cdk;
@@ -93,7 +93,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.tools.SMSDNormalizerTest")
 public class ExtAtomContainerManipulator extends AtomContainerManipulator implements Serializable {
 
     static final Logger logger = getLogger(ExtAtomContainerManipulator.class.getName());
@@ -120,7 +119,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param molecule_orignal
      * @return cleaned GraphAtomContainer
      */
-    @TestMethod("testCheckAndCleanMolecule")
     public synchronized static IAtomContainer checkAndCleanMolecule(IAtomContainer molecule_orignal) {
         boolean isMarkush = false;
         IAtomContainer molecule = molecule_orignal;
@@ -163,7 +161,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      *
      * @param mol input molecule
      */
-    @TestMethod("testAromatizeMolecule")
     public static void aromatizeMolecule(IAtomContainer mol) {
         try {
             // need to find rings and aromaticity again since added H's
@@ -226,7 +223,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @return deep copy of the mol
      * @throws CloneNotSupportedException
      */
-    @TestMethod("testMakeDeepCopy")
     public static IAtomContainer cloneWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         setNullHCountToZero(container);
         IAtomContainer ac = new AtomContainer(container).clone();
@@ -244,7 +240,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @return deep copy of the mol
      * @throws CloneNotSupportedException
      */
-    @TestMethod("testMakeDeepCopy")
     public static IAtomContainer newInstanceWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         IAtomContainer ac = container.getBuilder().newInstance(IAtomContainer.class, container);
         ac.setProperties(container.getProperties());
@@ -261,7 +256,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param atom
      * @return The number of explicit hydrogens on the given IAtom.
      */
-    @TestMethod("testGetExplicitHydrogenCount")
     public static int getExplicitHydrogenCount(IAtomContainer atomContainer, IAtom atom) {
         int hCount = 0;
         for (IAtom iAtom : atomContainer.getConnectedAtomsList(atom)) {
@@ -279,7 +273,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param atom
      * @return Implicit Hydrogen Count
      */
-    @TestMethod("testGetImplicitHydrogenCount")
     public static int getImplicitHydrogenCount(IAtom atom) {
         return Objects.equals(atom.getImplicitHydrogenCount(), CDKConstants.UNSET) ? 0 : atom.getImplicitHydrogenCount();
     }
@@ -291,7 +284,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param atom
      * @return The summed implicit + explicit hydrogens of the given IAtom.
      */
-    @TestMethod("testGetHydrogenCount")
     public static int getHydrogenCount(IAtomContainer atomContainer, IAtom atom) {
         return getExplicitHydrogenCount(atomContainer, atom) + getImplicitHydrogenCount(atom);
     }
@@ -305,7 +297,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * atom single atom which is atom Hydrogen then its not removed.
      * @throws CloneNotSupportedException
      */
-    @TestMethod("testRemoveHydrogensAndPreserveAtomID")
     public static IAtomContainer removeHydrogensExceptSingleAndPreserveAtomID(IAtomContainer container) throws CloneNotSupportedException {
         /*
          @ASAD: IMP STEP to avoid unset Hydrogen arror:
@@ -329,7 +320,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @cdk.keyword hydrogens, removal, suppress
      * @see #copyAndSuppressedHydrogens
      */
-    @TestMethod("testRemoveHydrogens_IAtomContainer")
     public static IAtomContainer removeHydrogens(IAtomContainer org) {
         return copyAndSuppressedHydrogens(org);
     }
@@ -633,7 +623,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @return IAtomContainer without Hydrogen. If an GraphAtomContainer has
      * atom single atom which is atom Hydrogen then its not removed.
      */
-    @TestMethod("testConvertExplicitToImplicitHydrogens")
     public static IAtomContainer convertExplicitToImplicitHydrogens(IAtomContainer atomContainer) {
         IAtomContainer mol = atomContainer.getBuilder().newInstance(IAtomContainer.class, atomContainer);
         setNullHCountToZero(mol);
@@ -662,7 +651,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param container
      * @throws CDKException
      */
-    @TestMethod("testPercieveAtomTypesAndConfigureAtoms")
     public static void percieveAtomTypesAndConfigureAtoms(IAtomContainer container) throws CDKException {
         CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(container.getBuilder());;
         for (IAtom atom : container.atoms()) {
@@ -687,7 +675,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param atomContainer the atom container to consider
      * @cdk.keyword hydrogens, adding
      */
-    @TestMethod("testConvertImplicitToExplicitHydrogens_IAtomContainer")
     public static void convertImplicitToExplicitHydrogens(IAtomContainer atomContainer) {
         List<IAtom> hydrogens = new ArrayList<>();
         List<IBond> newBonds = new ArrayList<>();

@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  * This class handles MCS between two identical molecules. Hence they generate am MCS where all atoms are mapped.
@@ -38,7 +38,6 @@ import org.openscience.cdk.annotations.TestClass;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.SMSDBondSensitiveTest")
 public class ExactMapping {
 
     private static final Logger LOG = getLogger(ExactMapping.class.getName());

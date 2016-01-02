@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestMethod;
+
 
 /**
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
@@ -46,7 +46,6 @@ public class Sotter {
      * @param map
      * @return
      */
-    @TestMethod(value = "testSortMapByValueInAscendingOrder")
     public static synchronized Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
@@ -70,7 +69,6 @@ public class Sotter {
      * @param map
      * @return
      */
-    @TestMethod(value = "testSortMapByValueInDescendingOrder")
     public static synchronized Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method

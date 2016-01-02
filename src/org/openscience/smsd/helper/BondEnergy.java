@@ -25,8 +25,8 @@ package org.openscience.smsd.helper;
 
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Order;
@@ -39,7 +39,6 @@ import org.openscience.cdk.interfaces.IBond.Order;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.helper.BondEnergyTest")
 public class BondEnergy {
     private static final Logger LOG = getLogger(BondEnergy.class.getName());
 
@@ -56,7 +55,6 @@ public class BondEnergy {
      * @param order bond order
      * @param energy energy for this bond type
      */
-    @TestMethod("BondEnergyTest")
     public BondEnergy(String symbol1, String symbol2,
             IBond.Order order, int energy) {
         this.symbol1 = symbol1;
@@ -70,7 +68,6 @@ public class BondEnergy {
      *
      * @return the element symbol as {@link String}
      */
-    @TestMethod("testGetSymbolFirstAtom")
     public synchronized String getSymbolFirstAtom() {
         return symbol1;
     }
@@ -80,7 +77,6 @@ public class BondEnergy {
      *
      * @return the element symbol as {@link String}
      */
-    @TestMethod("testGetSymbolSecondAtom")
     public synchronized String getSymbolSecondAtom() {
         return symbol2;
     }
@@ -90,7 +86,6 @@ public class BondEnergy {
      *
      * @return the bond order of the bond type as {@link Order}
      */
-    @TestMethod("testGetBondOrder")
     public synchronized IBond.Order getBondOrder() {
         return bondOrder;
     }
@@ -100,7 +95,6 @@ public class BondEnergy {
      *
      * @return the bond energy as integer.
      */
-    @TestMethod("testGetEnergy")
     public synchronized int getEnergy() {
         return energy;
     }

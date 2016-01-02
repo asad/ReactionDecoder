@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
@@ -70,7 +70,6 @@ import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class VFQueryBuilder implements IQuery {
     private static final Logger LOG = getLogger(VFQueryBuilder.class.getName());
 

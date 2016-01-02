@@ -45,7 +45,7 @@ import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.REMARK;
 import static org.openscience.cdk.CDKConstants.TITLE;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -131,7 +131,6 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      *
      * @return
      */
-    @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return getInstance();
@@ -179,7 +178,6 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      *
      * @throws java.io.IOException
      */
-    @TestMethod("testClose")
     @Override
     public void close() throws IOException {
         writer.close();
@@ -190,7 +188,6 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      * @param classObject
      * @return
      */
-    @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {
         Class[] interfaces = classObject.getInterfaces();

@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 
 /**
  * Class that handles atoms and assigns an integer label to them.
@@ -37,7 +37,6 @@ import org.openscience.cdk.annotations.TestMethod;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.helper.LabelContainerTest")
 public class LabelContainer {
     private static LabelContainer instance = null;
     private static final Logger LOG = getLogger(LabelContainer.class.getName());
@@ -47,7 +46,6 @@ public class LabelContainer {
      *
      * @return instance of this object
      */
-    @TestMethod(value = "testGetInstance")
     public static synchronized LabelContainer getInstance() {
         if (instance == null) {
             instance = new LabelContainer();
@@ -74,7 +72,6 @@ public class LabelContainer {
      *
      * @param label
      */
-    @TestMethod("testAddLabel")
     public synchronized void addLabel(String label) {
         if (!labelMap.contains(label)) {
             labelMap.add(labelCounter++, label);
@@ -87,7 +84,6 @@ public class LabelContainer {
      * @param label
      * @return labelID
      */
-    @TestMethod("testGetLabelID")
     synchronized public Integer getLabelID(String label) {
         addLabel(label);
         return labelMap.indexOf(label);
@@ -99,7 +95,6 @@ public class LabelContainer {
      * @param labelID
      * @return label
      */
-    @TestMethod("testGetLabel")
     synchronized public String getLabel(Integer labelID) {
         return labelMap.get(labelID);
     }
@@ -109,7 +104,6 @@ public class LabelContainer {
      *
      * @return size of the labels
      */
-    @TestMethod("testGetSize")
     synchronized public int getSize() {
         return labelMap.size();
     }

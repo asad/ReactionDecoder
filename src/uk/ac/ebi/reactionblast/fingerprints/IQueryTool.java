@@ -21,7 +21,7 @@
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.util.List;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -37,7 +37,6 @@ public interface IQueryTool {
      *
      * @return The number of times the pattern was found in the target molecule
      */
-    @TestMethod(value = "testQueryTool")
     int countMatches();
 
     /**
@@ -47,7 +46,6 @@ public interface IQueryTool {
      *
      * @return A List of List of atom indices in the target molecule
      */
-    @TestMethod(value = "testQueryTool")
     List<List<Integer>> getMatchingAtoms();
 
     /**
@@ -55,7 +53,6 @@ public interface IQueryTool {
      *
      * @return The SMARTS pattern
      */
-    @TestMethod(value = "testQueryTool")
     String getSmarts();
 
     /**
@@ -65,7 +62,6 @@ public interface IQueryTool {
      *
      * @return A List of List of atom indices in the target molecule
      */
-    @TestMethod(value = "testUniqueQueries")
     List<List<Integer>> getUniqueMatchingAtoms();
 
     /**
@@ -102,7 +98,6 @@ public interface IQueryTool {
      * @see #countMatches()
      * @see #matches(org.openscience.cdk.interfaces.IAtomContainer)
      */
-    @TestMethod(value = "testQueryTool, testQueryToolSingleAtomCase, testQuery")
     boolean matches(IAtomContainer atomContainer, boolean forceInitialization) throws CDKException;
 
     /**
@@ -118,7 +113,6 @@ public interface IQueryTool {
      * @param smarts The new SMARTS pattern
      * @throws CDKException if there is an error in parsing the pattern
      */
-    @TestMethod(value = "testQueryTool, testQueryToolResetSmart")
     void setSmarts(String smarts) throws CDKException;
     
 }

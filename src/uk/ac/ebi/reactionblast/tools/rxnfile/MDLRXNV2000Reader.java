@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.TITLE;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -134,7 +134,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      *
      * @return
      */
-    @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return getInstance();
@@ -145,7 +144,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param input
      * @throws CDKException
      */
-    @TestMethod("testSetReader_Reader")
     @Override
     public void setReader(Reader input) throws CDKException {
         if (input instanceof BufferedReader) {
@@ -160,7 +158,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param input
      * @throws CDKException
      */
-    @TestMethod("testSetReader_InputStream")
     @Override
     public void setReader(InputStream input) throws CDKException {
         setReader(new InputStreamReader(input));
@@ -171,7 +168,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param classObject
      * @return
      */
-    @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {
         Class[] interfaces = classObject.getInterfaces();
@@ -235,7 +231,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param object
      * @return
      */
-    @TestMethod("testAccepts")
     public boolean accepts(IChemObject object) {
         if (object instanceof IReaction) {
             return true;
@@ -392,7 +387,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
         return reaction;
     }
 
-    @TestMethod("testClose")
     @Override
     public void close() throws IOException {
         input.close();

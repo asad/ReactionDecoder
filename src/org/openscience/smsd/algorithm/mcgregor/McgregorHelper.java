@@ -27,7 +27,7 @@ import static java.util.Collections.unmodifiableList;
 import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  * Helper Class for McGregor algorithm.
@@ -38,7 +38,6 @@ import org.openscience.cdk.annotations.TestClass;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.mcgregor.McgregorHelperTest")
 public class McgregorHelper {
     private static final Logger LOG = getLogger(McgregorHelper.class.getName());
 

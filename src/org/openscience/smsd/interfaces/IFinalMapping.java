@@ -25,7 +25,7 @@ package org.openscience.smsd.interfaces;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  * Interface for mappings.
@@ -34,7 +34,6 @@ import org.openscience.cdk.annotations.TestClass;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 
-@TestClass("org.openscience.cdk.smsd.interfaces.IFinalMappingTest")
 public interface IFinalMapping {
 
    

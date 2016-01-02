@@ -55,7 +55,7 @@ import static org.openscience.cdk.CDKConstants.COMMENT;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.REMARK;
 import static org.openscience.cdk.CDKConstants.TITLE;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.config.IsotopeFactory;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
@@ -478,7 +478,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @param container the container
      * @throws IOException an error occur whilst reading the input
      */
-    @TestMethod("readNonStructuralData")
     static void readNonStructuralData(final BufferedReader input,
             final IAtomContainer container) throws IOException {
         
@@ -534,7 +533,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @param line an input line
      * @return the field name
      */
-    @TestMethod("dataHeader_1")
     static String dataHeader(final String line) {
         if (line.length() > 2
                 && line.charAt(0) != '>'
@@ -616,7 +614,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      *
      * @return
      */
-    @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return MDLV2000Format.getInstance();
@@ -627,7 +624,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @param input
      * @throws CDKException
      */
-    @TestMethod("testSetReader_Reader")
     @Override
     public void setReader(Reader input) throws CDKException {
         if (input instanceof BufferedReader) {
@@ -642,7 +638,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @param input
      * @throws CDKException
      */
-    @TestMethod("testSetReader_InputStream")
     @Override
     public void setReader(InputStream input) throws CDKException {
         setReader(new InputStreamReader(input));
@@ -653,7 +648,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @param classObject
      * @return
      */
-    @TestMethod("testAccepts")
     @SuppressWarnings("unchecked")
     @Override
     public boolean accepts(Class<? extends IChemObject> classObject) {
@@ -1045,7 +1039,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
     }
 
-    @TestMethod("testClose")
     @Override
     public void close() throws IOException {
         input.close();

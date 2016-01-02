@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtom;
@@ -48,7 +48,6 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.cdk.CDKMCSHandlerTest")
 public class CDKSubGraphHandler implements IResults {
     private static final Logger LOG = getLogger(CDKSubGraphHandler.class.getName());
 
@@ -231,7 +230,6 @@ public class CDKSubGraphHandler implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetAllAtomMapping")
     public List<AtomAtomMapping> getAllAtomMapping() {
         return unmodifiableList(allAtomMCS);
     }
@@ -242,7 +240,6 @@ public class CDKSubGraphHandler implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetFirstAtomMapping")
     public AtomAtomMapping getFirstAtomMapping() {
         if (allAtomMCS.iterator().hasNext()) {
             return allAtomMCS.iterator().next();

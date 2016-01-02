@@ -23,7 +23,7 @@
 package org.openscience.smsd.interfaces;
 
 import java.util.List;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.smsd.AtomAtomMapping;
 
 /**
@@ -31,7 +31,6 @@ import org.openscience.smsd.AtomAtomMapping;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.interfaces.IMCSBaseTest")
 public interface IResults {
 
     /**

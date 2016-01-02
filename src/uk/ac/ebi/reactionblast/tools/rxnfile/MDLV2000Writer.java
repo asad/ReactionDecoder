@@ -52,7 +52,7 @@ import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.REMARK;
 import static org.openscience.cdk.CDKConstants.TITLE;
 import static org.openscience.cdk.CDKConstants.UNSET;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
@@ -250,7 +250,6 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
      *
      * @return
      */
-    @TestMethod("testGetFormat")
     @Override
     public IResourceFormat getFormat() {
         return MDLFormat.getInstance();
@@ -285,7 +284,6 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
      *
      * @throws java.io.IOException
      */
-    @TestMethod("testClose")
     @Override
     public void close() throws IOException {
         writer.close();
@@ -296,7 +294,6 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
      * @param classObject
      * @return
      */
-    @TestMethod("testAccepts")
     @Override
     public boolean accepts(Class classObject) {
         Class[] interfaces = classObject.getInterfaces();

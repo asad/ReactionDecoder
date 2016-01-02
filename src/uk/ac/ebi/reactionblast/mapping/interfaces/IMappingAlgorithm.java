@@ -18,7 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.interfaces;
 
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  *
@@ -31,7 +31,6 @@ import org.openscience.cdk.annotations.TestClass;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.interfaces.AlgorithmTest")
 public enum IMappingAlgorithm {
 
     /**

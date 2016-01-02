@@ -27,7 +27,7 @@ import static java.lang.System.err;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.config.IsotopeFactory;
 import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -72,7 +72,6 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
      * @param o2
      * @return
      */
-    @TestMethod("testCompare_Object_Object")
     @Override
     public int compare(IAtomContainer o1, IAtomContainer o2) {
         // Check for nulls

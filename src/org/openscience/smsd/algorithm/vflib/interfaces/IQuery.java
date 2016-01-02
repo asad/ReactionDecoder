@@ -47,7 +47,7 @@
  */
 package org.openscience.smsd.algorithm.vflib.interfaces;
 
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtom;
 
 /**
@@ -57,7 +57,6 @@ import org.openscience.cdk.interfaces.IAtom;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public interface IQuery {
 
     /**

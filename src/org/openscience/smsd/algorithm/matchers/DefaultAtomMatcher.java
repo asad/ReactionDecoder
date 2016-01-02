@@ -29,7 +29,7 @@ import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISALIPHATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import static org.openscience.cdk.CDKConstants.RING_SIZES;
-import org.openscience.cdk.annotations.TestClass;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 
@@ -41,7 +41,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VFLibTest")
 public class DefaultAtomMatcher implements AtomMatcher {
 
     static final long serialVersionUID = -7861469841127327812L;

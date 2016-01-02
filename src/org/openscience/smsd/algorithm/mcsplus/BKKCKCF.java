@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
+
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -48,7 +48,6 @@ import org.openscience.cdk.annotations.TestClass;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.BKKCKCFTest")
 public class BKKCKCF {
     private static final Logger LOG = getLogger(BKKCKCF.class.getName());
 

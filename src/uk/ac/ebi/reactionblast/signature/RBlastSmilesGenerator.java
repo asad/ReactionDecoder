@@ -39,8 +39,8 @@ import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import static org.openscience.cdk.CDKConstants.VISITED;
 import org.openscience.cdk.PseudoAtom;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.config.IsotopeFactory;
 import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -106,7 +106,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * SMILES, generator @cdk.module smiles
  * @cdk.bug 1793446
  */
-@TestClass("org.openscience.cdk.smiles.SmilesGeneratorTest")
 public class RBlastSmilesGenerator {
 
     private static final Logger LOG = getLogger(RBlastSmilesGenerator.class.getName());
@@ -223,7 +222,6 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    @TestMethod("testCisResorcinol,testEthylPropylPhenantren,testAlanin")
     public synchronized String createSMILES(IAtomContainer molecule) {
         try {
             return (createSMILES(molecule, false, new boolean[molecule.getBondCount()]));
@@ -301,7 +299,6 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    @TestMethod("testAlaSMILES,testSugarSMILES")
     public synchronized String createChiralSMILES(IAtomContainer molecule, boolean[] doubleBondConfiguration) throws CDKException {
         return (createSMILES(molecule, true, doubleBondConfiguration));
     }
@@ -378,7 +375,6 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    @TestMethod("testCreateSMILESWithoutCheckForMultipleMolecules_withDetectAromaticity,testCreateSMILESWithoutCheckForMultipleMolecules_withoutDetectAromaticity")
     public synchronized String createSMILESWithoutCheckForMultipleMolecules(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[]) throws CDKException {
 
         if (molecule.getAtomCount() == 0) {
@@ -1634,7 +1630,6 @@ public class RBlastSmilesGenerator {
      * @param useAromaticityFlag if false only SP2-hybridized atoms will be
      * lower case (default), true=SP2 or aromaticity trigger lower case
      */
-    @TestMethod("testSFBug956923")
     public void setUseAromaticityFlag(boolean useAromaticityFlag) {
         this.useAromaticityFlag = useAromaticityFlag;
     }

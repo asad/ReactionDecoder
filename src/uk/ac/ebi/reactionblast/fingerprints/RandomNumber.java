@@ -31,7 +31,7 @@ import static java.util.logging.Logger.getLogger;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.openscience.cdk.annotations.TestMethod;
+
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -60,7 +60,6 @@ public class RandomNumber implements Serializable {
      * @param seed the seed for the next pseudorandom number
      * @return next pseudorandom number
      */
-    @TestMethod(value = "testGenerateMersenneTwisterRandomNumber")
     public int generateMersenneTwisterRandomNumber(int n, long seed) {
         rg.setSeed(seed);
         return rg.nextInt(n);

@@ -39,7 +39,7 @@ import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -566,7 +566,6 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @return
      * @throws CDKException
      */
-    @TestMethod("testBreadthFirstSearch_IAtomContainer_List_IAtomContainer_int")
     public static Collection<IAtom> circularFragment(IAtomContainer atomContainer, int rootAtom, int max) throws CDKException {
         IAtom root = atomContainer.getAtom(rootAtom);
         Set<IAtom> paths = new HashSet<>();

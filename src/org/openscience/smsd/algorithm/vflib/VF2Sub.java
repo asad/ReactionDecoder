@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -62,7 +62,6 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.algorithm.vflib.VF2SubTest")
 public class VF2Sub implements IResults {
     private static final ILoggingTool Logger = createLoggingTool(VF2Sub.class);
 
@@ -169,7 +168,6 @@ public class VF2Sub implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetAllAtomMapping")
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
         return unmodifiableList(allAtomMCS);
     }
@@ -180,7 +178,6 @@ public class VF2Sub implements IResults {
      * @return
      */
     @Override
-    @TestMethod("testGetFirstAtomMapping")
     public synchronized AtomAtomMapping getFirstAtomMapping() {
         if (allAtomMCS.iterator().hasNext()) {
             return allAtomMCS.iterator().next();

@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -48,13 +48,14 @@ import org.openscience.smsd.interfaces.IAtomMapping;
  *
  * @cdk.require java1.5+
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
 public class BaseMapping extends ChemicalFilters implements IAtomMapping {
+
     private static final ILoggingTool Logger = createLoggingTool(BaseMapping.class);
 
     private final boolean matchBonds;
@@ -145,7 +146,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * {@inheritDoc}
      */
     @Override
-    @TestMethod("testGetTanimotoSimilarity")
     public synchronized double getTanimotoSimilarity() {
         int decimalPlaces = 4;
         double rAtomCount;
@@ -175,7 +175,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      *
      */
     @Override
-    @TestMethod("testIsStereoMisMatch")
     public synchronized boolean isStereoMisMatch() {
         boolean flag = false;
         IAtomContainer reactant = getQuery();
@@ -220,7 +219,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * {@inheritDoc}
      */
-    @TestMethod("testGetEuclideanDistance")
     @Override
     public synchronized double getEuclideanDistance() {
         int decimalPlaces = 4;
@@ -316,7 +314,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * @param subgraph the subgraph to set
      */
-     synchronized void setSubgraph(boolean subgraph) {
+    synchronized void setSubgraph(boolean subgraph) {
         this.subgraph = subgraph;
     }
 

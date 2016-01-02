@@ -25,8 +25,8 @@ package org.openscience.smsd.helper;
 
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
+
+
 
 /**
  * Class to construct a Binary tree for McGregor search.
@@ -35,7 +35,6 @@ import org.openscience.cdk.annotations.TestMethod;
  * 
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-@TestClass("org.openscience.cdk.smsd.helper.BinaryTreeTest")
 public class BinaryTree {
     private static final Logger LOG = getLogger(BinaryTree.class.getName());
     /**
@@ -50,7 +49,6 @@ public class BinaryTree {
      *
      * @param value node value
      */
-    @TestMethod("testBinaryTree")
     public BinaryTree(int value) {
         this.value = value;
     }
@@ -60,7 +58,6 @@ public class BinaryTree {
      *
      * @return get the value of the current node
      */
-    @TestMethod("testGetValue")
     public synchronized int getValue() {
         return this.value;
     }
@@ -70,7 +67,6 @@ public class BinaryTree {
      *
      * @return the equal
      */
-    @TestMethod("testGetEqual")
     public synchronized BinaryTree getEqual() {
         return equal;
     }
@@ -80,7 +76,6 @@ public class BinaryTree {
      *
      * @param equal the equal to set
      */
-    @TestMethod("testSetEqual")
     public synchronized void setEqual(BinaryTree equal) {
         this.equal = equal;
     }
@@ -90,7 +85,6 @@ public class BinaryTree {
      *
      * @return the notEqual
      */
-    @TestMethod("testGetNotEqual")
     public synchronized BinaryTree getNotEqual() {
         return notEqual;
     }
@@ -100,7 +94,6 @@ public class BinaryTree {
      *
      * @param notEqual the notEqual to set
      */
-    @TestMethod(value = "testSetNotEqual")
     public synchronized void setNotEqual(BinaryTree notEqual) {
         this.notEqual = notEqual;
     }

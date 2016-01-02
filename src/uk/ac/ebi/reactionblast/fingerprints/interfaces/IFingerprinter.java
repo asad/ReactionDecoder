@@ -19,7 +19,7 @@
 package uk.ac.ebi.reactionblast.fingerprints.interfaces;
 
 import java.util.Map;
-import org.openscience.cdk.annotations.TestMethod;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.fingerprint.ICountFingerprint;
@@ -41,7 +41,6 @@ public interface IFingerprinter extends org.openscience.cdk.fingerprint.IFingerp
      * @exception CDKException if there is a timeout in ring or aromaticity perception
      * @return A {@link BitSet} representing the fingerprint
      */
-    @TestMethod(value = "testGetFingerprint_IAtomContainer")
     IBitFingerprint getBitFingerprint(IAtomContainer container, AllRingsFinder ringFinder) throws CDKException;
 
     /**
@@ -51,7 +50,6 @@ public interface IFingerprinter extends org.openscience.cdk.fingerprint.IFingerp
      * @return
      * @throws CDKException
      */
-    @TestMethod(value = "testGetFingerprint_IAtomContainer")
     @Override
     IBitFingerprint getBitFingerprint(IAtomContainer container) throws CDKException;
 
@@ -77,14 +75,12 @@ public interface IFingerprinter extends org.openscience.cdk.fingerprint.IFingerp
      *
      * @return
      */
-    @TestMethod(value = "testGetSearchDepth")
     int getSearchDepth();
 
     /**
      *
      * @return
      */
-    @TestMethod(value = "testGetSize")
     int getSize();
 
     /**
