@@ -378,14 +378,36 @@ public final class BondChangeAnnotator extends DUModel {
                             affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                             getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                             getReactionCenterSet().add(affectedBondReactants.getAtom(1));
-                            affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+
+                            try {
+                                if (affectedBondReactants.getProperties().isEmpty()) {
+                                    HashMap<Object, Object> hashMap = new HashMap<>();
+                                    hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    affectedBondReactants.addProperties(hashMap);
+                                } else {
+                                    affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                }
+                            } catch (Exception e) {
+                                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
+                            }
                         }
                         if (affectedBondProducts != null) {
                             affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
                             affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
                             getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                             getReactionCenterSet().add(affectedBondProducts.getAtom(1));
-                            affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+
+                            try {
+                                if (affectedBondProducts.getProperties().isEmpty()) {
+                                    HashMap<Object, Object> hashMap = new HashMap<>();
+                                    hashMap.put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                    affectedBondProducts.addProperties(hashMap);
+                                } else {
+                                    affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
+                                }
+                            } catch (Exception e) {
+                                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
+                            }
                         }
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     }
@@ -485,7 +507,7 @@ public final class BondChangeAnnotator extends DUModel {
                                         affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
                                 }
                             }
                             if (affectedBondProducts != null) {
@@ -504,7 +526,7 @@ public final class BondChangeAnnotator extends DUModel {
                                         affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
                                 }
                             }
                         } /*
@@ -540,7 +562,7 @@ public final class BondChangeAnnotator extends DUModel {
                                         affectedBondReactants.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
                                 }
                             }
                             if (affectedBondProducts != null) {
@@ -559,7 +581,7 @@ public final class BondChangeAnnotator extends DUModel {
                                         affectedBondProducts.getProperties().put(BOND_CHANGE_INFORMATION, bondChangeInformation);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, e);
                                 }
                             }
                         }
