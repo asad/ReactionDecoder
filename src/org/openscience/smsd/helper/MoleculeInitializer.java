@@ -56,13 +56,12 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatiz
 
 /**
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MoleculeInitializer {
-
 
     /**
      * Prepare the molecule for analysis.
@@ -132,16 +131,28 @@ public class MoleculeInitializer {
             valencesTable.put("Mn", 2);
             valencesTable.put("Co", 2);
 
+            IRingSet allRings = null;
+
             // do all ring perception
             AllRingsFinder arf = new AllRingsFinder();
-            IRingSet allRings = null;
             try {
                 allRings = arf.findAllRings(atomContainer);
             } catch (CDKException e) {
                 Logger.warn(e.toString());
             }
 
-            // sets SSSR information
+//            /*
+//             * Report All Cycles
+//             * or 
+//             * CycleFinder cycles = or(all(), relevant());
+//             */
+//            CycleFinder cycles = or(all(), all());
+//            Cycles rings = cycles.find(atomContainer);
+//            allRings = rings.toRingSet();
+
+            /*
+             * sets SSSR information
+             */
             IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
 
             for (IAtom atom : atomContainer.atoms()) {
@@ -325,11 +336,12 @@ public class MoleculeInitializer {
      */
     public MoleculeInitializer() {
     }
+
     /**
      * Defines which set of rings to define rings in the target.
      */
     private enum RingSet {
-        
+
         /**
          * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
          * strictly the same). Defines what is typically thought of as a 'ring'
@@ -337,9 +349,9 @@ public class MoleculeInitializer {
          */
         SmallestSetOfSmallestRings {
             @Override
-                            IRingSet ringSet(IAtomContainer m) {
-                                return new SSSRFinder(m).findSSSR();
-                            }
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findSSSR();
+            }
         },
         /**
          * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
@@ -347,9 +359,9 @@ public class MoleculeInitializer {
          */
         EssentialRings {
             @Override
-                            IRingSet ringSet(IAtomContainer m) {
-                                return new SSSRFinder(m).findEssentialRings();
-                            }
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findEssentialRings();
+            }
         },
         /**
          * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
@@ -357,11 +369,11 @@ public class MoleculeInitializer {
          */
         RelevantRings {
             @Override
-                            IRingSet ringSet(IAtomContainer m) {
-                                return new SSSRFinder(m).findRelevantRings();
-                            }
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findRelevantRings();
+            }
         };
-        
+
         /**
          * Compute a ring set for a molecule.
          *
