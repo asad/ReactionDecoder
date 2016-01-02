@@ -38,6 +38,10 @@ import static org.openscience.cdk.CDKConstants.TOTAL_CONNECTIONS;
 import static org.openscience.cdk.CDKConstants.TOTAL_H_COUNT;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
+import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -48,7 +52,6 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -133,22 +136,22 @@ public class MoleculeInitializer {
 
             IRingSet allRings = null;
 
-            // do all ring perception
-            AllRingsFinder arf = new AllRingsFinder();
-            try {
-                allRings = arf.findAllRings(atomContainer);
-            } catch (CDKException e) {
-                Logger.warn(e.toString());
-            }
+//            // do all ring perception
+//            AllRingsFinder arf = new AllRingsFinder();
+//            try {
+//                allRings = arf.findAllRings(atomContainer);
+//            } catch (CDKException e) {
+//                Logger.warn(e.toString());
+//            }
 
-//            /*
-//             * Report All Cycles
-//             * or 
-//             * CycleFinder cycles = or(all(), relevant());
-//             */
-//            CycleFinder cycles = or(all(), all());
-//            Cycles rings = cycles.find(atomContainer);
-//            allRings = rings.toRingSet();
+            /*
+             * Report All Cycles
+             * or 
+             * CycleFinder cycles = or(all(), relevant());
+             */
+            CycleFinder cycles = or(all(), all());
+            Cycles rings = cycles.find(atomContainer);
+            allRings = rings.toRingSet();
 
             /*
              * sets SSSR information
