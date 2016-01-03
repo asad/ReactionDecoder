@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 
@@ -102,16 +101,12 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      *
      * @param theory
      * @param reaction
-     * @param _educts
-     * @param _products
      * @param removeHydrogen
      * @throws Exception
      */
     public GameTheoryMatrix(
             IMappingAlgorithm theory,
             IReaction reaction,
-            Map<Integer, IAtomContainer> _educts,
-            Map<Integer, IAtomContainer> _products,
             boolean removeHydrogen) throws Exception {
         this.theory = theory;
         this.removeHydrogen = removeHydrogen;
@@ -205,13 +200,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 BitSet FP;
                 if (hydFreeFPContainer.isKeyPresent(eductID)) {
                     FP = hydFreeFPContainer.getFingerPrint(eductID);
+                } else if (mol.getAtomCount() > 0) {
+                    IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
+                    FP = fpr.getFingerprint(tempMol);
                 } else {
-                    if (mol.getAtomCount() > 0) {
-                        IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
-                        FP = fpr.getFingerprint(tempMol);
-                    } else {
-                        FP = new BitSet(getFingerprinterSize());
-                    }
+                    FP = new BitSet(getFingerprinterSize());
                 }
                 hydFreeFPContainer.setValue(eductID, FP);
                 eductCounter.add(key, eductID);
@@ -233,14 +226,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 
                 if (hydFreeFPContainer.isKeyPresent(productID)) {
                     fingerPrint = hydFreeFPContainer.getFingerPrint(productID);
+                } else if (mol.getAtomCount() > 0) {
+                    IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
+                    fingerPrint = fpr.getFingerprint(tempMol);
                 } else {
-
-                    if (mol.getAtomCount() > 0) {
-                        IAtomContainer tempMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
-                        fingerPrint = fpr.getFingerprint(tempMol);
-                    } else {
-                        fingerPrint = new BitSet(getFingerprinterSize());
-                    }
+                    fingerPrint = new BitSet(getFingerprinterSize());
                 }
                 hydFreeFPContainer.setValue(productID, fingerPrint);
                 productCounter.add(key, productID);

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 //~--- non-JDK imports --------------------------------------------------------
 
@@ -124,7 +123,7 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
             }
 
             GameTheoryMatrix EDSH
-                    = new GameTheoryMatrix(theory, reaction, educts, products, removeHydrogen);
+                    = new GameTheoryMatrix(theory, reaction, removeHydrogen);
 
             IGameTheory gameTheory = make(theory,
                     reaction,
