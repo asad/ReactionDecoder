@@ -320,14 +320,6 @@ public class TestUtility {
                 acMinusH.setID((String) atomContainer.getProperty(TITLE));
                 hydrogenFreeReactants.addAtomContainer(acMinusH);
             }
-            for (IAtomContainer atomContainer : reaction.getReactants().atomContainers()) {
-                setNullHCountToZero(atomContainer);
-                percieveAtomTypesAndConfigureAtoms(atomContainer);
-                IAtomContainer acMinusH = convertExplicitToImplicitHydrogens(atomContainer);
-                acMinusH.setID((String) atomContainer.getProperty(TITLE));
-                hydrogenFreeReactants.addAtomContainer(acMinusH);
-            }
-
             hydrogenFreeReaction.setReactants(hydrogenFreeReactants);
             IAtomContainerSet hydrogenFreeProducts = new AtomContainerSet();
             for (IAtomContainer atomContainer : reaction.getProducts().atomContainers()) {
