@@ -54,6 +54,7 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * @author Asad
  */
 class IsomeraseHandler {
+
     private static final Logger LOG = getLogger(IsomeraseHandler.class.getName());
 
     /**
@@ -80,7 +81,7 @@ class IsomeraseHandler {
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
 
-        if (ringContainerCountR.size() > 0 && ringContainerCountP.size() > 0) {
+        if (ringContainerCountR.size() == 1 && ringContainerCountP.size() == 1) {
             IAtomContainer educt = ringContainerCountR.values().iterator().next();
             IAtomContainer product = ringContainerCountP.values().iterator().next();
             try {
@@ -122,7 +123,7 @@ class IsomeraseHandler {
      * Returns Number of Container with Ring Atoms
      */
     private Map<IRingSet, IAtomContainer> getRingContainerCount(IAtomContainerSet acs) {
-        CycleFinder cycles = or(all(), relevant());
+        CycleFinder cycles = or(all(), all());
         Map<IRingSet, IAtomContainer> ringSet = new HashMap<>();
         for (IAtomContainer ac : acs.atomContainers()) {
             IRingSet basicRings;
@@ -159,10 +160,10 @@ class IsomeraseHandler {
 
         return false;
     }
+
     /*
      * Example reaction is R01518
      */
-
     private boolean chipPhophateInSingleReactantProductNotInRing(IAtomContainer educt, IAtomContainer product) throws CDKException {
 
         if (ringContainerCountR.isEmpty() && ringContainerCountP.isEmpty()) {
@@ -196,7 +197,6 @@ class IsomeraseHandler {
 
         return false;
     }
-
 
     private boolean findAndChipBond(IAtomContainer container, IAtomContainer referenceContainer) {
         boolean flag = false;
@@ -275,7 +275,7 @@ class IsomeraseHandler {
     /*
     This Method will find and chip the bonds between the rings
     Example R01557
-    */
+     */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
         if (DEBUG) {
             out.println("Find and Chip Bond Between Rings");
