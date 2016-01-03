@@ -1,0 +1,6 @@
+{
+  "pkgclss.excludelist" : [ ],
+  "preferences" : {
+    "JaCoCoverage.Prj.OverrideGlobals" : "false"
+  }
+}
