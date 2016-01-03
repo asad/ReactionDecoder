@@ -62,7 +62,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
 import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
