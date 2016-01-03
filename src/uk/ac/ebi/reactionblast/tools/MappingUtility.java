@@ -164,7 +164,7 @@ public class MappingUtility extends TestUtility {
         System.out.println("Mapping Reaction " + reactionID);
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ExtReactionManipulatorTool.addExplicitH(cdkReaction);
-        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
+//        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
 //        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
         ReactionMechanismTool annotation = getAnnotation(cdkReaction);
         MappingSolution s = annotation.getSelectedSolution();
