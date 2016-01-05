@@ -49,7 +49,8 @@ public class MCSSolution implements Serializable {
      * @param targetContainer
      * @param aam
      */
-    public MCSSolution(int queryPosition, int targetPosition, IAtomContainer queryContainer, IAtomContainer targetContainer, AtomAtomMapping aam) {
+    public MCSSolution(int queryPosition, int targetPosition, 
+            IAtomContainer queryContainer, IAtomContainer targetContainer, AtomAtomMapping aam) {
         this.queryContainer = queryContainer;
         this.targetPosition = targetPosition;
         this.targetContainer = targetContainer;

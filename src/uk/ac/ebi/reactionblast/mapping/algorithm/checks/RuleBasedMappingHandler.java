@@ -58,8 +58,6 @@ public final class RuleBasedMappingHandler implements Serializable {
     private Holder matrixHolderClone;
     private final Map<Integer, Integer> matchedRowColoumn;
 
-
-
     /*
      * SMARTS parser
      */
@@ -71,6 +69,14 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsTwoOxoglutarate;
     private IAtomContainer smartsD_Glutamate;
     private IAtomContainer smartsAcetate;
+    private IAtomContainer smartsATP;
+    private IAtomContainer smartsADP;
+    private IAtomContainer smartsCoA;
+    private IAtomContainer smartsAcetyl_CoA;
+    private IAtomContainer smartsC00003;
+    private IAtomContainer smartsC00006;
+    private IAtomContainer smartsC00004;
+    private IAtomContainer smartsC00005;
 
     /**
      *
@@ -163,7 +169,7 @@ public final class RuleBasedMappingHandler implements Serializable {
 
                     /*
                     Rule 1_A water and Phosphate
-                    */
+                     */
                     if (ac1.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac1)
                             && isMatch(getSmartsPhosphate(), ac2)
@@ -181,25 +187,25 @@ public final class RuleBasedMappingHandler implements Serializable {
 
                     } else /*
                         Rule 1_B phophate and water
-                        */ if (ac2.getAtomCount() == 1
-                                && isMatch(getSmartsWater(), ac2)
-                                && isMatch(getSmartsPhosphate(), ac1)
-                                && ac1.getAtomCount() == smallestMatchedReactant) {
-                            if (DEBUG) {
-                                out.println("Match ");
-                                out.println("smallest R phosphate " + smallestMatchedReactant);
-                                out.println("smallest P phosphate " + smallestMatchedProduct);
-                            }
-                            setRuleMatched(true);
-                            matchedRowColoumn.put(i, j);
-                            if (DEBUG) {
-                                out.println(" Rule 1 phosphate and water");
-                            }
-                            
+                     */ if (ac2.getAtomCount() == 1
+                            && isMatch(getSmartsWater(), ac2)
+                            && isMatch(getSmartsPhosphate(), ac1)
+                            && ac1.getAtomCount() == smallestMatchedReactant) {
+                        if (DEBUG) {
+                            out.println("Match ");
+                            out.println("smallest R phosphate " + smallestMatchedReactant);
+                            out.println("smallest P phosphate " + smallestMatchedProduct);
                         }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG) {
+                            out.println(" Rule 1 phosphate and water");
+                        }
+
+                    }
                     /*
                     Rule 1_C water and Sulphate
-                    */
+                     */
                     if (ac1.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac1)
                             && isMatch(getSmartsSulphate(), ac2)
@@ -217,57 +223,101 @@ public final class RuleBasedMappingHandler implements Serializable {
 
                     } else /*
                         Rule 1_D Sulphate and water
-                        */ if (ac2.getAtomCount() == 1
-                                && isMatch(getSmartsWater(), ac2)
-                                && isMatch(getSmartsSulphate(), ac1)
-                                && ac1.getAtomCount() == smallestMatchedReactant) {
-                            if (DEBUG) {
-                                out.println("Match ");
-                                out.println("smallest R phosphate " + smallestMatchedReactant);
-                                out.println("smallest P phosphate " + smallestMatchedProduct);
-                            }
-                            setRuleMatched(true);
-                            matchedRowColoumn.put(i, j);
-                            if (DEBUG) {
-                                out.println(" Rule 1 Sulphate and water");
-                            }
-                            
-                        }/*
-                        Rule 2 L_Glutamate and L_Glutamine
-                        */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                                && isMatch(getSmartsL_Glutamate(), ac1) && isMatch(getSmartsL_Glutamine(), ac2))
-                                || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                                && isMatch(getSmartsL_Glutamine(), ac1) && isMatch(getSmartsL_Glutamate(), ac2))) {
-                            setRuleMatched(true);
-                            matchedRowColoumn.put(i, j);
-                            if (DEBUG) {
-                                out.println("Rule 2 L-Glutamate with L-Glutamine found");
-                            }
-                        } /*
-                        Rule 3 D_Glutamate and TwoOxoglutarate
-                        */ else if ((ac2.getAtomCount() == 10 && ac1.getAtomCount() == 10
-                                && isMatch(getSmartsTwoOxoglutarate(), ac2) && isMatch(getSmartsD_Glutamate(), ac1))
-                                || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                                && isMatch(getSmartsTwoOxoglutarate(), ac1) && isMatch(getSmartsD_Glutamate(), ac2))) {
-                            
-                            setRuleMatched(true);
-                            matchedRowColoumn.put(i, j);
-                            if (DEBUG) {
-                                out.println("Rule 3 D-Glutamate with 2-Oxoglutarate found");
-                            }
-                            
-                        }/*
-                        Rule 4 water and Acetate
-                        */ else if ((ac1.getAtomCount() == 1 && isMatch(getSmartsWater(), ac1)
-                                && ac2.getAtomCount() >= getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac2))
-                                || (ac2.getAtomCount() == 1 && isMatch(getSmartsWater(), ac2)
-                                && ac1.getAtomCount() >= getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac1))) {
-                            if (DEBUG) {
-                                out.println("Rule 4 Water and Acetate found");
-                            }
-                            setRuleMatched(true);
-                            matchedRowColoumn.put(i, j);
+                     */ if (ac2.getAtomCount() == 1
+                            && isMatch(getSmartsWater(), ac2)
+                            && isMatch(getSmartsSulphate(), ac1)
+                            && ac1.getAtomCount() == smallestMatchedReactant) {
+                        if (DEBUG) {
+                            out.println("Match ");
+                            out.println("smallest R phosphate " + smallestMatchedReactant);
+                            out.println("smallest P phosphate " + smallestMatchedProduct);
                         }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG) {
+                            out.println(" Rule 1 Sulphate and water");
+                        }
+
+                    }/*
+                        Rule 2 L_Glutamate and L_Glutamine
+                     */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
+                            && isMatch(getSmartsL_Glutamate(), ac1) && isMatch(getSmartsL_Glutamine(), ac2))
+                            || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
+                            && isMatch(getSmartsL_Glutamine(), ac1) && isMatch(getSmartsL_Glutamate(), ac2))) {
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG) {
+                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                        }
+                    } /*
+                        Rule 3 D_Glutamate and TwoOxoglutarate
+                     */ else if ((ac2.getAtomCount() == 10 && ac1.getAtomCount() == 10
+                            && isMatch(getSmartsTwoOxoglutarate(), ac2) && isMatch(getSmartsD_Glutamate(), ac1))
+                            || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
+                            && isMatch(getSmartsTwoOxoglutarate(), ac1) && isMatch(getSmartsD_Glutamate(), ac2))) {
+
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG) {
+                            out.println("Rule 3 D-Glutamate with 2-Oxoglutarate found");
+                        }
+
+                    }/*
+                        Rule 4 water and Acetate
+                     */ else if ((ac1.getAtomCount() == 1 && isMatch(getSmartsWater(), ac1)
+                            && ac2.getAtomCount() >= getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac2))
+                            || (ac2.getAtomCount() == 1 && isMatch(getSmartsWater(), ac2)
+                            && ac1.getAtomCount() >= getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac1))) {
+                        if (DEBUG) {
+                            out.println("Rule 4 Water and Acetate found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }/*
+                        Rule 5 ADP_ATP
+                     */ else if ((ac1.getAtomCount() == getSmartsATP().getAtomCount() && isMatch(getSmartsATP(), ac1)
+                            && isMatch(getSmartsADP(), ac2))
+                            || (ac2.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac2)
+                            && isMatch(getSmartsATP(), ac1))) {
+                        if (DEBUG) {
+                            out.println("Rule 5 ADP_ATP found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }/*
+                        Rule 6 CoA_Acetyl_CoA
+                     */ else if ((ac1.getAtomCount() == getSmartsCoA().getAtomCount() && isMatch(getSmartsCoA(), ac1)
+                            && isMatch(getSmartsAcetyl_CoA(), ac2))
+                            || (ac2.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac2)
+                            && isMatch(getSmartsCoA(), ac1))) {
+                        if (DEBUG) {
+                            out.println("Rule 6 CoA_Acetyl_CoA found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }/*
+                        Rule 7 C00003_C00006
+                     */ else if ((ac1.getAtomCount() == getSmartsC00003().getAtomCount() && isMatch(getSmartsC00003(), ac1)
+                            && isMatch(getSmartsC00006(), ac2))
+                            || (ac2.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac2)
+                            && isMatch(getSmartsC00003(), ac1))) {
+                        if (DEBUG) {
+                            out.println("Rule 7 C00003_C00006 found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }/*
+                        Rule 8 C00004_C00005
+                     */ else if ((ac1.getAtomCount() == getSmartsC00004().getAtomCount() && isMatch(getSmartsC00004(), ac1)
+                            && isMatch(getSmartsC00005(), ac2))
+                            || (ac2.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac2)
+                            && isMatch(getSmartsC00004(), ac1))) {
+                        if (DEBUG) {
+                            out.println("Rule 8 C00004_C00005 found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }
                 }
             }
         } catch (IOException | CDKException ex) {
@@ -285,15 +335,15 @@ public final class RuleBasedMappingHandler implements Serializable {
                 for (int j = 0; j < this.matrixHolder.getReactionContainer().getProductCount(); j++) {
                     /*
                     * Keep the mapping for the smart matches
-                    */
+                     */
                     if (this.matchedRowColoumn.containsKey(i) && this.matchedRowColoumn.get(i) == j) {
                         /*
                         * reset the mapping for the unmatched
-                        */
+                         */
                         matrixHolderClone.getGraphSimilarityMatrix().setValue(i, j, 1.00);
                     } else /*
                         * reset the mapping for the unmatched
-                    */ {
+                     */ {
                         matrixHolderClone.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
                         matrixHolderClone.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
                         matrixHolderClone.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
@@ -305,7 +355,7 @@ public final class RuleBasedMappingHandler implements Serializable {
             }
             /*
             * Assign the new matrix
-            */
+             */
             this.matrixHolder = matrixHolderClone;
         }
     }
@@ -364,53 +414,102 @@ public final class RuleBasedMappingHandler implements Serializable {
 
     private void setRulesSmiles() throws CDKException {
         /*
-        * water with phosphate
-        */
-        
+         * water with phosphate
+         */
+
         final String waterSMILES = "O";
         final String phosphateSMILES = "OP(O)(O)=O";
 
         final String sulphateSMILES = "O=S(=O)(O)O";
         /*
-        * L-Glutamate with L-Glutamine
-        */
+         * L-Glutamate with L-Glutamine
+         */
         final String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
         final String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
         /*
-        * 2-Oxoglutarate to D-Glutamate
-        */
+         * 2-Oxoglutarate to D-Glutamate
+         */
         final String twoOxoglutarate = "OC(=O)CCC(=O)C(O)=O";
         final String dGlutamate = "N[C@H](CCC(O)=O)C(O)=O";
 
         /*
-        Acetate C00033
-        */
+         * Acetate C00033
+         */
         final String acetate = "CC(O)=O";
+
+        /*
+         * ADP_ATP
+         */
+        final String ATP = "NC1=NC=NC2=C1N=CN2[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OP(O)(O)=O)[C@@H](O)[C@H]1O";
+        final String ADP = "NC1=NC=NC2=C1N=CN2[C@@H]1O[C@H](COP(O)(=O)OP(O)(O)=O)[C@@H](O)[C@H]1O";
+
+        /*
+         * CoA_Acetyl_CoA
+         */
+        final String CoA = "CC(C)(COP(O)(=O)OP(O)(=O)OC[C@H]1O[C@H]([C@H](O)[C@@H]1OP(O)(O)=O)N1C=NC2=C1N=CN=C2N)[C@@H](O)C(=O)NCCC(=O)NCCS";
+        final String Acetyl_CoA = "CC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP(O)(=O)OP(O)(=O)OC[C@H]1O[C@H]([C@H](O)[C@@H]1OP(O)(O)=O)N1C=NC2=C1N=CN=C2N";
+
+
+        /*
+         * C00003_C00006
+         */
+        final String C00003 = "NC(=O)C1=CC=C[N+](=C1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](O)[C@@H]2O)N2C=NC3=C(N)N=CN=C23)[C@@H](O)[C@H]1O";
+        final String C00006 = "NC(=O)C1=C[N+](=CC=C1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](OP(O)(O)=O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
+
+        /*
+         * C00004_C00005
+         */
+        final String C00004 = "NC(=O)C1=CN(C=CC1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
+        final String C00005 = "NC(=O)C1=CN(C=CC1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](OP(O)(O)=O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
 
         SmilesParser smilesParser = new SmilesParser(getInstance());
         /*
-        * Rule 1
-        */
+         * Rule 1
+         */
         smartsWater = smilesParser.parseSmiles(waterSMILES);
         smartsPhosphate = smilesParser.parseSmiles(phosphateSMILES);
         smartsSulphate = smilesParser.parseSmiles(sulphateSMILES);
 
         /*
-        * Rule 2
+         * Rule 2
          */
         smartsL_Glutamate = smilesParser.parseSmiles(lGlutamate);
         smartsL_Glutamine = smilesParser.parseSmiles(lGlutamine);
 
         /*
          * Rule 3
-        */
+         */
         smartsTwoOxoglutarate = smilesParser.parseSmiles(twoOxoglutarate);
         smartsD_Glutamate = smilesParser.parseSmiles(dGlutamate);
 
         /*
-        * Rule 4 water tends to attack acetate when Phophate is not present
+         * Rule 4 water tends to attack acetate when Phophate is not present
          */
         smartsAcetate = smilesParser.parseSmiles(acetate);
+
+        /*
+         * Rule 5 AT_ADP
+         */
+        smartsATP = smilesParser.parseSmiles(ATP);
+        smartsADP = smilesParser.parseSmiles(ADP);
+
+        /*
+         * Rule 6 CoA_Acetyl_CoA
+         */
+        smartsCoA = smilesParser.parseSmiles(CoA);
+        smartsAcetyl_CoA = smilesParser.parseSmiles(Acetyl_CoA);
+
+        /*
+         * Rule 7 C00003_C00006
+         */
+        smartsC00003 = smilesParser.parseSmiles(C00003);
+        smartsC00006 = smilesParser.parseSmiles(C00006);
+
+        /*
+         * Rule 8 C00004_C00005
+         */
+        smartsC00004 = smilesParser.parseSmiles(C00004);
+        smartsC00005 = smilesParser.parseSmiles(C00005);
 
     }
 
@@ -468,6 +567,62 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     private IAtomContainer getSmartsSulphate() {
         return smartsSulphate;
+    }
+
+    /**
+     * @return the smartsATP
+     */
+    public IAtomContainer getSmartsATP() {
+        return smartsATP;
+    }
+
+    /**
+     * @return the smartsADP
+     */
+    public IAtomContainer getSmartsADP() {
+        return smartsADP;
+    }
+
+    /**
+     * @return the smartsCoA
+     */
+    public IAtomContainer getSmartsCoA() {
+        return smartsCoA;
+    }
+
+    /**
+     * @return the smartsAcetyl_CoA
+     */
+    public IAtomContainer getSmartsAcetyl_CoA() {
+        return smartsAcetyl_CoA;
+    }
+
+    /**
+     * @return the smartsC00003
+     */
+    public IAtomContainer getSmartsC00003() {
+        return smartsC00003;
+    }
+
+    /**
+     * @return the smartsC00006
+     */
+    public IAtomContainer getSmartsC00006() {
+        return smartsC00006;
+    }
+
+    /**
+     * @return the smartsC00004
+     */
+    public IAtomContainer getSmartsC00004() {
+        return smartsC00004;
+    }
+
+    /**
+     * @return the smartsC00005
+     */
+    public IAtomContainer getSmartsC00005() {
+        return smartsC00005;
     }
 
 }
