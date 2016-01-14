@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 /**
  * @RCSfile: GameTheoryMixture.java
  *
@@ -59,6 +58,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
@@ -97,7 +98,7 @@ final class GameTheoryMixture extends BaseGameTheory {
             GameTheoryMatrix rpsh)
             throws Exception {
         if (DEBUG) {
-            out.println("I am MAX MIN");
+            out.println("I am MIXTURE");
         }
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
@@ -128,7 +129,7 @@ final class GameTheoryMixture extends BaseGameTheory {
             mh = RIH.getMatrixHolder();
             GenerateIsoMorphismMapping();
         } else {
-            GenerateMapping();
+            GenerateMapping(false);
         }
     }
 //~--- methods ------------------------------------------------------------
@@ -144,11 +145,12 @@ final class GameTheoryMixture extends BaseGameTheory {
 //            System.out.println("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
 //            System.out.println("**********Generate Mapping**************");
-            GenerateMapping();
+            GenerateMapping(false);
         }
     }
 
-    private synchronized void GenerateMapping() throws Exception {
+    private synchronized void GenerateMapping(boolean flag) throws Exception {
+        boolean ruleMatchingFlag = flag;
         if (DEBUG) {
             printMatrixAtomContainer(mh, eductList, productList);
             out.println("**********Orignal Matrix**************");
@@ -157,6 +159,17 @@ final class GameTheoryMixture extends BaseGameTheory {
 //        printStereoMatrix(mh, eductList, productList);
 //        printFragmentMatrix(mh, eductList, productList);
 //        printEnergyMatrix(mh, eductList, productList);
+        }
+
+        if (!ruleMatchingFlag) {
+            RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
+            if (ruleBasedMappingHandler.isMatchFound()) {
+                if (DEBUG) {
+                    out.println("Rule Based Mapping Handler Match Found");
+                }
+                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+            }
+            ruleMatchingFlag = true;
         }
 
         winner.searchWinners(educts, products, mh);
@@ -170,7 +183,7 @@ final class GameTheoryMixture extends BaseGameTheory {
 //            System.out.println("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
 //            System.out.println("**********Generate Mapping**************");
-            GenerateMapping();
+            GenerateMapping(ruleMatchingFlag);
         }
     }
 
