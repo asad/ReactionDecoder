@@ -68,3 +68,5 @@ TEST:
   ant test
 HELP:
   ant run
+Fat Jar:
+  ant package-for-store
