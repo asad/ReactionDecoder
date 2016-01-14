@@ -80,10 +80,12 @@ public class SMILES2AAMTest extends TestUtility {
             IReaction readReaction;
             try {
                 readReaction = readReactionFile(file.getName().split("\\.")[0], RXN_DIR, true, false);
-                IReaction mapReaction = mapReaction(readReaction, true);
-                out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
-                        + smilesAAM.createReactionSMILES(mapReaction));
-                assertEquals(true, mapReaction.getMappingCount() > 0);
+                if (readReaction != null) {
+                    IReaction mapReaction = mapReaction(readReaction, true);
+                    out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
+                            + smilesAAM.createReactionSMILES(mapReaction));
+                    assertEquals(true, mapReaction.getMappingCount() > 0);
+                }
             } catch (CDKException ex) {
                 getLogger(SMILES2AAMTest.class.getName()).log(SEVERE, null, ex);
             } catch (Exception ex) {
