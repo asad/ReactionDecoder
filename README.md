@@ -57,7 +57,7 @@ and EMBL-European BioInformatics Institute (EBI).
 
 ####Reference
 ```
-Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RTD): 
+Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RDT): 
 Extracting Features from Chemical Reactions (submitted)
 ```
 
