@@ -13,7 +13,7 @@
   ```
 
   ```
-  java -cp dist/*:lib/* aamtool.ReactionDecoder -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j  AAM -f TEXT
+  java -cp "dist/*:lib/*" aamtool.ReactionDecoder -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j  AAM -f TEXT
   ```
 
 ####Annotate Reaction using SMILES
