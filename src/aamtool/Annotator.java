@@ -40,6 +40,7 @@ import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.w3c.dom.Attr;
@@ -546,7 +547,7 @@ public class Annotator extends Helper {
             /*
              * Selected AAM solution
              */
-            SmilesGenerator smiles = unique().aromatic().withAtomClasses();
+            SmilesGenerator smiles = generic().aromatic().withAtomClasses();
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
             sb.append("//");
@@ -676,7 +677,7 @@ public class Annotator extends Helper {
                     printRPAIRPatternAsXML(s, doc, annot);
                 }
             }
-            SmilesGenerator smiles = unique().aromatic().withAtomClasses();
+            SmilesGenerator smiles = generic().aromatic().withAtomClasses();
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
