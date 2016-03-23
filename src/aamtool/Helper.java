@@ -69,9 +69,13 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         sb.append(NEW_LINE);
 
-        sb.append("Reference: Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RTD):");
+        sb.append("Reference");
         sb.append(NEW_LINE);
-        sb.append("Extracting Features from Chemical Reactions (submitted)");
+        sb.append("Rahman, S.A. et.al.(2016) Reaction Decoder Tool (RDT):");
+        sb.append(NEW_LINE);
+        sb.append("Extracting Features from Chemical Reactions, Bioinformatics (2016)");
+        sb.append(NEW_LINE);
+        sb.append("doi: 10.1093/bioinformatics/btw096");
         sb.append(NEW_LINE);
         sb.append("!--------------------------------------------------------");
         sb.append(NEW_LINE);
