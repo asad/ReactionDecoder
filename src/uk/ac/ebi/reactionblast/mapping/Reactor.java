@@ -275,7 +275,8 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     private synchronized void LabelAtoms() {
-
+        int new_atom_rank_index_reactant = 1;
+        int new_atom_rank_index_product = 1;
 //        System.out.println("----------------------------");
         for (int i = 0; i < reactionWithUniqueSTOICHIOMETRY.getReactantCount(); i++) {
             IAtomContainer container = reactionWithUniqueSTOICHIOMETRY.getReactants().getAtomContainer(i);
@@ -287,7 +288,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("EAtom: " + k + " " + atom.getSymbol() + " Rank Atom: " + atom.getProperty("OLD_RANK") + " " + " Id: " + atom.getID());
                 rLabelledAtoms.put(atom.hashCode(), i);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsReactant().put((int) atom.getProperty("OLD_RANK"), (k + 1));
+                    getInputRankLabelledAtomsReactant().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant++));
                 }
             }
 
@@ -305,7 +306,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("PAtom: " + k + " " + atom.getSymbol() + " Id: " + atom.getID());
                 pLabelledAtoms.put(atom.hashCode(), j);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsProduct().put((int) atom.getProperty("OLD_RANK"), (k + 1));
+                    getInputRankLabelledAtomsProduct().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product++));
                 }
             }
 
