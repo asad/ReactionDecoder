@@ -53,7 +53,6 @@ import uk.ac.ebi.reactionblast.containers.MolContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
-import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.AtomContainerSetComparator;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
@@ -67,7 +66,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class CDKReactionBuilder extends BasicDebugger implements Serializable, IStandardizer {
+public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 19869866609698L;
@@ -114,11 +113,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
      * @return
      * @throws Exception
      */
-    @Override
     public synchronized IReaction standardize(IReaction reaction) throws Exception {
-
+        int old_atom_rank_index_reactant = 1;
+        int old_atom_rank_index_product = 1;
         if (DEBUG) {
-            String createReactionSMILES = unique().aromatic().createReactionSMILES(reaction);
+            String createReactionSMILES = generic().aromatic().createReactionSMILES(reaction);
             out.println("createReactionSMILES " + createReactionSMILES);
             out.println("standardize reaction module start");
         }
@@ -162,6 +161,16 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
             }
 
             IAtomContainer gMol = cloneWithIDs(mol);
+
+            /*
+             * Set old Atom Index
+             */
+            for (IAtom a : gMol.atoms()) {
+                if (a.getProperties() == null) {
+                    a.addProperties(new HashMap<>());
+                }
+                a.setProperty("OLD_RANK", old_atom_rank_index_reactant++);
+            }
             if (DEBUG) {
                 out.println("standardize reaction module phase 1.1.1");
             }
@@ -228,6 +237,16 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
                 out.println("t_mol " + unique().create(mol));
             }
             IAtomContainer gMol = cloneWithIDs(mol);
+
+            /*
+             * Set old Atom Index
+             */
+            for (IAtom a : gMol.atoms()) {
+                if (a.getProperties() == null) {
+                    a.addProperties(new HashMap<>());
+                }
+                a.setProperty("OLD_RANK", old_atom_rank_index_product++);
+            }
             if (DEBUG) {
                 out.println("standardize reaction module phase 2.1.1");
                 out.println("t_mol " + unique().create(gMol));
@@ -290,7 +309,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable, I
         stoichiometryMap.clear();
 
         if (DEBUG) {
-            String postCreateReactionSMILES = unique().aromatic().createReactionSMILES(standardizedReaction);
+            String postCreateReactionSMILES = generic().aromatic().createReactionSMILES(standardizedReaction);
             out.println("post CreateReactionSMILES " + postCreateReactionSMILES);
         }
 

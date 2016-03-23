@@ -60,6 +60,7 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Annotator extends Helper {
+
     static final String NEW_LINE = getProperty("line.separator");
     static final String TAB = "\t";
     private static final Logger LOG = getLogger(Annotator.class.getName());
@@ -98,7 +99,6 @@ public class Annotator extends Helper {
      *
      */
     protected String PREFIX;
-
 
     Annotator() {
         this.REPORT_ALL_MAPPINGS = false;
@@ -543,6 +543,9 @@ public class Annotator extends Helper {
                 }
             }
 
+            /*
+             * Selected AAM solution
+             */
             SmilesGenerator smiles = unique().aromatic().withAtomClasses();
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
@@ -554,6 +557,26 @@ public class Annotator extends Helper {
             sb.append(smiles.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             sb.append(NEW_LINE);
             sb.append(NEW_LINE);
+
+            /*
+             * Old atom index mapped to new mapping Index
+             */
+            //Start of Mapping Information
+            sb.append(NEW_LINE);
+            sb.append("//");
+            sb.append(NEW_LINE);
+            sb.append("REACTANT ATOM RANK OLD<->NEW");
+            sb.append(NEW_LINE);
+            //Start of Fingerprint elements
+            sb.append(s.getReactor().getInputRankLabelledAtomsReactant());
+            sb.append(NEW_LINE);
+            sb.append("PRODUCT ATOM RANK OLD<->NEW");
+            sb.append(NEW_LINE);
+            //Start of Mapping Information
+            sb.append(s.getReactor().getInputRankLabelledAtomsProduct());
+            sb.append(NEW_LINE);
+            sb.append(NEW_LINE);
+
             if (REPORT_ALL_MAPPINGS) {
                 int index = 1;
                 for (MappingSolution m : rmt.getAllSolutions()) {
@@ -657,6 +680,7 @@ public class Annotator extends Helper {
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
+
             //Start of BEST SOL as child node of AAM elements
             Attr attr = doc.createAttribute("STATUS");
             attr.setValue("SELECTED");
@@ -665,6 +689,19 @@ public class Annotator extends Helper {
             Element selected_AAM = doc.createElement("AAM");
             selected_AAM.appendChild(doc.createTextNode(smiles.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
             aam.appendChild(selected_AAM);
+
+            //RANK
+            String reactant_atom_rank = s.getReactor().getInputRankLabelledAtomsProduct().toString();
+            String product_atom_rank = s.getReactor().getInputRankLabelledAtomsProduct().toString();
+
+            Element selected_AAM_RANK_R = doc.createElement("RANK_REACTANT");
+            selected_AAM_RANK_R.appendChild(doc.createTextNode(reactant_atom_rank));
+            aam.appendChild(selected_AAM_RANK_R);
+
+            Element selected_AAM_RANK_P = doc.createElement("RANK_PRODUCT");
+            selected_AAM_RANK_P.appendChild(doc.createTextNode(product_atom_rank));
+            aam.appendChild(selected_AAM_RANK_P);
+
             if (REPORT_ALL_MAPPINGS) {
                 for (MappingSolution m : rmt.getAllSolutions()) {
                     //Start of Fingerprint elements
