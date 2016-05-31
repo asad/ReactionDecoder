@@ -31,8 +31,6 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;

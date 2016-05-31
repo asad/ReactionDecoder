@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.File;
 import java.io.IOException;
-import static java.lang.Math.abs;
 import static java.lang.System.out;
 import java.util.Collection;
 import static java.util.Collections.synchronizedMap;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
@@ -57,6 +55,8 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
+import static java.lang.Math.abs;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -369,7 +369,8 @@ public final class BondChangeAnnotator extends DUModel {
                         continue;
                     }
 
-                    int kekuleEffect = isAlternateKekuleChange(affectedBondReactants, affectedBondProducts);
+                    int kekuleEffect = 0;
+                    kekuleEffect = isAlternateKekuleChange(affectedBondReactants, affectedBondProducts);
                     if (kekuleEffect == 0) {
                         bondChangeInformation = BOND_ORDER;
                         if (affectedBondReactants != null) {
@@ -397,6 +398,14 @@ public final class BondChangeAnnotator extends DUModel {
                     System.out.println("Marking Bond Changes-2");
                 }
                 if (reactionMatrix.getValue(i, j) != 0.) {
+
+                    /*
+                     * DEBUG
+                     */
+                    if (DEBUG) {
+                        System.out.println("Bond Change in R Matrix " + " i "
+                                + (i + 1) + ", j " + (j + 1) + " " + reactionMatrix.getValue(i, j));
+                    }
 
                     //Diagonal free valence electron changes 
                     if (i == j) {
@@ -541,7 +550,7 @@ public final class BondChangeAnnotator extends DUModel {
          */
         markHydrogenDisplacementBondChanges();
         /*
-         * Marking Un Mapped Atoms
+         * Marking Un-Mapped Atoms
          */
         markUnMappedAtoms();
 
@@ -675,36 +684,49 @@ public final class BondChangeAnnotator extends DUModel {
 
     private synchronized void markUnMappedAtoms() {
         for (IAtomContainer acE : reactantSet.atomContainers()) {
-            for (IBond eBond : acE.bonds()) {
+            for (IBond affectedBondReactants : acE.bonds()) {
                 boolean isNotMapped = false;
-                if ((!mappingMap.containsKey(eBond.getAtom(0))
-                        && mappingMap.containsKey(eBond.getAtom(1)))
-                        || (mappingMap.containsKey(eBond.getAtom(0))
-                        && !mappingMap.containsKey(eBond.getAtom(1)))) {
+                if ((!mappingMap.containsKey(affectedBondReactants.getAtom(0))
+                        && mappingMap.containsKey(affectedBondReactants.getAtom(1)))
+                        || (mappingMap.containsKey(affectedBondReactants.getAtom(0))
+                        && !mappingMap.containsKey(affectedBondReactants.getAtom(1)))) {
                     isNotMapped = true;
                 }
                 IBond pBond = null;
                 if (isNotMapped) {
-                    eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-                    BondChange bondChange = new BondChange(eBond, pBond);
+
+                    if (DEBUG) {
+                        System.out.println("affectedBondReactants-0 " + affectedBondReactants.getAtom(0).getID());
+                        System.out.println("affectedBondReactants-1 " + affectedBondReactants.getAtom(1).getID());
+                    }
+                    affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
+                    getReactionCenterSet().add(affectedBondReactants.getAtom(0));
+                    getReactionCenterSet().add(affectedBondReactants.getAtom(1));
+                    affectedBondReactants.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
+                    BondChange bondChange = new BondChange(affectedBondReactants, pBond);
                     getBondChangeList().add(bondChange);
                 }
             }
         }
 
         for (IAtomContainer acP : productSet.atomContainers()) {
-            for (IBond pBond : acP.bonds()) {
+            for (IBond affectedBondProducts : acP.bonds()) {
                 boolean isNotMapped = false;
-                if ((!mappingMap.containsValue(pBond.getAtom(0))
-                        && mappingMap.containsValue(pBond.getAtom(1)))
-                        || (mappingMap.containsValue(pBond.getAtom(0))
-                        && !mappingMap.containsValue(pBond.getAtom(1)))) {
+                if ((!mappingMap.containsValue(affectedBondProducts.getAtom(0))
+                        && mappingMap.containsValue(affectedBondProducts.getAtom(1)))
+                        || (mappingMap.containsValue(affectedBondProducts.getAtom(0))
+                        && !mappingMap.containsValue(affectedBondProducts.getAtom(1)))) {
                     isNotMapped = true;
                 }
                 IBond eBond = null;
                 if (isNotMapped) {
-                    pBond.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-                    BondChange bondChange = new BondChange(eBond, pBond);
+                    affectedBondProducts.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    affectedBondProducts.getAtom(1).setFlag(REACTIVE_CENTER, true);
+                    getReactionCenterSet().add(affectedBondProducts.getAtom(0));
+                    getReactionCenterSet().add(affectedBondProducts.getAtom(1));
+                    affectedBondProducts.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
+                    BondChange bondChange = new BondChange(eBond, affectedBondProducts);
                     getBondChangeList().add(bondChange);
                 }
             }

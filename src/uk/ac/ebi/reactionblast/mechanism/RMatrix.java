@@ -48,6 +48,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
 public final class RMatrix extends EBIMatrix implements Serializable {
+
     private static final long serialVersionUID = 7057060562283378684L;
     private static final ILoggingTool logger = createLoggingTool(RMatrix.class);
     private static final Logger LOG = getLogger(RMatrix.class.getName());
@@ -134,10 +135,11 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                 }
             }
         }
-
-//        System.out.println("BE-React " + reactantBE.toString());
-//        System.out.println("BE-Prod " + productBE.toString());
-//        System.out.println("R " + toString());
+        if (DEBUG) {
+            System.out.println("BE-React " + reactantBE.toString());
+            System.out.println("BE-Prod " + productBE.toString());
+            System.out.println("R " + toString());
+        }
     }
 
     private synchronized boolean isAromaticChange(int IndexI, int IndexJ) throws CDKException {
@@ -220,7 +222,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         int res = 0;
         for (int i = 0; i < getRowDimension() - 1; i++) {
             for (int j = 0; j < getColumnDimension() - 1; j++) {
-                if (getReactantBEMatrix().getAtom(i).getID().equals(atomID1) && getReactantBEMatrix().getAtom(j).getID().equals(atomID2)) {
+                if (getReactantBEMatrix().getAtom(i).getID().equals(atomID1)
+                        && getReactantBEMatrix().getAtom(j).getID().equals(atomID2)) {
                     res = (int) getValue(i, j);
                 }
             }
@@ -239,7 +242,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         int res = 0;
         for (int i = 0; i < getRowDimension() - 1; i++) {
             for (int j = 0; j < getColumnDimension() - 1; j++) {
-                if (getProductBEMatrix().getAtom(i).getID().equals(atomID1) && getProductBEMatrix().getAtom(j).getID().equals(atomID2)) {
+                if (getProductBEMatrix().getAtom(i).getID().equals(atomID1)
+                        && getProductBEMatrix().getAtom(j).getID().equals(atomID2)) {
                     res = (int) getValue(i, j);
                 }
             }
@@ -331,7 +335,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         result.append("\t");
         for (int i = 0; i < this.getRowDimension() - 1; i++) {
             try {
-                result.append("\t").append(this.getReactantBEMatrix().getAtom(i).getSymbol()).append(this.getReactantBEMatrix().getAtom(i).getID());
+                result.append("\t").append(this.getReactantBEMatrix().getAtom(i).getSymbol())
+                        .append(this.getReactantBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
                 getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
             }
@@ -340,7 +345,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         result.append("\t");
         for (int i = 0; i < this.getRowDimension() - 1; i++) {
             try {
-                result.append("\t").append(this.getProductBEMatrix().getAtom(i).getSymbol()).append(this.getProductBEMatrix().getAtom(i).getID());
+                result.append("\t").append(this.getProductBEMatrix().getAtom(i).getSymbol())
+                        .append(this.getProductBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
                 getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
             }
@@ -408,7 +414,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
 
         for (String s : atomUniqueCounter1.keySet()) {
             if (atomUniqueCounter2.containsKey(s)) {
-                Integer overlap = atomUniqueCounter1.get(s) <= atomUniqueCounter2.get(s) ? atomUniqueCounter1.get(s) : atomUniqueCounter2.get(s);
+                Integer overlap = atomUniqueCounter1.get(s) <= atomUniqueCounter2.get(s)
+                        ? atomUniqueCounter1.get(s) : atomUniqueCounter2.get(s);
                 atomOverlap.put(s, overlap);
             }
         }
