@@ -82,8 +82,15 @@ public class Holder extends Debugger implements Cloneable, Serializable {
      * @param hydFPFree
      * @throws IOException
      */
-    public Holder(IMappingAlgorithm theory, String reactionID, List<String> eductCounter, List<String> productCounter, ReactionContainer reactionContainer, BestMatch bestMatchContainer, HydrogenFreeFingerPrintContainer hydFPFree) throws IOException {
-        
+    public Holder(
+            IMappingAlgorithm theory,
+            String reactionID,
+            List<String> eductCounter,
+            List<String> productCounter,
+            ReactionContainer reactionContainer,
+            BestMatch bestMatchContainer,
+            HydrogenFreeFingerPrintContainer hydFPFree) throws IOException {
+
         this(eductCounter.size(), productCounter.size());
         this.theory = theory;
         this.reactionID = reactionID;
@@ -148,8 +155,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     /**
      * @return the fragmentMatrix
      */
-    public synchronized EBIMatrix getFragmentMatrix(
-    ) {
+    public synchronized EBIMatrix getFragmentMatrix() {
         return fragmentMatrix;
     }
 
