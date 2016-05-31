@@ -171,7 +171,7 @@ public abstract class AbstractChangeCalculator extends Utility {
      * @return
      * @throws Exception
      */
-    protected MoleculeMoleculePair getMolMolPair(
+    protected static MoleculeMoleculePair getMolMolPair(
             IAtom reactantAtom,
             IAtom productAtom,
             IAtomContainer atomContainerR,
