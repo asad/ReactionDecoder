@@ -123,7 +123,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     ipvt = i;
                 }
             }
-            
+
             // Exchanges rows when necessary
             if (pivot[j] != ipvt) {
                 pivot[j] = ipvt;
@@ -133,24 +133,24 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     a.matrix[j][k] = a.matrix[pivot[j]][k];
                     a.matrix[pivot[j]][k] = temp;
                 }
-                
+
                 temp = b.get(j);
                 b.set(j, b.get(pivot[j]));
                 b.set(pivot[j], temp);
             }
-            
+
             // Store multipliers
             for (i = j + 1; i < n; i++) {
                 a.matrix[i][j] /= a.matrix[j][j];
             }
-            
+
             // Give elements below the diagonal a zero value
             for (i = j + 1; i < n; i++) {
                 for (k = j + 1; k < n; k++) {
                     a.matrix[i][k] -= a.matrix[i][j] * a.matrix[j][k];
                 }
                 b.set(i, b.get(i) - a.matrix[i][j] * b.get(j));
-                
+
                 a.matrix[i][j] = 0.0; // Not necessary
             }
         }
@@ -162,7 +162,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             for (k = n - 1; k > j; k--) {
                 result.set(j, result.get(j) - result.get(k) * a.matrix[j][k]);
             }
-            
+
             result.set(j, result.get(j) / a.matrix[j][k]);
         }
         return result;
@@ -219,7 +219,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     @SuppressWarnings(value = {"empty-statement", "unchecked"})
     public static EBIMatrix read(BufferedReader input) throws java.io.IOException {
         StreamTokenizer tokenizer = new StreamTokenizer(input);
-        
+
         // Although StreamTokenizer will parse numbers, it doesn't recognize
         // scientific notation (E or D); however, double.valueOf does.
         // The strategy here is to disable StreamTokenizer's number parsing.
@@ -230,7 +230,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         tokenizer.whitespaceChars(0, ' ');
         tokenizer.eolIsSignificant(true);
         ArrayList v = new ArrayList();
-        
+
         // Ignore initial empty lines
         while (tokenizer.nextToken() == TT_EOL) {
             ;
@@ -241,7 +241,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         do {
             v.add(valueOf(tokenizer.sval)); // Read & store 1st row.
         } while (tokenizer.nextToken() == TT_WORD);
-        
+
         int n = v.size();  // Now we've got the number of columns!
         double row[] = new double[n];
         for (int j = 0; j < n; j++) {
@@ -380,7 +380,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
     /**
-     * dataonstruct a matrix from a one-dimensional packed array
+     * data construct a matrix from a one-dimensional packed array
      *
      * @param vals One-dimensional array of doubles, packed by columns (ala
      * Fortran).
@@ -402,9 +402,9 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
 
     /**
      *
-     * @param v default value for the Martix cells
+     * @param v default value for the Matrix cells
      */
-    public void initMatrix(double v) {
+    public synchronized void initMatrix(double v) {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = v;
@@ -1082,7 +1082,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
 
     /*
     * ------------------------ Private Methods ------------------------
-    */
+     */
     /**
      * dataheck if size(matrix) == size(B) *
      */
@@ -1523,7 +1523,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             for (i = 0; i < rows; i++) {
                 result.matrix[i][p] = matrix[i][p];
             }
-            
+
             for (k = 0; k < p; k++) // Substracts the previous vector 
             {
                 // First the calculation of the product <phi_p|phi_k>=length
@@ -1609,7 +1609,6 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
 //    DecimalFormat is a little disappointing coming from Fortran or data's printf.
-
 //    Since it doesn't pad on the left, the elements will come out different
 //    widths.  Consequently, we'll pass the desired column width in as an
 //    argument and do the extra padding ourselves.
@@ -1865,6 +1864,5 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         }
         return this;
     }
-
 
 }
