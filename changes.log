@@ -181,9 +181,16 @@ Changes (22/03/2016)
 -----------------------
 a) Old Atom Rank (Index) reported
 
+-----------------------
+Changes (31/05/2016)
+-----------------------
+a) Unbalanced reactions with Rearrangement bug fixed
+b) CDK jar cdk-1.5.13.jar added
+
 
 -----------------------
 TO DO
 -----------------------
 a) CDK to handle missing atom types like Fe, Co etc.
 b) Fix DIAT bonds in the CDK.
+c) Old Atom Rank reporting test.
