@@ -293,7 +293,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws CloneNotSupportedException
      */
     protected static void setCircularSignatureFingerprints(String rid, IAtomContainer mol, IAtom atom, Map<Integer, IPatternFingerprinter> patternFP) throws CDKException, CloneNotSupportedException {
-        
+
         for (int i = 1; i < 5; i++) {
             if (!patternFP.containsKey(i)) {
                 IPatternFingerprinter fp = new PatternFingerprinter();
@@ -486,7 +486,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         /*
         Use the Canonical labelling from the SMILES
         IMP: Suggested by John May
-        */
+         */
         try {
             unique().create(cloneMolecule, p);
         } catch (CDKException e) {
@@ -497,7 +497,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
 
         /*
         Set the IDs to container
-        */
+         */
         if (org_mol.getID() != null) {
             cloneMolecule.setID(org_mol.getID());
         }
@@ -508,7 +508,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     /*
     This is a very imp code modified by John May
     The idea is to canonicalise the atoms and bonds
-    */
+     */
     private static void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
         IAtom[] permutedAtoms = new IAtom[n];
@@ -612,7 +612,10 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws Exception
      * @throws CloneNotSupportedException
      */
-    protected void setCircularFingerprints(String rid, IAtomContainer molOrignal, IAtom atom, Map<Integer, IPatternFingerprinter> patternFP) throws Exception, CloneNotSupportedException {
+    protected static void setCircularFingerprints(String rid,
+            IAtomContainer molOrignal,
+            IAtom atom, Map<Integer, IPatternFingerprinter> patternFP)
+            throws Exception, CloneNotSupportedException {
         IAtomContainer clone = molOrignal.clone();
         for (int i = 0; i < 3; i++) {
             if (!patternFP.containsKey(i)) {
@@ -643,7 +646,10 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws Exception
      * @throws CloneNotSupportedException
      */
-    protected List<ReactionCenterFragment> getCircularReactionPatternFingerprints(IAtomContainer molOrignal, IAtom atom, EnumSubstrateProduct type) throws Exception, CloneNotSupportedException {
+    protected static List<ReactionCenterFragment> getCircularReactionPatternFingerprints(IAtomContainer molOrignal,
+            IAtom atom,
+            EnumSubstrateProduct type)
+            throws Exception, CloneNotSupportedException {
         List<ReactionCenterFragment> fragmentsRC = new ArrayList<>();
         IAtomContainer clone = molOrignal.clone();
         for (int i = 0; i < 3; i++) {
