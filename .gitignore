@@ -18,3 +18,5 @@ hs_err_pid*
 /Output/
 /store/
 /temp/
+/ReactionDecoderTool/target/
+/ReactionDecoderTool/Output/
