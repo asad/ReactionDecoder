@@ -187,6 +187,12 @@ Changes (31/05/2016)
 a) Unbalanced reactions with Rearrangement bug fixed
 b) CDK jar cdk-1.5.13.jar added
 
+-----------------------
+Changes (01/06/2016)
+-----------------------
+a) Migrate to Maven project with POM.xml
+b) Version rdt-2.0-SNAPSHOT
+
 
 -----------------------
 TO DO

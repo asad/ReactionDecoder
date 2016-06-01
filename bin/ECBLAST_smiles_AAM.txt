@@ -1,0 +1,39 @@
+
+//
+SELECTED AAM MAPPING
+[O:1]=[CH2:2].[O:3]=[CH2:4].[OH2:5]>>[O:1]=[CH:2][O-:5].[OH:3][CH3:4]
+
+
+//
+REACTANT ATOM RANK OLD<->NEW
+{1=4, 2=3, 5=5}
+PRODUCT ATOM RANK OLD<->NEW
+{1=2, 2=1, 3=3, 4=5, 5=4}
+
+Incorrect
+0 / 1 points
+11. 
+In order to act with humility, it is enough to know that you are not perfect. True or False?
+
+Incorrect
+0 / 1 points
+12. 
+It is essential that to be genuine, one must ALWAYS be honest and transparent. True or False?
+
+
+Incorrect
+0 / 1 points
+13. 
+Being Generous means the ability to give money to people in need. Therefore it is essential for one to have money in order for one to be generous. True or False?
+
+With an intellectual leader there is a higher moral purpose and vision that can transform society. 
+1:33
+There are the reformers, the movements that require the participation of large numbers of followers to achieve. 
+1:40
+Reform leaders can transform part of society to realize a higher standard of moral principles. 
+1:46
+Then there are the revolutionaries, they may ask followers for the ultimate sacrifice for greater good of all. While a reform leader may work towards improving one aspect of society, the revolutionary leader asks for changes to the whole society. 
+2:04
+And then there are the heroes. Perhaps the ultimate form of a transformational approach. 
+2:10
+The charismatic leader is viewed as a hero among followers. 
