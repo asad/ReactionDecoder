@@ -23,9 +23,8 @@
     <dependencies>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
-            <artifactId>cdk</artifactId>
+            <artifactId>cdk-bundle</artifactId>
             <version>1.5.13</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
