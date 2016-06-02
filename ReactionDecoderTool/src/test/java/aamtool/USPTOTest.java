@@ -73,7 +73,7 @@ public class USPTOTest extends MappingUtility {
                 Scanner sc = new Scanner(zipIn);
                 while (sc.hasNextLine()) {
                     readLine = sc.nextLine();
-                    System.out.println(readLine);
+//                    System.out.println(readLine);
                     String[] split = readLine.split("\\s+");
                     String reactionSMILES = split[0].trim();
                     String reactionID = split[split.length - 1].trim();
