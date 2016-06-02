@@ -7,6 +7,7 @@ package aamtool;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.System.out;
@@ -14,7 +15,10 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 import static java.util.logging.Logger.getLogger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -62,9 +66,14 @@ public class USPTOTest extends MappingUtility {
         SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         if (dir.isDirectory()) {
             String readLine = null;
-            File reactionFile = new File(dir, "2008-2011_USPTO_reactionSmiles_filtered.txt");
-            try (BufferedReader fileReader = new BufferedReader(new FileReader(reactionFile))) {
-                while ((readLine = fileReader.readLine()) != null) {
+            File reactionFile = new File(dir, "2008-2011_USPTO_reactionSmiles_filtered.txt.zip");
+
+            try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(reactionFile))) {
+                ZipEntry entry = zipIn.getNextEntry();
+                Scanner sc = new Scanner(zipIn);
+                while (sc.hasNextLine()) {
+                    readLine = sc.nextLine();
+                    System.out.println(readLine);
                     String[] split = readLine.split("\\s+");
                     String reactionSMILES = split[0].trim();
                     String reactionID = split[split.length - 1].trim();
@@ -116,7 +125,6 @@ public class USPTOTest extends MappingUtility {
             } catch (IOException ex) {
                 Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 
