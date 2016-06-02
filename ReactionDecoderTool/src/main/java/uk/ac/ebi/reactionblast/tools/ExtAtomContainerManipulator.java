@@ -627,13 +627,13 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         setNullHCountToZero(mol);
         if (mol.getAtomCount() > 1) {
             mol = removeHydrogens(mol);
-        } else if (!atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
+        } else if (mol.getAtomCount() == 1 && !atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
             /*
              * Pseudo-atoms and unconfigured atoms safetynet
              */
             convertImplicitToExplicitHydrogens(mol);
             mol = removeHydrogens(mol);
-        } else if (!atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
+        } else if (mol.getAtomCount() == 1 && atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
             System.err.println("WARNING: single hydrogen atom removal not supported!");
         }
         mol.setProperties(atomContainer.getProperties());
