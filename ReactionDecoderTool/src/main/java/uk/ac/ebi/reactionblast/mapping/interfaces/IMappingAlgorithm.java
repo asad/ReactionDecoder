@@ -26,7 +26,7 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
  * Mapping supports 4 different kinds of algorithms:
  *
  * <OL> <lI>0: MIN Minimization Model, <lI>1: MAX Minimization Model, <lI>2: MAX
- * MIXTURE Model, <lI>3: ASSIMILATION Model <lI>4: MIN MIXTURE Model </OL>
+ MIX Model, <lI>3: ASSIMILATION Model <lI>4: MIN MIX Model </OL>
  *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
@@ -34,6 +34,8 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
 public enum IMappingAlgorithm {
 
     /**
+     * MIN Model
+     *//**
      * MIN Model
      */
     MIN(0, "Local Minimization Model"),
@@ -44,7 +46,7 @@ public enum IMappingAlgorithm {
     /**
      * MAX-MIN Model
      */
-    MIXTURE(2, "Max-Mixture Model"),
+    MIX(2, "Max-Mixture Model"),
     /**
      * RING Conservation Model
      */

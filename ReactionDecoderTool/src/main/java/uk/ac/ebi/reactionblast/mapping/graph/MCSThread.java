@@ -56,6 +56,11 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
+import static java.lang.String.valueOf;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.relevant;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

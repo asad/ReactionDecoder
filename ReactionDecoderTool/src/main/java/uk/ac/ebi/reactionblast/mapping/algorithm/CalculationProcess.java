@@ -24,7 +24,6 @@ import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -35,8 +34,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
-import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIX;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -89,9 +89,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
                 logger.debug("Processing Reaction for Global Minimum: ");
                 delta = (int) calRelation(reaction, MAX);
                 break;
-            case MIXTURE:
+            case MIX:
                 logger.debug("Processing Reaction for Max-Mixture Model: ");
-                delta = (int) calRelation(reaction, MIXTURE);
+                delta = (int) calRelation(reaction, MIX);
                 break;
             case RINGS:
                 logger.debug("Processing Reaction for Ring Model: ");

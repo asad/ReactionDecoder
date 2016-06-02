@@ -26,6 +26,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * This class initiates the algorithm
@@ -52,7 +53,7 @@ public class GameTheoryFactory implements Serializable {
      */
     public static synchronized IGameTheory make(IMappingAlgorithm theory, IReaction reaction, boolean removeHydrogen, Map<Integer, IAtomContainer> educts, Map<Integer, IAtomContainer> products, GameTheoryMatrix rpsh) throws Exception {
         switch (theory) {
-            case MIXTURE:
+            case MIX:
                 return new GameTheoryMixture(
                         reaction, removeHydrogen,
                         educts, products,

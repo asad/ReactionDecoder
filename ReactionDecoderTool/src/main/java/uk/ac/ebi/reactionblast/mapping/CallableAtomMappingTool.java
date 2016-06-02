@@ -22,7 +22,6 @@ import java.io.File;
 import static java.io.File.separator;
 import java.io.FileWriter;
 import java.io.Serializable;
-import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
 import static java.lang.System.out;
@@ -34,10 +33,7 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -45,9 +41,13 @@ import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
-import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIX;
+import static java.lang.String.valueOf;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -161,7 +161,7 @@ public class CallableAtomMappingTool implements Serializable {
             cs.submit(minThread);
             jobCounter++;
             /*
-             * MIXTURE Algorithm
+             * MIX Algorithm
              */
             logger.info("\n|++++++++++++++++++++++++++++|");
             logger.info("b) Mixture Model: ");
@@ -176,7 +176,7 @@ public class CallableAtomMappingTool implements Serializable {
                 logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
                 logger.error(e);
             }
-            MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
+            MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIX", cleanedReaction3, MIX, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
 

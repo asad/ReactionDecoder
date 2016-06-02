@@ -55,6 +55,11 @@ import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
+import static java.util.Collections.synchronizedCollection;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.graph.Cycles.all;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -214,7 +219,7 @@ public class GraphMatcher extends Debugger {
                         mcsThread.setProductCount(productCount);
                         break;
 
-                    case MIXTURE:
+                    case MIX:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, false);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductCount(eductCount);

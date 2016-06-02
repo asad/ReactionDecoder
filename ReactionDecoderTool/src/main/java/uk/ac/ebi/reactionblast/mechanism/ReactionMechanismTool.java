@@ -67,6 +67,12 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.USER_DEFINED;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
+import static java.lang.Integer.parseInt;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 
 /**
  *
