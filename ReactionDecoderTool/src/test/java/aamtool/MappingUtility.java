@@ -225,9 +225,9 @@ public class MappingUtility extends TestUtility {
         IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
         /*
-         * Code for Image generation
+         * Code for Depict Image generation
          */
-        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+//        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
         TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
 //        int i = 1;
@@ -284,30 +284,21 @@ public class MappingUtility extends TestUtility {
         rcSteps.append("Formed Cleaved");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterFormedCleavedFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterFormedCleavedFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append("Order Change");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterOrderChangeFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterOrderChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append("Stereo Change");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterStereoChangeFingerprint = s.getBondChangeCalculator().getReactionCenterStereoChangeFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterStereoChangeFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterStereoChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append(NEW_LINE);
         out.println(rcSteps.toString());
         return s.getBondChangeCalculator();

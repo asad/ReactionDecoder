@@ -85,6 +85,7 @@ public class TestUtility {
     public static final String METRXN_RXN = "rxn" + separator + "metrxn" + separator;
     public static final String INFORCHEM_RXN = "rxn" + separator + "infochem" + separator;
     public static final String MACIE_RXN = "rxn" + separator + "macie" + separator;
+    public static final String USPTO_RXN = "rxn" + separator + "uspto" + separator;
     private static final Logger LOG = getLogger(TestUtility.class.getName());
     protected final URL resource;
 
