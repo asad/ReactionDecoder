@@ -40,7 +40,6 @@ import org.openscience.cdk.CDKConstants;
 import static org.openscience.cdk.CDKConstants.BONDORDER_SINGLE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 
-
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import static org.openscience.cdk.aromaticity.ElectronDonation.cdk;
@@ -626,11 +625,16 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     public static IAtomContainer convertExplicitToImplicitHydrogens(IAtomContainer atomContainer) {
         IAtomContainer mol = atomContainer.getBuilder().newInstance(IAtomContainer.class, atomContainer);
         setNullHCountToZero(mol);
-        //convertImplicitToExplicitHydrogens(mol);
         if (mol.getAtomCount() > 1) {
             mol = removeHydrogens(mol);
-        } else if (atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
-//            System.err.println("WARNING: single hydrogen atom removal not supported!");
+        } else if (!atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
+            /*
+             * Pseudo-atoms and unconfigured atoms safetynet
+             */
+            convertImplicitToExplicitHydrogens(mol);
+            mol = removeHydrogens(mol);
+        } else if (!atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
+            System.err.println("WARNING: single hydrogen atom removal not supported!");
         }
         mol.setProperties(atomContainer.getProperties());
         mol.setFlags(atomContainer.getFlags());
