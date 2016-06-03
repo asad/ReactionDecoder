@@ -20,3 +20,5 @@ hs_err_pid*
 /temp/
 /ReactionDecoderTool/target/
 /ReactionDecoderTool/Output/
+/ReactionDecoderTool/nbproject/
+/build/

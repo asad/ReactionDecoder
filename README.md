@@ -16,7 +16,7 @@ Installation
 
 `a)` You could [download the latest RDT] (https://github.com/asad/ReactionDecoder/releases) release version from the github.
 
-`b)` Compile the code using `maven`?:
+`b)` Compile the core code using `maven`?:
 
 `POM.xml` commands
 
@@ -26,9 +26,29 @@ use POM.xml and mvn commands to build your project
 2) mvn install (include test)
 3) mvn clean (clean)
 ```
+`b)` Compile and bundle the code using `ant`?:
+
+`c)` `Ant Build` commands
+
+```
+CLEAN:
+  ant clean
+BUILD:
+  ant compile
+DIST:
+  ant jar
+DOC:
+  ant javadoc
+TEST:
+  ant test
+HELP:
+  ant run
+Fat Jar:
+ ant package-for-store
+```
 
 
-Licence
+License
 =======
 
 `RDT` is released under the [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html).
