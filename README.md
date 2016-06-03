@@ -16,25 +16,12 @@ Installation
 
 `a)` You could [download the latest RDT] (https://github.com/asad/ReactionDecoder/releases) release version from the github.
 
-`b)` Compile the code using `ant`?:
+`b)` Compile the code using `maven`?:
 
-`Ant Build` commands
+`POM.xml` commands
 
 ```
-CLEAN:
-  ant clean
-BUILD:
-  ant compile
-DIST:
-  ant jar
-DOC:
-  ant javadoc
-TEST:
-  ant test
-HELP:
-  ant run
-Fat Jar:
- ant package-for-store
+use POM.xml and mvn commands to build you project
 ```
 
 
