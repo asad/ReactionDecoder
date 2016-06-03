@@ -21,7 +21,7 @@ Installation
 `POM.xml` commands
 
 ```
-use POM.xml and mvn commands to build you project
+use POM.xml and mvn commands to build your project
 ```
 
 
