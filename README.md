@@ -22,6 +22,9 @@ Installation
 
 ```
 use POM.xml and mvn commands to build your project
+1) mvn -DskipTests=true install (skip test)
+2) mvn install (include test)
+3) mvn clean (clean)
 ```
 
 
