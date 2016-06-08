@@ -18,13 +18,11 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
-import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,14 +31,11 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
-import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
