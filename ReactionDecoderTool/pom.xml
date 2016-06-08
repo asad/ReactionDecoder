@@ -20,6 +20,14 @@
         </developerConnection>
     </scm>
     
+    <licenses>
+        <license>
+            <name>GNU LGPL 3.0 or later</name>
+            <url>http://www.gnu.org/licenses/lgpl.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     <dependencies>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
@@ -32,14 +40,13 @@
             <version>4.11</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>smsd-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
-    <licenses>
-        <license>
-            <name>GNU LGPL 3.0 or later</name>
-            <url>http://www.gnu.org/licenses/lgpl.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+    
     <developers>
         <developer>
             <name>Syed Asad Rahman</name>
