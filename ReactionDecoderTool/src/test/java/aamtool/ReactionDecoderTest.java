@@ -774,12 +774,15 @@ public class ReactionDecoderTest extends MappingUtility {
     }
 
     /*
-     *  MIN, fp 
-     *  ID=R05069:Bond Cleaved and Formed (2)
-     *  [C-C:2.0, H-O:2.0]
-     *  BE 692.0, Fragment 0
-     * 
+     * MIN, fp 
+     * ID=R05069:Bond Cleaved and Formed (1)
+     * [C-C:2.0]
      *
+     * MIN, fp 
+     * ID=R05069:Bond Order Change (1)
+     * [C-O*C=O:2.0]
+     *
+     * BE 692.0, Fragment 0
      * @throws Exception
      */
     @Test
@@ -792,15 +795,7 @@ public class ReactionDecoderTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        /*
-         * Expected Solution
-         *  MIXTURE, fp 
-         *  ID=R05069:Bond Cleaved and Formed (2)
-         *   {C-C:2; H-O:2;}
-         * 
-         *   BE 692.0, Fragment 0
-         */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*

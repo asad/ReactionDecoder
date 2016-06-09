@@ -38,6 +38,13 @@ public class ComplexCases extends MappingUtility {
     /**
      * Complex case, linear to Ring system; Takes longer to Run
      *
+     * MIN, fp ID=R03200:Bond Cleaved and Formed (4) [C%C:6.0, C%O:1.0,
+     * C-C:3.0,C-H:3.0]
+     *
+     * MIN, fp ID=R03200:Bond Order Change (2) [C%C*C=C:3.0, C-C*C=C:1.0]
+     *
+     * BE 3437.0, Fragment 0
+     *
      * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
      * C-C:2.0, C-H:5.0, H-O:1.0]
      *
