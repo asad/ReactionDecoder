@@ -56,6 +56,7 @@ import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.relevant;
+import org.openscience.smsd.interfaces.Algorithm;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -207,11 +208,9 @@ public class MCSThread implements Callable<MCSSolution> {
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
                     Substructure substructure;
-                    substructure = new Substructure(ac1, ac2,
-                            true, false, isHasPerfectRings(), true);
+                    substructure = new Substructure(ac1, ac2, true, false, isHasPerfectRings(), true);
                     if (!substructure.isSubgraph()) {
-                        substructure = new Substructure(ac1, ac2,
-                                false, false, isHasPerfectRings(), true);
+                        substructure = new Substructure(ac1, ac2, false, false, isHasPerfectRings(), true);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
@@ -239,11 +238,9 @@ public class MCSThread implements Callable<MCSSolution> {
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
                     Substructure substructure;
-                    substructure = new Substructure(ac2, ac1,
-                            true, false, isHasPerfectRings(), true);
+                    substructure = new Substructure(ac2, ac1, true, false, isHasPerfectRings(), true);
                     if (!substructure.isSubgraph()) {
-                        substructure = new Substructure(ac2, ac1,
-                                false, false, isHasPerfectRings(), true);
+                        substructure = new Substructure(ac2, ac1, false, false, isHasPerfectRings(), true);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
@@ -425,6 +422,7 @@ public class MCSThread implements Callable<MCSSolution> {
     }
 
     synchronized MCSSolution mcs() {
+//        System.out.println("MCS called");
         try {
             /*
              * 0: default Isomorphism, 1: MCSPlus, 2: VFLibMCS, 3: CDKMCS
@@ -439,12 +437,18 @@ public class MCSThread implements Callable<MCSSolution> {
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), false);
             } else if (expectedMaxGraphmatch > 30) {
+//                System.out.println("CDK MCS called");
+//                System.out.println("getCompound1() " + getCompound1().getAtomCount());
+//                System.out.println("getCompound2() " + getCompound2().getAtomCount());
                 /*
                  This handles large aliphatics to ring system (ex: R06466)
                  */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), VFLibMCS,
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.CDKMCS,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             } else {
+//                System.out.println("Default called");
+//                System.out.println("getCompound1() " + getCompound1().getAtomCount());
+//                System.out.println("getCompound2() " + getCompound2().getAtomCount());
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             }
