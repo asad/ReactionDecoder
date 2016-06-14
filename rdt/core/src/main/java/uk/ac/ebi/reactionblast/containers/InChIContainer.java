@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
@@ -40,24 +39,28 @@ import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
  *
  * @Contact: asad@ebi.ac.uk
  *
- * @This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version. All we ask is that proper credit is given for our work, which includes - but is not limited to -
- * adding the above copyright notice to the beginning of your source code files, and to any copyright notice that you
- * may distribute with programs based on this work.
+ * @This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation; either version 2.1 of the License, or (at your
+ * option) any later version. All we ask is that proper credit is given for our
+ * work, which includes - but is not limited to - adding the above copyright
+ * notice to the beginning of your source code files, and to any copyright
+ * notice that you may distribute with programs based on this work.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
  */
 public class InChIContainer implements IInChIContainer, Cloneable {
-    /* Singleton Pattern Implementation */
 
+    /* Singleton Pattern Implementation */
     private static InChIContainer _instance = null;
     private static Map<String, String> InChIMap = null;
     private static final Logger LOG = getLogger(InChIContainer.class.getName());
@@ -66,25 +69,25 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      *
      * @throws java.io.IOException
      * @return
-     */    public static int getCount() throws IOException {
-         return InChIMap.size();
-     }
+     */
+    public static int getCount() throws IOException {
+        return InChIMap.size();
+    }
 
     /**
      *
      * @return
      */
-     public static synchronized InChIContainer getInstance() {
-         if (_instance == null) {
-             _instance = new InChIContainer();
-         }
-         return _instance;
-     }
+    public static synchronized InChIContainer getInstance() {
+        if (_instance == null) {
+            _instance = new InChIContainer();
+        }
+        return _instance;
+    }
 
     //~--- constructors -------------------------------------------------------
-
-     private InChIContainer() {
-         InChIMap = synchronizedSortedMap(new TreeMap<String, String>());
+    private InChIContainer() {
+        InChIMap = synchronizedSortedMap(new TreeMap<String, String>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -119,21 +122,15 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      *
      * @param Key
      * @param Value
-     * @throws java.io.IOException
      */
     @Override
     synchronized public void put(String Key, String Value) throws IOException {
-        try {
-            if (Value != null) {
-                InChIMap.put(Key, Value);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (Value != null) {
+            InChIMap.put(Key, Value);
         }
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param Key

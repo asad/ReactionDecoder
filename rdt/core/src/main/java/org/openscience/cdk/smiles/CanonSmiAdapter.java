@@ -17,19 +17,19 @@
 package org.openscience.cdk.smiles;
 
 import java.io.IOException;
-import static java.lang.Math.abs;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.GraphUtil.EdgeToBondMap;
 import static org.openscience.cdk.graph.GraphUtil.EdgeToBondMap.withSpaceFor;
-import static org.openscience.cdk.graph.GraphUtil.toAdjList;
-import static org.openscience.cdk.graph.invariant.Canon.label;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.ringsearch.RingSearch;
 import uk.ac.ebi.beam.Graph;
+import static java.lang.Math.abs;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.graph.GraphUtil.toAdjList;
+import static org.openscience.cdk.graph.invariant.Canon.label;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -40,7 +40,7 @@ import uk.ac.ebi.beam.Graph;
 public class CanonSmiAdapter {
 
     // convert to Beam excluding stereo (not canonicalised) and aromaticity
-    static final CDKToBeam cdkToBeam = new CDKToBeam(false, false);
+    static final CDKToBeam CDK2BEAM = new CDKToBeam(false, false);
     private static final Logger LOG = getLogger(CanonSmiAdapter.class.getName());
 
     /**
@@ -57,7 +57,7 @@ public class CanonSmiAdapter {
 
         long[] labels = label(ac, graph, betterInvariants(ac, graph, bonds));
 
-        Graph g = cdkToBeam.toBeamGraph(ac);
+        Graph g = CDK2BEAM.toBeamGraph(ac);
         g = g.permute(toPermutation(labels));
         g = g.resonate(); // ensure consistent Kekule form 
 

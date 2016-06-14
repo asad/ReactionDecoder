@@ -151,7 +151,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
              */
 //            initializeMappingFLAGS(matrixHolder);
             UpdateMatrix(matrixHolder, removeHydrogen);
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             logger.error(e);
         }
     }

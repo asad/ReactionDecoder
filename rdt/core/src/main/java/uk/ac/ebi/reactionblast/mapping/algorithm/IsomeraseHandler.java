@@ -36,7 +36,6 @@ import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
-import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;

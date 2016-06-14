@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-/*
+ /*
  * Suffix.java
  *
  * Created on January 22, 2006, 10:04 PM
@@ -64,21 +64,19 @@ public class Suffix {
      */
     public static synchronized Suffix getInstance() throws IOException {
         if (ref == null) {
-            
+
             // it's ok, we can call this constructor
             ref = new Suffix();
         }
-        
+
         return ref;
     }
 
     //~--- constructors -------------------------------------------------------
-
     /**
      *
      * @throws IOException
      */
-
     protected Suffix() throws IOException {
         Calendar cal = new GregorianCalendar();
         int ms = cal.get(YEAR);

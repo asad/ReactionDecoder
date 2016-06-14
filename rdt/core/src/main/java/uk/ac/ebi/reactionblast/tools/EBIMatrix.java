@@ -252,7 +252,8 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         v.add(row);  // Start storing rows instead of columns.
         while (tokenizer.nextToken() == TT_WORD) {
             // While non-empty lines
-            v.add(row = new double[n]);
+            row = new double[n];
+            v.add(row);
             int j = 0;
             do {
                 if (j >= n) {

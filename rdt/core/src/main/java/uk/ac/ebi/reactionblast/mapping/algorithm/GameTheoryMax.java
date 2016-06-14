@@ -112,7 +112,7 @@ final class GameTheoryMax extends BaseGameTheory {
 
         setReactionMolMapping(rpsh.getReactionMolMapping());
         this.winner = new ChooseWinner(eductList, productList);
-        this.dirSuffix = getSuffix();
+        this.dirSuffix = super.getSuffix();
         GenerateMapping();
     }
 

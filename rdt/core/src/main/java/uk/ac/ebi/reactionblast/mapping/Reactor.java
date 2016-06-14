@@ -638,7 +638,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     public synchronized boolean getReactionBalanceFlag() throws IOException {
 
         boolean flag = true;
-        if (this.getLabledReactantAtomsCount() != this.getLabledProductAtomsCount()) {
+        if (!Objects.equals(this.getLabledReactantAtomsCount(), this.getLabledProductAtomsCount())) {
             flag = false;
         }
         if (!getReactionBalanceFlagWithoutHydrogen()) {

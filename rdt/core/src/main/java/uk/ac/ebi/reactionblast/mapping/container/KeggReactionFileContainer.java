@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.mapping.container.helper.ReactionFileData;
+import static java.util.logging.Logger.getLogger;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -50,17 +50,17 @@ public class KeggReactionFileContainer implements Serializable {
     private static TreeMap<String, Map<String, ReactionFileData>> reactionMap = null;
     private static KeggReactionFileContainer ref = null;
     //~--- fields -------------------------------------------------------------
-    private final static String entry = "ENTRY";
-    private final static String name = "NAME";
-    private final static String equat = "EQUATION";
-    private final static String defin = "DEFINITION";
-    private final static String path = "PATHWAY";
-    private final static String rpair = "RPAIR";
-    private final static String ortho = "ORTHOLOGY";
-    private final static String enzyme = "ENZYME";
-    private final static String end = "///";
-    private final static String comment = "COMMENT";
-    private final static String remark = "REMARK";
+    private final static String ENTRY = "ENTRY";
+    private final static String NAME = "NAME";
+    private final static String EQUAT = "EQUATION";
+    private final static String DEFIN = "DEFINITION";
+    private final static String PATH = "PATHWAY";
+    private final static String RPAIR = "RPAIR";
+    private final static String ORTHO = "ORTHOLOGY";
+    private final static String ENZYME = "ENZYME";
+    private final static String END = "///";
+    private final static String COMMENT = "COMMENT";
+    private final static String REMARK = "REMARK";
     private static final Logger LOG = getLogger(KeggReactionFileContainer.class.getName());
 
     /**
@@ -131,8 +131,8 @@ public class KeggReactionFileContainer implements Serializable {
          if (reactionMap.containsKey(_recID)) {
              Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
              
-             if (DataMap.containsKey(defin)) {
-                 _data = DataMap.get(defin).getValue(0);
+             if (DataMap.containsKey(DEFIN)) {
+                 _data = DataMap.get(DEFIN).getValue(0);
              }
          }
 
@@ -142,7 +142,7 @@ public class KeggReactionFileContainer implements Serializable {
     /**
      *
      * @param _recID
-     * @return entry ID of the reaction
+     * @return ENTRY ID of the reaction
      */
      public synchronized String getEntry(String _recID) {
          String _data = null;
@@ -150,8 +150,8 @@ public class KeggReactionFileContainer implements Serializable {
          if (reactionMap.containsKey(_recID)) {
              Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
              
-             if (DataMap.containsKey(entry)) {
-                 _data = DataMap.get(entry).getValue(0);
+             if (DataMap.containsKey(ENTRY)) {
+                 _data = DataMap.get(ENTRY).getValue(0);
             }
         }
 
@@ -169,9 +169,9 @@ public class KeggReactionFileContainer implements Serializable {
          if (reactionMap.containsKey(_recID)) {
              Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
              
-             if (DataMap.containsKey(enzyme)) {
+             if (DataMap.containsKey(ENZYME)) {
                  ecData = new ArrayList<>();
-                 ReactionFileData eData = DataMap.get(enzyme);
+                 ReactionFileData eData = DataMap.get(ENZYME);
                  for (String data : eData.getValues()) {
 //                    System.out.println("RID " + _recID + " EC: " + data);
                      ecData.add(data);
@@ -193,8 +193,8 @@ public class KeggReactionFileContainer implements Serializable {
          if (reactionMap.containsKey(_recID)) {
              Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
              
-             if (DataMap.containsKey(equat)) {
-                _data = DataMap.get(equat).getValue(0);
+             if (DataMap.containsKey(EQUAT)) {
+                _data = DataMap.get(EQUAT).getValue(0);
             }
         }
 
@@ -226,8 +226,8 @@ public class KeggReactionFileContainer implements Serializable {
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
 
-            if (DataMap.containsKey(name)) {
-                _data = DataMap.get(name).getValue(0).trim();
+            if (DataMap.containsKey(NAME)) {
+                _data = DataMap.get(NAME).getValue(0).trim();
             }
         }
         return _data;
@@ -244,9 +244,9 @@ public class KeggReactionFileContainer implements Serializable {
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
 
-            if (DataMap.containsKey(path)) {
+            if (DataMap.containsKey(PATH)) {
                 _data = new ArrayList<>();
-                for (String data : DataMap.get(path).getValues()) {
+                for (String data : DataMap.get(PATH).getValues()) {
                     _data.add(data);
                 }
             }
@@ -265,9 +265,9 @@ public class KeggReactionFileContainer implements Serializable {
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
 
-            if (DataMap.containsKey(remark)) {
+            if (DataMap.containsKey(REMARK)) {
                 _data = new ArrayList<>();
-                for (String data : DataMap.get(remark).getValues()) {
+                for (String data : DataMap.get(REMARK).getValues()) {
                     _data.add(data);
                 }
             }
@@ -285,8 +285,8 @@ public class KeggReactionFileContainer implements Serializable {
         String _data = null;
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
-            if (DataMap.containsKey(rpair)) {
-                _data = DataMap.get(rpair).getValue(0);
+            if (DataMap.containsKey(RPAIR)) {
+                _data = DataMap.get(RPAIR).getValue(0);
             }
         }
 

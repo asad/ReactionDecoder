@@ -38,16 +38,15 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
-import org.openscience.cdk.io.MDLReader;
 import org.openscience.cdk.io.MDLV3000Reader;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAllAtomContainers;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 /**
- * Class that reads MDL files (various versions). 
- *  
- * 
+ * Class that reads MDL files (various versions).
+ *
+ *
  *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
@@ -145,7 +144,7 @@ public class MDLFileReader {
 
             } else if (string.contains("This file must be read with the MDLReader.")) {
                 try {
-                    try (MDLReader reader2 = new MDLReader(reader, mode)) {
+                    try (MDLV2000Reader reader2 = new MDLV2000Reader(reader, mode)) {
                         molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     }
@@ -200,7 +199,7 @@ public class MDLFileReader {
                     StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(mol));
                     sdg.generateCoordinates();
                     ac = sdg.getMolecule();
-                } catch (Exception e) {
+                } catch (IllegalArgumentException | CDKException e) {
                     e.printStackTrace();
                 }
             }

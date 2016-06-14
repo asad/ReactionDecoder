@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
@@ -25,6 +24,7 @@ import static java.lang.System.err;
 import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
@@ -83,22 +83,21 @@ public class MolContainer implements IMolContainer {
     /**
      *
      * @return
-     */    public static synchronized MolContainer getInstance() {
-         if (_instance == null) {
-             _instance = new MolContainer();
-         }
-         
-         return _instance;
-     }
+     */
+    public static synchronized MolContainer getInstance() {
+        if (_instance == null) {
+            _instance = new MolContainer();
+        }
+
+        return _instance;
+    }
 
     //~--- constructors -------------------------------------------------------
-
-     private MolContainer() {
-         molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+    private MolContainer() {
+        molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
     }
 
     //~--- methods ------------------------------------------------------------
-
     /**
      *
      * @throws java.io.IOException
@@ -126,15 +125,10 @@ public class MolContainer implements IMolContainer {
      */
     @Override
     public synchronized void put(String key, IAtomContainer Value) throws IOException {
-        try {
-            molContainer.put(key, Value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        molContainer.put(key, Value);
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param key
@@ -195,7 +189,7 @@ public class MolContainer implements IMolContainer {
         if (_queryMol.getAtomCount() == 1 && _targetMol.getAtomCount() == 1) {
             IAtom a = _queryMol.atoms().iterator().next();
             IAtom b = _targetMol.atoms().iterator().next();
-            return a.getSymbol().equalsIgnoreCase(b.getSymbol()) && a.getFormalCharge() == b.getFormalCharge();
+            return a.getSymbol().equalsIgnoreCase(b.getSymbol()) && Objects.equals(a.getFormalCharge(), b.getFormalCharge());
         }
         return isSubgraphIdentical(_queryMol, _targetMol, removeHydrogen);
     }

@@ -18,10 +18,12 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
+import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -45,13 +47,15 @@ public class LayoutCheck {
      */
     public static IAtomContainer getMoleculeWithLayoutCheck(IAtomContainer mol) {
         if (!has2DCoordinates(mol)) {
+
+            StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(mol));
             try {
-                StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(mol));
                 sdg.generateCoordinates();
                 mol = sdg.getMolecule();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (CDKException ex) {
+                Logger.getLogger(LayoutCheck.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
 
         return mol;
@@ -67,12 +71,12 @@ public class LayoutCheck {
         chemModel.setMoleculeSet(partitionIntoMolecules(mol));
         for (IAtomContainer molecule : getAllAtomContainers(chemModel.getMoleculeSet())) {
             if (has2DCoordinates(molecule)) {
+                StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(molecule));
                 try {
-                    StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(molecule));
                     sdg.generateCoordinates();
                     molecule = sdg.getMolecule();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (CDKException ex) {
+                    Logger.getLogger(LayoutCheck.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

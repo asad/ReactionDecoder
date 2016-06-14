@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-/*
+ /*
  * EBIMolSplitter.java
  *
  * Created on 24 January 2007, 14:07
@@ -52,8 +52,8 @@ public class EBIMolSplitter {
     /**
      * Check whether a set of atoms in an atomcontainer is connected
      *
-     * @param   atomContainer  The GraphAtomContainer to be check for connectedness
-     * @return                 true if the GraphAtomContainer is connected
+     * @param atomContainer The GraphAtomContainer to be check for connectedness
+     * @return true if the GraphAtomContainer is connected
      */
     public static boolean isConnected(IAtomContainer atomContainer) {
         boolean flag = false;
@@ -64,8 +64,8 @@ public class EBIMolSplitter {
         List<IAtom> sphere = new ArrayList<>();
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {
             atom = atomContainer.getAtom(f);
-            atomContainer.getAtom(f).setFlag(VISITED, false);
-            ac.addAtom(atomContainer.getAtom(f));
+            atom.setFlag(VISITED, false);
+            ac.addAtom(atom);
         }
 
         Iterator<IBond> bonds = atomContainer.bonds().iterator();
@@ -85,17 +85,20 @@ public class EBIMolSplitter {
     }
 
     /**
-     * Partitions the atoms in an GraphAtomContainer into covalently connected components.
+     * Partitions the atoms in an GraphAtomContainer into covalently connected
+     * components.
      *
-     * @param   atomContainer  The GraphAtomContainer to be partitioned into connected components, i.e. molecules
-     * @return                 A MoleculeSet.
+     * @param atomContainer The GraphAtomContainer to be partitioned into
+     * connected components, i.e. molecules
+     * @return A MoleculeSet.
      *
-     * */
+     *
+     */
     public static IAtomContainerSet splitMolecules(IAtomContainer atomContainer) {
         IAtomContainer ac = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-        IAtom atom ;
+        IAtom atom;
         IElectronContainer eContainer;
-        IAtomContainer molecule ;
+        IAtomContainer molecule;
         IAtomContainerSet molecules = atomContainer.getBuilder().newInstance(IAtomContainerSet.class);
         List<IAtom> sphere = new ArrayList<>();
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {

@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
@@ -106,7 +107,7 @@ public class ImageGenerator {
 
     static {
         /* works fine! ! */
-        /*
+ /*
          This makes the awt headless
          */
 
@@ -124,6 +125,7 @@ public class ImageGenerator {
     public synchronized static Image getBlankImage(int width, int height) {
         return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
     }
+
     /**
      *
      * @param reaction
@@ -141,40 +143,40 @@ public class ImageGenerator {
             int width, int height,
             File outFile) throws IOException {
         Params params = new Params();
-        
+
         params.leftToRightMoleculeLabelFontSize = 10;
-        
+
         params.drawMappings = false;
         params.drawHighlights = true;
         params.highlightsAbove = true;
-        
+
         params.drawAtomID = false;
-        
+
         params.drawMoleculeID = false;
         params.drawLabelPanel = true;
         params.drawAromaticCircles = true;
-        
+
         params.useCircularHighlight = false;
-        
+
         params.drawSubgraphBoxes = false;
         params.drawBondStereoChanges = false;
         params.drawBondFormedCleavedMarks = true;
         params.drawBondOrderChangedMarks = true;
-        
+
         params.arrowGap = 30;
         params.arrowLength = 60;
         params.drawFatArrow = true;
         params.drawArrowFilled = true;
-        
+
         params.borderY = 40;
-        
+
         params.drawRS = true;
         params.shouldCrop = true;
-        
+
         RBlastReaction rblReaction = new RBlastReaction(reaction, true);
         Map<IAtomContainer, List<RootSystem>> rootSystems
                 = findRootSystems(rblReaction);
-        
+
         DirectRBLastReactionDrawer reactionDrawer
                 = new DirectRBLastReactionDrawer(params, layout, awtLayout);
         Color rootColor = RED;
@@ -201,7 +203,7 @@ public class ImageGenerator {
                 moleculeDrawer.addHighlighter(highlighter);
             }
         }
-        
+
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setColor(WHITE);
@@ -219,6 +221,7 @@ public class ImageGenerator {
         g.dispose();
         write(image, "PNG", outFile);
     }
+
     /**
      *
      * @param reaction
@@ -237,19 +240,19 @@ public class ImageGenerator {
             int width, int height,
             boolean shouldCrop,
             File outFile) throws IOException {
-        
+
         RBlastReaction rblReaction = new RBlastReaction(reaction, true);
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(
                         new Params(),
                         layout,
                         awtLayout);
-        
+
         drawer.getParams().drawMappings = false;
         drawer.getParams().drawAromaticCircles = false;
         /*
         * set ids to false
-        */
+         */
         drawer.getParams().drawAtomID = false;
         drawer.getParams().drawLonePairs = false;
         drawer.getParams().drawMoleculeID = true;
@@ -271,10 +274,11 @@ public class ImageGenerator {
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
         drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-        
+
         Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
         write((RenderedImage) drawRBlastReaction, "PNG", outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -289,19 +293,19 @@ public class ImageGenerator {
             int width, int height,
             boolean shouldCrop,
             File outFile) throws IOException {
-        
+
         RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-        
+
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(new Params(),
                         new LeftToRightReactionLayout(),
                         new LeftToRightAWTReactionLayout());
-        
+
         drawer.getParams().drawMappings = false;
         drawer.getParams().drawAromaticCircles = false;
         /*
         * set ids to false
-        */
+         */
         drawer.getParams().drawAtomID = false;
         drawer.getParams().drawLonePairs = false;
         drawer.getParams().drawMoleculeID = true;
@@ -321,12 +325,11 @@ public class ImageGenerator {
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
         drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-        
-        
+
         /*
         * Hack the code to crop by Asad else use //java.awt.Image image =
         * drawer.drawRBlastReaction(rbReaction, width, height); for usual image
-        */
+         */
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setColor(WHITE);
@@ -342,10 +345,11 @@ public class ImageGenerator {
                     (int) finalBounds.getHeight());
         }
         g.dispose();
-        
+
         write(image, "PNG", outFile);
-        
+
     }
+
     /**
      *
      * @param cdkReaction
@@ -358,9 +362,9 @@ public class ImageGenerator {
             IReaction cdkReaction,
             int width, int height,
             File outFile) throws IOException {
-        
+
         RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-        
+
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(
                         new Params(),
@@ -388,10 +392,11 @@ public class ImageGenerator {
         drawer.getParams().drawLabelPanel = false;
         drawer.getParams().drawMoleculeID = true;
         drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
-        
+
         java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
         write((RenderedImage) image, "PNG", outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -406,6 +411,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, true, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -422,6 +428,7 @@ public class ImageGenerator {
                 new LeftToRightReactionLayout(),
                 new LeftToRightAWTReactionLayout(), width, height, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -431,13 +438,14 @@ public class ImageGenerator {
      */
     public synchronized static void TopToBottomReactionLayoutImageSmall(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        
+
         int height = 400;
         int width = 600;
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
-        
+
     }
+
     /**
      *
      * @param cdkReaction
@@ -452,6 +460,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, false, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -468,6 +477,7 @@ public class ImageGenerator {
                 new LeftToRightReactionLayout(),
                 new LeftToRightAWTReactionLayout(), width, height, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -482,6 +492,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
     }
+
     private synchronized static File getDir(String outputDir) {
         File file = new File(outputDir);
         if (!file.exists()) {
@@ -676,8 +687,8 @@ public class ImageGenerator {
 
         try {
             write((RenderedImage) image, "PNG", new File(outImageFileName + ".png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(ImageGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -940,7 +951,7 @@ public class ImageGenerator {
          *   drawer.getParams().highlightAlpha = 0.25f;
          *   drawer.getParams().bondStrokeWidth = default;
          */
-        /* for darker presentation images
+ /* for darker presentation images
          * drawer.getParams().highlightAlpha = 0.30f;
          * drawer.getParams().bondStrokeWidth=2.0f;
          */
@@ -1097,6 +1108,5 @@ public class ImageGenerator {
             this.label = label;
         }
     }
-
 
 }

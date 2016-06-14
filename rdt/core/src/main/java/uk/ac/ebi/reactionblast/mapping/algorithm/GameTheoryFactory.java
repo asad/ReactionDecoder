@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;

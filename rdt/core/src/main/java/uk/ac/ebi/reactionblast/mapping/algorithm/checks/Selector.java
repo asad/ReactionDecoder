@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.Double.MIN_VALUE;
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;

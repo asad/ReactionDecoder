@@ -22,8 +22,8 @@ package uk.ac.ebi.reactionblast.mapping.container.helper;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -39,7 +39,7 @@ public class MolMapping extends Object implements Serializable {
     private final Integer indexJ;
     private Integer indexStep = 0;
     private boolean keggMapping;
-    private boolean rBLASTMapping;
+    private boolean mapping;
     private IAtomContainer matchedMol = null;
     private String matchedSMILES = null;
 
@@ -56,7 +56,7 @@ public class MolMapping extends Object implements Serializable {
         this.indexI = indexI;
         this.indexJ = indexJ;
         this.keggMapping = false;
-        this.rBLASTMapping = false;
+        this.mapping = false;
     }
 
     /**
@@ -90,17 +90,17 @@ public class MolMapping extends Object implements Serializable {
     }
 
     /**
-     * @return the rBLASTMapping
+     * @return the mapping
      */
     public synchronized boolean isrBLASTMapping() {
-        return rBLASTMapping;
+        return mapping;
     }
 
     /**
-     * @param rBLASTMapping the rBLASTMapping to set
+     * @param mapping the mapping to set
      */
-    public synchronized void setReactionMapping(boolean rBLASTMapping) {
-        this.rBLASTMapping = rBLASTMapping;
+    public synchronized void setReactionMapping(boolean mapping) {
+        this.mapping = mapping;
     }
 
     /**
@@ -181,7 +181,7 @@ public class MolMapping extends Object implements Serializable {
         if (this.keggMapping != other.keggMapping) {
             return false;
         }
-        if (this.rBLASTMapping != other.rBLASTMapping) {
+        if (this.mapping != other.mapping) {
             return false;
         }
         if (this.matchedMol != other.matchedMol && (this.matchedMol == null || !this.matchedMol.equals(other.matchedMol))) {
@@ -199,7 +199,7 @@ public class MolMapping extends Object implements Serializable {
         hash = 83 * hash + (this.indexJ != null ? this.indexJ.hashCode() : 0);
         hash = 83 * hash + (this.indexStep != null ? this.indexStep.hashCode() : 0);
         hash = 83 * hash + (this.keggMapping ? 1 : 0);
-        hash = 83 * hash + (this.rBLASTMapping ? 1 : 0);
+        hash = 83 * hash + (this.mapping ? 1 : 0);
         hash = 83 * hash + (this.matchedMol != null ? this.matchedMol.hashCode() : 0);
         hash = 83 * hash + (this.matchedSMILES != null ? this.matchedSMILES.hashCode() : 0);
         return hash;
@@ -214,6 +214,6 @@ public class MolMapping extends Object implements Serializable {
 
     @Override
     public String toString() {
-        return "MolMapping{" + "mol1=" + mol1 + ", mol2=" + mol2 + ", indexI=" + indexI + ", indexJ=" + indexJ + ", indexStep=" + indexStep + ", keggMapping=" + keggMapping + ", rBLASTMapping=" + rBLASTMapping + ", matchedMol=" + matchedMol + ", matchedSMILES=" + matchedSMILES + '}';
+        return "MolMapping{" + "mol1=" + mol1 + ", mol2=" + mol2 + ", indexI=" + indexI + ", indexJ=" + indexJ + ", indexStep=" + indexStep + ", keggMapping=" + keggMapping + ", rBLASTMapping=" + mapping + ", matchedMol=" + matchedMol + ", matchedSMILES=" + matchedSMILES + '}';
     }
 }
