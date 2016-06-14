@@ -1006,7 +1006,7 @@ public class ReactionDecoderTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
 
-        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
