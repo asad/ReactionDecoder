@@ -23,7 +23,6 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.lang.System.err;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,27 +56,27 @@ import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import java.util.Arrays;
-import static java.util.Arrays.sort;
-import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Arrays.sort;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
  *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public abstract class Utility extends MatrixPrinter implements Serializable {
+public abstract class ReactionMappingUtility extends MatrixPrinter implements Serializable {
 
     /**
      * Used Chemaxon to generate smikrs
@@ -100,7 +99,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             }
 
         } catch (Exception ex) {
-            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+            getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
         }
         return sb.toString();
     }
@@ -136,7 +135,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         try {
             return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
         } catch (CloneNotSupportedException ex) {
-            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+            getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
         }
         return smiles;
     }
@@ -263,16 +262,16 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     protected static void setFragmentMatches(SortedMap<String, Integer> atomRCChangesMap, List<IAtomContainer> fragments) throws CloneNotSupportedException {
         for (IAtomContainer fragment : fragments) {
             CountSubstructures countSubstructures = new CountSubstructures(fragment);
-            for (String pattern : atomRCChangesMap.keySet()) {
+            atomRCChangesMap.keySet().stream().forEach((pattern) -> {
                 int hit = 0;
                 try {
                     hit = countSubstructures.substructureSize(pattern);
                 } catch (CDKException ex) {
-                    getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+                    getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
                 }
                 int val = hit == 0 ? 0 : atomRCChangesMap.get(pattern) + 1;
                 atomRCChangesMap.put(pattern, val);
-            }
+            });
         }
     }
 
@@ -282,13 +281,13 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param signatures
      */
     protected static void setReactionCenterMatches(IPatternFingerprinter atomRCChangesMap, List<String> signatures) {
-        for (String fragment : signatures) {
+        signatures.stream().forEach((fragment) -> {
             try {
                 atomRCChangesMap.add(new Feature(fragment, 1.0));
             } catch (CDKException ex) {
-                getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+                getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
             }
-        }
+        });
     }
 
     /**
@@ -329,8 +328,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      */
     protected static String getCanonicalisedBondChangePattern(IBond reactBond, IBond prodBond) {
 
-        String concatE = Utility.getCanonicalisedBondChangePattern(reactBond);
-        String concatP = Utility.getCanonicalisedBondChangePattern(prodBond);
+        String concatE = ReactionMappingUtility.getCanonicalisedBondChangePattern(reactBond);
+        String concatP = ReactionMappingUtility.getCanonicalisedBondChangePattern(prodBond);
 
         List<String> pattern = new ArrayList<>(2);
         pattern.add(0, concatE);
@@ -492,19 +491,15 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
 //        SignatureMoleculeLabeller().getCanonicalPermutation(cloneMolecule);
 
         /*
-        Use the Canonical labelling from the SMILES
-        IMP: Suggested by John May
+         * Use the Canonical labelling from the SMILES
+         * IMP: Suggested by John May
          */
-        try {
-            unique().create(cloneMolecule, p);
-        } catch (CDKException e) {
-            e.printStackTrace();
-        }
+        unique().create(cloneMolecule, p);
 
         permuteWithoutClone(p, cloneMolecule);
 
         /*
-        Set the IDs to container
+         * Set the IDs to container
          */
         if (org_mol.getID() != null) {
             cloneMolecule.setID(org_mol.getID());
@@ -514,8 +509,8 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     }
 
     /*
-    This is a very imp code modified by John May
-    The idea is to canonicalise the atoms and bonds
+     * This is a very imp code modified by John May
+     * The idea is to canonicalise the atoms and bonds
      */
     private static void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
@@ -529,31 +524,26 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         atomContainer.setAtoms(permutedAtoms);
 
         IBond[] bonds = getBondArray(atomContainer);
-        sort(bonds, new Comparator<IBond>() {
+        sort(bonds, (IBond o1, IBond o2) -> {
+            int u = o1.getAtom(0).getProperty("label");
+            int v = o1.getAtom(1).getProperty("label");
+            int x = o2.getAtom(0).getProperty("label");
+            int y = o2.getAtom(1).getProperty("label");
+            int min1 = min(u, v);
+            int min2 = min(x, y);
+            int max1 = max(u, v);
+            int max2 = max(x, y);
 
-            @Override
-            public int compare(IBond o1, IBond o2) {
-                int u = o1.getAtom(0).getProperty("label");
-                int v = o1.getAtom(1).getProperty("label");
-                int x = o2.getAtom(0).getProperty("label");
-                int y = o2.getAtom(1).getProperty("label");
-                int min1 = min(u, v);
-                int min2 = min(x, y);
-                int max1 = max(u, v);
-                int max2 = max(x, y);
-
-                int minCmp = Integer.compare(min1, min2);
-                if (minCmp != 0) {
-                    return minCmp;
-                }
-                int maxCmp = Integer.compare(max1, max2);
-                if (maxCmp != 0) {
-                    return maxCmp;
-                }
-                err.println("pokemon!");
-                throw new InternalError();
+            int minCmp = Integer.compare(min1, min2);
+            if (minCmp != 0) {
+                return minCmp;
             }
-
+            int maxCmp = Integer.compare(max1, max2);
+            if (maxCmp != 0) {
+                return maxCmp;
+            }
+            err.println("pokemon!");
+            throw new InternalError();
         });
         atomContainer.setBonds(bonds);
     }
@@ -599,11 +589,9 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             neighbours.addAll(atomContainer.getConnectedAtomsList(currentPath));
 
             if (openList.isEmpty() && !neighbours.isEmpty() && (max > level || max == -1)) {
-                for (IAtom a : neighbours) {
-                    if (!closedList.contains(a)) {
-                        openList.add(a);
-                    }
-                }
+                neighbours.stream().filter((a) -> (!closedList.contains(a))).forEach((a) -> {
+                    openList.add(a);
+                });
                 level += 1;
                 neighbours.clear();
             }
@@ -722,18 +710,16 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
          * Find mapping pairs
          */
         Set<IAtom> unMappedAtomsToBeRemoved = new HashSet<>();
-        for (Map.Entry<IAtom, IAtom> map : mappings.entrySet()) {
-            if (map.getValue() == null) {
-                unMappedAtomsToBeRemoved.add(map.getKey());
-            }
-        }
+        mappings.entrySet().stream().filter((map) -> (map.getValue() == null)).forEach((map) -> {
+            unMappedAtomsToBeRemoved.add(map.getKey());
+        });
 
         /*
          * Removed unpaired atoms
          */
-        for (IAtom removeAtom : unMappedAtomsToBeRemoved) {
+        unMappedAtomsToBeRemoved.stream().forEach((removeAtom) -> {
             mappings.remove(removeAtom);
-        }
+        });
 
         return mappings;
     }

@@ -29,7 +29,7 @@ import uk.ac.ebi.centres.cdk.CDKPerceptor;
 import uk.ac.ebi.centres.descriptor.Planar;
 import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.descriptor.Trigonal;
-import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
+import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
@@ -39,7 +39,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
-public abstract class StereoCenteralityTool extends Utility {
+public abstract class StereoCenteralityTool extends ReactionMappingUtility {
 
     private static final long serialVersionUID = 17867606807697859L;
 

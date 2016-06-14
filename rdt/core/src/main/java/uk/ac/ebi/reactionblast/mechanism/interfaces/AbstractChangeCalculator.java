@@ -32,14 +32,14 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.MoleculeMoleculePair;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactantProductPair;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionCenterFragment;
-import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
+import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 
 /**
  *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public abstract class AbstractChangeCalculator extends Utility {
+public abstract class AbstractChangeCalculator extends ReactionMappingUtility {
 
     private static final long serialVersionUID = 1523522323512L;
 
