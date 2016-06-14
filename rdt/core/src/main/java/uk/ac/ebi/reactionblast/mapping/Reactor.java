@@ -982,11 +982,13 @@ public class Reactor extends AbstractReactor implements Serializable {
          */
         for (IAtomContainer mol : rMolSet.atomContainers()) {
             List<Integer> atom_index = new ArrayList<>();
-            try {
-                int[] p = new int[mol.getAtomCount()];
-                String smiles = unique().create(mol, p);
-            } catch (CDKException e) {
-                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+            if (DEBUG) {
+                try {
+                    int[] p = new int[mol.getAtomCount()];
+                    String smiles = unique().create(mol, p);
+                } catch (CDKException e) {
+                    getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+                }
             }
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
@@ -1012,14 +1014,14 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         for (IAtomContainer mol : pMolSet.atomContainers()) {
-
-            try {
-                int[] p = new int[mol.getAtomCount()];
-                String smiles = unique().create(mol, p);
-            } catch (CDKException e) {
-                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+            if (DEBUG) {
+                try {
+                    int[] p = new int[mol.getAtomCount()];
+                    String smiles = unique().create(mol, p);
+                } catch (CDKException e) {
+                    getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+                }
             }
-
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
             List<Integer> atom_index = new ArrayList<>();
