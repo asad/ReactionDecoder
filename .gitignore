@@ -22,3 +22,9 @@ hs_err_pid*
 /ReactionDecoderTool/Output/
 /ReactionDecoderTool/nbproject/
 /build/
+/ReactionDecoderTool/core/target/
+/ReactionDecoderTool/exec/target/
+/rdt/core/target/
+/rdt/exec/target/
+/rdt/nbproject/
+/rdt/core/Output/
