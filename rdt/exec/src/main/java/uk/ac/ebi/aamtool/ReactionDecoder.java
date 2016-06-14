@@ -46,9 +46,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.openscience.cdk.interfaces.IReaction;
 import org.w3c.dom.Document;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
@@ -72,11 +72,11 @@ public class ReactionDecoder extends Annotator {
             Options createCompareOptions = cmd.createCompareOptions();
             Options createAnnotateOptions = cmd.createAnnotateOptions();
 
-            PosixParser parser1 = new PosixParser();
+            DefaultParser parser1 = new DefaultParser();
             CommandLine aamLine = parser1.parse(createAAMOptions, args, true);
-            PosixParser parser2 = new PosixParser();
+            DefaultParser parser2 = new DefaultParser();
             CommandLine compareLine = parser2.parse(createCompareOptions, args, true);
-            PosixParser parser3 = new PosixParser();
+            DefaultParser parser3 = new DefaultParser();
             CommandLine annotateLine = parser3.parse(createAnnotateOptions, args, true);
 
             /*
