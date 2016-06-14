@@ -70,12 +70,13 @@ import static java.lang.String.valueOf;
 import java.net.URL;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
+import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class TestUtility {
+public class TestUtility extends ReactionMappingUtility {
 
     public static final String KEGG_RXN_DIR = "rxn" + separator + "kegg" + separator;
     public static final String RHEA_RXN_DIR = "rxn" + separator + "rhea" + separator;
