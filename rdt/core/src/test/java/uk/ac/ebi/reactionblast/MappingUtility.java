@@ -42,7 +42,6 @@ import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
-import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
