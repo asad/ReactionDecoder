@@ -80,6 +80,12 @@ import static uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct.
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct.REACTANT;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.IChangeCalculator;
 import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getRelevantAtomContainer;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getRelevantAtomContainer;
 
 /**
  * This class marks the bond changes
@@ -305,7 +311,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
                 productAtoms.add(bondP.getAtom(0));
                 productAtoms.add(bondP.getAtom(1));
-                orderChangesWFingerprint.add(new Feature(getCanonisedBondChangePattern(bondR, bondP), 1.0));
+                orderChangesWFingerprint.add(new Feature(getCanonicalisedBondChangePattern(bondR, bondP), 1.0));
             }
         }
 

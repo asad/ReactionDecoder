@@ -19,14 +19,10 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.lang.System.err;
 import java.util.ArrayList;
-import static java.util.Arrays.sort;
 import java.util.Collection;
-import static java.util.Collections.sort;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 
@@ -53,7 +48,6 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
@@ -63,6 +57,12 @@ import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Arrays.sort;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
  *
@@ -319,10 +319,10 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param prodBond
      * @return
      */
-    protected static String getCanonisedBondChangePattern(IBond reactBond, IBond prodBond) {
+    public static String getCanonicalisedBondChangePattern(IBond reactBond, IBond prodBond) {
 
-        String concatE = getCanonicalisedBondChangePattern(reactBond);
-        String concatP = getCanonicalisedBondChangePattern(prodBond);
+        String concatE = Utility.getCanonicalisedBondChangePattern(reactBond);
+        String concatP = Utility.getCanonicalisedBondChangePattern(prodBond);
 
         List<String> pattern = new ArrayList<>(2);
         pattern.add(0, concatE);
@@ -338,7 +338,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param bond
      * @return
      */
-    protected static String getCanonicalisedBondChangePattern(IBond bond) {
+    public static String getCanonicalisedBondChangePattern(IBond bond) {
         String symbol = getBondOrderSign(bond);
         List<String> atoms = new ArrayList<>(2);
         atoms.add(0, bond.getAtom(0).getSymbol());

@@ -35,6 +35,7 @@ import uk.ac.ebi.reactionblast.mechanism.helper.ReactionCenterFragment;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
 import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularFragment;
 import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getSMILES;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getSMILES;
 
 /**
  *
