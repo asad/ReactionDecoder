@@ -36,6 +36,7 @@ import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
