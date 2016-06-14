@@ -963,6 +963,10 @@ public class Reactor extends AbstractReactor implements Serializable {
         return null;
     }
 
+    /*
+     * Set ATOM_ATOM_MAPPING flag in this method. This flag is very important as 
+     * rest of the code will read/use this flag to determine the AAM.
+     */
     private synchronized int setCanonicalMappingLabels(IReaction mappedReaction) throws CDKException {
 //        ICanonicalMoleculeLabeller cng = new SignatureMoleculeLabeller();
 
