@@ -61,7 +61,6 @@ import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
 import uk.ac.ebi.reactionblast.mechanism.helper.BondChange;
 import uk.ac.ebi.reactionblast.mechanism.helper.MoleculeMoleculePair;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionCenterFragment;
-import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularSMILES;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.AbstractChangeCalculator;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;

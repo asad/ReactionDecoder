@@ -59,10 +59,18 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWit
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import java.util.Arrays;
 import static java.util.Arrays.sort;
 import static java.util.Collections.sort;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 
 /**
  *
@@ -78,7 +86,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param remove_AAM
      * @return
      */
-    public static String getSMILES(IReaction reaction, boolean remove_AAM) {
+    protected static String getSMILES(IReaction reaction, boolean remove_AAM) {
         StringBuilder sb = new StringBuilder("");
         try {
             for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
@@ -107,7 +115,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @return
      * @throws Exception
      */
-    public static String getCircularSMILES(
+    protected static String getCircularSMILES(
             IAtomContainer mol, IAtom atom, int level, boolean remove_AAM) throws Exception {
         int refAtom = getAtomIndexByID(mol, atom);
         IAtomContainer fragment = getCircularFragment(mol, refAtom, level);
@@ -122,7 +130,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param remove_AAM
      * @return
      */
-    public static String getSMILES(
+    protected static String getSMILES(
             IAtomContainer mol, boolean remove_AAM) {
         String smiles = "";
         try {
@@ -319,7 +327,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param prodBond
      * @return
      */
-    public static String getCanonicalisedBondChangePattern(IBond reactBond, IBond prodBond) {
+    protected static String getCanonicalisedBondChangePattern(IBond reactBond, IBond prodBond) {
 
         String concatE = Utility.getCanonicalisedBondChangePattern(reactBond);
         String concatP = Utility.getCanonicalisedBondChangePattern(prodBond);
@@ -338,7 +346,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param bond
      * @return
      */
-    public static String getCanonicalisedBondChangePattern(IBond bond) {
+    protected static String getCanonicalisedBondChangePattern(IBond bond) {
         String symbol = getBondOrderSign(bond);
         List<String> atoms = new ArrayList<>(2);
         atoms.add(0, bond.getAtom(0).getSymbol());
@@ -353,7 +361,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param bond
      * @return
      */
-    public static String getBondOrderSign(IBond bond) {
+    protected static String getBondOrderSign(IBond bond) {
         String bondSymbol = "";
         if (bond.getFlag(ISAROMATIC)) {
             bondSymbol += "@";
@@ -378,7 +386,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param singleRings
      * @return
      */
-    public static int getNeighbourBondOrderCountFromRing(IBond ringBond, IRingSet singleRings) {
+    protected static int getNeighbourBondOrderCountFromRing(IBond ringBond, IRingSet singleRings) {
         int minValue = 9999;
         for (IAtomContainer ring : singleRings.atomContainers()) {
             int value = 0;
@@ -402,7 +410,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param singleRings
      * @return
      */
-    public static IRingSet getSmallestRingSet(IBond ringBond, IRingSet singleRings) {
+    protected static IRingSet getSmallestRingSet(IBond ringBond, IRingSet singleRings) {
         IRingSet rs = new RingSet();
         for (IAtomContainer ring : singleRings.atomContainers()) {
             if (ring.contains(ringBond.getAtom(0)) && ring.contains(ringBond.getAtom(1))) {
@@ -444,7 +452,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @return
      * @throws Exception
      */
-    public static IAtomContainer getCircularFragment(IAtomContainer mol, int startAtomIndex, int radius) throws Exception {
+    protected static IAtomContainer getCircularFragment(IAtomContainer mol, int startAtomIndex, int radius) throws Exception {
         IAtomContainer fragment = cloneWithIDs(mol);
         Set<IAtom> removeList = new HashSet<>();
         Collection<IAtom> solutionSphereList = circularFragment(fragment, startAtomIndex, radius);
@@ -472,7 +480,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @throws CloneNotSupportedException
      * @throws CDKException
      */
-    public static IAtomContainer canonicalise(IAtomContainer org_mol) throws CloneNotSupportedException, CDKException {
+    protected static IAtomContainer canonicalise(IAtomContainer org_mol) throws CloneNotSupportedException, CDKException {
 
         IAtomContainer cloneMolecule = cloneWithIDs(org_mol);
 
@@ -566,7 +574,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @return
      * @throws CDKException
      */
-    public static Collection<IAtom> circularFragment(IAtomContainer atomContainer, int rootAtom, int max) throws CDKException {
+    protected static Collection<IAtom> circularFragment(IAtomContainer atomContainer, int rootAtom, int max) throws CDKException {
         IAtom root = atomContainer.getAtom(rootAtom);
         Set<IAtom> paths = new HashSet<>();
         // list of visited nodes
@@ -662,5 +670,136 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, -1, type);
         fragmentsRC.add(reactionCenterFragment);
         return fragmentsRC;
+    }
+
+    protected static Set<IBond> getBondChanges(IReaction mappedReaction) {
+
+        Map<IAtom, IAtom> mappings = getMappings(mappedReaction);
+
+        IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(mappedReaction);
+        IAtomContainerSet allProducts = ExtReactionManipulatorTool.getAllProducts(mappedReaction);
+        Set<IBond> reactantsbonds = getBonds(allReactants);
+        Set<IBond> productsbonds = getBonds(allProducts);
+
+        Set<IBond> bondChange = detectBondsCleavedAndFormed(reactantsbonds, productsbonds, mappings);
+
+        return bondChange;
+    }
+
+    protected static Map<IAtom, IAtom> getMappings(IReaction mappedReaction) {
+        HashMap<IAtom, IAtom> mappings = new HashMap<>();
+
+        /*
+         * Find mapped atoms in reactants
+         */
+        for (IAtomContainer container : ExtReactionManipulatorTool.getAllReactants(mappedReaction).atomContainers()) {
+            for (IAtom a : container.atoms()) {
+                Integer mappingNumber = a.getProperty(ATOM_ATOM_MAPPING);
+                if (mappingNumber != null) {
+                    mappings.put(a, null);
+                }
+            }
+        }
+        /*
+         * Find mapped atoms in products
+         */
+        for (IAtomContainer container : ExtReactionManipulatorTool.getAllProducts(mappedReaction).atomContainers()) {
+            for (IAtom a : container.atoms()) {
+                Integer mappingNumber = a.getProperty(ATOM_ATOM_MAPPING);
+                if (mappingNumber != null) {
+                    for (IAtom mappedAtom : mappings.keySet()) {
+                        Integer storedAtomMappingNumber = mappedAtom.getProperty(ATOM_ATOM_MAPPING);
+                        if (mappingNumber.intValue() == storedAtomMappingNumber) {
+                            mappings.put(mappedAtom, a);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+         * Find mapping pairs
+         */
+        Set<IAtom> unMappedAtomsToBeRemoved = new HashSet<>();
+        for (Map.Entry<IAtom, IAtom> map : mappings.entrySet()) {
+            if (map.getValue() == null) {
+                unMappedAtomsToBeRemoved.add(map.getKey());
+            }
+        }
+
+        /*
+         * Removed unpaired atoms
+         */
+        for (IAtom removeAtom : unMappedAtomsToBeRemoved) {
+            mappings.remove(removeAtom);
+        }
+
+        return mappings;
+    }
+
+    protected static Set<IBond> getBonds(IAtomContainerSet containers) {
+        Set<IBond> bonds = new LinkedHashSet<>();
+        for (IAtomContainer container : containers.atomContainers()) {
+            IBond[] bondArray = ExtAtomContainerManipulator.getBondArray(container);
+            bonds.addAll(Arrays.asList(bondArray));
+        }
+        return bonds;
+    }
+
+    protected static Set<IBond> detectBondsCleavedAndFormed(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings) {
+        Set<IBond> bondChange = new LinkedHashSet<>();
+
+        for (IBond rb : reactantsbonds) {
+            if (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
+                boolean bondBroken = true;
+                for (IBond pb : productsbonds) {
+                    if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
+                        bondBroken = false;
+                        break;
+                    }
+                }
+                if (bondBroken) {
+                    rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                    rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                    bondChange.add(rb);
+                }
+            } else if (mappings.containsKey(rb.getAtom(0)) && !mappings.containsKey(rb.getAtom(1))) {
+                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                bondChange.add(rb);
+            } else if (!mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
+                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                bondChange.add(rb);
+            }
+        }
+
+        for (IBond pb : productsbonds) {
+            if (mappings.containsKey(pb.getAtom(0)) && mappings.containsKey(pb.getAtom(1))) {
+                boolean bondBroken = true;
+                for (IBond rb : reactantsbonds) {
+                    if (rb.contains(mappings.get(pb.getAtom(0))) && rb.contains(mappings.get(pb.getAtom(1)))) {
+                        bondBroken = false;
+                        break;
+                    }
+                }
+                if (bondBroken) {
+                    pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    bondChange.add(pb);
+                }
+            } else if (mappings.containsKey(pb.getAtom(0)) && !mappings.containsKey(pb.getAtom(1))) {
+                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                bondChange.add(pb);
+            } else if (!mappings.containsKey(pb.getAtom(0)) && mappings.containsKey(pb.getAtom(1))) {
+                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                bondChange.add(pb);
+            }
+        }
+
+        return bondChange;
     }
 }
