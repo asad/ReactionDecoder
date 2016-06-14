@@ -27,7 +27,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class AbstractCanvasGenerator implements CanvasGenerator {
 

@@ -86,7 +86,7 @@ import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutChe
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ImageGenerator {
 

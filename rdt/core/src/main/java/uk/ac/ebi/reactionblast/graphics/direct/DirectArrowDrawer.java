@@ -43,7 +43,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BIDIRECTI
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectArrowDrawer extends AbstractDirectDrawer {
     

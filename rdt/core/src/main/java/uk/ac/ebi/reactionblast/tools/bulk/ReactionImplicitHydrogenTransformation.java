@@ -34,7 +34,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieve
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionImplicitHydrogenTransformation implements
         ITransformation<IReaction> {

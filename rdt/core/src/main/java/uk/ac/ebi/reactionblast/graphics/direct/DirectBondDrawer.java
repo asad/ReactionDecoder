@@ -59,7 +59,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectBondDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());

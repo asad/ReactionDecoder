@@ -32,7 +32,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class AbstractDirectReactionLayout extends AbstractDirectLayout<IReaction> {
     

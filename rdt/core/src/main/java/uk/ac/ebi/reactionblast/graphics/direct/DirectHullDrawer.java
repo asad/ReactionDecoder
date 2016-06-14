@@ -42,7 +42,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectHullDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectHullDrawer.class.getName());

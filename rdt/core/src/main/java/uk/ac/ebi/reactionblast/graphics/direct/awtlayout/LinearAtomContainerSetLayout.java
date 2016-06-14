@@ -35,7 +35,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
     private static final Logger LOG = getLogger(LinearAtomContainerSetLayout.class.getName());

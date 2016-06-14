@@ -29,7 +29,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.layout.MoleculeAligner.ali
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @param <T>
  */
 public abstract class AbstractDirectLayout<T> {

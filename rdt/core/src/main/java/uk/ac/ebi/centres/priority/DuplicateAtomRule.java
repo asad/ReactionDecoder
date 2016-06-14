@@ -24,7 +24,7 @@ import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @param <A>
  */
 public class DuplicateAtomRule<A>

@@ -37,7 +37,7 @@ import javax.vecmath.Point2f;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class AbstractDirectDrawer {
     private static final Logger LOG = getLogger(AbstractDirectDrawer.class.getName());

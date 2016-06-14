@@ -27,7 +27,7 @@ import static java.util.logging.Logger.getLogger;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(AbstractHighlightDrawer.class.getName());

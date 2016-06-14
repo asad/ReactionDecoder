@@ -28,7 +28,7 @@ import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BondChangeCalculationTransformation implements ITransformation<IReaction> {
 

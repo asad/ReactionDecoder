@@ -31,7 +31,7 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class MappingTransformation implements ITransformation<IReaction> {
 private final static ILoggingTool logger

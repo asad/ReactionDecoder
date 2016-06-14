@@ -28,7 +28,7 @@ import org.openscience.cdk.interfaces.IBond;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public interface Highlighter {
 

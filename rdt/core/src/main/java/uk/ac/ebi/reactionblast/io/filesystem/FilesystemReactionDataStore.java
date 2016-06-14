@@ -31,7 +31,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemReactionDataStore implements IDataStore<IReaction> {
     private static final Logger LOG = getLogger(FilesystemReactionDataStore.class.getName());

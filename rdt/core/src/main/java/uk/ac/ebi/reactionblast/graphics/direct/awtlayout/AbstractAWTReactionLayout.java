@@ -33,7 +33,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReaction> {
     

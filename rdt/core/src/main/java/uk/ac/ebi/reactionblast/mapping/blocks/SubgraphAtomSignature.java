@@ -32,7 +32,7 @@ import signature.AbstractVertexSignature;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SubgraphAtomSignature extends AbstractVertexSignature {
     private static final Logger LOG = getLogger(SubgraphAtomSignature.class.getName());

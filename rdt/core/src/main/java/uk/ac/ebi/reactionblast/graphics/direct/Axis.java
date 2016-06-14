@@ -20,7 +20,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public enum Axis {
 

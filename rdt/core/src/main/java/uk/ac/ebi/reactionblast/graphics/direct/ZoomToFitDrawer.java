@@ -38,7 +38,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ZoomToFitDrawer {
     private static final Logger LOG = getLogger(ZoomToFitDrawer.class.getName());

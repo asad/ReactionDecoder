@@ -32,7 +32,7 @@ import org.openscience.cdk.interfaces.IReaction;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BlockMapper {
     private static final Logger LOG = getLogger(BlockMapper.class.getName());

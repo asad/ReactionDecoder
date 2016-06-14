@@ -28,7 +28,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class GridCanvasGenerator extends AbstractCanvasGenerator implements CanvasGenerator {
     private static final Logger LOG = getLogger(GridCanvasGenerator.class.getName());

@@ -26,7 +26,7 @@ import org.openscience.cdk.interfaces.IStereoElement;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class WedgeRule {
 

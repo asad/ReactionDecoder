@@ -37,7 +37,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
     private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());

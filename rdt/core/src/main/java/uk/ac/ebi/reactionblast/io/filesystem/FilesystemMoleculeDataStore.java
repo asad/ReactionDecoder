@@ -31,7 +31,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
     private static final Logger LOG = getLogger(FilesystemMoleculeDataStore.class.getName());

@@ -37,7 +37,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemReactionDataSource implements IDataSource<IReaction> {
     private static final Logger LOG = getLogger(FilesystemReactionDataSource.class.getName());

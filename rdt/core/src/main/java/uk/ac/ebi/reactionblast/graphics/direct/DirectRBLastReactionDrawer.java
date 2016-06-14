@@ -51,7 +51,7 @@ import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectRBLastReactionDrawer.class.getName());

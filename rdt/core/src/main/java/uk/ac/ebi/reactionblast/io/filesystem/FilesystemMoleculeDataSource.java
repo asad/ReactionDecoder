@@ -37,7 +37,7 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemMoleculeDataSource implements IDataSource<IAtomContainer> {
     private static final Logger LOG = getLogger(FilesystemMoleculeDataSource.class.getName());

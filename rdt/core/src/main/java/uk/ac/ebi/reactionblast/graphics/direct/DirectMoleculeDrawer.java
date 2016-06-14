@@ -40,7 +40,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectMoleculeDrawer.class.getName());

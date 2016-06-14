@@ -43,7 +43,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPos
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class LabelManager {
 

@@ -32,7 +32,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Block implements Comparable<Block> {
     private static final Logger LOG = getLogger(Block.class.getName());

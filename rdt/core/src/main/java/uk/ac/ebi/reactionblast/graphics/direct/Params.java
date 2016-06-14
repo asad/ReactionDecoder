@@ -30,7 +30,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Params.MoleculeAlignMethod
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Params {
     private static final Logger LOG = getLogger(Params.class.getName());

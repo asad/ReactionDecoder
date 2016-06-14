@@ -26,7 +26,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
     private static final Logger LOG = getLogger(TopToBottomReactionLayout.class.getName());

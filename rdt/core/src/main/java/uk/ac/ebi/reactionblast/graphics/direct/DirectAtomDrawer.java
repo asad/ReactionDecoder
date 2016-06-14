@@ -68,7 +68,7 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class DirectAtomDrawer extends AbstractDirectDrawer {
     private static final Logger LOG = getLogger(DirectAtomDrawer.class.getName());

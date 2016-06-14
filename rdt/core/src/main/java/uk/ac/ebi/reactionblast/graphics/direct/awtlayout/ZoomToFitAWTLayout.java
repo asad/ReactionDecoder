@@ -42,7 +42,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
     private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());

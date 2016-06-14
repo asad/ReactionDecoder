@@ -38,7 +38,7 @@ import org.openscience.cdk.interfaces.IBond;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
     private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());

@@ -36,7 +36,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ZoomToFitGridLayout {
     private static final Logger LOG = getLogger(ZoomToFitGridLayout.class.getName());

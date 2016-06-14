@@ -43,7 +43,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ConvexHull implements Iterable<Point2d> {
     private static final Logger LOG = getLogger(ConvexHull.class.getName());

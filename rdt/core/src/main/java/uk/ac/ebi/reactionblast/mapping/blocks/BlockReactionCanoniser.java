@@ -39,7 +39,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     private static final Logger LOG = getLogger(BlockReactionCanoniser.class.getName());
