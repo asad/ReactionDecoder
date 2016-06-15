@@ -35,14 +35,16 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
-import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
+import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
+import static java.util.logging.Logger.getLogger;
+import static java.util.logging.Logger.getLogger;
 import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-class MultiReactionContainer extends Utility {
+class MultiReactionContainer extends ReactionMappingUtility {
 
     private static final Logger LOG = getLogger(MultiReactionContainer.class.getName());
 
