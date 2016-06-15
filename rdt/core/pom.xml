@@ -28,6 +28,16 @@
             <artifactId>smsd-core</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.rdt</groupId>
+            <artifactId>rdt-stereo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.rdt</groupId>
+            <artifactId>rdt-basic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

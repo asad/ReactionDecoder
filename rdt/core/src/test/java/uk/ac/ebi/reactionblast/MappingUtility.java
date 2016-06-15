@@ -41,8 +41,6 @@ import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
-import uk.ac.ebi.reactionblast.tools.ImageGenerator;
-import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 /**
@@ -221,13 +219,13 @@ public class MappingUtility extends TestUtility {
 //        System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
 //        System.out.println("RC Changed " + s.getBondChangeCalculator().getReactionCenterWFingerprint().toString());
 //        System.out.println("BE " + s.getBondEnergyChange() + ", Fragment " + s.getTotalFragmentChanges());
-        IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+//        IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
         /*
          * Code for Depict Image generation
          */
 //        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+//        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {
@@ -258,7 +256,7 @@ public class MappingUtility extends TestUtility {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();
-        new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        //new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
 
         StringBuilder sb = new StringBuilder();
         sb.append("++++++++++++++++++++++++++++++++++++++++++");
@@ -315,7 +313,7 @@ public class MappingUtility extends TestUtility {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();
-        new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        //new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
         return s.getBondChangeCalculator();
     }
 }

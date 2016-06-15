@@ -58,13 +58,11 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.per
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
-import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
 import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeCDK;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import static java.lang.String.valueOf;
 import java.net.URL;
@@ -227,15 +225,6 @@ public class TestUtility extends ReactionMappingUtility {
         }
     }
 
-    /**
-     *
-     * @param reaction
-     * @return
-     */
-    protected static IReaction canonise(IReaction reaction) {
-        ICanonicalReactionLabeller labeller = new BlockReactionCanoniser();
-        return labeller.getCanonicalReaction(reaction);
-    }
 
     /**
      *
