@@ -13,6 +13,7 @@
         <module>core</module>
         <module>exec</module>
         <module>graphics</module>
+        <module>auxi</module>
         <module>tools</module>
     </modules>
     
