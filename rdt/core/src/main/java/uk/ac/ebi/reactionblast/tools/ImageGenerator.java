@@ -34,10 +34,14 @@ import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import static java.io.File.separator;
 import java.io.IOException;
 import static java.lang.String.valueOf;
 import static java.lang.System.err;
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
 import static java.lang.System.setProperty;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
@@ -63,13 +68,13 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.Isomorphism;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectRBLastReactionDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.Highlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.OutlineHighlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.RootSystem;
-import static uk.ac.ebi.reactionblast.graphics.direct.SignatureRootFinder.findRootSystems;
 import uk.ac.ebi.reactionblast.graphics.direct.SimpleHighlighter;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.AbstractAWTReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.LeftToRightAWTReactionLayout;
@@ -81,8 +86,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.TopToBottomReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitGridLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
-import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
+import static uk.ac.ebi.reactionblast.signature.SignatureRootFinder.findRootSystems;
 import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutCheck;
 
 /**
@@ -90,6 +95,42 @@ import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutChe
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ImageGenerator {
+
+    /**
+     *
+     * @param outPutFileName
+     * @param query
+     * @param target
+     * @param smsd
+     */
+    protected static void generateImage(String outPutFileName, IAtomContainer query, IAtomContainer target, Isomorphism smsd) {
+
+        ImageGenerator imageGenerator = new ImageGenerator();
+
+        ////set the format right for the Tanimoto score (only two digits printed)
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(2);
+        out.println("Output of the final Mappings: ");
+        int counter = 1;
+        for (AtomAtomMapping mapping : smsd.getAllAtomMapping()) {
+
+            String tanimoto = nf.format(smsd.getTanimotoSimilarity());
+            String stereo = "NA";
+            if (smsd.getStereoScore(counter - 1) != null) {
+                stereo = nf.format(smsd.getStereoScore(counter - 1));
+            }
+            String label = "Scores [" + "Tanimoto: " + tanimoto + ", Stereo: " + stereo + "]";
+            try {
+                imageGenerator.addImages(query, target, label, mapping);
+            } catch (Exception ex) {
+                getLogger(ImageGenerator.class.getName()).log(SEVERE, null, ex);
+            }
+            counter++;
+        }
+        String filePNG = getProperty("user.dir") + separator + outPutFileName;
+        imageGenerator.createImage(filePNG, "Query", "Target");
+    }
 
     private static final ILoggingTool logger
             = createLoggingTool(ImageGenerator.class);

@@ -43,7 +43,6 @@ import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
-import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -378,41 +377,7 @@ public abstract class Debugger extends BasicDebugger {
         }
     }
 
-    /**
-     *
-     * @param outPutFileName
-     * @param query
-     * @param target
-     * @param smsd
-     */
-    protected void generateImage(String outPutFileName, IAtomContainer query, IAtomContainer target, Isomorphism smsd) {
-
-        ImageGenerator imageGenerator = new ImageGenerator();
-
-        ////set the format right for the Tanimoto score (only two digits printed)
-        NumberFormat nf = getInstance();
-        nf.setMaximumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
-        out.println("Output of the final Mappings: ");
-        int counter = 1;
-        for (AtomAtomMapping mapping : smsd.getAllAtomMapping()) {
-
-            String tanimoto = nf.format(smsd.getTanimotoSimilarity());
-            String stereo = "NA";
-            if (smsd.getStereoScore(counter - 1) != null) {
-                stereo = nf.format(smsd.getStereoScore(counter - 1));
-            }
-            String label = "Scores [" + "Tanimoto: " + tanimoto + ", Stereo: " + stereo + "]";
-            try {
-                imageGenerator.addImages(query, target, label, mapping);
-            } catch (Exception ex) {
-                getLogger(Debugger.class.getName()).log(SEVERE, null, ex);
-            }
-            counter++;
-        }
-        String filePNG = getProperty("user.dir") + separator + outPutFileName;
-        imageGenerator.createImage(filePNG, "Query", "Target");
-    }
+ 
 
     /**
      *
