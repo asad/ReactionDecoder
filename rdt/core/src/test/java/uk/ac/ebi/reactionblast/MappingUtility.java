@@ -41,6 +41,7 @@ import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 /**
@@ -219,12 +220,12 @@ public class MappingUtility extends TestUtility {
 //        System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
 //        System.out.println("RC Changed " + s.getBondChangeCalculator().getReactionCenterWFingerprint().toString());
 //        System.out.println("BE " + s.getBondEnergyChange() + ", Fragment " + s.getTotalFragmentChanges());
-//        IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+        IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
         /*
          * Code for Depict Image generation
          */
-//        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
 //        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
 //        int i = 1;
