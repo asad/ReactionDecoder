@@ -9,8 +9,11 @@
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>    
     <modules>
+        <module>stereo</module>
         <module>core</module>
         <module>exec</module>
+        <module>graphics</module>
+        <module>tools</module>
     </modules>
     
     <scm>
