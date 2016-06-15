@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.ebi.reactionblast.graphics.direct;
+package uk.ac.ebi.reactionblast.signature;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +30,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
-import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
-import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
+import uk.ac.ebi.reactionblast.graphics.direct.RootSystem;
+import uk.ac.ebi.reactionblast.tools.RBlastReaction;
 
 /**
  * Given an IReaction, a set of signatures, and (optionally) a set of bond
@@ -63,8 +63,7 @@ public class SignatureRootFinder {
         atomChanges.addAll(rblReaction.getAtomStereoProductMap().keySet());
         atomChanges.addAll(rblReaction.getAtomStereoReactantMap().keySet());
 
-        return findRootSystems(
-                rblReaction.getReaction(), allBondChanges, atomChanges);
+        return findRootSystems(rblReaction.getReaction(), allBondChanges, atomChanges);
     }
 
     /**
@@ -95,8 +94,7 @@ public class SignatureRootFinder {
                 }
             }
             rootSystems.put(atomContainer,
-                    findRootSystems(
-                            atomContainer, bonds, atoms));
+                    findRootSystems(atomContainer, bonds, atoms));
         }
         return rootSystems;
     }
