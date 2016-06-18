@@ -122,8 +122,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @throws Exception
      */
     public synchronized IReaction standardize(IReaction reaction) throws Exception {
-        int old_atom_rank_index_reactant = 1;
-        int old_atom_rank_index_product = 1;
         if (DEBUG) {
             String createReactionSMILES = generic().aromatic().createReactionSMILES(reaction);
             out.println("createReactionSMILES " + createReactionSMILES);
@@ -173,6 +171,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             /*
              * Set old Atom Index
              */
+            int old_atom_rank_index_reactant = 1;
             for (IAtom a : gMol.atoms()) {
                 if (a.getProperties() == null) {
                     a.addProperties(new HashMap<>());
@@ -249,6 +248,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             /*
              * Set old Atom Index
              */
+            int old_atom_rank_index_product = 1;
             for (IAtom a : gMol.atoms()) {
                 if (a.getProperties() == null) {
                     a.addProperties(new HashMap<>());

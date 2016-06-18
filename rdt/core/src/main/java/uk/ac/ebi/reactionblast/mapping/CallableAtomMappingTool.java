@@ -50,7 +50,6 @@ import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static java.lang.String.valueOf;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -65,7 +64,6 @@ public class CallableAtomMappingTool implements Serializable {
     private final static ILoggingTool logger
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
-    private static final Logger LOG = getLogger(CallableAtomMappingTool.class.getName());
 
     /**
      * Creates mapping PDFs for all the processed reaction mappings
@@ -112,12 +110,11 @@ public class CallableAtomMappingTool implements Serializable {
         try {
             cleanedReaction = standardizer.standardize(reaction);
             cleanedReaction = CDKReactionBuilder.preprocessStandardizedReaction(cleanedReaction);
+            generateAtomAtomMapping(cleanedReaction, removeHydrogen);
         } catch (Exception e) {
             logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             logger.error(e);
-            return;
         }
-        generateAtomAtomMapping(cleanedReaction, removeHydrogen);
     }
 
     private synchronized void generateAtomAtomMapping(
@@ -141,10 +138,6 @@ public class CallableAtomMappingTool implements Serializable {
              */
             logger.info("\n|++++++++++++++++++++++++++++|");
             logger.info("a) Global Model: ");
-            if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP 1: Global Model Standardize Reactions\n");
-            }
 
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", ExtReactionManipulatorTool.deepClone(cleanedReaction), MAX, removeHydrogen);
             cs.submit(maxThread);
@@ -155,10 +148,6 @@ public class CallableAtomMappingTool implements Serializable {
              */
             logger.info("\n|++++++++++++++++++++++++++++|");
             logger.info("c) Local Model: ");
-            if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP 1: Local Model Standardize Reactions\n");
-            }
 
             MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", ExtReactionManipulatorTool.deepClone(cleanedReaction), MIN, removeHydrogen);
             cs.submit(minThread);
@@ -169,10 +158,6 @@ public class CallableAtomMappingTool implements Serializable {
              */
             logger.info("\n|++++++++++++++++++++++++++++|");
             logger.info("b) Mixture Model: ");
-            if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP 1: Mixture Model Standardize Reactions\n");
-            }
 
             MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIX", ExtReactionManipulatorTool.deepClone(cleanedReaction), MIX, removeHydrogen);
             cs.submit(maxMixtureThread);
@@ -183,10 +168,6 @@ public class CallableAtomMappingTool implements Serializable {
              */
             logger.info("\n|++++++++++++++++++++++++++++|");
             logger.info("d) Rings Model: ");
-            if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP 1: Rings Model Standardize Reactions\n");
-            }
 
             MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", ExtReactionManipulatorTool.deepClone(cleanedReaction), RINGS, removeHydrogen);
             cs.submit(ringThread);
@@ -212,6 +193,8 @@ public class CallableAtomMappingTool implements Serializable {
             logger.error(e);
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(CallableAtomMappingTool.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            Logger.getLogger(CallableAtomMappingTool.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             executor.shutdown();
         }

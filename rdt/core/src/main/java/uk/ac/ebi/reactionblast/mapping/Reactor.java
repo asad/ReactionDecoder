@@ -85,6 +85,7 @@ import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Collections.synchronizedList;
+import java.util.logging.Level;
 import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 
@@ -121,9 +122,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             boolean partialMapping,
             IMappingAlgorithm algorithm)
             throws Exception {
-//        System.err.println("In Reaction");
-//        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
-//        System.err.println("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
+
         this.partialMapping = partialMapping;
         this.algorithm = algorithm;
         this.reactionWithUniqueSTOICHIOMETRY = reaction;
@@ -134,28 +133,37 @@ public class Reactor extends AbstractReactor implements Serializable {
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
-        if (DEBUG) {
-            out.println("|++++++++++++++++++++++++++++|");
-            out.println("|i. Reactor Initialized");
-        }
-        cleanMapping(reaction);
-        if (DEBUG) {
-            out.println("|++++++++++++++++++++++++++++|");
-            super.printReaction(reaction);
-            out.println("|ii. Create Mapping Objects");
-        }
-        labelAtoms();
-        bondCollection();
-        checkReactionBalance();
-        if (DEBUG) {
-            out.println("|iii. Compute atom-atom Mappings");
-        }
-        calculateAtomAtomMapping();
-        if (DEBUG) {
-            super.printReaction(reactionWithUniqueSTOICHIOMETRY);
-            out.println("|++++++++++++++++++++++++++++|");
-            out.println("|iv. Done|");
-            out.println("|++++++++++++++++++++++++++++|\n\n");
+
+        try {
+//        System.err.println("In Reaction");
+//        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
+//        System.err.println("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
+
+            if (DEBUG) {
+                out.println("|++++++++++++++++++++++++++++|");
+                out.println("|i. Reactor Initialized");
+            }
+            cleanMapping(reaction);
+            if (DEBUG) {
+                out.println("|++++++++++++++++++++++++++++|");
+                super.printReaction(reaction);
+                out.println("|ii. Create Mapping Objects");
+            }
+            labelAtoms();
+            bondCollection();
+            checkReactionBalance();
+            if (DEBUG) {
+                out.println("|iii. Compute atom-atom Mappings");
+            }
+            calculateAtomAtomMapping();
+            if (DEBUG) {
+                super.printReaction(reactionWithUniqueSTOICHIOMETRY);
+                out.println("|++++++++++++++++++++++++++++|");
+                out.println("|iv. Done|");
+                out.println("|++++++++++++++++++++++++++++|\n\n");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Reactor.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -173,8 +181,6 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     private synchronized void labelAtoms() {
-        int new_atom_rank_index_reactant = 1;
-        int new_atom_rank_index_product = 1;
 //        System.out.println("----------------------------");
         for (int i = 0; i < reactionWithUniqueSTOICHIOMETRY.getReactantCount(); i++) {
             IAtomContainer container = reactionWithUniqueSTOICHIOMETRY.getReactants().getAtomContainer(i);
@@ -183,11 +189,6 @@ public class Reactor extends AbstractReactor implements Serializable {
                 substrateAtomCounter += 1;
                 IAtom atom = container.getAtom(k);
                 atom.setID(counter);
-//                System.out.println("EAtom: " + k + " " + atom.getSymbol() + " Rank Atom: " + atom.getProperty("OLD_RANK") + " " + " Id: " + atom.getID());
-                if (atom.getProperty("OLD_RANK") != null) {
-                    atom.setProperty("NEW_RANK", new_atom_rank_index_reactant);
-                    new_atom_rank_index_reactant++;
-                }
             }
         }
 
@@ -199,14 +200,8 @@ public class Reactor extends AbstractReactor implements Serializable {
                 productAtomCounter += 1;
                 IAtom atom = container.getAtom(k);
                 atom.setID(counter);
-//                System.out.println("PAtom: " + k + " " + atom.getSymbol() + " Id: " + atom.getID());
-                if (atom.getProperty("OLD_RANK") != null) {
-                    atom.setProperty("NEW_RANK", new_atom_rank_index_product);
-                    new_atom_rank_index_product++;
-                }
             }
         }
-
     }
 
     private synchronized void bondCollection() {
@@ -1043,14 +1038,19 @@ public class Reactor extends AbstractReactor implements Serializable {
         IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(reactionWithUniqueSTOICHIOMETRY);
         StringBuilder atomIndex = new StringBuilder("");
         for (IAtomContainer ac : allReactants.atomContainers()) {
-            atomIndex.append("{\"").append(ac.getID()).append(":\"");
+            atomIndex.append(" {\"").append(ac.getID()).append("\": ");
+            int counter = ac.getAtomCount();
             for (IAtom a : ac.atoms()) {
-                if (ac.getProperty("OLD_RANK") != null) {
-                    atomIndex.append((String) ac.getProperty("OLD_RANK"));
-                    atomIndex.append("(").append((String) ac.getProperty("NEW_RANK")).append("), ");
+                if (a.getProperty("OLD_RANK") != null) {
+                    atomIndex.append(a.getSymbol()).append("-");
+                    atomIndex.append((Integer) a.getProperty("OLD_RANK"));
+                    atomIndex.append("(").append((Integer) a.getProperty(ATOM_ATOM_MAPPING)).append(")");
+                    if (--counter > 0) {
+                        atomIndex.append(", ");
+                    }
                 }
             }
-            atomIndex.append("}" + ",");
+            atomIndex.append("}");
         }
         return atomIndex.toString().trim();
     }
@@ -1064,14 +1064,19 @@ public class Reactor extends AbstractReactor implements Serializable {
         IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllProducts(reactionWithUniqueSTOICHIOMETRY);
         StringBuilder atomIndex = new StringBuilder("");
         for (IAtomContainer ac : allReactants.atomContainers()) {
-            atomIndex.append("{\"").append(ac.getID()).append(":\"");
+            atomIndex.append(" {\"").append(ac.getID()).append("\": ");
+            int counter = ac.getAtomCount();
             for (IAtom a : ac.atoms()) {
-                if (ac.getProperty("OLD_RANK") != null) {
-                    atomIndex.append((String) ac.getProperty("OLD_RANK"));
-                    atomIndex.append("(").append((String) ac.getProperty("NEW_RANK")).append("), ");
+                if (a.getProperty("OLD_RANK") != null) {
+                    atomIndex.append(a.getSymbol()).append("-");
+                    atomIndex.append((Integer) a.getProperty("OLD_RANK"));
+                    atomIndex.append("(").append((Integer) a.getProperty(ATOM_ATOM_MAPPING)).append(")");
+                    if (--counter > 0) {
+                        atomIndex.append(",");
+                    }
                 }
             }
-            atomIndex.append("}" + ",");
+            atomIndex.append("}");
         }
         return atomIndex.toString().trim();
     }

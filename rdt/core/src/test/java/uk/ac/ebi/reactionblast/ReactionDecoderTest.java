@@ -72,6 +72,8 @@ public class ReactionDecoderTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        String inputRankLabelledAtomsReactant = testReactions.getSelectedSolution().getReactor().getInputRankLabelledAtomsReactant();
+        assertEquals("{\"M00001\": O-3(1), C-2(2), C-4(3), C-5(4), C-1(5)} {\"M00002\": C-5(6), C-4(7), C-3(8), C-2(9), C-1(10)}", inputRankLabelledAtomsReactant);
     }
 
 

@@ -565,12 +565,12 @@ public class Annotator extends Helper {
             sb.append(NEW_LINE);
             sb.append("//");
             sb.append(NEW_LINE);
-            sb.append("REACTANT ATOM RANK OLD<->NEW");
+            sb.append("REACTANT INPUT ATOM INDEX<->AAM ID");
             sb.append(NEW_LINE);
             //Start of Fingerprint elements
             sb.append(s.getReactor().getInputRankLabelledAtomsReactant());
             sb.append(NEW_LINE);
-            sb.append("PRODUCT ATOM RANK OLD<->NEW");
+            sb.append("PRODUCT INPUT ATOM INDEX<->AAM ID");
             sb.append(NEW_LINE);
             //Start of Mapping Information
             sb.append(s.getReactor().getInputRankLabelledAtomsProduct());
