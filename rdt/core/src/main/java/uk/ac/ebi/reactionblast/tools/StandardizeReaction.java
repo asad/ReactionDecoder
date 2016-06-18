@@ -19,9 +19,13 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import static java.lang.System.currentTimeMillis;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.exception.CDKException;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
@@ -37,12 +41,19 @@ public class StandardizeReaction implements IStandardizer {
 
     /**
      *
+     */
+    public StandardizeReaction() {
+    }
+
+    /**
+     *
      * @param reaction
      * @return New Standardized reaction Object
      * @throws Exception
      */
     @Override
-    public synchronized IReaction standardize(IReaction reaction) throws Exception {
+    public synchronized IReaction
+            standardize(IReaction reaction) throws Exception {
         String ReactionID = reaction.getID();
         cleanMapping(reaction);
 
@@ -52,6 +63,22 @@ public class StandardizeReaction implements IStandardizer {
         }
         CDKReactionBuilder rBuilder = new CDKReactionBuilder();
         IReaction standardizedReaction = rBuilder.standardize(reaction);
+        ExtReactionManipulatorTool.getAllAtomContainers(reaction).stream().filter((mol) -> (!has2DCoordinates(mol))).forEach((mol) -> {
+
+            /*
+             * Clone it else it will loose mol ID
+             */
+            try {
+                StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+                sdg.setMolecule(mol, false);
+                sdg.generateCoordinates();
+            } catch (CDKException ex) {
+                Logger.getLogger(StandardizeReaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        /*
+         * Generate 2D Diagram without cloning
+         */
         return standardizedReaction;
     }
 }

@@ -225,7 +225,6 @@ public class TestUtility extends ReactionMappingUtility {
         }
     }
 
-
     /**
      *
      * @param AtomContainer
@@ -416,7 +415,7 @@ public class TestUtility extends ReactionMappingUtility {
         /*
         * RMT for the reaction mapping
          */
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, new StandardizeReaction());
 
         /*
         Reaction with hydrogens mapped but unchanged hydrogens suppressed

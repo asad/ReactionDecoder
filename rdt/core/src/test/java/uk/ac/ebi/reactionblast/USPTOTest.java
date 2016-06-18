@@ -96,7 +96,7 @@ public class USPTOTest extends MappingUtility {
                         System.out.println("F/C " + formedCleavedWFingerprint.toString());
 
                         try {
-                            ReactionMechanismTool rmt = new ReactionMechanismTool(inputReaction, true, true, false, new StandardizeReaction());
+                            ReactionMechanismTool rmt = new ReactionMechanismTool(inputReaction, true, new StandardizeReaction());
                             MappingSolution s = rmt.getSelectedSolution();
                             System.out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
                             IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();

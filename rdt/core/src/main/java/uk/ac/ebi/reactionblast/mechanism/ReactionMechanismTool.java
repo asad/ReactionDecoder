@@ -87,34 +87,22 @@ public class ReactionMechanismTool implements Serializable {
      *
      * @param reaction
      * @param forcedMapping force re-mapping of the reactions
-     * @param generate2D deduce stereo on 2D
-     * @param generate3D deduce stereo on 3D
      * @throws Exception
      */
-    public ReactionMechanismTool(
-            IReaction reaction,
-            boolean forcedMapping,
-            boolean generate2D,
-            boolean generate3D) throws Exception {
-        this(reaction, forcedMapping, generate2D, generate3D, new StandardizeReaction());
+    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping) throws Exception {
+        this(reaction, forcedMapping, new StandardizeReaction());
     }
 
     /**
      *
      * @param reaction
      * @param forcedMapping
-     * @param generate2D
-     * @param generate3D
      * @param standardizer
      * @throws CDKException
      * @throws AssertionError
      * @throws Exception
      */
-    public ReactionMechanismTool(IReaction reaction,
-            boolean forcedMapping,
-            boolean generate2D,
-            boolean generate3D,
-            IStandardizer standardizer) throws CDKException, AssertionError, Exception {
+    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping, IStandardizer standardizer) throws CDKException, AssertionError, Exception {
         this.allSolutions = synchronizedList(new ArrayList<MappingSolution>());
         this.selectedMapping = null;
 
@@ -156,7 +144,7 @@ public class ReactionMechanismTool implements Serializable {
                         map.getChemObject(1).setFlag(MAPPED, true);
                     }
                 }
-                boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED, reaction, generate2D, generate3D);
+                boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED, reaction);
                 logger.info("is solution: " + USER_DEFINED + " selected: " + selected);
             } catch (Exception e) {
                 String ls = getProperty("line.separator");
@@ -192,7 +180,7 @@ public class ReactionMechanismTool implements Serializable {
 //                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
 //                                + "(" + algorithm + ") algorithm." + newline);
                     }
-                    selected = isMappingSolutionAcceptable(solutions.get(algorithm), algorithm, reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
+                    selected = isMappingSolutionAcceptable(solutions.get(algorithm), algorithm, reactor.getReactionWithAtomAtomMapping());
                     logger.info("is solution: " + algorithm + " selected: " + selected);
                 }
                 gc();
@@ -204,8 +192,7 @@ public class ReactionMechanismTool implements Serializable {
         }
     }
 
-    private boolean isBalanced(
-            IReaction r) {
+    private boolean isBalanced(IReaction r) {
 
         Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
         Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
@@ -282,14 +269,14 @@ public class ReactionMechanismTool implements Serializable {
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
 
-    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor, IMappingAlgorithm ma, IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor, IMappingAlgorithm ma, IReaction reaction) throws Exception {
 
         boolean chosen = false;
         try {
             BondChangeCalculator bcc;
             int fragmentDeltaChanges;
             if (reactor == null && ma.equals(USER_DEFINED)) {
-                bcc = new BondChangeCalculator(reaction, generate2D, generate3D);
+                bcc = new BondChangeCalculator(reaction);
                 fragmentDeltaChanges = 0;
                 int bondChange = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 bondChange += getTotalBondChange(bcc.getOrderChangesWFingerprint());
@@ -321,7 +308,7 @@ public class ReactionMechanismTool implements Serializable {
                 if (reactor == null) {
                     throw new CDKException("Reactor is NULL");
                 }
-                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
+                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping());
                 fragmentDeltaChanges = reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
@@ -578,9 +565,9 @@ public class ReactionMechanismTool implements Serializable {
         double total = 0;
         for (IFeature key : fingerprint.getFeatures()) {
             if (key.getPattern().contains("C-C")
-                || key.getPattern().contains("C=C")
-                || key.getPattern().contains("C#C")
-                || key.getPattern().contains("C%C")
+                    || key.getPattern().contains("C=C")
+                    || key.getPattern().contains("C#C")
+                    || key.getPattern().contains("C%C")
                     || key.getPattern().contains("C@C")) {
                 double val = key.getWeight();
                 if (val > 0.) {//&& !key.contains("H")

@@ -25,7 +25,6 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import static java.util.Collections.sort;
 import static java.util.Collections.synchronizedMap;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.Fingerprinter;
@@ -61,6 +59,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWit
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.fixDativeBonds;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -447,14 +447,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @throws java.io.IOException
      * @return
      */
-    private boolean isValuePresent(BitSet value) throws IOException {
+    private boolean isValuePresent(BitSet value) throws IOException, Exception {
         for (BitSet bitset : fingerprintMap.values()) {
-            try {
-                if (getTanimotoSimilarity(value, bitset) == 1.0) {
-                    return true;
-                }
-            } catch (Exception ex) {
-                getLogger(CDKReactionBuilder.class.getName()).log(SEVERE, null, ex);
+            if (getTanimotoSimilarity(value, bitset) == 1.0) {
+                return true;
             }
         }
         return false;
@@ -466,21 +462,14 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @return
      * @throws java.io.IOException
      */
-    private String getMoleculeID(BitSet bitset) throws IOException {
-        String Key = null;
+    private String getMoleculeID(BitSet bitset) throws IOException, Exception {
         for (Map.Entry<String, BitSet> map : fingerprintMap.entrySet()) {
-            String key = map.getKey();
-            try {
-                if (getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
-                    Key = key;
-                    break;
-                }
-            } catch (Exception ex) {
-                getLogger(CDKReactionBuilder.class.getName()).log(SEVERE, null, ex);
+            if (getTanimotoSimilarity(map.getValue(), bitset) == 1.0) {
+                return map.getKey();
             }
         }
         //System.err.println("Error: Unable to Find AtomContainer ID!!!");
-        return Key;
+        return null;
     }
 
     /**
@@ -505,16 +494,16 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
     /**
      *
-     * @param queryMol_org
-     * @param targetMol_org
+     * @param originalQMol
+     * @param originalTMol
      * @param removeHydrogen
      * @return
      * @throws Exception
      */
-    private boolean isIdentical(IAtomContainer queryMol_org, IAtomContainer targetMol_org, boolean removeHydrogen) throws Exception {
+    private boolean isIdentical(IAtomContainer originalQMol, IAtomContainer originalTMol, boolean removeHydrogen) throws Exception {
 
-        IAtomContainer queryMol = queryMol_org.clone();
-        IAtomContainer targetMol = targetMol_org.clone();
+        IAtomContainer queryMol = originalQMol.clone();
+        IAtomContainer targetMol = originalTMol.clone();
 
         if (removeHydrogen) {
             queryMol = removeHydrogens(queryMol);

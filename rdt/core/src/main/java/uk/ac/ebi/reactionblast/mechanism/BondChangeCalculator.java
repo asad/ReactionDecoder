@@ -115,11 +115,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      *
      * @param reaction
-     * @param generate2D
-     * @param generate3D
      * @throws Exception
      */
-    public BondChangeCalculator(IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+    public BondChangeCalculator(IReaction reaction) throws Exception {
         if (DEBUG) {
             System.out.println("Bond Change Calculator START");
         }
@@ -133,7 +131,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         if (DEBUG) {
             System.out.println("Bond Change Annotator START");
         }
-        this.bondChangeAnnotator = new BondChangeAnnotator(this.mappedReaction, true, generate2D, generate3D);
+        this.bondChangeAnnotator = new BondChangeAnnotator(this.mappedReaction, true);
         if (DEBUG) {
             System.out.println("Bond Change Annotator END");
         }

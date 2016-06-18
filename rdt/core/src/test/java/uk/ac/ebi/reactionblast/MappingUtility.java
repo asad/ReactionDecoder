@@ -123,9 +123,7 @@ public class MappingUtility extends TestUtility {
      */
     public IReaction map(IReaction reaction) {
         try {
-            ReactionMechanismTool rmt = new ReactionMechanismTool(
-                    //                    reaction, true, true, true, new CDKReactionStandardizer());
-                    reaction, true, false, false, new StandardizeReaction());
+            ReactionMechanismTool rmt = new ReactionMechanismTool(reaction, true, new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,7 +209,7 @@ public class MappingUtility extends TestUtility {
         /*
          RMT for the reaction mapping
          */
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false, new StandardizeReaction());
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();
 
         out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
@@ -255,7 +253,7 @@ public class MappingUtility extends TestUtility {
     public BondChangeCalculator testRCReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();
         //new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
 
@@ -312,7 +310,7 @@ public class MappingUtility extends TestUtility {
      */
     public BondChangeCalculator map(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, false);
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();
         //new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
         return s.getBondChangeCalculator();

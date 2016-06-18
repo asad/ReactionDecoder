@@ -65,8 +65,6 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
     final List<AtomStereoChangeInformation> stereoChangeList;
     final List<AtomStereoChangeInformation> conformationChangeList;
     final List<StereoChange> stereogenicCenters;
-    protected final boolean generate3DCoordinates;
-    protected final boolean generate2DCoordinates;
     protected final AtomAtomMappingContainer mapping;
     protected final BEMatrix reactantBE;
     protected final BEMatrix productBE;
@@ -84,9 +82,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
      * @throws Exception
      */
     DUModel(IReaction reaction,
-            boolean withoutHydrogen,
-            boolean generate2D,
-            boolean generate3D) throws CDKException, Exception {
+            boolean withoutHydrogen) throws CDKException, Exception {
 
         this.reactantSet = reaction.getReactants();
         this.productSet = reaction.getProducts();
@@ -96,8 +92,6 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         this.conformationChangeList = synchronizedList(new ArrayList<AtomStereoChangeInformation>());
         this.mappingMap = synchronizedMap(new HashMap<IAtom, IAtom>());
 
-        this.generate3DCoordinates = generate3D;
-        this.generate2DCoordinates = generate2D;
         this.queryRingSet = new RingSet();
         this.targetRingSet = new RingSet();
         /*

@@ -72,15 +72,10 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @param reaction with Atom-Atom Mapping produced by Reactor class
      * @param withoutHydrogen
-     * @param generate2D
-     * @param generate3D
      * @throws Exception
      */
-    protected BondChangeAnnotator(IReaction reaction,
-            boolean withoutHydrogen,
-            boolean generate2D,
-            boolean generate3D) throws Exception {
-        super(reaction, withoutHydrogen, generate2D, generate3D);
+    protected BondChangeAnnotator(IReaction reaction, boolean withoutHydrogen) throws Exception {
+        super(reaction, withoutHydrogen);
         if (DEBUG) {
             System.out.println("MARK Bond Change START");
         }
