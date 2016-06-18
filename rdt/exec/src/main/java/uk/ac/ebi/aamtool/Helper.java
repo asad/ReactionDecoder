@@ -33,7 +33,6 @@ import org.apache.commons.cli.Options;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
-import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**

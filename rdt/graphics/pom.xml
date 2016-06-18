@@ -12,6 +12,12 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>uk.ac.ebi.rdt</groupId>
+            <artifactId>rdt-stereo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- http://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
             <groupId>commons-cli</groupId>
@@ -33,11 +39,6 @@
             <groupId>uk.ac.ebi.smsd</groupId>
             <artifactId>smsd-core </artifactId>
             <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.rdt</groupId>
-            <artifactId>rdt-stereo</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

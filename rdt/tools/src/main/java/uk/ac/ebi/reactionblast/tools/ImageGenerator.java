@@ -230,14 +230,14 @@ public class ImageGenerator {
             for (RootSystem rootSystem : rootSystemList) {
                 IAtomContainer rootContainer
                         = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom root : rootSystem.getRoots()) {
+                rootSystem.getRoots().stream().forEach((root) -> {
                     rootContainer.addAtom(root);
-                }
+                });
                 IAtomContainer neighbourContainer
                         = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom leaf : rootSystem.getLeaves()) {
+                rootSystem.getLeaves().stream().forEach((leaf) -> {
                     neighbourContainer.addAtom(leaf);
-                }
+                });
                 Highlighter highlighter = new SimpleHighlighter(params);
                 highlighter.addHighlights(rootContainer, rootColor);
                 highlighter.addHighlights(neighbourContainer, neighbourColor);
@@ -606,14 +606,14 @@ public class ImageGenerator {
         List<IAtom> n1 = new ArrayList<>(query.getAtomCount());
         List<IAtom> n2 = new ArrayList<>(target.getAtomCount());
 
-        for (Map.Entry<Integer, Integer> aMaps : maxac.entrySet()) {
+        maxac.entrySet().stream().forEach((aMaps) -> {
             IAtom qAtom = cloneOfQuery.getAtom(aMaps.getKey());
             IAtom tAtom = cloneOfTarget.getAtom(aMaps.getValue());
             qAtom.setID(aMaps.getKey().toString());
             tAtom.setID(aMaps.getValue().toString());
             n1.add(qAtom);
             n2.add(tAtom);
-        }
+        });
 
         for (IAtom atom : cloneOfQuery.atoms()) {
             if (!n1.contains(atom)) {
@@ -655,14 +655,14 @@ public class ImageGenerator {
         List<IAtom> n1 = new ArrayList<>(query.getAtomCount());
         List<IAtom> n2 = new ArrayList<>(target.getAtomCount());
 
-        for (Map.Entry<IAtom, IAtom> aMaps : maxac.getMappingsByAtoms().entrySet()) {
+        maxac.getMappingsByAtoms().entrySet().stream().forEach((aMaps) -> {
             IAtom qAtom = aMaps.getKey();
             IAtom tAtom = aMaps.getValue();
             qAtom.setID(valueOf(maxac.getQueryIndex(qAtom)));
             tAtom.setID(valueOf(maxac.getQueryIndex(tAtom)));
             n1.add(qAtom);
             n2.add(tAtom);
-        }
+        });
 
         for (IAtom atom : cloneOfQuery.atoms()) {
             if (!n1.contains(atom)) {
@@ -694,12 +694,18 @@ public class ImageGenerator {
         IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             moleculeDrawer.addHighlights(pair.querySubgraph);
+            return pair;
+        }).map((pair) -> {
             moleculeDrawer.addHighlights(pair.targetSubgraph);
+            return pair;
+        }).map((pair) -> {
             leftHandMoleculeSet.addAtomContainer(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             rightHandMoleculeSet.addAtomContainer(pair.target);
-        }
+        });
 
         // calculate the total dimensions of the final image
         int width = SUB_IMAGE_WIDTH * 2;
@@ -710,10 +716,12 @@ public class ImageGenerator {
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             mols.add(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             mols.add(pair.target);
-        }
+        });
         ZoomToFitGridLayout layoutDrawer = new ZoomToFitGridLayout(moleculeDrawer, queryTargetPairs.size(), 2);
         layoutDrawer.layout(mols, new Dimension(SUB_IMAGE_WIDTH, SUB_IMAGE_HEIGHT), g);
 
@@ -745,12 +753,18 @@ public class ImageGenerator {
         IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             moleculeDrawer.addHighlights(pair.querySubgraph);
+            return pair;
+        }).map((pair) -> {
             moleculeDrawer.addHighlights(pair.targetSubgraph);
+            return pair;
+        }).map((pair) -> {
             leftHandMoleculeSet.addAtomContainer(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             rightHandMoleculeSet.addAtomContainer(pair.target);
-        }
+        });
 
         // calculate the total dimensions of the final image
         int width = SUB_IMAGE_WIDTH * 2;
@@ -761,10 +775,12 @@ public class ImageGenerator {
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             mols.add(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             mols.add(pair.target);
-        }
+        });
         ZoomToFitGridLayout layoutDrawer = new ZoomToFitGridLayout(moleculeDrawer, queryTargetPairs.size(), 2);
         layoutDrawer.layout(mols, new Dimension(SUB_IMAGE_WIDTH, SUB_IMAGE_HEIGHT), g);
 
@@ -1096,10 +1112,10 @@ public class ImageGenerator {
 //            System.out.println("root " + atom.getID() + " " + atomContainer.getID());
 
             IAtomContainer neighbourContainer = reaction.getBuilder().newInstance(IAtomContainer.class);
-            for (IAtom neighbour : atomContainer.getConnectedAtomsList(atom)) {
+            atomContainer.getConnectedAtomsList(atom).stream().forEach((neighbour) -> {
                 neighbourContainer.addAtom(neighbour);
 //                System.out.println("neighbour " + neighbour.getID());
-            }
+            });
             Highlighter highlighter = new OutlineHighlighter(moleculeDrawer.getParams());
             highlighter.addHighlights(rootContainer, rootColor);
             highlighter.addHighlights(neighbourContainer, neighbourColor);
@@ -1109,22 +1125,20 @@ public class ImageGenerator {
 
     private Map<IAtom, IAtomContainer> getAtomToAtomContainerMap(IReaction reaction) {
         Map<IAtom, IAtomContainer> map = new HashMap<>();
-        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
+        getAllAtomContainers(reaction).stream().forEach((atomContainer) -> {
             for (IAtom atom : atomContainer.atoms()) {
                 map.put(atom, atomContainer);
             }
-        }
+        });
         return map;
     }
 
     private void filterByBonds(List<IAtom> atomList, List<IAtom> filteredList, List<IBond> bonds) {
-        for (IAtom atom : atomList) {
-            for (IBond bond : bonds) {
-                if (bond.contains(atom)) {
-                    filteredList.add(atom);
-                }
-            }
-        }
+        atomList.stream().forEach((IAtom atom) -> {
+            bonds.stream().filter((bond) -> (bond.contains(atom))).forEach((_item) -> {
+                filteredList.add(atom);
+            });
+        });
     }
 
     private void filterByAtoms(List<IAtom> atomList, List<IAtom> filteredList, Set<IAtom> validAtoms) {
