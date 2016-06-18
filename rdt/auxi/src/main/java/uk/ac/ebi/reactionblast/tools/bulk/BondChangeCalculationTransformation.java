@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
@@ -50,15 +50,14 @@ public class BondChangeCalculationTransformation implements ITransformation<IRea
      */
     @Override
     public IReaction transform(IReaction reaction) {
+
         try {
-            boolean generate2D = false;
-            boolean generate3D = false;
-            BondChangeCalculator bcc =
-                    new BondChangeCalculator(reaction, generate2D, generate3D);
+            BondChangeCalculator bcc
+                    = new BondChangeCalculator(reaction);
             return bcc.getReactionWithCompressUnChangedHydrogens();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } catch (Exception ex) {
+            Logger.getLogger(BondChangeCalculationTransformation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 }

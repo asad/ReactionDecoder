@@ -127,7 +127,7 @@ public class Annotator extends Helper {
         } else {
             cdkReaction.setFlag(MAPPED, false);
         }
-        rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, new StandardizeReaction());
+        rmt = new ReactionMechanismTool(cdkReaction, reMap, new StandardizeReaction());
         return rmt;
     }
 
