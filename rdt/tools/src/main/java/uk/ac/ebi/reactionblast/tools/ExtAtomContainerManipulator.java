@@ -27,6 +27,7 @@ import java.io.Serializable;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import static java.util.Arrays.copyOf;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -228,7 +229,17 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         /*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
             ac.getAtom(i).setID(container.getAtom(i).getID());
+            if (ac.getAtom(i).getProperties() == null) {
+                ac.getAtom(i).setProperties(new HashMap<>());
+            }
         }
+
+        for (int i = 0; i < ac.getBondCount(); i++) {
+            if (ac.getBond(i).getProperties() == null) {
+                ac.getBond(i).setProperties(new HashMap<>());
+            }
+        }
+
         ac.setProperties(container.getProperties());
         ac.setFlags(container.getFlags());
         ac.setID(container.getID());
@@ -249,6 +260,9 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         /*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
             ac.getAtom(i).setID(container.getAtom(i).getID());
+            if (ac.getAtom(i).getProperties() == null) {
+                ac.setProperties(new HashMap<>());
+            }
         }
         ac.setProperties(container.getProperties());
         ac.setFlags(container.getFlags());
