@@ -1213,9 +1213,9 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
             }
         }
 
-        for (IAtom atom : chiralityMap.keySet()) {
+        chiralityMap.keySet().stream().forEach((atom) -> {
             atom.setProperty("Stereo", chiralityMap.get(atom));
-        }
+        });
         return chiralityMap;
     }
 
@@ -1276,24 +1276,21 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                 targetAtoms.add(a);
             }
         }
-        for (IAtom atomQ : queryAtoms) {
-            for (IAtom atomT : targetAtoms) {
-                if (isAtomMappingMatch(atomQ, atomT) && !atomQ.getSymbol().equalsIgnoreCase("H")) {
-                    IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
-                    IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
-
+        queryAtoms.stream().forEach((IAtom atomQ) -> {
+            targetAtoms.stream().filter((atomT) -> (isAtomMappingMatch(atomQ, atomT) && !atomQ.getSymbol().equalsIgnoreCase("H"))).forEach((atomT) -> {
+                IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
+                IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
 //                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
 //                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
 //
 //                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
 //                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
-                    if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                        StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
-                        stereoChangeList.add(sc);
-                    }
+                if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
+                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    stereoChangeList.add(sc);
                 }
-            }
-        }
+            });
+        });
         return stereoChangeList;
     }
 
