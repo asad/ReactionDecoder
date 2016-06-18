@@ -20,12 +20,9 @@ package uk.ac.ebi.reactionblast.mapping.container;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.ArrayList;
-import static java.util.Arrays.sort;
 import java.util.BitSet;
 import java.util.Collection;
 import static java.util.Collections.synchronizedMap;
@@ -57,18 +54,21 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.fixDativeBonds;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
-import static java.util.Collections.sort;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
-import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Arrays.sort;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -633,7 +633,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         return mcs.isSubgraph() && !mcs.isStereoMisMatch();
     }
 
-    public static IReaction preprocessCleanedReaction(IReaction referenceReaction) throws CDKException, IOException, Exception {
+    public static IReaction preprocessStandardizedReaction(IReaction referenceReaction) throws CDKException, IOException, Exception {
         IReaction reactionWithSTOICHIOMETRY = referenceReaction.getBuilder().newInstance(IReaction.class);
         try {
             for (int i = 0; i < referenceReaction.getReactantCount(); i++) {

@@ -52,8 +52,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.System.out;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,11 +81,12 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWit
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
+import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
-import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
+import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 
 /**
  *
@@ -98,10 +97,6 @@ public class Reactor extends AbstractReactor implements Serializable {
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 197816786981017L;
     private static final Logger LOG = getLogger(Reactor.class.getName());
-    private final Map<Integer, Integer> inputRankLabelledAtomsReactant;
-    private final Map<Integer, Integer> inputRankLabelledAtomsProduct;
-    private final Map<Integer, IAtomContainer> educts;
-    private final Map<Integer, IAtomContainer> products;
     private final List<IBond> rBonds;
     private final List<IBond> pBonds;
     private final boolean partialMapping;
@@ -134,13 +129,8 @@ public class Reactor extends AbstractReactor implements Serializable {
         this.reactionWithUniqueSTOICHIOMETRY = reaction;
         this.balanceFlag = true;
 
-        this.inputRankLabelledAtomsReactant = synchronizedMap(new HashMap<Integer, Integer>());
-        this.inputRankLabelledAtomsProduct = synchronizedMap(new HashMap<Integer, Integer>());
         this.rBonds = synchronizedList(new ArrayList<IBond>());
         this.pBonds = synchronizedList(new ArrayList<IBond>());
-
-        this.educts = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
-        this.products = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
@@ -196,12 +186,9 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("EAtom: " + k + " " + atom.getSymbol() + " Rank Atom: " + atom.getProperty("OLD_RANK") + " " + " Id: " + atom.getID());
                 if (atom.getProperty("OLD_RANK") != null) {
                     atom.setProperty("NEW_RANK", new_atom_rank_index_reactant);
-                    getInputRankLabelledAtomsReactant().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant));
                     new_atom_rank_index_reactant++;
                 }
             }
-
-            educts.put(i, container);
         }
 
 //        System.out.println("+++++++++++++++++");
@@ -215,12 +202,9 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("PAtom: " + k + " " + atom.getSymbol() + " Id: " + atom.getID());
                 if (atom.getProperty("OLD_RANK") != null) {
                     atom.setProperty("NEW_RANK", new_atom_rank_index_product);
-                    getInputRankLabelledAtomsProduct().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product));
                     new_atom_rank_index_product++;
                 }
             }
-
-            products.put(j, container);
         }
 
     }
@@ -1050,20 +1034,45 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     /**
-     * Old Atom Rank in the reactant mapped to new Rank
      *
-     * @return the inputRankLabelledAtomsReactant
+     * Maps old atom index to new reported index in reactants
+     *
+     * @return Atom rank index between old and new
      */
-    public Map<Integer, Integer> getInputRankLabelledAtomsReactant() {
-        return inputRankLabelledAtomsReactant;
+    public String getInputRankLabelledAtomsReactant() {
+        IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(reactionWithUniqueSTOICHIOMETRY);
+        StringBuilder atomIndex = new StringBuilder("");
+        for (IAtomContainer ac : allReactants.atomContainers()) {
+            atomIndex.append("{\"").append(ac.getID()).append(":\"");
+            for (IAtom a : ac.atoms()) {
+                if (ac.getProperty("OLD_RANK") != null) {
+                    atomIndex.append((String) ac.getProperty("OLD_RANK"));
+                    atomIndex.append("(").append((String) ac.getProperty("NEW_RANK")).append("), ");
+                }
+            }
+            atomIndex.append("}" + ",");
+        }
+        return atomIndex.toString().trim();
     }
 
     /**
-     * Old Atom Rank in the product mapped to new Rank
+     * Maps old atom index to new reported index in products
      *
-     * @return the inputRankLabelledAtomsProduct
+     * @return Atom rank index between old and new
      */
-    public Map<Integer, Integer> getInputRankLabelledAtomsProduct() {
-        return inputRankLabelledAtomsProduct;
+    public String getInputRankLabelledAtomsProduct() {
+        IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllProducts(reactionWithUniqueSTOICHIOMETRY);
+        StringBuilder atomIndex = new StringBuilder("");
+        for (IAtomContainer ac : allReactants.atomContainers()) {
+            atomIndex.append("{\"").append(ac.getID()).append(":\"");
+            for (IAtom a : ac.atoms()) {
+                if (ac.getProperty("OLD_RANK") != null) {
+                    atomIndex.append((String) ac.getProperty("OLD_RANK"));
+                    atomIndex.append("(").append((String) ac.getProperty("NEW_RANK")).append("), ");
+                }
+            }
+            atomIndex.append("}" + ",");
+        }
+        return atomIndex.toString().trim();
     }
 }

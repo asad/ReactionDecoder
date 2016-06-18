@@ -45,12 +45,12 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIX;
 import java.util.logging.Level;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
-import static java.lang.String.valueOf;
 import static java.util.Collections.synchronizedMap;
+import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
+import static java.lang.String.valueOf;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.logging.Logger.getLogger;
-import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 
 /**
  *
@@ -104,13 +104,24 @@ public class CallableAtomMappingTool implements Serializable {
             IStandardizer standardizer,
             boolean removeHydrogen) throws Exception {
         solution = synchronizedMap(new EnumMap<IMappingAlgorithm, Reactor>(IMappingAlgorithm.class));
-        generateAtomAtomMapping(reaction, standardizer, removeHydrogen);
+
+        logger.info("\n|++++++++++++++++++++++++++++|");
+        logger.info(" Standardize Reaction");
+
+        IReaction cleanedReaction;
+        try {
+            cleanedReaction = standardizer.standardize(reaction);
+            cleanedReaction = CDKReactionBuilder.preprocessStandardizedReaction(cleanedReaction);
+        } catch (Exception e) {
+            logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+            logger.error(e);
+            return;
+        }
+        generateAtomAtomMapping(cleanedReaction, removeHydrogen);
     }
 
     private synchronized void generateAtomAtomMapping(
-            IReaction reaction,
-            IStandardizer standardizer,
-            boolean removeHydrogen) {
+            IReaction cleanedReaction, boolean removeHydrogen) {
         ExecutorService executor = null;
         if (DEBUG) {
             executor = newSingleThreadExecutor();
@@ -120,19 +131,6 @@ public class CallableAtomMappingTool implements Serializable {
         int jobCounter = 0;
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
-
-            logger.info("\n|++++++++++++++++++++++++++++|");
-            logger.info(" Standaerdize this Reaction");
-
-            IReaction cleanedReaction;
-            try {
-                cleanedReaction = standardizer.standardize(reaction);
-                cleanedReaction = CDKReactionBuilder.preprocessCleanedReaction(cleanedReaction);
-            } catch (Exception e) {
-                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                logger.error(e);
-                return;
-            }
 
             if (DEBUG) {
                 out.println("\nSTEP 2: Calling Mapping Models\n");

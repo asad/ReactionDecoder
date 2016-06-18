@@ -29,6 +29,8 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
 import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 
 /**
  *
