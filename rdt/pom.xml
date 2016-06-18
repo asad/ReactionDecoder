@@ -10,11 +10,11 @@
     <version>2.0.0-SNAPSHOT</version>    
     <modules>
         <module>stereo</module>
+        <module>graphics</module>
+        <module>tools</module>
         <module>core</module>
         <module>exec</module>
-        <module>graphics</module>
         <module>auxi</module>
-        <module>tools</module>
     </modules>
     
     <scm>
