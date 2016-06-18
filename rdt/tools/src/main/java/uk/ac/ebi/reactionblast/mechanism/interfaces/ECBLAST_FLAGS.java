@@ -26,12 +26,13 @@ package uk.ac.ebi.reactionblast.mechanism.interfaces;
 public enum ECBLAST_FLAGS {
 
     /**
-     * BOND_CHANGE_INFORMATION
+     * Bond Change (Bond Cleaved/Formed or Oder Change)
      */
-    BOND_CHANGE_INFORMATION(0, "Mark Bond Changes"), /**
-     * MAX Model
+    BOND_CHANGE_INFORMATION(0, "Mark Bond Changes"),
+    /**
+     * Stereo Change
      */
-    ATOM_STEREO_CHANGE_INFORMATION(1, "Mark Stereo Changes");
+    ATOM_STEREO_CHANGE_INFORMATION(1, "Mark Stereo (R/S) or (E/Z) Changes");
     private final int type;
     private final String description;
 

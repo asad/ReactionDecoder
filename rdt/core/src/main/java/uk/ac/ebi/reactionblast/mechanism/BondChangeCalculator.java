@@ -79,6 +79,12 @@ import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getRelevantAtomContainer;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getRelevantAtomContainer;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getRelevantAtomContainer;
+import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getRelevantAtomContainer;
 
 /**
  * This class marks the bond changes

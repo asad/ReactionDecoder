@@ -69,6 +69,9 @@ import java.net.URL;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
+import static java.lang.String.valueOf;
+import static java.util.logging.Logger.getLogger;
+import static javax.imageio.ImageIO.write;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

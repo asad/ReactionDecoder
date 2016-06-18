@@ -57,6 +57,8 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 import static java.lang.Math.abs;
 import static java.util.logging.Logger.getLogger;
+import static java.lang.Math.abs;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

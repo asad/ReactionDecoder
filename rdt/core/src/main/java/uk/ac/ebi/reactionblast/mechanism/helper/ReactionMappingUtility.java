@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import static java.util.logging.Level.SEVERE;
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
-import static org.openscience.cdk.CDKConstants.ISINRING;
 
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -64,12 +61,31 @@ import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import static java.util.logging.Level.SEVERE;
+import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import static org.openscience.cdk.CDKConstants.ISINRING;
+import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
+import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.System.err;
+import static java.lang.System.out;
 import static java.util.Arrays.sort;
 import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import uk.ac.ebi.reactionblast.mechanism.StereoChange;
+import uk.ac.ebi.reactionblast.mechanism.StereogenicCenterCalculator;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
+import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
+import static uk.ac.ebi.reactionblast.stereo.ebi.StereoCenteralityTool.getChirality2D;
 
 /**
  *
@@ -670,8 +686,27 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         Set<IBond> productsbonds = getBonds(allProducts);
 
         Set<IBond> bondChange = detectBondsCleavedAndFormed(reactantsbonds, productsbonds, mappings);
+        IRingSet ringsR = getRings(allReactants);
+        IRingSet ringsP = getRings(allProducts);
+        Set<IBond> detectBondOrderChanges = detectBondOrderChanges(reactantsbonds, productsbonds, mappings, ringsR, ringsP);
+        bondChange.addAll(detectBondOrderChanges);
 
         return bondChange;
+    }
+
+    protected static IRingSet getRings(IAtomContainerSet containerSet) {
+        IRingSet rings = new org.openscience.cdk.RingSet();
+        for (IAtomContainer container : containerSet.atomContainers()) {
+            try {
+                /*
+                 * set Flag(CDKConstants.ISINRING)
+                 */
+                initializeMolecule(container);
+            } catch (CDKException ex) {
+                getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
+            }
+        }
+        return rings;
     }
 
     protected static Map<IAtom, IAtom> getMappings(IReaction mappedReaction) {
@@ -733,6 +768,14 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         return bonds;
     }
 
+    /**
+     * Reports bond formed or cleaved
+     *
+     * @param reactantsbonds
+     * @param productsbonds
+     * @param mappings
+     * @return
+     */
     protected static Set<IBond> detectBondsCleavedAndFormed(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings) {
         Set<IBond> bondChange = new LinkedHashSet<>();
 
@@ -748,15 +791,21 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                 if (bondBroken) {
                     rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
                     rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                    rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                     bondChange.add(rb);
                 }
             } else if (mappings.containsKey(rb.getAtom(0)) && !mappings.containsKey(rb.getAtom(1))) {
                 rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
                 rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                 bondChange.add(rb);
             } else if (!mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
                 rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
                 rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                 bondChange.add(rb);
             }
         }
@@ -773,19 +822,243 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                 if (bondBroken) {
                     pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
                     pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                    pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                     bondChange.add(pb);
                 }
             } else if (mappings.containsKey(pb.getAtom(0)) && !mappings.containsKey(pb.getAtom(1))) {
                 pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
                 pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                 bondChange.add(pb);
             } else if (!mappings.containsKey(pb.getAtom(0)) && mappings.containsKey(pb.getAtom(1))) {
                 pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
                 pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
                 bondChange.add(pb);
             }
         }
 
         return bondChange;
     }
+
+    /**
+     * Reports bond order changes BOND_ORDER_REDUCED or BOND_ORDER_GAIN
+     * Look for BOND_CHANGE_INFORMATION Flag for 
+     * BOND_ORDER_REDUCED or BOND_ORDER_GAIN
+     * @param reactantsbonds
+     * @param productsbonds
+     * @param mappings
+     * @param queryRingSet
+     * @param targetRingSet
+     * @return
+     */
+    protected static Set<IBond> detectBondOrderChanges(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings, IRingSet queryRingSet, IRingSet targetRingSet) {
+        Set<IBond> bondChange = new LinkedHashSet<>();
+
+        for (IBond rb : reactantsbonds) {
+            if (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
+                for (IBond pb : productsbonds) {
+                    if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
+                        int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
+                        if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()) && kekuleEffect == 0)) {
+                            if (rb.getOrder().numeric() > pb.getOrder().numeric()) {
+                                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                            } else if (rb.getOrder().numeric() < pb.getOrder().numeric()) {
+                                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            }
+
+                            rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                            rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
+
+                            if (pb.getOrder().numeric() > rb.getOrder().numeric()) {
+                                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                            } else if (pb.getOrder().numeric() < rb.getOrder().numeric()) {
+                                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            }
+
+                            pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                            pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
+
+                            /*
+                             * Store on Left to right changes else it will duplicate
+                             */
+                            bondChange.add(rb);
+                        }
+                    }
+                }
+            }
+        }
+        return bondChange;
+    }
+
+    /**
+     * Reports Stereo changes (R/S) or (E/Z) Look for
+     * BOND_CHANGE_INFORMATION flags for BOND_STEREO Changes 
+     *
+     * @param reaction
+     * @return
+     */
+    protected static Set<IAtom> detectStereoChanges(IReaction reaction) {
+        /*
+         * Mining Stereo Atom Changes E/Z or R/S only
+         */
+        Set<IAtom> atomChanges = new LinkedHashSet<>();
+
+        System.out.println("Marking E/Z or R/S");
+
+        /*
+         * Stereo mapping
+         */
+        Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
+        try {
+            chiralityCDK2D = getChirality2D(reaction);
+        } catch (CDKException | CloneNotSupportedException ex) {
+            err.println("WARNING: 2D CDK based stereo perception failed");
+        }
+        /*
+         * Generate stereo information
+         */
+        List<StereoChange> stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
+
+        for (StereoChange sc : stereogenicCenters) {
+            IAtom atomE = sc.getReactantAtom();
+            IAtom atomP = sc.getProductAtom();
+
+            IStereoAndConformation rsb = sc.getReactantAtomStereo();
+            IStereoAndConformation psb = sc.getProductAtomStereo();
+
+            if (atomE != null && atomP != null) {
+                if (atomE.getSymbol().equals("P") || atomP.getSymbol().equals("P")) {
+                    err.println("\nWARNING: The stereo change " + atomE.getSymbol()
+                            + " not supported");
+                    continue;
+                }
+                atomE.setFlag(REACTIVE_CENTER, true);
+                atomP.setFlag(REACTIVE_CENTER, true);
+
+                if ((sc.getReactantAtomStereo().equals(E)
+                        || sc.getProductAtomStereo().equals(Z))
+                        || (sc.getReactantAtomStereo().equals(Z)
+                        || sc.getProductAtomStereo().equals(E))) {
+                    atomE.setProperty(ATOM_STEREO_CHANGE_INFORMATION, rsb);
+                    atomP.setProperty(ATOM_STEREO_CHANGE_INFORMATION, psb);
+                    
+                    atomE.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomP.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+
+                } else if ((sc.getReactantAtomStereo().equals(R)
+                        || sc.getProductAtomStereo().equals(S))
+                        || (sc.getReactantAtomStereo().equals(S)
+                        || sc.getProductAtomStereo().equals(R))) {
+                    atomE.setProperty(ATOM_STEREO_CHANGE_INFORMATION, rsb);
+                    atomP.setProperty(ATOM_STEREO_CHANGE_INFORMATION, psb);
+                    
+                    atomE.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomP.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                }
+
+                atomChanges.add(atomE);
+                atomChanges.add(atomP);
+            }
+        }
+        return atomChanges;
+
+    }
+
+    private static boolean isBondMappingMatch(IBond a, IBond b) {
+        if (a.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(0).getProperty(ATOM_ATOM_MAPPING))
+                && a.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(1).getProperty(ATOM_ATOM_MAPPING))) {
+            return true;
+        }
+
+        return a.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(0).getProperty(ATOM_ATOM_MAPPING))
+                && a.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(1).getProperty(ATOM_ATOM_MAPPING));
+    }
+
+    /**
+     * Return is the ring has undergone a KekuleChange (0=KekuleChange, -1 or
+     * 1=Bond Order Change)
+     *
+     * @param affectedBondReactants
+     * @param affectedBondProducts
+     * @param queryRingSet
+     * @param targetRingSet
+     * @return
+     */
+    public static int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts, IRingSet queryRingSet, IRingSet targetRingSet) {
+        if (affectedBondReactants != null && affectedBondProducts != null) {
+            if (affectedBondReactants.getFlag(ISINRING)
+                    == affectedBondProducts.getFlag(ISINRING)) {
+
+                if ((!affectedBondReactants.getFlag(ISAROMATIC)
+                        && affectedBondProducts.getFlag(ISAROMATIC))
+                        || (affectedBondReactants.getFlag(ISAROMATIC)
+                        && !affectedBondProducts.getFlag(ISAROMATIC))) {
+                    IRingSet smallestRingSetR = getSmallestRingSet(affectedBondReactants, queryRingSet);
+                    IRingSet smallestRingSetP = getSmallestRingSet(affectedBondProducts, targetRingSet);
+                    int countR = getNeighbourBondOrderCountFromRing(affectedBondReactants, smallestRingSetR);
+                    int countP = getNeighbourBondOrderCountFromRing(affectedBondProducts, smallestRingSetP);
+                    int sizeR = smallestRingSetR.getAtomContainerCount() > 0 ? smallestRingSetR.atomContainers().iterator().next().getBondCount() : 0;
+                    int sizeP = smallestRingSetP.getAtomContainerCount() > 0 ? smallestRingSetP.atomContainers().iterator().next().getBondCount() : 0;
+
+                    IAtom atomR1 = affectedBondReactants.getAtom(0);
+                    IAtom atomR2 = affectedBondReactants.getAtom(1);
+
+                    IAtom atomP1 = affectedBondProducts.getAtom(0);
+                    IAtom atomP2 = affectedBondProducts.getAtom(1);
+
+                    if (atomR1.getID().equals(atomP1.getID())
+                            && atomR2.getID().equals(atomP2.getID())) {
+                        if (atomR1.getHybridization() != null
+                                && atomR2.getHybridization() != null
+                                && atomP1.getHybridization() != null
+                                && atomP2.getHybridization() != null) {
+
+                            if (!atomR1.getHybridization().equals(atomP1.getHybridization())
+                                    && !atomR2.getHybridization().equals(atomP2.getHybridization())) {
+                                if (countR == countP && sizeR == sizeP) {
+                                    return 1;
+                                } else {
+                                    if (!affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
+                                        if (abs(countR - countP) <= 1 && sizeR == sizeP) {
+                                            return 1;
+                                        }
+                                    }
+                                    if (affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
+                                        if (abs(countR - countP) == 0 && sizeR == sizeP) {
+                                            return 0;
+                                        }
+                                    }
+                                }
+                            } else if (atomR1.getHybridization().equals(atomP1.getHybridization())
+                                    && atomR2.getHybridization().equals(atomP2.getHybridization())) {
+
+                                if (!affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
+                                    if (abs(countR - countP) <= 1
+                                            && sizeR == sizeP) {
+                                        return 0;
+                                    }
+                                }
+                                if (affectedBondReactants.getOrder().equals(affectedBondProducts.getOrder())) {
+                                    if (abs(countR - countP) > 1 && sizeR == sizeP) {
+                                        return 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
 }

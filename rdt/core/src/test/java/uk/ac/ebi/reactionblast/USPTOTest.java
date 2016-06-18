@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import static java.util.logging.Logger.getLogger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Test top 10 USPTO Reactions
