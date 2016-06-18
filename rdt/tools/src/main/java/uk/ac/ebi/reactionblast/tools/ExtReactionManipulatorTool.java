@@ -48,11 +48,11 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
      * @throws CloneNotSupportedException
      */
     public static synchronized IReaction deepClone(IReaction reaction) throws CloneNotSupportedException {
-        IReaction clone = new Reaction();
+        IReaction clone = reaction.getBuilder().newInstance(IReaction.class);
         // clone the reactants, products and agents
 
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-            IAtomContainer acClone = new AtomContainer(ac).clone();
+            IAtomContainer acClone = ExtAtomContainerManipulator.cloneWithIDs(ac);
             /*Set IDs as CDK clone doesn't*/
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 acClone.getAtom(i).setID(ac.getAtom(i).getID());
@@ -63,7 +63,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
         }
 
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            IAtomContainer acClone = new AtomContainer(ac).clone();
+            IAtomContainer acClone = ExtAtomContainerManipulator.cloneWithIDs(ac);
             /*Set IDs as CDK clone doesn't*/
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 acClone.getAtom(i).setID(ac.getAtom(i).getID());
@@ -74,12 +74,16 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
         }
 
         for (IAtomContainer ac : reaction.getAgents().atomContainers()) {
-            IAtomContainer acClone = new AtomContainer(ac).clone();
+            IAtomContainer acClone = ExtAtomContainerManipulator.cloneWithIDs(ac);
+            /*Set IDs as CDK clone doesn't*/
+            for (int i = 0; i < ac.getAtomCount(); i++) {
+                acClone.getAtom(i).setID(ac.getAtom(i).getID());
+            }
             acClone.setID(ac.getID());
             acClone.addProperties(ac.getProperties());
             clone.getAgents().addAtomContainer(acClone);
         }
-        
+
         // create a Map of corresponding atoms for molecules (key: original Atom, 
         // value: clone Atom)
         Map<IChemObject, IChemObject> atomatom = new HashMap<>();

@@ -41,7 +41,7 @@ import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
-import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
 /**
@@ -223,8 +223,8 @@ public class MappingUtility extends TestUtility {
         /*
          * Code for Depict Image generation
          */
-        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-//        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+//        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
 
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {

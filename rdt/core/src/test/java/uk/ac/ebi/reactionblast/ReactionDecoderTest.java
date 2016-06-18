@@ -18,7 +18,7 @@
  */
 package uk.ac.ebi.reactionblast;
 
-import static uk.ac.ebi.reactionblast.TestUtility.BRENDA_RXN_DIR;
+ import static uk.ac.ebi.reactionblast.TestUtility.BRENDA_RXN_DIR;
 import java.io.FileNotFoundException;
 import static java.lang.System.out;
 import java.util.logging.Logger;

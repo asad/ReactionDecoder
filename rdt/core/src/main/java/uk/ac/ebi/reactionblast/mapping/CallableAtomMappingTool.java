@@ -25,7 +25,6 @@ import java.io.Serializable;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
 import static java.lang.System.out;
-import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
 import java.util.Map;
@@ -44,10 +43,14 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIX;
+import java.util.logging.Level;
+import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import static java.lang.String.valueOf;
+import static java.util.Collections.synchronizedMap;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.logging.Logger.getLogger;
+import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 
 /**
  *
@@ -118,6 +121,23 @@ public class CallableAtomMappingTool implements Serializable {
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
 
+            logger.info("\n|++++++++++++++++++++++++++++|");
+            logger.info(" Standaerdize this Reaction");
+
+            IReaction cleanedReaction;
+            try {
+                cleanedReaction = standardizer.standardize(reaction);
+                cleanedReaction = CDKReactionBuilder.preprocessCleanedReaction(cleanedReaction);
+            } catch (Exception e) {
+                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+                logger.error(e);
+                return;
+            }
+
+            if (DEBUG) {
+                out.println("\nSTEP 2: Calling Mapping Models\n");
+            }
+
             /*
              * MAX Algorithm
              */
@@ -127,17 +147,8 @@ public class CallableAtomMappingTool implements Serializable {
                 out.println("\n-----------------------------------\n");
                 out.println("\nSTEP 1: Global Model Standardize Reactions\n");
             }
-            IReaction cleanedReaction1 = null;
-            try {
-                cleanedReaction1 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                logger.error(e);
-            }
-            if (DEBUG) {
-                out.println("\nSTEP 2: Calling Mapping Models\n");
-            }
-            MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction1, MAX, removeHydrogen);
+
+            MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", ExtReactionManipulatorTool.deepClone(cleanedReaction), MAX, removeHydrogen);
             cs.submit(maxThread);
             jobCounter++;
 
@@ -150,16 +161,11 @@ public class CallableAtomMappingTool implements Serializable {
                 out.println("\n-----------------------------------\n");
                 out.println("\nSTEP 1: Local Model Standardize Reactions\n");
             }
-            IReaction cleanedReaction2 = null;
-            try {
-                cleanedReaction2 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                logger.error(e);
-            }
-            MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", cleanedReaction2, MIN, removeHydrogen);
+
+            MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", ExtReactionManipulatorTool.deepClone(cleanedReaction), MIN, removeHydrogen);
             cs.submit(minThread);
             jobCounter++;
+
             /*
              * MIX Algorithm
              */
@@ -169,14 +175,8 @@ public class CallableAtomMappingTool implements Serializable {
                 out.println("\n-----------------------------------\n");
                 out.println("\nSTEP 1: Mixture Model Standardize Reactions\n");
             }
-            IReaction cleanedReaction3 = null;
-            try {
-                cleanedReaction3 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                logger.error(e);
-            }
-            MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIX", cleanedReaction3, MIX, removeHydrogen);
+
+            MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIX", ExtReactionManipulatorTool.deepClone(cleanedReaction), MIX, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
 
@@ -189,14 +189,8 @@ public class CallableAtomMappingTool implements Serializable {
                 out.println("\n-----------------------------------\n");
                 out.println("\nSTEP 1: Rings Model Standardize Reactions\n");
             }
-            IReaction cleanedReaction4 = null;
-            try {
-                cleanedReaction4 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                logger.error(e);
-            }
-            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
+
+            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", ExtReactionManipulatorTool.deepClone(cleanedReaction), RINGS, removeHydrogen);
             cs.submit(ringThread);
             jobCounter++;
 
@@ -218,6 +212,8 @@ public class CallableAtomMappingTool implements Serializable {
         } catch (InterruptedException | ExecutionException e) {
             logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             logger.error(e);
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(CallableAtomMappingTool.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             executor.shutdown();
         }
@@ -238,5 +234,4 @@ public class CallableAtomMappingTool implements Serializable {
     private void putSolution(IMappingAlgorithm choice, Reactor reactor) {
         this.solution.put(choice, reactor);
     }
-
 }

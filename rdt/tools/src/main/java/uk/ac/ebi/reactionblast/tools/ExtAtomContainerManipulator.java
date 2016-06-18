@@ -2,7 +2,7 @@ package uk.ac.ebi.reactionblast.tools;
 
 /**
  *
- * Copyright (C) 2006-2013 Syed Asad Rahman {asad@ebi.ac.uk}
+ * Copyright (C) 2006-2016 Syed Asad Rahman {asad@ebi.ac.uk}
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -225,6 +225,10 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     public static IAtomContainer cloneWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         setNullHCountToZero(container);
         IAtomContainer ac = new AtomContainer(container).clone();
+        /*Set IDs as CDK clone doesn't*/
+        for (int i = 0; i < ac.getAtomCount(); i++) {
+            ac.getAtom(i).setID(container.getAtom(i).getID());
+        }
         ac.setProperties(container.getProperties());
         ac.setFlags(container.getFlags());
         ac.setID(container.getID());
@@ -233,14 +237,19 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     }
 
     /**
-     * Returns deep copy of the molecule
+     * Returns deep copy of the molecule and atoms
      *
      * @param container
      * @return deep copy of the mol
      * @throws CloneNotSupportedException
      */
     public static IAtomContainer newInstanceWithIDs(IAtomContainer container) throws CloneNotSupportedException {
+        setNullHCountToZero(container);
         IAtomContainer ac = container.getBuilder().newInstance(IAtomContainer.class, container);
+        /*Set IDs as CDK clone doesn't*/
+        for (int i = 0; i < ac.getAtomCount(); i++) {
+            ac.getAtom(i).setID(container.getAtom(i).getID());
+        }
         ac.setProperties(container.getProperties());
         ac.setFlags(container.getFlags());
         ac.setID(container.getID());
