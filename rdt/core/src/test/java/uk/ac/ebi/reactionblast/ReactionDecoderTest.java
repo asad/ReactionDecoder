@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast;
 import static uk.ac.ebi.reactionblast.TestUtility.BRENDA_RXN_DIR;
 import java.io.FileNotFoundException;
 import static java.lang.System.out;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,19 +34,20 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IBond;
-import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import static uk.ac.ebi.reactionblast.TestUtility.BUG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.TestUtility.KEGG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.TestUtility.OTHER_RXN;
 import static uk.ac.ebi.reactionblast.TestUtility.RHEA_RXN_DIR;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
-import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
-import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
+import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.interfaces.IAtom;
+import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
+import static java.util.logging.Logger.getLogger;
+import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -83,55 +85,65 @@ public class ReactionDecoderTest extends MappingUtility {
 
         IPatternFingerprinter formedCleavedWFingerprintNew = new PatternFingerprinter();
         formedCleavedWFingerprintNew.setFingerprintID("TestNewReaction FC");
-        Set<IBond> bondChanges = ReactionMappingUtility.getBondChanges(mappedReaction);
-        
-        System.out.println("Changes NEW COUNT " + bondChanges.size());
-        
-        for (IBond bond : bondChanges) {
-            if (bond.getProperty(BOND_CHANGE_INFORMATION) == null
-                    || !bond.getProperty(BOND_CHANGE_INFORMATION).equals(ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER)) {
-                try {
-                    formedCleavedWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0));
-                } catch (CDKException ex) {
-                    Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        Map<IAtom, IAtom> mappings = ReactionMappingUtility.getMappings(mappedReaction);
+        Set<IBond> bondCleavedFormedChanges = ReactionMappingUtility.getBondCleavedFormedChanges(mappedReaction, mappings);
+
+        System.out.println("Changes NEW COUNT " + bondCleavedFormedChanges.size());
+
+        for (IBond bond : bondCleavedFormedChanges) {
+            try {
+                formedCleavedWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0));
+            } catch (CDKException ex) {
+                Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
         System.out.println("F/C " + formedCleavedWFingerprintNew.toString());
 
         IPatternFingerprinter orderWFingerprintNew = new PatternFingerprinter();
         orderWFingerprintNew.setFingerprintID("TestNewReaction FC");
-        for (IBond bond1 : bondChanges) {
-            if (bond1.getProperty(BOND_CHANGE_INFORMATION) != null
-                    && bond1.getProperty(BOND_CHANGE_INFORMATION).equals(ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER)) {
-                for (IBond bond2 : bondChanges) {
-                    if (bond2.getProperty(BOND_CHANGE_INFORMATION) != null
-                            && bond2.getProperty(BOND_CHANGE_INFORMATION).equals(ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER)) {
-                        try {
-                            if (ReactionMappingUtility.isBondMappingMatch(bond1, bond2)) {
-                                orderWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond1, bond2), 1.0));
-                            }
-                        } catch (CDKException ex) {
-                            Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
+
+        Map<IBond, IBond> bondOrderChanges = ReactionMappingUtility.getBondOrderChanges(mappedReaction, mappings);
+
+        for (Map.Entry<IBond, IBond> bond : bondOrderChanges.entrySet()) {
+            try {
+                orderWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond.getKey(), bond.getValue()), 1.0));
+            } catch (CDKException ex) {
+                Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
         System.out.println("OC " + orderWFingerprintNew.toString());
 
+        IPatternFingerprinter stereoWFingerprintNew = new PatternFingerprinter();
+        orderWFingerprintNew.setFingerprintID("TestNewReaction ST");
+
+        Set<IAtom> atomStereoChanges = ReactionMappingUtility.getAtomStereoChanges(mappedReaction, mappings);
+
+        for (IAtom atom : atomStereoChanges) {
+
+            stereoWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedAtomChangePattern(atom), 1.0));
+        }
+
+        System.out.println("ST " + stereoWFingerprintNew.toString());
+
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        System.out.println("OLD F/C " + formedCleavedWFingerprint);
-        System.out.println("OLD OC " + testReactions
+
+        System.out.println(
+                "OLD F/C " + formedCleavedWFingerprint);
+        System.out.println(
+                "OLD OC " + testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator().getOrderChangesWFingerprint());
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(
+                1, formedCleavedWFingerprint.getFeatureCount());
         String inputRankLabelledAtomsReactant = testReactions.getSelectedSolution().getReactor().getInputRankLabelledAtomsReactant();
-        assertEquals("{\"M00001\": O-3(1), C-2(2), C-4(3), C-5(4), C-1(5)} {\"M00002\": C-5(6), C-4(7), C-3(8), C-2(9), C-1(10)}", inputRankLabelledAtomsReactant);
+
+        assertEquals(
+                "{\"M00001\": O-3(1), C-2(2), C-4(3), C-5(4), C-1(5)} {\"M00002\": C-5(6), C-4(7), C-3(8), C-2(9), C-1(10)}", inputRankLabelledAtomsReactant);
     }
 
 

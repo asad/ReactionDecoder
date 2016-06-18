@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -31,6 +32,7 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.interfaces.IAtom;
 import static java.util.logging.Logger.getLogger;
 
 /**
@@ -80,12 +82,13 @@ public class USPTOTest extends MappingUtility {
                     String[] split = readLine.split("\\s+");
                     String reactionSMILES = split[0].trim();
                     String reactionID = split[split.length - 1].trim();
-                    System.out.println(reactionID+ ", Parsing Input Reaction SMILES " + reactionSMILES);
+                    System.out.println(reactionID + ", Parsing Input Reaction SMILES " + reactionSMILES);
                     try {
                         IReaction inputReaction = sp.parseReactionSmiles(reactionSMILES);
                         inputReaction.setID(reactionID);
                         IPatternFingerprinter formedCleavedWFingerprint = new PatternFingerprinter();
-                        Set<IBond> bondChanges = ReactionMappingUtility.getBondChanges(inputReaction);
+                        Map<IAtom, IAtom> mappings = ReactionMappingUtility.getMappings(inputReaction);
+                        Set<IBond> bondChanges = ReactionMappingUtility.getBondCleavedFormedChanges(inputReaction, mappings);
                         for (IBond bond : bondChanges) {
                             try {
                                 formedCleavedWFingerprint.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0));

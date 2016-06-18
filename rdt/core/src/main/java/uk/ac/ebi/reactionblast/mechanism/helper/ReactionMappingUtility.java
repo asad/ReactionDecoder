@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.lang.System.err;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
-import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
@@ -52,29 +50,20 @@ import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS;
-import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
-import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.lang.System.err;
-import static java.lang.System.out;
-import static java.util.Arrays.sort;
-import static java.util.Collections.sort;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import org.openscience.cdk.ringsearch.SSSRFinder;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.mechanism.StereoChange;
 import uk.ac.ebi.reactionblast.mechanism.StereogenicCenterCalculator;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO;
@@ -85,7 +74,33 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
+import uk.ac.ebi.centres.cdk.CDKPerceptor;
+import uk.ac.ebi.centres.descriptor.Planar;
+import uk.ac.ebi.centres.descriptor.Tetrahedral;
+import uk.ac.ebi.centres.descriptor.Trigonal;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Arrays.sort;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.EITHER;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
+import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 import static uk.ac.ebi.reactionblast.stereo.ebi.StereoCenteralityTool.getChirality2D;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.util.Arrays.sort;
+import static java.util.Collections.sort;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import static uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility.getChirality2D;
 
 /**
  *
@@ -676,11 +691,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         return fragmentsRC;
     }
 
-    protected static Set<IBond> getBondChanges(IReaction mappedReaction) {
-
-        Map<IAtom, IAtom> mappings = getMappings(mappedReaction);
-
-        System.out.println("mappings " + mappings.size());
+    protected static Set<IBond> getBondCleavedFormedChanges(IReaction mappedReaction, Map<IAtom, IAtom> mappings) {
 
         IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(mappedReaction);
         IAtomContainerSet allProducts = ExtReactionManipulatorTool.getAllProducts(mappedReaction);
@@ -689,17 +700,31 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
 
         Set<IBond> bondChange = detectBondsCleavedAndFormed(reactantsbonds, productsbonds, mappings);
 
-        System.out.println("bondChange FC " + bondChange.size());
-
-        IRingSet ringsR = getRings(allReactants);
-        IRingSet ringsP = getRings(allProducts);
-        Set<IBond> detectBondOrderChanges = detectBondOrderChanges(reactantsbonds, productsbonds, mappings, ringsR, ringsP);
-        bondChange.addAll(detectBondOrderChanges);
-
         return bondChange;
     }
 
-    protected static IRingSet getRings(IAtomContainerSet containerSet) {
+    protected static Map<IBond, IBond> getBondOrderChanges(IReaction mappedReaction, Map<IAtom, IAtom> mappings) {
+
+        IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(mappedReaction);
+        IAtomContainerSet allProducts = ExtReactionManipulatorTool.getAllProducts(mappedReaction);
+        Set<IBond> reactantsbonds = getBonds(allReactants);
+        Set<IBond> productsbonds = getBonds(allProducts);
+
+        IRingSet ringsR = getRings(allReactants);
+        IRingSet ringsP = getRings(allProducts);
+
+        Map<IBond, IBond> detectBondOrderChanges = detectBondOrderChanges(reactantsbonds, productsbonds, mappings, ringsR, ringsP);
+
+        return detectBondOrderChanges;
+    }
+
+    protected static Set<IAtom> getAtomStereoChanges(IReaction mappedReaction, Map<IAtom, IAtom> mappings) {
+
+        Set<IAtom> detectStereoChanges = detectStereoChanges(mappedReaction, mappings);
+        return detectStereoChanges;
+    }
+
+    private static IRingSet getRings(IAtomContainerSet containerSet) {
         IRingSet rings = new org.openscience.cdk.RingSet();
         for (IAtomContainer container : containerSet.atomContainers()) {
             try {
@@ -710,6 +735,8 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
             } catch (CDKException ex) {
                 getLogger(ReactionMappingUtility.class.getName()).log(SEVERE, null, ex);
             }
+            IRingSet ssrRings = new SSSRFinder(container).findSSSR();
+            rings.add(ssrRings);
         }
         return rings;
     }
@@ -781,7 +808,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * @param mappings
      * @return
      */
-    protected static Set<IBond> detectBondsCleavedAndFormed(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings) {
+    private static Set<IBond> detectBondsCleavedAndFormed(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings) {
         Set<IBond> bondChange = new LinkedHashSet<>();
 
         for (IBond rb : reactantsbonds) {
@@ -870,14 +897,13 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * @param targetRingSet
      * @return
      */
-    protected static Set<IBond> detectBondOrderChanges(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings, IRingSet queryRingSet, IRingSet targetRingSet) {
-        Set<IBond> bondChange = new LinkedHashSet<>();
+    private static Map<IBond, IBond> detectBondOrderChanges(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings, IRingSet queryRingSet, IRingSet targetRingSet) {
+        Map<IBond, IBond> bondChange = new HashMap<>();
 
         for (IBond rb : reactantsbonds) {
             if (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
                 for (IBond pb : productsbonds) {
                     if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
-                        int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
                         if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()))) {
                             if (rb.getOrder().numeric() > pb.getOrder().numeric()) {
                                 rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
@@ -906,9 +932,26 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                             pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
 
                             /*
-                             * Store on Left to right changes else it will duplicate
+                             * Store all order changes
                              */
-                            bondChange.add(rb);
+                            bondChange.put(rb, pb);
+                        }
+
+                        int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
+
+                        if (kekuleEffect == 0) {
+                            rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+
+                            pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                            pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+
+                            /*
+                             * Store all order changes
+                             */
+                            bondChange.put(rb, pb);
                         }
                     }
                 }
@@ -924,27 +967,27 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * @param reaction
      * @return
      */
-    protected static Set<IAtom> detectStereoChanges(IReaction reaction) {
+    private static Set<IAtom> detectStereoChanges(IReaction reaction, Map<IAtom, IAtom> mappings) {
         /*
          * Mining Stereo Atom Changes E/Z or R/S only
          */
         Set<IAtom> atomChanges = new LinkedHashSet<>();
 
-        System.out.println("Marking E/Z or R/S");
+//        System.out.println("Marking E/Z or R/S");
 
         /*
          * Stereo mapping
          */
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
-            chiralityCDK2D = getChirality2D(reaction);
+            chiralityCDK2D = getChirality2D(reaction, mappings);
         } catch (CDKException | CloneNotSupportedException ex) {
             err.println("WARNING: 2D CDK based stereo perception failed");
         }
         /*
          * Generate stereo information
          */
-        List<StereoChange> stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
+        List<StereoChange> stereogenicCenters = getStereoChanges(reaction, chiralityCDK2D);
 
         for (StereoChange sc : stereogenicCenters) {
             IAtom atomE = sc.getReactantAtom();
@@ -992,13 +1035,17 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
     }
 
     protected static boolean isBondMappingMatch(IBond a, IBond b) {
-        if (a.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(0).getProperty(ATOM_ATOM_MAPPING))
-                && a.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(1).getProperty(ATOM_ATOM_MAPPING))) {
+        if (isAtomMappingMatch(a.getAtom(1), b.getAtom(0))
+                && isAtomMappingMatch(a.getAtom(0), b.getAtom(1))) {
             return true;
         }
 
-        return a.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(0).getProperty(ATOM_ATOM_MAPPING))
-                && a.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(1).getProperty(ATOM_ATOM_MAPPING));
+        return (isAtomMappingMatch(a.getAtom(0), b.getAtom(0))
+                && isAtomMappingMatch(a.getAtom(1), b.getAtom(1)));
+    }
+
+    protected static boolean isAtomMappingMatch(IAtom a, IAtom b) {
+        return a.getProperty(ATOM_ATOM_MAPPING).equals(b.getProperty(ATOM_ATOM_MAPPING));
     }
 
     /**
@@ -1011,7 +1058,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * @param targetRingSet
      * @return
      */
-    protected static int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts, IRingSet queryRingSet, IRingSet targetRingSet) {
+    private static int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts, IRingSet queryRingSet, IRingSet targetRingSet) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
             if (affectedBondReactants.getFlag(ISINRING)
                     == affectedBondProducts.getFlag(ISINRING)) {
@@ -1078,6 +1125,231 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         }
 
         return -1;
+    }
+
+    /**
+     * This Chirality is based on the 2D with stereo code written by John May in
+     * our collaboration. Note: Explicit Hydrogens should be added before
+     * calling.
+     *
+     * @param reaction
+     * @param mappings
+     * @return
+     * @throws CDKException
+     * @throws java.lang.CloneNotSupportedException
+     */
+    protected static Map<IAtom, IStereoAndConformation> getChirality2D(IReaction reaction, Map<IAtom, IAtom> mappings) throws CDKException, CloneNotSupportedException {
+        Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
+        CDKPerceptor perceptor = new CDKPerceptor();
+        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
+//            System.err.println("R 2D CDK based stereo perception for " + ac.getID());
+            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
+//            System.err.println("R 2D CDK based stereo " + chirality2D.size());
+            if (!chirality2D.isEmpty()) {
+                chirality2D.entrySet().stream().forEach((m) -> {
+                    IAtom atomByMappingID = getMappingAtomByID(m.getKey(), ac);
+                    if (atomByMappingID != null) {
+                        atomByMappingID.setProperty("Stereo", m.getValue());
+                        chiralityMap.put(atomByMappingID, m.getValue());
+                    }
+                });
+            }
+        }
+        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
+            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
+//            System.err.println("P 2D CDK based stereo perception for " + ac.getID());
+            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
+//            System.err.println("P 2D CDK based stereo " + chirality2D.size());
+            if (!chirality2D.isEmpty()) {
+                chirality2D.entrySet().stream().forEach((m) -> {
+                    IAtom atomByMappingID = getMappingAtomByID(m.getKey(), ac);
+                    if (atomByMappingID != null) {
+                        atomByMappingID.setProperty("Stereo", m.getValue());
+                        chiralityMap.put(atomByMappingID, m.getValue());
+                    }
+                });
+            }
+        }
+        return chiralityMap;
+    }
+
+    /**
+     *
+     * @param ac
+     * @param perceptor
+     * @return
+     */
+    protected static Map<IAtom, IStereoAndConformation> getChirality2D(IAtomContainer ac, CDKPerceptor perceptor) {
+        Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
+        perceptor.perceive(ac);
+        for (IAtom atom : ac.atoms()) {
+            if (!chiralityMap.containsKey(atom)) {
+                chiralityMap.put(atom, IStereoAndConformation.NONE);
+            }
+
+            if (Tetrahedral.R.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.R);
+            }
+            if (Tetrahedral.S.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.S);
+            }
+            if (Planar.E.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.E);
+            }
+            if (Planar.Z.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.Z);
+            }
+            if (Trigonal.Re.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.P);
+            }
+            if (Trigonal.Si.equals(atom.getProperty("descriptor"))) {
+                chiralityMap.put(atom, IStereoAndConformation.M);
+            }
+        }
+        for (IBond bond : ac.bonds()) {
+            if (Planar.E.equals(bond.getProperty("descriptor"))) {
+                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.E);
+                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.E);
+            }
+            if (Planar.Z.equals(bond.getProperty("descriptor"))) {
+                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.Z);
+                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.Z);
+            }
+            if (Trigonal.Re.equals(bond.getProperty("descriptor"))) {
+                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.P);
+                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.P);
+            }
+            if (Trigonal.Si.equals(bond.getProperty("descriptor"))) {
+                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.M);
+                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.M);
+            }
+        }
+
+        for (IAtom atom : chiralityMap.keySet()) {
+            atom.setProperty("Stereo", chiralityMap.get(atom));
+        }
+        return chiralityMap;
+    }
+
+    protected static IAtom getMappingAtomByID(IAtom atom, IAtomContainer ac) {
+        for (IAtom a : ac.atoms()) {
+            if (atom.getProperty(ATOM_ATOM_MAPPING).equals(a.getProperty(ATOM_ATOM_MAPPING))) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Generates String from Stereo change types
+     *
+     * @param atom
+     * @return (E/Z) or (R/S) else (NA)
+     */
+    protected static String getCanonicalisedAtomChangePattern(IAtom atom) {
+
+        if (atom.getProperty("Stereo").equals(IStereoAndConformation.E)) {
+            return atom.getSymbol().concat("(E/Z)");
+        }
+
+        if (atom.getProperty("Stereo").equals(IStereoAndConformation.Z)) {
+            return atom.getSymbol().concat("(E/Z)");
+        }
+
+        if (atom.getProperty("Stereo").equals(IStereoAndConformation.R)) {
+            return atom.getSymbol().concat("(R/S)");
+        }
+
+        if (atom.getProperty("Stereo").equals(IStereoAndConformation.S)) {
+            return atom.getSymbol().concat("(R/S)");
+        }
+
+        return atom.getSymbol().concat("(NA)");
+    }
+
+    /**
+     *
+     * @param reaction
+     * @param chirality2DCDK
+     * @return
+     */
+    protected static List<StereoChange> getStereoChanges(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK) {
+
+        List<StereoChange> stereoChangeList = new ArrayList<>();
+        List<IAtom> queryAtoms = new ArrayList<>();
+        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+            for (IAtom a : ac.atoms()) {
+                queryAtoms.add(a);
+            }
+        }
+        List<IAtom> targetAtoms = new ArrayList<>();
+        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
+            for (IAtom a : ac.atoms()) {
+                targetAtoms.add(a);
+            }
+        }
+        for (IAtom atomQ : queryAtoms) {
+            for (IAtom atomT : targetAtoms) {
+                if (isAtomMappingMatch(atomQ, atomT) && !atomQ.getSymbol().equalsIgnoreCase("H")) {
+                    IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
+                    IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
+
+//                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
+//                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
+//
+//                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
+//                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
+                    if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
+                        StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                        stereoChangeList.add(sc);
+                    }
+                }
+            }
+        }
+        return stereoChangeList;
+    }
+
+    /**
+     * Returns type of stereo changes
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    private static boolean isStereogenicChange(IStereoAndConformation a, IStereoAndConformation b) {
+        if (a.equals(S) && b.equals(NONE)) {
+            return true;
+        } else if (a.equals(R) && b.equals(NONE)) {
+            return true;
+        } else if (b.equals(S) && a.equals(NONE)) {
+            return true;
+        } else if (b.equals(R) && a.equals(NONE)) {
+            return true;
+        } else if (a.equals(R) && b.equals(S)) {
+            return true;
+        } else if (a.equals(S) && b.equals(R)) {
+            return true;
+        } else if (a.equals(S) && b.equals(EITHER)) {
+            return true;
+        } else if (a.equals(R) && b.equals(EITHER)) {
+            return true;
+        } else if (b.equals(S) && a.equals(EITHER)) {
+            return true;
+        } else if (b.equals(R) && a.equals(EITHER)) {
+            return true;
+        } else if (a.equals(EITHER) && b.equals(EITHER)) {
+            return true;
+        } else if (a.equals(NONE) && b.equals(EITHER)) {
+            return true;
+        } else if (a.equals(EITHER) && b.equals(NONE)) {
+            return true;
+        } else if (a.equals(Z) && b.equals(E)) {
+            return true;
+        } else if (a.equals(E) && b.equals(Z)) {
+            return true;
+        }
+        return false;
     }
 
 }
