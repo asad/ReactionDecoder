@@ -80,7 +80,7 @@ public class USPTOTest extends MappingUtility {
                     String[] split = readLine.split("\\s+");
                     String reactionSMILES = split[0].trim();
                     String reactionID = split[split.length - 1].trim();
-                    //System.out.println(reactionID+ ", Parsing Input Reaction SMILES " + reactionSMILES);
+                    System.out.println(reactionID+ ", Parsing Input Reaction SMILES " + reactionSMILES);
                     try {
                         IReaction inputReaction = sp.parseReactionSmiles(reactionSMILES);
                         inputReaction.setID(reactionID);

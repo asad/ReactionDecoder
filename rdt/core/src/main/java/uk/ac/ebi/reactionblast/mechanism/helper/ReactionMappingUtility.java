@@ -680,12 +680,17 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
 
         Map<IAtom, IAtom> mappings = getMappings(mappedReaction);
 
+        System.out.println("mappings " + mappings.size());
+
         IAtomContainerSet allReactants = ExtReactionManipulatorTool.getAllReactants(mappedReaction);
         IAtomContainerSet allProducts = ExtReactionManipulatorTool.getAllProducts(mappedReaction);
         Set<IBond> reactantsbonds = getBonds(allReactants);
         Set<IBond> productsbonds = getBonds(allProducts);
 
         Set<IBond> bondChange = detectBondsCleavedAndFormed(reactantsbonds, productsbonds, mappings);
+
+        System.out.println("bondChange FC " + bondChange.size());
+
         IRingSet ringsR = getRings(allReactants);
         IRingSet ringsP = getRings(allProducts);
         Set<IBond> detectBondOrderChanges = detectBondOrderChanges(reactantsbonds, productsbonds, mappings, ringsR, ringsP);
@@ -811,10 +816,11 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         }
 
         for (IBond pb : productsbonds) {
-            if (mappings.containsKey(pb.getAtom(0)) && mappings.containsKey(pb.getAtom(1))) {
+            if (mappings.containsValue(pb.getAtom(0)) && mappings.containsValue(pb.getAtom(1))) {
                 boolean bondBroken = true;
                 for (IBond rb : reactantsbonds) {
-                    if (rb.contains(mappings.get(pb.getAtom(0))) && rb.contains(mappings.get(pb.getAtom(1)))) {
+                    if (rb.contains(getKeyFromValue(pb.getAtom(0), mappings))
+                            && rb.contains(getKeyFromValue(pb.getAtom(1), mappings))) {
                         bondBroken = false;
                         break;
                     }
@@ -844,10 +850,19 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         return bondChange;
     }
 
+    private static IAtom getKeyFromValue(IAtom a, Map<IAtom, IAtom> mappings) {
+        for (Map.Entry<IAtom, IAtom> map : mappings.entrySet()) {
+            if (map.getValue() == a) {
+                return map.getKey();
+            }
+        }
+        return null;
+    }
+
     /**
-     * Reports bond order changes BOND_ORDER_REDUCED or BOND_ORDER_GAIN
-     * Look for BOND_CHANGE_INFORMATION Flag for 
-     * BOND_ORDER_REDUCED or BOND_ORDER_GAIN
+     * Reports bond order changes BOND_ORDER_REDUCED or BOND_ORDER_GAIN Look for
+     * BOND_CHANGE_INFORMATION Flag for BOND_ORDER_REDUCED or BOND_ORDER_GAIN
+     *
      * @param reactantsbonds
      * @param productsbonds
      * @param mappings
@@ -863,13 +878,15 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                 for (IBond pb : productsbonds) {
                     if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
                         int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
-                        if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()) && kekuleEffect == 0)) {
+                        if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()))) {
                             if (rb.getOrder().numeric() > pb.getOrder().numeric()) {
                                 rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
                                 rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                                rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
                             } else if (rb.getOrder().numeric() < pb.getOrder().numeric()) {
                                 rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
                                 rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                                rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
                             }
 
                             rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
@@ -878,9 +895,11 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                             if (pb.getOrder().numeric() > rb.getOrder().numeric()) {
                                 pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
                                 pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                                pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
                             } else if (pb.getOrder().numeric() < rb.getOrder().numeric()) {
                                 pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
                                 pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                                pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
                             }
 
                             pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
@@ -899,8 +918,8 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
     }
 
     /**
-     * Reports Stereo changes (R/S) or (E/Z) Look for
-     * BOND_CHANGE_INFORMATION flags for BOND_STEREO Changes 
+     * Reports Stereo changes (R/S) or (E/Z) Look for BOND_CHANGE_INFORMATION
+     * flags for BOND_STEREO Changes
      *
      * @param reaction
      * @return
@@ -949,7 +968,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                         || sc.getProductAtomStereo().equals(E))) {
                     atomE.setProperty(ATOM_STEREO_CHANGE_INFORMATION, rsb);
                     atomP.setProperty(ATOM_STEREO_CHANGE_INFORMATION, psb);
-                    
+
                     atomE.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
                     atomP.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
 
@@ -959,7 +978,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
                         || sc.getProductAtomStereo().equals(R))) {
                     atomE.setProperty(ATOM_STEREO_CHANGE_INFORMATION, rsb);
                     atomP.setProperty(ATOM_STEREO_CHANGE_INFORMATION, psb);
-                    
+
                     atomE.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
                     atomP.setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
                 }
@@ -972,7 +991,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
 
     }
 
-    private static boolean isBondMappingMatch(IBond a, IBond b) {
+    protected static boolean isBondMappingMatch(IBond a, IBond b) {
         if (a.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(0).getProperty(ATOM_ATOM_MAPPING))
                 && a.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(b.getAtom(1).getProperty(ATOM_ATOM_MAPPING))) {
             return true;
@@ -992,7 +1011,7 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * @param targetRingSet
      * @return
      */
-    public static int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts, IRingSet queryRingSet, IRingSet targetRingSet) {
+    protected static int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts, IRingSet queryRingSet, IRingSet targetRingSet) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
             if (affectedBondReactants.getFlag(ISINRING)
                     == affectedBondProducts.getFlag(ISINRING)) {
