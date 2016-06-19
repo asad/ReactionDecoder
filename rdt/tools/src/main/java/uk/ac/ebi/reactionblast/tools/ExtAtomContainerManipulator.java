@@ -2,7 +2,7 @@ package uk.ac.ebi.reactionblast.tools;
 
 /**
  *
- * Copyright (C) 2006-2016 Syed Asad Rahman {asad@ebi.ac.uk}
+ * Copyright (C) 2006-2013 Syed Asad Rahman {asad@ebi.ac.uk}
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,42 +24,31 @@ package uk.ac.ebi.reactionblast.tools;
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 import java.io.Serializable;
-import static java.lang.System.out;
 import java.util.ArrayList;
-import static java.util.Arrays.copyOf;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.CDKConstants;
-import static org.openscience.cdk.CDKConstants.BONDORDER_SINGLE;
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
-import static org.openscience.cdk.aromaticity.ElectronDonation.cdk;
-import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
-import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.CycleFinder;
-import static org.openscience.cdk.graph.Cycles.all;
-import static org.openscience.cdk.graph.Cycles.cdkAromaticSet;
-import static org.openscience.cdk.graph.Cycles.or;
-import static org.openscience.cdk.graph.Cycles.relevant;
-import static org.openscience.cdk.graph.GraphUtil.toAdjList;
+import org.openscience.cdk.graph.Cycles;
+import org.openscience.cdk.graph.GraphUtil;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IAtomType;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
 import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -74,13 +63,9 @@ import org.openscience.cdk.stereo.DoubleBondStereochemistry;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
-import static org.openscience.cdk.tools.manipulator.AtomTypeManipulator.configure;
-import static org.openscience.cdk.tools.manipulator.RingSetManipulator.markAromaticRings;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.getExplicitHydrogenCount;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.getImplicitHydrogenCount;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.convertImplicitToExplicitHydrogens;
+import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
+import org.openscience.cdk.tools.manipulator.RingSetManipulator;
 
 /**
  * Class that handles some customised features for atom containers.
@@ -91,26 +76,26 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  *
  *
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class ExtAtomContainerManipulator extends AtomContainerManipulator implements Serializable {
 
-    static final Logger logger = getLogger(ExtAtomContainerManipulator.class.getName());
+    static final Logger logger = Logger.getLogger(ExtAtomContainerManipulator.class.getName());
     static final long serialVersionUID = 1786786539472837495L;
 
     private static void printAtoms(IAtomContainer mol) {
-        out.print("Atom: ");
+        System.out.print("Atom: ");
         for (IAtom a : mol.atoms()) {
 
-            out.print(a.getSymbol());
-            out.print("[" + a.getFormalCharge() + "]");
+            System.out.print(a.getSymbol());
+            System.out.print("[" + a.getFormalCharge() + "]");
             if (a.getID() != null) {
-                out.print("[" + a.getID() + "]");
+                System.out.print("[" + a.getID() + "]");
             }
 
         }
-        out.println();
-        out.println();
+        System.out.println();
+        System.out.println();
     }
 
     /**
@@ -130,17 +115,17 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         }
 
         if (isMarkush) {
-            logger.log(WARNING, "Skipping Markush structure for sanity check");
+            logger.log(Level.WARNING, "Skipping Markush structure for sanity check");
         }
 
         // Check for salts and such
-        if (!isConnected(molecule)) {
+        if (!ConnectivityChecker.isConnected(molecule)) {
             // lets see if we have just two parts if so, we assume its a salt and just work
             // on the larger part. Ideally we should have a check to ensure that the smaller
             //  part is a metal/halogen etc.
-            IAtomContainerSet fragments = partitionIntoMolecules(molecule);
+            IAtomContainerSet fragments = ConnectivityChecker.partitionIntoMolecules(molecule);
             if (fragments.getAtomContainerCount() > 2) {
-                logger.log(WARNING, "More than 2 components. Skipped");
+                logger.log(Level.WARNING, "More than 2 components. Skipped");
             } else {
                 IAtomContainer frag1 = fragments.getAtomContainer(0);
                 IAtomContainer frag2 = fragments.getAtomContainer(1);
@@ -168,9 +153,9 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             try {
                 AllRingsFinder arf = new AllRingsFinder();
                 ringSet = arf.findAllRings(mol);
-                markAromaticRings(ringSet);
+                RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
-                logger.log(WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
+                logger.log(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
             }
 
             try {
@@ -182,7 +167,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     aromatizeDayLight(mol);
                 }
             } catch (CDKException e) {
-                logger.log(WARNING, "Error in aromaticity dectection. ", mol.getID());
+                logger.log(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
             }
 
             if (ringSet == null) {
@@ -193,26 +178,26 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             // determine largest ring that each atom is atom part of
             for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
 
-                mol.getAtom(i).setFlag(ISAROMATIC, false);
+                mol.getAtom(i).setFlag(CDKConstants.ISAROMATIC, false);
 
                 jloop:
                 for (int j = 0; j <= ringSet.getAtomContainerCount() - 1; j++) {
                     //logger.debug(i+"\t"+j);
                     IRing ring = (IRing) ringSet.getAtomContainer(j);
-                    if (!ring.getFlag(ISAROMATIC)) {
-                        continue;
+                    if (!ring.getFlag(CDKConstants.ISAROMATIC)) {
+                        continue jloop;
                     }
 
                     boolean haveatom = ring.contains(mol.getAtom(i));
 
                     //logger.debug("haveatom="+haveatom);
                     if (haveatom && ring.getAtomCount() == 6) {
-                        mol.getAtom(i).setFlag(ISAROMATIC, true);
+                        mol.getAtom(i).setFlag(CDKConstants.ISAROMATIC, true);
                     }
                 }
             }
         } catch (Exception e) {
-            logger.log(WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
+            logger.log(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
         }
     }
 
@@ -225,8 +210,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static IAtomContainer cloneWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         setNullHCountToZero(container);
-        IAtomContainer ac = new AtomContainer(container).clone();
-        /*Set IDs as CDK clone doesn't*/
+        IAtomContainer ac = new AtomContainer(container).clone();/*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
             ac.getAtom(i).setID(container.getAtom(i).getID());
             if (ac.getAtom(i).getProperties() == null) {
@@ -248,7 +232,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     }
 
     /**
-     * Returns deep copy of the molecule and atoms
+     * Returns deep copy of the molecule
      *
      * @param container
      * @return deep copy of the mol
@@ -261,9 +245,10 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         for (int i = 0; i < ac.getAtomCount(); i++) {
             ac.getAtom(i).setID(container.getAtom(i).getID());
             if (ac.getAtom(i).getProperties() == null) {
-                ac.setProperties(new HashMap<>());
+                ac.getAtom(i).setProperties(new HashMap<>());
             }
         }
+
         for (int i = 0; i < ac.getBondCount(); i++) {
             if (ac.getBond(i).getProperties() == null) {
                 ac.getBond(i).setProperties(new HashMap<>());
@@ -285,12 +270,8 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static int getExplicitHydrogenCount(IAtomContainer atomContainer, IAtom atom) {
         int hCount = 0;
-        for (IAtom iAtom : atomContainer.getConnectedAtomsList(atom)) {
-            IAtom connectedAtom = iAtom;
-            if (connectedAtom.getSymbol().equals("H")) {
-                hCount++;
-            }
-        }
+        hCount = atomContainer.getConnectedAtomsList(atom).stream().map((iAtom) -> iAtom).filter((connectedAtom)
+                -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
         return hCount;
     }
 
@@ -326,11 +307,10 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static IAtomContainer removeHydrogensExceptSingleAndPreserveAtomID(IAtomContainer container) throws CloneNotSupportedException {
         /*
-         @ASAD: IMP STEP to avoid unset Hydrogen arror:
-         Set implicit Hydrogen count
+         * @ASAD: IMP STEP to avoid unset Hydrogen arror:
+         * Set implicit Hydrogen count
          */
         for (IAtom a : container.atoms()) {
-            //int explicitHydrogenCount = ExtAtomContainerManipulator.getExplicitHydrogenCount(container, a);
             int implicitHydrogenCount = getImplicitHydrogenCount(a);
             a.setImplicitHydrogenCount(implicitHydrogenCount);
         }
@@ -344,7 +324,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      *
      * @param org The AtomContainer from which to remove the hydrogens
      * @return The molecule without hydrogens.
-     * @cdk.keyword hydrogens, removal, suppress
      * @see #copyAndSuppressedHydrogens
      */
     public static IAtomContainer removeHydrogens(IAtomContainer org) {
@@ -404,7 +383,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
 
         // we need fast adjacency checks (to check for suppression and 
         // update hydrogen counts)
-        final int[][] graph = toAdjList(org);
+        final int[][] graph = GraphUtil.toAdjList(org);
 
         final int nOrgAtoms = org.getAtomCount();
         final int nOrgBonds = org.getBondCount();
@@ -432,7 +411,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             return org;
         }
 
-        org.setAtoms(copyOf(cpyAtoms, nCpyAtoms));
+        org.setAtoms(Arrays.copyOf(cpyAtoms, nCpyAtoms));
 
         // we now update the bonds - we have auxiliary variable remaining that
         // bypasses the set membership checks if all suppressed bonds are found  
@@ -544,9 +523,9 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     remove.add(se);
                 }
             }
-            for (ISingleElectron se : remove) {
+            remove.stream().forEach((se) -> {
                 org.removeSingleElectron(se);
-            }
+            });
         }
 
         if (org.getLonePairCount() > 0) {
@@ -556,9 +535,9 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     remove.add(lp);
                 }
             }
-            for (ILonePair lp : remove) {
+            remove.stream().forEach((lp) -> {
                 org.removeLonePair(lp);
-            }
+            });
         }
 
         return org;
@@ -684,16 +663,16 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @throws CDKException
      */
     public static void percieveAtomTypesAndConfigureAtoms(IAtomContainer container) throws CDKException {
-        CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(container.getBuilder());;
+        CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(container.getBuilder());
         for (IAtom atom : container.atoms()) {
             if (!(atom instanceof IPseudoAtom)) {
                 try {
                     IAtomType matched = matcher.findMatchingAtomType(container, atom);
                     if (matched != null) {
-                        configure(atom, matched);
+                        AtomTypeManipulator.configure(atom, matched);
                     }
                 } catch (CDKException e) {
-                    logger.log(WARNING,
+                    logger.log(Level.WARNING,
                             "Failed to find Matching AtomType! {0}{1}", new Object[]{atom.getSymbol(), e});
                 }
             }
@@ -701,85 +680,35 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     }
 
     /**
-     * Adds explicit hydrogens (without coordinates) to the IAtomContainer,
-     * equaling the number of set implicit hydrogens.
      *
-     * @param atomContainer the atom container to consider
-     * @cdk.keyword hydrogens, adding
-     */
-    public static void convertImplicitToExplicitHydrogens(IAtomContainer atomContainer) {
-        List<IAtom> hydrogens = new ArrayList<>();
-        List<IBond> newBonds = new ArrayList<>();
-
-        for (IAtom atom : atomContainer.atoms()) {
-            if (!atom.getSymbol().equals("H")) {
-                Integer hCount = atom.getImplicitHydrogenCount();
-                if (hCount != null) {
-                    for (int i = 0; i < hCount; i++) {
-
-                        IAtom hydrogen = atom.getBuilder().newInstance(IAtom.class, "H");
-                        hydrogen.setAtomTypeName("H");
-                        hydrogen.setImplicitHydrogenCount(0);
-                        hydrogens.add(hydrogen);
-                        newBonds.add(atom.getBuilder().newInstance(IBond.class,
-                                atom, hydrogen, BONDORDER_SINGLE));
-                    }
-                    atom.setImplicitHydrogenCount(0);
-                }
-            }
-        }
-        for (IAtom atom : hydrogens) {
-            atomContainer.addAtom(atom);
-        }
-        for (IBond bond : newBonds) {
-            atomContainer.addBond(bond);
-        }
-    }
-
-    /**
-     *
-     * @param ac
+     * @param gMol
      * @return a new mol with explicit Hydrogens
      * @throws CloneNotSupportedException
      */
-    public static IAtomContainer addExplicitH(IAtomContainer ac) throws CloneNotSupportedException {
-//        /*
-//         For debugging use chemaxon to add hydrogens, cdk adder has bug
-//         */
-//        IAtomContainer addExplicitH = null;
-//        try {
-//            addExplicitH = ChemaxonHydrogenHandler.addExplicitH(gMol);
-//        } catch (Exception ex) {
-//            Logger.getLogger(ExtAtomContainerManipulator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-        IAtomContainer acClone = new AtomContainer(ac).clone();
-        /*Set IDs as CDK clone doesn't*/
-        for (int i = 0; i < ac.getAtomCount(); i++) {
-            acClone.getAtom(i).setID(ac.getAtom(i).getID());
-        }
-        acClone.setID(ac.getID());
-        acClone.addProperties(ac.getProperties());
-
-        CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(acClone.getBuilder());
-        for (IAtom atom : acClone.atoms()) {
-            IAtomType type;
-            try {
-                type = matcher.findMatchingAtomType(acClone, atom);
-                configure(atom, type);
-            } catch (CDKException ex) {
-                getLogger(ExtAtomContainerManipulator.class.getName()).log(SEVERE, null, ex);
-            }
-        }
-
-        CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(acClone.getBuilder());
+    public static IAtomContainer addExplicitH(IAtomContainer gMol) throws CloneNotSupportedException {
+        IAtomContainer mol = cloneWithIDs(gMol);
+//        fixDativeBonds(mol);
+        CDKHydrogenAdder hydAdder = CDKHydrogenAdder.getInstance(mol.getBuilder());
         try {
-            adder.addImplicitHydrogens(acClone);
+            percieveAtomTypesAndConfigureAtoms(mol);
+            for (IAtom a : mol.atoms()) {
+                if (!(a instanceof IPseudoAtom)) {
+                    try {
+                        hydAdder.addImplicitHydrogens(mol, a);
+                    } catch (Exception e) {
+                        a.setImplicitHydrogenCount(0);
+                        System.err.println("WARNING: Error in adding Hydrogen" + ":" + a.getSymbol());
+                        logger.log(Level.WARNING, "This might effect the final calculations!");
+                    }
+                } else {
+                    a.setImplicitHydrogenCount(0);
+                }
+            }
         } catch (CDKException ex) {
-            getLogger(ExtAtomContainerManipulator.class.getName()).log(SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
-
-        return acClone;
+        convertImplicitToExplicitHydrogens(mol);
+        return mol;
 
     }
 
@@ -789,13 +718,13 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @throws CDKException
      */
     public static void aromatizeDayLight(IAtomContainer molecule) throws CDKException {
-        ElectronDonation model = daylight();
-        CycleFinder cycles = or(all(), relevant());
+        ElectronDonation model = ElectronDonation.daylight();
+        CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
         Aromaticity aromaticity = new Aromaticity(model, cycles);
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            logger.log(WARNING,
+            logger.log(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }
@@ -807,14 +736,14 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @throws CDKException
      */
     public static void aromatizeCDK(IAtomContainer molecule) throws CDKException {
-        ElectronDonation model = cdk();
-        CycleFinder cycles = cdkAromaticSet();
+        ElectronDonation model = ElectronDonation.cdk();
+        CycleFinder cycles = Cycles.cdkAromaticSet();
         Aromaticity aromaticity = new Aromaticity(model, cycles);
-        percieveAtomTypesAndConfigureAtoms(molecule);
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            logger.log(WARNING,
+            logger.log(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }
