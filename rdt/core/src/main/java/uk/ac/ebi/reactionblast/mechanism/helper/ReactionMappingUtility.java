@@ -64,7 +64,6 @@ import static java.lang.System.err;
 import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.smsd.helper.MoleculeInitializer;
-import uk.ac.ebi.reactionblast.mechanism.StereoChange;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
