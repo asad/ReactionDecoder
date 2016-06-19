@@ -22,9 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Mapping;
-import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IMapping;
@@ -58,6 +56,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
                 acClone.getAtom(i).setID(ac.getAtom(i).getID());
             }
             acClone.setID(ac.getID());
+            acClone.setFlags(ac.getFlags());
             acClone.addProperties(ac.getProperties());
             clone.getReactants().addAtomContainer(acClone);
         }
@@ -69,6 +68,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
                 acClone.getAtom(i).setID(ac.getAtom(i).getID());
             }
             acClone.setID(ac.getID());
+            acClone.setFlags(ac.getFlags());
             acClone.addProperties(ac.getProperties());
             clone.getProducts().addAtomContainer(acClone);
         }

@@ -35,6 +35,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
 
 /**
  * Tool for comparing chiralities.
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
@@ -53,8 +54,9 @@ public abstract class StereoCenteralityTool extends ReactionMappingUtility {
     }
 
     /**
-     * This Chirality is based on the 2D with stereo code written by John May in our collaboration. Note: Explicit
-     * Hydrogens should be added before calling.
+     * This Chirality is based on the 2D with stereo code written by John May in
+     * our collaboration. Note: Explicit Hydrogens should be added before
+     * calling.
      *
      * @param reaction
      * @return

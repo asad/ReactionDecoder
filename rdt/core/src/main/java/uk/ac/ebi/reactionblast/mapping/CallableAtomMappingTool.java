@@ -50,6 +50,7 @@ import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
 import static java.lang.String.valueOf;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
  *

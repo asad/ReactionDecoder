@@ -43,10 +43,22 @@ import static uk.ac.ebi.reactionblast.TestUtility.KEGG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.TestUtility.OTHER_RXN;
 import static uk.ac.ebi.reactionblast.TestUtility.RHEA_RXN_DIR;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
-import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.geometry.cip.CIPTool;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IChemObjectBuilder;
+import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
+import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.stereo.ExtendedTetrahedral;
+import uk.ac.ebi.beam.Graph;
+import uk.ac.ebi.reactionblast.tools.BeamToCDK;
+import uk.ac.ebi.reactionblast.tools.CDKToBeam;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
@@ -56,6 +68,52 @@ import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity
 public class ReactionDecoderTest extends MappingUtility {
 
     private static final Logger LOG = getLogger(ReactionDecoderTest.class.getName());
+
+    /*
+     * Test case for Reaction SMILES
+     * Expected Solution
+     * MIN, fp 
+     * ID=TestReaction:Bond Cleaved and Formed (1)
+     * [C%C:2.0]
+     *
+     * BE 682.0, Fragment 0
+     * @throws Exception
+     */
+    @Test
+    public void TestStereo() throws Exception {
+
+        String reactionSM = "C[C@H](N)C(O)=O>>C[C@@H](N)C(O)=O";
+
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        parseReactionSmiles.setID("TestReaction");
+
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
+
+        IReaction mappedReaction = smilesParser.parseReactionSmiles(testReactions.getMappedReactionSMILES());
+        mappedReaction.setID("TestNewReaction");
+
+        System.out.println("Reaction " + SmilesGenerator.isomeric().aromatic().createReactionSMILES(mappedReaction));
+
+        Map<IAtom, IAtom> mappings = ReactionMappingUtility.getMappings(mappedReaction);
+        IPatternFingerprinter stereoWFingerprintNew = new PatternFingerprinter();
+        stereoWFingerprintNew.setFingerprintID("TestNewReaction ST");
+        Set<IAtom> atomStereoChanges = ReactionMappingUtility.getAtomStereoChanges(mappedReaction, mappings);
+
+        for (IAtom atom : atomStereoChanges) {
+            stereoWFingerprintNew.add(new Feature(ReactionMappingUtility.getCanonicalisedAtomChangePattern(atom), 1.0));
+        }
+
+        System.out.println("ST " + stereoWFingerprintNew.toString());
+
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator().getStereoChangesWFingerprint();
+        System.out.println(
+                "OLD ST " + stereoChangesWFingerprint);
+
+        assertEquals(1, stereoChangesWFingerprint.getFeatureCount());
+    }
 
 
     /*
@@ -71,7 +129,7 @@ public class ReactionDecoderTest extends MappingUtility {
     @Test
     public void Test() throws Exception {
 
-        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";//C[C@H](N)C(O)=O>>C[C@@H](N)C(O)=O
 
         SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);

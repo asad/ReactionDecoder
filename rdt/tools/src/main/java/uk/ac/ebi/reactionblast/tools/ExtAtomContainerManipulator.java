@@ -264,6 +264,11 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 ac.setProperties(new HashMap<>());
             }
         }
+        for (int i = 0; i < ac.getBondCount(); i++) {
+            if (ac.getBond(i).getProperties() == null) {
+                ac.getBond(i).setProperties(new HashMap<>());
+            }
+        }
         ac.setProperties(container.getProperties());
         ac.setFlags(container.getFlags());
         ac.setID(container.getID());

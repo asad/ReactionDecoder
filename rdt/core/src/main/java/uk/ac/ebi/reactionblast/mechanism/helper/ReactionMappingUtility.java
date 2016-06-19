@@ -69,10 +69,6 @@ import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_BOND_CHANGE_F
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
 import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
-import uk.ac.ebi.centres.cdk.CDKPerceptor;
-import uk.ac.ebi.centres.descriptor.Planar;
-import uk.ac.ebi.centres.descriptor.Tetrahedral;
-import uk.ac.ebi.centres.descriptor.Trigonal;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.E;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.EITHER;
@@ -80,6 +76,10 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.NONE;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
+import org.openscience.cdk.geometry.cip.CIPTool;
+import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
+import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -87,7 +87,6 @@ import static java.util.Arrays.sort;
 import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
-import static uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility.getChirality2D;
 
 /**
  *
@@ -97,7 +96,7 @@ import static uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility.ge
 public abstract class ReactionMappingUtility extends MatrixPrinter implements Serializable {
 
     /**
-     * Used Chemaxon to generate smikrs
+     * Used Chemaxon to generate SMIRKS
      *
      * @param reaction
      * @param remove_AAM
@@ -960,21 +959,20 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
          */
         Set<IAtom> atomChanges = new LinkedHashSet<>();
 
-//        System.out.println("Marking E/Z or R/S");
-
         /*
          * Stereo mapping
          */
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
             chiralityCDK2D = getChirality2D(reaction, mappings);
+            System.out.println("chiralityCDK2D map size " + chiralityCDK2D.size());
         } catch (CDKException | CloneNotSupportedException ex) {
             err.println("WARNING: 2D CDK based stereo perception failed");
         }
         /*
          * Generate stereo information
          */
-        List<StereoChange> stereogenicCenters = getStereoChanges(reaction, chiralityCDK2D);
+        List<StereoChange> stereogenicCenters = getStereoChanges(mappings, chiralityCDK2D);
 
         for (StereoChange sc : stereogenicCenters) {
             IAtom atomE = sc.getReactantAtom();
@@ -1119,104 +1117,107 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
      * our collaboration. Note: Explicit Hydrogens should be added before
      * calling.
      *
-     * @param reaction
-     * @param mappings
+     * @param reaction Mapped Reaction
+     * @param mappings Atom-Atom Mapping
      * @return
      * @throws CDKException
      * @throws java.lang.CloneNotSupportedException
      */
-    protected static Map<IAtom, IStereoAndConformation> getChirality2D(IReaction reaction, Map<IAtom, IAtom> mappings) throws CDKException, CloneNotSupportedException {
+    private static Map<IAtom, IStereoAndConformation> getChirality2D(IReaction reaction, Map<IAtom, IAtom> mappings) throws CDKException, CloneNotSupportedException {
         Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
-        CDKPerceptor perceptor = new CDKPerceptor();
-        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-//            System.err.println("R 2D CDK based stereo perception for " + ac.getID());
-            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
-//            System.err.println("R 2D CDK based stereo " + chirality2D.size());
-            if (!chirality2D.isEmpty()) {
-                chirality2D.entrySet().stream().forEach((m) -> {
-                    IAtom atomByMappingID = getMappingAtomByID(m.getKey(), ac);
-                    if (atomByMappingID != null) {
-                        atomByMappingID.setProperty("Stereo", m.getValue());
-                        chiralityMap.put(atomByMappingID, m.getValue());
-                    }
-                });
-            }
-        }
-        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-//            System.err.println("P 2D CDK based stereo perception for " + ac.getID());
-            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
-//            System.err.println("P 2D CDK based stereo " + chirality2D.size());
-            if (!chirality2D.isEmpty()) {
-                chirality2D.entrySet().stream().forEach((m) -> {
-                    IAtom atomByMappingID = getMappingAtomByID(m.getKey(), ac);
-                    if (atomByMappingID != null) {
-                        atomByMappingID.setProperty("Stereo", m.getValue());
-                        chiralityMap.put(atomByMappingID, m.getValue());
-                    }
-                });
-            }
-        }
-        return chiralityMap;
-    }
 
-    /**
-     *
-     * @param ac
-     * @param perceptor
-     * @return
-     */
-    protected static Map<IAtom, IStereoAndConformation> getChirality2D(IAtomContainer ac, CDKPerceptor perceptor) {
-        Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
-        perceptor.perceive(ac);
-        for (IAtom atom : ac.atoms()) {
-            if (!chiralityMap.containsKey(atom)) {
-                chiralityMap.put(atom, IStereoAndConformation.NONE);
+        for (IAtomContainer ac : ExtReactionManipulatorTool.getAllReactants(reaction).atomContainers()) {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
+            for (IStereoElement stereoElement : ac.stereoElements()) {
+                if (stereoElement instanceof ITetrahedralChirality) {
+                    ITetrahedralChirality tetrahedralChirality = ((ITetrahedralChirality) stereoElement);
+                    IAtom chiralAtom = tetrahedralChirality.getChiralAtom();
+                    CIPTool.CIP_CHIRALITY cipChirality = CIPTool.getCIPChirality(ac, tetrahedralChirality);
+                    IStereoAndConformation deduceChirality = deduceChirality(cipChirality);
+
+                    if (mappings.containsKey(chiralAtom)) {
+                        chiralityMap.put(chiralAtom, deduceChirality);
+                    }
+                }
+                if (stereoElement instanceof IDoubleBondStereochemistry) {
+                    IDoubleBondStereochemistry bondStereochemistry = (IDoubleBondStereochemistry) stereoElement;
+                    IBond chiralBond = bondStereochemistry.getStereoBond();
+                    CIPTool.CIP_CHIRALITY cipChirality = CIPTool.getCIPChirality(ac, bondStereochemistry);
+                    IStereoAndConformation deduceChirality = deduceChirality(cipChirality);
+                    if (mappings.containsKey(chiralBond.getAtom(0))) {
+                        chiralityMap.put(chiralBond.getAtom(0), deduceChirality);
+                    }
+                    if (mappings.containsKey(chiralBond.getAtom(1))) {
+                        chiralityMap.put(chiralBond.getAtom(1), deduceChirality);
+                    }
+                }
             }
 
-            if (Tetrahedral.R.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.R);
-            }
-            if (Tetrahedral.S.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.S);
-            }
-            if (Planar.E.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.E);
-            }
-            if (Planar.Z.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.Z);
-            }
-            if (Trigonal.Re.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.P);
-            }
-            if (Trigonal.Si.equals(atom.getProperty("descriptor"))) {
-                chiralityMap.put(atom, IStereoAndConformation.M);
-            }
         }
-        for (IBond bond : ac.bonds()) {
-            if (Planar.E.equals(bond.getProperty("descriptor"))) {
-                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.E);
-                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.E);
+
+        for (IAtomContainer ac : ExtReactionManipulatorTool.getAllProducts(reaction).atomContainers()) {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
+            for (IStereoElement stereoElement : ac.stereoElements()) {
+                if (stereoElement instanceof ITetrahedralChirality) {
+                    ITetrahedralChirality tetrahedralChirality = ((ITetrahedralChirality) stereoElement);
+                    IAtom chiralAtom = tetrahedralChirality.getChiralAtom();
+                    CIPTool.CIP_CHIRALITY cipChirality = CIPTool.getCIPChirality(ac, tetrahedralChirality);
+                    IStereoAndConformation deduceChirality = deduceChirality(cipChirality);
+
+                    if (mappings.containsValue(chiralAtom)) {
+                        chiralityMap.put(chiralAtom, deduceChirality);
+                    }
+                }
+                if (stereoElement instanceof IDoubleBondStereochemistry) {
+                    IDoubleBondStereochemistry bondStereochemistry = (IDoubleBondStereochemistry) stereoElement;
+                    IBond chiralBond = bondStereochemistry.getStereoBond();
+                    CIPTool.CIP_CHIRALITY cipChirality = CIPTool.getCIPChirality(ac, bondStereochemistry);
+                    IStereoAndConformation deduceChirality = deduceChirality(cipChirality);
+                    if (mappings.containsValue(chiralBond.getAtom(0))) {
+                        chiralityMap.put(chiralBond.getAtom(0), deduceChirality);
+                    }
+                    if (mappings.containsValue(chiralBond.getAtom(1))) {
+                        chiralityMap.put(chiralBond.getAtom(1), deduceChirality);
+                    }
+                }
             }
-            if (Planar.Z.equals(bond.getProperty("descriptor"))) {
-                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.Z);
-                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.Z);
-            }
-            if (Trigonal.Re.equals(bond.getProperty("descriptor"))) {
-                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.P);
-                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.P);
-            }
-            if (Trigonal.Si.equals(bond.getProperty("descriptor"))) {
-                chiralityMap.put(bond.getAtom(0), IStereoAndConformation.M);
-                chiralityMap.put(bond.getAtom(1), IStereoAndConformation.M);
-            }
+
         }
 
         chiralityMap.keySet().stream().forEach((atom) -> {
             atom.setProperty("Stereo", chiralityMap.get(atom));
         });
+
+        System.out.println("getChirality2D : " + chiralityMap.size());
+
         return chiralityMap;
+    }
+
+    private static IStereoAndConformation deduceChirality(CIPTool.CIP_CHIRALITY cip) {
+
+        IStereoAndConformation stereoType = IStereoAndConformation.NONE;
+
+        switch (cip) {
+            case R:
+                stereoType = IStereoAndConformation.R;
+                break;
+            case S:
+                stereoType = IStereoAndConformation.S;
+                break;
+            case E:
+                stereoType = IStereoAndConformation.E;
+                break;
+            case Z:
+                stereoType = IStereoAndConformation.Z;
+                break;
+            case NONE:
+                stereoType = IStereoAndConformation.NONE;
+                break;
+            default:
+                break;
+        }
+
+        return stereoType;
     }
 
     protected static IAtom getMappingAtomByID(IAtom atom, IAtomContainer ac) {
@@ -1257,40 +1258,32 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
 
     /**
      *
-     * @param reaction
+     * @param mappings
      * @param chirality2DCDK
      * @return
      */
-    protected static List<StereoChange> getStereoChanges(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK) {
+    private static List<StereoChange> getStereoChanges(Map<IAtom, IAtom> mappings, Map<IAtom, IStereoAndConformation> chirality2DCDK) {
 
         List<StereoChange> stereoChangeList = new ArrayList<>();
-        List<IAtom> queryAtoms = new ArrayList<>();
-        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-            for (IAtom a : ac.atoms()) {
-                queryAtoms.add(a);
-            }
+
+        if (chirality2DCDK.isEmpty()) {
+            return stereoChangeList;
         }
-        List<IAtom> targetAtoms = new ArrayList<>();
-        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            for (IAtom a : ac.atoms()) {
-                targetAtoms.add(a);
-            }
+
+        if (mappings.isEmpty()) {
+            return stereoChangeList;
         }
-        queryAtoms.stream().forEach((IAtom atomQ) -> {
-            targetAtoms.stream().filter((atomT) -> (isAtomMappingMatch(atomQ, atomT) && !atomQ.getSymbol().equalsIgnoreCase("H"))).forEach((atomT) -> {
-                IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
-                IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
-//                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
-//                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
-//
-//                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
-//                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
-                if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+
+        for (Map.Entry<IAtom, IAtom> map : mappings.entrySet()) {
+            if (!map.getKey().getSymbol().equalsIgnoreCase("H")
+                    && chirality2DCDK.containsKey(map.getKey())
+                    && chirality2DCDK.containsKey(map.getValue())) {
+                if (isStereogenicChange(chirality2DCDK.get(map.getKey()), chirality2DCDK.get(map.getValue()))) {
+                    StereoChange sc = new StereoChange(chirality2DCDK.get(map.getKey()), chirality2DCDK.get(map.getValue()), map.getKey(), map.getValue());
                     stereoChangeList.add(sc);
                 }
-            });
-        });
+            }
+        }
         return stereoChangeList;
     }
 

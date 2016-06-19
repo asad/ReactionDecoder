@@ -19,11 +19,8 @@ package uk.ac.ebi.centres.cdk;
 
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.centres.DefaultPerceptor;
@@ -87,21 +84,21 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
      */
     public void perceive(IAtomContainer container) {
         try {
-            /*
-            Check for 2D co-ordinates for EC-BLAST, must else it will fail!
-             */
-            if (!has2DCoordinates(container)) {
-                try {
-                    /*
-                    Clone it else it will loose mol ID
-                     */
-                    IAtomContainer clone = container.clone();
-                    StructureDiagramGenerator sdg = new StructureDiagramGenerator(clone);
-                    sdg.generateCoordinates();
-                    container = sdg.getMolecule();
-                } catch (CDKException e) {
-                }
-            }
+//            /*
+//             * Check for 2D co-ordinates for EC-BLAST, must else it will fail!
+//             */
+//            if (!has2DCoordinates(container)) {
+//                try {
+//                    /*
+//                     * Clone it else it will loose mol ID
+//                     */
+//                    IAtomContainer clone = container.clone();
+//                    StructureDiagramGenerator sdg = new StructureDiagramGenerator(clone);
+//                    sdg.generateCoordinates();
+//                    container = sdg.getMolecule();
+//                } catch (CDKException e) {
+//                }
+//            }
             perceive(new CDKCentreProvider(container), new CDKManager(container));
         } catch (Exception e) {
             logger.warn("WARNING: 2D CDK based stereo perception failed! ");

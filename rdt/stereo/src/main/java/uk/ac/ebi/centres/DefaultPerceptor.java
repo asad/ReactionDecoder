@@ -34,6 +34,7 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @param <A>
  */
 public class DefaultPerceptor<A> implements Perceptor<A> {
+
     private static final Logger LOG = getLogger(DefaultPerceptor.class.getName());
 
     private final CentrePerceptor<A> mainPerceptor;
@@ -87,9 +88,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
                     map.put(centre, descriptor);
                 }
 
-
             }
-
 
             // transfer descriptors
             for (Map.Entry<Centre<A>, Descriptor> entry : map.entrySet()) {
@@ -98,7 +97,6 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
                 entry.getKey().dispose();
                 entry.getKey().setDescriptor(entry.getValue());
             }
-
 
         } while (!map.isEmpty());
 
@@ -145,6 +143,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
     /**
      * Shutdown the internal executor
      */
+    @Override
     public void shutdown() {
         executor.shutdownNow();
     }

@@ -38,6 +38,10 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN_INVERTED;
+import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
+import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import org.openscience.cdk.stereo.ExtendedTetrahedral;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.CentreProvider;
 import uk.ac.ebi.centres.ConnectionTable;
@@ -50,6 +54,7 @@ import uk.ac.ebi.centres.ligand.TetrahedralCentre;
  * @author John May
  */
 public class CDKCentreProvider implements CentreProvider<IAtom> {
+
     private static final Logger LOG = getLogger(CDKCentreProvider.class.getName());
 
     private final IAtomContainer container;
@@ -97,7 +102,6 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
                 centres.add(centre);
             }
         }
-
 
         // planar centres
         for (IBond bond : container.bonds()) {

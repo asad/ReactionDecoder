@@ -694,6 +694,6 @@ public class ReactionMechanismTool implements Serializable {
      * @throws CDKException
      */
     public String getMappedReactionSMILES() throws CDKException {
-        return SmilesGenerator.generic().aromatic().withAtomClasses().createReactionSMILES(getSelectedSolution().getReaction());
+        return SmilesGenerator.isomeric().withAtomClasses().createReactionSMILES(getSelectedSolution().getReaction());
     }
 }

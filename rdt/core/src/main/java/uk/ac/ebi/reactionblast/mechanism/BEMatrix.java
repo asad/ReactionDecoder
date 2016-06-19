@@ -400,21 +400,29 @@ public class BEMatrix extends EBIMatrix implements Serializable {
     public IBond.Stereo convertStereo(int stereoValue) {
         IBond.Stereo stereo = NONE;
 
-        if (stereoValue == 1) {
-            // up bond
-            stereo = UP;
-        } else if (stereoValue == 6) {
-            // down bond
-            stereo = DOWN;
-        } else if (stereoValue == 0) {
-            // bond has no stereochemistry
-            stereo = NONE;
-        } else if (stereoValue == 4) {
-            //up or down bond
-            stereo = UP_OR_DOWN;
-        } else if (stereoValue == 3) {
-            //e or z undefined
-            stereo = E_OR_Z;
+        switch (stereoValue) {
+            case 1:
+                // up bond
+                stereo = UP;
+                break;
+            case 6:
+                // down bond
+                stereo = DOWN;
+                break;
+            case 0:
+                // bond has no stereochemistry
+                stereo = NONE;
+                break;
+            case 4:
+                //up or down bond
+                stereo = UP_OR_DOWN;
+                break;
+            case 3:
+                //e or z undefined
+                stereo = E_OR_Z;
+                break;
+            default:
+                break;
         }
 
         return stereo;

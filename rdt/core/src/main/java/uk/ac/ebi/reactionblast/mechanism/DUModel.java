@@ -39,6 +39,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
