@@ -645,6 +645,14 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 Double st = referenceReaction.getReactantCoefficient(refMol);
                 aromatizeMolecule(mol);
                 reactionWithSTOICHIOMETRY.addReactant(mol, st);
+                /*
+                 * Note: This is a work around to help calculate CIPLigand rule
+                 * cip.rules.MassNumberRule.getMassNumber
+                 */
+                for (IAtom atom : mol.atoms()) {
+                    int number = atom.getMassNumber() == null ? 11 : atom.getMassNumber();
+                    atom.setMassNumber(number);
+                }
             }
         } catch (CloneNotSupportedException | CDKException e) {
             getLogger(Reactor.class.getName()).log(SEVERE, null, e);
@@ -659,6 +667,14 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 Double st = referenceReaction.getProductCoefficient(refMol);
                 aromatizeMolecule(mol);
                 reactionWithSTOICHIOMETRY.addProduct(mol, st);
+                /*
+                 * Note: This is a work around to help calculate CIPLigand rule
+                 * cip.rules.MassNumberRule.getMassNumber
+                 */
+                for (IAtom atom : mol.atoms()) {
+                    int number = atom.getMassNumber() == null ? 11 : atom.getMassNumber();
+                    atom.setMassNumber(number);
+                }
             }
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());

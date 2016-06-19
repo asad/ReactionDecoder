@@ -26,20 +26,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.System.out;
-import java.util.Map;
 import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
+import uk.ac.ebi.reactionblast.mechanism.IBondChangeCalculator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
@@ -250,7 +248,7 @@ public class MappingUtility extends TestUtility {
      * @throws FileNotFoundException
      * @throws Exception
      */
-    public BondChangeCalculator testRCReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
+    public IBondChangeCalculator testRCReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, new StandardizeReaction());
@@ -276,27 +274,27 @@ public class MappingUtility extends TestUtility {
         sb.append(NEW_LINE);
         out.println(sb.toString());
 
-        StringBuilder rcSteps = new StringBuilder();
-        rcSteps.append("Formed Cleaved");
-        rcSteps.append(NEW_LINE);
-        Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
-        reactionCenterFormedCleavedFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
-            rcSteps.append(m.getValue());
-        });
-        rcSteps.append("Order Change");
-        rcSteps.append(NEW_LINE);
-        Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
-        reactionCenterOrderChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
-            rcSteps.append(m.getValue());
-        });
-        rcSteps.append("Stereo Change");
-        rcSteps.append(NEW_LINE);
-        Map<Integer, IPatternFingerprinter> reactionCenterStereoChangeFingerprint = s.getBondChangeCalculator().getReactionCenterStereoChangeFingerprint();
-        reactionCenterStereoChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
-            rcSteps.append(m.getValue());
-        });
-        rcSteps.append(NEW_LINE);
-        out.println(rcSteps.toString());
+//        StringBuilder rcSteps = new StringBuilder();
+//        rcSteps.append("Formed Cleaved");
+//        rcSteps.append(NEW_LINE);
+//        Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
+//        reactionCenterFormedCleavedFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
+//            rcSteps.append(m.getValue());
+//        });
+//        rcSteps.append("Order Change");
+//        rcSteps.append(NEW_LINE);
+//        Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
+//        reactionCenterOrderChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
+//            rcSteps.append(m.getValue());
+//        });
+//        rcSteps.append("Stereo Change");
+//        rcSteps.append(NEW_LINE);
+//        Map<Integer, IPatternFingerprinter> reactionCenterStereoChangeFingerprint = s.getBondChangeCalculator().getReactionCenterStereoChangeFingerprint();
+//        reactionCenterStereoChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
+//            rcSteps.append(m.getValue());
+////        });
+//        rcSteps.append(NEW_LINE);
+//        out.println(rcSteps.toString());
         return s.getBondChangeCalculator();
     }
 
@@ -308,7 +306,7 @@ public class MappingUtility extends TestUtility {
      * @throws FileNotFoundException
      * @throws Exception
      */
-    public BondChangeCalculator map(String reactionID, String directory) throws FileNotFoundException, Exception {
+    public IBondChangeCalculator map(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, new StandardizeReaction());
         MappingSolution s = rmt.getSelectedSolution();

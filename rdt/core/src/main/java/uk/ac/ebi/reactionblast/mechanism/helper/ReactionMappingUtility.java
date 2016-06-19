@@ -86,6 +86,7 @@ import static java.lang.Math.min;
 import static java.util.Arrays.sort;
 import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.Reaction;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
@@ -93,7 +94,110 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.get
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public abstract class ReactionMappingUtility extends MatrixPrinter implements Serializable {
+public abstract class ReactionMappingUtility implements Serializable {
+
+    /**
+     *
+     * @param reactantAtom
+     * @param productAtom
+     * @param atomContainerR
+     * @param atomContainerP
+     * @return
+     * @throws Exception
+     */
+    protected static MoleculeMoleculePair getMolMolPair(
+            IAtom reactantAtom,
+            IAtom productAtom,
+            IAtomContainer atomContainerR,
+            IAtomContainer atomContainerP) throws Exception {
+
+        int atomIndexR = getAtomIndexByID(atomContainerR, reactantAtom);
+
+        String signatureR1 = getSignature(atomContainerR, reactantAtom, 1);
+        String signatureR2 = getSignature(atomContainerR, reactantAtom, 2);
+        String signatureR3 = getSignature(atomContainerR, reactantAtom, 3);
+        String signatureR = getSignature(atomContainerR, reactantAtom, -1);
+
+        IAtomContainer fragR1 = getCircularFragment(atomContainerR, atomIndexR, 1);
+        IAtomContainer fragR2 = getCircularFragment(atomContainerR, atomIndexR, 2);
+        IAtomContainer fragR3 = getCircularFragment(atomContainerR, atomIndexR, 3);
+        IAtomContainer fragR = getCircularFragment(atomContainerR, atomIndexR, -1);
+
+        String signatureP1 = getSignature(atomContainerP, productAtom, 1);
+        String signatureP2 = getSignature(atomContainerP, productAtom, 2);
+        String signatureP3 = getSignature(atomContainerP, productAtom, 3);
+        String signatureP = getSignature(atomContainerP, productAtom, -1);
+
+        int atomIndexP = getAtomIndexByID(atomContainerP, productAtom);
+
+        IAtomContainer fragP1 = getCircularFragment(atomContainerP, atomIndexP, 1);
+        IAtomContainer fragP2 = getCircularFragment(atomContainerP, atomIndexP, 2);
+        IAtomContainer fragP3 = getCircularFragment(atomContainerP, atomIndexP, 3);
+        IAtomContainer fragP = getCircularFragment(atomContainerP, atomIndexP, -1);
+
+        IReaction reaction1 = new Reaction();
+        reaction1.addReactant(fragR1, 1.0);
+        reaction1.addProduct(fragP1, 1.0);
+
+        IReaction reaction2 = new Reaction();
+        reaction2.addReactant(fragR2, 1.0);
+        reaction2.addProduct(fragP2, 1.0);
+
+        IReaction reaction3 = new Reaction();
+        reaction3.addReactant(fragR3, 1.0);
+        reaction3.addProduct(fragP3, 1.0);
+
+        IReaction reaction = new Reaction();
+        reaction.addReactant(fragR, 1.0);
+        reaction.addProduct(fragP, 1.0);
+
+        String smirks;
+        String smirks1;
+        String smirks2;
+        String smirks3;
+
+        smirks = getSMILES(reaction, true);
+        smirks1 = getSMILES(reaction1, true);
+        smirks2 = getSMILES(reaction2, true);
+        smirks3 = getSMILES(reaction3, true);
+
+        String smartsR;
+        String smartsR1;
+        String smartsR2;
+        String smartsR3;
+
+        smartsR = getSMILES(fragR, true);
+        smartsR1 = getSMILES(fragR1, true);
+        smartsR2 = getSMILES(fragR2, true);
+        smartsR3 = getSMILES(fragR3, true);
+
+        String smartsP;
+        String smartsP1;
+        String smartsP2;
+        String smartsP3;
+
+        smartsP = getSMILES(fragP, true);
+        smartsP1 = getSMILES(fragP1, true);
+        smartsP2 = getSMILES(fragP2, true);
+        smartsP3 = getSMILES(fragP3, true);
+
+        ReactantProductPair rrpName = new ReactantProductPair(atomContainerR.getID(), atomContainerP.getID());
+        ReactantProductPair rrpSMARTS = new ReactantProductPair(smartsR, smartsP);
+        ReactantProductPair rrpSignature = new ReactantProductPair(signatureR, signatureP);
+
+        MoleculeMoleculePair mmp = new MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks);
+        mmp.setSignature1(new ReactantProductPair(signatureR1, signatureP1));
+        mmp.setSignature2(new ReactantProductPair(signatureR2, signatureP2));
+        mmp.setSignature3(new ReactantProductPair(signatureR3, signatureP3));
+        mmp.setSmarts1(new ReactantProductPair(smartsR1, smartsP1));
+        mmp.setSmarts2(new ReactantProductPair(smartsR2, smartsP2));
+        mmp.setSmarts3(new ReactantProductPair(smartsR3, smartsP3));
+        mmp.setSmirks1(smirks1);
+        mmp.setSmirks2(smirks2);
+        mmp.setSmirks3(smirks3);
+
+        return mmp;
+    }
 
     /**
      * Used Chemaxon to generate SMIRKS
@@ -705,7 +809,6 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
     }
 
     protected static Set<IAtom> getAtomStereoChanges(IReaction mappedReaction, Map<IAtom, IAtom> mappings) {
-
         Set<IAtom> detectStereoChanges = detectStereoChanges(mappedReaction, mappings);
         return detectStereoChanges;
     }
@@ -725,6 +828,15 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
             rings.add(ssrRings);
         }
         return rings;
+    }
+
+    protected static Map<IAtom, IAtom> getMappingsWithouH(IReaction mappedReaction) {
+        HashMap<IAtom, IAtom> mappingsWithoutH = new HashMap<>();
+        Map<IAtom, IAtom> mappingsFull = getMappings(mappedReaction);
+        mappingsFull.entrySet().stream().filter((map) -> (!map.getKey().getSymbol().equals("H"))).forEach((map) -> {
+            mappingsWithoutH.put(map.getKey(), map.getValue());
+        });
+        return mappingsWithoutH;
     }
 
     protected static Map<IAtom, IAtom> getMappings(IReaction mappedReaction) {
@@ -886,63 +998,59 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
     private static Map<IBond, IBond> detectBondOrderChanges(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings, IRingSet queryRingSet, IRingSet targetRingSet) {
         Map<IBond, IBond> bondChange = new HashMap<>();
 
-        for (IBond rb : reactantsbonds) {
-            if (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
-                for (IBond pb : productsbonds) {
-                    if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
-                        if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()))) {
-                            if (rb.getOrder().numeric() > pb.getOrder().numeric()) {
-                                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
-                                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
-                                rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-                            } else if (rb.getOrder().numeric() < pb.getOrder().numeric()) {
-                                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                                rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-                            }
-
-                            rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                            rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-
-                            if (pb.getOrder().numeric() > rb.getOrder().numeric()) {
-                                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
-                                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
-                                pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-                            } else if (pb.getOrder().numeric() < rb.getOrder().numeric()) {
-                                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                                pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-                            }
-
-                            pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                            pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-
-                            /*
-                             * Store all order changes
-                             */
-                            bondChange.put(rb, pb);
-                        }
-
-                        int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
-
-                        if (kekuleEffect == 0) {
-                            rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                            rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                            rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-
-                            pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                            pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
-                            pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
-
-                            /*
-                             * Store all order changes
-                             */
-                            bondChange.put(rb, pb);
-                        }
+        reactantsbonds.stream().filter((rb) -> (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1)))).forEach((IBond rb) -> {
+            productsbonds.stream().filter((pb) -> (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1))))).map((IBond pb) -> {
+                if ((isBondMappingMatch(rb, pb) && !rb.getOrder().equals(pb.getOrder()))) {
+                    if (rb.getOrder().numeric() > pb.getOrder().numeric()) {
+                        rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                        rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                        rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+                    } else if (rb.getOrder().numeric() < pb.getOrder().numeric()) {
+                        rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                        rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                        rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
                     }
+
+                    rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
+
+                    if (pb.getOrder().numeric() > rb.getOrder().numeric()) {
+                        pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                        pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_REDUCED);
+                        pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+                    } else if (pb.getOrder().numeric() < rb.getOrder().numeric()) {
+                        pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                        pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                        pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+                    }
+
+                    pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
+                    pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
+
+                    /*
+                    * Store all order changes
+                     */
+                    bondChange.put(rb, pb);
                 }
-            }
-        }
+                return pb;
+            }).forEach((pb) -> {
+                int kekuleEffect = isAlternateKekuleChange(rb, pb, queryRingSet, targetRingSet);
+                if (kekuleEffect == 0) {
+                    rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                    rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                    rb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+
+                    pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                    pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER_GAIN);
+                    pb.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+
+                    /*
+                    * Store all order changes
+                     */
+                    bondChange.put(rb, pb);
+                }
+            });
+        });
         return bondChange;
     }
 
@@ -965,7 +1073,6 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
             chiralityCDK2D = getChirality2D(reaction, mappings);
-            System.out.println("chiralityCDK2D map size " + chiralityCDK2D.size());
         } catch (CDKException | CloneNotSupportedException ex) {
             err.println("WARNING: 2D CDK based stereo perception failed");
         }
@@ -1183,12 +1290,9 @@ public abstract class ReactionMappingUtility extends MatrixPrinter implements Se
             }
 
         }
-
         chiralityMap.keySet().stream().forEach((atom) -> {
             atom.setProperty("Stereo", chiralityMap.get(atom));
         });
-
-        System.out.println("getChirality2D : " + chiralityMap.size());
 
         return chiralityMap;
     }

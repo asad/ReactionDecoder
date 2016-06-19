@@ -48,7 +48,7 @@ public class MappingSolution implements Serializable {
     private final Reactor reactor;
     private final int totalChanges;
     private boolean chosen;
-    private final BondChangeCalculator bondChangeCalculator;
+    private final IBondChangeCalculator bondChangeCalculator;
     private boolean generate3D;
     private boolean generate2D;
 
@@ -67,7 +67,19 @@ public class MappingSolution implements Serializable {
      * @param reaction
      * @param energyDelta
      */
-    public MappingSolution(BondChangeCalculator bondChangeCalculator, IMappingAlgorithm ma, IReaction reaction, Reactor reactor, double bondEnergyChange, int totalCarbonBondChanges, int totalBondChanges, int totalFragmentChanges, int totalStereoChanges, int smallestFragmentCount, int localScore, double energyDelta) {
+    public MappingSolution(
+            IBondChangeCalculator bondChangeCalculator,
+            IMappingAlgorithm ma,
+            IReaction reaction,
+            Reactor reactor,
+            double bondEnergyChange,
+            int totalCarbonBondChanges,
+            int totalBondChanges,
+            int totalFragmentChanges,
+            int totalStereoChanges,
+            int smallestFragmentCount,
+            int localScore,
+            double energyDelta) {
         this.algorithmID = ma;
         this.bondEnergySum = bondEnergyChange;
         this.totalBondChanges = totalBondChanges;
@@ -86,8 +98,7 @@ public class MappingSolution implements Serializable {
     }
 
     @Override
-    public String toString(
-            ) {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         String property = getProperty("line.separator");
         sb.append(property);
@@ -183,7 +194,7 @@ public class MappingSolution implements Serializable {
     /**
      * @return the bondChangeCalculator
      */
-    public BondChangeCalculator getBondChangeCalculator() {
+    public IBondChangeCalculator getBondChangeCalculator() {
         return bondChangeCalculator;
     }
 

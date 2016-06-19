@@ -273,10 +273,10 @@ public class ReactionMechanismTool implements Serializable {
 
         boolean chosen = false;
         try {
-            BondChangeCalculator bcc;
+            IBondChangeCalculator bcc;
             int fragmentDeltaChanges;
             if (reactor == null && ma.equals(USER_DEFINED)) {
-                bcc = new BondChangeCalculator(reaction);
+                bcc = new BondChangeCalculator1(reaction);
                 fragmentDeltaChanges = 0;
                 int bondChange = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 bondChange += getTotalBondChange(bcc.getOrderChangesWFingerprint());
@@ -308,7 +308,7 @@ public class ReactionMechanismTool implements Serializable {
                 if (reactor == null) {
                     throw new CDKException("Reactor is NULL");
                 }
-                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping());
+                bcc = new BondChangeCalculator1(reactor.getReactionWithAtomAtomMapping());
                 fragmentDeltaChanges = reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());

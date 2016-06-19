@@ -32,7 +32,6 @@ import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -42,23 +41,11 @@ import static uk.ac.ebi.reactionblast.TestUtility.BUG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.TestUtility.KEGG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.TestUtility.OTHER_RXN;
 import static uk.ac.ebi.reactionblast.TestUtility.RHEA_RXN_DIR;
-import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import org.openscience.cdk.interfaces.IAtom;
 import static java.util.logging.Logger.getLogger;
-import org.openscience.cdk.geometry.cip.CIPTool;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IChemObjectBuilder;
-import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
-import org.openscience.cdk.interfaces.IStereoElement;
-import org.openscience.cdk.interfaces.ITetrahedralChirality;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.stereo.ExtendedTetrahedral;
-import uk.ac.ebi.beam.Graph;
-import uk.ac.ebi.reactionblast.tools.BeamToCDK;
-import uk.ac.ebi.reactionblast.tools.CDKToBeam;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
-import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import uk.ac.ebi.reactionblast.mechanism.IBondChangeCalculator;
+import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 
 /**
@@ -1596,7 +1583,7 @@ public class ReactionDecoderTest extends MappingUtility {
     public void R204() throws FileNotFoundException, Exception {
 
         String reactionID = "204";
-        BondChangeCalculator bondChanges = testReactions(reactionID, BRENDA_RXN_DIR, false, false)
+        IBondChangeCalculator bondChanges = testReactions(reactionID, BRENDA_RXN_DIR, false, false)
                 .getSelectedSolution().getBondChangeCalculator();
         IPatternFingerprinter formedCleavedWFingerprint = bondChanges
                 .getFormedCleavedWFingerprint();
@@ -1612,10 +1599,10 @@ public class ReactionDecoderTest extends MappingUtility {
     public void SIM() throws Exception {
 
         String reactionID1 = "R01194";
-        BondChangeCalculator testRCReactions1 = testReactions(reactionID1, KEGG_RXN_DIR, false, false)
+        IBondChangeCalculator testRCReactions1 = testReactions(reactionID1, KEGG_RXN_DIR, false, false)
                 .getSelectedSolution().getBondChangeCalculator();
         String reactionID2 = "R01188";
-        BondChangeCalculator testRCReactions2 = testReactions(reactionID2, KEGG_RXN_DIR, false, false)
+        IBondChangeCalculator testRCReactions2 = testReactions(reactionID2, KEGG_RXN_DIR, false, false)
                 .getSelectedSolution().getBondChangeCalculator();
 
         IPatternFingerprinter fp1 = new PatternFingerprinter();
