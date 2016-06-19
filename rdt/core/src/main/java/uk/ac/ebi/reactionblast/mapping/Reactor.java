@@ -292,6 +292,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     private synchronized IReaction getMapping(IReaction coreMappedReaction) throws IOException, CDKException, CloneNotSupportedException {
 
         IReaction mappedReaction = deepClone(reactionWithUniqueSTOICHIOMETRY);
+        cleanMapping(mappedReaction);
 
 //        printReaction(mappedReaction);
 
