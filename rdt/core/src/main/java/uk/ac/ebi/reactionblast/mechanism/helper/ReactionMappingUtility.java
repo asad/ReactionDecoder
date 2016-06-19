@@ -87,6 +87,7 @@ import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import uk.ac.ebi.reactionblast.mechanism.StereoChange;
 
 /**
  *
