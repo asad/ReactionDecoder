@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mechanism;
 
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -765,8 +766,7 @@ public class BondChangeCalculator1 extends AbstractChangeCalculator implements I
      */
     @Override
     public synchronized IReaction getReaction() throws Exception {
-        IReaction mappedReactionWithBondChanges = mappedReaction;
-        return mappedReactionWithBondChanges;
+        return this.mappedReaction;
     }
 
     /**

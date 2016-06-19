@@ -28,7 +28,6 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.MoleculeMoleculePair;
-import uk.ac.ebi.reactionblast.mechanism.helper.ReactionCenterFragment;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 
 /**

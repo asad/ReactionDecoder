@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mechanism;
 
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import java.io.Serializable;
 import static java.lang.Integer.MIN_VALUE;
 import static java.lang.System.err;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
@@ -107,11 +107,8 @@ public class ReactionMechanismTool implements Serializable {
         this.selectedMapping = null;
 
         if (!isBalanced(reaction)) {
-            getLogger(ReactionMechanismTool.class.getName()).
-                    log(WARNING, "Atoms not balanced in the input reaction: {0}; "
-                            + "unbalanced reaction may result in erroneous bond change assumptions!", reaction.getID());
-            getLogger(ReactionMechanismTool.class.getName()).
-                    log(WARNING, " ");
+            logger.info("Atoms not balanced in the input reaction: {0}; "
+                    + "unbalanced reaction may result in erroneous bond change assumptions!", reaction.getID());
             if (!forcedMapping) {
                 return;
             }
@@ -176,7 +173,7 @@ public class ReactionMechanismTool implements Serializable {
                     if (atomCountR != atomCountP) {
                         logger.warn("ERROR in Mapping " + reactor.toString());
                         String newline = getProperty("line.separator");
-                        err.println("Unmapped atoms present in this reaction" + "(" + algorithm + ") algorithm.");
+                        logger.warn("Unmapped atoms present in this reaction" + "(" + algorithm + ") algorithm.");
 //                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
 //                                + "(" + algorithm + ") algorithm." + newline);
                     }
@@ -249,16 +246,14 @@ public class ReactionMechanismTool implements Serializable {
         }
 
         if (leftHandAtomCount != rightHandAtomCount) {
-            err.println();
-            err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+            logger.warn("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            logger.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            err.println();
-            err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+            logger.warn("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            logger.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         }
 
@@ -690,6 +685,7 @@ public class ReactionMechanismTool implements Serializable {
 
     /**
      * Reaction SMILES with AAM based on the selected solution
+     *
      * @return Reaction SMILES with AAM
      * @throws CDKException
      */

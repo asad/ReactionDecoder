@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mechanism;
 
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import java.io.Serializable;
 import static java.lang.System.getProperty;
 import java.util.logging.Logger;

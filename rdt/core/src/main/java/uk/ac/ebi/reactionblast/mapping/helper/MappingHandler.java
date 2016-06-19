@@ -18,19 +18,26 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
+import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
+import static org.openscience.cdk.CDKConstants.REACTIVE_CENTER;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
+import static uk.ac.ebi.reactionblast.mechanism.interfaces.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
+import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 
 /**
- * @Author: Syed Asad Rahman <asad @ ebi.ac.uk> 
- * @Date: 2009/06/3 
+ * @Author: Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @Date: 2009/06/3
  * @Revision: 1.10
  */
 public class MappingHandler extends BasicDebugger {
@@ -45,6 +52,20 @@ public class MappingHandler extends BasicDebugger {
         int count = MappedReaction.getMappingCount();
         for (int i = count; i > 0; i--) {
             MappedReaction.removeMapping(i);
+        }
+
+        List<IAtomContainer> allAtomContainers = ExtReactionManipulatorTool.getAllAtomContainers(MappedReaction);
+        for (IAtomContainer container : allAtomContainers) {
+            for (IAtom a : container.atoms()) {
+                a.removeProperty(BOND_CHANGE_INFORMATION);
+                a.removeProperty(ATOM_STEREO_CHANGE_INFORMATION);
+                a.removeProperty(ATOM_ATOM_MAPPING);
+                a.setFlag(REACTIVE_CENTER, false);
+            }
+            for (IBond b : container.bonds()) {
+                b.removeProperty(BOND_CHANGE_INFORMATION);
+                b.removeProperty(ATOM_ATOM_MAPPING);
+            }
         }
 
         for (int eMol = 0; eMol < MappedReaction.getReactantCount(); eMol++) {
@@ -85,22 +106,18 @@ public class MappingHandler extends BasicDebugger {
         IAtomContainerSet expProductSet = expLabReaction.getProducts();
 
 //        System.out.println("Mapping size " + expLabReaction.getMappingCount());
-        
-        
         for (IMapping map : expLabReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
             IAtom J_Atom = (IAtom) map.getChemObject(1);
 
 //            System.out.println("Mapped Atom ID " + I_Atom.getID().trim() + "  Atom ID " + J_Atom.getID().trim());
-
             if (I_Atom != null && J_Atom != null) {
 
                 /*
                 *******************************
                 * Mapping the Reactants ******************************
-                */
-                
+                 */
                 boolean eFlag = false;
                 IAtom firstAtom = null;
                 IAtom secondAtom = null;
@@ -128,7 +145,7 @@ public class MappingHandler extends BasicDebugger {
                 /*
                 *******************************
                 * Mapping the Products ******************************
-                */
+                 */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {
                     IAtomContainer pMolecule = expProductSet.getAtomContainer(pMol);
@@ -173,8 +190,6 @@ public class MappingHandler extends BasicDebugger {
         IAtomContainerSet expProductSet = ReactionWithUniqueSTOICHIOMETRY.getProducts();
 
 //        System.out.println("Mapping size " + coreMappedReaction.getMappingCount());
-        
-        
         for (IMapping map : coreMappedReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
@@ -188,8 +203,7 @@ public class MappingHandler extends BasicDebugger {
                 /*
                 *******************************
                 * Mapping the Reactants ******************************
-                */
-                
+                 */
                 boolean eFlag = false;
                 IAtom firstAtom = null;
                 IAtom secondAtom = null;
@@ -200,10 +214,8 @@ public class MappingHandler extends BasicDebugger {
 
 //                            System.out.println("Mapped Atom ID " + I_Atom.getID().trim() + " eMoleculeID " + eMolecule.getAtom(eAtom).getID().trim());
 //                            System.out.println("Mapped Atom Symbol " + I_Atom.getSymbol() + " eMolecule Symbol " + eMolecule.getAtom(eAtom).getSymbol());
-
 //                            System.out.println("Hi Matched product");
 //                            System.out.println("ID:" + I_Atom.getID().trim());
-
                             String atomLabel = Integer.toString(counter);
 //                            System.out.println("_atomMappings.get(i).getSymbol().trim() " + I_Atom.getSymbol().trim() + " eMolecule.getAtom(eAtom).getID().trim() " + eMolecule.getAtom(eAtom).getSymbol().trim());
 
@@ -223,7 +235,7 @@ public class MappingHandler extends BasicDebugger {
                 /*
                 *******************************
                 * Mapping the Products ******************************
-                */
+                 */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {
                     IAtomContainer pMolecule = expProductSet.getAtomContainer(pMol);
@@ -254,7 +266,6 @@ public class MappingHandler extends BasicDebugger {
             }
 
         }
-
 
 //        System.out.println("expLabReaction in setMapping: ");
 //        printReaction(expLabReaction);

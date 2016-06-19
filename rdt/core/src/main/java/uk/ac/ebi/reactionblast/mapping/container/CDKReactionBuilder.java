@@ -69,6 +69,7 @@ import static java.util.Collections.sort;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import uk.ac.ebi.reactionblast.mapping.helper.MappingHandler;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -681,6 +682,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         } catch (CloneNotSupportedException | CDKException e) {
             getLogger(Reactor.class.getName()).log(SEVERE, null, e);
         }
+
+        /*
+         * Clean mapping flag and bond change flags
+         */
+        MappingHandler.cleanMapping(reactionWithSTOICHIOMETRY);
         return expandReaction(reactionWithSTOICHIOMETRY);
     }
 

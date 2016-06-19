@@ -48,7 +48,6 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -88,6 +87,7 @@ import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import uk.ac.ebi.reactionblast.mechanism.StereoChange;
+import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeCDK;
 
 /**
  *
@@ -588,7 +588,7 @@ public abstract class ReactionMappingUtility implements Serializable {
         }
 
         IAtomContainer canonicalise = canonicalise(fragment);
-        aromatizeDayLight(canonicalise);
+        aromatizeCDK(canonicalise);
 
         return fragment;
     }
@@ -909,69 +909,90 @@ public abstract class ReactionMappingUtility implements Serializable {
     private static Set<IBond> detectBondsCleavedAndFormed(Set<IBond> reactantsbonds, Set<IBond> productsbonds, Map<IAtom, IAtom> mappings) {
         Set<IBond> bondChange = new LinkedHashSet<>();
 
-        for (IBond rb : reactantsbonds) {
-            if (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
-                boolean bondBroken = true;
-                for (IBond pb : productsbonds) {
-                    if (pb.contains(mappings.get(rb.getAtom(0))) && pb.contains(mappings.get(rb.getAtom(1)))) {
-                        bondBroken = false;
-                        break;
+        Set<IBond> cleaved = new LinkedHashSet<>(reactantsbonds);
+
+        reactantsbonds.stream().filter((rb) -> (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1)))).forEach((rb) -> {
+            productsbonds.stream().filter((pb) -> (mappings.containsValue(pb.getAtom(0)) && mappings.containsValue(pb.getAtom(1)))).map((pb) -> {
+                if (rb.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(0).getProperty(ATOM_ATOM_MAPPING))) {
+                    if (rb.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(1).getProperty(ATOM_ATOM_MAPPING))) {
+                        cleaved.remove(rb);
                     }
                 }
-                if (bondBroken) {
-                    rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                    rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                    rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                    rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                    bondChange.add(rb);
-                }
-            } else if (mappings.containsKey(rb.getAtom(0)) && !mappings.containsKey(rb.getAtom(1))) {
-                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                bondChange.add(rb);
-            } else if (!mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1))) {
-                rb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                rb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
-                rb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                rb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                bondChange.add(rb);
-            }
-        }
+                return pb;
+            }).filter((pb) -> (rb.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(0).getProperty(ATOM_ATOM_MAPPING)))).filter((pb) -> (rb.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(1).getProperty(ATOM_ATOM_MAPPING)))).forEach((_item) -> {
+                cleaved.remove(rb);
+            });
+        });
 
-        for (IBond pb : productsbonds) {
-            if (mappings.containsValue(pb.getAtom(0)) && mappings.containsValue(pb.getAtom(1))) {
-                boolean bondBroken = true;
-                for (IBond rb : reactantsbonds) {
-                    if (rb.contains(getKeyFromValue(pb.getAtom(0), mappings))
-                            && rb.contains(getKeyFromValue(pb.getAtom(1), mappings))) {
-                        bondBroken = false;
-                        break;
+        reactantsbonds.stream().filter((bond) -> (!mappings.containsKey(bond.getAtom(0)) && !mappings.containsKey(bond.getAtom(1)))).forEach((bond) -> {
+            cleaved.remove(bond);
+        });
+
+        Set<IBond> formed = new LinkedHashSet<>(productsbonds);
+
+        productsbonds.stream().filter((pb) -> (mappings.containsValue(pb.getAtom(0)) && mappings.containsValue(pb.getAtom(1)))).forEach((pb) -> {
+            reactantsbonds.stream().filter((rb) -> (mappings.containsKey(rb.getAtom(0)) && mappings.containsKey(rb.getAtom(1)))).map((rb) -> {
+                if (rb.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(0).getProperty(ATOM_ATOM_MAPPING))) {
+                    if (rb.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(1).getProperty(ATOM_ATOM_MAPPING))) {
+                        formed.remove(pb);
                     }
                 }
-                if (bondBroken) {
-                    pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                    pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                    pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                    pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                    bondChange.add(pb);
-                }
-            } else if (mappings.containsKey(pb.getAtom(0)) && !mappings.containsKey(pb.getAtom(1))) {
-                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                bondChange.add(pb);
-            } else if (!mappings.containsKey(pb.getAtom(0)) && mappings.containsKey(pb.getAtom(1))) {
-                pb.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                pb.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
-                pb.getAtom(0).setFlag(REACTIVE_CENTER, true);
-                pb.getAtom(1).setFlag(REACTIVE_CENTER, true);
-                bondChange.add(pb);
-            }
-        }
+                return rb;
+            }).filter((rb) -> (rb.getAtom(1).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(0).getProperty(ATOM_ATOM_MAPPING)))).filter((rb) -> (rb.getAtom(0).getProperty(ATOM_ATOM_MAPPING).equals(pb.getAtom(1).getProperty(ATOM_ATOM_MAPPING)))).forEach((_item) -> {
+                formed.remove(pb);
+            });
+        });
 
+        productsbonds.stream().filter((bond) -> (!mappings.containsValue(bond.getAtom(0)) && !mappings.containsValue(bond.getAtom(1)))).forEach((bond) -> {
+            formed.remove(bond);
+        });
+
+        /*
+         * set Flags for Bonds cleaved and formed
+         */
+        cleaved.stream().map((bond) -> {
+            bond.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(0).setFlag(REACTIVE_CENTER, true);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(1).setFlag(REACTIVE_CENTER, true);
+            return bond;
+        }).map((bond) -> {
+            bond.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+            return bond;
+        }).forEach((bond) -> {
+            bondChange.add(bond);
+        });
+
+        /*
+         * set Flags for Bonds formed
+         */
+        formed.stream().map((bond) -> {
+            bond.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(0).setFlag(REACTIVE_CENTER, true);
+            return bond;
+        }).map((bond) -> {
+            bond.getAtom(1).setFlag(REACTIVE_CENTER, true);
+            return bond;
+        }).map((bond) -> {
+            bond.setProperty(BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+            return bond;
+        }).forEach((bond) -> {
+            bondChange.add(bond);
+        });
+
+        cleaved.clear();
+        formed.clear();
         return bondChange;
     }
 

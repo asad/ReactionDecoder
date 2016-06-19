@@ -193,8 +193,6 @@ public class CallableAtomMappingTool implements Serializable {
             logger.error(e);
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(CallableAtomMappingTool.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception e) {
-            Logger.getLogger(CallableAtomMappingTool.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             executor.shutdown();
         }
