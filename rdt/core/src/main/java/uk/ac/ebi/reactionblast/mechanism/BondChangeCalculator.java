@@ -66,6 +66,9 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * This class marks the bond changes
@@ -73,11 +76,11 @@ import static java.util.logging.Logger.getLogger;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class BondChangeCalculator1 extends AbstractChangeCalculator implements IBondChangeCalculator {
+public class BondChangeCalculator extends AbstractChangeCalculator implements IBondChangeCalculator {
 
     private final boolean DEBUG = false;
     private static final long serialVersionUID = 98698690880809981L;
-    private static final Logger LOG = getLogger(BondChangeCalculator1.class.getName());
+    private static final Logger LOG = getLogger(BondChangeCalculator.class.getName());
 
     private final IPatternFingerprinter formedCleavedWFingerprint;
     private final IPatternFingerprinter orderChangesWFingerprint;
@@ -100,7 +103,7 @@ public class BondChangeCalculator1 extends AbstractChangeCalculator implements I
      * @param reaction
      * @throws Exception
      */
-    public BondChangeCalculator1(IReaction reaction) throws Exception {
+    public BondChangeCalculator(IReaction reaction) throws Exception {
         if (DEBUG) {
             System.out.println("Bond Change Calculator START");
         }
@@ -726,7 +729,7 @@ public class BondChangeCalculator1 extends AbstractChangeCalculator implements I
                 }
             }
         } catch (CloneNotSupportedException ex) {
-            getLogger(BondChangeCalculator1.class.getName()).log(SEVERE, null, ex);
+            getLogger(BondChangeCalculator.class.getName()).log(SEVERE, null, ex);
         }
         return compressedReaction;
     }

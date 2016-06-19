@@ -67,6 +67,12 @@ import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
+import static java.lang.Integer.parseInt;
+import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 
 /**
  *
@@ -271,7 +277,7 @@ public class ReactionMechanismTool implements Serializable {
             IBondChangeCalculator bcc;
             int fragmentDeltaChanges;
             if (reactor == null && ma.equals(USER_DEFINED)) {
-                bcc = new BondChangeCalculator1(reaction);
+                bcc = new BondChangeCalculator(reaction);
                 fragmentDeltaChanges = 0;
                 int bondChange = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 bondChange += getTotalBondChange(bcc.getOrderChangesWFingerprint());
@@ -303,7 +309,7 @@ public class ReactionMechanismTool implements Serializable {
                 if (reactor == null) {
                     throw new CDKException("Reactor is NULL");
                 }
-                bcc = new BondChangeCalculator1(reactor.getReactionWithAtomAtomMapping());
+                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping());
                 fragmentDeltaChanges = reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
