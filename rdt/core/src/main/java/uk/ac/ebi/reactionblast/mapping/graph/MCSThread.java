@@ -436,12 +436,12 @@ public class MCSThread implements Callable<MCSSolution> {
                 /*
                  This handles large aliphatics to ring system (ex: R06466)
                  */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.VFLibMCS, false, isPerfectRings(), !isPerfectRings());
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.CDKMCS, false, isPerfectRings(), !isPerfectRings());
             } else {
 //                System.out.println("Default called");
 //                System.out.println("getCompound1() " + getCompound1().getAtomCount());
 //                System.out.println("getCompound2() " + getCompound2().getAtomCount());
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.VFLibMCS, false, isPerfectRings(), !isPerfectRings());
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT, false, isPerfectRings(), !isPerfectRings());
             }
 
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
