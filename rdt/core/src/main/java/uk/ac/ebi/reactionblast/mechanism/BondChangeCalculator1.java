@@ -227,6 +227,10 @@ public class BondChangeCalculator1 extends AbstractChangeCalculator implements I
 
         for (Map.Entry<IAtom, IAtom> map : mappings.entrySet()) {
 
+            if (map.getKey().getSymbol().equals("H")) {
+                continue;
+            }
+
             IAtomContainer atomContainerR = getAtomContainer(map.getKey(), allReactants);
             IAtomContainer atomContainerP = getAtomContainer(map.getValue(), allProducts);
 
