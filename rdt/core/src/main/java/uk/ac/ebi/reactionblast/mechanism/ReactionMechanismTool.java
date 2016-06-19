@@ -67,12 +67,6 @@ import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
-import static java.lang.Integer.parseInt;
-import static java.lang.Math.abs;
-import static java.lang.System.getProperty;
-import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 
 /**
  *
@@ -553,29 +547,17 @@ public class ReactionMechanismTool implements Serializable {
 
     private synchronized double getTotalBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
-        for (IFeature key : fingerprint.getFeatures()) {
-            double val = key.getWeight();
-            if (val > 0.) {//&& !key.contains("H")
-                total += val;
-            }
-        }
+        total = fingerprint.getFeatures().stream().map((key) -> key.getWeight()).filter((val) -> (val > 0.)).map((val) -> val).reduce(total, (accumulator, _item) -> accumulator + _item); //&& !key.contains("H")
         return total;
     }
 
     private synchronized int getTotalCarbonBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
-        for (IFeature key : fingerprint.getFeatures()) {
-            if (key.getPattern().contains("C-C")
-                    || key.getPattern().contains("C=C")
-                    || key.getPattern().contains("C#C")
-                    || key.getPattern().contains("C%C")
-                    || key.getPattern().contains("C@C")) {
-                double val = key.getWeight();
-                if (val > 0.) {//&& !key.contains("H")
-                    total += val;
-                }
-            }
-        }
+        total = fingerprint.getFeatures().stream().filter((key) -> (key.getPattern().contains("C-C")
+                || key.getPattern().contains("C=C")
+                || key.getPattern().contains("C#C")
+                || key.getPattern().contains("C%C")
+                || key.getPattern().contains("C@C"))).map((key) -> key.getWeight()).filter((val) -> (val > 0.)).map((val) -> val).reduce(total, (accumulator, _item) -> accumulator + _item); //&& !key.contains("H")
         return (int) total;
     }
 
