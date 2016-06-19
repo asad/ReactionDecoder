@@ -44,7 +44,7 @@ import static uk.ac.ebi.reactionblast.TestUtility.RHEA_RXN_DIR;
 import org.openscience.cdk.interfaces.IAtom;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import uk.ac.ebi.reactionblast.mechanism.IBondChangeCalculator;
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 

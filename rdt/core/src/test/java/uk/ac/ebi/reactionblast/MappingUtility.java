@@ -37,7 +37,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
-import uk.ac.ebi.reactionblast.mechanism.IBondChangeCalculator;
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;

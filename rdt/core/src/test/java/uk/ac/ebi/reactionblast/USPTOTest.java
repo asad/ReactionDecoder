@@ -31,9 +31,11 @@ import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import static java.util.logging.Logger.getLogger;
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
+import uk.ac.ebi.reactionblast.tools.ImageGenerator;
+import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 
 /**
  * Test top 10 USPTO Reactions
@@ -64,7 +66,7 @@ public class USPTOTest extends MappingUtility {
             Logger.getLogger(SMILES2AAMTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        int counter = 1;
+        int counter = 10;
         /*
          * Instance of SMILES with AAM
          */
@@ -85,45 +87,47 @@ public class USPTOTest extends MappingUtility {
                     System.out.println(reactionID + ", Parsing Input Reaction SMILES " + reactionSMILES);
                     try {
                         IReaction inputReaction = sp.parseReactionSmiles(reactionSMILES);
-                        inputReaction.setID(reactionID);
+                        String rid = reactionID + System.currentTimeMillis();
+                        inputReaction.setID(rid);
                         IPatternFingerprinter formedCleavedWFingerprint = new PatternFingerprinter();
                         Map<IAtom, IAtom> mappings = ReactionMappingUtility.getMappings(inputReaction);
                         Set<IBond> bondChanges = ReactionMappingUtility.getBondCleavedFormedChanges(inputReaction, mappings);
                         for (IBond bond : bondChanges) {
                             try {
                                 formedCleavedWFingerprint.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0));
-                                formedCleavedWFingerprint.setFingerprintID(reactionID);
+                                formedCleavedWFingerprint.setFingerprintID(rid);
                             } catch (CDKException ex) {
                                 Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                        System.out.println("F/C " + formedCleavedWFingerprint.toString());
+                        //System.out.println("F/C " + formedCleavedWFingerprint.toString());
 
                         try {
                             ReactionMechanismTool rmt = new ReactionMechanismTool(inputReaction, true, new StandardizeReaction());
                             MappingSolution s = rmt.getSelectedSolution();
-                            System.out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
-                            IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
-                            System.out.println("F/C RDT " + s.getBondChangeCalculator().getFormedCleavedWFingerprint().toString());
+                            //System.out.println("F/C RDT " + s.getBondChangeCalculator().getFormedCleavedWFingerprint());
+
+                            System.out.println("INDIGO " + formedCleavedWFingerprint.toString() + ", RMT " + s.getBondChangeCalculator().getFormedCleavedWFingerprint());
+
                             /*
                              * Code for decipt Image generation
                              */
-//                            TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
-
+                            IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+                            TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (rid + s.getAlgorithmID()), "Output");
 //                            /*
 //                             * Depict all 4 mappings
 //                             */
+//                            out.println("--------------------------------------");
+//
 //                            for (MappingSolution m : rmt.getAllSolutions()) {
-//                                out.println("--------------------------------------");
-//                                BondChangeCalculator bcc = m.getBondChangeCalculator();
-//                                out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
-//                                out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
-//                                
+//                                IBondChangeCalculator bcc = m.getBondChangeCalculator();
+//                                out.println(m.getAlgorithmID());
 //                                out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
-//                                new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + s.getReaction().getID() + m.getAlgorithmID()));
-//                                out.println();
-//                                out.println("--------------------------------------");
+//                                new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + rid + m.getAlgorithmID()));
 //                            }
+//
+//                            out.println();
+//                            out.println("--------------------------------------");
                         } catch (AssertionError | Exception ex) {
                             Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -133,8 +137,8 @@ public class USPTOTest extends MappingUtility {
                     /*
                      * Only top 10 reactions tested
                      */
-                    counter++;
-                    if (counter > 1) {
+                    counter--;
+                    if (counter < 1) {
                         break;
                     }
                 }
