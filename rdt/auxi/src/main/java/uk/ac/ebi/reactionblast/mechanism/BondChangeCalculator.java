@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mechanism;
 
+import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
