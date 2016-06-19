@@ -23,12 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * A graph of the atom-atom mappings in a reaction - each vertex of the graph is
@@ -39,6 +40,7 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class MappingGraph {
+
     private static final Logger LOG = getLogger(MappingGraph.class.getName());
 
     /**
@@ -105,9 +107,9 @@ public class MappingGraph {
         List<DefinedMapping> definedMappings = new ArrayList<>();
         int i = 0;
         for (IMapping mapping : reaction.mappings()) {
-            String id = mapping.getChemObject(0).getID();
-            AtomContainerAtomPair reactantPair = getByID(reactants, id);
-            AtomContainerAtomPair productPair = getByID(products, id);
+            Integer id = mapping.getChemObject(0).getProperty(ATOM_ATOM_MAPPING);
+            AtomContainerAtomPair reactantPair = getByMappingID(reactants, id);
+            AtomContainerAtomPair productPair = getByMappingID(products, id);
 
             if (reactantPair != null && productPair != null) {
                 int rIndex = reactantPair.getIndex();
@@ -141,8 +143,7 @@ public class MappingGraph {
             for (int i = 0; i < mappingComponent.size(); i++) {
                 DefinedMapping definedMapping = mappingComponent.get(i);
                 IMapping mapping = reaction.getMapping(definedMapping.getIndex());
-                blockPair.addMapping(mapping,
-                        definedMapping.getRAtom(), definedMapping.getPAtom());
+                blockPair.addMapping(mapping, definedMapping.getRAtom(), definedMapping.getPAtom());
             }
             blockPairs.add(blockPair);
         }
@@ -150,11 +151,11 @@ public class MappingGraph {
         return blockPairs;
     }
 
-    private AtomContainerAtomPair getByID(IAtomContainerSet moleculeSet, String id) {
+    private AtomContainerAtomPair getByMappingID(IAtomContainerSet moleculeSet, Integer id) {
 //        System.out.println("getting id " + id);
         for (IAtomContainer ac : moleculeSet.atomContainers()) {
             for (IAtom atom : ac.atoms()) {
-                String atomID = atom.getID();
+                Integer atomID = atom.getProperty(ATOM_ATOM_MAPPING);
                 if (atomID != null && atomID.equals(id)) {
                     int index = ac.getAtomNumber(atom);
                     return new AtomContainerAtomPair(ac, atom, index);
