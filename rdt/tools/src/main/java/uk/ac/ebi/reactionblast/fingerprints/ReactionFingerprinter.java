@@ -110,11 +110,7 @@ public class ReactionFingerprinter implements Serializable {
             String id = ac.getID() == null ? toHexString(currentTimeMillis()).toUpperCase() : ac.getID();
             Double reactantCoefficient = reaction.getReactantCoefficient(ac);
             try {
-                try {
-                    ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
-                } catch (CloneNotSupportedException ex) {
-                    getLogger(ReactionFingerprinter.class.getName()).log(SEVERE, null, ex);
-                }
+                ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
                 initializeMolecule(ac1);
             } catch (CDKException ex) {
                 err.println("ERROR: while configuring the reaction");
@@ -130,11 +126,7 @@ public class ReactionFingerprinter implements Serializable {
             Double productCoefficient = reaction.getProductCoefficient(ac);
 
             try {
-                try {
-                    ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
-                } catch (CloneNotSupportedException ex) {
-                    getLogger(ReactionFingerprinter.class.getName()).log(SEVERE, null, ex);
-                }
+                ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
                 initializeMolecule(ac1);
             } catch (CDKException ex) {
                 err.println("ERROR: while configuring the reaction");
