@@ -39,6 +39,7 @@ import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
 import uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool;
+import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
@@ -187,7 +188,7 @@ public class MappingUtility extends TestUtility {
 
         IReaction cdkReaction = readReactionFile(reactionID, ins, remap, removeHydrogen);
         ExtReactionManipulatorTool.addExplicitH(cdkReaction);
-//        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
+//        SmilesGenerator withAtomClasses = SmilesGenerator.isomeric().aromatic().withAtomClasses();
 //        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
         ReactionMechanismTool annotation = getAnnotation(cdkReaction);
         MappingSolution s = annotation.getSelectedSolution();
@@ -227,7 +228,7 @@ public class MappingUtility extends TestUtility {
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {
 //            out.println("--------------------------------------");
-//            BondChangeCalculator bcc = m.getBondChangeCalculator();
+//            IBondChangeCalculator bcc = m.getBondChangeCalculator();
 //            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
 //            out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
 //

@@ -671,13 +671,13 @@ public class Reactor extends AbstractReactor implements Serializable {
                 IAtom atom = newMol.getAtom(index);
                 atom.setProperty("index", index);
             }
-//            System.out.println("Hydrogen Before" + newMol.getAtomCount());
+//            System.out.println("Hydrogen Before: " + newMol.getAtomCount());
 
             percieveAtomTypesAndConfigureAtoms(newMol);
             if (removeHydrogen) {
                 newMol = removeHydrogensExceptSingleAndPreserveAtomID(newMol);
             }
-//            System.out.println("Hydrogen After" + newMol.getAtomCount());
+//            System.out.println("Hydrogen After: " + newMol.getAtomCount());
             copiedReaction.addReactant(newMol, st);
         }
         for (int i = 0; i < orignalReaction.getProductCount(); i++) {
@@ -721,11 +721,9 @@ public class Reactor extends AbstractReactor implements Serializable {
                 if (!atom.getSymbol().equalsIgnoreCase("H") && !atom.getID().equalsIgnoreCase("-1")) {
                     if (atom.getID().equalsIgnoreCase(id)) {
                         List<IAtom> conAtoms = pMolecule.getConnectedAtomsList(atom);
-                        for (IAtom atomH : conAtoms) {
-                            if (atomH.getID().equalsIgnoreCase("-1") && atomH.getSymbol().equalsIgnoreCase("H")) {
-                                list.add(atomH);
-                            }
-                        }
+                        conAtoms.stream().filter((atomH) -> (atomH.getID().equalsIgnoreCase("-1") && atomH.getSymbol().equalsIgnoreCase("H"))).forEach((atomH) -> {
+                            list.add(atomH);
+                        });
                     }
                 }
             }

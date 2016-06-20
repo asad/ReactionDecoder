@@ -66,9 +66,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
-import static java.lang.Math.abs;
-import static java.lang.System.getProperty;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * This class marks the bond changes

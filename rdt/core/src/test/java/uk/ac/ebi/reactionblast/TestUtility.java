@@ -67,6 +67,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import java.net.URL;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import static java.lang.String.valueOf;
+import java.util.logging.Level;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 
@@ -206,9 +207,8 @@ public class TestUtility extends ReactionMappingUtility {
     protected static void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
             getInstance(getInstance()).addImplicitHydrogens(atomContainer);
-        } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (CDKException ex) {
+            Logger.getLogger(TestUtility.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

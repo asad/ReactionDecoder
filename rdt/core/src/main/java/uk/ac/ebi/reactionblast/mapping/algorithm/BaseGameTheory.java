@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
@@ -84,8 +83,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
     /**
      *
-     * @return
-     * @throws IOException
+     * @return @throws IOException
      */
     @Override
     public synchronized String getSuffix() throws IOException {
@@ -282,7 +280,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             double ACount = educt.getAtomCount();
             double BCount = product.getAtomCount();
 
-            mappingSize = atomatomMapping.getAtomAtomMapping().getCount();
+            mappingSize = getNonHAtomsMapppingSize(atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet());
             if (DEBUG) {
                 out.println(substrateIndex + " KEY " + productIndex + ", MCS Mapping Size " + mappingSize);
             }
@@ -414,7 +412,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 double ACount = educt.getAtomCount();
                 double BCount = product.getAtomCount();
 
-                mappingSize = bestAtomAtomMapping.getCount();
+                mappingSize = getNonHAtomsMapppingSize(bestAtomAtomMapping.getMappingsByAtoms().keySet());
 //                System.out.println("KEY " + key + ", MCS Mapping Size " + mappingSize);
                 graphSimilarity = mappingSize / (ACount + BCount - mappingSize);
 
@@ -445,5 +443,10 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         } catch (IOException ex) {
             logger.error(SEVERE, null, ex);
         }
+    }
+
+    private double getNonHAtomsMapppingSize(Collection<IAtom> atoms) {
+        int count = 0;
+        return (atoms.size() == 1) ? 1 : atoms.stream().filter((IAtom a) -> !a.getSymbol().equals("H")).map((IAtom _item) -> 1).reduce(count, Integer::sum);
     }
 }
