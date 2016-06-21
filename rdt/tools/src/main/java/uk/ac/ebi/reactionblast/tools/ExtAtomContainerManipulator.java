@@ -338,7 +338,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static IAtomContainer convertExplicitToImplicitHydrogens(IAtomContainer atomContainer) {
         IAtomContainer mol = atomContainer.getBuilder().newInstance(IAtomContainer.class, atomContainer);
-        setNullHCountToZero(mol);
         if (mol.getAtomCount() > 1) {
             mol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         } else if (mol.getAtomCount() == 1 && !atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
