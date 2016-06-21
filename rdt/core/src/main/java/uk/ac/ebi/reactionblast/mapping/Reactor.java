@@ -659,8 +659,10 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     private synchronized IReaction copyReaction(IReaction orignalReaction, boolean removeHydrogen) throws Exception {
+//        System.out.println("orignalReaction ID "+ orignalReaction.getID());
 //        System.out.println("R size: " + orignalReaction.getReactantCount() + " , " + orignalReaction.getProductCount());
         IReaction copiedReaction = reactionWithUniqueSTOICHIOMETRY.getBuilder().newInstance(IReaction.class);
+        copiedReaction.setID(orignalReaction.getID());
 
         for (int i = 0; i < orignalReaction.getReactantCount(); i++) {
             IAtomContainer mol = orignalReaction.getReactants().getAtomContainer(i);

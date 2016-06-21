@@ -182,11 +182,11 @@ public class GraphMatcher extends Debugger {
                 int numberOfCyclesProduct = rings.numberOfCycles();
                 if (numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0) {
                     ring = true;
+                    if (numberOfCyclesEduct == numberOfCyclesProduct) {
+                        ringSizeEqual = true;
+                    }
                 }
 
-                if (numberOfCyclesEduct == numberOfCyclesProduct) {
-                    ringSizeEqual = true;
-                }
                 if (DEBUG) {
                     out.println(educt.getID() + " ED: " + new SmilesGenerator().create(educt));
                     out.println(product.getID() + " PD: " + new SmilesGenerator().create(product));

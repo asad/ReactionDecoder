@@ -363,10 +363,8 @@ public class MCSThread implements Callable<MCSSolution> {
         }
 
         if (difference.isEmpty()) {
-            for (String k : atomUniqueCounter1.keySet()) {
-                if (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)) {
-                    return false;
-                }
+            if (!atomUniqueCounter1.keySet().stream().noneMatch((k) -> (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)))) {
+                return false;
             }
         }
 
