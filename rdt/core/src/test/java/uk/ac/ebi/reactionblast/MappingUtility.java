@@ -187,6 +187,7 @@ public class MappingUtility extends TestUtility {
         //System.out.println("PAth " + this.getClass().getClassLoader().getResource(filepath));
 
         IReaction cdkReaction = readReactionFile(reactionID, ins, remap, removeHydrogen);
+//        System.out.println("cdkReaction " + cdkReaction.getID()) ;
         ExtReactionManipulatorTool.addExplicitH(cdkReaction);
 //        SmilesGenerator withAtomClasses = SmilesGenerator.isomeric().aromatic().withAtomClasses();
 //        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
