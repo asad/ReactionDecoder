@@ -280,8 +280,8 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             double ACount = educt.getAtomCount();
             double BCount = product.getAtomCount();
 
-            mappingSize = getNonHAtomsMapppingSize(atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet());
             if (DEBUG) {
+                mappingSize = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().size();
                 out.println(substrateIndex + " KEY " + productIndex + ", MCS Mapping Size " + mappingSize);
             }
             graphSimilarity = mappingSize / (ACount + BCount - mappingSize);
@@ -412,7 +412,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 double ACount = educt.getAtomCount();
                 double BCount = product.getAtomCount();
 
-                mappingSize = getNonHAtomsMapppingSize(bestAtomAtomMapping.getMappingsByAtoms().keySet());
+                mappingSize = bestAtomAtomMapping.getMappingsByAtoms().size();
 //                System.out.println("KEY " + key + ", MCS Mapping Size " + mappingSize);
                 graphSimilarity = mappingSize / (ACount + BCount - mappingSize);
 
@@ -443,10 +443,5 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         } catch (IOException ex) {
             logger.error(SEVERE, null, ex);
         }
-    }
-
-    private double getNonHAtomsMapppingSize(Collection<IAtom> atoms) {
-        int count = 0;
-        return (atoms.size() == 1) ? 1 : atoms.stream().filter((IAtom a) -> !a.getSymbol().equals("H")).map((IAtom _item) -> 1).reduce(count, Integer::sum);
     }
 }

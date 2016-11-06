@@ -37,7 +37,6 @@ import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import static java.util.logging.Logger.getLogger;
-import org.junit.Assert;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 
 /**

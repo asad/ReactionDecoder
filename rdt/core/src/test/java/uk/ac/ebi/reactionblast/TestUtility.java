@@ -70,7 +70,6 @@ import static java.lang.String.valueOf;
 import java.util.logging.Level;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

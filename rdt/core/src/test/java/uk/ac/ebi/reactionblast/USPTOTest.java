@@ -27,14 +27,12 @@ import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import org.openscience.cdk.exception.CDKException;
-import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.helper.ReactionMappingUtility;
 import org.openscience.cdk.interfaces.IAtom;
 import static java.util.logging.Logger.getLogger;
-import uk.ac.ebi.reactionblast.mechanism.interfaces.IBondChangeCalculator;
-import uk.ac.ebi.reactionblast.tools.ImageGenerator;
+import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 
 /**
@@ -94,7 +92,8 @@ public class USPTOTest extends MappingUtility {
                         Set<IBond> bondChanges = ReactionMappingUtility.getBondCleavedFormedChanges(inputReaction, mappings);
                         for (IBond bond : bondChanges) {
                             try {
-                                formedCleavedWFingerprint.add(new Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0));
+                                IFeature feature = new uk.ac.ebi.reactionblast.fingerprints.Feature(ReactionMappingUtility.getCanonicalisedBondChangePattern(bond), 1.0);
+                                formedCleavedWFingerprint.add(feature);
                                 formedCleavedWFingerprint.setFingerprintID(rid);
                             } catch (CDKException ex) {
                                 Logger.getLogger(USPTOTest.class.getName()).log(Level.SEVERE, null, ex);
