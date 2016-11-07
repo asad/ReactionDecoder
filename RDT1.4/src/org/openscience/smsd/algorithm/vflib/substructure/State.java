@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *                          Gilleain Torrance <gilleain.torrance@gmail.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -47,8 +47,6 @@
 package org.openscience.smsd.algorithm.vflib.substructure;
 
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -65,12 +63,11 @@ import org.openscience.smsd.algorithm.matchers.DefaultBondMatcher;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 // The State class represents a single state in the isomorphism detection
 // algorithm. Every state uses and modifies the same SharedState object.
-class State {
-    private static final Logger LOG = getLogger(State.class.getName());
+final class State {
 
     private final boolean shouldMatchBonds;
     private final boolean shouldMatchRings;
@@ -78,6 +75,38 @@ class State {
     private final IAtomContainer target;
     private final boolean shouldMatchAtomType;
 
+    // Returns true if the state contains an isomorphism.
+    public boolean isGoal() {
+        return size == source.getAtomCount();
+    }
+
+    public boolean isDead() {
+        return (!isMatchPossible || source.getAtomCount() > target.getAtomCount());
+    }
+
+    public boolean hasNextCandidate(Pair<Integer, Integer> candidate) {
+        return candidate.getSourceAtom() != -1;
+    }
+
+    int getSize() {
+        return size;
+    }
+
+    IAtomContainer getSource() {
+        return source;
+    }
+
+    IAtomContainer getTarget() {
+        return target;
+    }
+
+    IAtom sourceAtom(int index) {
+        return source.getAtom(index);
+    }
+
+    IAtom targetAtom(int index) {
+        return target.getAtom(index);
+    }
     private int size;
     private int sourceTerminalSize;
     private int targetTerminalSize;
@@ -139,36 +168,6 @@ class State {
         this.shouldMatchAtomType = state.shouldMatchAtomType;
     }
 
-    // Returns true if the state contains an isomorphism.
-    public boolean isGoal() {
-        return size == source.getAtomCount();
-    }
-
-    public boolean isDead() {
-        return (!isMatchPossible || source.getAtomCount() > target.getAtomCount());
-    }
-    public boolean hasNextCandidate(Pair<Integer, Integer> candidate) {
-        return candidate.getSourceAtom() != -1;
-    }
-    int getSize(
-            ) {
-        return size;
-    }
-    IAtomContainer getSource() {
-        return source;
-    }
-    IAtomContainer getTarget() {
-        return target;
-    }
-
-    IAtom sourceAtom(int index) {
-        return source.getAtom(index);
-    }
-
-    IAtom targetAtom(int index) {
-        return target.getAtom(index);
-    }
-
     private boolean isFeasible() {
         for (int i = 0; i < source.getAtomCount(); i++) {
             boolean flag = false;
@@ -212,7 +211,8 @@ class State {
     // Returns the next candidate pair (sourceAtom, targetAtom) to be added
     // to the state. The candidate should be checked for feasibility and then added
     // using the addPair() method.
-    Pair<Integer, Integer> nextCandidate(Pair<Integer, Integer> lastCandidate) {
+    Pair<Integer, Integer> nextCandidate(
+            Pair<Integer, Integer> lastCandidate) {
         int lastSourceAtom = lastCandidate.getSourceAtom();
         int lastTargetAtom = lastCandidate.getTargetAtom();
 
@@ -425,7 +425,7 @@ class State {
     }
 
     boolean matchFirst(State state, List<AtomAtomMapping> mappings) {
-        //            System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
+//            System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
         if (state.isGoal()) {
             mappings.add(state.getMapping());
             return true;
@@ -459,7 +459,7 @@ class State {
 
     /* TO DO: Fix the match all results*/
     void matchAll(State state, List<AtomAtomMapping> mappings) {
-        //        System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
+//        System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
 
         if (state.isGoal()) {
             AtomAtomMapping map = state.getMapping();

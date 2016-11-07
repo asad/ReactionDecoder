@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,34 +22,25 @@
  */
 package org.openscience.smsd.filters;
 
-import static java.util.Collections.sort;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 
 /**
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  * @author maclean
- *
+ * 
  */
 public class Sotter {
-
-    private static final Logger LOG = getLogger(Sotter.class.getName());
-
-    /**
-     *
-     * @param map
-     * @return
-     */
-    public static synchronized Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
-        List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
+    
+    public synchronized static Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
+        List<Map.Entry<Integer, Double>> list = new LinkedList<Map.Entry<Integer, Double>>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        sort(list, new Comparator<Map.Entry<Integer, Double>>() {
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
             @Override
             public int compare(Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) {
                 // Return 0 for eAtom match, -1 for less than and +1 for more then (Aceending Order Sort)
@@ -57,22 +48,17 @@ public class Sotter {
             }
         });
         // logger.info(list);
-        Map<Integer, Double> result = new LinkedHashMap<>();
+        Map<Integer, Double> result = new LinkedHashMap<Integer, Double>();
         for (Map.Entry<Integer, Double> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
     }
 
-    /**
-     *
-     * @param map
-     * @return
-     */
-    public static synchronized Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
-        List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
+    public synchronized static Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
+        List<Map.Entry<Integer, Double>> list = new LinkedList<Map.Entry<Integer, Double>>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
-        sort(list, new Comparator<Map.Entry<Integer, Double>>() {
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
             @Override
             public int compare(Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) {
                 // Return 0 for eAtom match, -1 for less than and +1 for more then (Decending Order Sort)
@@ -81,13 +67,10 @@ public class Sotter {
             }
         });
         // logger.info(list);
-        Map<Integer, Double> result = new LinkedHashMap<>();
+        Map<Integer, Double> result = new LinkedHashMap<Integer, Double>();
         for (Map.Entry<Integer, Double> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
-    }
-
-    Sotter() {
     }
 }

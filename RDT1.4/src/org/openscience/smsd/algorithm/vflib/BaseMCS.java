@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -25,71 +25,49 @@ package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import static java.util.Collections.sort;
-import static java.util.Collections.synchronizedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import static java.util.logging.Level.SEVERE;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import static org.openscience.smsd.algorithm.vflib.SortOrder.DESCENDING;
-import org.openscience.smsd.algorithm.vflib.interfaces.INode;
-import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.cdk.smsd.algorithm.vflib.map.VFMCSMapper} and reports
+ * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports
  * MCS between run source and target graphs. Then these solutions are extended
- * using McGregor {@link org.openscience.cdk.smsd.algorithm.mcgregor.McGregor}
+ * using McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor}
  * algorithm where ever required.
  *
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class BaseMCS {
-    private static final ILoggingTool Logger = createLoggingTool(BaseMCS.class);
 
-    /**
-     *
-     */
     protected int countR;
-
-    /**
-     *
-     */
     protected int countP;
-
-    /**
-     *
-     */
     protected final IAtomContainer source;
-
-    /**
-     *
-     */
     protected final IAtomContainer target;
     private final boolean shouldMatchRings;
     private final boolean matchBonds;
     private final boolean matchAtomType;
-
-    /**
-     *
-     */
-    protected final List<Map<INode, IAtom>> vfLibSolutions;
+    protected final List<Map<IAtom, IAtom>> vfLibSolutions;
     final List<Map<Integer, Integer>> allLocalMCS;
     final List<AtomAtomMapping> allLocalAtomAtomMapping;
+    private final static ILoggingTool Logger
+            = LoggingToolFactory.createLoggingTool(BaseMCS.class);
+    private final boolean DEBUG = false;
 
     BaseMCS(IAtomContainer source, IAtomContainer target, boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.allLocalAtomAtomMapping = new ArrayList<>();
@@ -117,7 +95,7 @@ public class BaseMCS {
      *
      * @param cliqueMap
      * @param mapGlobal
-     * @return
+     * @return true if condition meet else false
      */
     protected synchronized boolean hasClique(
             Map<Integer, Integer> cliqueMap, List<Map<Integer, Integer>> mapGlobal) {
@@ -135,15 +113,11 @@ public class BaseMCS {
      *
      * @param cliqueMap
      * @param mapGlobal
-     * @return
+     * @return true if condition meet else false
      */
-    protected synchronized boolean isCliquePresent(Map<Integer, Integer> cliqueMap, Collection<Map<Integer, Integer>> mapGlobal) {
-        for (Map<Integer, Integer> storedMap : mapGlobal) {
-            if (cliqueMap.equals(storedMap)) {
-                return true;
-            }
-        }
-        return false;
+    protected synchronized boolean isCliquePresent(
+            Map<Integer, Integer> cliqueMap, List<Map<Integer, Integer>> mapGlobal) {
+        return mapGlobal.stream().anyMatch((storedMap) -> (cliqueMap.equals(storedMap)));
     }
 
     /**
@@ -160,25 +134,23 @@ public class BaseMCS {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (source instanceof IQueryAtomContainer) {
+                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                //Start McGregor search
+                mgit.startMcGregorIteration((IQueryAtomContainer) source, mgit.getMCSSize(), extendMapping);
+            } else if (countR > countP) {
                 mgit = new McGregor(source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+
                 //Start McGregor search
                 mgit.startMcGregorIteration(source, mgit.getMCSSize(), extendMapping);
             } else {
-                if (countR > countP) {
-                    mgit = new McGregor(source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
-
-                    //Start McGregor search
-                    mgit.startMcGregorIteration(source, mgit.getMCSSize(), extendMapping);
-                } else {
-                    extendMapping.clear();
-                    mgit = new McGregor(target, source, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
-                    ROPFlag = false;
-                    for (Map.Entry<Integer, Integer> map : firstPassMappings.entrySet()) {
-                        extendMapping.put(map.getValue(), map.getKey());
-                    }
-                    //Start McGregor search
-                    mgit.startMcGregorIteration(target, mgit.getMCSSize(), extendMapping);
-                }
+                extendMapping.clear();
+                mgit = new McGregor(target, source, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                ROPFlag = false;
+                firstPassMappings.entrySet().stream().forEach((map) -> {
+                    extendMapping.put(map.getValue(), map.getKey());
+                });
+                //Start McGregor search
+                mgit.startMcGregorIteration(target, mgit.getMCSSize(), extendMapping);
             }
             mappings = mgit.getMappings();
         }
@@ -191,31 +163,30 @@ public class BaseMCS {
     /**
      *
      * @param RONP
-     * @param query
      */
-    protected synchronized void setVFMappings(boolean RONP, IQuery query) {
+    protected synchronized void setVFMappings(boolean RONP) {
+//        System.out.println(" setVFMappings ");
         /*
          * Sort biggest clique to smallest
          */
-        sort(vfLibSolutions, new Map2ValueComparator(DESCENDING));
-        for (Map<INode, IAtom> solution : vfLibSolutions) {
+        Collections.sort(vfLibSolutions, new Map2ValueComparator(SortOrder.DESCENDING));
+        for (Map<IAtom, IAtom> solution : vfLibSolutions) {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
             Map<Integer, Integer> indexindexMapping = new TreeMap<>();
-
-            for (INode node : solution.keySet()) {
+            solution.entrySet().stream().forEach((mapping) -> {
                 IAtom qAtom;
                 IAtom tAtom;
-                int qIndex;
-                int tIndex;
+                Integer qIndex;
+                Integer tIndex;
 
                 if (RONP) {
-                    qAtom = query.getAtom(node);
-                    tAtom = solution.get(node);
+                    qAtom = mapping.getKey();
+                    tAtom = mapping.getValue();
                     qIndex = source.getAtomNumber(qAtom);
                     tIndex = target.getAtomNumber(tAtom);
                 } else {
-                    tAtom = query.getAtom(node);
-                    qAtom = solution.get(node);
+                    tAtom = mapping.getKey();
+                    qAtom = mapping.getValue();
                     qIndex = source.getAtomNumber(qAtom);
                     tIndex = target.getAtomNumber(tAtom);
                 }
@@ -227,16 +198,20 @@ public class BaseMCS {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(SEVERE, null, ex);
+                        Logger.error(Level.SEVERE, null, ex);
                     }
                 }
-            }
+            });
 
             if (!indexindexMapping.isEmpty()
                     && !hasClique(indexindexMapping, getLocalMCSSolution())) {
                 getLocalAtomMCSSolution().add(atomatomMapping);
                 getLocalMCSSolution().add(indexindexMapping);
             }
+        }
+
+        if (DEBUG) {
+            System.out.println("VF seed mappings stored count: " + getLocalMCSSolution().size());
         }
     }
 
@@ -291,18 +266,10 @@ public class BaseMCS {
 
     }
 
-    /**
-     *
-     * @return
-     */
     protected synchronized IAtomContainer getReactantMol() {
         return source;
     }
 
-    /**
-     *
-     * @return
-     */
     protected synchronized IAtomContainer getProductMol() {
         return target;
     }
@@ -325,21 +292,16 @@ public class BaseMCS {
      * @return the allLocalMCS
      */
     private synchronized List<Map<Integer, Integer>> getLocalMCSSolution() {
-        return synchronizedList(allLocalMCS);
+        return Collections.synchronizedList(allLocalMCS);
     }
 
     /**
      * @return the allLocalAtomAtomMapping
      */
     private synchronized List<AtomAtomMapping> getLocalAtomMCSSolution() {
-        return synchronizedList(allLocalAtomAtomMapping);
+        return Collections.synchronizedList(allLocalAtomAtomMapping);
     }
 
-    /**
-     *
-     * @param mcsSeeds
-     * @return
-     */
     protected synchronized boolean isExtensionRequired(List<Map<Integer, Integer>> mcsSeeds) {
         int maxSize = 0;
         for (Map<Integer, Integer> map : mcsSeeds) {
@@ -350,10 +312,6 @@ public class BaseMCS {
         return this.source.getAtomCount() > maxSize && this.target.getAtomCount() > maxSize;
     }
 
-    /**
-     *
-     * @return
-     */
     protected synchronized boolean isExtensionRequired() {
         int commonAtomCount = checkCommonAtomCount(getReactantMol(), getProductMol());
         int maxSize = 0;
@@ -388,5 +346,4 @@ public class BaseMCS {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(BaseMCS.class.getName());
 }

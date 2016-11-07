@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -26,12 +26,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Interface for mappings.
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 
 public interface IFinalMapping {

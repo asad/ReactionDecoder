@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,12 +22,8 @@
  */
 package org.openscience.smsd.tools;
 
-import static java.lang.System.currentTimeMillis;
 import java.text.SimpleDateFormat;
-import static java.util.TimeZone.getTimeZone;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
+import java.util.TimeZone;
 
 
 /**
@@ -40,13 +36,12 @@ import static java.util.logging.Logger.getLogger;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class TimeManager {
-    private static final Logger LOG = getLogger(TimeManager.class.getName());
 
-    private final double startTime;
-    private final SimpleDateFormat dateFormat;
+    private double startTime;
+    private SimpleDateFormat dateFormat;
 
     /**
      * Constructor for storing execution time
@@ -54,8 +49,8 @@ public class TimeManager {
     public TimeManager() {
 
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        dateFormat.setTimeZone(getTimeZone("GMT"));
-        startTime = currentTimeMillis();
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -64,7 +59,7 @@ public class TimeManager {
      * @return Elapsed Time In Hours
      */
     public synchronized double getElapsedTimeInHours() {
-        double currentTime = currentTimeMillis();
+        double currentTime = System.currentTimeMillis();
         return (currentTime - startTime) / (60 * 60 * 1000);
 
 
@@ -76,7 +71,7 @@ public class TimeManager {
      * @return Elapsed Time In Minutes
      */
     public synchronized double getElapsedTimeInMinutes() {
-        double currentTime = currentTimeMillis();
+        double currentTime = System.currentTimeMillis();
         return (currentTime - startTime) / (60 * 1000);
 
     }
@@ -87,7 +82,7 @@ public class TimeManager {
      * @return Elapsed Time In Seconds
      */
     public synchronized double getElapsedTimeInSeconds() {
-        double currentTime = currentTimeMillis();
+        double currentTime = System.currentTimeMillis();
         return ((currentTime - startTime) / 1000);
 
     }
@@ -98,7 +93,7 @@ public class TimeManager {
      * @return Elapsed Time In Mill Seconds
      */
     public synchronized double getElapsedTimeInMilliSeconds() {
-        double currentTime = currentTimeMillis();
+        double currentTime = System.currentTimeMillis();
         return (currentTime - startTime);
 
     }

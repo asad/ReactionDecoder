@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,35 +22,29 @@
  */
 package org.openscience.smsd.algorithm.single;
 
-import java.util.ArrayList;
-import static java.util.Collections.unmodifiableList;
-import java.util.List;
-import java.util.Map;
-import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-
-
+import java.util.*;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
  * This is a handler class for single atom mapping
- * ({@link org.openscience.cdk.smsd.algorithm.single.SingleMapping}).
+ * ({@link org.openscience.smsd.algorithm.single.SingleMapping}).
  *
+ *  
  *
- *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class SingleMappingHandler implements IResults {
 
     private final ILoggingTool Logger
-            = createLoggingTool(SingleMappingHandler.class);
+            = LoggingToolFactory.createLoggingTool(SingleMappingHandler.class);
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;
     private final IAtomContainer target;
@@ -63,8 +57,8 @@ public class SingleMappingHandler implements IResults {
      * @param shouldMatchRings
      */
     public SingleMappingHandler(
-            IAtomContainer source,
-            IAtomContainer target,
+            IAtomContainer source, 
+            IAtomContainer target, 
             boolean shouldMatchRings) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
@@ -79,7 +73,7 @@ public class SingleMappingHandler implements IResults {
      * @param target
      */
     public SingleMappingHandler(
-            IQueryAtomContainer source,
+            IQueryAtomContainer source, 
             IAtomContainer target) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
@@ -105,7 +99,7 @@ public class SingleMappingHandler implements IResults {
                 mappings = singleMapping.getOverLaps((IQueryAtomContainer) source, target);
             }
         } catch (CDKException ex) {
-            Logger.error(SEVERE, null, ex);
+            Logger.error(Level.SEVERE, null, ex);
         }
         setAllAtomMapping(mappings);
         //setStereoScore();
@@ -136,7 +130,7 @@ public class SingleMappingHandler implements IResults {
      */
     @Override
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return unmodifiableList(allAtomMCS);
+        return Collections.unmodifiableList(allAtomMCS);
     }
 
     /**

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,7 +23,7 @@
 package org.openscience.smsd.algorithm.single;
 
 import java.util.ArrayList;
-import static java.util.Collections.sort;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,10 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
-
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -45,7 +41,6 @@ import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.tools.BondEnergies;
-import static org.openscience.smsd.tools.BondEnergies.getInstance;
 
 /**
  * This class handles single atom mapping. Either query and/or target molecule
@@ -54,10 +49,9 @@ import static org.openscience.smsd.tools.BondEnergies.getInstance;
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class SingleMapping {
-    private static final Logger LOG = getLogger(SingleMapping.class.getName());
 
     private IAtomContainer source = null;
     private IAtomContainer target = null;
@@ -123,7 +117,7 @@ public class SingleMapping {
 
     private synchronized void setSourceSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
         int counter = 0;
-        BondEnergies be = getInstance();
+        BondEnergies be = BondEnergies.getInstance();
         for (IAtom sourceAtom : source.atoms()) {
             for (IAtom targetAtom : target.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
@@ -176,7 +170,7 @@ public class SingleMapping {
 
     private synchronized void setTargetSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
         int counter = 0;
-        BondEnergies be = getInstance();
+        BondEnergies be = BondEnergies.getInstance();
         for (IAtom targetAtom : target.atoms()) {
             for (IAtom sourceAtoms : source.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
@@ -242,7 +236,7 @@ public class SingleMapping {
 
     private <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List list = new LinkedList(map.entrySet());
-        sort(list, new Comparator() {
+        Collections.sort(list, new Comparator() {
             @Override
             public int compare(Object object1, Object object2) {
                 return ((Comparable) ((Map.Entry<K, V>) (object1)).getValue()).compareTo(

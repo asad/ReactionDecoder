@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -27,57 +27,47 @@
  */
 package org.openscience.smsd;
 
-import com.google.common.collect.HashBiMap;
-import static com.google.common.collect.HashBiMap.create;
 import java.io.Serializable;
-import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedSortedMap;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSortedMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import static java.util.logging.Level.SEVERE;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import static org.openscience.cdk.CDKConstants.MAPPED;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IMapping;
+import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
-import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
  * Holds atom-atom mappings information between source and target molecules
  *
- *  
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ *
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class AtomAtomMapping implements Serializable {
+public final class AtomAtomMapping implements Serializable {
 
+    class MyQueryIAtomComp implements Comparator<IAtom> {
+
+        @Override
+        public int compare(IAtom o1, IAtom o2) {
+            int atomNumber1 = getQuery().getAtomNumber(o1);
+            int atomNumber2 = getQuery().getAtomNumber(o2);
+            return atomNumber1 - atomNumber2;
+        }
+    }
     private static final long serialVersionUID = 1223637237262778L;
-    private static final Logger LOG = getLogger(AtomAtomMapping.class.getName());
     private final IAtomContainer query;
     private final IAtomContainer target;
-    private final HashBiMap<IAtom, IAtom> mapping;
+    private final Map<IAtom, IAtom> mapping;
     private final Map<Integer, Integer> mappingIndex;
-
-    /**
-     *
-     * @param query source molecule
-     * @param target target molecule
-     */
-    public AtomAtomMapping(IAtomContainer query, IAtomContainer target) {
-        this.query = query;
-        this.target = target;
-        this.mapping = create(new HashMap<IAtom, IAtom>());
-        this.mappingIndex = synchronizedSortedMap(new TreeMap<Integer, Integer>());
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -112,6 +102,18 @@ public class AtomAtomMapping implements Serializable {
 
     /**
      *
+     * @param query source molecule
+     * @param target target molecule
+     */
+    public AtomAtomMapping(IAtomContainer query, IAtomContainer target) {
+        this.query = query;
+        this.target = target;
+        mapping = new TreeMap<>(new MyQueryIAtomComp());
+        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+    }
+
+    /**
+     *
      * @param atom1
      * @param atom2
      */
@@ -121,19 +123,65 @@ public class AtomAtomMapping implements Serializable {
     }
 
     /**
-     * Returns String.
+     * Returns String with MMP and AAM.
      *
      * @return string
      */
     @Override
     public synchronized String toString() {
-        String s = "[";
-        for (IAtom key : mapping.keySet()) {
-            int keyIndex = getQuery().getAtomNumber(key);
-            int valueIndex = getTarget().getAtomNumber(mapping.get(key));
-            s += keyIndex + ":" + valueIndex + "|";
+        StringBuilder s = new StringBuilder();
+        try {
+            IReaction reaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+            reaction.addReactant(getQuery().clone(), 1.0);
+            reaction.addProduct(getTarget().clone(), 1.0);
+
+            int counter = 1;
+            for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+                for (IAtom a : ac.atoms()) {
+                    IAtom refAtom = getQuery().getAtom(ac.getAtomNumber(a));
+                    if (mapping.containsKey(refAtom)) {
+                        a.setProperty(ATOM_ATOM_MAPPING, counter);
+                        a.setFlag(MAPPED, true);
+                        IAtom mappedAtom = mapping.get(refAtom);
+                        int mappedAtomIndex = getTarget().getAtomNumber(mappedAtom);
+                        IAtom b = reaction.getProducts().getAtomContainer(0).getAtom(mappedAtomIndex);
+                        b.setProperty(ATOM_ATOM_MAPPING, counter);
+                        b.setFlag(MAPPED, true);
+                        IMapping aammapping
+                                = reaction.getBuilder().newInstance(IMapping.class, a, b);
+                        reaction.addMapping(aammapping);
+                    }
+                    counter++;
+                }
+            }
+
+            String createReactionSMILES = "NA";
+            try {
+                SmilesGenerator withAtomClasses = SmilesGenerator.generic().aromatic().withAtomClasses();
+                createReactionSMILES = withAtomClasses.createReactionSMILES(reaction);
+            } catch (CDKException ex) {
+                Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            s.append("MMP: ").append(createReactionSMILES).append(", AAM:[");
+            for (IAtom firstAtom : mapping.keySet()) {
+                int keyIndex = getQuery().getAtomNumber(firstAtom) + 1;
+                int valueIndex = getTarget().getAtomNumber(mapping.get(firstAtom)) + 1;
+                s.append(keyIndex).append(":").append(valueIndex).append("|");
+            }
+
+            s.append("]");
+
+            try {
+                s.append(", MCS: ").append(getCommonFragmentAsSMILES());
+            } catch (CDKException ex) {
+                Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return s + "]";
+        return s.toString();
     }
 
     /**
@@ -151,7 +199,7 @@ public class AtomAtomMapping implements Serializable {
      */
     public synchronized void clear() {
         mapping.clear();
-        mapping.clear();
+        mappingIndex.clear();
     }
 
     /**
@@ -170,7 +218,7 @@ public class AtomAtomMapping implements Serializable {
      * @return atom-atom mappings
      */
     public synchronized Map<IAtom, IAtom> getMappingsByAtoms() {
-        return unmodifiableMap(new HashMap<>(mapping));
+        return Collections.unmodifiableMap(new LinkedHashMap<>(mapping));
     }
 
     /**
@@ -179,7 +227,7 @@ public class AtomAtomMapping implements Serializable {
      * @return atom-atom index mappings
      */
     public synchronized Map<Integer, Integer> getMappingsByIndex() {
-        return unmodifiableSortedMap(new TreeMap<>(mappingIndex));
+        return Collections.unmodifiableSortedMap(new TreeMap<>(mappingIndex));
     }
 
     /**
@@ -228,16 +276,16 @@ public class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
 
-        for (IAtom atom : uniqueAtoms) {
+        uniqueAtoms.stream().forEach((atom) -> {
             ac.removeAtomAndConnectedElectronContainers(atom);
-        }
+        });
 
         return ac;
     }
@@ -251,16 +299,16 @@ public class AtomAtomMapping implements Serializable {
     public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
 
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
                 uniqueAtoms.add(ac.getAtom(getTargetIndex(atom)));
             }
         }
 
-        for (IAtom atom : uniqueAtoms) {
+        uniqueAtoms.stream().forEach((atom) -> {
             ac.removeAtomAndConnectedElectronContainers(atom);
-        }
+        });
         return ac;
     }
 
@@ -272,7 +320,7 @@ public class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -295,23 +343,23 @@ public class AtomAtomMapping implements Serializable {
             }
         }
 
-        for (IAtom atom : uniqueAtoms) {
+        uniqueAtoms.stream().forEach((atom) -> {
             ac.removeAtomAndConnectedElectronContainers(atom);
-        }
+        });
 
         /*
          Get canonicalised by fixing hydrogens 
          o/p i.e. atom type + CDKHydrogenManipulator
          */
         try {
-            getInstance(ac.getBuilder()).addImplicitHydrogens(ac);
+            CDKHydrogenAdder.getInstance(ac.getBuilder()).addImplicitHydrogens(ac);
         } catch (CDKException ex) {
-            getLogger(AtomAtomMapping.class.getName()).log(SEVERE, null, ex);
+            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            percieveAtomTypesAndConfigureAtoms(ac);
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
         } catch (CDKException ex) {
-            getLogger(AtomAtomMapping.class.getName()).log(SEVERE, null, ex);
+            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return ac;
@@ -325,7 +373,32 @@ public class AtomAtomMapping implements Serializable {
      * @throws CDKException
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
-        SmilesGenerator aromatic = unique().withAtomClasses();
+        SmilesGenerator aromatic = SmilesGenerator.unique().withAtomClasses();
         return aromatic.create(getCommonFragment());
     }
+
+    /*
+     * Java method to sort Map in Java by value e.g. HashMap or Hashtable
+     * throw NullPointerException if Map contains null values
+     * It also sort values even if they are duplicates
+     */
+    public Map<IAtom, IAtom> sortByValues(Map<IAtom, IAtom> map) {
+        List<Map.Entry<IAtom, IAtom>> entries = new LinkedList<>(map.entrySet());
+        Collections.sort(entries, (Entry<IAtom, IAtom> o1, Entry<IAtom, IAtom> o2) -> {
+            int atomNumber1 = getQuery().getAtomNumber(o1.getKey());
+            int atomNumber2 = getQuery().getAtomNumber(o2.getKey());
+            return atomNumber1 - atomNumber2;
+        });
+
+        //LinkedHashMap will keep the keys in the order they are inserted
+        //which is currently sorted on natural ordering
+        Map<IAtom, IAtom> sortedMap = new LinkedHashMap<>();
+
+        entries.stream().forEach((entry) -> {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        });
+
+        return sortedMap;
+    }
+
 }

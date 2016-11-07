@@ -2,7 +2,7 @@
 /* $Revision$ $Author$ $Date$
  *
  * Copyright (C) 2002-2007  Stephane Werner <mail@ixelis.net>
- *               2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ *               2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * This code has been kindly provided by Stephane Werner
  * and Thierry Hanser from IXELIS mail@ixelis.net.
@@ -29,22 +29,18 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 
 /**
  * An CDKRMap implements the association between an edge (bond) in G1 and an
  * edge (bond) in G2, G1 and G2 being the compared graphs in a RGraph context.
  *
  * @author Stephane Werner, IXELIS <mail@ixelis.net>, Syed Asad Rahman
- * <asad @ ebi.ac.uk> (modified the orignal code)
- * @cdk.created 2002-07-24
+ * <asad@ebi.ac.uk> (modified the orignal code)
+ * 2002-07-24
  * 
  * 
  */
 class CDKRMap extends Object {
-    private static final Logger LOG = getLogger(CDKRMap.class.getName());
 
     private int id1 = 0;
     private int id2 = 0;
@@ -55,7 +51,7 @@ class CDKRMap extends Object {
      * @param id1 number of the edge (bond) in the graph e1
      * @param id2 number of the edge (bond) in the graph e2
      */
-    CDKRMap(int id1, int id2) {
+    public CDKRMap(int id1, int id2) {
         this.id1 = id1;
         this.id2 = id2;
     }

@@ -23,7 +23,7 @@ import java.util.BitSet;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.ShortestPathFingerprinter;
+import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
 
@@ -63,7 +63,7 @@ public class Fragment implements Comparable<Fragment>, Serializable {
             throw new CDKException("NULL container not supported");
         }
         this.container = container;
-        this.fingerprint = new ShortestPathFingerprinter().getBitFingerprint(container).asBitSet();
+        this.fingerprint = new Fingerprinter().getBitFingerprint(container).asBitSet();
         this.fingerprintAsLong = convert(this.fingerprint);
     }
 

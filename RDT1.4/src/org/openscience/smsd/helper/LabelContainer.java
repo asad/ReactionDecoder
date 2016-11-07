@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009-2015 Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015 Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -25,9 +25,6 @@ package org.openscience.smsd.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 
 
 /**
@@ -35,36 +32,32 @@ import static java.util.logging.Logger.getLogger;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class LabelContainer {
+
+    private final List<String> labelMap;
+    private int labelCounter = 0;
     private static LabelContainer instance = null;
-    private static final Logger LOG = getLogger(LabelContainer.class.getName());
+
+    protected LabelContainer() {
+
+        // System.err.println("List Initialized");
+        labelMap = new ArrayList<String>();
+        labelMap.add(labelCounter++, "X");
+        labelMap.add(labelCounter++, "R");
+    }
 
     /**
      * Create ids from atom labels
      *
      * @return instance of this object
      */
-    public static synchronized LabelContainer getInstance() {
+    synchronized public static LabelContainer getInstance() {
         if (instance == null) {
             instance = new LabelContainer();
         }
         return instance;
-    }
-
-    private final List<String> labelMap;
-    private int labelCounter = 0;
-
-    /**
-     *
-     */
-    protected LabelContainer() {
-
-        // System.err.println("List Initialized");
-        labelMap = new ArrayList<>();
-        labelMap.add(labelCounter++, "X");
-        labelMap.add(labelCounter++, "R");
     }
 
     /**
@@ -72,7 +65,7 @@ public class LabelContainer {
      *
      * @param label
      */
-    public synchronized void addLabel(String label) {
+    synchronized public void addLabel(String label) {
         if (!labelMap.contains(label)) {
             labelMap.add(labelCounter++, label);
         }
@@ -107,5 +100,4 @@ public class LabelContainer {
     synchronized public int getSize() {
         return labelMap.size();
     }
-
 }

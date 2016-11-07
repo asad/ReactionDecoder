@@ -40,7 +40,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.tools.AtomContainerComparator;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
  * 

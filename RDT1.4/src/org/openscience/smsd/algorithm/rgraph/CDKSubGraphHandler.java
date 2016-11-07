@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,34 +22,24 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
-import java.util.ArrayList;
-import static java.util.Collections.unmodifiableList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
-
+import java.util.*;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
-import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getSubgraphAtomsMaps;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
- * This class acts as a handler class for CDKMCS algorithm {@link org.openscience.cdk.smsd.algorithm.cdk.CDKMCS}.
+ * This class acts as a handler class for CDKMCS algorithm {@link org.openscience.smsd.algorithm.rgraph.CDKMCS}.
  *
  *  
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class CDKSubGraphHandler implements IResults {
-    private static final Logger LOG = getLogger(CDKSubGraphHandler.class.getName());
 
 //    //~--- fields -------------------------------------------------------------
     private final IAtomContainer source;
@@ -145,7 +135,7 @@ public class CDKSubGraphHandler implements IResults {
     protected IAtomContainerSet getUncommon(IAtomContainer mol, IAtomContainer mcss) throws CDKException {
         ArrayList<Integer> atomSerialsToDelete = new ArrayList<>();
 
-        List<List<CDKRMap>> matches = getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
         List<CDKRMap> mapList = matches.get(0);
         for (Object o : mapList) {
             CDKRMap rmap = (CDKRMap) o;
@@ -167,7 +157,7 @@ public class CDKSubGraphHandler implements IResults {
         // now we probably have a set of disconnected components
         // so lets get a set of individual atom containers for
         // corresponding to each component
-        return partitionIntoMolecules(mol);
+        return ConnectivityChecker.partitionIntoMolecules(mol);
     }
 
     //~--- get methods --------------------------------------------------------
@@ -231,7 +221,7 @@ public class CDKSubGraphHandler implements IResults {
      */
     @Override
     public List<AtomAtomMapping> getAllAtomMapping() {
-        return unmodifiableList(allAtomMCS);
+        return Collections.unmodifiableList(allAtomMCS);
     }
 
     /**

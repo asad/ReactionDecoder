@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,70 +22,34 @@
  */
 package org.openscience.smsd.filters;
 
-import static java.lang.Double.MAX_VALUE;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.tools.BondEnergies;
 
 /**
  * Filter based on energies.
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
- *
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * 
  */
-public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
+public final class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
-    /**
-     *
-     */
-    public static final Double MAX_ENERGY = MAX_VALUE;
-    private static final Logger LOG = getLogger(EnergyFilter.class.getName());
-
-    private static synchronized double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
-        Double eEnergy = 0.0;
-        BondEnergies bondEnergy = BondEnergies.getInstance();
-        for (int i = 0; i
-                < educt.getBondCount(); i++) {
-            IBond bond = educt.getBond(i);
-            eEnergy += getBondEnergy(bond, bondEnergy);
-        }
-        Double pEnergy = 0.0;
-        for (int j = 0; j
-                < product.getBondCount(); j++) {
-            IBond bond = product.getBond(j);
-            pEnergy += getBondEnergy(bond, bondEnergy);
-        }
-        return (eEnergy + pEnergy);
-    }
-
-    private static synchronized double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
-        double energy = 0.0;
-        if ((bond.getAtom(0).getFlag(0) == true && bond.getAtom(1).getFlag(0) == false)
-                || (bond.getAtom(0).getFlag(0) == false && bond.getAtom(1).getFlag(0) == true)) {
-            Integer val = bondEnergy.getEnergies(bond.getAtom(0), bond.getAtom(1), bond.getOrder());
-            if (val != null) {
-                energy = val;
-            }
-        }
-        return energy;
-    }
+    public static final Double MAX_ENERGY = Double.MAX_VALUE;
     private final List<Double> bEnergies;
     private final ChemicalFilters chemfilter;
 
     EnergyFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        bEnergies = synchronizedList(new ArrayList<Double>());
+        bEnergies = Collections.synchronizedList(new ArrayList<Double>());
 
     }
 
@@ -93,11 +57,10 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
     public synchronized Double sortResults(
             Map<Integer, AtomAtomMapping> allAtomEnergyMCS,
             Map<Integer, Double> energySelectionMap) throws CDKException {
-
         for (Integer Key : allAtomEnergyMCS.keySet()) {
             AtomAtomMapping mcsAtom = allAtomEnergyMCS.get(Key);
-            Double Energies = getMappedMoleculeEnergies(mcsAtom);
-            energySelectionMap.put(Key, Energies);
+            Double energies = getMappedMoleculeEnergies(mcsAtom);
+            energySelectionMap.put(Key, energies);
         }
 
         energySelectionMap = sortMapByValueInAscendingOrder(energySelectionMap);
@@ -110,37 +73,21 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
         return lowestEnergyScore;
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public synchronized List<Double> getScores() {
-        return unmodifiableList(bEnergies);
+        return Collections.unmodifiableList(bEnergies);
     }
 
-    /**
-     *
-     */
     @Override
     public synchronized void clearScores() {
         bEnergies.clear();
     }
 
-    /**
-     *
-     * @param counter
-     * @param value
-     */
     @Override
     public synchronized void addScore(int counter, Double value) {
         bEnergies.add(counter, value);
     }
 
-    /**
-     *
-     * @param energySelectionMap
-     */
     @Override
     public synchronized void fillMap(Map<Integer, Double> energySelectionMap) {
         int Index = 0;
@@ -152,29 +99,67 @@ public class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 
     private synchronized Double getMappedMoleculeEnergies(AtomAtomMapping mcsAtomSolution) throws CDKException {
 
-//      System.out.println("\nSort By Energies");
+//        System.out.println("\nSort By Energies");
         double totalBondEnergy = -9999.0;
 
         IAtomContainer educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
         IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
         for (int i = 0; i < educt.getAtomCount(); i++) {
-            educt.getAtom(i).setFlag(0, false);
+            educt.getAtom(i).setFlag(999, false);
         }
 
         for (int i = 0; i < product.getAtomCount(); i++) {
-            product.getAtom(i).setFlag(0, false);
+            product.getAtom(i).setFlag(999, false);
         }
 
         if (mcsAtomSolution != null) {
-            for (IAtom eAtom : mcsAtomSolution.getMappingsByAtoms().keySet()) {
-                IAtom pAtom = mcsAtomSolution.getMappingsByAtoms().get(eAtom);
-                eAtom.setFlag(0, true);
-                pAtom.setFlag(0, true);
-            }
+            Map<IAtom, IAtom> mappingsByAtoms = mcsAtomSolution.getMappingsByAtoms();
+            mappingsByAtoms.entrySet().stream().map((mapping) -> {
+                mapping.getKey().setFlag(999, true);
+                return mapping;
+            }).forEach((mapping) -> {
+                mapping.getValue().setFlag(999, true);
+            });
             totalBondEnergy = getEnergy(educt, product);
         }
+
+        /*
+         * Reset the flag
+         */
+        for (int i = 0; i < educt.getAtomCount(); i++) {
+            educt.getAtom(i).setFlag(999, false);
+        }
+
+        for (int i = 0; i < product.getAtomCount(); i++) {
+            product.getAtom(i).setFlag(999, false);
+        }
+
         return totalBondEnergy;
     }
 
+    private synchronized static double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
+        Double eEnergy = 0.0;
+        BondEnergies bondEnergy = BondEnergies.getInstance();
+        for (int i = 0; i < educt.getBondCount(); i++) {
+            IBond bond = educt.getBond(i);
+            eEnergy += getBondEnergy(bond, bondEnergy);
+        }
+        Double pEnergy = 0.0;
+        for (int j = 0; j < product.getBondCount(); j++) {
+            IBond bond = product.getBond(j);
+            pEnergy += getBondEnergy(bond, bondEnergy);
+        }
+        return (eEnergy + pEnergy);
+    }
+
+    private synchronized static double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
+        double energy = 0.0;
+        if ((bond.getAtom(0).getFlag(999) == true && bond.getAtom(1).getFlag(999) == false)
+                || (bond.getAtom(0).getFlag(999) == false && bond.getAtom(1).getFlag(999) == true)) {
+            int val = bondEnergy.getEnergies(bond.getAtom(0), bond.getAtom(1), bond.getOrder());
+            energy = val;
+        }
+        return energy;
+    }
 }

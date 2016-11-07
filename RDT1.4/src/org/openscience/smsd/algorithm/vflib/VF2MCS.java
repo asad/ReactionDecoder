@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,29 +23,14 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
-import static java.lang.System.gc;
-import static java.lang.System.nanoTime;
-import static java.lang.System.out;
-import java.util.ArrayList;
-import java.util.Collection;
-import static java.util.Collections.sort;
-import static java.util.Collections.unmodifiableList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
-
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -54,40 +39,36 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import static org.openscience.smsd.algorithm.vflib.SortOrder.DESCENDING;
-import org.openscience.smsd.algorithm.vflib.interfaces.IMapper;
-import org.openscience.smsd.algorithm.vflib.interfaces.INode;
-import org.openscience.smsd.algorithm.vflib.interfaces.IQuery;
-import org.openscience.smsd.algorithm.vflib.map.VFMCSMapper;
-import org.openscience.smsd.algorithm.vflib.query.QueryCompiler;
-import org.openscience.smsd.algorithm.vflib.seeds.MCSSeedGenerator;
-import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
-import static org.openscience.smsd.interfaces.Algorithm.MCSPlus;
+import org.openscience.smsd.algorithm.vflib.vf2.DefaultAtomMatcher;
+import org.openscience.smsd.algorithm.vflib.vf2.DefaultBondMatcher;
+import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern;
+import org.openscience.smsd.algorithm.vflib.vf2.sub.VF;
+import org.openscience.smsd.algorithm.vflib.vf2.mcs.VFSeed;
+import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.cdk.smsd.algorithm.vflib.map.VFMCSMapper} and reports
+ * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports
  * MCS between run source and target graphs. Then these solutions are extended
- * using McGregor {@link org.openscience.cdk.smsd.algorithm.mcgregor.McGregor}
+ * using McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor}
  * algorithm where ever required.
  *
  *
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public final class VF2MCS extends BaseMCS implements IResults {
 
-    private final static ILoggingTool logger
-            = createLoggingTool(VF2MCS.class);
-    private static final java.util.logging.Logger LOG = getLogger(VF2MCS.class.getName());
     private final List<AtomAtomMapping> allAtomMCS;
+    private final static ILoggingTool logger
+            = LoggingToolFactory.createLoggingTool(VF2MCS.class);
     private final boolean DEBUG = false;
 
     /**
@@ -104,7 +85,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
         boolean timeoutVF = searchVFMappings();
 
         if (DEBUG) {
-            out.println("time for VF search " + timeoutVF);
+            System.out.println("time for VF search " + timeoutVF);
         }
 
         /*
@@ -113,9 +94,15 @@ public final class VF2MCS extends BaseMCS implements IResults {
          *
          *
          */
-        int size = allLocalMCS.iterator().hasNext() ? allLocalMCS.iterator().next().size() : 0;
+        int maxVFMappingSize = allLocalMCS.iterator().hasNext() ? allLocalMCS.iterator().next().size() : 0;
+        if (DEBUG) {
+            System.out.println("maxVFMappingSize " + maxVFMappingSize);
+        }
 
-        if (timeoutVF || (size != source.getAtomCount() && size != target.getAtomCount())) {
+        /*
+         * Atleast two atoms are unmapped else you will get bug due to unmapped single atoms
+         */
+        if (timeoutVF || (maxVFMappingSize != (source.getAtomCount()) && maxVFMappingSize != (target.getAtomCount()))) {
 
             List<Map<Integer, Integer>> mcsVFSeeds = new ArrayList<>();
 
@@ -134,9 +121,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
             allLocalMCS.clear();
             allLocalAtomAtomMapping.clear();
 
-            long startTimeSeeds = nanoTime();
+            long startTimeSeeds = System.nanoTime();
 
-            ExecutorService executor = newSingleThreadExecutor();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -145,60 +132,69 @@ public final class VF2MCS extends BaseMCS implements IResults {
              */
             IAtomContainer targetClone = null;
             try {
+                DefaultBondMatcher defaultBondMatcher = new DefaultBondMatcher(shouldMatchBonds, shouldMatchRings, matchAtomType);
+                DefaultAtomMatcher defaultAtomMatcher = new DefaultAtomMatcher(shouldMatchRings, matchAtomType);
+
                 targetClone = target.clone();
                 Set<IBond> bondRemovedT = new HashSet<>();
                 for (IBond b1 : targetClone.bonds()) {
+                    IAtom a1 = b1.getAtom(0);
+                    IAtom a2 = b1.getAtom(1);
+                    boolean flag = false;
                     for (IBond b2 : source.bonds()) {
-                        if (b1.getAtom(0).getSymbol().equals(b2.getAtom(0).getSymbol())
-                                && (b1.getAtom(1).getSymbol().equals(b2.getAtom(1).getSymbol()))) {
-                            if ((shouldMatchBonds || shouldMatchRings || matchAtomType)
-                                    && (b1.getAtom(0).getHybridization() != null
-                                    && b2.getAtom(0).getHybridization() != null
-                                    && b1.getAtom(1).getHybridization() != null
-                                    && b2.getAtom(1).getHybridization() != null)
-                                    && (!b1.getAtom(0).getHybridization().equals(b2.getAtom(0).getHybridization())
-                                    || !b1.getAtom(1).getHybridization().equals(b2.getAtom(1).getHybridization()))) {
-                                bondRemovedT.add(b1);
-                            }
-
-                        } else if (b1.getAtom(0).getSymbol().equals(b2.getAtom(1).getSymbol())
-                                && (b1.getAtom(1).getSymbol().equals(b2.getAtom(0).getSymbol()))) {
-                            if ((shouldMatchBonds || shouldMatchRings || matchAtomType)
-                                    && (b1.getAtom(0).getHybridization() != null
-                                    && b2.getAtom(0).getHybridization() != null
-                                    && b1.getAtom(1).getHybridization() != null
-                                    && b2.getAtom(1).getHybridization() != null)
-                                    && (!b1.getAtom(0).getHybridization().equals(b2.getAtom(1).getHybridization())
-                                    || !b1.getAtom(1).getHybridization().equals(b2.getAtom(0).getHybridization()))) {
-                                bondRemovedT.add(b1);
-                            }
+                        IAtom a3 = b2.getAtom(0);
+                        IAtom a4 = b2.getAtom(1);
+                        boolean matchesBond = defaultBondMatcher.matches(b1, b2);
+                        boolean matchesAtom0 = defaultAtomMatcher.matches(a1, a3);
+                        boolean matchesAtom1 = defaultAtomMatcher.matches(a2, a4);
+                        boolean matchesAtom3 = defaultAtomMatcher.matches(a1, a4);
+                        boolean matchesAtom4 = defaultAtomMatcher.matches(a2, a3);
+                        if (matchesBond && matchesAtom0 && matchesAtom1) {
+                            flag = true;
+                        } else if (matchesBond && matchesAtom3 && matchesAtom4) {
+                            flag = true;
+                        } else if (matchesAtom0 && matchesAtom1) {
+                            flag = true;
+                        } else if (matchesAtom3 && matchesAtom4) {
+                            flag = true;
+                        }
+                        if (flag) {
+                            break;
                         }
                     }
-                    if (DEBUG) {
-                        out.println("Bond to be removed " + bondRemovedT.size());
-                    }
-                    for (IBond b : bondRemovedT) {
-                        targetClone.removeBond(b);
+                    if (!flag) {
+                        bondRemovedT.add(b1);
                     }
                 }
 
+                if (DEBUG) {
+                    System.out.println("Bond to be removed " + bondRemovedT.size());
+                }
+                for (IBond b : bondRemovedT) {
+                    targetClone.removeBond(b);
+                }
+
             } catch (CloneNotSupportedException ex) {
-                getLogger(VF2MCS.class.getName()).log(SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             int jobCounter = 0;
 
             if (DEBUG) {
-                out.println(" CALLING UIT ");
+                System.out.println(" CALLING UIT ");
             }
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, CDKMCS);
-            cs.submit(mcsSeedGeneratorUIT);
-            jobCounter++;
+            if (targetClone != null) {
+                if (targetClone.getBondCount() > 0) {
+                    MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.CDKMCS);
+                    cs.submit(mcsSeedGeneratorUIT);
+                    jobCounter++;
+                }
+            }
 
             if (DEBUG) {
-                out.println(" CALLING MCSPLUS ");
+                System.out.println(" CALLING MCSPLUS ");
             }
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, isBondMatchFlag(), isMatchRings(), matchAtomType, MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 
@@ -213,13 +209,15 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 List<AtomAtomMapping> chosen;
                 try {
                     chosen = cs.take().get();
-                    for (AtomAtomMapping mapping : chosen) {
+                    chosen.stream().map((mapping) -> {
                         Map<Integer, Integer> map = new TreeMap<>();
                         map.putAll(mapping.getMappingsByIndex());
+                        return map;
+                    }).forEach((map) -> {
                         mcsSeeds.add(map);
-                    }
+                    });
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(SEVERE, null, ex);
+                    logger.error(Level.SEVERE, null, ex);
                 }
             }
             executor.shutdown();
@@ -229,27 +227,27 @@ public final class VF2MCS extends BaseMCS implements IResults {
 
             while (!executor.isTerminated()) {
             }
-            gc();
+            System.gc();
 
-            long stopTimeSeeds = nanoTime();
+            long stopTimeSeeds = System.nanoTime();
             if (DEBUG) {
-                out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
+                System.out.println("time taken for seeds: " + TimeUnit.MILLISECONDS.convert((stopTimeSeeds - startTimeSeeds), TimeUnit.NANOSECONDS) + " ms.");
             }
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT
              */
             int solutionSize = 0;
             counter = 0;
-            Set<Map<Integer, Integer>> cleanedMCSSeeds = new LinkedHashSet<>();
+            List<Map<Integer, Integer>> cleanedMCSSeeds = new ArrayList<>();
 
             if (DEBUG) {
-                out.println("merging  UIT & KochCliques");
+                System.out.println("merging  UIT & KochCliques");
             }
 
             if (!mcsSeeds.isEmpty()) {
                 for (Map<Integer, Integer> map : mcsSeeds) {
                     if (DEBUG) {
-                        out.println("potential seed MCS, UIT " + map.size());
+                        System.out.println("potential seed MCSPlus, UIT " + map.size());
                     }
                     if (map.size() > solutionSize) {
                         solutionSize = map.size();
@@ -258,43 +256,35 @@ public final class VF2MCS extends BaseMCS implements IResults {
                     }
                     if (!map.isEmpty()
                             && map.size() == solutionSize
-                            && !isCliquePresent(map, cleanedMCSSeeds)) {
+                            && !super.isCliquePresent(map, cleanedMCSSeeds)) {
                         if (DEBUG) {
-                            out.println("seed MCS, UIT " + map.size());
+                            System.out.println("seed MCS, UIT " + cleanedMCSSeeds.size());
                         }
-                        cleanedMCSSeeds.add(map);
+                        cleanedMCSSeeds.add(counter, map);
                         counter++;
                     }
                 }
             }
-            for (Map<Integer, Integer> map : mcsVFSeeds) {
-                if (!map.isEmpty()
-                        && map.size() >= solutionSize
-                        && !isCliquePresent(map, cleanedMCSSeeds)) {
-                    if (DEBUG) {
-                        out.println("seed VF " + map.size());
-                    }
-                    cleanedMCSSeeds.add(map);
-                    counter++;
-                }
-            }
+
+            /*
+             * Add seeds from VF MCS
+             */
+            mcsVFSeeds.stream().filter((map) -> (!map.isEmpty()
+                    && !super.isCliquePresent(map, cleanedMCSSeeds))).forEach((_item) -> {
+                cleanedMCSSeeds.addAll(mcsVFSeeds);
+            });
             /*
              * Sort biggest clique to smallest
              */
-            List<Map<Integer, Integer>> sortedList = new ArrayList<>(cleanedMCSSeeds);
-            sort(sortedList, new Map1ValueComparator(DESCENDING));
+            Collections.sort(cleanedMCSSeeds, new Map1ValueComparator(SortOrder.DESCENDING));
 
             /*
              * Extend the seeds using McGregor
              */
             try {
-                sortedList = reduceMatches(sortedList);
-                if (DEBUG) {
-                    out.println(" Calling McGregor " + sortedList.size());
-                }
-                extendCliquesWithMcGregor(sortedList);
+                super.extendCliquesWithMcGregor(cleanedMCSSeeds);
             } catch (CDKException | IOException ex) {
-                logger.error(SEVERE, null, ex);
+                logger.error(Level.SEVERE, null, ex);
             }
 
             /*
@@ -335,27 +325,38 @@ public final class VF2MCS extends BaseMCS implements IResults {
             allLocalAtomAtomMapping.clear();
 
         } else {
-
+            if (DEBUG) {
+                System.out.println("IS A Subgraph ");
+            }
             /*
              * Store solutions from VF MCS only
              */
-            int solSize = 0;
+            int solutionSize = 0;
             int counter = 0;
             this.allAtomMCS = new ArrayList<>();
+            /*
+             * Store solutions from VF MCS only
+             */
             if (!allLocalAtomAtomMapping.isEmpty()) {
                 for (AtomAtomMapping atomMCSMap : allLocalAtomAtomMapping) {
-                    if (atomMCSMap.getCount() > solSize) {
-                        solSize = atomMCSMap.getCount();
+                    if (atomMCSMap.getCount() > solutionSize) {
+                        solutionSize = atomMCSMap.getCount();
                         allAtomMCS.clear();
                         counter = 0;
                     }
                     if (!atomMCSMap.isEmpty()
-                            && atomMCSMap.getCount() == solSize) {
+                            && atomMCSMap.getCount() == solutionSize) {
                         allAtomMCS.add(counter, atomMCSMap);
                         counter++;
                     }
                 }
             }
+
+            /*
+             * Clear the local solution after storing it into mcs solutions
+             */
+            allLocalMCS.clear();
+            allLocalAtomAtomMapping.clear();
         }
     }
 
@@ -366,7 +367,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @param target
      */
     public VF2MCS(IQueryAtomContainer source, IAtomContainer target) {
-        super(source, target, true, true, true);
+        super((IQueryAtomContainer) source, target, true, true, true);
         boolean timeoutVF = searchVFMappings();
 
 //        System.out.println("time for VF search " + timeoutVF);
@@ -396,9 +397,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
             allLocalMCS.clear();
             allLocalAtomAtomMapping.clear();
 
-            long startTimeSeeds = nanoTime();
+            long startTimeSeeds = System.nanoTime();
 
-            ExecutorService executor = newSingleThreadExecutor();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -429,11 +430,11 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                getLogger(VF2MCS.class.getName()).log(SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, CDKMCS);
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);
+            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.MCSPlus);
 
             int jobCounter = 0;
             cs.submit(mcsSeedGeneratorUIT);
@@ -452,22 +453,24 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 List<AtomAtomMapping> chosen;
                 try {
                     chosen = cs.take().get();
-                    for (AtomAtomMapping mapping : chosen) {
+                    chosen.stream().map((mapping) -> {
                         Map<Integer, Integer> map = new TreeMap<>();
                         map.putAll(mapping.getMappingsByIndex());
+                        return map;
+                    }).forEach((map) -> {
                         mcsSeeds.add(map);
-                    }
+                    });
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(SEVERE, null, ex);
+                    logger.error(Level.SEVERE, null, ex);
                 }
             }
             executor.shutdown();
             // Wait until all threads are finish
             while (!executor.isTerminated()) {
             }
-            gc();
+            System.gc();
 
-            long stopTimeSeeds = nanoTime();
+            long stopTimeSeeds = System.nanoTime();
 //            System.out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT
@@ -485,7 +488,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                     }
                     if (!map.isEmpty()
                             && map.size() == solutionSize
-                            && !hasClique(map, cleanedMCSSeeds)) {
+                            && !super.hasClique(map, cleanedMCSSeeds)) {
                         cleanedMCSSeeds.add(counter, map);
                         counter++;
                     }
@@ -494,7 +497,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             for (Map<Integer, Integer> map : mcsVFSeeds) {
                 if (!map.isEmpty()
                         && map.size() >= solutionSize
-                        && !hasClique(map, cleanedMCSSeeds)) {
+                        && !super.hasClique(map, cleanedMCSSeeds)) {
                     cleanedMCSSeeds.add(counter, map);
                     counter++;
                 }
@@ -502,16 +505,15 @@ public final class VF2MCS extends BaseMCS implements IResults {
             /*
              * Sort biggest clique to smallest
              */
-            sort(cleanedMCSSeeds, new Map1ValueComparator(DESCENDING));
+            Collections.sort(cleanedMCSSeeds, new Map1ValueComparator(SortOrder.DESCENDING));
 
             /*
              * Extend the seeds using McGregor
              */
             try {
-                reduceMatches(cleanedMCSSeeds);
-                extendCliquesWithMcGregor(cleanedMCSSeeds);
+                super.extendCliquesWithMcGregor(cleanedMCSSeeds);
             } catch (CDKException | IOException ex) {
-                logger.error(SEVERE, null, ex);
+                logger.error(Level.SEVERE, null, ex);
             }
 
             /*
@@ -576,6 +578,144 @@ public final class VF2MCS extends BaseMCS implements IResults {
         }
     }
 
+//    /*
+//     * Note: VF MCS will search for cliques which will match the types. Mcgregor will extend the cliques depending of
+//     * the bond type (sensitive and insensitive).
+//     */
+//    protected synchronized boolean searchVFMappings() {
+////        System.out.println("searchVFMappings ");
+//        IQuery queryCompiler;
+//        IMapper mapper;
+//
+//        if (!(source instanceof IQueryAtomContainer)
+//                && !(target instanceof IQueryAtomContainer)) {
+//            countR = getReactantMol().getAtomCount();
+//            countP = getProductMol().getAtomCount();
+//        }
+//
+//        if (source instanceof IQueryAtomContainer) {
+//            queryCompiler = new QueryCompiler((IQueryAtomContainer) source).compile();
+//            mapper = new VFMCSMapper(queryCompiler);
+//            List<Map<INode, IAtom>> maps = mapper.getMaps(getProductMol());
+//            if (maps != null) {
+//                vfLibSolutions.addAll(maps);
+//            }
+//            setVFMappings(true, queryCompiler);
+//
+//        } else if (countR <= countP) {//isBondMatchFlag()
+//            queryCompiler = new QueryCompiler(this.source, true, isMatchRings(), isMatchAtomType()).compile();
+//            mapper = new VFMCSMapper(queryCompiler);
+//            List<Map<INode, IAtom>> map = mapper.getMaps(this.target);
+//            if (map != null) {
+//                vfLibSolutions.addAll(map);
+//            }
+//            setVFMappings(true, queryCompiler);
+//        } else {
+//            queryCompiler = new QueryCompiler(this.target, true, isMatchRings(), isMatchAtomType()).compile();
+//            mapper = new VFMCSMapper(queryCompiler);
+//            List<Map<INode, IAtom>> map = mapper.getMaps(this.source);
+//            if (map != null) {
+//                vfLibSolutions.addAll(map);
+//            }
+//            setVFMappings(false, queryCompiler);
+//        }
+//        return mapper.isTimeout();
+//    }
+    /*
+     * Note: VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
+     * insensitive).
+     */
+    private synchronized boolean searchVFMappings() {
+        if (DEBUG) {
+            System.out.println("searchVFMappings ");
+        }
+        VF mapper = null;
+        if (!(source instanceof IQueryAtomContainer) && !(target instanceof IQueryAtomContainer)) {
+            countR = getReactantMol().getAtomCount();
+            countP = getProductMol().getAtomCount();
+        }
+
+        if (source instanceof IQueryAtomContainer) {
+            Pattern findSeeds = VF.findSubstructure((IQueryAtomContainer) source);
+            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
+            if (maps.isEmpty()) {
+                findSeeds = VFSeed.findSeeds((IQueryAtomContainer) source);
+                maps = findSeeds.matchAll(getProductMol());
+            }
+            if (maps != null && !maps.isEmpty()) {
+                vfLibSolutions.addAll(maps);
+            }
+            setVFMappings(true);
+        } else if (countR < countP) {
+            if (DEBUG) {
+                System.out.println("searchVFMappings findSubstructure");
+            }
+
+            //long start = System.currentTimeMillis();
+            Pattern findSeeds = VF.findSubstructure(this.source, true, isMatchRings(), isMatchAtomType());
+            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
+            //long end = System.currentTimeMillis();
+            //System.out.println("Time elapsed: " + TimeUnit.NANOSECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " ns.");
+
+            if (maps.isEmpty()) {
+                if (DEBUG) {
+                    System.out.println("searchVFMappings ");
+                }
+                findSeeds = VFSeed.findSeeds(this.source, true, isMatchRings(), isMatchAtomType());
+                maps = findSeeds.matchAll(getProductMol());
+            }
+            if (maps != null && !maps.isEmpty()) {
+                vfLibSolutions.addAll(maps);
+            }
+            setVFMappings(true);
+        } else if (countR == countP) {
+            if (DEBUG) {
+                System.out.println("searchVFMappings findSubstructure");
+            }
+
+            //long start = System.currentTimeMillis();
+            Pattern findSeeds = VF.findIdentical(this.source, true, isMatchRings(), isMatchAtomType());
+            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
+            //long end = System.currentTimeMillis();
+            //System.out.println("Time elapsed: " + TimeUnit.NANOSECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " ns.");
+
+            if (maps.isEmpty()) {
+                if (DEBUG) {
+                    System.out.println("searchVFMappings ");
+                }
+                findSeeds = VFSeed.findSeeds(this.source, true, isMatchRings(), isMatchAtomType());
+                maps = findSeeds.matchAll(getProductMol());
+            }
+            if (maps != null && !maps.isEmpty()) {
+                vfLibSolutions.addAll(maps);
+            }
+            setVFMappings(true);
+        } else {
+            if (DEBUG) {
+                System.out.println("searchVFMappings findSubstructure");
+            }
+            Pattern findSeeds = VF.findSubstructure(this.target, true, isMatchRings(), isMatchAtomType());
+            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getReactantMol());
+            if (maps.isEmpty()) {
+                if (DEBUG) {
+                    System.out.println("searchVFMappings ");
+                }
+                findSeeds = VFSeed.findSeeds(this.target, true, isMatchRings(), isMatchAtomType());
+                maps = findSeeds.matchAll(getReactantMol());
+            }
+            if (maps != null && !maps.isEmpty()) {
+                vfLibSolutions.addAll(maps);
+            }
+            setVFMappings(false);
+        }
+        if (DEBUG) {
+            System.out.println("\nSol count " + ((float) vfLibSolutions.size()));
+            System.out.println("Sol size " + ((vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0)));
+            System.out.println("searchVFMappings done ");
+        }
+        return mapper != null;
+    }
+
     /**
      * Constructor for an extended VF Algorithm for the MCS search
      *
@@ -586,56 +726,6 @@ public final class VF2MCS extends BaseMCS implements IResults {
         this(source, target, true, true, true);
     }
 
-    /*
-     * Note: VF MCS will search for cliques which will match the types. Mcgregor will extend the cliques depending of
-     * the bond type (sensitive and insensitive).
-     */
-
-    /**
-     *
-     * @return
-     */
-
-    protected synchronized boolean searchVFMappings() {
-//        System.out.println("searchVFMappings ");
-        IQuery queryCompiler;
-        IMapper mapper;
-
-        if (!(source instanceof IQueryAtomContainer)
-                && !(target instanceof IQueryAtomContainer)) {
-            countR = getReactantMol().getAtomCount();
-            countP = getProductMol().getAtomCount();
-        }
-
-        if (source instanceof IQueryAtomContainer) {
-            queryCompiler = new QueryCompiler((IQueryAtomContainer) source).compile();
-            mapper = new VFMCSMapper(queryCompiler);
-            List<Map<INode, IAtom>> maps = mapper.getMaps(getProductMol());
-            if (maps != null) {
-                vfLibSolutions.addAll(maps);
-            }
-            setVFMappings(true, queryCompiler);
-
-        } else if (countR <= countP) {//isBondMatchFlag()
-            queryCompiler = new QueryCompiler(this.source, true, isMatchRings(), isMatchAtomType()).compile();
-            mapper = new VFMCSMapper(queryCompiler);
-            List<Map<INode, IAtom>> map = mapper.getMaps(this.target);
-            if (map != null) {
-                vfLibSolutions.addAll(map);
-            }
-            setVFMappings(true, queryCompiler);
-        } else {
-            queryCompiler = new QueryCompiler(this.target, true, isMatchRings(), isMatchAtomType()).compile();
-            mapper = new VFMCSMapper(queryCompiler);
-            List<Map<INode, IAtom>> map = mapper.getMaps(this.source);
-            if (map != null) {
-                vfLibSolutions.addAll(map);
-            }
-            setVFMappings(false, queryCompiler);
-        }
-        return mapper.isTimeout();
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -643,7 +733,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
      */
     @Override
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return unmodifiableList(allAtomMCS);
+        return Collections.unmodifiableList(allAtomMCS);
     }
 
     /**
@@ -657,47 +747,5 @@ public final class VF2MCS extends BaseMCS implements IResults {
             return allAtomMCS.iterator().next();
         }
         return new AtomAtomMapping(getReactantMol(), getProductMol());
-    }
-
-    private List<Map<Integer, Integer>> reduceMatches(Collection<Map<Integer, Integer>> sortedList) {
-        Map<String, Map<Integer, Integer>> m = new TreeMap<>();
-        for (Map<Integer, Integer> map : sortedList) {
-            StringBuilder sb = new StringBuilder();
-            TreeSet<Integer> sortedKeys = new TreeSet<>(map.keySet());
-            for (Integer i : sortedKeys) {
-                sb.append(i).append(".").append(map.get(i)).append("$");
-            }
-            m.put(sb.toString(), map);
-        }
-        removeRedundantKeys(m);
-        if (DEBUG) {
-            out.println("Keys " + m.keySet().size());
-        }
-        return new ArrayList<>(m.values());
-    }
-
-    private boolean isSubKey(Set<String> keySet, String key) {
-        for (String s : keySet) {
-//            if (key.length() < s.length() && s.contains(key)) {
-            if (key.length() < s.length()) {
-                if (DEBUG) {
-                    out.println("k " + key);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void removeRedundantKeys(Map<String, Map<Integer, Integer>> m) {
-        List<String> removeKeys = new ArrayList<>();
-        for (String s : m.keySet()) {
-            if (isSubKey(m.keySet(), s)) {
-                removeKeys.add(s);
-            }
-        }
-        for (String r : removeKeys) {
-            m.remove(r);
-        }
     }
 }

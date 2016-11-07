@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2015 Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015 Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,32 +23,26 @@
 package org.openscience.smsd.tools;
 
 import java.io.IOException;
-import static java.lang.System.err;
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 import org.openscience.cdk.config.IsotopeFactory;
-import static org.openscience.cdk.config.Isotopes.getInstance;
+import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getSingleBondEquivalentSum;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @author Syed Asad Rahman<asad@ebi.ac.uk> 
  */
 public class AtomContainerComparator implements Comparator<IAtomContainer> {
-    private static final Logger LOG = getLogger(AtomContainerComparator.class.getName());
 
     /**
      * Configure LoggingTool
      */
-    private final ILoggingTool logger
-            = createLoggingTool(AtomContainerComparator.class);
+    private ILoggingTool logger
+            = LoggingToolFactory.createLoggingTool(AtomContainerComparator.class);
 
     /**
      * Creates a new instance of AtomContainerComparator
@@ -138,8 +132,8 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
                     return -1;
                 } else {
                     // 4. Bond count equal, compare sum of bond orders (heavy atoms only)
-                    double bondOrderSum1 = getSingleBondEquivalentSum(atomContainer1);
-                    double bondOrderSum2 = getSingleBondEquivalentSum(atomContainer2);
+                    double bondOrderSum1 = ExtAtomContainerManipulator.getSingleBondEquivalentSum(atomContainer1);
+                    double bondOrderSum2 = ExtAtomContainerManipulator.getSingleBondEquivalentSum(atomContainer2);
                     if (bondOrderSum1 > bondOrderSum2) {
                         return 1;
                     } else if (bondOrderSum1 < bondOrderSum2) {
@@ -170,14 +164,14 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
             for (IAtom atom : atomContainer.atoms()) {
                 if (!atom.getSymbol().equals("H") && !atom.getSymbol().equals("R")) {
                     try {
-                        IsotopeFactory elfac = getInstance();
+                        IsotopeFactory elfac = Isotopes.getInstance();
                         IIsotope majorIsotope = elfac.getMajorIsotope(atom.getSymbol());
                         mw += majorIsotope.getExactMass();
                     } catch (IOException e) {
-                        err.println("Molecular weight calculation failes for atom " + atom.getSymbol());
+                        System.err.println("Molecular weight calculation failes for atom " + atom.getSymbol());
                     }
                 } else if (atom.getSymbol().equals("R")) {
-                    IsotopeFactory elfac = getInstance();
+                    IsotopeFactory elfac = Isotopes.getInstance();
                     IIsotope majorIsotope = elfac.getMajorIsotope("C");
                     mw += majorIsotope.getExactMass();
                 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,25 +24,18 @@ package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
-import static org.openscience.cdk.tools.manipulator.BondManipulator.getAtomArray;
-import static org.openscience.smsd.algorithm.rgraph.CDKMCS.checkSingleAtomCases;
-import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getIsomorphMaps;
-import static org.openscience.smsd.algorithm.rgraph.CDKMCS.getSubgraphMaps;
-import static org.openscience.smsd.algorithm.rgraph.CDKMCS.search;
+import org.openscience.cdk.tools.manipulator.BondManipulator;
 
 /**
  * This algorithm derives from the algorithm described in [Tonnelier, C. and
@@ -51,20 +44,12 @@ import static org.openscience.smsd.algorithm.rgraph.CDKMCS.search;
  * substructure determination, Tetrahedron Comput. Methodol., 1990, 3:351-358]
  * and modified in the thesis of T. Hanser [Unknown BibTeXML type: HAN93].
  *
- * 
- * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ *
+ *
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class CDKRMapHandler {
-    private static final Logger LOG = getLogger(CDKRMapHandler.class.getName());
-    private List<Map<Integer, Integer>> mappings;
-    private IAtomContainer source;
-    private IAtomContainer target;
-    private boolean timeout;
+public final class CDKRMapHandler {
 
-    /**
-     *
-     */
     public CDKRMapHandler() {
         this.timeout = false;
     }
@@ -83,8 +68,7 @@ public class CDKRMapHandler {
      *
      * @param aSource the source to set
      */
-    public synchronized void setSource(
-            IAtomContainer aSource) {
+    public synchronized void setSource(IAtomContainer aSource) {
         source = aSource;
     }
 
@@ -105,6 +89,10 @@ public class CDKRMapHandler {
     public synchronized void setTarget(IAtomContainer aTarget) {
         target = aTarget;
     }
+    private List<Map<Integer, Integer>> mappings;
+    private IAtomContainer source;
+    private IAtomContainer target;
+    private boolean timeout;
 
     /**
      * This function calculates all the possible combinations of MCS
@@ -114,17 +102,18 @@ public class CDKRMapHandler {
      * @param shouldMatchBonds
      * @param shouldMatchRings
      * @param matchAtomType
-     * @return
+     * @return List
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1, IAtomContainer molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1,
+            IAtomContainer molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         setSource(molecule1);
         setTarget(molecule2);
         List<Map<Integer, Integer>> solution = new ArrayList<>();
         setMappings(solution);
 
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
-            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -137,7 +126,7 @@ public class CDKRMapHandler {
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -158,17 +147,18 @@ public class CDKRMapHandler {
      *
      * @param molecule1
      * @param molecule2
-     * @return
+     * @return List
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1, IQueryAtomContainer molecule2) throws CDKException {
+    public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1,
+            IQueryAtomContainer molecule2) throws CDKException {
         setSource(molecule1);
         setTarget(molecule2);
         List<Map<Integer, Integer>> solution = new ArrayList<>();
         setMappings(solution);
 
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
-            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -176,20 +166,20 @@ public class CDKRMapHandler {
                 /*UnComment this to get one Unique Mapping*/
                 //List reducedList = removeRedundantMappingsForSingleAtomCase(overlaps);
                 //int counter = 0;
-                identifySingleAtomsMatchedParts(overlaps, getSource(), getTarget());
+                identifySingleAtomsMatchedParts(overlaps, getSource(), (IQueryAtomContainer) getTarget());
 
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
+            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), (IQueryAtomContainer) getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
             while (!allMaxOverlaps.empty()) {
 //                System.out.println("source: " + source.getAtomCount() + ", target: " + target.getAtomCount() + ", overl: " + allMaxOverlaps.peek().size());
-                List<List<CDKRMap>> maxOverlapsAtoms = makeAtomsMapOfBondsMap(allMaxOverlaps.peek(), getSource(), getTarget());
+                List<List<CDKRMap>> maxOverlapsAtoms = makeAtomsMapOfBondsMap(allMaxOverlaps.peek(), getSource(), (IQueryAtomContainer) getTarget());
 //                System.out.println("size of maxOverlaps: " + maxOverlapsAtoms.size());
-                identifyMatchedParts(maxOverlapsAtoms, getSource(), getTarget());
+                identifyMatchedParts(maxOverlapsAtoms, getSource(), (IQueryAtomContainer) getTarget());
 //                identifyMatchedParts(allMaxOverlaps.peek(), source, target);
                 allMaxOverlaps.pop();
             }
@@ -209,18 +199,23 @@ public class CDKRMapHandler {
      * @param matchAtomType
      * @throws CDKException
      */
-    public synchronized void calculateOverlapsAndReduceExactMatch(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
-        
+    public synchronized void calculateOverlapsAndReduceExactMatch(
+            IAtomContainer Molecule1,
+            IAtomContainer Molecule2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) throws CDKException {
+
         setSource(Molecule1);
         setTarget(Molecule2);
 
-        setMappings(new ArrayList<Map<Integer, Integer>>());
+        setMappings(new ArrayList<>());
 
         //System.out.println("Searching: ");
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -231,7 +226,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true,
+                    = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true,
                             shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
@@ -255,11 +250,15 @@ public class CDKRMapHandler {
      * @param shouldMatchBonds
      * @param shouldMatchRings
      * @param matchAtomType
-     * @return
+     * @return List
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateSubGraphs(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
-        
+    public synchronized List<Map<Integer, Integer>> calculateSubGraphs(IAtomContainer Molecule1,
+            IAtomContainer Molecule2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) throws CDKException {
+
         setSource(Molecule1);
         setTarget(Molecule2);
 
@@ -270,7 +269,7 @@ public class CDKRMapHandler {
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -281,7 +280,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = getSubgraphMaps(getSource(), getTarget(),
+                    = CDKMCS.getSubgraphMaps(getSource(), getTarget(),
                             shouldMatchBonds,
                             shouldMatchRings,
                             matchAtomType);
@@ -308,11 +307,15 @@ public class CDKRMapHandler {
      * @param shouldMatchBonds
      * @param shouldMatchRings
      * @param matchAtomType
-     * @return
+     * @return List
      * @throws CDKException
      */
-    public synchronized List<Map<Integer, Integer>> calculateIsomorphs(IAtomContainer Molecule1, IAtomContainer Molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
-        
+    public synchronized List<Map<Integer, Integer>> calculateIsomorphs(IAtomContainer Molecule1,
+            IAtomContainer Molecule2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) throws CDKException {
+
         setSource(Molecule1);
         setTarget(Molecule2);
         List<Map<Integer, Integer>> solutions = new ArrayList<>();
@@ -322,7 +325,7 @@ public class CDKRMapHandler {
         //List overlaps = UniversalIsomorphismTesterBondTypeInSensitive.getSubgraphAtomsMap(source, target);
         if ((getSource().getAtomCount() == 1) || (getTarget().getAtomCount() == 1)) {
 
-            List<CDKRMap> overlaps = checkSingleAtomCases(getSource(), getTarget());
+            List<CDKRMap> overlaps = CDKMCS.checkSingleAtomCases(getSource(), getTarget());
             this.setTimeout(CDKMCS.isTimeout());
             int nAtomsMatched = overlaps.size();
             nAtomsMatched = (nAtomsMatched > 0) ? 1 : 0;
@@ -333,7 +336,7 @@ public class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = getIsomorphMaps(getSource(), getTarget(), shouldMatchBonds, shouldMatchRings, matchAtomType);
+                    = CDKMCS.getIsomorphMaps(getSource(), getTarget(), shouldMatchBonds, shouldMatchRings, matchAtomType);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -350,7 +353,7 @@ public class CDKRMapHandler {
     /**
      *
      * @param overlaps
-     * @return
+     * @return removed List
      */
     protected synchronized List<List<CDKRMap>> removeSubGraph(List<List<CDKRMap>> overlaps) {
 
@@ -380,10 +383,10 @@ public class CDKRMapHandler {
     /**
      *
      * @param overlaps
-     * @return
+     * @return List removed
      */
     protected synchronized List<CDKRMap> removeRedundantMappingsForSingleAtomCase(List<CDKRMap> overlaps) {
-        List<CDKRMap> reducedList = synchronizedList(new ArrayList<CDKRMap>());
+        List<CDKRMap> reducedList = Collections.synchronizedList(new ArrayList<CDKRMap>());
         reducedList.add(overlaps.get(0));
         //reducedList.add(overlaps.get(1));
         return reducedList;
@@ -411,8 +414,8 @@ public class CDKRMapHandler {
             for (CDKRMap rMapList2 : rMapList) {
                 IBond qBond = graph1.getBond(rMapList2.getId1());
                 IBond tBond = graph2.getBond(rMapList2.getId2());
-                IAtom[] qAtoms = getAtomArray(qBond);
-                IAtom[] tAtoms = getAtomArray(tBond);
+                IAtom[] qAtoms = BondManipulator.getAtomArray(qBond);
+                IAtom[] tAtoms = BondManipulator.getAtomArray(tBond);
                 for (int j = 0; j < 2; j++) {
                     List<IBond> bondsConnectedToAtom1j = graph1.getConnectedBondsList(qAtoms[j]);
                     for (IBond bondsConnectedToAtom1j1 : bondsConnectedToAtom1j) {
@@ -539,7 +542,7 @@ public class CDKRMapHandler {
         List list = null;
         int count = 0;
         for (Object o : overlaps) {
-            List arrayList = (List) o;
+            List arrayList = (ArrayList) o;
             if (arrayList.size() > count) {
                 list = arrayList;
                 count = arrayList.size();
@@ -591,12 +594,12 @@ public class CDKRMapHandler {
 //        List<IAtom> array2 = new ArrayList<IAtom>();
 
         /*
-        * We have serial numbers of the bonds/Atoms to delete
-        * Now we will collect the actual bond/Atoms rather than
-        * serial number for deletion. RonP flag check whether reactant is
-        * mapped on product or Vise Versa
-        *
-        */
+         * We have serial numbers of the bonds/Atoms to delete
+         * Now we will collect the actual bond/Atoms rather than
+         * serial number for deletion. RonP flag check whether reactant is
+         * mapped on product or Vise Versa
+         *
+         */
         for (List<CDKRMap> rMap : list) {
             Map<Integer, Integer> atomNumbersFromContainer = new TreeMap<>();
             for (CDKRMap rmap : rMap) {
@@ -605,14 +608,13 @@ public class CDKRMapHandler {
 
 //                array1.add(sourceAtom);
 //                array2.add(targetAtom);
-
                 int indexI = source.getAtomNumber(sourceAtom);
                 int indexJ = target.getAtomNumber(targetAtom);
 
                 atomNumbersFromContainer.put(indexI, indexJ);
             }
             /*Added the Mapping Numbers to the FinalMapping*
-            */
+             */
             getMappings().add(atomNumbersFromContainer);
         }
     }
@@ -623,16 +625,18 @@ public class CDKRMapHandler {
      * @param source
      * @param target
      */
-    protected synchronized void identifySingleAtomsMatchedParts(List<CDKRMap> list, IAtomContainer source, IAtomContainer target) {
-        
+    protected synchronized void identifySingleAtomsMatchedParts(List<CDKRMap> list,
+            IAtomContainer source,
+            IAtomContainer target) {
+
 //        List<IAtom> array1 = new ArrayList<>();
 //        List<IAtom> array2 = new ArrayList<>();
 
         /* We have serial numbers of the bonds/Atoms to delete
-        * Now we will collect the actual bond/Atoms rather than
-        * serial number for deletion. RonP flag check whether reactant is
-        * mapped on product or Vise Versa
-        */
+         * Now we will collect the actual bond/Atoms rather than
+         * serial number for deletion. RonP flag check whether reactant is
+         * mapped on product or Vise Versa
+         */
         TreeMap<Integer, Integer> atomNumbersFromContainer = new TreeMap<>();
 
         for (CDKRMap rmap : list) {
@@ -649,7 +653,7 @@ public class CDKRMapHandler {
             atomNumbersFromContainer.put(indexI, indexJ);
 
             /*Added the Mapping Numbers to the FinalMapping*
-            */
+             */
             getMappings().add(atomNumbersFromContainer);
 
         }
@@ -659,7 +663,7 @@ public class CDKRMapHandler {
      *
      * @param rmaps1
      * @param rmaps2
-     * @return
+     * @return true if condition meet else false
      */
     protected synchronized boolean isSubgraph(List<CDKRMap> rmaps1, List<CDKRMap> rmaps2) {
         //System.out.println("Entering isSubgraph.");
@@ -686,7 +690,7 @@ public class CDKRMapHandler {
      *
      * @param sourceRMap sourceAtom
      * @param targetRMap targetAtom
-     * @return
+     * @return true if condition meet else false
      */
     protected synchronized boolean isSameRMap(CDKRMap sourceRMap, CDKRMap targetRMap) {
         return sourceRMap.getId1() == targetRMap.getId1()

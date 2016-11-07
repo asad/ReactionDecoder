@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -29,20 +29,11 @@ import org.openscience.cdk.interfaces.IAtom;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public interface AtomMatcher {
 
-    /**
-     *
-     * @param atom
-     * @return
-     */
     boolean matches(IAtom atom);
 
-    /**
-     *
-     * @return
-     */
     IAtom getQueryAtom();
 }

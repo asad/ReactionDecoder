@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,48 +23,80 @@
 package org.openscience.smsd.helper;
 
 import java.util.ArrayList;
-import static java.util.Collections.sort;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import static org.openscience.cdk.CDKConstants.ISALIPHATIC;
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
-import static org.openscience.cdk.CDKConstants.ISINRING;
-import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
-import static org.openscience.cdk.CDKConstants.RING_SIZES;
-import static org.openscience.cdk.CDKConstants.SMALLEST_RINGS;
-import static org.openscience.cdk.CDKConstants.TOTAL_CONNECTIONS;
-import static org.openscience.cdk.CDKConstants.TOTAL_H_COUNT;
-import static org.openscience.cdk.CDKConstants.UNSET;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.CycleFinder;
-import org.openscience.cdk.graph.Cycles;
-import static org.openscience.cdk.graph.Cycles.all;
-import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
-import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
-import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
+import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
  *
+ * 
+ * 
  *
- *
- *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class MoleculeInitializer {
+
+    /**
+     * Defines which set of rings to define rings in the target.
+     */
+    private enum RingSet {
+
+        /**
+         * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
+         * strictly the same). Defines what is typically thought of as a 'ring'
+         * however the non-uniqueness leads to ambiguous matching.
+         */
+        SmallestSetOfSmallestRings {
+                    @Override
+                    IRingSet ringSet(IAtomContainer m) {
+                        return new SSSRFinder(m).findSSSR();
+                    }
+                },
+        /**
+         * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
+         * The set is unique but may excludes rings (e.g. from bridged systems).
+         */
+        EssentialRings {
+                    @Override
+                    IRingSet ringSet(IAtomContainer m) {
+                        return new SSSRFinder(m).findEssentialRings();
+                    }
+                },
+        /**
+         * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
+         * The set is unique but may include more rings then is necessary.
+         */
+        RelevantRings {
+                    @Override
+                    IRingSet ringSet(IAtomContainer m) {
+                        return new SSSRFinder(m).findRelevantRings();
+                    }
+                };
+
+        /**
+         * Compute a ring set for a molecule.
+         *
+         * @param m molecule
+         * @return the ring set for the molecule
+         */
+        abstract IRingSet ringSet(IAtomContainer m);
+    }
 
     /**
      * Prepare the molecule for analysis.
@@ -79,7 +111,7 @@ public class MoleculeInitializer {
      * finding code.
      */
     private static final ILoggingTool Logger
-            = createLoggingTool(MoleculeInitializer.class);
+            = LoggingToolFactory.createLoggingTool(MoleculeInitializer.class);
 
     /**
      *
@@ -134,28 +166,16 @@ public class MoleculeInitializer {
             valencesTable.put("Mn", 2);
             valencesTable.put("Co", 2);
 
+            // do all ring perception
+            AllRingsFinder arf = new AllRingsFinder();
             IRingSet allRings = null;
+            try {
+                allRings = arf.findAllRings(atomContainer);
+            } catch (CDKException e) {
+                Logger.warn(e.toString());
+            }
 
-//            // do all ring perception
-//            AllRingsFinder arf = new AllRingsFinder();
-//            try {
-//                allRings = arf.findAllRings(atomContainer);
-//            } catch (CDKException e) {
-//                Logger.warn(e.toString());
-//            }
-
-            /*
-             * Report All Cycles
-             * or 
-             * CycleFinder cycles = or(all(), relevant());
-             */
-            CycleFinder cycles = or(all(), all());
-            Cycles rings = cycles.find(atomContainer);
-            allRings = rings.toRingSet();
-
-            /*
-             * sets SSSR information
-             */
+            // sets SSSR information
             IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
 
             for (IAtom atom : atomContainer.atoms()) {
@@ -164,8 +184,8 @@ public class MoleculeInitializer {
                 // Integers, indicating what size ring the given atom belongs to
                 // Add SSSR ring counts
                 if (allRings != null && allRings.contains(atom)) { // it's in a ring
-                    atom.setFlag(ISINRING, true);
-                    atom.setFlag(ISALIPHATIC, false);
+                    atom.setFlag(CDKConstants.ISINRING, true);
+                    atom.setFlag(CDKConstants.ISALIPHATIC, false);
                     // lets find which ring sets it is a part of
                     List<Integer> ringsizes = new ArrayList<>();
                     IRingSet currentRings = allRings.getRings(atom);
@@ -177,19 +197,19 @@ public class MoleculeInitializer {
                         }
                         ringsizes.add(size);
                     }
-                    sort(ringsizes);
-                    atom.setProperty(RING_SIZES, ringsizes);
-                    atom.setProperty(SMALLEST_RINGS, sssr.getRings(atom));
+                    Collections.sort(ringsizes);
+                    atom.setProperty(CDKConstants.RING_SIZES, ringsizes);
+                    atom.setProperty(CDKConstants.SMALLEST_RINGS, sssr.getRings(atom));
                     atom.setProperty(SMALLEST_RING_SIZE, min);
                 } else {
-                    atom.setFlag(ISINRING, false);
-                    atom.setFlag(ISALIPHATIC, true);
+                    atom.setFlag(CDKConstants.ISINRING, false);
+                    atom.setFlag(CDKConstants.ISALIPHATIC, true);
                     atom.setProperty(SMALLEST_RING_SIZE, 0);
                 }
 
                 // determine how many rings bonds each atom is a part of
                 int hCount;
-                if (Objects.equals(atom.getImplicitHydrogenCount(), UNSET)) {
+                if (Objects.equals(atom.getImplicitHydrogenCount(), CDKConstants.UNSET)) {
                     hCount = 0;
                 } else {
                     hCount = atom.getImplicitHydrogenCount();
@@ -202,19 +222,19 @@ public class MoleculeInitializer {
                         hCount++;
                     }
                 }
-                atom.setProperty(TOTAL_CONNECTIONS, total);
-                atom.setProperty(TOTAL_H_COUNT, hCount);
+                atom.setProperty(CDKConstants.TOTAL_CONNECTIONS, total);
+                atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
 
                 if (valencesTable.get(atom.getSymbol()) != null) {
-                    int formalCharge = Objects.equals(atom.getFormalCharge(), UNSET) ? 0 : atom.getFormalCharge();
+                    int formalCharge = Objects.equals(atom.getFormalCharge(), CDKConstants.UNSET) ? 0 : atom.getFormalCharge();
                     atom.setValency(valencesTable.get(atom.getSymbol()) - formalCharge);
                 }
             }
 
             for (IBond bond : atomContainer.bonds()) {
                 if (allRings != null && allRings.getRings(bond).getAtomContainerCount() > 0) {
-                    bond.setFlag(ISINRING, true);
-                    bond.setFlag(ISALIPHATIC, false);
+                    bond.setFlag(CDKConstants.ISINRING, true);
+                    bond.setFlag(CDKConstants.ISALIPHATIC, false);
                 }
             }
 
@@ -225,14 +245,14 @@ public class MoleculeInitializer {
                 IAtom any;
                 for (IAtom connectedAtom : connectedAtoms) {
                     any = connectedAtom;
-                    if (any.getFlag(ISINRING)) {
+                    if (any.getFlag(CDKConstants.ISINRING)) {
                         counter++;
                     }
                 }
-                atom.setProperty(RING_CONNECTIONS, counter);
+                atom.setProperty(CDKConstants.RING_CONNECTIONS, counter);
             }
 
-            aromatizeMolecule(atomContainer);
+            ExtAtomContainerManipulator.aromatizeMolecule(atomContainer);
         }
 
     }
@@ -269,25 +289,25 @@ public class MoleculeInitializer {
                 if (bond instanceof IQueryBond) {
                     continue;
                 }
-                if (bond.getFlag(ISAROMATIC)) {
+                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
                     ac1AromaticBondCount++;
-                } else if (bond.getOrder() == SINGLE) {
+                } else if (bond.getOrder() == IBond.Order.SINGLE) {
                     ac1SingleBondCount++;
-                } else if (bond.getOrder() == DOUBLE) {
+                } else if (bond.getOrder() == IBond.Order.DOUBLE) {
                     ac1DoubleBondCount++;
-                } else if (bond.getOrder() == TRIPLE) {
+                } else if (bond.getOrder() == IBond.Order.TRIPLE) {
                     ac1TripleBondCount++;
                 }
             }
             for (int indexI = 0; indexI < ac2.getBondCount(); indexI++) {
                 bond = ac2.getBond(indexI);
-                if (bond.getFlag(ISAROMATIC)) {
+                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
                     ac2AromaticBondCount++;
-                } else if (bond.getOrder() == SINGLE) {
+                } else if (bond.getOrder() == IBond.Order.SINGLE) {
                     ac2SingleBondCount++;
-                } else if (bond.getOrder() == DOUBLE) {
+                } else if (bond.getOrder() == IBond.Order.DOUBLE) {
                     ac2DoubleBondCount++;
-                } else if (bond.getOrder() == TRIPLE) {
+                } else if (bond.getOrder() == IBond.Order.TRIPLE) {
                     ac2TripleBondCount++;
                 }
             }
@@ -333,58 +353,4 @@ public class MoleculeInitializer {
         }
         return map.isEmpty();
     }
-
-    /**
-     *
-     */
-    public MoleculeInitializer() {
-    }
-
-    /**
-     * Defines which set of rings to define rings in the target.
-     */
-    private enum RingSet {
-
-        /**
-         * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
-         * strictly the same). Defines what is typically thought of as a 'ring'
-         * however the non-uniqueness leads to ambiguous matching.
-         */
-        SmallestSetOfSmallestRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findSSSR();
-            }
-        },
-        /**
-         * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
-         * The set is unique but may excludes rings (e.g. from bridged systems).
-         */
-        EssentialRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findEssentialRings();
-            }
-        },
-        /**
-         * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
-         * The set is unique but may include more rings then is necessary.
-         */
-        RelevantRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findRelevantRings();
-            }
-        };
-
-        /**
-         * Compute a ring set for a molecule.
-         *
-         * @param m molecule
-         * @return the ring set for the molecule
-         */
-        abstract IRingSet ringSet(IAtomContainer m);
-    }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MoleculeInitializer.class.getName());
-
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009-2015 Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015 Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,26 +23,15 @@
  */
 package org.openscience.smsd.helper;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
-
 
 /**
  * Class to construct a Binary tree for McGregor search.
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class BinaryTree {
-    private static final Logger LOG = getLogger(BinaryTree.class.getName());
-    /**
-     * not equal is initialized as null
-     */
-    private BinaryTree equal = null;
-    private BinaryTree notEqual = null;
-    private int value = -1;
 
     /**
      * Creates a new instance of BinaryTree.
@@ -52,6 +41,12 @@ public class BinaryTree {
     public BinaryTree(int value) {
         this.value = value;
     }
+    /**
+     * not equal is initialized as null
+     */
+    private BinaryTree equal = null;
+    private BinaryTree notEqual = null;
+    private int value = -1;
 
     /**
      * Return value of the node

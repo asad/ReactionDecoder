@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,41 +22,30 @@
  */
 package org.openscience.smsd;
 
-import static java.lang.Math.sqrt;
 import java.math.BigDecimal;
-import static java.math.BigDecimal.ROUND_HALF_UP;
-import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.unmodifiableList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static java.util.logging.Level.SEVERE;
-
+import java.util.*;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.filters.ChemicalFilters;
 import org.openscience.smsd.interfaces.IAtomMapping;
 
 /**
  *
- * @cdk.require java1.5+
+ *  java1.8+
  *
+ * 
+ * 
  *
- *
- *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  *
  */
 public class BaseMapping extends ChemicalFilters implements IAtomMapping {
-
-    private static final ILoggingTool Logger = createLoggingTool(BaseMapping.class);
 
     private final boolean matchBonds;
     private final boolean matchRings;
@@ -65,6 +54,8 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     private List<Double> stereoScoreList;
     private List<Integer> fragmentSizeList;
     private List<Double> bondEnergiesList;
+    private final static ILoggingTool Logger
+            = LoggingToolFactory.createLoggingTool(BaseMapping.class);
 
     /**
      *
@@ -74,10 +65,8 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @param mol1
      * @param mol2
      */
-    public BaseMapping(IAtomContainer mol1, IAtomContainer mol2,
-            boolean matchBonds,
-            boolean matchRings,
-            boolean matchAtomType) {
+    public BaseMapping(IAtomContainer mol1, IAtomContainer mol2, boolean matchBonds,
+            boolean matchRings, boolean matchAtomType) {
         super(mol1, mol2);
         this.matchBonds = matchBonds;
         this.matchRings = matchRings;
@@ -106,7 +95,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                     sortResultsByEnergies();
                     this.bondEnergiesList = getSortedEnergy();
                 } catch (CDKException ex) {
-                    Logger.error(SEVERE, null, ex);
+                    Logger.error(Level.SEVERE, null, ex);
                 }
             }
 
@@ -120,7 +109,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                     sortResultsByStereoAndBondMatch();
                     this.stereoScoreList = getStereoMatches();
                 } catch (CDKException ex) {
-                    Logger.error(SEVERE, null, ex);
+                    Logger.error(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -157,13 +146,13 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
             if (!firstAtomMCS.isEmpty()) {
 
-                rAtomCount = this.getMCSList().iterator().next().getQuery().getAtomCount();
-                pAtomCount = this.getMCSList().iterator().next().getTarget().getAtomCount();
+                rAtomCount = (double) this.getMCSList().iterator().next().getQuery().getAtomCount();
+                pAtomCount = (double) this.getMCSList().iterator().next().getTarget().getAtomCount();
 
-                double matchCount = firstAtomMCS.getCount();
+                double matchCount = (double) firstAtomMCS.getCount();
                 tanimotoAtom = (matchCount) / (rAtomCount + pAtomCount - matchCount);
                 BigDecimal tan = new BigDecimal(tanimotoAtom);
-                tan = tan.setScale(decimalPlaces, ROUND_HALF_UP);
+                tan = tan.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
                 tanimotoAtom = tan.doubleValue();
             }
         }
@@ -231,15 +220,15 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
             if (!firstAtomMCS.isEmpty()) {
 
-                sourceAtomCount = this.getMCSList().iterator()
+                sourceAtomCount = (double) this.getMCSList().iterator()
                         .next().getQuery().getAtomCount();
-                targetAtomCount = this.getMCSList().iterator()
+                targetAtomCount = (double) this.getMCSList().iterator()
                         .next().getTarget().getAtomCount();
 
-                double common = firstAtomMCS.getCount();
-                euclidean = sqrt(sourceAtomCount + targetAtomCount - 2 * common);
+                double common = (double) firstAtomMCS.getCount();
+                euclidean = Math.sqrt(sourceAtomCount + targetAtomCount - 2 * common);
                 BigDecimal dist = new BigDecimal(euclidean);
-                dist = dist.setScale(decimalPlaces, ROUND_HALF_UP);
+                dist = dist.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
                 euclidean = dist.doubleValue();
             }
         }
@@ -253,7 +242,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      */
     @Override
     public synchronized List<AtomAtomMapping> getAllAtomMapping() {
-        return unmodifiableList(new ArrayList<>(getMCSList()));
+        return Collections.unmodifiableList(new ArrayList<>(getMCSList()));
     }
 
     /**
@@ -294,9 +283,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         return this.subgraph;
     }
 
-    /**
-     *
-     */
     public synchronized void clearMaps() {
         this.getMCSList().clear();
     }
@@ -314,7 +300,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * @param subgraph the subgraph to set
      */
-    synchronized void setSubgraph(boolean subgraph) {
+    public synchronized void setSubgraph(boolean subgraph) {
         this.subgraph = subgraph;
     }
 
@@ -331,7 +317,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      */
     public synchronized List<Map<IBond, IBond>> makeBondMapsOfAtomMaps(IAtomContainer ac1,
             IAtomContainer ac2, List<AtomAtomMapping> mappings) {
-        List<Map<IBond, IBond>> bondMaps = synchronizedList(new ArrayList<Map<IBond, IBond>>());
+        List<Map<IBond, IBond>> bondMaps = Collections.synchronizedList(new ArrayList<Map<IBond, IBond>>());
         for (AtomAtomMapping mapping : mappings) {
             bondMaps.add(makeBondMapOfAtomMap(ac1, ac2, mapping));
         }
@@ -353,7 +339,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     private synchronized Map<IBond, IBond> makeBondMapOfAtomMap(IAtomContainer ac1, IAtomContainer ac2,
             AtomAtomMapping mapping) {
 
-        Map<IBond, IBond> bondbondMappingMap = synchronizedMap(new HashMap<IBond, IBond>());
+        Map<IBond, IBond> bondbondMappingMap = Collections.synchronizedMap(new HashMap<IBond, IBond>());
 
         for (Map.Entry<IAtom, IAtom> map1 : mapping.getMappingsByAtoms().entrySet()) {
             for (Map.Entry<IAtom, IAtom> map2 : mapping.getMappingsByAtoms().entrySet()) {
@@ -376,5 +362,4 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     public boolean isMatchAtomType() {
         return matchAtomType;
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(BaseMapping.class.getName());
 }

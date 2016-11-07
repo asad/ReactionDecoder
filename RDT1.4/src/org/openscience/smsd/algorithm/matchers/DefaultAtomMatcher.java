@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,12 +24,7 @@
 package org.openscience.smsd.algorithm.matchers;
 
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-import static org.openscience.cdk.CDKConstants.ISALIPHATIC;
-import static org.openscience.cdk.CDKConstants.ISINRING;
-import static org.openscience.cdk.CDKConstants.RING_SIZES;
-
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 
@@ -39,12 +34,11 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class DefaultAtomMatcher implements AtomMatcher {
+public final class DefaultAtomMatcher implements AtomMatcher {
 
     static final long serialVersionUID = -7861469841127327812L;
-    private static final Logger LOG = getLogger(DefaultAtomMatcher.class.getName());
     private final String symbol;
     private final IAtom qAtom;
     private final boolean shouldMatchRings;
@@ -85,7 +79,7 @@ public class DefaultAtomMatcher implements AtomMatcher {
      * {@inheritDoc}
      *
      * @param targetAtom
-     * @return
+     * @return true if condition meet else false
      */
     @Override
     public boolean matches(IAtom targetAtom) {
@@ -114,8 +108,8 @@ public class DefaultAtomMatcher implements AtomMatcher {
     }
 
     private boolean isRingSizeMatch(IAtom atom) {
-        List<Integer> ringsizesQ = qAtom.getProperty(RING_SIZES);
-        List<Integer> ringsizesT = atom.getProperty(RING_SIZES);
+        List<Integer> ringsizesQ = qAtom.getProperty(CDKConstants.RING_SIZES);
+        List<Integer> ringsizesT = atom.getProperty(CDKConstants.RING_SIZES);
         if (ringsizesQ != null && ringsizesT != null) {
             for (int i : ringsizesQ) {
                 if (ringsizesT.contains(i)) {
@@ -127,11 +121,11 @@ public class DefaultAtomMatcher implements AtomMatcher {
     }
 
     private boolean isAliphaticAtom(IAtom atom) {
-        return atom.getFlag(ISALIPHATIC);
+        return atom.getFlag(CDKConstants.ISALIPHATIC);
     }
 
     private boolean isRingAtom(IAtom atom) {
-        return atom.getFlag(ISINRING);
+        return atom.getFlag(CDKConstants.ISINRING);
     }
 
     /**

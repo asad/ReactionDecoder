@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015   Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015   Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,8 +23,6 @@
  */
 package org.openscience.smsd.algorithm.matchers;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -33,24 +31,23 @@ import org.openscience.cdk.interfaces.IBond;
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class DefaultMatcher {
-
-    private static final Logger LOG = getLogger(DefaultMatcher.class.getName());
 
     /**
      *
      * @param bondMatcher
      * @param bondA2
      * @param shouldMatchBonds
-     * @return
+     * @return true if condition meet else false
      */
     private static boolean isBondMatch(BondMatcher queryBondMatcher, IBond targetBond) {
         return queryBondMatcher.matches(targetBond);
     }
 
     private static boolean isAtomMatch(IBond bondA1, IBond bondA2, boolean shouldMatchRings, boolean matchAtomTypes) {
+
         AtomMatcher atomMatcher1;
         AtomMatcher atomMatcher2;
 
@@ -77,15 +74,14 @@ public class DefaultMatcher {
      * @param matchBond
      * @param shouldMatchRings
      * @param matchAtomTypes (atom type also matched and symbol matched)
-     * @return
+     * @return true if condition meet else false
      */
-    public static boolean matches(IBond bondA1, IBond bondA2, boolean matchBond, boolean shouldMatchRings, boolean matchAtomTypes) {
+    public static boolean matches(IBond bondA1, IBond bondA2,
+            boolean matchBond, boolean shouldMatchRings, boolean matchAtomTypes) {
+
         if (!isAtomMatch(bondA1, bondA2, shouldMatchRings, matchAtomTypes)) {
             return false;
         }
         return isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2);
-    }
-
-    private DefaultMatcher() {
     }
 }

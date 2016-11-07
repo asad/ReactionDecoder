@@ -41,7 +41,7 @@ import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import static org.openscience.smsd.mcss.JobType.MULTIPLE;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
  * 

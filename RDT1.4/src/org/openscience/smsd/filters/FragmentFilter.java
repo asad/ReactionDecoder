@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,15 +23,13 @@
 package org.openscience.smsd.filters;
 
 import java.util.ArrayList;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
+
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
-import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -40,11 +38,10 @@ import org.openscience.smsd.AtomAtomMapping;
 /**
  * Filter the results based on fragment size.
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  * 
  */
-public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
-    private static final Logger LOG = getLogger(FragmentFilter.class.getName());
+public final class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     private final List<Integer> fragmentSize;
     private final ChemicalFilters chemfilter;
@@ -72,37 +69,21 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
         return _minFragmentScore;
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public synchronized List<Integer> getScores() {
-        return unmodifiableList(fragmentSize);
+        return Collections.unmodifiableList(fragmentSize);
     }
 
-    /**
-     *
-     */
     @Override
     public synchronized void clearScores() {
         fragmentSize.clear();
     }
 
-    /**
-     *
-     * @param counter
-     * @param value
-     */
     @Override
     public synchronized void addScore(int counter, Integer value) {
         fragmentSize.add(counter, value);
     }
 
-    /**
-     *
-     * @param fragmentScoreMap
-     */
     @Override
     public synchronized void fillMap(Map<Integer, Integer> fragmentScoreMap) {
         int Index = 0;
@@ -114,8 +95,8 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     private synchronized int getMappedMoleculeFragmentSize(AtomAtomMapping mcsAtomSolution) {
 
-        IAtomContainer Educt = getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
-        IAtomContainer product = getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
+        IAtomContainer Educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
+        IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
 
         if (mcsAtomSolution != null) {
@@ -131,13 +112,13 @@ public class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
     private synchronized int getFragmentCount(IAtomContainer molecule) {
         boolean fragmentFlag = true;
-        IAtomContainerSet fragmentMolSet = getInstance().newInstance(IAtomContainerSet.class);
+        IAtomContainerSet fragmentMolSet = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
         int countFrag = 0;
         if (molecule.getAtomCount()
                 > 0) {
-            fragmentFlag = isConnected(molecule);
+            fragmentFlag = ConnectivityChecker.isConnected(molecule);
             if (!fragmentFlag) {
-                fragmentMolSet.add(partitionIntoMolecules(molecule));
+                fragmentMolSet.add(ConnectivityChecker.partitionIntoMolecules(molecule));
             } else {
                 fragmentMolSet.addAtomContainer(molecule);
             }

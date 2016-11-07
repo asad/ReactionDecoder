@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,36 +23,20 @@
  */
 package org.openscience.smsd.algorithm.vflib;
 
-import static java.lang.Integer.signum;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
-import static org.openscience.smsd.algorithm.vflib.SortOrder.ASCENDING;
-import org.openscience.smsd.algorithm.vflib.interfaces.INode;
 
  /*
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-
-/**
- *
- * @author asad
- */
-
-public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
-    private static final Logger LOG = getLogger(Map2ValueComparator.class.getName());
+public class Map2ValueComparator implements Comparator<Map<IAtom, IAtom>> {
 
     private final SortOrder sortOrder;
 
-    /**
-     *
-     * @param sortOrder
-     */
     public Map2ValueComparator(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
@@ -64,12 +48,12 @@ public class Map2ValueComparator implements Comparator<Map<INode, IAtom>> {
      * @return
      */
     @Override
-    public int compare(Map<INode, IAtom> object1, Map<INode, IAtom> object2) {
+    public int compare(Map<IAtom, IAtom> object1, Map<IAtom, IAtom> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
-        int compare = signum(new Integer(size1).compareTo(size2));
+        int compare = Integer.signum(new Integer(size1).compareTo(size2));
 
-        if (sortOrder == ASCENDING) {
+        if (sortOrder == SortOrder.ASCENDING) {
             return compare;
         } else {
             return compare * (-1);

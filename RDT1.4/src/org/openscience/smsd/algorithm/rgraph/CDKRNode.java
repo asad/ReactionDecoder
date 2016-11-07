@@ -1,7 +1,7 @@
 /* $Revision$ $Author$ $Date$
  *
  * Copyright (C) 2002-2007  Stephane Werner <mail@ixelis.net>
- *               2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ *               2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * This code has been kindly provided by Stephane Werner
  * and Thierry Hanser from IXELIS mail@ixelis.net.
@@ -29,9 +29,6 @@
 package org.openscience.smsd.algorithm.rgraph;
 
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 
 /**
  *  Node of the resolution graphe (RGraph) An CDKRNode represents an association
@@ -43,12 +40,11 @@ import static java.util.logging.Logger.getLogger;
  *  this node in the same solution)
  *
  * @author      Stephane Werner from IXELIS mail@ixelis.net
- * @cdk.created 2002-07-17
- * @cdk.module  smsd
+ * 2002-07-17
+ *   smsd
  * 
  */
 public class CDKRNode {
-    private static final Logger LOG = getLogger(CDKRNode.class.getName());
     // G1/G2 mapping
 
     private CDKRMap rMap = null;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,34 +23,26 @@
 package org.openscience.smsd.filters;
 
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.synchronizedSortedMap;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
-import static org.openscience.smsd.filters.EnergyFilter.MAX_ENERGY;
 
 /**
  *
  * A set of filters applied to the results.
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  * 
  *
  */
 public class ChemicalFilters extends BaseFilter {
-    private static final Logger LOG = getLogger(ChemicalFilters.class.getName());
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final IChemicalFilter<Double> energyFilter;
@@ -66,7 +58,7 @@ public class ChemicalFilters extends BaseFilter {
             IAtomContainer sourceMol,
             IAtomContainer targetMol) {
         super(sourceMol, targetMol);
-        this.allAtomMCS = synchronizedList(new ArrayList<AtomAtomMapping>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
         this.stereoFilter = new StereoFilter(this);
         this.fragmentFilter = new FragmentFilter(this);
         this.energyFilter = new EnergyFilter(this);
@@ -81,7 +73,7 @@ public class ChemicalFilters extends BaseFilter {
             IQueryAtomContainer sourceMol,
             IAtomContainer targetMol) {
         super(sourceMol, targetMol);
-        this.allAtomMCS = synchronizedList(new ArrayList<AtomAtomMapping>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
         this.stereoFilter = new StereoFilter(this);
         this.fragmentFilter = new FragmentFilter(this);
         this.energyFilter = new EnergyFilter(this);
@@ -104,10 +96,10 @@ public class ChemicalFilters extends BaseFilter {
      * @throws CDKException
      */
     public synchronized void sortResultsByEnergies() throws CDKException {
-        Map<Integer, AtomAtomMapping> allEnergyAtomMCS = synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
-        Map<Integer, Double> stereoScoreMap = synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Integer> fragmentScoreMap = synchronizedSortedMap(new TreeMap<Integer, Integer>());
-        Map<Integer, Double> energySelectionMap = synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, AtomAtomMapping> allEnergyAtomMCS = Collections.synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        Map<Integer, Double> energySelectionMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
 
         initializeMaps(allEnergyAtomMCS, stereoScoreMap, fragmentScoreMap, energySelectionMap);
         double lowestEnergyScore = energyFilter.sortResults(allEnergyAtomMCS, energySelectionMap);
@@ -125,7 +117,7 @@ public class ChemicalFilters extends BaseFilter {
             }
         }
 
-        if (lowestEnergyScore != MAX_ENERGY) {
+        if (lowestEnergyScore != EnergyFilter.MAX_ENERGY) {
             clear(allEnergyAtomMCS, stereoScoreMap, fragmentScoreMap, energySelectionMap);
         }
     }
@@ -134,10 +126,10 @@ public class ChemicalFilters extends BaseFilter {
      * Sort solution by ascending order of the fragment count.
      */
     public synchronized void sortResultsByFragments() {
-        Map<Integer, AtomAtomMapping> allFragmentAtomMCS = synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
-        Map<Integer, Double> stereoScoreMap = synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Double> energyScoreMap = synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Integer> fragmentScoreMap = synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        Map<Integer, AtomAtomMapping> allFragmentAtomMCS = Collections.synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
 
         initializeMaps(
                 allFragmentAtomMCS,
@@ -180,10 +172,10 @@ public class ChemicalFilters extends BaseFilter {
      * @throws CDKException
      */
     public synchronized void sortResultsByStereoAndBondMatch() throws CDKException {
-        Map<Integer, AtomAtomMapping> allStereoAtomMCS = synchronizedMap(new HashMap<Integer, AtomAtomMapping>());
-        Map<Integer, Integer> fragmentScoreMap = synchronizedSortedMap(new TreeMap<Integer, Integer>());
-        Map<Integer, Double> energyScoreMap = synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Double> stereoScoreMap = synchronizedMap(new HashMap<Integer, Double>());
+        Map<Integer, AtomAtomMapping> allStereoAtomMCS = Collections.synchronizedMap(new HashMap<Integer, AtomAtomMapping>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedMap(new HashMap<Integer, Double>());
 
         initializeMaps(
                 allStereoAtomMCS,
@@ -237,7 +229,7 @@ public class ChemicalFilters extends BaseFilter {
      * @return sorted bond breaking energy
      */
     public synchronized List<Double> getSortedEnergy() {
-        return unmodifiableList(energyFilter.getScores());
+        return Collections.unmodifiableList(energyFilter.getScores());
     }
 
     /**
@@ -246,7 +238,7 @@ public class ChemicalFilters extends BaseFilter {
      * @return sorted fragment count
      */
     public synchronized List<Integer> getSortedFragment() {
-        return unmodifiableList(fragmentFilter.getScores());
+        return Collections.unmodifiableList(fragmentFilter.getScores());
     }
 
     /**
@@ -255,7 +247,7 @@ public class ChemicalFilters extends BaseFilter {
      * @return sorted stereo matches
      */
     public synchronized List<Double> getStereoMatches() {
-        return unmodifiableList(stereoFilter.getScores());
+        return Collections.unmodifiableList(stereoFilter.getScores());
     }
 
     private synchronized void initializeMaps(
@@ -303,6 +295,6 @@ public class ChemicalFilters extends BaseFilter {
      * @return the mcsList
      */
     protected synchronized List<AtomAtomMapping> getMCSList() {
-        return synchronizedList(allAtomMCS);
+        return Collections.synchronizedList(allAtomMCS);
     }
 }

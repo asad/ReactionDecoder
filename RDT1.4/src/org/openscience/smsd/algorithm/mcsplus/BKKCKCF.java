@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009-2015 Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015 Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,18 +23,13 @@
  */
 package org.openscience.smsd.algorithm.mcsplus;
 
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.unmodifiableCollection;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -46,10 +41,9 @@ import static java.util.logging.Logger.getLogger;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class BKKCKCF {
-    private static final Logger LOG = getLogger(BKKCKCF.class.getName());
+public final class BKKCKCF {
 
     private final Set<List<Integer>> max_Cliques_Set;
     /**
@@ -109,9 +103,9 @@ public class BKKCKCF {
             List<Integer> cEdges,
             List<Integer> dEdges) {
 
-        this.comp_graph_nodes = unmodifiableList(new ArrayList<>(compGraphNodes));
-        this.C_edges = unmodifiableList(new ArrayList<>(cEdges));
-        this.D_edges = unmodifiableList(new ArrayList<>(dEdges));
+        this.comp_graph_nodes = Collections.unmodifiableList(new ArrayList<>(compGraphNodes));
+        this.C_edges = Collections.unmodifiableList(new ArrayList<>(cEdges));
+        this.D_edges = Collections.unmodifiableList(new ArrayList<>(dEdges));
         best_clique_size = 0;
         max_Cliques_Set = new HashSet<>();
 
@@ -249,7 +243,7 @@ public class BKKCKCF {
                 }
             }
             if (ut_node_pos == 100000) {
-                out.println("ut_node_pos = 100000");
+                System.out.println("ut_node_pos = 100000");
             }
             //delete P_Prime node in P
             for (int counter = ut_node_pos; counter < P_size - 1; counter++) {
@@ -400,10 +394,6 @@ public class BKKCKCF {
         return neighbor_vec;
     }
 
-    /**
-     *
-     * @return
-     */
     public synchronized int getBestCliqueSize() {
         return best_clique_size;
     }
@@ -414,6 +404,6 @@ public class BKKCKCF {
      */
     public synchronized Collection<List<Integer>> getMaxCliqueSet() {
         //System.out.println("max_Cliques_Set: " + max_Cliques_Set.size());
-        return unmodifiableCollection(max_Cliques_Set);
+        return Collections.unmodifiableCollection(max_Cliques_Set);
     }
 }

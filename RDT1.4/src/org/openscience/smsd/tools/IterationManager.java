@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,9 +23,6 @@
 package org.openscience.smsd.tools;
 
 import java.io.Serializable;
-import static java.lang.Integer.MAX_VALUE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * Class that handles execution time of the MCS search.
@@ -33,12 +30,11 @@ import static java.util.logging.Logger.getLogger;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class IterationManager implements Serializable {
 
     private static final long serialVersionUID = 396239639826981L;
-    private static final Logger LOG = getLogger(IterationManager.class.getName());
     private int max;
     private int counter;
     private int coverage;
@@ -48,7 +44,7 @@ public class IterationManager implements Serializable {
      * Constructor for storing execution time
      */
     public IterationManager() {
-        this(MAX_VALUE);
+        this(Integer.MAX_VALUE);
     }
 
     /**
@@ -90,10 +86,6 @@ public class IterationManager implements Serializable {
         counter--;
     }
 
-    /**
-     *
-     * @return
-     */
     public synchronized boolean isMaxIteration() {
         return getCounter() > limit;
     }

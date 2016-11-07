@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,7 +23,6 @@
 package org.openscience.smsd.interfaces;
 
 
-
 /**
  * 
  * This class represents various algorithm type supported by SMSD.
@@ -40,7 +39,7 @@ package org.openscience.smsd.interfaces;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public enum Algorithm implements Comparable<Algorithm> {
 

@@ -22,23 +22,21 @@
  */
 package org.openscience.smsd.filters;
 
-import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static java.util.logging.Level.SEVERE;
+import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.graph.Cycles;
-import static org.openscience.cdk.graph.Cycles.all;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -54,78 +52,14 @@ import org.openscience.smsd.AtomAtomMapping;
  * @author Syed Asad Rahman <asad@ebi.subGraph.uk>
  * 
  */
-public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
-    private static final Logger LOG = getLogger(StereoFilter.class.getName());
-
-    /**
-     * Get stereo value as integer
-     *
-     * @param bond
-     * @return
-     */
-    public static synchronized int convertBondStereo(IBond bond) {
-        int value;
-        switch (bond.getStereo()) {
-            case UP:
-                value = 1;
-                break;
-            case UP_INVERTED:
-                value = 1;
-                break;
-            case DOWN:
-                value = 6;
-                break;
-            case DOWN_INVERTED:
-                value = 6;
-                break;
-            case UP_OR_DOWN:
-                value = 4;
-                break;
-            case UP_OR_DOWN_INVERTED:
-                value = 4;
-                break;
-            case E_OR_Z:
-                value = 3;
-                break;
-            default:
-                value = 0;
-        }
-        return value;
-    }
-
-    /**
-     * Get bond order value as integer
-     *
-     * @param bond
-     * @return
-     */
-    public static synchronized int convertBondOrder(IBond bond) {
-        int value;
-        switch (bond.getOrder()) {
-            case QUADRUPLE:
-                value = 4;
-                break;
-            case TRIPLE:
-                value = 3;
-                break;
-            case DOUBLE:
-                value = 2;
-                break;
-            case SINGLE:
-                value = 1;
-                break;
-            default:
-                value = 1;
-        }
-        return value;
-    }
+public final class StereoFilter extends Sotter implements IChemicalFilter<Double> {
 
     private final List<Double> stereoScore;
     private final ChemicalFilters chemfilter;
 
     StereoFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        stereoScore = synchronizedList(new ArrayList<Double>());
+        stereoScore = Collections.synchronizedList(new ArrayList<Double>());
     }
 
     @Override
@@ -142,37 +76,21 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         return highestStereoScore;
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public synchronized List<Double> getScores() {
-        return unmodifiableList(stereoScore);
+        return Collections.unmodifiableList(stereoScore);
     }
 
-    /**
-     *
-     */
     @Override
     public synchronized void clearScores() {
         stereoScore.clear();
     }
 
-    /**
-     *
-     * @param counter
-     * @param score
-     */
     @Override
     public synchronized void addScore(int counter, Double score) {
         stereoScore.add(counter, score);
     }
 
-    /**
-     *
-     * @param stereoScoreMap
-     */
     @Override
     public synchronized void fillMap(Map<Integer, Double> stereoScoreMap) {
         int Index = 0;
@@ -212,7 +130,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
                 }
                 stereoScoreMap.put(Key, score);
             } catch (CloneNotSupportedException ex) {
-                getLogger(StereoFilter.class.getName()).log(SEVERE, null, ex);
+                Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return stereoMatchFlag;
@@ -257,8 +175,8 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
                 pHCount = pAtom.getImplicitHydrogenCount();
             }
 
-            int HScore = abs(rHCount - pHCount);
-            double BOScore = abs(rBO - pBO);
+            int HScore = Math.abs(rHCount - pHCount);
+            double BOScore = Math.abs(rBO - pBO);
 
             if (rHCount != pHCount) {
                 score -= HScore;
@@ -272,7 +190,7 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
                 score += BOScore;
             }
 
-            if (rAtom.getFormalCharge() == pAtom.getFormalCharge()) {
+            if (Objects.equals(rAtom.getFormalCharge(), pAtom.getFormalCharge())) {
                 score += 5.0;
             }
         }
@@ -328,17 +246,17 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
             int productBondType = convertBondOrder(targetBond);
             int rStereo = convertBondStereo(queryBond);
             int pStereo = convertBondStereo(targetBond);
-            if ((queryBond.getFlag(ISAROMATIC) == targetBond.getFlag(ISAROMATIC))
+            if ((queryBond.getFlag(CDKConstants.ISAROMATIC) == targetBond.getFlag(CDKConstants.ISAROMATIC))
                     && (reactantBondType == productBondType)) {
                 score += 8;
-            } else if (queryBond.getFlag(ISAROMATIC) && targetBond.getFlag(ISAROMATIC)) {
+            } else if (queryBond.getFlag(CDKConstants.ISAROMATIC) && targetBond.getFlag(CDKConstants.ISAROMATIC)) {
                 score += 4;
             }
 
             if (reactantBondType == productBondType) {
                 score += productBondType;
             } else {
-                score -= 4 * abs(reactantBondType - productBondType);
+                score -= 4 * Math.abs(reactantBondType - productBondType);
             }
 
             if (rStereo != 4 || pStereo != 4 || rStereo != 3 || pStereo != 3) {
@@ -353,15 +271,78 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         return score;
     }
 
+    /**
+     * Get stereo value as integer
+     *
+     * @param bond
+     * @return
+     */
+    public synchronized static int convertBondStereo(IBond bond) {
+        int value;
+        switch (bond.getStereo()) {
+            case UP:
+                value = 1;
+                break;
+            case UP_INVERTED:
+                value = 1;
+                break;
+            case DOWN:
+                value = 6;
+                break;
+            case DOWN_INVERTED:
+                value = 6;
+                break;
+            case UP_OR_DOWN:
+                value = 4;
+                break;
+            case UP_OR_DOWN_INVERTED:
+                value = 4;
+                break;
+            case E_OR_Z:
+                value = 3;
+                break;
+            default:
+                value = 0;
+        }
+        return value;
+    }
+
+    /**
+     * Get bond order value as integer
+     *
+     * @param bond
+     * @return
+     */
+    public synchronized static int convertBondOrder(IBond bond) {
+        int value;
+        switch (bond.getOrder()) {
+            case QUADRUPLE:
+                value = 4;
+                break;
+            case TRIPLE:
+                value = 3;
+                break;
+            case DOUBLE:
+                value = 2;
+                break;
+            case SINGLE:
+                value = 1;
+                break;
+            default:
+                value = 1;
+        }
+        return value;
+    }
+
     private synchronized double getRingMatchScore(List<IAtomContainer> list) throws CloneNotSupportedException {
         double lScore = 0;
         IAtomContainer listMap = list.get(0).clone();
         IAtomContainer subGraph = list.get(1).clone();
         try {
-            Cycles cycles = all(subGraph);
+            Cycles cycles = Cycles.all(subGraph);
             lScore = getRingMatch(cycles.toRingSet(), listMap);
         } catch (Intractable ex) {
-            getLogger(StereoFilter.class.getName()).log(SEVERE, null, ex);
+            Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
         }
         return lScore;
     }
@@ -409,5 +390,4 @@ public class StereoFilter extends Sotter implements IChemicalFilter<Double> {
         l.add(subgraphContainer);
         return l;
     }
-
 }

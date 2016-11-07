@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,6 +24,7 @@ package org.openscience.smsd.filters;
 
 import java.util.List;
 import java.util.Map;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.smsd.AtomAtomMapping;
 
@@ -32,7 +33,7 @@ import org.openscience.smsd.AtomAtomMapping;
  *
  * @param <T>
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  * @author maclean
  * 
  */
@@ -51,27 +52,11 @@ public interface IChemicalFilter<T> {
             Map<Integer, AtomAtomMapping> allAtomMCS,
             Map<Integer, T> selectionMap) throws CDKException;
 
-    /**
-     *
-     * @return
-     */
     public List<T> getScores();
 
-    /**
-     *
-     */
     public void clearScores();
 
-    /**
-     *
-     * @param counter
-     * @param value
-     */
     public void addScore(int counter, T value);
 
-    /**
-     *
-     * @param map
-     */
     public void fillMap(Map<Integer, T> map);
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -25,31 +25,30 @@ package org.openscience.smsd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2Sub;
 import org.openscience.smsd.algorithm.vflib.substructure.VF2;
-import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
+import org.openscience.smsd.helper.MoleculeInitializer;
 
 /**
  * This is an ultra fast method to report if query is a substructure for target
  * molecule. If this case is true then it returns only all mapping.
  *
  * This is much faster than {@link
- * org.openscience.cdk.smsd.algorithm.vflib.substructure} class as it only
+ * org.openscience.smsd.algorithm.vflib.substructure} class as it only
  * reports first match and backtracks.
  *
  * This class should only be used to report if a query graph is a substructure
  * of the target graph.
  *
- *  
+ *  *
  * <p>
  * An example for <b>Substructure search</b>:</p> <font color="#003366">
  * <pre>
@@ -64,19 +63,18 @@ import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule
  * smsd = new Substructure(queryContainer, target, true);
  * Assert.assertTrue(smsd.isSubgraph());
  *
- *  </pre> </font>
+ * </pre> </font>
  *
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class Substructure extends BaseMapping {
-    private static final java.util.logging.Logger LOG = getLogger(Substructure.class.getName());
+public final class Substructure extends BaseMapping {
 
     private int vfMappingSize = -1;
     private final ILoggingTool Logger
-            = createLoggingTool(Substructure.class);
+            = LoggingToolFactory.createLoggingTool(Substructure.class);
 
     /**
      * Constructor for VF Substructure Algorithm
@@ -99,8 +97,8 @@ public class Substructure extends BaseMapping {
         super(query, target, shouldMatchBonds, matchRings, matchAtomType);
         if (isMatchRings()) {
             try {
-                initializeMolecule(getQuery());
-                initializeMolecule(getTarget());
+                MoleculeInitializer.initializeMolecule(getQuery());
+                MoleculeInitializer.initializeMolecule(getTarget());
             } catch (CDKException ex) {
             }
         }
@@ -154,12 +152,14 @@ public class Substructure extends BaseMapping {
             throw new CDKException("Query or Target molecule is not initialized (NULL)");
         }
 
+        if (getQuery().getAtomCount() > getTarget().getAtomCount()) {
+            return false;
+        }
+
         if (getQuery().getAtomCount() == 1 || getTarget().getAtomCount() == 1) {
             isSubgraph = singleMapping();
         } else {
-            if (getQuery().getAtomCount() > getTarget().getAtomCount()) {
-                return false;
-            }
+
             VF2 mapper;
             List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();
             if (getQuery() instanceof IQueryAtomContainer) {
@@ -193,31 +193,31 @@ public class Substructure extends BaseMapping {
             throw new CDKException("Query or Target molecule is not initialized (NULL)");
         }
 
+        if (getQuery().getAtomCount() > getTarget().getAtomCount()) {
+            return false;
+        }
+
         if (getQuery().getAtomCount() == 1 || getTarget().getAtomCount() == 1) {
             isSubgraph = singleMapping();
         } else {
-            if (getQuery().getAtomCount() > getTarget().getAtomCount()) {
-                return false;
+            List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();
+            VF2Sub mapper;
+            if (getQuery() instanceof IQueryAtomContainer) {
+                mapper = new VF2Sub((IQueryAtomContainer) getQuery(), getTarget());
             } else {
-                List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();
-                VF2Sub mapper;
-                if (getQuery() instanceof IQueryAtomContainer) {
-                    mapper = new VF2Sub((IQueryAtomContainer) getQuery(), getTarget());
-                } else {
-                    mapper = new VF2Sub(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-                }
-                isSubgraph = mapper.isSubgraph();
-                List<AtomAtomMapping> atomMappings = mapper.getAllAtomMapping();
+                mapper = new VF2Sub(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            }
+            isSubgraph = mapper.isSubgraph();
+            List<AtomAtomMapping> atomMappings = mapper.getAllAtomMapping();
 //                if (atomMappings.iterator().hasNext()) {
 //                    System.out.println("Mapping Size " + atomMappings.iterator().next().getCount());
 //                }
-                if (isSubgraph) {
-                    mappingsVF2.addAll(atomMappings);
-                } else {
-                    return false;
-                }
-                setVFMappings(mappingsVF2);
+            if (isSubgraph) {
+                mappingsVF2.addAll(atomMappings);
+            } else {
+                return false;
             }
+            setVFMappings(mappingsVF2);
         }
         return isSubgraph;
     }
@@ -243,7 +243,7 @@ public class Substructure extends BaseMapping {
                     try {
                         throw new CDKException("Atom index pointing to NULL");
                     } catch (CDKException ex) {
-                        Logger.error(SEVERE, null, ex);
+                        Logger.error(Level.SEVERE, null, ex);
                     }
                 }
             }

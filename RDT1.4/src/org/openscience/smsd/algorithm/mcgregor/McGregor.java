@@ -1,6 +1,6 @@
 
 /* Copyright (C) 2005-2006 Markus Leber
- *               2006-2014 Syed Asad Rahman <asad @ ebi.ac.uk>
+ *               2006-2014 Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -26,18 +26,14 @@ package org.openscience.smsd.algorithm.mcgregor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
-import static org.openscience.smsd.algorithm.mcgregor.McGregorChecks.generateCTabCopy;
 import org.openscience.smsd.helper.BinaryTree;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -51,14 +47,12 @@ import org.openscience.smsd.tools.IterationManager;
  *
  * @cdk.cite SMSD2009}. </p>
  *
+ * 
+ * 
  *
- *
- *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public final class McGregor {
-
-    private static final Logger LOG = getLogger(McGregor.class.getName());
 
     private final boolean shouldMatchRings;
     private final boolean bondMatch;
@@ -66,6 +60,36 @@ public final class McGregor {
     private IterationManager iterationManager = null;
     private boolean timeout = false;
 
+    /**
+     * @return the timeout
+     */
+    public synchronized boolean isTimeout() {
+        return timeout;
+    }
+
+    private synchronized boolean checkTimeout() {
+        if (getIterationManager().isMaxIteration()) {
+            this.timeout = true;
+//            System.err.println("McGregor MCS has hit the iteration limits " + getIterationManager().getCounter());
+            return true;
+        }
+        getIterationManager().increment();
+        return false;
+    }
+
+    /**
+     * @return the iterationManager
+     */
+    public IterationManager getIterationManager() {
+        return iterationManager;
+    }
+
+    /**
+     * @param iterationManager the iterationManager to set
+     */
+    public void setIterationManager(IterationManager iterationManager) {
+        this.iterationManager = iterationManager;
+    }
     /*
      *
      * McGregor starts
@@ -110,7 +134,7 @@ public final class McGregor {
         this.bondMatch = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
         this.target = target;
-        this.mappings = synchronizedList(mappings);
+        this.mappings = Collections.synchronizedList(mappings);
         this.bestarcsleft = 0;
         setIterationManager(new IterationManager((source.getAtomCount() + this.target.getAtomCount()) * 1000));
 
@@ -120,7 +144,7 @@ public final class McGregor {
             this.globalMCSSize = 0;
         }
 //        System.out.println("globalMCSSize " + globalMCSSize);
-        this.modifiedARCS = synchronizedList(new ArrayList<Integer>());
+        this.modifiedARCS = Collections.synchronizedList(new ArrayList<Integer>());
         this.bestARCS = new Stack<>();
         this.newMatrix = false;
     }
@@ -137,7 +161,7 @@ public final class McGregor {
         this.bondMatch = true;
         this.matchAtomType = true;
         this.target = target;
-        this.mappings = synchronizedList(mappings);
+        this.mappings = Collections.synchronizedList(mappings);
         this.bestarcsleft = 0;
         setIterationManager(new IterationManager((source.getAtomCount() + this.target.getAtomCount()) * 1000));
 
@@ -146,40 +170,9 @@ public final class McGregor {
         } else {
             this.globalMCSSize = 0;
         }
-        this.modifiedARCS = synchronizedList(new ArrayList<Integer>());
+        this.modifiedARCS = Collections.synchronizedList(new ArrayList<Integer>());
         this.bestARCS = new Stack<>();
         this.newMatrix = false;
-    }
-
-    /**
-     * @return the timeout
-     */
-    public synchronized boolean isTimeout() {
-        return timeout;
-    }
-
-    private synchronized boolean checkTimeout() {
-        if (getIterationManager().isMaxIteration()) {
-            this.timeout = true;
-//            System.err.println("McGregor MCS has hit the iteration limits " + getIterationManager().getCounter());
-            return true;
-        }
-        getIterationManager().increment();
-        return false;
-    }
-
-    /**
-     * @return the iterationManager
-     */
-    public IterationManager getIterationManager() {
-        return iterationManager;
-    }
-
-    /**
-     * @param iterationManager the iterationManager to set
-     */
-    public void setIterationManager(IterationManager iterationManager) {
-        this.iterationManager = iterationManager;
     }
 
     /**
@@ -194,8 +187,8 @@ public final class McGregor {
 
         this.globalMCSSize = (largestMappingSize / 2);
 //        System.out.println("globalMCSSize " + globalMCSSize);
-        List<String> c_tab1_copy = generateCTabCopy(source);
-        List<String> c_tab2_copy = generateCTabCopy(target);
+        List<String> c_tab1_copy = McGregorChecks.generateCTabCopy(source);
+        List<String> c_tab2_copy = McGregorChecks.generateCTabCopy(target);
 
         //find mapped atoms of both molecules and store these in mappedAtoms
         List<Integer> mapped_atoms = new ArrayList<>();
@@ -324,7 +317,7 @@ public final class McGregor {
 //        //check possible mappings:
         boolean furtherMappingFlag;
         if (source instanceof IQueryAtomContainer) {
-            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
+            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible((IQueryAtomContainer) source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
         } else {
             furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
         }
@@ -361,7 +354,10 @@ public final class McGregor {
         return 0;
     }
 
-    private synchronized void searchAndExtendMappings(IAtomContainer source, Stack<List<Integer>> bestARCSClone, McgregorHelper mcGregorHelper) throws IOException {
+    private synchronized void searchAndExtendMappings(
+            IAtomContainer source,
+            Stack<List<Integer>> bestARCSClone,
+            McgregorHelper mcGregorHelper) throws IOException {
         int mappedAtomCount = mcGregorHelper.getMappedAtomCount();
         int setNumA = mcGregorHelper.getSetNumA();
         int setNumB = mcGregorHelper.getsetNumB();
@@ -396,7 +392,7 @@ public final class McGregor {
             List<String> c_setB_copy = McGregorChecks.generateCSetCopy(setNumB, c_bond_setB);
 
             //find unmapped atoms of molecule A
-            List<Integer> unmapped_atoms_molA = new ArrayList<>();
+            List<Integer> unmapped_atoms_molA = new ArrayList<Integer>();
             int unmapped_numA = 0;
             boolean atomA_is_unmapped = true;
 
@@ -447,7 +443,7 @@ public final class McGregor {
             new_c_neighborsA = queryProcess.getCBondNeighborsA();
 
             //find unmapped atoms of molecule B
-            List<Integer> unmapped_atoms_molB = new ArrayList<>();
+            List<Integer> unmapped_atoms_molB = new ArrayList<Integer>();
             int unmapped_numB = 0;
             boolean atomB_is_unmapped = true;
 
@@ -611,7 +607,7 @@ public final class McGregor {
         int xIndex = xstart;
         int yIndex = ystart;
 
-        List<Integer> TEMPMARCS = new ArrayList<>(TEMPMARCS_ORG);
+        List<Integer> TEMPMARCS = new ArrayList<Integer>(TEMPMARCS_ORG);
 
         if (TEMPMARCS.get(xstart * neighborBondNumB + ystart) == 1) {
 
@@ -657,7 +653,7 @@ public final class McGregor {
     private synchronized boolean checkMARCS(List<Integer> MARCS_T, int neighborBondNumA, int neighborBondNumB) {
 
         int size = neighborBondNumA * neighborBondNumA;
-        List<Integer> posnum_list = new ArrayList<>(size);
+        List<Integer> posnum_list = new ArrayList<Integer>(size);
 
         for (int i = 0; i < posnum_list.size(); i++) {
             posnum_list.add(i, 0);
@@ -723,7 +719,7 @@ public final class McGregor {
         int neighborBondNumB = mcGregorHelper.getNeighborBondNumB();
 
         int size = neighborBondNumA * neighborBondNumB;
-        List<Integer> FIXARCS = new ArrayList<>(size);//  Initialize FIXARCS with 0
+        List<Integer> FIXARCS = new ArrayList<Integer>(size);//  Initialize FIXARCS with 0
         for (int i = 0; i < size; i++) {
             FIXARCS.add(i, 0);
         }
@@ -762,7 +758,7 @@ public final class McGregor {
      * @return mappings
      */
     public synchronized List<List<Integer>> getMappings() {
-        return synchronizedList(mappings);
+        return Collections.synchronizedList(mappings);
     }
 
     /**

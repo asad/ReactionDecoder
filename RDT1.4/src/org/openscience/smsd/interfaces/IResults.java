@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,13 +23,12 @@
 package org.openscience.smsd.interfaces;
 
 import java.util.List;
-
 import org.openscience.smsd.AtomAtomMapping;
 
 /**
  * Interface that holds basic core interface for all MCS algorithm.  
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public interface IResults {
 

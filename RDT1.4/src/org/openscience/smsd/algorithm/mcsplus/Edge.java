@@ -26,8 +26,6 @@ package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * This class generates compatibility graph between query and target molecule. It also marks edges in the compatibility
@@ -41,20 +39,6 @@ import static java.util.logging.Logger.getLogger;
 public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     private static final long serialVersionUID = 52343464641L;
-    private static final Logger LOG = getLogger(Edge.class.getName());
-
-    private final int i;
-    private final int j;
-
-    /**
-     *
-     * @param i
-     * @param j
-     */
-    public Edge(int i, int j) {
-        this.i = i;
-        this.j = j;
-    }
 
     @Override
     public int hashCode() {
@@ -80,6 +64,19 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
             return false;
         }
         return this.i == other.i || this.j == other.j;
+    }
+
+    private final int i;
+    private final int j;
+
+    /**
+     *
+     * @param i
+     * @param j
+     */
+    public Edge(int i, int j) {
+        this.i = i;
+        this.j = j;
     }
 
     @Override

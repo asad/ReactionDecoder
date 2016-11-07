@@ -27,25 +27,20 @@ package org.openscience.smsd.algorithm.mcsplus;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.unmodifiableList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import static org.openscience.smsd.algorithm.matchers.DefaultMatcher.matches;
+import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
 import org.openscience.smsd.helper.LabelContainer;
-import static org.openscience.smsd.helper.LabelContainer.getInstance;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -54,12 +49,11 @@ import static org.openscience.smsd.helper.LabelContainer.getInstance;
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public final class GenerateCompatibilityGraph implements Serializable {
 
     private static final long serialVersionUID = 96986606860861L;
-    private static final Logger LOG = getLogger(GenerateCompatibilityGraph.class.getName());
     private List<Integer> compGraphNodes = null;
     private List<Integer> compGraphNodesCZero = null;
     private final List<Integer> cEdges;
@@ -95,8 +89,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
         this.target = target;
         compGraphNodes = new ArrayList<>();
         compGraphNodesCZero = new ArrayList<>();
-        cEdges = synchronizedList(new ArrayList<Integer>());
-        dEdges = synchronizedList(new ArrayList<Integer>());
+        cEdges = Collections.synchronizedList(new ArrayList<Integer>());
+        dEdges = Collections.synchronizedList(new ArrayList<Integer>());
 
         /*
          Generate all possible graphs when no ring match or atom type is required
@@ -148,7 +142,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
              */
             String referenceAtom;
             if (refAtom instanceof IQueryAtom) {
-                referenceAtom = ((IQueryAtom) refAtom).getSymbol() == null ? "*" : refAtom.getSymbol();
+                referenceAtom = ((IQueryAtom) refAtom).getSymbol() == null ? "*" : ((IQueryAtom) refAtom).getSymbol();
 //                System.out.println("referenceAtom " + referenceAtom);
             } else if (!(refAtom instanceof IQueryAtom) && this.matchAtomType) {
                 referenceAtom = refAtom.getAtomTypeName() == null ? refAtom.getSymbol() : refAtom.getAtomTypeName();
@@ -163,7 +157,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
             for (IAtom negAtom : connAtoms) {
                 String neighbouringAtom;
                 if (refAtom instanceof IQueryAtom) {
-                    neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : negAtom.getSymbol();
+                    neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : ((IQueryAtom) negAtom).getSymbol();
 //                    System.out.println("neighbouringAtom " + neighbouringAtom);
                 } else if (!(negAtom instanceof IQueryAtom) && this.matchAtomType) {
                     neighbouringAtom = negAtom.getAtomTypeName() == null ? negAtom.getSymbol() : negAtom.getAtomTypeName();
@@ -324,7 +318,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
         int count_nodes = 1;
         List<String> list = new ArrayList<>();
         compGraphNodesCZero = new ArrayList<>(); //Initialize the compGraphNodesCZero List
-        LabelContainer labelContainer = getInstance();
+        LabelContainer labelContainer = LabelContainer.getInstance();
         compGraphNodes.clear();
 
         for (int i = 0; i < source.getAtomCount(); i++) {
@@ -446,52 +440,32 @@ public final class GenerateCompatibilityGraph implements Serializable {
             /*
              This one also matches atom type, not just symbols
              */
-            return matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
-    /**
-     *
-     * @return
-     */
     public synchronized List<Integer> getCEgdes() {
-        return synchronizedList(cEdges);
+        return Collections.synchronizedList(cEdges);
     }
 
-    /**
-     *
-     * @return
-     */
     public synchronized List<Integer> getDEgdes() {
-        return synchronizedList(dEdges);
+        return Collections.synchronizedList(dEdges);
     }
 
-    /**
-     *
-     * @return
-     */
     public synchronized List<Integer> getCompGraphNodes() {
-        return synchronizedList(compGraphNodes);
+        return Collections.synchronizedList(compGraphNodes);
     }
 
-    /**
-     *
-     * @return
-     */
     protected synchronized int getCEdgesSize() {
         return cEdgesSize;
     }
 
-    /**
-     *
-     * @return
-     */
     protected synchronized int getDEdgesSize() {
         return dEdgesSize;
     }
 
     private List<Integer> getCompGraphNodesCZero() {
-        return unmodifiableList(compGraphNodesCZero);
+        return Collections.unmodifiableList(compGraphNodesCZero);
     }
 
     private void clearCEgdes() {
@@ -518,9 +492,6 @@ public final class GenerateCompatibilityGraph implements Serializable {
         dEdgesSize = 0;
     }
 
-    /**
-     *
-     */
     public synchronized void clear() {
         cEdges.clear();
         dEdges.clear();

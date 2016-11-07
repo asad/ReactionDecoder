@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -22,27 +22,25 @@
  */
 package org.openscience.smsd.filters;
 
-import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  * @author maclean
  * 
  */
 public class BaseFilter {
-    private static final ILoggingTool logger = createLoggingTool(BaseFilter.class);
-    private static final Logger LOG = getLogger(BaseFilter.class.getName());
 
     private final IAtomContainer mol1;
     private final IAtomContainer mol2;
+    private final static ILoggingTool logger
+            = LoggingToolFactory.createLoggingTool(BaseFilter.class);
 
     /**
      *
@@ -50,19 +48,19 @@ public class BaseFilter {
      * @param targetMol
      */
     public BaseFilter(IAtomContainer sourceMol, IAtomContainer targetMol) {
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(sourceMol);
+        } catch (CDKException ex) {
+            logger.error(Level.SEVERE, null, ex);
+        }
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(targetMol);
+        } catch (CDKException ex) {
+            logger.error(Level.SEVERE, null, ex);
+        }
         this.mol1 = sourceMol;
         this.mol2 = targetMol;
 
-        try {
-            percieveAtomTypesAndConfigureAtoms(mol1);
-        } catch (CDKException ex) {
-            logger.error(SEVERE, null, ex);
-        }
-        try {
-            percieveAtomTypesAndConfigureAtoms(mol2);
-        } catch (CDKException ex) {
-            logger.error(SEVERE, null, ex);
-        }
     }
 
     /**
@@ -75,9 +73,9 @@ public class BaseFilter {
         this.mol2 = targetMol;
 
         try {
-            percieveAtomTypesAndConfigureAtoms(mol2);
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol2);
         } catch (CDKException ex) {
-            logger.error(SEVERE, null, ex);
+            logger.error(Level.SEVERE, null, ex);
         }
     }
 

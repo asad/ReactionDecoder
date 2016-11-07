@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -23,34 +23,19 @@
  */
 package org.openscience.smsd.algorithm.vflib;
 
-import static java.lang.Integer.signum;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-import static org.openscience.smsd.algorithm.vflib.SortOrder.ASCENDING;
 
  /*
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-
-/**
- *
- * @author asad
- */
-
 public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
-    private static final Logger LOG = getLogger(Map1ValueComparator.class.getName());
 
     private final SortOrder sortOrder;
 
-    /**
-     *
-     * @param sortOrder
-     */
     public Map1ValueComparator(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
@@ -65,9 +50,9 @@ public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
     public int compare(Map<Integer, Integer> object1, Map<Integer, Integer> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
-        int compare = signum(new Integer(size1).compareTo(size2));
+        int compare = Integer.signum(new Integer(size1).compareTo(size2));
 
-        if (sortOrder == ASCENDING) {
+        if (sortOrder == SortOrder.ASCENDING) {
             return compare;
         } else {
             return compare * (-1);

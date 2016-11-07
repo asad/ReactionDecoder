@@ -23,10 +23,6 @@
  */
 package org.openscience.smsd.helper;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
-
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Order;
@@ -37,10 +33,9 @@ import org.openscience.cdk.interfaces.IBond.Order;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class BondEnergy {
-    private static final Logger LOG = getLogger(BondEnergy.class.getName());
 
     private String symbol1 = "";
     private String symbol2 = "";
@@ -99,11 +94,6 @@ public class BondEnergy {
         return energy;
     }
 
-    /**
-     *
-     * @param bond
-     * @return
-     */
     public synchronized boolean matches(IBond bond) {
         IAtom atom1 = bond.getAtom(0);
         IAtom atom2 = bond.getAtom(1);

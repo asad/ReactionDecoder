@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,18 +24,17 @@
 package org.openscience.smsd;
 
 import java.io.Serializable;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcsplus.MCSPlusHandler;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
-import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
@@ -100,22 +99,21 @@ import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
  *  }
  *
  *
- *  </pre> </font>
+ * </pre> </font>
  *
- * @cdk.require java1.5+
+ *  java1.8+
  *
  * 
  * 
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  *
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
     private final static ILoggingTool logger
-            = createLoggingTool(Isomorphism.class);
+            = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
-    private static final java.util.logging.Logger LOG = getLogger(Isomorphism.class.getName());
     private final Algorithm algorithmType;
     private double bondSensitiveMcGregorOut = -1;//mins
     private double bondInSensitiveMcGregor = -1;//mins
@@ -130,11 +128,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * @param query query molecule
      * @param target target molecule This is the algorithm factory and entry
      * port for all the MCS algorithm in the Isomorphism supported algorithm
-     * {@link org.openscience.cdk.smsd.interfaces.Algorithm} types: <OL> <lI>0:
+     * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
      * @param algorithmType
-     * {@link org.openscience.cdk.smsd.interfaces.Algorithm}
+     * {@link org.openscience.smsd.interfaces.Algorithm}
      */
     public Isomorphism(
             IQueryAtomContainer query,
@@ -143,7 +141,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         super(query, target);
         this.algorithmType = algorithmType;
         mcsBuilder(query, target);
-        setSubgraph(isSubgraph());
+        super.setSubgraph(isSubgraph());
     }
 
     /**
@@ -156,11 +154,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * @param query query mol
      * @param target target mol This is the algorithm factory and entry port for
      * all the MCS algorithm in the Isomorphism supported algorithm
-     * {@link org.openscience.cdk.smsd.interfaces.Algorithm} types: <OL> <lI>0:
+     * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
      * @param algorithmType
-     * {@link org.openscience.cdk.smsd.interfaces.Algorithm}
+     * {@link org.openscience.smsd.interfaces.Algorithm}
      * @param bondTypeFlag Match bond types (i.e. double to double etc)
      * @param matchRings Match ring atoms and ring size
      * @param matchAtomType
@@ -174,15 +172,15 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             boolean matchAtomType) {
         super(query, target, bondTypeFlag, matchRings, matchAtomType);
         this.algorithmType = algorithmType;
-        if (isMatchRings()) {
+        if (super.isMatchRings()) {
             try {
-                initializeMolecule(getQuery());
-                initializeMolecule(getTarget());
+                MoleculeInitializer.initializeMolecule(super.getQuery());
+                MoleculeInitializer.initializeMolecule(super.getTarget());
             } catch (CDKException ex) {
             }
         }
-        mcsBuilder(getQuery(), getTarget());
-        setSubgraph(isSubgraph());
+        mcsBuilder(super.getQuery(), super.getTarget());
+        super.setSubgraph(isSubgraph());
     }
 
     private synchronized void mcsBuilder(IAtomContainer mol1, IAtomContainer mol2) {
@@ -301,7 +299,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 }
             }
         } catch (CDKException e) {
-            logger.error(SEVERE, null, e);
+            logger.error(Level.SEVERE, null, e);
         }
     }
 

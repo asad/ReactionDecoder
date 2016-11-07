@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *                          Gilleain Torrance <gilleain.torrance@gmail.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -45,39 +45,36 @@
  ******************************************************************************/
 package org.openscience.smsd.algorithm.vflib.substructure;
 
-import static java.util.Arrays.fill;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import java.util.Arrays;
 
 /**
  * This class keeps track of shared states
  * 
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 // The SharedState class holds four arrays containing the mapping between
 // the two graphs and the terminal sets. It is shared between all the states
 // in each isomorphism test.
 class SharedState {
-    private static final Logger LOG = getLogger(SharedState.class.getName());
 
     int[] sourceMapping;
     int[] targetMapping;
     int[] sourceTerminalSet;
     int[] targetTerminalSet;
 
-    SharedState(int sourceSize, int targetSize) {
+    public SharedState(int sourceSize, int targetSize) {
         sourceMapping = new int[sourceSize];
-        fill(sourceMapping, -1);
+        Arrays.fill(sourceMapping, -1);
 
         targetMapping = new int[targetSize];
-        fill(targetMapping, -1);
+        Arrays.fill(targetMapping, -1);
 
         sourceTerminalSet = new int[sourceSize];
-        fill(sourceTerminalSet, 0);
+        Arrays.fill(sourceTerminalSet, 0);
 
         targetTerminalSet = new int[targetSize];
-        fill(targetTerminalSet, 0);
+        Arrays.fill(targetTerminalSet, 0);
     }
 }

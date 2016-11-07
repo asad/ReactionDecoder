@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *                          Gilleain Torrance <gilleain.torrance@gmail.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -46,31 +46,22 @@
  ******************************************************************************/
 package org.openscience.smsd.algorithm.vflib.substructure;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 /**
  * Holds source and target atoms
  * 
  * 
  * 
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 /**
  * @param <T>
  * @param <S>
  */
 public class Pair<T, S> {
-    private static final Logger LOG = getLogger(Pair.class.getName());
 
     private T source;
     private S target;
 
-    /**
-     *
-     * @param a
-     * @param b
-     */
     public Pair(T a, S b) {
         this.source = a;
         this.target = b;
@@ -89,7 +80,6 @@ public class Pair<T, S> {
     }
 
     /**
-     * @param first
      * @param source the source to set
      */
     public synchronized void setSourceAtom(T first) {
@@ -104,7 +94,6 @@ public class Pair<T, S> {
     }
 
     /**
-     * @param second
      * @param target the target to set
      */
     public synchronized void setTargetAtom(S second) {

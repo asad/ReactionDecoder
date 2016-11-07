@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2015  Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -45,16 +45,13 @@
  ******************************************************************************/
 package org.openscience.smsd.algorithm.vflib.substructure;
 
-import java.util.ArrayList;
-import static java.util.Collections.unmodifiableList;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.*;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import static org.openscience.smsd.helper.MoleculeInitializer.testIsSubgraphHeuristics;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -62,9 +59,9 @@ import org.openscience.smsd.interfaces.IResults;
  *
  *  
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class VF2 implements IResults {
+public final class VF2 implements IResults {
 
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;
@@ -75,7 +72,7 @@ public class VF2 implements IResults {
 
     private boolean isSubgraph = false;
     private final ILoggingTool Logger
-            = createLoggingTool(VF2.class);
+            = LoggingToolFactory.createLoggingTool(VF2.class);
 
     /**
      * Constructor for an extended VF Algorithm for the MCS search
@@ -131,7 +128,7 @@ public class VF2 implements IResults {
      */
     private synchronized void isomorphism() {
 
-        if (!isDead(source, target) && testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
+        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
             State state = new State(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             if (!state.isDead()) {
                 state.matchFirst(state, allAtomMCS);
@@ -149,7 +146,7 @@ public class VF2 implements IResults {
      */
     private synchronized void isomorphisms() {
 
-        if (!isDead(source, target) && testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
+        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
             State state = new State(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             if (!state.isDead()) {
                 state.matchAll(state, allAtomMCS);
@@ -174,7 +171,7 @@ public class VF2 implements IResults {
 
     @Override
     public List<AtomAtomMapping> getAllAtomMapping() {
-        return unmodifiableList(allAtomMCS);
+        return Collections.unmodifiableList(allAtomMCS);
     }
 
     @Override
