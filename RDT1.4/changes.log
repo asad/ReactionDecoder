@@ -194,6 +194,11 @@ a) Cli 1.3 added
 b) Bug fixed for -u option in COMPARE function
 c) Do not print atom index for pre mapped reactions
 
+-----------------------
+Changes (08/11/2016)
+-----------------------
+a) Write Aromatic bond in the RXN writer switched off
+
 
 -----------------------
 TO DO
