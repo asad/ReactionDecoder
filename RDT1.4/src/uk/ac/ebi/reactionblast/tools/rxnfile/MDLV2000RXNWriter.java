@@ -360,8 +360,9 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
                 try {
                     mdlwriter = new MDLV2000Writer(sw);
                     // GMT : added to force writing of aromatic bond types
-                    mdlwriter.getIOSettings()[1].setSetting("true");
-                } catch (CDKException ex) {
+                    // Asad: Swith off aromatic bond writing
+                    // mdlwriter.getIOSettings()[1].setSetting("true");
+                } catch (Exception ex) {
                     logger.error(ex.getMessage());
                     logger.debug(ex);
                     throw new CDKException("Exception while creating MDLWriter: " + ex.getMessage(), ex);
