@@ -42,6 +42,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class CDKSMILES {
+
     private static final Logger LOG = getLogger(CDKSMILES.class.getName());
 
     private final ILoggingTool logger
@@ -120,6 +121,26 @@ public class CDKSMILES {
      * @return
      */
     public String getGenericSMILES() {
+        String smiles = "NA";
+        if (molecule.getAtomCount() == 0) {
+            return smiles;
+        }
+        try {
+            SmilesGenerator g;
+            g = generic();
+            return g.create(molecule);
+        } catch (CDKException ex) {
+            logger.error("ERROR : in generating CDK SMILES" + molecule.getID());
+        }
+
+        return smiles;
+    }
+
+    /**
+     * Aromatic SMILES corrupts the code
+     * @return
+     */
+    public String getGenericAromaticSMILES() {
         String smiles = "NA";
         if (molecule.getAtomCount() == 0) {
             return smiles;
