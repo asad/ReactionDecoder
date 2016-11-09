@@ -546,7 +546,7 @@ public class Annotator extends Helper {
             /*
              * Selected AAM solution
              */
-            SmilesGenerator smiles = generic().aromatic().withAtomClasses();
+            SmilesGenerator smiles = generic().withAtomClasses();
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
             sb.append("//");
@@ -677,7 +677,7 @@ public class Annotator extends Helper {
                     printRPAIRPatternAsXML(s, doc, annot);
                 }
             }
-            SmilesGenerator smiles = generic().aromatic().withAtomClasses();
+            SmilesGenerator smiles = generic().withAtomClasses();
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
