@@ -442,7 +442,8 @@ public class ReactionMechanismTool implements Serializable {
             return true;
         } else if (this.selectedMapping.getTotalFragmentChanges() >= ms.getTotalFragmentChanges()
                 && this.selectedMapping.getSmallestFragmentCount() >= ms.getSmallestFragmentCount()
-                && this.selectedMapping.getBondEnergySum() > ms.getBondEnergySum()) {
+                && this.selectedMapping.getBondEnergySum() > ms.getBondEnergySum()
+                && this.selectedMapping.getTotalCarbonBondChanges() >= ms.getTotalCarbonBondChanges()) {
             /* Example reaction R05069*/
             logger.info("Condition 4 " + ms.getAlgorithmID().description());
             if (DEBUG) {
@@ -458,7 +459,8 @@ public class ReactionMechanismTool implements Serializable {
             return true;
         } else if (this.selectedMapping.getTotalFragmentChanges() == ms.getTotalFragmentChanges()
                 && this.selectedMapping.getSmallestFragmentCount() == ms.getSmallestFragmentCount()
-                && this.selectedMapping.getBondEnergySum() > ms.getBondEnergySum()) {
+                && this.selectedMapping.getBondEnergySum() > ms.getBondEnergySum()
+                && this.selectedMapping.getTotalCarbonBondChanges() >= ms.getTotalCarbonBondChanges()) {
             logger.info("Condition 6 " + ms.getAlgorithmID().description());
             if (DEBUG) {
                 out.println("CASE: Condition 6");
