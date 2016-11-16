@@ -77,6 +77,8 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsC00006;
     private IAtomContainer smartsC00004;
     private IAtomContainer smartsC00005;
+    private IAtomContainer smartsPyruvate;
+    private IAtomContainer smartsAlanine;
 
     /**
      *
@@ -277,8 +279,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 5 ADP_ATP
                      */ else if ((ac1.getAtomCount() == getSmartsATP().getAtomCount() && isMatch(getSmartsATP(), ac1)
                             && isMatch(getSmartsADP(), ac2))
-                            || (ac2.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac2)
-                            && isMatch(getSmartsATP(), ac1))) {
+                            || (ac1.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac1)
+                            && isMatch(getSmartsATP(), ac2))) {
                         if (DEBUG) {
                             out.println("Rule 5 ADP_ATP found");
                         }
@@ -288,8 +290,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 6 CoA_Acetyl_CoA
                      */ else if ((ac1.getAtomCount() == getSmartsCoA().getAtomCount() && isMatch(getSmartsCoA(), ac1)
                             && isMatch(getSmartsAcetyl_CoA(), ac2))
-                            || (ac2.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac2)
-                            && isMatch(getSmartsCoA(), ac1))) {
+                            || (ac1.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac1)
+                            && isMatch(getSmartsCoA(), ac2))) {
                         if (DEBUG) {
                             out.println("Rule 6 CoA_Acetyl_CoA found");
                         }
@@ -299,8 +301,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 7 C00003_C00006
                      */ else if ((ac1.getAtomCount() == getSmartsC00003().getAtomCount() && isMatch(getSmartsC00003(), ac1)
                             && isMatch(getSmartsC00006(), ac2))
-                            || (ac2.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac2)
-                            && isMatch(getSmartsC00003(), ac1))) {
+                            || (ac1.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac1)
+                            && isMatch(getSmartsC00003(), ac2))) {
                         if (DEBUG) {
                             out.println("Rule 7 C00003_C00006 found");
                         }
@@ -310,11 +312,22 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 8 C00004_C00005
                      */ else if ((ac1.getAtomCount() == getSmartsC00004().getAtomCount() && isMatch(getSmartsC00004(), ac1)
                             && isMatch(getSmartsC00005(), ac2))
-                            || (ac2.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac2)
-                            && isMatch(getSmartsC00004(), ac1))) {
+                            || (ac1.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac1)
+                            && isMatch(getSmartsC00004(), ac2))) {
                         if (DEBUG) {
                             out.println("Rule 8 C00004_C00005 found");
                         }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    } /*
+                        Rule 9 C00022_C00041
+                     */ else if ((ac1.getAtomCount() == getSmartsPyruvate().getAtomCount() && isMatch(getSmartsPyruvate(), ac1)
+                            && isMatch(getSmartsAlanine(), ac2))
+                            || (ac1.getAtomCount() == getSmartsAlanine().getAtomCount() && isMatch(getSmartsAlanine(), ac1)
+                            && isMatch(getSmartsPyruvate(), ac2))) {
+                        //if (DEBUG) {
+                        out.println("Rule 9 C00022_C00041 found");
+                        //}
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }
@@ -462,6 +475,12 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String C00004 = "NC(=O)C1=CN(C=CC1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
         final String C00005 = "NC(=O)C1=CN(C=CC1)[C@@H]1O[C@H](COP(O)(=O)OP(O)(=O)OC[C@H]2O[C@H]([C@H](OP(O)(O)=O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
 
+        /*
+         * C00022_C00041
+         */
+        final String C00022 = "[CH3][C](=O)C(O)=O";
+        final String C00041 = "[CH3][C](N)C(O)=O";
+
         SmilesParser smilesParser = new SmilesParser(getInstance());
         /*
          * Rule 1
@@ -510,6 +529,12 @@ public final class RuleBasedMappingHandler implements Serializable {
          */
         smartsC00004 = smilesParser.parseSmiles(C00004);
         smartsC00005 = smilesParser.parseSmiles(C00005);
+
+        /*
+         * Rule 9 Alanine_Pyruvate
+         */
+        smartsAlanine = smilesParser.parseSmiles(C00041);
+        smartsPyruvate = smilesParser.parseSmiles(C00022);
 
     }
 
@@ -623,6 +648,20 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public IAtomContainer getSmartsC00005() {
         return smartsC00005;
+    }
+
+    /**
+     * @return the smartsPyruvate
+     */
+    public IAtomContainer getSmartsPyruvate() {
+        return smartsPyruvate;
+    }
+
+    /**
+     * @return the smartsAlanine
+     */
+    public IAtomContainer getSmartsAlanine() {
+        return smartsAlanine;
     }
 
 }
