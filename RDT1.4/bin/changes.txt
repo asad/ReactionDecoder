@@ -204,6 +204,12 @@ Changes (09/11/2016)
 -----------------------
 a) Write reaction SMILES in Kekulé format.
 
+-----------------------
+Changes (16/11/2016)
+-----------------------
+a) Test case updated
+b) Mapping rule updated
+
 
 -----------------------
 TO DO
