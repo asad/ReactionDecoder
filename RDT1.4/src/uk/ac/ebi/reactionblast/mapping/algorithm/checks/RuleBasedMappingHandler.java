@@ -325,9 +325,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsAlanine(), ac2))
                             || (ac1.getAtomCount() == getSmartsAlanine().getAtomCount() && isMatch(getSmartsAlanine(), ac1)
                             && isMatch(getSmartsPyruvate(), ac2))) {
-                        //if (DEBUG) {
-                        out.println("Rule 9 C00022_C00041 found");
-                        //}
+                        if (DEBUG) {
+                            out.println("Rule 9 C00022_C00041 found");
+                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }
