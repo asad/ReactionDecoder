@@ -30,23 +30,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import static java.lang.Character.digit;
-import static java.lang.Character.isDigit;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.MIN_VALUE;
-import static java.lang.Integer.parseInt;
-import static java.lang.Integer.valueOf;
-import static java.lang.Math.min;
-import static java.lang.System.getProperty;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static java.util.regex.Pattern.compile;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 import org.openscience.cdk.CDKConstants;
@@ -99,7 +91,6 @@ import static org.openscience.cdk.stereo.StereoElementFactory.using2DCoordinates
 import static org.openscience.cdk.stereo.StereoElementFactory.using3DCoordinates;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.replaceAtomByAtom;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getAtomicNumber;
 import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader.CTabVersion.ofHeader;
@@ -110,6 +101,15 @@ import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLI
 import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY.TRIPLET;
 import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY.ofValue;
 import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLValence.implicitValence;
+import static java.lang.Character.digit;
+import static java.lang.Character.isDigit;
+import static java.lang.Integer.parseInt;
+import static java.lang.Integer.valueOf;
+import static java.lang.Math.min;
+import static java.lang.System.getProperty;
+import static java.util.logging.Logger.getLogger;
+import static java.util.regex.Pattern.compile;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 
 /**
  * Reads content from MDL molfiles and SD files. It can read a {@link
@@ -141,7 +141,7 @@ import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLValence.implicitValence;
  * @author steinbeck
  * @author Egon Willighagen
  * @cdk.module io
- * 
+ *
  * @cdk.iooptions
  * @cdk.created 2000-10-02
  * @cdk.keyword file format, MDL molfile
@@ -150,10 +150,12 @@ import static uk.ac.ebi.reactionblast.tools.rxnfile.MDLValence.implicitValence;
  */
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
-    private static final HashMap<IBond, Integer> special_bond_map = new HashMap<>();
+    /**
+     *
+     */
+    protected static final HashMap<IBond, Integer> SPECIAL_BOND_MAP = new HashMap<>();
     private static ILoggingTool logger
             = createLoggingTool(MDLV2000Reader.class);
-
 
     // Pattern to remove trailing space (String.trim() will remove leading space, which we don't want)
     private static final Pattern TRAILING_SPACE = compile("\\s+$");
@@ -176,6 +178,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             .add("R#")
             .build();
     private static final Logger LOG = getLogger(MDLV2000Reader.class.getName());
+
     /**
      * Create a new chem model for a single {@link IAtomContainer}.
      *
@@ -183,20 +186,21 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @return a new {@link IChemModel}
      */
     private static IChemModel newModel(final IAtomContainer container) {
-        
+
         if (container == null) {
             throw new NullPointerException("cannot create chem model for a null container");
         }
-        
+
         final IChemObjectBuilder builder = container.getBuilder();
         final IChemModel model = builder.newInstance(IChemModel.class);
         final IAtomContainerSet containers = builder.newInstance(IAtomContainerSet.class);
-        
+
         containers.addAtomContainer(container);
         model.setMoleculeSet(containers);
-        
+
         return model;
     }
+
     /**
      * Determine the length of the line excluding trailing whitespace.
      *
@@ -210,6 +214,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
         return i + 1;
     }
+
     /**
      * Is the symbol a periodic element.
      *
@@ -221,6 +226,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         Integer elem = getAtomicNumber(symbol);
         return elem != null && elem > 0;
     }
+
     /**
      * Is the atom symbol a non-periodic element (i.e. pseudo). Valid pseudo
      * atoms are 'R#', 'A', 'Q', '*', 'L' and 'LP'. We also accept 'R' but this
@@ -232,6 +238,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     static boolean isPseudoElement(final String symbol) {
         return PSUEDO_LABELS.contains(symbol);
     }
+
     /**
      * Read a coordinate from an MDL input. The MDL V2000 input coordinate has
      * 10 characters, 4 significant figures and is prefixed with whitespace for
@@ -248,22 +255,23 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         if (line.charAt(offset + 5) != '.') {
             throw new CDKException("invalid coordinate specification");
         }
-        
+
         int start = offset;
         while (line.charAt(start) == ' ') {
             start++;
         }
-        
+
         int sign = sign(line.charAt(start));
         if (sign < 0) {
             start++;
         }
-        
+
         int integral = readUInt(line, start, (offset + 5) - start);
         int fraction = readUInt(line, offset + 6, 4);
-        
+
         return sign * (integral * 10000l + fraction) / 10000d;
     }
+
     /**
      * Convert the a character (from an MDL V2000 input) to a charge value: 1 =
      * +1, 2 = +2, 3 = +3, 4 = doublet radical, 5 = -1, 6 = -2, 7 = -3.
@@ -290,6 +298,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
         return 0;
     }
+
     /**
      * Obtain the sign of the character, -1 if the character is '-', +1
      * otherwise.
@@ -300,6 +309,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     private static int sign(final char c) {
         return c == '-' ? -1 : +1;
     }
+
     /**
      * Convert a character (ASCII code points) to an integer. If the character
      * was not a digit (i.e. space) the value defaults to 0.
@@ -312,6 +322,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         // or need it - imagine an MDL file with roman numerals!
         return c >= '0' && c <= '9' ? c - '0' : 0;
     }
+
     /**
      * Read an unsigned int value from the given index with the expected number
      * of digits.
@@ -328,6 +339,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
         return result;
     }
+
     /**
      * Optimised method for reading a integer from 3 characters in a string at a
      * specified index. MDL V2000 Molfile make heavy use of the 3 character ints
@@ -419,6 +431,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
         return sign * result;
     }
+
     /**
      * Labels the atom at the specified index with the provide label. If the
      * atom was not already a pseudo atom then the original atom is replaced.
@@ -447,6 +460,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             replaceAtomByAtom(container, atom, pseudoAtom);
         }
     }
+
     /**
      * Read non-structural data from input and store as properties the provided
      * 'container'. Non-structural data appears in a structure data file (SDF)
@@ -480,51 +494,52 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      */
     static void readNonStructuralData(final BufferedReader input,
             final IAtomContainer container) throws IOException {
-        
+
         final String newline = getProperty("line.separator");
-        
+
         String line, header = null;
         boolean wrap = false;
-        
+
         final StringBuilder data = new StringBuilder(80);
-        
+
         while (!endOfRecord(line = input.readLine())) {
-            
+
             final String newHeader = dataHeader(line);
-            
+
             if (newHeader != null) {
-                
+
                 if (header != null) {
                     container.setProperty(header, data.toString());
                 }
-                
+
                 header = newHeader;
                 wrap = false;
                 data.setLength(0);
-                
+
             } else {
-                
+
                 if (data.length() > 0 || !line.equals(" ")) {
                     line = line.trim();
                 }
-                
+
                 if (line.isEmpty()) {
                     continue;
                 }
-                
+
                 if (!wrap && data.length() > 0) {
                     data.append(newline);
                 }
                 data.append(line);
-                
+
                 wrap = line.length() == 80;
             }
         }
-        
+
         if (header != null) {
             container.setProperty(header, data.toString());
         }
     }
+
     /**
      * Obtain the field name from a potential SD data header. If the header does
      * not contain a field name, then null is returned. The method does not
@@ -549,6 +564,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         }
         return line.substring(i + 1, j);
     }
+
     /**
      * Is the line the end of a record. A line is the end of a record if it is
      * 'null' or is the SDF deliminator, '$$$$'.
@@ -749,7 +765,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         return chemFile;
     }
 
-
     /**
      * Read an IAtomContainer from a file in MDL sd format
      *
@@ -879,8 +894,8 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                  We do not support metal co-ordinated diat bonds, 
                  hence they are read as 1
                  */
-                if (hasQueryBonds && special_bond_map.containsKey(bonds[i])) {
-                    Integer bondType = special_bond_map.get(bonds[i]);
+                if (hasQueryBonds && SPECIAL_BOND_MAP.containsKey(bonds[i])) {
+                    Integer bondType = SPECIAL_BOND_MAP.get(bonds[i]);
                     if ((bonds[i].getOrder() == UNSET && !bonds[i].getFlag(ISAROMATIC))
                             && bondType == 8) {
                         logger.warn("! Fixing unsupported potential DIAT COORDINATE BOND TYPE !");
@@ -897,7 +912,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             /*
              Fixed by Asad Clean global & local maps/list
              */
-            special_bond_map.clear();
+            SPECIAL_BOND_MAP.clear();
 
             if (!hasQueryBonds) {
                 outputContainer = molecule;
@@ -975,8 +990,8 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             );
         }
 
-        String property = outputContainer == null ? "" : 
-                (String) outputContainer.getProperty(TITLE);
+        String property = outputContainer == null ? ""
+                : (String) outputContainer.getProperty(TITLE);
         if (outputContainer != null && property != null) {
             outputContainer.setID(property);
         }
@@ -1254,7 +1269,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             case 7: // double or aromatic
             case 8: // any
                 bond = ofType(bond, type);
-                special_bond_map.put(bond, type);
+                SPECIAL_BOND_MAP.put(bond, type);
                 break;
             default:
                 throw new CDKException("unrecognised bond type: " + type + ", " + line);
@@ -1459,7 +1474,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         return IBond.Stereo.NONE;
     }
 
-
     /**
      * Create an atom for the provided symbol. If the atom symbol is a periodic
      * element a new 'Atom' is created otherwise if the symbol is an allowed
@@ -1498,7 +1512,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
         return atom;
     }
-
 
     /**
      * Reads an atom from the input allowing for non-standard formatting (i.e
@@ -1843,7 +1856,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     int charge = parseInt(token.trim());
                     container.getAtom(atomNumber - 1).setFormalCharge(charge);
                 }
-            } else if (line.matches("A\\s{1,4}\\d+")) {
+            } else if (line != null && line.matches("A\\s{1,4}\\d+")) {
                 // Reads the pseudo atom property from the mol file
 
                 // The atom number of the to replaced atom
@@ -1866,7 +1879,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     newPseudoAtom.setPoint3d(aliasAtom.getPoint3d());
                 }
                 replaceAtomByAtom(container, aliasAtom, newPseudoAtom);
-            } else if (line.startsWith("M  ISO")) {
+            } else if (line != null && line.startsWith("M  ISO")) {
                 try {
                     String countString = line.substring(6, 10).trim();
                     int infoCount = parseInt(countString);
@@ -1990,7 +2003,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             }
         }
     }
-
 
     /**
      * Enumeration of property keys that can be specified in the V2000 property
