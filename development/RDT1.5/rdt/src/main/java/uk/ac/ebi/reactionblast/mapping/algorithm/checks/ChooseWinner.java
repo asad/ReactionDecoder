@@ -55,7 +55,7 @@ public class ChooseWinner extends Selector implements Serializable {
     private EBIMatrix carbonOverlapMatrix;
 
     private EBIMatrix similarityMatrix = null;
-    private List<Cells> crossMappingTracer = null;
+    private List<Cell> crossMappingTracer = null;
     private Map<Integer, IAtomContainer> educts = null;
     private Map<Integer, IAtomContainer> products = null;
 
@@ -124,7 +124,7 @@ public class ChooseWinner extends Selector implements Serializable {
         this.setEnergyMatrix(mHolder.getEnergyMatrix());
         this.setCarbonOverlapMatrix(mHolder.getCarbonOverlapMatrix());
 
-        this.crossMappingTracer = synchronizedList(new ArrayList<Cells>());
+        this.crossMappingTracer = synchronizedList(new ArrayList<Cell>());
 
         boolean isMappingFesiable = checkStatusFlag();
         List<Double> scores = new ArrayList<>();
@@ -237,7 +237,7 @@ public class ChooseWinner extends Selector implements Serializable {
     private synchronized void setWinOverFlags() {
         educts.keySet().stream().forEach((indexI) -> {
             products.keySet().stream().forEach((indexJ) -> {
-                Cells cell = new Cells();
+                Cell cell = new Cell();
                 cell.indexI = indexI;
                 cell.indexJ = indexJ;
                 cell.eductName = educts.get(indexI).getID();
@@ -252,9 +252,9 @@ public class ChooseWinner extends Selector implements Serializable {
         });
     }
 
-    private synchronized boolean checkTwinMapping(Cells refCell) {
+    private synchronized boolean checkTwinMapping(Cell refCell) {
         boolean _statusFlag = false;
-        for (Cells cell : crossMappingTracer) {
+        for (Cell cell : crossMappingTracer) {
 
             //System.out.println("Visitor AtomContainer " + moleculeName + " i:" + _value.get(1) + " j:" + j);
             if (cell.eductName.equals(refCell.eductName)
@@ -292,7 +292,15 @@ public class ChooseWinner extends Selector implements Serializable {
     /**
      * Chosen cell of the matrix is stored here
      */
-    class Cells {
+    class Cell {
+
+        @Override
+        public String toString() {
+            return "Cells{" + "eductName=" + eductName
+                    + ", productName=" + productName
+                    + ", indexI=" + indexI
+                    + ", indexJ=" + indexJ + '}';
+        }
 
         String eductName;
         String productName;
@@ -307,9 +315,9 @@ public class ChooseWinner extends Selector implements Serializable {
      */
     class DeadLockResolver {
 
-        private synchronized double getMaxStereo(List<ChooseWinner.Cells> choosenCells) {
-            double max = Double.MIN_VALUE;
-            for (ChooseWinner.Cells cell : choosenCells) {
+        private synchronized double getMaxStereo(List<ChooseWinner.Cell> choosenCells) {
+            double max = 0.0;
+            for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getStereoMatrix().getValue(cell.indexI, cell.indexJ);
                 if (val > max) {
                     max = val;
@@ -318,9 +326,9 @@ public class ChooseWinner extends Selector implements Serializable {
             return max;
         }
 
-        private synchronized double getMinEnergy(List<ChooseWinner.Cells> choosenCells) {
+        private synchronized double getMinEnergy(List<ChooseWinner.Cell> choosenCells) {
             double min = Double.MAX_VALUE;
-            for (ChooseWinner.Cells cell : choosenCells) {
+            for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getEnergyMatrix().getValue(cell.indexI, cell.indexJ);
                 if (val < min) {
                     min = val;
@@ -329,11 +337,11 @@ public class ChooseWinner extends Selector implements Serializable {
             return min;
         }
 
-        private synchronized double getMaxCarbonOverlap(List<ChooseWinner.Cells> choosenCells) {
+        private synchronized double getMaxCarbonOverlap(List<ChooseWinner.Cell> choosenCells) {
             double max = Double.MIN_VALUE;
-            for (ChooseWinner.Cells cell : choosenCells) {
+            for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getCarbonOverlapMatrix().getValue(cell.indexI, cell.indexJ);
-                if (val < max) {
+                if (val > max) {
                     max = val;
                 }
             }
@@ -346,19 +354,24 @@ public class ChooseWinner extends Selector implements Serializable {
          * @param choosenScore
          * @return
          */
-        public synchronized ChooseWinner.Cells resolver(double choosenScore) {
-            List<ChooseWinner.Cells> choosenCells = new ArrayList<>();
+        public synchronized ChooseWinner.Cell resolver(double choosenScore) {
+            List<ChooseWinner.Cell> choosenCells = new ArrayList<>();
             for (int i = 0; i < rowSize; i++) {
                 for (int j = 0; j < colSize; j++) {
                     if (flagMatrix[i][j] && choosenScore > MIN_VALUE
                             && similarityMatrix.getValue(i, j) == choosenScore) {
-                        ChooseWinner.Cells cells = new ChooseWinner.Cells();
-                        cells.indexI = i;
-                        cells.indexJ = j;
-                        choosenCells.add(cells);
+                        ChooseWinner.Cell cell = new ChooseWinner.Cell();
+                        cell.indexI = i;
+                        cell.indexJ = j;
+                        cell.eductName = educts.get(i).getID();
+                        cell.productName = products.get(j).getID();
+                        choosenCells.add(cell);
                     }
                 }
             }
+
+            Cell winner = choosenCells.listIterator().next();
+
             double maxStereo = getMaxStereo(choosenCells);
             double minEnergy = getMinEnergy(choosenCells);
             double maxCarbonOverlap = getMaxCarbonOverlap(choosenCells);
@@ -368,27 +381,42 @@ public class ChooseWinner extends Selector implements Serializable {
             if (DEBUG) {
                 System.out.println("minEnergy " + minEnergy);
             }
-            for (ChooseWinner.Cells cell : choosenCells) {
+            if (DEBUG) {
+                System.out.println("maxCarbon " + maxCarbonOverlap);
+            }
+            for (ChooseWinner.Cell cell : choosenCells) {
                 double stereoVal = stereoMatrix.getValue(cell.indexI, cell.indexJ);
                 double energyVal = energyMatrix.getValue(cell.indexI, cell.indexJ);
-                double carbonOverlap = energyMatrix.getValue(cell.indexI, cell.indexJ);
+                double carbonOverlap = carbonOverlapMatrix.getValue(cell.indexI, cell.indexJ);
 
                 if (DEBUG) {
-                    System.out.println("stereoVal " + stereoVal);
-                }
-                if (DEBUG) {
-                    System.out.println("energyVal " + energyVal);
-                }
-                if (stereoVal <= maxStereo && energyVal <= minEnergy) {
-                    return cell;
+                    System.out.println("Comparing " + cell.indexI + "," + cell.indexJ);
                 }
 
-                if (stereoVal == maxStereo && energyVal == minEnergy
-                        && maxCarbonOverlap < carbonOverlap) {
-                    return cell;
+                if (DEBUG) {
+                    System.out.print("maxStereo " + maxStereo);
+                    System.out.println(", stereoVal " + stereoVal);
                 }
+                if (DEBUG) {
+                    System.out.print("minEnergy " + minEnergy);
+                    System.out.println(", energyVal " + energyVal);
+                }
+
+                if (DEBUG) {
+                    System.out.print("maxCarbon " + maxCarbonOverlap);
+                    System.out.println(", Carbon " + carbonOverlap);
+                }
+
+                if (stereoVal >= maxStereo
+                        && energyVal <= minEnergy
+                        && (maxCarbonOverlap == carbonOverlap
+                        || maxCarbonOverlap == 0)) {
+                    winner = cell;
+                    break;
+                }
+
             }
-            return choosenCells.listIterator().next();
+            return winner;
         }
     }
 }
