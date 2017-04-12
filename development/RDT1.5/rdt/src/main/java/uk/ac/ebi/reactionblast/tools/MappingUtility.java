@@ -198,7 +198,7 @@ public class MappingUtility extends TestUtility{
          */
         LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
         TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
-
+//
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {
 //            out.println("--------------------------------------");

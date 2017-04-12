@@ -39,7 +39,7 @@ import org.openscience.smsd.AtomAtomMapping;
  * Filter the results based on fragment size.
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
- * 
+ *
  */
 public final class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
@@ -57,12 +57,12 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
             Map<Integer, Integer> fragmentScoreMap) throws CDKException {
 
         int _minFragmentScore = 9999;
-        for (Integer Key : allFragmentAtomMCS.keySet()) {
-            AtomAtomMapping mcsAtom = allFragmentAtomMCS.get(Key);
-            int FragmentCount = getMappedMoleculeFragmentSize(mcsAtom);
-            fragmentScoreMap.put(Key, FragmentCount);
-            if (_minFragmentScore > FragmentCount) {
-                _minFragmentScore = FragmentCount;
+        for (Integer key : allFragmentAtomMCS.keySet()) {
+            AtomAtomMapping mcsAtom = allFragmentAtomMCS.get(key);
+            int fragmentCount = getMappedMoleculeFragmentSize(mcsAtom);
+            fragmentScoreMap.put(key, fragmentCount);
+            if (_minFragmentScore > fragmentCount) {
+                _minFragmentScore = fragmentCount;
             }
         }
 
@@ -98,14 +98,13 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
         IAtomContainer Educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
         IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
-
         if (mcsAtomSolution != null) {
-            for (Map.Entry<IAtom, IAtom> map : mcsAtomSolution.getMappingsByAtoms().entrySet()) {
+            mcsAtomSolution.getMappingsByAtoms().entrySet().stream().forEach((map) -> {
                 IAtom atomE = map.getKey();
                 IAtom atomP = map.getValue();
                 Educt.removeAtomAndConnectedElectronContainers(atomE);
                 product.removeAtomAndConnectedElectronContainers(atomP);
-            }
+            });
         }
         return getFragmentCount(Educt) + getFragmentCount(product);
     }

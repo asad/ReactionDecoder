@@ -100,26 +100,26 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
     private synchronized Double getMappedMoleculeEnergies(AtomAtomMapping mcsAtomSolution) throws CDKException {
 
 //        System.out.println("\nSort By Energies");
-        double totalBondEnergy = -9999.0;
+        double totalBondEnergy = Double.MIN_VALUE;
 
         IAtomContainer educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
         IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
         for (int i = 0; i < educt.getAtomCount(); i++) {
-            educt.getAtom(i).setFlag(999, false);
+            educt.getAtom(i).setFlag(100, false);
         }
 
         for (int i = 0; i < product.getAtomCount(); i++) {
-            product.getAtom(i).setFlag(999, false);
+            product.getAtom(i).setFlag(100, false);
         }
 
         if (mcsAtomSolution != null) {
             Map<IAtom, IAtom> mappingsByAtoms = mcsAtomSolution.getMappingsByAtoms();
             mappingsByAtoms.entrySet().stream().map((mapping) -> {
-                mapping.getKey().setFlag(999, true);
+                mapping.getKey().setFlag(100, true);
                 return mapping;
             }).forEach((mapping) -> {
-                mapping.getValue().setFlag(999, true);
+                mapping.getValue().setFlag(100, true);
             });
             totalBondEnergy = getEnergy(educt, product);
         }
@@ -128,11 +128,11 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
          * Reset the flag
          */
         for (int i = 0; i < educt.getAtomCount(); i++) {
-            educt.getAtom(i).setFlag(999, false);
+            educt.getAtom(i).setFlag(100, false);
         }
 
         for (int i = 0; i < product.getAtomCount(); i++) {
-            product.getAtom(i).setFlag(999, false);
+            product.getAtom(i).setFlag(100, false);
         }
 
         return totalBondEnergy;
@@ -155,8 +155,8 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
 
     private synchronized static double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
         double energy = 0.0;
-        if ((bond.getAtom(0).getFlag(999) == true && bond.getAtom(1).getFlag(999) == false)
-                || (bond.getAtom(0).getFlag(999) == false && bond.getAtom(1).getFlag(999) == true)) {
+        if ((bond.getAtom(0).getFlag(100) == true && bond.getAtom(1).getFlag(100) == false)
+                || (bond.getAtom(0).getFlag(100) == false && bond.getAtom(1).getFlag(100) == true)) {
             int val = bondEnergy.getEnergies(bond.getAtom(0), bond.getAtom(1), bond.getOrder());
             energy = val;
         }

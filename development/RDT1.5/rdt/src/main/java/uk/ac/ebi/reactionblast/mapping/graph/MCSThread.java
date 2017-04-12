@@ -190,12 +190,12 @@ public class MCSThread implements Callable<MCSSolution> {
                  */
                 boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
                 if (DEBUG1) {
-                    out.println("VF Matcher " + possibleVFmatch12);
+                    out.println("VF Matcher 1->2 " + possibleVFmatch12);
                 }
 
                 boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
                 if (DEBUG1) {
-                    out.println("VF Matcher " + possibleVFmatch21);
+                    out.println("VF Matcher 2->1 " + possibleVFmatch21);
                 }
 
                 if (possibleVFmatch12
@@ -214,6 +214,7 @@ public class MCSThread implements Callable<MCSSolution> {
                                 false, false, isHasPerfectRings(), true);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+//                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
                                 substructure.getQuery(), substructure.getTarget(), substructure.getFirstAtomMapping());

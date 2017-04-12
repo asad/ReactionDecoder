@@ -40,7 +40,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
  */
 public class IsomorphismMax extends Selector implements IResult {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(IsomorphismMax.class);
     private static final long serialVersionUID = 0x192aa60a59L;
     private static final Logger LOG = getLogger(IsomorphismMax.class.getName());
@@ -128,7 +128,8 @@ public class IsomorphismMax extends Selector implements IResult {
                                 this.flagMatrix[i][j] = false;
                                 this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
                                 this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
-                                this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                                this.updatedHolder.getStereoMatrix().setValue(i, j, MIN_VALUE);
+                                this.updatedHolder.getCarbonOverlapMatrix().setValue(i, j, MIN_VALUE);
                                 this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
                                 this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
                                 this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
@@ -138,7 +139,8 @@ public class IsomorphismMax extends Selector implements IResult {
                         this.flagMatrix[i][j] = false;
                         this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
                         this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
-                        this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                        this.updatedHolder.getStereoMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getCarbonOverlapMatrix().setValue(i, j, MIN_VALUE);
                         this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
                         this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
                         this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
@@ -165,7 +167,8 @@ public class IsomorphismMax extends Selector implements IResult {
                     } else {
                         this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
                         this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
-                        this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                        this.updatedHolder.getStereoMatrix().setValue(i, j, MIN_VALUE);
+                        this.updatedHolder.getCarbonOverlapMatrix().setValue(i, j, MIN_VALUE);
                         this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
                         this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
                         this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);
@@ -191,7 +194,7 @@ public class IsomorphismMax extends Selector implements IResult {
                 return s.isSubgraph();
             }
         } catch (CDKException ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return false;
     }

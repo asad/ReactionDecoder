@@ -24,7 +24,6 @@ import static java.lang.System.gc;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.synchronizedCollection;
 import static java.util.Collections.unmodifiableCollection;
 import java.util.Map;
 import java.util.Set;
@@ -34,16 +33,12 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
-import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -55,6 +50,11 @@ import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
+import static java.util.Collections.synchronizedCollection;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.logging.Logger.getLogger;
+import static org.openscience.cdk.graph.Cycles.all;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -63,7 +63,7 @@ import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 public class GraphMatcher extends Debugger {
 
     private final static boolean DEBUG = false;
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
     private static final Logger LOG = getLogger(GraphMatcher.class.getName());
 
@@ -296,7 +296,7 @@ public class GraphMatcher extends Debugger {
             gc();
 
         } catch (IOException | CDKException | ExecutionException | InterruptedException | CloneNotSupportedException ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         } finally {
             if (executor != null) {
                 executor.shutdown();
@@ -345,7 +345,7 @@ public class GraphMatcher extends Debugger {
                 if (atomByID1 != null && atomByID2 != null) {
                     atomAtomMappingNew.put(atomByID1, atomByID2);
                 } else {
-                    logger.error(WARNING, "UnExpected NULL ATOM FOUND");
+                    LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
                 }
             }
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);

@@ -37,10 +37,10 @@ import org.openscience.smsd.interfaces.IAtomMapping;
 
 /**
  *
- *  java1.8+
+ * java1.8+
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  *
@@ -54,7 +54,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     private List<Double> stereoScoreList;
     private List<Integer> fragmentSizeList;
     private List<Double> bondEnergiesList;
-    private final static ILoggingTool Logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BaseMapping.class);
 
     /**
@@ -95,7 +95,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                     sortResultsByEnergies();
                     this.bondEnergiesList = getSortedEnergy();
                 } catch (CDKException ex) {
-                    Logger.error(Level.SEVERE, null, ex);
+                    LOGGER.error(Level.SEVERE, null, ex);
                 }
             }
 
@@ -109,7 +109,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                     sortResultsByStereoAndBondMatch();
                     this.stereoScoreList = getStereoMatches();
                 } catch (CDKException ex) {
-                    Logger.error(Level.SEVERE, null, ex);
+                    LOGGER.error(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -179,7 +179,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
                         IAtom sourceAtom1 = indexI;
                         IAtom sourceAtom2 = indexIPlus;
-
                         IBond rBond = reactant.getBond(sourceAtom1, sourceAtom2);
 
                         IAtom targetAtom1 = indexJ;
@@ -318,9 +317,9 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     public synchronized List<Map<IBond, IBond>> makeBondMapsOfAtomMaps(IAtomContainer ac1,
             IAtomContainer ac2, List<AtomAtomMapping> mappings) {
         List<Map<IBond, IBond>> bondMaps = Collections.synchronizedList(new ArrayList<Map<IBond, IBond>>());
-        for (AtomAtomMapping mapping : mappings) {
+        mappings.stream().forEach((mapping) -> {
             bondMaps.add(makeBondMapOfAtomMap(ac1, ac2, mapping));
-        }
+        });
         return bondMaps;
     }
 
@@ -341,17 +340,17 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
         Map<IBond, IBond> bondbondMappingMap = Collections.synchronizedMap(new HashMap<IBond, IBond>());
 
-        for (Map.Entry<IAtom, IAtom> map1 : mapping.getMappingsByAtoms().entrySet()) {
-            for (Map.Entry<IAtom, IAtom> map2 : mapping.getMappingsByAtoms().entrySet()) {
-                if (map1.getKey() != map2.getKey()) {
-                    IBond bond1 = ac1.getBond(map1.getKey(), map2.getKey());
-                    IBond bond2 = ac2.getBond(map1.getValue(), map2.getValue());
-                    if (bond1 != null && bond2 != null && !bondbondMappingMap.containsKey(bond1)) {
-                        bondbondMappingMap.put(bond1, bond2);
-                    }
+        mapping.getMappingsByAtoms().entrySet().stream().forEach((Map.Entry<IAtom, IAtom> map1) -> {
+            mapping.getMappingsByAtoms().entrySet().stream().filter((map2) -> (map1.getKey()
+                    != map2.getKey())).forEach((Map.Entry<IAtom, IAtom> map2) -> {
+                IBond bond1;
+                bond1 = ac1.getBond(map1.getKey(), map2.getKey());
+                IBond bond2 = ac2.getBond(map1.getValue(), map2.getValue());
+                if (bond1 != null && bond2 != null && !bondbondMappingMap.containsKey(bond1)) {
+                    bondbondMappingMap.put(bond1, bond2);
                 }
-            }
-        }
+            });
+        });
 //        System.out.println("Mol Map size:" + bondbondMappingMap.size());
         return bondbondMappingMap;
     }

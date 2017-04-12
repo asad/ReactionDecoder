@@ -129,7 +129,7 @@ final class GameTheoryMax extends BaseGameTheory {
 
         IsomorphismMax omorphismMax = new IsomorphismMax(mh, eductList, productList);
         if (omorphismMax.isSubAndCompleteMatchFlag()) {
-//                System.out.println("Subgraph/Exact Match");
+//            System.out.println("Subgraph/Exact Match");
             mh = omorphismMax.getUpdatedHolder();
         }
 
@@ -139,6 +139,7 @@ final class GameTheoryMax extends BaseGameTheory {
 //        printFragmentMatrix(mh, eductList, productList);
 //        printEnergyMatrix(mh, eductList, productList);
         winner.searchWinners(educts, products, mh);
+
         if (DEBUG) {
             printFlagMatrix(winner, eductList, productList);
         }
@@ -184,8 +185,10 @@ final class GameTheoryMax extends BaseGameTheory {
                         delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                         List<MolMapping> rMap = getReactionMolMapping().
                                 getMapping(rid, this.eductList.get(substrateIndex), this.productList.get(productIndex));
-                        for (MolMapping map : rMap) {
+                        rMap.stream().map((map) -> {
                             map.setReactionMapping(true);
+                            return map;
+                        }).forEach((map) -> {
                             try {
                                 IAtomContainer mol = GM.getMatchedPart();
                                 mol = canonLabeler.getCanonicalMolecule(mol);
@@ -193,7 +196,7 @@ final class GameTheoryMax extends BaseGameTheory {
                                 map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
                             } catch (CloneNotSupportedException e) {
                             }
-                        }
+                        });
                     }
                     IAtomContainer remainingEduct = GM.getRemainingEduct();
                     IAtomContainer remainingProduct = GM.getRemainingProduct();

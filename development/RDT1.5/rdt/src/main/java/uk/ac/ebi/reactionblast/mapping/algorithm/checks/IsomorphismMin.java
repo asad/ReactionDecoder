@@ -122,7 +122,8 @@ public class IsomorphismMin extends Selector implements IResult {
                             this.flagMatrix[i][j] = false;
                             this.updatedHolder.getGraphSimilarityMatrix().setValue(i, j, MIN_VALUE);
                             this.updatedHolder.getCliqueMatrix().setValue(i, j, MIN_VALUE);
-                            this.updatedHolder.getStereoMatrix().setValue(i, j, -MAX_VALUE);
+                            this.updatedHolder.getStereoMatrix().setValue(i, j, MIN_VALUE);
+                            this.updatedHolder.getCarbonOverlapMatrix().setValue(i, j, MIN_VALUE);
                             this.updatedHolder.getFragmentMatrix().setValue(i, j, MAX_VALUE);
                             this.updatedHolder.getEnergyMatrix().setValue(i, j, MAX_VALUE);
                             this.updatedHolder.getFPSimilarityMatrix().setValue(i, j, MIN_VALUE);

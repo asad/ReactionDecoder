@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
@@ -84,8 +83,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
     /**
      *
-     * @return
-     * @throws IOException
+     * @return @throws IOException
      */
     @Override
     public synchronized String getSuffix() throws IOException {
@@ -150,6 +148,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                             mh.getGraphSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
                             mh.getStereoMatrix().setValue(substrateIndex, productIndex, 0.0);
                             mh.getCliqueMatrix().setValue(substrateIndex, productIndex, 0.0);
+                            mh.getCarbonOverlapMatrix().setValue(substrateIndex, productIndex, 0.0);
                             mh.getFragmentMatrix().setValue(substrateIndex, productIndex, 0.0);
                             mh.getEnergyMatrix().setValue(substrateIndex, productIndex, 0.0);
                             mh.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
@@ -207,7 +206,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                         mh.getGraphSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
                         mh.getStereoMatrix().setValue(substrateIndex, productIndex, 0.0);
                         mh.getCliqueMatrix().setValue(substrateIndex, productIndex, 0.0);
+                        mh.getCarbonOverlapMatrix().setValue(substrateIndex, productIndex, 0.0);
                         mh.getFragmentMatrix().setValue(substrateIndex, productIndex, 0.0);
+
                         mh.getEnergyMatrix().setValue(substrateIndex, productIndex, 0.0);
                         mh.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
                     }
@@ -243,6 +244,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             double graphSimilarity = 0.0;
             double mappingSize = 0.0;
             double fpSim = 0.0;
+            double carbonCount = 0.0;
 
             IAtomContainer educt = reactionContainer.getEduct(substrateIndex);
             IAtomContainer product = reactionContainer.getProduct(productIndex);
@@ -255,6 +257,10 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             }
 
             MCSSolution atomatomMapping = getMappings(substrateIndex, productIndex, educt, product, mcsSolutions);
+
+            carbonCount = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet().stream().filter((atom)
+                    -> (atom.getSymbol().equalsIgnoreCase("C"))).map((IAtom _item) -> 1.0).reduce(carbonCount, (accumulator, _item)
+                    -> accumulator + 1);
 
             if (atomatomMapping == null) {
                 throw new CDKException("atom-atom mapping is null");
@@ -306,6 +312,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getCliqueMatrix().setValue(substrateIndex, productIndex, mappingSize);
             holder.getGraphSimilarityMatrix().setValue(substrateIndex, productIndex, graphSimilarity);
             holder.getStereoMatrix().setValue(substrateIndex, productIndex, stereoVal);
+            holder.getCarbonOverlapMatrix().setValue(substrateIndex, productIndex, carbonCount);
             holder.getFragmentMatrix().setValue(substrateIndex, productIndex, fragmentVal);
             holder.getEnergyMatrix().setValue(substrateIndex, productIndex, energyVal);
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
@@ -397,6 +404,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             double graphSimilarity = 0.0;
             double mappingSize = 0.0;
             double fpSim = 0.0;
+            double carbonCount = 0.0;
 
             IAtomContainer educt = reactionContainer.getEduct(substrateIndex);
             IAtomContainer product = reactionContainer.getProduct(productIndex);
@@ -407,6 +415,13 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 if (bestAtomAtomMapping == null) {
                     throw new CDKException("atom-atom mapping is null");
                 }
+
+                for (IAtom atom : bestAtomAtomMapping.getMappingsByAtoms().keySet()) {
+                    if (atom.getSymbol().equalsIgnoreCase("C")) {
+                        carbonCount++;
+                    }
+                }
+
                 stereoVal = initMcsAtom.getStereoScore(substrateIndex, productIndex);
                 fragmentVal = initMcsAtom.getTotalFragmentCount(substrateIndex, productIndex);
                 energyVal = initMcsAtom.getBondEnergy(substrateIndex, productIndex);
@@ -437,6 +452,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getCliqueMatrix().setValue(substrateIndex, productIndex, mappingSize);
             holder.getGraphSimilarityMatrix().setValue(substrateIndex, productIndex, graphSimilarity);
             holder.getStereoMatrix().setValue(substrateIndex, productIndex, stereoVal);
+            holder.getCarbonOverlapMatrix().setValue(substrateIndex, productIndex, carbonCount);
             holder.getFragmentMatrix().setValue(substrateIndex, productIndex, fragmentVal);
             holder.getEnergyMatrix().setValue(substrateIndex, productIndex, energyVal);
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);

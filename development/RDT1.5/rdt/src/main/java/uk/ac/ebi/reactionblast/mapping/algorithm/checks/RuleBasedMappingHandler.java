@@ -359,7 +359,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                      */ {
                         matrixHolderClone.getGraphSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);
                         matrixHolderClone.getCliqueMatrix().setValue(i, j, Double.MIN_VALUE);
-                        matrixHolderClone.getStereoMatrix().setValue(i, j, -Double.MAX_VALUE);
+                        matrixHolderClone.getStereoMatrix().setValue(i, j, Double.MIN_VALUE);
+                        matrixHolderClone.getCarbonOverlapMatrix().setValue(i, j, Double.MIN_VALUE);
                         matrixHolderClone.getFragmentMatrix().setValue(i, j, Double.MAX_VALUE);
                         matrixHolderClone.getEnergyMatrix().setValue(i, j, Double.MAX_VALUE);
                         matrixHolderClone.getFPSimilarityMatrix().setValue(i, j, Double.MIN_VALUE);

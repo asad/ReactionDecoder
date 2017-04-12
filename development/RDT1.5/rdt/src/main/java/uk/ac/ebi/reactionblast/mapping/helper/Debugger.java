@@ -21,15 +21,12 @@ package uk.ac.ebi.reactionblast.mapping.helper;
 import static java.io.File.separator;
 import java.io.IOException;
 import static java.lang.System.err;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import static java.text.NumberFormat.getInstance;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -44,6 +41,9 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
+import static java.lang.System.getProperty;
+import static java.text.NumberFormat.getInstance;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -163,15 +163,15 @@ public abstract class Debugger extends BasicDebugger {
 
     /**
      *
-     * @param Max
+     * @param winner
      * @param EdMap
      * @param PdMap
      */
-    protected void printFlagMatrix(ChooseWinner Max, List<String> EdMap, List<String> PdMap) {
+    protected void printFlagMatrix(ChooseWinner winner, List<String> EdMap, List<String> PdMap) {
 
         out.println();
         out.println("********* MATRIX **********");
-        boolean[][] FlagMatrix = Max.getFlagMatrix();
+        boolean[][] FlagMatrix = winner.getFlagMatrix();
         out.println("Flag Matrix");
         out.print("\t\t");
         for (String PdMap1 : PdMap) {
@@ -248,7 +248,7 @@ public abstract class Debugger extends BasicDebugger {
      * @param PdMap
      */
     protected void printFragmentMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
-        EBIMatrix FragmentMatrix = mh.getFragmentMatrix();
+        EBIMatrix fragmentMatrix = mh.getFragmentMatrix();
 
         out.println();
         out.println("********* MATRIX **********");
@@ -271,9 +271,54 @@ public abstract class Debugger extends BasicDebugger {
                 out.print(" " + EdMap.get(i));
                 for (int j = 0; j
                         < PdMap.size(); j++) {
-                    val = FragmentMatrix.getValue(i, j);
+                    val = fragmentMatrix.getValue(i, j);
                     result
                             = format.format(val);
+                    out.print("   " + result);
+                }
+
+                out.println();
+            }
+
+        } catch (Exception e) {
+            err.println("Parser Error");
+            e.printStackTrace();
+        }
+
+        out.println();
+    }
+
+    /**
+     *
+     * @param mh
+     * @param EdMap
+     * @param PdMap
+     */
+    protected void printCarbonMatrix(Holder mh, List<String> EdMap, List<String> PdMap) {
+        EBIMatrix carbonMatrix = mh.getCarbonOverlapMatrix();
+
+        out.println();
+        out.println("********* MATRIX **********");
+
+        try {
+            NumberFormat format = new DecimalFormat("0.00");
+            String result;
+
+            out.println("Fragment Matrix");
+            out.print("\t\t");
+
+            for (String PdMap1 : PdMap) {
+                out.print(" " + PdMap1);
+            }
+
+            out.println();
+            double val;
+            for (int i = 0; i < EdMap.size(); i++) {
+                out.print(" " + EdMap.get(i));
+                for (int j = 0; j
+                        < PdMap.size(); j++) {
+                    val = carbonMatrix.getValue(i, j);
+                    result = format.format(val);
                     out.print("   " + result);
                 }
 

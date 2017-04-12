@@ -24,11 +24,9 @@ import static java.lang.System.arraycopy;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedList;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.HydrogenFreeFingerPrintContainer;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
@@ -37,6 +35,8 @@ import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -56,6 +56,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     private final EBIMatrix graphSimilarityMatrix;
     private final EBIMatrix fragmentMatrix;
     private final EBIMatrix energyMatrix;
+    private final EBIMatrix carbonOverlapMatrix;
     private final EBIMatrix fpSimMatrixWithoutHydrogen;
     private final int row;
     private final int coloumn;
@@ -112,18 +113,18 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     /**
      *
      * @param row
-     * @param coloumn
+     * @param column
      */
-    public Holder(int row, int coloumn) {
+    public Holder(int row, int column) {
         this.row = row;
-        this.coloumn = coloumn;
-        this.graphSimilarityMatrix = new EBIMatrix(row, coloumn);
-        this.stereoMatrix = new EBIMatrix(row, coloumn);
-        this.cliqueMatrix = new EBIMatrix(row, coloumn);
-        this.fragmentMatrix = new EBIMatrix(row, coloumn);
-        this.fpSimMatrixWithoutHydrogen
-                = new EBIMatrix(row, coloumn);
-        this.energyMatrix = new EBIMatrix(row, coloumn);
+        this.coloumn = column;
+        this.graphSimilarityMatrix = new EBIMatrix(row, column);
+        this.stereoMatrix = new EBIMatrix(row, column);
+        this.cliqueMatrix = new EBIMatrix(row, column);
+        this.fragmentMatrix = new EBIMatrix(row, column);
+        this.carbonOverlapMatrix = new EBIMatrix(row, column);
+        this.fpSimMatrixWithoutHydrogen = new EBIMatrix(row, column);
+        this.energyMatrix = new EBIMatrix(row, column);
         this.mappingMolPair = synchronizedList(new ArrayList<MolMapping>());
         if (DEBUG) {
             out.println("initialize the Matrix");
@@ -174,6 +175,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         fragmentMatrix.initMatrix(0.0);
         fpSimMatrixWithoutHydrogen.initMatrix(0.0);
         energyMatrix.initMatrix(0.0);
+        carbonOverlapMatrix.initMatrix(0.0);
     }
 
     private void setFingerprint() {
@@ -263,6 +265,10 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         matrix = mhClone.getEnergyMatrix();
         setData(arrayCopy, matrix, row, coloumn);
 
+        arrayCopy = this.getCarbonOverlapMatrix().getArrayCopy();
+        matrix = mhClone.getCarbonOverlapMatrix();
+        setData(arrayCopy, matrix, row, coloumn);
+
         arrayCopy = this.getFPSimilarityMatrix().getArrayCopy();
         matrix = mhClone.getFPSimilarityMatrix();
         setData(arrayCopy, matrix, row, coloumn);
@@ -306,5 +312,12 @@ public class Holder extends Debugger implements Cloneable, Serializable {
      */
     public void setTheory(IMappingAlgorithm theory) {
         this.theory = theory;
+    }
+
+    /**
+     * @return the carbonOverlapMatrix
+     */
+    public EBIMatrix getCarbonOverlapMatrix() {
+        return carbonOverlapMatrix;
     }
 }

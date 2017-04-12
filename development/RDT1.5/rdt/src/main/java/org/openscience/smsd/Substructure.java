@@ -24,7 +24,6 @@ package org.openscience.smsd;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -42,8 +41,8 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * molecule. If this case is true then it returns only all mapping.
  *
  * This is much faster than {@link
- * org.openscience.smsd.algorithm.vflib.substructure} class as it only
- * reports first match and backtracks.
+ * org.openscience.smsd.algorithm.vflib.substructure} class as it only reports
+ * first match and backtracks.
  *
  * This class should only be used to report if a query graph is a substructure
  * of the target graph.
@@ -66,8 +65,8 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  * </pre> </font>
  *
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public final class Substructure extends BaseMapping {
@@ -95,18 +94,18 @@ public final class Substructure extends BaseMapping {
             boolean matchAtomType,
             boolean findAllSubgraph) throws CDKException {
         super(query, target, shouldMatchBonds, matchRings, matchAtomType);
-        if (isMatchRings()) {
+        if (super.isMatchRings()) {
             try {
-                MoleculeInitializer.initializeMolecule(getQuery());
-                MoleculeInitializer.initializeMolecule(getTarget());
+                MoleculeInitializer.initializeMolecule(super.getQuery());
+                MoleculeInitializer.initializeMolecule(super.getTarget());
             } catch (CDKException ex) {
             }
         }
 
         if (findAllSubgraph) {
-            setSubgraph(findSubgraphs());
+            super.setSubgraph(findSubgraphs());
         } else {
-            setSubgraph(findSubgraph());
+            super.setSubgraph(findSubgraph());
         }
     }
 
@@ -124,17 +123,15 @@ public final class Substructure extends BaseMapping {
             boolean findAllSubgraph) throws CDKException {
         super(query, target);
         if (findAllSubgraph) {
-            setSubgraph(findSubgraphs());
+            super.setSubgraph(findSubgraphs());
         } else {
-            setSubgraph(findSubgraph());
+            super.setSubgraph(findSubgraph());
         }
     }
 
     private synchronized boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mapGlobal) {
-        for (AtomAtomMapping test : mapGlobal) {
-            if (test.equals(map)) {
-                return true;
-            }
+        if (mapGlobal.stream().anyMatch((test) -> (test.equals(map)))) {
+            return true;
         }
         return false;
     }
@@ -230,7 +227,7 @@ public final class Substructure extends BaseMapping {
                 this.vfMappingSize = solution.getCount();
                 counter = 0;
             }
-            for (Map.Entry<IAtom, IAtom> mapping : solution.getMappingsByAtoms().entrySet()) {
+            solution.getMappingsByAtoms().entrySet().stream().forEach((mapping) -> {
                 IAtom qAtom;
                 IAtom tAtom;
 
@@ -246,7 +243,7 @@ public final class Substructure extends BaseMapping {
                         Logger.error(Level.SEVERE, null, ex);
                     }
                 }
-            }
+            });
             if (!atomatomMapping.isEmpty() && !hasMap(atomatomMapping, getMCSList())
                     && atomatomMapping.getCount() == vfMappingSize) {
                 getMCSList().add(counter, atomatomMapping);

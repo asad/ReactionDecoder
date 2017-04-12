@@ -127,7 +127,8 @@ public class ReactionIsomorphismHandler implements Serializable {
 
                 matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
-                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCarbonOverlapMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
                 matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
@@ -136,7 +137,8 @@ public class ReactionIsomorphismHandler implements Serializable {
             for (int i = rowSize - 1; i >= 0; i--) {
                 matrixHolderWithStereoCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithStereoCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
-                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithStereoCheck.getStereoMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCarbonOverlapMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithStereoCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
                 matrixHolderWithStereoCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
@@ -175,7 +177,8 @@ public class ReactionIsomorphismHandler implements Serializable {
             for (int i = 0; i < rowSize; i++) {
                 matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCarbonOverlapMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
                 matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
@@ -184,7 +187,8 @@ public class ReactionIsomorphismHandler implements Serializable {
             for (int i = rowSize - 1; i >= 0; i--) {
                 matrixHolderWithSimilarityCheck.getGraphSimilarityMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithSimilarityCheck.getCliqueMatrix().setValue(i, i, MIN_VALUE);
-                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, -MAX_VALUE);
+                matrixHolderWithSimilarityCheck.getStereoMatrix().setValue(i, i, MIN_VALUE);
+                matrixHolderWithStereoCheck.getCarbonOverlapMatrix().setValue(i, i, MIN_VALUE);
                 matrixHolderWithSimilarityCheck.getFragmentMatrix().set(i, i, MAX_VALUE);
                 matrixHolderWithSimilarityCheck.getEnergyMatrix().set(i, i, MAX_VALUE);
             }
