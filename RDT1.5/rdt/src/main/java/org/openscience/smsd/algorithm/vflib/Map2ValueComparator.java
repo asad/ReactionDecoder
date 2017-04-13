@@ -27,7 +27,7 @@ import java.util.Comparator;
 import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 
- /*
+/*
  * 
  * 
  *

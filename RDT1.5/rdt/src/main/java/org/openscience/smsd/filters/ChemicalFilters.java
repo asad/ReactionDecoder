@@ -39,7 +39,7 @@ import org.openscience.smsd.AtomAtomMapping;
  * A set of filters applied to the results.
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
- * 
+ *
  *
  */
 public class ChemicalFilters extends BaseFilter {

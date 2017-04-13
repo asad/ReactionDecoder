@@ -486,7 +486,7 @@ final public class CDKMCS {
         }
 
         // reset result
-        List<List<CDKRMap>> rMapsList = new ArrayList<List<CDKRMap>>();
+        List<List<CDKRMap>> rMapsList = new ArrayList<>();
 
         // build the CDKRGraph corresponding to this problem
         CDKRGraph rGraph = buildRGraph(g1, g2, shouldMatchBonds, shouldMatchRings, matchAtomType);
@@ -497,9 +497,9 @@ final public class CDKMCS {
         List<BitSet> solutionList = rGraph.getSolutions();
 
         // conversions of CDKRGraph's internal solutions to G1/G2 mappings
-        for (BitSet set : solutionList) {
+        solutionList.stream().forEach((set) -> {
             rMapsList.add(rGraph.bitSetToRMap(set));
-        }
+        });
 
         return rMapsList;
     }
@@ -574,10 +574,9 @@ final public class CDKMCS {
     private static List<IAtomContainer> projectList(List<List<CDKRMap>> rMapsList, IAtomContainer g, int id) {
         List<IAtomContainer> graphList = new ArrayList<>();
 
-        for (List<CDKRMap> rMapList : rMapsList) {
-            IAtomContainer ac = project(rMapList, g, id);
+        rMapsList.stream().map((rMapList) -> project(rMapList, g, id)).forEach((ac) -> {
             graphList.add(ac);
-        }
+        });
         return graphList;
     }
 
@@ -688,9 +687,9 @@ final public class CDKMCS {
             return l; // since the CDKRMap is already an atom-atom mapping
         }
         List<List<CDKRMap>> result = new ArrayList<>();
-        for (List<CDKRMap> l2 : l) {
+        l.stream().forEach((l2) -> {
             result.add(makeAtomsMapOfBondsMap(l2, g1, g2));
-        }
+        });
         return result;
     }
 
@@ -985,12 +984,8 @@ final public class CDKMCS {
             IQueryAtom queryAtom2 = (IQueryAtom) queryBond2.getConnectedAtom(centralQueryAtom);
             IAtom atom1 = bond1.getConnectedAtom(centralAtom);
             IAtom atom2 = bond2.getConnectedAtom(centralAtom);
-            if (queryAtom1.matches(atom1) && queryAtom2.matches(atom2)
-                    || queryAtom1.matches(atom2) && queryAtom2.matches(atom1)) {
-                return true;
-            } else {
-                return false;
-            }
+            return queryAtom1.matches(atom1) && queryAtom2.matches(atom2)
+                    || queryAtom1.matches(atom2) && queryAtom2.matches(atom1);
         } else {
             return centralAtom == null && centralQueryAtom == null;
         }
@@ -1089,22 +1084,33 @@ final public class CDKMCS {
 
         for (int i = 0; i < ac1.getAtomCount(); i++) {
             atom = ac1.getAtom(i);
-            if (atom.getSymbol().equals("S")) {
-                ac1SCount++;
-            } else if (atom.getSymbol().equals("N")) {
-                ac1NCount++;
-            } else if (atom.getSymbol().equals("O")) {
-                ac1OCount++;
-            } else if (atom.getSymbol().equals("F")) {
-                ac1FCount++;
-            } else if (atom.getSymbol().equals("Cl")) {
-                ac1ClCount++;
-            } else if (atom.getSymbol().equals("Br")) {
-                ac1BrCount++;
-            } else if (atom.getSymbol().equals("I")) {
-                ac1ICount++;
-            } else if (atom.getSymbol().equals("C")) {
-                ac1CCount++;
+            switch (atom.getSymbol()) {
+                case "S":
+                    ac1SCount++;
+                    break;
+                case "N":
+                    ac1NCount++;
+                    break;
+                case "O":
+                    ac1OCount++;
+                    break;
+                case "F":
+                    ac1FCount++;
+                    break;
+                case "Cl":
+                    ac1ClCount++;
+                    break;
+                case "Br":
+                    ac1BrCount++;
+                    break;
+                case "I":
+                    ac1ICount++;
+                    break;
+                case "C":
+                    ac1CCount++;
+                    break;
+                default:
+                    break;
             }
         }
         for (int i = 0; i < ac2.getAtomCount(); i++) {
@@ -1112,22 +1118,33 @@ final public class CDKMCS {
             if (atom instanceof IQueryAtom) {
                 continue;
             }
-            if (atom.getSymbol().equals("S")) {
-                ac2SCount++;
-            } else if (atom.getSymbol().equals("N")) {
-                ac2NCount++;
-            } else if (atom.getSymbol().equals("O")) {
-                ac2OCount++;
-            } else if (atom.getSymbol().equals("F")) {
-                ac2FCount++;
-            } else if (atom.getSymbol().equals("Cl")) {
-                ac2ClCount++;
-            } else if (atom.getSymbol().equals("Br")) {
-                ac2BrCount++;
-            } else if (atom.getSymbol().equals("I")) {
-                ac2ICount++;
-            } else if (atom.getSymbol().equals("C")) {
-                ac2CCount++;
+            switch (atom.getSymbol()) {
+                case "S":
+                    ac2SCount++;
+                    break;
+                case "N":
+                    ac2NCount++;
+                    break;
+                case "O":
+                    ac2OCount++;
+                    break;
+                case "F":
+                    ac2FCount++;
+                    break;
+                case "Cl":
+                    ac2ClCount++;
+                    break;
+                case "Br":
+                    ac2BrCount++;
+                    break;
+                case "I":
+                    ac2ICount++;
+                    break;
+                case "C":
+                    ac2CCount++;
+                    break;
+                default:
+                    break;
             }
         }
 

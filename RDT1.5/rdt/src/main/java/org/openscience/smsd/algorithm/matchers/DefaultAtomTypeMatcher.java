@@ -126,10 +126,8 @@ public final class DefaultAtomTypeMatcher implements AtomMatcher {
         List<Integer> ringsizesQ = qAtom.getProperty(CDKConstants.RING_SIZES);
         List<Integer> ringsizesT = atom.getProperty(CDKConstants.RING_SIZES);
         if (ringsizesQ != null && ringsizesT != null) {
-            for (int i : ringsizesQ) {
-                if (ringsizesT.contains(i)) {
-                    return true;
-                }
+            if (ringsizesQ.stream().anyMatch((i) -> (ringsizesT.contains(i)))) {
+                return true;
             }
         }
         return false;

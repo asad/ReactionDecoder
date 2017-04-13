@@ -43,8 +43,8 @@ import org.openscience.smsd.tools.AtomContainerComparator;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
@@ -98,9 +98,9 @@ public class MCSS {
          * Remove hydrogen from the molecules
          **/
         List<IAtomContainer> selectedJobs = new ArrayList<>(jobList.size());
-        for (IAtomContainer ac : jobList) {
+        jobList.stream().forEach((ac) -> {
             selectedJobs.add(removeHydrogens(ac));
-        }
+        });
         /*
          * Sort the molecules in the ascending order of atom size and atom type
          */

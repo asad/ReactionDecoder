@@ -28,11 +28,11 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * This class generates compatibility graph between query and target molecule. It also marks edges in the compatibility
- * graph as c-edges or d-edges.
+ * This class generates compatibility graph between query and target molecule.
+ * It also marks edges in the compatibility graph as c-edges or d-edges.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */

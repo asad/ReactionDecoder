@@ -46,8 +46,8 @@ import org.openscience.smsd.tools.BondEnergies;
  * This class handles single atom mapping. Either query and/or target molecule
  * with single atom is mapped by this class.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -227,10 +227,9 @@ public class SingleMapping {
         }
 
         Map<Integer, Double> sortedMapByValue = sortByValue(connectedBondOrder);
-        for (Integer key : sortedMapByValue.keySet()) {
-            Map<IAtom, IAtom> mapToBeMoved = mappings.get(key);
+        sortedMapByValue.keySet().stream().map((key) -> mappings.get(key)).forEach((mapToBeMoved) -> {
             sortedMap.add(mapToBeMoved);
-        }
+        });
         return sortedMap;
     }
 

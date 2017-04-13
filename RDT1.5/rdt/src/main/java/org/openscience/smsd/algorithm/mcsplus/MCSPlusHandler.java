@@ -39,7 +39,7 @@ import org.openscience.smsd.interfaces.IResults;
  * This class acts as a handler class for MCSPlus algorithm.
  * {@link org.openscience.smsd.algorithm.mcsplus.MCSPlus}
  *
- *  
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -132,14 +132,13 @@ public final class MCSPlusHandler implements IResults {
 //                System.out.println("Number of MCS solution: " + solution);
                 Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
                 if (!flagExchange) {
-                    for (Map.Entry<Integer, Integer> map : solution.entrySet()) {
+                    solution.entrySet().stream().forEach((map) -> {
                         validSolution.put(map.getKey(), map.getValue());
-                    }
+                    });
                 } else {
-                    for (Map.Entry<Integer, Integer> map : solution.entrySet()) {
+                    solution.entrySet().stream().forEach((map) -> {
                         validSolution.put(map.getValue(), map.getKey());
-                    }
-//                    System.out.println("MCS solution: " + validSolution);
+                    });//                    System.out.println("MCS solution: " + validSolution);
                 }
                 if (validSolution.size() > bestSolSize) {
                     bestSolSize = validSolution.size();

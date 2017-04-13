@@ -39,8 +39,8 @@ import java.util.Stack;
  *
  * BronKerboschCazalsKarandeKochCliqueFinder.java
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public final class BKKCKCF {
@@ -206,9 +206,9 @@ public final class BKKCKCF {
         D_copy = new Stack<>();
         S_copy = new ArrayList<>();
 
-        for (Integer I : P) {
+        P.stream().forEach((I) -> {
             P_Prime.add(I);
-        }
+        });
 
         if (P.size() == 1) {
             if (S.isEmpty()) {
@@ -258,19 +258,19 @@ public final class BKKCKCF {
             S_copy.clear();
             N.clear();
 
-            for (Integer obj : C) {
+            C.stream().forEach((obj) -> {
                 C_copy.add(obj);
-            }
+            });
 
-            for (Integer obj : P) {
+            P.stream().forEach((obj) -> {
                 P_copy.add(obj);
-            }
-            for (Integer obj : D) {
+            });
+            D.stream().forEach((obj) -> {
                 D_copy.add(obj);
-            }
-            for (Integer obj : S) {
+            });
+            S.stream().forEach((obj) -> {
                 S_copy.add(obj);
-            }
+            });
 
             P_copy.pop(); //Entferne Endekennung bei P_copy POP method() in CPP
 

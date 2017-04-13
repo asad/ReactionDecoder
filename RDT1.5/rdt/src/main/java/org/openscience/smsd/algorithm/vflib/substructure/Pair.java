@@ -48,9 +48,9 @@ package org.openscience.smsd.algorithm.vflib.substructure;
 
 /**
  * Holds source and target atoms
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 /**
@@ -80,6 +80,7 @@ public class Pair<T, S> {
     }
 
     /**
+     * @param first
      * @param source the source to set
      */
     public synchronized void setSourceAtom(T first) {
@@ -96,7 +97,7 @@ public class Pair<T, S> {
     /**
      * @param target the target to set
      */
-    public synchronized void setTargetAtom(S second) {
-        this.target = second;
+    public synchronized void setTargetAtom(S target) {
+        this.target = target;
     }
 }

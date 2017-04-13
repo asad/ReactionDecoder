@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
@@ -50,7 +51,7 @@ import org.openscience.smsd.AtomAtomMapping;
  * Filter on stereo and bond matches.
  *
  * @author Syed Asad Rahman <asad@ebi.subGraph.uk>
- * 
+ *
  */
 public final class StereoFilter extends Sotter implements IChemicalFilter<Double> {
 
@@ -72,7 +73,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         Map<Integer, Double> sortedStereoScoreMap = sortMapByValueInDescendingOrder(stereoScoreMap);
         double highestStereoScore
                 = sortedStereoScoreMap.isEmpty() ? 0
-                : sortedStereoScoreMap.values().iterator().next();
+                        : sortedStereoScoreMap.values().iterator().next();
         return highestStereoScore;
     }
 
@@ -141,17 +142,15 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
 
         Map<IBond, IBond> bondbondMappingMap = new HashMap<>();
 
-        for (Map.Entry<IAtom, IAtom> map1 : mappings.getMappingsByAtoms().entrySet()) {
-            for (Map.Entry<IAtom, IAtom> map2 : mappings.getMappingsByAtoms().entrySet()) {
-                if (map1.getKey() != map2.getKey()) {
-                    IBond bond1 = ac1.getBond(map1.getKey(), map2.getKey());
-                    IBond bond2 = ac2.getBond(map1.getValue(), map2.getValue());
-                    if (bond1 != null && bond2 != null && !bondbondMappingMap.containsKey(bond1)) {
-                        bondbondMappingMap.put(bond1, bond2);
-                    }
+        mappings.getMappingsByAtoms().entrySet().stream().forEach((Map.Entry<IAtom, IAtom> map1) -> {
+            mappings.getMappingsByAtoms().entrySet().stream().filter((map2) -> (map1.getKey() != map2.getKey())).forEach((map2) -> {
+                IBond bond1 = ac1.getBond(map1.getKey(), map2.getKey());
+                IBond bond2 = ac2.getBond(map1.getValue(), map2.getValue());
+                if (bond1 != null && bond2 != null && !bondbondMappingMap.containsKey(bond1)) {
+                    bondbondMappingMap.put(bond1, bond2);
                 }
-            }
-        }
+            });
+        });
 //        System.out.println("Mol Map size:" + bondbondMappingMap.size());
         return bondbondMappingMap;
     }
@@ -370,10 +369,9 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
             return new ArrayList<>(2);
         }
         List<IAtom> list = new ArrayList<>(atomsMCS.size());
-        for (IAtom atom : atomsMCS) {
-            int post = molecule.getAtomNumber(atom);
+        atomsMCS.stream().map((atom) -> molecule.getAtomNumber(atom)).forEach((post) -> {
             list.add(subgraphContainer.getAtom(post));
-        }
+        });
 
         IAtomContainer rlist = new AtomContainer();
         for (IAtom atoms : subgraphContainer.atoms()) {

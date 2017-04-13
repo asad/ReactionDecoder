@@ -43,13 +43,13 @@ import org.openscience.smsd.algorithm.mcgregor.McGregor;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports
- * MCS between run source and target graphs. Then these solutions are extended
- * using McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor}
- * algorithm where ever required.
+ * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports MCS between
+ * run source and target graphs. Then these solutions are extended using
+ * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
+ * where ever required.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -170,7 +170,7 @@ public class BaseMCS {
          * Sort biggest clique to smallest
          */
         Collections.sort(vfLibSolutions, new Map2ValueComparator(SortOrder.DESCENDING));
-        for (Map<IAtom, IAtom> solution : vfLibSolutions) {
+        vfLibSolutions.stream().forEach((solution) -> {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
             Map<Integer, Integer> indexindexMapping = new TreeMap<>();
             solution.entrySet().stream().forEach((mapping) -> {
@@ -202,13 +202,12 @@ public class BaseMCS {
                     }
                 }
             });
-
             if (!indexindexMapping.isEmpty()
                     && !hasClique(indexindexMapping, getLocalMCSSolution())) {
                 getLocalAtomMCSSolution().add(atomatomMapping);
                 getLocalMCSSolution().add(indexindexMapping);
             }
-        }
+        });
 
         if (DEBUG) {
             System.out.println("VF seed mappings stored count: " + getLocalMCSSolution().size());

@@ -28,8 +28,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */

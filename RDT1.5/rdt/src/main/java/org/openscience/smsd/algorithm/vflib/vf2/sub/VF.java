@@ -54,7 +54,7 @@ import org.openscience.smsd.algorithm.vflib.vf2.DefaultBondMatcher;
  *
  * @author John May
  * @author Syed Asad Rahman
- * 
+ *
  */
 public final class VF extends Pattern {
 

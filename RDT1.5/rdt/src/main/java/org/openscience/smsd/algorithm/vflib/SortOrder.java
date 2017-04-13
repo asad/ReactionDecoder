@@ -4,7 +4,7 @@
  */
 package org.openscience.smsd.algorithm.vflib;
 
- /*
+/*
  * 
  * 
  *

@@ -26,12 +26,11 @@ package org.openscience.smsd.helper;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Class that handles atoms and assigns an integer label to them.
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class LabelContainer {

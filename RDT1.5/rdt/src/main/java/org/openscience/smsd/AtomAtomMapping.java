@@ -164,11 +164,11 @@ public final class AtomAtomMapping implements Serializable {
             }
 
             s.append("MMP: ").append(createReactionSMILES).append(", AAM:[");
-            for (IAtom firstAtom : mapping.keySet()) {
+            mapping.keySet().stream().forEach((firstAtom) -> {
                 int keyIndex = getQuery().getAtomNumber(firstAtom) + 1;
                 int valueIndex = getTarget().getAtomNumber(mapping.get(firstAtom)) + 1;
                 s.append(keyIndex).append(":").append(valueIndex).append("|");
-            }
+            });
 
             s.append("]");
 

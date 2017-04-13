@@ -33,8 +33,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 /**
  * Class to handle mappings of target molecule based on the query.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -118,7 +118,7 @@ public class TargetProcessor {
                 if (unmapped_atoms_molB.get(b).equals(indexI)) {
                     normal_bond = unMappedAtomsEqualsIndexI(target, mappingSize, atomIndex, counter, mapped_atoms, indexI, indexJ, order);
                     bond_considered = true;
-                } else if (unmapped_atoms_molB.get(b) == indexJ) {
+                } else if (unmapped_atoms_molB.get(b).equals(indexJ)) {
                     normal_bond = unMappedAtomsEqualsIndexJ(target, mappingSize, atomIndex, counter, mapped_atoms, indexI, indexJ, order);
                     bond_considered = true;
                 }
@@ -377,7 +377,8 @@ public class TargetProcessor {
 
     /**
      *
-     * @return number of remaining molecule A bonds after the clique search, which are neighbors of the MCS
+     * @return number of remaining molecule A bonds after the clique search,
+     * which are neighbors of the MCS
      *
      */
     protected int getNeighborBondNumB() {
@@ -386,7 +387,8 @@ public class TargetProcessor {
 
     /**
      *
-     * @return number of remaining molecule A bonds after the clique search, which aren't neighbors
+     * @return number of remaining molecule A bonds after the clique search,
+     * which aren't neighbors
      */
     protected int getBondNumB() {
         return this.setBondNumB;

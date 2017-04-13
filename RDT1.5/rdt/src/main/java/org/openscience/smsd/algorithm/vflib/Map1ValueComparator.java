@@ -26,7 +26,7 @@ package org.openscience.smsd.algorithm.vflib;
 import java.util.Comparator;
 import java.util.Map;
 
- /*
+/*
  * 
  * 
  *

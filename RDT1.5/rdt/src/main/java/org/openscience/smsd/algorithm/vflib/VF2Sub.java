@@ -42,13 +42,13 @@ import org.openscience.smsd.interfaces.IResults;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports
- * MCS between run source and target graphs. Then these solutions are extended
- * using McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor}
- * algorithm where ever required.
+ * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports MCS between
+ * run source and target graphs. Then these solutions are extended using
+ * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
+ * where ever required.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -145,12 +145,7 @@ public class VF2Sub implements IResults {
     }
 
     private boolean hasMap(Map<Integer, Integer> maps, List<Map<Integer, Integer>> mapGlobal) {
-        for (Map<Integer, Integer> test : mapGlobal) {
-            if (test.equals(maps)) {
-                return true;
-            }
-        }
-        return false;
+        return mapGlobal.stream().anyMatch((test) -> (test.equals(maps)));
     }
 
     /**
@@ -279,9 +274,9 @@ public class VF2Sub implements IResults {
                 extendMapping.clear();
                 mgit = new McGregor(target, source, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
                 ROPFlag = false;
-                for (Map.Entry<Integer, Integer> map : firstPassMappings.entrySet()) {
+                firstPassMappings.entrySet().stream().forEach((map) -> {
                     extendMapping.put(map.getValue(), map.getKey());
-                }
+                });
                 //Start McGregor search
                 mgit.startMcGregorIteration(target, mgit.getMCSSize(), extendMapping);
             }
@@ -299,7 +294,7 @@ public class VF2Sub implements IResults {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
             Map<Integer, Integer> indexindexMapping = new TreeMap<>();
 
-            for (Map.Entry<IAtom, IAtom> mapping : solution.entrySet()) {
+            solution.entrySet().stream().forEach((mapping) -> {
                 IAtom qAtom;
                 IAtom tAtom;
                 Integer qIndex;
@@ -327,7 +322,7 @@ public class VF2Sub implements IResults {
                         Logger.error(Level.SEVERE, null, ex);
                     }
                 }
-            }
+            });
             if (indexindexMapping.size() > bestHitSize) {
                 bestHitSize = indexindexMapping.size();
                 allAtomMCSCopy.clear();

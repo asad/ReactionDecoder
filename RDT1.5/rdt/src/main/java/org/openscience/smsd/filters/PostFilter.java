@@ -4,18 +4,22 @@
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version. All we ask is that proper credit is given for our work, which includes - but is not limited to -
- * adding the above copyright notice to the beginning of your source code files, and to any copyright notice that you
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version. All we ask is that proper credit is given for our work,
+ * which includes - but is not limited to - adding the above copyright notice to
+ * the beginning of your source code files, and to any copyright notice that you
  * may distribute with programs based on this work.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to
- * the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package org.openscience.smsd.filters;
 
@@ -35,8 +39,8 @@ import java.util.TreeMap;
  *
  * </OL>
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class PostFilter {
@@ -58,12 +62,7 @@ public class PostFilter {
     }
 
     private synchronized static boolean hasMap(Map<Integer, Integer> newMap, List<Map<Integer, Integer>> nonRedundantMapping) {
-        for (Map<Integer, Integer> storedMap : nonRedundantMapping) {
-            if (storedMap.equals(newMap)) {
-                return true;
-            }
-        }
-        return false;
+        return nonRedundantMapping.stream().anyMatch((storedMap) -> (storedMap.equals(newMap)));
     }
 
     /**
@@ -73,12 +72,9 @@ public class PostFilter {
      */
     private synchronized static List<Map<Integer, Integer>> removeRedundantMapping(List<List<Integer>> mapping_org) {
         List<Map<Integer, Integer>> nonRedundantMapping = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
-        for (List<Integer> M : mapping_org) {
-            Map<Integer, Integer> newMap = getMappingMapFromList(M);
-            if (!hasMap(newMap, nonRedundantMapping)) {
-                nonRedundantMapping.add(newMap);
-            }
-        }
+        mapping_org.stream().map((M) -> getMappingMapFromList(M)).filter((newMap) -> (!hasMap(newMap, nonRedundantMapping))).forEach((newMap) -> {
+            nonRedundantMapping.add(newMap);
+        });
         return nonRedundantMapping;
     }
 

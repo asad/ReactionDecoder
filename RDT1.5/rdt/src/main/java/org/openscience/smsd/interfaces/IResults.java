@@ -26,16 +26,17 @@ import java.util.List;
 import org.openscience.smsd.AtomAtomMapping;
 
 /**
- * Interface that holds basic core interface for all MCS algorithm.  
+ * Interface that holds basic core interface for all MCS algorithm.
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public interface IResults {
 
     /**
-     * Returns all plausible mappings between query and target molecules. Each map in the list has atom-atom equivalence
-     * of the mappings between query and target molecule i.e. map.getKey() for the query and map.getValue() for the
-     * target molecule
+     * Returns all plausible mappings between query and target molecules. Each
+     * map in the list has atom-atom equivalence of the mappings between query
+     * and target molecule i.e. map.getKey() for the query and map.getValue()
+     * for the target molecule
      *
      * @return All possible MCS atom Mappings
      */

@@ -18,7 +18,7 @@ package org.openscience.smsd.algorithm.vflib.vf2.mcs;
  * @author Syed Asad Rahman
  * @author John May
  *
- * 
+ *
  */
 import org.openscience.smsd.algorithm.vflib.vf2.*;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -155,7 +155,6 @@ final class VFSeedState extends AbstractVFSeedState {
         // equal to the number of the number of vertices adjacent to m that
         // are neither in m2 or t2. To allow mapping of monomorphisms we addMapping the
         // number of adjacent terminal vertices.
-        
         /*
          * @Asad
          * Return all matche combinations

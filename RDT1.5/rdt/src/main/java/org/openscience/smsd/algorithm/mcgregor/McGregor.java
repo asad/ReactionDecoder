@@ -47,8 +47,8 @@ import org.openscience.smsd.tools.IterationManager;
  *
  * @cdk.cite SMSD2009}. </p>
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -193,11 +193,13 @@ public final class McGregor {
         //find mapped atoms of both molecules and store these in mappedAtoms
         List<Integer> mapped_atoms = new ArrayList<>();
 //        System.out.println("\nMapped Atoms");
-        for (Map.Entry<Integer, Integer> map : present_Mapping.entrySet()) {
-//            System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+        present_Mapping.entrySet().stream().map((map) -> {
+            //            System.out.println("i:" + map.getKey() + " j:" + map.getValue());
             mapped_atoms.add(map.getKey());
+            return map;
+        }).forEach((map) -> {
             mapped_atoms.add(map.getValue());
-        }
+        });
         int mapping_size = present_Mapping.size();
 
         List<Integer> i_bond_neighborsA = new ArrayList<>();
@@ -392,7 +394,7 @@ public final class McGregor {
             List<String> c_setB_copy = McGregorChecks.generateCSetCopy(setNumB, c_bond_setB);
 
             //find unmapped atoms of molecule A
-            List<Integer> unmapped_atoms_molA = new ArrayList<Integer>();
+            List<Integer> unmapped_atoms_molA = new ArrayList<>();
             int unmapped_numA = 0;
             boolean atomA_is_unmapped = true;
 
@@ -443,7 +445,7 @@ public final class McGregor {
             new_c_neighborsA = queryProcess.getCBondNeighborsA();
 
             //find unmapped atoms of molecule B
-            List<Integer> unmapped_atoms_molB = new ArrayList<Integer>();
+            List<Integer> unmapped_atoms_molB = new ArrayList<>();
             int unmapped_numB = 0;
             boolean atomB_is_unmapped = true;
 
@@ -607,7 +609,7 @@ public final class McGregor {
         int xIndex = xstart;
         int yIndex = ystart;
 
-        List<Integer> TEMPMARCS = new ArrayList<Integer>(TEMPMARCS_ORG);
+        List<Integer> TEMPMARCS = new ArrayList<>(TEMPMARCS_ORG);
 
         if (TEMPMARCS.get(xstart * neighborBondNumB + ystart) == 1) {
 
@@ -653,7 +655,7 @@ public final class McGregor {
     private synchronized boolean checkMARCS(List<Integer> MARCS_T, int neighborBondNumA, int neighborBondNumB) {
 
         int size = neighborBondNumA * neighborBondNumA;
-        List<Integer> posnum_list = new ArrayList<Integer>(size);
+        List<Integer> posnum_list = new ArrayList<>(size);
 
         for (int i = 0; i < posnum_list.size(); i++) {
             posnum_list.add(i, 0);
@@ -719,7 +721,7 @@ public final class McGregor {
         int neighborBondNumB = mcGregorHelper.getNeighborBondNumB();
 
         int size = neighborBondNumA * neighborBondNumB;
-        List<Integer> FIXARCS = new ArrayList<Integer>(size);//  Initialize FIXARCS with 0
+        List<Integer> FIXARCS = new ArrayList<>(size);//  Initialize FIXARCS with 0
         for (int i = 0; i < size; i++) {
             FIXARCS.add(i, 0);
         }

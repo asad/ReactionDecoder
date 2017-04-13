@@ -31,8 +31,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 /**
  * Checks if atom is matching between query and target molecules.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -111,10 +111,8 @@ public final class DefaultAtomMatcher implements AtomMatcher {
         List<Integer> ringsizesQ = qAtom.getProperty(CDKConstants.RING_SIZES);
         List<Integer> ringsizesT = atom.getProperty(CDKConstants.RING_SIZES);
         if (ringsizesQ != null && ringsizesT != null) {
-            for (int i : ringsizesQ) {
-                if (ringsizesT.contains(i)) {
-                    return true;
-                }
+            if (ringsizesQ.stream().anyMatch((i) -> (ringsizesT.contains(i)))) {
+                return true;
             }
         }
         return false;

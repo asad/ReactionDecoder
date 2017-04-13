@@ -29,10 +29,11 @@ import java.util.List;
 /**
  * Helper Class for McGregor algorithm.
  *
- * The second part of the program extents the mapping by the McGregor algorithm in case,
- * that not all atoms of molecule A and molecule B are mapped by the clique approach.
- * 
- * 
+ * The second part of the program extents the mapping by the McGregor algorithm
+ * in case, that not all atoms of molecule A and molecule B are mapped by the
+ * clique approach.
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class McgregorHelper {
@@ -55,6 +56,7 @@ public class McgregorHelper {
 
     /**
      * Stores the variables
+     *
      * @param mappingCheckFlag
      * @param mappedAtomCount
      * @param mappedAtomsOrg

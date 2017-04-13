@@ -22,12 +22,11 @@
  */
 package org.openscience.smsd.interfaces;
 
-
 /**
- * 
- * This class represents various algorithm type supported by SMSD.
- * Presently SMSD supports 5 different kinds of algorithms:
- * 
+ *
+ * This class represents various algorithm type supported by SMSD. Presently
+ * SMSD supports 5 different kinds of algorithms:
+ *
  * <OL>
  * <lI>0: default,
  * <lI>1: MCSPlus,
@@ -37,8 +36,8 @@ package org.openscience.smsd.interfaces;
  * <lI>5: TurboSubStructure
  * </OL>
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public enum Algorithm implements Comparable<Algorithm> {
@@ -69,6 +68,7 @@ public enum Algorithm implements Comparable<Algorithm> {
 
     /**
      * Returns type of algorithm.
+     *
      * @return type of algorithm
      */
     public int type() {
@@ -77,6 +77,7 @@ public enum Algorithm implements Comparable<Algorithm> {
 
     /**
      * Returns short description of the algorithm.
+     *
      * @return description of the algorithm
      */
     public String description() {

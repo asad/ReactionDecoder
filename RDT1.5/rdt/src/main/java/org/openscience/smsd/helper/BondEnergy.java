@@ -31,8 +31,8 @@ import org.openscience.cdk.interfaces.IBond.Order;
  * Helper class defining the energy for a bond type. The bond type is defined as
  * to element symbols and a bond order.
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class BondEnergy {

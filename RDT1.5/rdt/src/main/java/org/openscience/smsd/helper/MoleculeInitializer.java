@@ -45,8 +45,8 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -63,31 +63,31 @@ public class MoleculeInitializer {
          * however the non-uniqueness leads to ambiguous matching.
          */
         SmallestSetOfSmallestRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findSSSR();
-                    }
-                },
+            @Override
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findSSSR();
+            }
+        },
         /**
          * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
          * The set is unique but may excludes rings (e.g. from bridged systems).
          */
         EssentialRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findEssentialRings();
-                    }
-                },
+            @Override
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findEssentialRings();
+            }
+        },
         /**
          * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
          * The set is unique but may include more rings then is necessary.
          */
         RelevantRings {
-                    @Override
-                    IRingSet ringSet(IAtomContainer m) {
-                        return new SSSRFinder(m).findRelevantRings();
-                    }
-                };
+            @Override
+            IRingSet ringSet(IAtomContainer m) {
+                return new SSSRFinder(m).findRelevantRings();
+            }
+        };
 
         /**
          * Compute a ring set for a molecule.
@@ -217,11 +217,7 @@ public class MoleculeInitializer {
 
                 List<IAtom> connectedAtoms = atomContainer.getConnectedAtomsList(atom);
                 int total = hCount + connectedAtoms.size();
-                for (IAtom connectedAtom : connectedAtoms) {
-                    if (connectedAtom.getSymbol().equals("H")) {
-                        hCount++;
-                    }
-                }
+                hCount = connectedAtoms.stream().filter((connectedAtom) -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
                 atom.setProperty(CDKConstants.TOTAL_CONNECTIONS, total);
                 atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
 

@@ -37,7 +37,7 @@ import org.openscience.smsd.interfaces.IResults;
  * This is a handler class for single atom mapping
  * ({@link org.openscience.smsd.algorithm.single.SingleMapping}).
  *
- *  
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -57,8 +57,8 @@ public class SingleMappingHandler implements IResults {
      * @param shouldMatchRings
      */
     public SingleMappingHandler(
-            IAtomContainer source, 
-            IAtomContainer target, 
+            IAtomContainer source,
+            IAtomContainer target,
             boolean shouldMatchRings) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
@@ -73,7 +73,7 @@ public class SingleMappingHandler implements IResults {
      * @param target
      */
     public SingleMappingHandler(
-            IQueryAtomContainer source, 
+            IQueryAtomContainer source,
             IAtomContainer target) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
@@ -111,12 +111,11 @@ public class SingleMappingHandler implements IResults {
             int counter = 0;
             for (Map<IAtom, IAtom> solution : mappings) {
                 AtomAtomMapping atomMappings = new AtomAtomMapping(source, target);
-                for (Map.Entry<IAtom, IAtom> map : solution.entrySet()) {
-
+                solution.entrySet().stream().forEach((map) -> {
                     IAtom sourceAtom = map.getKey();
                     IAtom targetAtom = map.getValue();
                     atomMappings.put(sourceAtom, targetAtom);
-                }
+                });
                 allAtomMCS.add(counter, atomMappings);
                 counter++;
             }

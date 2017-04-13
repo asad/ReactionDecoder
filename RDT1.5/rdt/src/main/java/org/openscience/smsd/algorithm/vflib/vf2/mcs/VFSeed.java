@@ -56,7 +56,7 @@ import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern;
  *
  * @author John May
  * @author Syed Asad Rahman
- * 
+ *
  */
 public final class VFSeed extends Pattern {
 

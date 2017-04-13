@@ -33,7 +33,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
 
 /**
- * This class maintain the atom-atom mapping of a reaction between reactants and products
+ * This class maintain the atom-atom mapping of a reaction between reactants and
+ * products
  *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
@@ -240,8 +241,9 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     }
 
     /**
-     * The method returns the product atom mapped to the reactant atom passed as parameter. Returns null if the
-     * reactantAtom is not mapped to any product atom.
+     * The method returns the product atom mapped to the reactant atom passed as
+     * parameter. Returns null if the reactantAtom is not mapped to any product
+     * atom.
      *
      * @param reactantAtom The IAtom for which the product atom is required.
      * @return The product atom mapped to the given reactant atom.
@@ -288,9 +290,11 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     }
 
     /**
-     * Returns the number of mappings which the AtomAtomMappingContainer contains.
+     * Returns the number of mappings which the AtomAtomMappingContainer
+     * contains.
      *
-     * @return the number of mappings which the AtomAtomMappingContainer contains.
+     * @return the number of mappings which the AtomAtomMappingContainer
+     * contains.
      */
     public synchronized int getSize() {
         return reactantAtomArray.size();
@@ -302,11 +306,9 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      */
     public synchronized int getSizeNoHydrogens() {
         int count = 0;
-        for (IAtom a : reactantAtomArray) {
-            if (!a.getSymbol().equals("H")) {
-                count++;
-            }
-        }
+        count = reactantAtomArray.stream().filter((a)
+                -> (!a.getSymbol().equals("H"))).map((_item) -> 1)
+                .reduce(count, Integer::sum);
         return count;
     }
 

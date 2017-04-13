@@ -27,8 +27,8 @@ import org.openscience.cdk.interfaces.IAtom;
 /**
  * Interface for the AtomMatcher (atoms) in graph.
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public interface AtomMatcher {

@@ -29,8 +29,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 /**
  * Checks if a bond is matching between query and target molecules.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */

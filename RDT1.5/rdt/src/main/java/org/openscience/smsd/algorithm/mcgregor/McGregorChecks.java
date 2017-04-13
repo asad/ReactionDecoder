@@ -38,8 +38,8 @@ import org.openscience.smsd.helper.BinaryTree;
 /**
  * Class to perform check/methods for McGregor class.
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class McGregorChecks {

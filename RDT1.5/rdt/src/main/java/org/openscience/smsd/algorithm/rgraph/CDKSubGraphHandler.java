@@ -33,9 +33,10 @@ import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
- * This class acts as a handler class for CDKMCS algorithm {@link org.openscience.smsd.algorithm.rgraph.CDKMCS}.
+ * This class acts as a handler class for CDKMCS algorithm
+ * {@link org.openscience.smsd.algorithm.rgraph.CDKMCS}.
  *
- *  
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -137,22 +138,21 @@ public class CDKSubGraphHandler implements IResults {
 
         List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
         List<CDKRMap> mapList = matches.get(0);
-        for (Object o : mapList) {
-            CDKRMap rmap = (CDKRMap) o;
+        mapList.stream().map((o) -> (CDKRMap) o).forEach((rmap) -> {
             atomSerialsToDelete.add(rmap.getId1());
-        }
+        });
 
         // at this point we have the serial numbers of the bonds to delete
         // we should get the actual bonds rather than delete by serial numbers
         ArrayList<IAtom> atomsToDelete = new ArrayList<>();
-        for (Integer serial : atomSerialsToDelete) {
+        atomSerialsToDelete.stream().forEach((serial) -> {
             atomsToDelete.add(mol.getAtom(serial));
-        }
+        });
 
         // now lets get rid of the bonds themselves
-        for (IAtom atom : atomsToDelete) {
+        atomsToDelete.stream().forEach((atom) -> {
             mol.removeAtomAndConnectedElectronContainers(atom);
-        }
+        });
 
         // now we probably have a set of disconnected components
         // so lets get a set of individual atom containers for
@@ -169,8 +169,7 @@ public class CDKSubGraphHandler implements IResults {
             int counter = 0;
             for (Map<Integer, Integer> final_solution : solutions) {
                 TreeMap<Integer, Integer> atomMappings = new TreeMap<>();
-                for (Map.Entry<Integer, Integer> Solutions : final_solution.entrySet()) {
-
+                final_solution.entrySet().stream().forEach((Solutions) -> {
                     int IIndex = Solutions.getKey();
                     int JIndex = Solutions.getValue();
 
@@ -179,7 +178,7 @@ public class CDKSubGraphHandler implements IResults {
                     } else {
                         atomMappings.put(JIndex, IIndex);
                     }
-                }
+                });
                 if (!allMCS.contains(atomMappings)) {
                     allMCS.add(counter++, atomMappings);
                 }
@@ -197,8 +196,7 @@ public class CDKSubGraphHandler implements IResults {
         int counter = 0;
         for (Map<Integer, Integer> final_solution : sol) {
             AtomAtomMapping atomMappings = new AtomAtomMapping(source, target);
-            for (Map.Entry<Integer, Integer> Solutions : final_solution.entrySet()) {
-
+            final_solution.entrySet().stream().forEach((Solutions) -> {
                 int IIndex = Solutions.getKey();
                 int JIndex = Solutions.getValue();
 
@@ -208,8 +206,7 @@ public class CDKSubGraphHandler implements IResults {
                 sourceAtom = source.getAtom(IIndex);
                 targetAtom = target.getAtom(JIndex);
                 atomMappings.put(sourceAtom, targetAtom);
-
-            }
+            });
             allAtomMCS.add(counter++, atomMappings);
         }
     }

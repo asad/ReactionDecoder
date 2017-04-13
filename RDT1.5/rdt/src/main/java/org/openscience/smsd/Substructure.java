@@ -130,10 +130,7 @@ public final class Substructure extends BaseMapping {
     }
 
     private synchronized boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mapGlobal) {
-        if (mapGlobal.stream().anyMatch((test) -> (test.equals(map)))) {
-            return true;
-        }
-        return false;
+        return mapGlobal.stream().anyMatch((test) -> (test.equals(map)));
     }
 
     /**

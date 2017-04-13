@@ -42,13 +42,13 @@ import org.openscience.smsd.interfaces.Algorithm;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports
- * MCS between run source and target graphs. Then these solutions are extended
- * using McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor}
- * algorithm where ever required.
+ * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports MCS between
+ * run source and target graphs. Then these solutions are extended using
+ * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
+ * where ever required.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
@@ -211,7 +211,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                 IAtom tAtom;
                 int qIndex;
                 int tIndex;
-                
+
                 if (RONP) {
                     qAtom = source.getAtom(qAtomIndex);
                     tAtom = target.getAtom(solution.get(qAtomIndex));
@@ -219,7 +219,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     tAtom = target.getAtom(qAtomIndex);
                     qAtom = source.getAtom(solution.get(qAtomIndex));
                 }
-                
+
                 qIndex = source.getAtomNumber(qAtom);
                 tIndex = target.getAtomNumber(tAtom);
                 if (qIndex != -1 && tIndex != -1) {

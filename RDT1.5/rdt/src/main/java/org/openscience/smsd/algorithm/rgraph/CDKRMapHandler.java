@@ -411,7 +411,7 @@ public final class CDKRMapHandler {
             result = makeAtomsMapOfBondsMapSingleBond(rMapList, graph1, graph2);
         } else {
             List<CDKRMap> resultLocal = new ArrayList<>();
-            for (CDKRMap rMapList2 : rMapList) {
+            rMapList.stream().forEach((rMapList2) -> {
                 IBond qBond = graph1.getBond(rMapList2.getId1());
                 IBond tBond = graph2.getBond(rMapList2.getId2());
                 IAtom[] qAtoms = BondManipulator.getAtomArray(qBond);
@@ -453,7 +453,7 @@ public final class CDKRMapHandler {
                         }
                     }
                 }
-            }
+            });
             result = new ArrayList<>();
             result.add(resultLocal);
         }
@@ -476,13 +476,13 @@ public final class CDKRMapHandler {
             return null;
         }
         Map<IBond, IBond> bondMap = new HashMap<>(list.size());
-        for (CDKRMap solBondMap : list) {
+        list.stream().forEach((solBondMap) -> {
             int id1 = solBondMap.getId1();
             int id2 = solBondMap.getId2();
             IBond qBond = sourceGraph.getBond(id1);
             IBond tBond = targetGraph.getBond(id2);
             bondMap.put(qBond, tBond);
-        }
+        });
         List<CDKRMap> result1 = new ArrayList<>();
         List<CDKRMap> result2 = new ArrayList<>();
         for (IBond qbond : sourceGraph.bonds()) {
@@ -559,7 +559,7 @@ public final class CDKRMapHandler {
      */
     protected synchronized Stack<List<CDKRMap>> getAllMaximum(List<List<CDKRMap>> overlaps) {
 
-        Stack<List<CDKRMap>> allMaximumMappings = null;
+        Stack<List<CDKRMap>> allMaximumMappings = new Stack<>();
 
         int count = -1;
 
@@ -570,7 +570,7 @@ public final class CDKRMapHandler {
 
                 List<CDKRMap> list = new ArrayList<>(arrayList);
                 count = arrayList.size();
-                allMaximumMappings = new Stack<>();
+                allMaximumMappings.clear();
                 allMaximumMappings.push(list);
             } else if (arrayList.size() == count) {
                 List<CDKRMap> list = new ArrayList<>(arrayList);

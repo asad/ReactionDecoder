@@ -16,7 +16,7 @@ import org.openscience.smsd.algorithm.vflib.vf2.BondMatcher;
  *
  * @author John May
  * @author Syed Asad Rahman
- * 
+ *
  */
 final class VFState extends AbstractVFState {
 

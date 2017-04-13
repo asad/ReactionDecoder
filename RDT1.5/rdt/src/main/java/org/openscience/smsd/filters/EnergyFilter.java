@@ -39,7 +39,7 @@ import org.openscience.smsd.tools.BondEnergies;
  * Filter based on energies.
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
- * 
+ *
  */
 public final class EnergyFilter extends Sotter implements IChemicalFilter<Double> {
 

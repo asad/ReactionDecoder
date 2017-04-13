@@ -19,8 +19,8 @@
 package org.openscience.smsd.mcss;
 
 /**
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */

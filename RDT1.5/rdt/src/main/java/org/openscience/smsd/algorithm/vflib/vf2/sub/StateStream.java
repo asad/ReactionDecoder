@@ -11,7 +11,7 @@ import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern.Patterns;
  *
  * @author John May
  * @author Syed Asad Rahman
- * 
+ *
  */
 final class StateStream implements Iterator<int[]> {
 
@@ -79,6 +79,7 @@ final class StateStream implements Iterator<int[]> {
      *
      * @return the next state (or null if none)
      */
+    @SuppressWarnings("empty-statement")
     private int[] findNext() {
 
         if (Patterns.SUBGRAPH == searchType || Patterns.IDENTICAL == searchType) {

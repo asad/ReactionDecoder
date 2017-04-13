@@ -189,10 +189,9 @@ public final class MCSPlus {
             } else {
                 extendMapping.clear();
                 ROPFlag = false;
-                for (Map.Entry<Integer, Integer> map : firstPassMappings.entrySet()) {
+                firstPassMappings.entrySet().stream().forEach((map) -> {
                     extendMapping.put(map.getValue(), map.getKey());
-
-                }
+                });
                 mgit = new McGregor(ac2, ac1, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
                 mgit.startMcGregorIteration(ac2, mgit.getMCSSize(), extendMapping);
             }

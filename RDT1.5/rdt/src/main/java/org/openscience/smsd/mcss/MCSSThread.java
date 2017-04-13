@@ -44,8 +44,8 @@ import static org.openscience.smsd.mcss.JobType.MULTIPLE;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  */
@@ -99,10 +99,10 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
             return singleSolution();
         }
     }
+
     /*
      * MULTIPLE Fragments of MCS are returned if present
      */
-
     private synchronized LinkedBlockingQueue<IAtomContainer> multiSolution() {
         /*
          * Store final solution here
@@ -231,10 +231,10 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
         logger.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
         return mcss;
     }
+
     /*
      * SINGLE Fragment of MCS is returned if present.
      */
-
     private synchronized LinkedBlockingQueue<IAtomContainer> singleSolution() {
 
         logger.debug("Calling MCSSTask " + taskNumber + " with " + mcssList.size() + " items");
@@ -281,7 +281,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
 
     private synchronized Collection<Fragment> getMCSS(BaseMapping comparison) {
         Set<Fragment> matchList = new HashSet<>();
-        for (AtomAtomMapping mapping : comparison.getAllAtomMapping()) {
+        comparison.getAllAtomMapping().stream().forEach((mapping) -> {
             IAtomContainer match;
             try {
                 match = mapping.getCommonFragment();
@@ -293,7 +293,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
             } catch (CloneNotSupportedException ex) {
                 logger.error("ERROR IN MCS Thread: ", ex);
             }
-        }
+        });
         return matchList;
     }
 

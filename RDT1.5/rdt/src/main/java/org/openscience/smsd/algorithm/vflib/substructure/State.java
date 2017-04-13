@@ -61,8 +61,8 @@ import org.openscience.smsd.algorithm.matchers.DefaultBondMatcher;
 /**
  * This class finds mapping states between query and target molecules.
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 // The State class represents a single state in the isomorphism detection
@@ -288,22 +288,20 @@ final class State {
 
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(sourceAtom));
-        for (IAtom neighbor : sourceNeighbours) {
-            int neighbourIndex = source.getAtomNumber(neighbor);
-            if (sharedState.sourceTerminalSet[neighbourIndex] < 1) {
-                sharedState.sourceTerminalSet[neighbourIndex] = size;
-                sourceTerminalSize++;
-            }
-        }
+        sourceNeighbours.stream().map((neighbor) -> source.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
+            sharedState.sourceTerminalSet[neighbourIndex] = size;
+            return neighbourIndex;
+        }).forEach((_item) -> {
+            sourceTerminalSize++;
+        });
 
         List<IAtom> targetNeighbours = target.getConnectedAtomsList(target.getAtom(targetAtom));
-        for (IAtom neighbor : targetNeighbours) {
-            int neighbourIndex = target.getAtomNumber(neighbor);
-            if (sharedState.targetTerminalSet[neighbourIndex] < 1) {
-                sharedState.targetTerminalSet[neighbourIndex] = size;
-                targetTerminalSize++;
-            }
-        }
+        targetNeighbours.stream().map((neighbor) -> target.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
+            sharedState.targetTerminalSet[neighbourIndex] = size;
+            return neighbourIndex;
+        }).forEach((_item) -> {
+            targetTerminalSize++;
+        });
     }
 
     // Restores the shared state to how it was before adding the last
@@ -321,12 +319,9 @@ final class State {
 
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(addedSourceAtom));
-        for (IAtom neighbor : sourceNeighbours) {
-            int neighbourIndex = source.getAtomNumber(neighbor);
-            if (sharedState.sourceTerminalSet[neighbourIndex] == size) {
-                sharedState.sourceTerminalSet[neighbourIndex] = 0;
-            }
-        }
+        sourceNeighbours.stream().map((neighbor) -> source.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
+            sharedState.sourceTerminalSet[neighbourIndex] = 0;
+        });
 
         int addedTargetAtom = lastAddition.getTargetAtom();
 
@@ -336,12 +331,9 @@ final class State {
 
         List<IAtom> targetNeighbours
                 = target.getConnectedAtomsList(target.getAtom(addedTargetAtom));
-        for (IAtom neighbor : targetNeighbours) {
-            int neighbourIndex = target.getAtomNumber(neighbor);
-            if (sharedState.targetTerminalSet[neighbourIndex] == size) {
-                sharedState.targetTerminalSet[neighbourIndex] = 0;
-            }
-        }
+        targetNeighbours.stream().map((neighbor) -> target.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
+            sharedState.targetTerminalSet[neighbourIndex] = 0;
+        });
 
         sharedState.sourceMapping[addedSourceAtom] = -1;
         sharedState.targetMapping[addedTargetAtom] = -1;
@@ -391,12 +383,10 @@ final class State {
                     return false;
                 }
 
+            } else if (sharedState.sourceTerminalSet[neighbourIndex] > 0) {
+                sourceTerminalNeighborCount++;
             } else {
-                if (sharedState.sourceTerminalSet[neighbourIndex] > 0) {
-                    sourceTerminalNeighborCount++;
-                } else {
-                    sourceNewNeighborCount++;
-                }
+                sourceNewNeighborCount++;
             }
         }
 
@@ -412,12 +402,10 @@ final class State {
 //                    if (source.getBond(sourceAtomAtom, sourceNeighbourAtom) == null) {
 //                        return false;
 //                    }
+            } else if (sharedState.targetTerminalSet[neighbourIndex] > 0) {
+                targetTerminalNeighborCount++;
             } else {
-                if (sharedState.targetTerminalSet[neighbourIndex] > 0) {
-                    targetTerminalNeighborCount++;
-                } else {
-                    targetNewNeighborCount++;
-                }
+                targetNewNeighborCount++;
             }
         }
         return (sourceTerminalNeighborCount <= targetTerminalNeighborCount)
@@ -513,11 +501,6 @@ final class State {
     }
 
     private boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mappings) {
-        for (AtomAtomMapping test : mappings) {
-            if (test.equals(map)) {
-                return true;
-            }
-        }
-        return false;
+        return mappings.stream().anyMatch((test) -> (test.equals(map)));
     }
 }

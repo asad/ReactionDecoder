@@ -5,13 +5,13 @@ package org.openscience.smsd.algorithm.vflib.vf2.mcs;
  * (<i>G1</i>) to a target graph (<i>G2</i>). The mutable state allows
  * generation and adding and removal of mappings. A mapping {n, m} indicates a
  * query vertex (from <i>G1</i>), n, is paired (mapped) with the target vertex,
- * m (from <i>G2</i>). Candidate pairs are generated using {@link #hasNextCandidate(int)}
- * and {@link #nextM(int)}. Each candidate pair {n, m} is then {@link #addMapping}ed if
- * the mapping was feasible.
+ * m (from <i>G2</i>). Candidate pairs are generated using
+ * {@link #hasNextCandidate(int)} and {@link #nextM(int)}. Each candidate pair
+ * {n, m} is then {@link #addMapping}ed if the mapping was feasible.
  *
  * @author John May
  * @author Syed Asad Rahman
- * 
+ *
  */
 abstract class State {
 
