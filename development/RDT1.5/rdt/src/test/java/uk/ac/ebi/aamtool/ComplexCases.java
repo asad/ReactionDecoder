@@ -106,12 +106,9 @@ public class ComplexCases extends MappingUtility {
 //    }
 
 //    /*
-//     * Complex case,
-//     * Takes longer to Run
-//     * @BUG TO DO
-//     *  
+//     * Complex case, Takes longer to Run
+//     * 
 //     * Functional group regarrangment
-//     *
 //     *
 //     * @throws Exception
 //     */
