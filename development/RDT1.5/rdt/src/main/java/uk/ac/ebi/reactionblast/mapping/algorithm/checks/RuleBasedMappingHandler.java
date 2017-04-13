@@ -28,7 +28,6 @@ import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -38,6 +37,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -79,6 +79,8 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsC00005;
     private IAtomContainer smartsPyruvate;
     private IAtomContainer smartsAlanine;
+    private IAtomContainer smartsNRule;
+    private IAtomContainer smartsCRule;
 
     /**
      *
@@ -243,9 +245,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     }/*
                         Rule 2 L_Glutamate and L_Glutamine
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsL_Glutamate(), ac1) && isMatch(getSmartsL_Glutamine(), ac2))
+                            && isMatch(getSmartsGlutamate(), ac1) && isMatch(getSmartsGlutamine(), ac2))
                             || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsL_Glutamine(), ac1) && isMatch(getSmartsL_Glutamate(), ac2))) {
+                            && isMatch(getSmartsGlutamine(), ac1) && isMatch(getSmartsGlutamate(), ac2))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG) {
@@ -327,6 +329,17 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsPyruvate(), ac2))) {
                         if (DEBUG) {
                             out.println("Rule 9 C00022_C00041 found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    }/*
+                        Rule 10 N_C
+                     */ else if (isMatch(getSmartsNRule(), ac1) && isMatch(getSmartsCRule(), ac2)
+                            || (isMatch(getSmartsCRule(), ac1) && isMatch(getSmartsNRule(), ac2))) {
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG) {
+                            out.println("Rule 10 N with C found");
                         }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -482,6 +495,12 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String C00022 = "[CH3][C](=O)C(O)=O";
         final String C00041 = "[CH3][C](N)C(O)=O";
 
+        /*
+         * N_C CC(C)[C@H](N)C(O)=O>>CC(C)C(=O)C(O)=O
+         */
+        final String N = "CC(C)[C@H](N)C(O)=O";
+        final String C = "CC(C)C(=O)C(O)=O";
+
         SmilesParser smilesParser = new SmilesParser(getInstance());
         /*
          * Rule 1
@@ -537,6 +556,12 @@ public final class RuleBasedMappingHandler implements Serializable {
         smartsAlanine = smilesParser.parseSmiles(C00041);
         smartsPyruvate = smilesParser.parseSmiles(C00022);
 
+        /*
+         * Rule 10 Valine_Isoleucine
+         */
+        smartsNRule = smilesParser.parseSmiles(N);
+        smartsCRule = smilesParser.parseSmiles(C);
+
     }
 
     /**
@@ -556,14 +581,14 @@ public final class RuleBasedMappingHandler implements Serializable {
     /**
      * @return the smartsL_Glutamate
      */
-    private IAtomContainer getSmartsL_Glutamate() {
+    private IAtomContainer getSmartsGlutamate() {
         return smartsL_Glutamate;
     }
 
     /**
      * @return the smartsL_Glutamine
      */
-    private IAtomContainer getSmartsL_Glutamine() {
+    private IAtomContainer getSmartsGlutamine() {
         return smartsL_Glutamine;
     }
 
@@ -663,6 +688,20 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public IAtomContainer getSmartsAlanine() {
         return smartsAlanine;
+    }
+
+    /**
+     * @return the smartsNRule
+     */
+    public IAtomContainer getSmartsNRule() {
+        return smartsNRule;
+    }
+
+    /**
+     * @return the smartsCRule
+     */
+    public IAtomContainer getSmartsCRule() {
+        return smartsCRule;
     }
 
 }

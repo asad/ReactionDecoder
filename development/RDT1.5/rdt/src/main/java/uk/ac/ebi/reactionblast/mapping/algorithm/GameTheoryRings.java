@@ -52,11 +52,9 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 //~--- classes ----------------------------------------------------------------
 import static java.lang.System.out;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
@@ -71,6 +69,8 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
+import static java.util.Collections.synchronizedList;
+import static java.util.logging.Logger.getLogger;
 
 final class GameTheoryRings extends BaseGameTheory {
 

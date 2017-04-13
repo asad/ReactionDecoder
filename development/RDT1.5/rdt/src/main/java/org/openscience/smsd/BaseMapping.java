@@ -90,24 +90,27 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
         if (getMappingCount() > 0) {
 
-            if (energyFilter) {
-                try {
-                    sortResultsByEnergies();
-                    this.bondEnergiesList = getSortedEnergy();
-                } catch (CDKException ex) {
-                    LOGGER.error(Level.SEVERE, null, ex);
-                }
-            }
-
             if (fragmentFilter) {
                 sortResultsByFragments();
                 this.fragmentSizeList = getSortedFragment();
+//                System.out.println("fragmentSizeList " + fragmentSizeList);
             }
 
             if (stereoFilter) {
                 try {
                     sortResultsByStereoAndBondMatch();
                     this.stereoScoreList = getStereoMatches();
+//                    System.out.println("stereoScoreList " + stereoScoreList);
+                } catch (CDKException ex) {
+                    LOGGER.error(Level.SEVERE, null, ex);
+                }
+            }
+
+            if (energyFilter) {
+                try {
+                    sortResultsByEnergies();
+                    this.bondEnergiesList = getSortedEnergy();
+//                    System.out.println("bondEnergiesList " + bondEnergiesList);
                 } catch (CDKException ex) {
                     LOGGER.error(Level.SEVERE, null, ex);
                 }

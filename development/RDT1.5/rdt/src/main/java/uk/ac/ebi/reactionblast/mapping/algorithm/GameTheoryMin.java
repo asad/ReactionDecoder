@@ -68,9 +68,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 
 final class GameTheoryMin extends BaseGameTheory {
 

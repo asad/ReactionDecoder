@@ -123,11 +123,15 @@ public class MCSThread implements Callable<MCSSolution> {
     /**
      *
      * @param theory
+     * @param queryPosition
+     * @param targetPosition
      * @param educt
      * @param product
      * @param bondMatcher
      * @param ringMatcher
+     * @param atomMatcher
      * @throws CloneNotSupportedException
+     * @throws org.openscience.cdk.exception.CDKException
      */
     MCSThread(IMappingAlgorithm theory, int queryPosition, int targetPosition,
             IAtomContainer educt, IAtomContainer product,
