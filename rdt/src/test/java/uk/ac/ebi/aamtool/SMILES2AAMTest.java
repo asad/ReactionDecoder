@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2015 Syed Asad Rahman <asad@ebi.ac.uk>.
+ * Copyright (C) 2007-2017 Syed Asad Rahman <asad@ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,22 +18,11 @@
  */
 package uk.ac.ebi.aamtool;
 
-import java.io.File;
-import static java.io.File.separator;
-import static java.lang.System.out;
-import static java.util.logging.Level.SEVERE;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import uk.ac.ebi.reactionblast.tools.TestUtility;
-import static java.util.logging.Logger.getLogger;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

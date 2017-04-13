@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2015 Syed Asad Rahman <asad@ebi.ac.uk>.
+ * Copyright (C) 2007-2017 Syed Asad Rahman <asad@ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -135,41 +135,37 @@ public class UnblancedReactionChecker extends TestUtility {
             err.println();
             err.println("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            for (String s : atomUniqueCounter1.keySet()) {
+            atomUniqueCounter1.keySet().stream().map((s) -> {
                 if (atomUniqueCounter2.containsKey(s)) {
                     if (atomUniqueCounter1.get(s) != atomUniqueCounter2.get(s).intValue()) {
                         err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
                     }
                 }
-                if (!atomUniqueCounter2.containsKey(s)) {
-                    err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + 0 + ")");
-                }
-            }
-            for (String s : atomUniqueCounter2.keySet()) {
-                if (!atomUniqueCounter1.containsKey(s)) {
-                    err.println(s + "(" + 0 + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
-                }
-            }
+                return s;
+            }).filter((s) -> (!atomUniqueCounter2.containsKey(s))).forEach((s) -> {
+                err.println(s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= " + s + "(" + 0 + ")");
+            });
+            atomUniqueCounter2.keySet().stream().filter((s) -> (!atomUniqueCounter1.containsKey(s))).forEach((s) -> {
+                err.println(s + "(" + 0 + ")" + " =/= " + s + "(" + atomUniqueCounter2.get(s) + ")");
+            });
             return false;
         } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
             err.println();
             err.println("Number of unique atom types(s) on the Left side " + atomUniqueCounter1.size()
                     + " =/= Number of unique atom types(s)on the Right side " + atomUniqueCounter2.size());
-            for (String s : atomUniqueCounter1.keySet()) {
+            atomUniqueCounter1.keySet().stream().map((s) -> {
                 if (atomUniqueCounter2.containsKey(s)) {
                     if (atomUniqueCounter1.get(s) != atomUniqueCounter2.get(s).intValue()) {
                         err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
                     }
                 }
-                if (!atomUniqueCounter2.containsKey(s)) {
-                    err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + 0 + ")");
-                }
-            }
-            for (String s : atomUniqueCounter2.keySet()) {
-                if (!atomUniqueCounter1.containsKey(s)) {
-                    err.println("Number of reactant Atom: " + s + "(" + 0 + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
-                }
-            }
+                return s;
+            }).filter((s) -> (!atomUniqueCounter2.containsKey(s))).forEach((s) -> {
+                err.println("Number of reactant Atom: " + s + "(" + atomUniqueCounter1.get(s) + ")" + " =/= Number of product atom: " + s + "(" + 0 + ")");
+            });
+            atomUniqueCounter2.keySet().stream().filter((s) -> (!atomUniqueCounter1.containsKey(s))).forEach((s) -> {
+                err.println("Number of reactant Atom: " + s + "(" + 0 + ")" + " =/= Number of product atom: " + s + "(" + atomUniqueCounter2.get(s) + ")");
+            });
             return false;
         }
 
