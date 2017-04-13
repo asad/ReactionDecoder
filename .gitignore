@@ -28,3 +28,6 @@ hs_err_pid*
 /rdt/exec/target/
 /rdt/nbproject/
 /rdt/core/Output/
+/development/RDT1.5/rdt/target/
+/development/RDT1.5/rdt/Output/
+/RDT1.5/rdt/Output/
