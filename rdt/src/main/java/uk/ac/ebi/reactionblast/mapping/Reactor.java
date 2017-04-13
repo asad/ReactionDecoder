@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2015 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2017 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@
  * @Date: 2004/06/3
  * @Revision: 1.10
  *
- * @Copyright (C) 2004-2012 The Atom Mapper Tool (AMT) project
+ * @Copyright (C) 2004-2017 The Atom Mapper Tool (AMT) project
  *
  * @Contact: asad@ebi.ac.uk
  *

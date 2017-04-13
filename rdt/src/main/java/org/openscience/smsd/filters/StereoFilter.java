@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2015  Syed Asad Rahman <asad@ebi.subGraph.uk>
+/* Copyright (C) 2009-2017  Syed Asad Rahman <asad@ebi.subGraph.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
