@@ -202,7 +202,7 @@ b) Roll back Version rdt-1.5-SNAPSHOT
 c) Fixed bugs
 d) SMSD precedence on filter frag > stereo > energy
 e) Java 8.0
-h) CDK 1.5.14
+f) CDK 1.5.14
 
 
 -----------------------
