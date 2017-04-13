@@ -55,6 +55,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.graph.Cycles.all;
+import org.openscience.cdk.smiles.SmiFlavor;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -188,8 +189,9 @@ public class GraphMatcher extends Debugger {
                     ringSizeEqual = true;
                 }
                 if (DEBUG) {
-                    out.println(educt.getID() + " ED: " + new SmilesGenerator().create(educt));
-                    out.println(product.getID() + " PD: " + new SmilesGenerator().create(product));
+                    SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
+                    out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
+                    out.println(product.getID() + " PD: " + smilesGenerator.create(product));
                     out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
                     out.println("numberOfCyclesProduct " + numberOfCyclesProduct);
                     out.println("ringSizeEqual " + ringSizeEqual);

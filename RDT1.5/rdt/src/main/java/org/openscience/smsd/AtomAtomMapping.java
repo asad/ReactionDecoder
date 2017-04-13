@@ -41,6 +41,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -157,8 +158,10 @@ public final class AtomAtomMapping implements Serializable {
 
             String createReactionSMILES = "NA";
             try {
-                SmilesGenerator withAtomClasses = SmilesGenerator.generic().aromatic().withAtomClasses();
-                createReactionSMILES = withAtomClasses.createReactionSMILES(reaction);
+                SmilesGenerator withAtomClasses = new SmilesGenerator(
+                        SmiFlavor.Unique
+                        | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+                createReactionSMILES = withAtomClasses.create(reaction);
             } catch (CDKException ex) {
                 Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -373,7 +376,10 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CDKException
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
-        SmilesGenerator aromatic = SmilesGenerator.unique().withAtomClasses();
+        SmilesGenerator aromatic = new SmilesGenerator(
+                        SmiFlavor.Unique
+                        | SmiFlavor.UseAromaticSymbols 
+                                | SmiFlavor.AtomAtomMap);
         return aromatic.create(getCommonFragment());
     }
 

@@ -31,8 +31,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularFragment;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
@@ -42,6 +42,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class MultiReactionContainer {
+
     private static final Logger LOG = getLogger(MultiReactionContainer.class.getName());
 
     private final Set<ReactionGroup> reaction;
@@ -53,7 +54,7 @@ class MultiReactionContainer {
         this.enzyme = enzyme;
         this.reaction = new TreeSet<>();
         this.RGroup = false;
-        fp = new FingerprintType(new TreeSet<String>(), new TreeSet<String>(), new TreeSet<String>());
+        fp = new FingerprintType(new TreeSet<>(), new TreeSet<>(), new TreeSet<>());
 
     }
 
@@ -134,7 +135,9 @@ class MultiReactionContainer {
     private void calculateCommonFingerprint(IReaction reaction) {
         Set<String> l = new HashSet<>();
         Set<String> r = new HashSet<>();
-        SmilesGenerator sm = unique().aromatic();
+        SmilesGenerator sm = new SmilesGenerator(
+                SmiFlavor.Unique
+                | SmiFlavor.UseAromaticSymbols);
         for (IAtomContainer a : reaction.getReactants().atomContainers()) {
             IAtomContainer ac = null;
             ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
@@ -144,17 +147,17 @@ class MultiReactionContainer {
                     String smiles = sm.create(circularFragment);
                     l.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                     circularFragment = getCircularFragment(ac, i, 2);
                     smiles = sm.create(circularFragment);
                     l.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                     circularFragment = getCircularFragment(ac, i, 3);
                     smiles = sm.create(circularFragment);
                     l.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                 } catch (Exception ex) {
                     getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                 }
@@ -170,17 +173,17 @@ class MultiReactionContainer {
                     String smiles = sm.create(circularFragment);
                     r.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                     circularFragment = getCircularFragment(ac, i, 2);
                     smiles = sm.create(circularFragment);
                     r.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                     circularFragment = getCircularFragment(ac, i, 3);
                     smiles = sm.create(circularFragment);
                     r.add(smiles);
                     getAllFP().add(smiles);
-                    
+
                 } catch (Exception ex) {
                     getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
                 }

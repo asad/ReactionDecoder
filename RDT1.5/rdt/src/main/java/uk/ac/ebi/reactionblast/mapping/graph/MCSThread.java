@@ -44,6 +44,7 @@ import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.smsd.AtomAtomMapping;
@@ -156,7 +157,7 @@ public class MCSThread implements Callable<MCSSolution> {
         if (DEBUG1) {
             aromaticity = new Aromaticity(daylight(),
                     or(all(), relevant()));
-            smiles = unique().aromatic();
+            smiles = new SmilesGenerator(SmiFlavor.Unique|SmiFlavor.UseAromaticSymbols);
         }
 
     }

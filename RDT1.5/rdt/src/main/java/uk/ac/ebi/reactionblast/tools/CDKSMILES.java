@@ -36,6 +36,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatiz
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.smiles.SmiFlavor;
 
 /**
  *
@@ -138,6 +139,7 @@ public class CDKSMILES {
 
     /**
      * Aromatic SMILES corrupts the code
+     *
      * @return
      */
     public String getGenericAromaticSMILES() {
@@ -146,8 +148,9 @@ public class CDKSMILES {
             return smiles;
         }
         try {
-            SmilesGenerator g;
-            g = generic().aromatic();
+            SmilesGenerator g = new SmilesGenerator(
+                    SmiFlavor.Generic
+                    | SmiFlavor.UseAromaticSymbols);
             return g.create(molecule);
         } catch (CDKException ex) {
             logger.error("ERROR : in generating CDK SMILES" + molecule.getID());

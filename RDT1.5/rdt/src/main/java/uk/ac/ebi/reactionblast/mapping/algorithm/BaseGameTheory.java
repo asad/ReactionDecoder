@@ -41,7 +41,8 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
@@ -348,8 +349,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     if (mappingPossible) {
                         if (DEBUG) {
                             out.println("Expected Mapping");
-                            out.println(educt.getID() + " ED: " + unique().aromatic().create(educt));
-                            out.println(product.getID() + " PD: " + unique().aromatic().create(product));
+                            SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
+                            out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
+                            out.println(product.getID() + " PD: " + smilesGenerator.create(product));
                         }
                         return quickMapping(educt, product, queryPosition, targetPosition);
                     }

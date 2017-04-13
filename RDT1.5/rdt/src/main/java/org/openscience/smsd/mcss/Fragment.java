@@ -25,6 +25,7 @@ import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
@@ -46,7 +47,9 @@ public class Fragment implements Comparable<Fragment>, Serializable {
      * @throws org.openscience.cdk.exception.CDKException
      */
     public static String toSmiles(IAtomContainer ac) throws CDKException {
-        SmilesGenerator g = new SmilesGenerator().aromatic();
+        SmilesGenerator g = new SmilesGenerator(
+                SmiFlavor.Unique
+                | SmiFlavor.UseAromaticSymbols);
         return g.create(ac);
     }
     private final BitSet fingerprint;

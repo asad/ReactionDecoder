@@ -44,6 +44,7 @@ import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.SSSRFinder;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
@@ -110,7 +111,8 @@ class IsomeraseHandler {
                 try {
                     IAtomContainer educt = reactants.atomContainers().iterator().next();
                     IAtomContainer product = products.atomContainers().iterator().next();
-                    boolean chipPhophateInSingleReactantProductNotInRing = chipPhophateInSingleReactantProductNotInRing(educt, product);
+                    boolean chipPhophateInSingleReactantProductNotInRing
+                            = chipPhophateInSingleReactantProductNotInRing(educt, product);
                 } catch (CDKException ex) {
                     getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
                 }
@@ -187,8 +189,8 @@ class IsomeraseHandler {
                 if (DEBUG) {
                     out.println("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
                     out.println("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
-                    out.println("SM " + new SmilesGenerator().create(educt));
-                    out.println("SM " + new SmilesGenerator().create(product));
+                    out.println("SM " + new SmilesGenerator(SmiFlavor.Generic).create(educt));
+                    out.println("SM " + new SmilesGenerator(SmiFlavor.Generic).create(product));
                 }
                 return findAndChipBondPhophate1 && findAndChipBondPhophate2;
             }
@@ -247,21 +249,20 @@ class IsomeraseHandler {
                     IAtom oxygen = atomE.getSymbol().equals("O") ? atomE : atomP;
                     List<IBond> neighbourBonds = container.getConnectedBondsList(oxygen);
                     if (neighbourBonds.size() == 2) {
-                        for (IBond b : neighbourBonds) {
-                            if (b.getAtom(0).getSymbol().equals("O")
-                                    || b.getAtom(0).getSymbol().equals("P")) {
-                                if (b.getAtom(1).getSymbol().equals("O")
-                                        || b.getAtom(1).getSymbol().equals("P")) {
-                                    container.removeBond(b);
-
-                                    if (DEBUG) {
-                                        out.println("bondToBeChipped " + b.getAtom(0).getSymbol());
-                                        out.println("bondToBeChipped " + b.getAtom(1).getSymbol());
-                                        out.println("removeBond o-p ");
-                                    }
-                                }
-                            }
-                        }
+                        neighbourBonds.stream().filter((b) -> (b.getAtom(0).getSymbol().equals("O")
+                                || b.getAtom(0).getSymbol().equals("P"))).filter((b) -> (b.getAtom(1).getSymbol().equals("O")
+                                || b.getAtom(1).getSymbol().equals("P"))).map((b) -> {
+                            container.removeBond(b);
+                            return b;
+                        }).filter((b) -> (DEBUG)).map((b) -> {
+                            out.println("bondToBeChipped " + b.getAtom(0).getSymbol());
+                            return b;
+                        }).map((b) -> {
+                            out.println("bondToBeChipped " + b.getAtom(1).getSymbol());
+                            return b;
+                        }).forEach((_item) -> {
+                            out.println("removeBond o-p ");
+                        });
                         return true;
                     }
                 }
@@ -303,19 +304,19 @@ class IsomeraseHandler {
                 }
             }
         }
-        for (IBond bond : bond_to_be_removed) {
+        bond_to_be_removed.stream().map((bond) -> {
             container.removeBond(bond);
-            if (DEBUG) {
-                try {
-                    out.println("CHIPPING BONDS "
-                            + " B0 " + bond.getAtom(0).getSymbol()
-                            + " B1 " + bond.getAtom(1).getSymbol());
-                    out.println("CHIPPED SM " + new SmilesGenerator().create(container));
-                } catch (CDKException ex) {
-                    getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
-                }
+            return bond;
+        }).filter((bond) -> (DEBUG)).forEach((bond) -> {
+            try {
+                out.println("CHIPPING BONDS "
+                        + " B0 " + bond.getAtom(0).getSymbol()
+                        + " B1 " + bond.getAtom(1).getSymbol());
+                out.println("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
+            } catch (CDKException ex) {
+                getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
             }
-        }
+        });
         return !bond_to_be_removed.isEmpty();
     }
 

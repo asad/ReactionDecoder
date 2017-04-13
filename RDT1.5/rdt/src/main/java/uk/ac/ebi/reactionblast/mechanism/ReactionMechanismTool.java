@@ -45,7 +45,6 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAllAtomContainers;
@@ -65,6 +64,7 @@ import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
@@ -168,8 +168,11 @@ public class ReactionMechanismTool implements Serializable {
         } else {
             try {
                 if (DEBUG) {
-                    SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
-                    err.println("Input reaction mapped " + withAtomClasses.createReactionSMILES(reaction));
+                    SmilesGenerator withAtomClasses = new SmilesGenerator(
+                            SmiFlavor.Unique
+                            | SmiFlavor.UseAromaticSymbols
+                            | SmiFlavor.AtomAtomMap);
+                    err.println("Input reaction mapped " + withAtomClasses.create(reaction));
                 }
 
                 boolean onlyCoreMappingByMCS = true;
@@ -182,8 +185,12 @@ public class ReactionMechanismTool implements Serializable {
                     Reactor reactor = solutions.get(algorithm);
 
                     if (DEBUG) {
-                        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
-                        out.println("reaction mapped " + withAtomClasses.createReactionSMILES(reactor.getReactionWithAtomAtomMapping()));
+
+                        SmilesGenerator withAtomClasses = new SmilesGenerator(
+                                SmiFlavor.Unique
+                                | SmiFlavor.UseAromaticSymbols
+                                | SmiFlavor.AtomAtomMap);
+                        out.println("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
                     }
                     int atomCountR = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getReactants());
                     int atomCountP = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getProducts());
@@ -569,29 +576,17 @@ public class ReactionMechanismTool implements Serializable {
 
     private synchronized double getTotalBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
-        for (IFeature key : fingerprint.getFeatures()) {
-            double val = key.getWeight();
-            if (val > 0.) {//&& !key.contains("H")
-                total += val;
-            }
-        }
+        total = fingerprint.getFeatures().stream().map((key) -> key.getWeight()).filter((val) -> (val > 0.)).map((val) -> val).reduce(total, (accumulator, _item) -> accumulator + _item); //&& !key.contains("H")
         return total;
     }
 
     private synchronized int getTotalCarbonBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
-        for (IFeature key : fingerprint.getFeatures()) {
-            if (key.getPattern().contains("C-C")
-                    || key.getPattern().contains("C=C")
-                    || key.getPattern().contains("C#C")
-                    || key.getPattern().contains("C%C")
-                    || key.getPattern().contains("C@C")) {
-                double val = key.getWeight();
-                if (val > 0.) {//&& !key.contains("H")
-                    total += val;
-                }
-            }
-        }
+        total = fingerprint.getFeatures().stream().filter((key) -> (key.getPattern().contains("C-C")
+                || key.getPattern().contains("C=C")
+                || key.getPattern().contains("C#C")
+                || key.getPattern().contains("C%C")
+                || key.getPattern().contains("C@C"))).map((key) -> key.getWeight()).filter((val) -> (val > 0.)).map((val) -> val).reduce(total, (accumulator, _item) -> accumulator + _item); //&& !key.contains("H")
         return (int) total;
     }
 

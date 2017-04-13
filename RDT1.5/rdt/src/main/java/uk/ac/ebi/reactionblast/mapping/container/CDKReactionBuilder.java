@@ -45,6 +45,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.interfaces.IReactionSet;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
@@ -117,8 +118,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         int old_atom_rank_index_reactant = 1;
         int old_atom_rank_index_product = 1;
         if (DEBUG) {
-            String createReactionSMILES = generic().aromatic().createReactionSMILES(reaction);
-            out.println("createReactionSMILES " + createReactionSMILES);
+            SmilesGenerator createReactionSMILES = new SmilesGenerator(
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap);
+            out.println("createReactionSMILES " + createReactionSMILES.create(reaction));
             out.println("standardize reaction module start");
         }
 
@@ -309,7 +313,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         stoichiometryMap.clear();
 
         if (DEBUG) {
-            String postCreateReactionSMILES = generic().aromatic().createReactionSMILES(standardizedReaction);
+            SmilesGenerator smiles = new SmilesGenerator(
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap);
+            String postCreateReactionSMILES = smiles.create(standardizedReaction);
             out.println("post CreateReactionSMILES " + postCreateReactionSMILES);
         }
 

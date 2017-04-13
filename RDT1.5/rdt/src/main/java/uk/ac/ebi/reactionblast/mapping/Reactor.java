@@ -97,6 +97,7 @@ import static java.util.Arrays.sort;
 import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
@@ -167,7 +168,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         cleanMapping(reaction);
         if (DEBUG) {
             out.println("|++++++++++++++++++++++++++++|");
-            printReaction(reaction);
+            super.printReaction(reaction);
             out.println("|ii. Create Mapping Objects");
         }
         copyReferenceReaction(reaction);
@@ -178,7 +179,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
         calculateAtomAtomMapping();
         if (DEBUG) {
-            printReaction(reactionWithUniqueSTOICHIOMETRY);
+            super.printReaction(reactionWithUniqueSTOICHIOMETRY);
             out.println("|++++++++++++++++++++++++++++|");
             out.println("|iv. Done|");
             out.println("|++++++++++++++++++++++++++++|\n\n");
@@ -187,10 +188,10 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     @Override
     public String toString() {
-        SmilesGenerator smiles = unique().aromatic().withAtomClasses();
+        SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
         String createReactionSMILES = "";
         try {
-            createReactionSMILES = smiles.createReactionSMILES(reactionWithUniqueSTOICHIOMETRY);
+            createReactionSMILES = smiles.create(reactionWithUniqueSTOICHIOMETRY);
         } catch (CDKException ex) {
             getLogger(Reactor.class.getName()).log(SEVERE, null, ex);
         }

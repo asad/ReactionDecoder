@@ -26,7 +26,6 @@ import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.sort;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +38,6 @@ import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import static org.openscience.cdk.CDKConstants.VISITED;
 import org.openscience.cdk.PseudoAtom;
-
 
 import org.openscience.cdk.config.IsotopeFactory;
 import static org.openscience.cdk.config.Isotopes.getInstance;
@@ -490,9 +488,9 @@ public class RBlastSmilesGenerator {
             return false;
         }
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
-        int lengthAtom = container.getConnectedAtomsCount(atom) + ((atom.getImplicitHydrogenCount() == UNSET) ? 0 : atom.getImplicitHydrogenCount());
+        int lengthAtom = container.getConnectedAtomsCount(atom) + ((Objects.equals(atom.getImplicitHydrogenCount(), UNSET)) ? 0 : atom.getImplicitHydrogenCount());
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
-        int lengthParent = container.getConnectedAtomsCount(parent) + ((parent.getImplicitHydrogenCount() == UNSET) ? 0 : parent.getImplicitHydrogenCount());
+        int lengthParent = container.getConnectedAtomsCount(parent) + ((Objects.equals(parent.getImplicitHydrogenCount(), UNSET)) ? 0 : parent.getImplicitHydrogenCount());
         if (container.getBond(atom, parent) != null) {
             if (container.getBond(atom, parent).getOrder() == BONDORDER_DOUBLE && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N"))) && (lengthParent == 3 || (lengthParent == 2 && parent.getSymbol().equals("N")))) {
                 List<IAtom> atoms = container.getConnectedAtomsList(atom);
@@ -598,14 +596,7 @@ public class RBlastSmilesGenerator {
      * first pass.
      */
     private boolean isRingOpening(IAtom a1, List v) {
-        for (BrokenBond bond : brokenBonds) {
-            for (Object aV : v) {
-                if ((bond.getA1().equals(a1) && bond.getA2().equals(aV)) || (bond.getA1().equals(aV) && bond.getA2().equals(a1))) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return brokenBonds.stream().anyMatch((BrokenBond bond) -> v.stream().anyMatch((aV) -> ((bond.getA1().equals(a1) && bond.getA2().equals(aV)) || (bond.getA1().equals(aV) && bond.getA2().equals(a1)))));
     }
 
     /**
@@ -619,19 +610,15 @@ public class RBlastSmilesGenerator {
     private List getCanNeigh(final IAtom a, final IAtomContainer container, final int[] canonicalLabels) {
         List<IAtom> v = container.getConnectedAtomsList(a);
         if (v.size() > 1) {
-            sort(v,
-                    new Comparator<IAtom>() {
-
-                public int compare(IAtom a1, IAtom a2) {
-                    int l1 = canonicalLabels[container.getAtomNumber(a1)];
-                    int l2 = canonicalLabels[container.getAtomNumber(a2)];
-                    if (l1 < l2) {
-                        return -1;
-                    } else if (l1 > l2) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+            sort(v, (IAtom a1, IAtom a2) -> {
+                int l1 = canonicalLabels[container.getAtomNumber(a1)];
+                int l2 = canonicalLabels[container.getAtomNumber(a2)];
+                if (l1 < l2) {
+                    return -1;
+                } else if (l1 > l2) {
+                    return 1;
+                } else {
+                    return 0;
                 }
             });
         }
@@ -684,13 +671,13 @@ public class RBlastSmilesGenerator {
      * @param result The feature to be added to the Atoms attribute
      */
     private void addAtoms(List v, List result) {
-        for (Object aV : v) {
+        v.stream().forEach((aV) -> {
             if (aV instanceof IAtom) {
                 result.add(aV);
             } else {
                 addAtoms((List) aV, result);
             }
-        }
+        });
     }
 
     /**

@@ -39,8 +39,8 @@ import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -546,7 +546,10 @@ public class Annotator extends Helper {
             /*
              * Selected AAM solution
              */
-            SmilesGenerator smiles = generic().withAtomClasses();
+            SmilesGenerator smiles = new SmilesGenerator(
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap);
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
             sb.append("//");
@@ -554,7 +557,7 @@ public class Annotator extends Helper {
             sb.append("SELECTED AAM MAPPING");
             sb.append(NEW_LINE);
             //Start of Fingerprint elements
-            sb.append(smiles.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            sb.append(smiles.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             sb.append(NEW_LINE);
             sb.append(NEW_LINE);
 
@@ -587,7 +590,7 @@ public class Annotator extends Helper {
                     sb.append(index).append(") AAM MAPPING ALGORITHM: ").append(m.getAlgorithmID().description());
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
-                    sb.append(smiles.createReactionSMILES(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+                    sb.append(smiles.create(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
                     sb.append("SCORE: ").append((m.getTotalBondChanges() + m.getTotalFragmentChanges()));
@@ -677,7 +680,11 @@ public class Annotator extends Helper {
                     printRPAIRPatternAsXML(s, doc, annot);
                 }
             }
-            SmilesGenerator smiles = generic().withAtomClasses();
+
+            SmilesGenerator smiles = new SmilesGenerator(
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap);
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
@@ -688,7 +695,7 @@ public class Annotator extends Helper {
             aam.setAttributeNode(attr);
             // AAM elements
             Element selected_AAM = doc.createElement("AAM");
-            selected_AAM.appendChild(doc.createTextNode(smiles.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
+            selected_AAM.appendChild(doc.createTextNode(smiles.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
             aam.appendChild(selected_AAM);
 
             //OLD RANK
@@ -719,7 +726,7 @@ public class Annotator extends Helper {
                     aam.setAttributeNode(attr);
                     // AAM elements
                     Element solutionAAM = doc.createElement("AAM");
-                    solutionAAM.appendChild(doc.createTextNode(smiles.createReactionSMILES(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
+                    solutionAAM.appendChild(doc.createTextNode(smiles.create(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
                     aam.appendChild(solutionAAM);
                     // AAM elements
                     Element score = doc.createElement("SCORE");

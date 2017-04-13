@@ -40,7 +40,7 @@ import static org.openscience.cdk.graph.invariant.Canon.label;
 public class CanonSmiAdapter {
 
     // convert to Beam excluding stereo (not canonicalised) and aromaticity
-    static final CDKToBeam CDK2BEAM = new CDKToBeam(false, false);
+    static final CDKToBeam CDK2BEAM = new CDKToBeam();
     private static final Logger LOG = getLogger(CanonSmiAdapter.class.getName());
 
     /**

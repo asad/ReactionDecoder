@@ -33,10 +33,10 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
@@ -305,7 +305,9 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      * @throws org.openscience.cdk.exception.CDKException
      */
     public synchronized String getMCSSSmiles(IAtomContainer ac) throws CDKException {
-        SmilesGenerator g = new SmilesGenerator().aromatic();
+        SmilesGenerator g = new SmilesGenerator(
+                SmiFlavor.Unique
+                | SmiFlavor.UseAromaticSymbols);
         return g.create(ac);
     }
 
