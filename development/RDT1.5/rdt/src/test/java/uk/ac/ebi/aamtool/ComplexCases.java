@@ -23,7 +23,6 @@ import org.junit.Test;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.MappingUtility;
-import static uk.ac.ebi.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -31,53 +30,53 @@ import static uk.ac.ebi.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
  */
 public class ComplexCases extends MappingUtility {
 
-//    /*
-//     ************************
-//     * COMPLEX CASES
-//     ************************
-//     */
-//    /**
-//     * Complex case, linear to Ring system; Takes longer to Run
-//     *
-//     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
-//     * C-C:2.0, C-H:5.0, H-O:1.0]
-//     *
-//     * BE 2750.0, Fragment 0
-//     *
-//     * @throws java.lang.Exception
-//     */
-//    @Test
-//    public void R03200() throws Exception {
-//
-//        String reactionID = "R03200";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
-//    }
-//
-//    /**
-//     * Lowest Bond Energy Solution not accepted
-//     *
-//     * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
-//     *
-//     * BE 2208.0, Fragment 0
-//     *
-//     * @throws java.lang.Exception
-//     */
-//    @Test
-//    public void R00369() throws Exception {
-//
-//        String reactionID = "R00369";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    /*
+     ************************
+     * COMPLEX CASES
+     ************************
+     */
+    /**
+     * Complex case, linear to Ring system; Takes longer to Run
+     *
+     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
+     * C-C:2.0, C-H:5.0, H-O:1.0]
+     *
+     * BE 2750.0, Fragment 0
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void R03200() throws Exception {
+
+        String reactionID = "R03200";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * Lowest Bond Energy Solution not accepted
+     *
+     * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
+     *
+     * BE 2208.0, Fragment 0
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void R00369() throws Exception {
+
+        String reactionID = "R00369";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
 //
 //    @Test
 //    public void FAOXC140() throws Exception {
