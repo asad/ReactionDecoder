@@ -183,7 +183,7 @@ public class LUDecomposition implements java.io.Serializable {
      End of temporary code.
      * ------------------------ */
 
-    /* ------------------------
+ /* ------------------------
      Public Methods
      * ------------------------ */
     /**

@@ -33,6 +33,7 @@ import org.openscience.cdk.interfaces.IMapping;
  *
  */
 public class BlockPair {
+
     private static final Logger LOG = getLogger(BlockPair.class.getName());
 
     private final Block reactantBlock;

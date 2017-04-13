@@ -31,6 +31,7 @@ import static java.util.logging.Logger.getLogger;
  *
  */
 public class BlockList implements Comparable<BlockList> {
+
     private static final Logger LOG = getLogger(BlockList.class.getName());
 
     private final List<Block> blocks;
@@ -115,14 +116,14 @@ public class BlockList implements Comparable<BlockList> {
 
     private String calculateSignatureString() {
         List<String> signatures = new ArrayList<>();
-        for (Block block : blocks) {
+        blocks.stream().forEach((block) -> {
             signatures.add(block.getSignatureString());
-        }
+        });
         sort(signatures);
         StringBuilder sb = new StringBuilder();
-        for (String s : signatures) {
+        signatures.stream().forEach((s) -> {
             sb.append(s).append("|");
-        }
+        });
         return sb.toString();
     }
 
@@ -143,9 +144,7 @@ public class BlockList implements Comparable<BlockList> {
      */
     public int numberOfAtoms() {
         int total = 0;
-        for (Block block : blocks) {
-            total += block.getAtomCount();
-        }
+        total = blocks.stream().map((block) -> block.getAtomCount()).reduce(total, Integer::sum);
         return total;
     }
 
@@ -162,6 +161,7 @@ public class BlockList implements Comparable<BlockList> {
         }
     }
 
+    @Override
     public int hashCode() {
         return getSignatureString().hashCode();
     }

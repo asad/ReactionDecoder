@@ -256,30 +256,21 @@ public class MappingUtility extends TestUtility {
         rcSteps.append("Formed Cleaved");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterFormedCleavedFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterFormedCleavedFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append("Order Change");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterOrderChangeFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterOrderChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append("Stereo Change");
         rcSteps.append(NEW_LINE);
         Map<Integer, IPatternFingerprinter> reactionCenterStereoChangeFingerprint = s.getBondChangeCalculator().getReactionCenterStereoChangeFingerprint();
-        for (Map.Entry<Integer, IPatternFingerprinter> m : reactionCenterStereoChangeFingerprint.entrySet()) {
-            if (m.getKey() == -1) {
-                continue;
-            }
+        reactionCenterStereoChangeFingerprint.entrySet().stream().filter((m) -> !(m.getKey() == -1)).forEach((m) -> {
             rcSteps.append(m.getValue());
-        }
+        });
         rcSteps.append(NEW_LINE);
         out.println(rcSteps.toString());
         return s.getBondChangeCalculator();

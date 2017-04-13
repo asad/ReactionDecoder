@@ -35,6 +35,7 @@ import signature.AbstractVertexSignature;
  * @author asad
  */
 public class SubgraphAtomSignature extends AbstractVertexSignature {
+
     private static final Logger LOG = getLogger(SubgraphAtomSignature.class.getName());
 
     private final IAtomContainer atomContainer;

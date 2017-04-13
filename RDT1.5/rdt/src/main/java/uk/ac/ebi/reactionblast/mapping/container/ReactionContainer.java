@@ -95,7 +95,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- methods ------------------------------------------------------------
-
     /**
      *
      * @throws java.io.IOException
@@ -148,7 +147,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param value
@@ -175,7 +173,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param value
@@ -204,7 +201,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- set methods --------------------------------------------------------
-
     /**
      *
      * @param index
@@ -219,7 +215,7 @@ public class ReactionContainer implements Cloneable, Serializable {
             setFingerPrintofEduct(index, new BitSet(getFingerprinterSize()));
         } else {
             BitSet fp = fpr.getFingerprint(educt);
-            setFingerPrintofEduct(index, (BitSet)fp.clone());
+            setFingerPrintofEduct(index, (BitSet) fp.clone());
         }
     }
 
@@ -237,12 +233,11 @@ public class ReactionContainer implements Cloneable, Serializable {
             setFingerPrintofProduct(index, new BitSet(getFingerprinterSize()));
         } else {
             BitSet fp = fpr.getFingerprint(product);
-            setFingerPrintofProduct(index, (BitSet)fp.clone());
+            setFingerPrintofProduct(index, (BitSet) fp.clone());
         }
     }
 
     //~--- set methods --------------------------------------------------------
-
     /**
      *
      * @param index
@@ -298,7 +293,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param value
@@ -324,7 +318,6 @@ public class ReactionContainer implements Cloneable, Serializable {
     }
 
     //~--- set methods --------------------------------------------------------
-
     /**
      *
      * @param value

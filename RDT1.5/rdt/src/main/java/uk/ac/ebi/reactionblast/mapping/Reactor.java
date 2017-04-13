@@ -639,7 +639,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     public synchronized boolean getReactionBalanceFlag() throws IOException {
 
         boolean flag = true;
-        if (this.getLabledReactantAtomsCount() != this.getLabledProductAtomsCount()) {
+        if (!Objects.equals(this.getLabledReactantAtomsCount(), this.getLabledProductAtomsCount())) {
             flag = false;
         }
         if (!getReactionBalanceFlagWithoutHydrogen()) {
@@ -833,11 +833,9 @@ public class Reactor extends AbstractReactor implements Serializable {
                 if (!atom.getSymbol().equalsIgnoreCase("H") && !atom.getID().equalsIgnoreCase("-1")) {
                     if (atom.getID().equalsIgnoreCase(id)) {
                         List<IAtom> conAtoms = pMolecule.getConnectedAtomsList(atom);
-                        for (IAtom atomH : conAtoms) {
-                            if (atomH.getID().equalsIgnoreCase("-1") && atomH.getSymbol().equalsIgnoreCase("H")) {
-                                list.add(atomH);
-                            }
-                        }
+                        conAtoms.stream().filter((atomH) -> (atomH.getID().equalsIgnoreCase("-1") && atomH.getSymbol().equalsIgnoreCase("H"))).forEach((atomH) -> {
+                            list.add(atomH);
+                        });
                     }
                 }
             }
@@ -1228,31 +1226,26 @@ public class Reactor extends AbstractReactor implements Serializable {
         atomContainer.setAtoms(permutedAtoms);
 
         IBond[] bonds = getBondArray(atomContainer);
-        sort(bonds, new Comparator<IBond>() {
+        sort(bonds, (IBond o1, IBond o2) -> {
+            int u = o1.getAtom(0).getProperty("label");
+            int v = o1.getAtom(1).getProperty("label");
+            int x = o2.getAtom(0).getProperty("label");
+            int y = o2.getAtom(1).getProperty("label");
+            int min1 = min(u, v);
+            int min2 = min(x, y);
+            int max1 = max(u, v);
+            int max2 = max(x, y);
 
-            @Override
-            public int compare(IBond o1, IBond o2) {
-                int u = o1.getAtom(0).getProperty("label");
-                int v = o1.getAtom(1).getProperty("label");
-                int x = o2.getAtom(0).getProperty("label");
-                int y = o2.getAtom(1).getProperty("label");
-                int min1 = min(u, v);
-                int min2 = min(x, y);
-                int max1 = max(u, v);
-                int max2 = max(x, y);
-
-                int minCmp = Integer.compare(min1, min2);
-                if (minCmp != 0) {
-                    return minCmp;
-                }
-                int maxCmp = Integer.compare(max1, max2);
-                if (maxCmp != 0) {
-                    return maxCmp;
-                }
-                err.println("pokemon!");
-                throw new InternalError();
+            int minCmp = Integer.compare(min1, min2);
+            if (minCmp != 0) {
+                return minCmp;
             }
-
+            int maxCmp = Integer.compare(max1, max2);
+            if (maxCmp != 0) {
+                return maxCmp;
+            }
+            err.println("pokemon!");
+            throw new InternalError();
         });
         atomContainer.setBonds(bonds);
     }

@@ -35,30 +35,35 @@ import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
 /**
  * @RCSfile: atomMapperTool.java,v
  *
- * @Author: Syed Asad Rahman 
- * @Date: 2009/06/3 
+ * @Author: Syed Asad Rahman
+ * @Date: 2009/06/3
  * @Revision: 1.10
  *
  * @Copyright (C) 2004-2004 The Atom Mapper Tool (AMT) project
  *
  * @Contact: asad@ebi.ac.uk
  *
- * @This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version. All we ask is that proper credit is given for our work, which includes - but is not limited to -
- * adding the above copyright notice to the beginning of your source code files, and to any copyright notice that you
- * may distribute with programs based on this work.
+ * @This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation; either version 2.1 of the License, or (at your
+ * option) any later version. All we ask is that proper credit is given for our
+ * work, which includes - but is not limited to - adding the above copyright
+ * notice to the beginning of your source code files, and to any copyright
+ * notice that you may distribute with programs based on this work.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
  */
-public class MoleculeMoleculeMapping implements Serializable{
+public class MoleculeMoleculeMapping implements Serializable {
+
     private static final long serialVersionUID = 1094750239472059259L;
     private static final Logger LOG = getLogger(MoleculeMoleculeMapping.class.getName());
 
@@ -107,7 +112,6 @@ public class MoleculeMoleculeMapping implements Serializable{
     }
 
     //~--- set methods --------------------------------------------------------
-
     /**
      *
      * @param Key

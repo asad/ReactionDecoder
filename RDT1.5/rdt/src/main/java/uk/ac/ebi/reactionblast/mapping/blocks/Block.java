@@ -35,6 +35,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class Block implements Comparable<Block> {
+
     private static final Logger LOG = getLogger(Block.class.getName());
 
     private final IAtomContainer atomContainer;
@@ -69,23 +70,22 @@ public class Block implements Comparable<Block> {
         int[] mappingPermutation = new int[atomMap.size()];
 
         Map<Integer, Integer> indexMap = new HashMap<>();
-        for (IAtom atom : atomMap.keySet()) {
+        atomMap.keySet().stream().forEach((atom) -> {
             int atomIndex = atomContainer.getAtomNumber(atom);
             IAtom partnerAtom = atomMap.get(atom);
             int partnerIndex = partner.atomContainer.getAtomNumber(partnerAtom);
             indexMap.put(atomIndex, partnerIndex);
-        }
-//        System.out.println("indexMap " + indexMap);
+        });//        System.out.println("indexMap " + indexMap);
 
         Map<Integer, Integer> compactMap
                 = getCompactMap(new ArrayList<>(indexMap.keySet()));
         Map<Integer, Integer> compactPartnerMap
                 = getCompactMap(new ArrayList<>(indexMap.values()));
 
-        for (Integer index : indexMap.keySet()) {
+        indexMap.keySet().stream().forEach((index) -> {
             mappingPermutation[compactMap.get(index)]
                     = compactPartnerMap.get(indexMap.get(index));
-        }
+        });
 
         return mappingPermutation;
     }
@@ -235,9 +235,9 @@ public class Block implements Comparable<Block> {
 
     private List<Integer> getIndices(List<IAtom> atoms, IAtomContainer container) {
         List<Integer> indices = new ArrayList<>();
-        for (IAtom atom : atoms) {
+        atoms.stream().forEach((atom) -> {
             indices.add(container.getAtomNumber(atom));
-        }
+        });
         return indices;
     }
 

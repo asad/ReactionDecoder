@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.mapping.interfaces;
 
-
-
 /**
  *
  * This class represents various algorithm type supported. Presently Atom-Atom

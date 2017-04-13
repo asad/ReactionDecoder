@@ -138,7 +138,7 @@ class Helper extends ChemicalFormatParser {
         final String commandLineSyntax = "java -jar ReactionDecoder.jar";
         try (PrintWriter writer = new PrintWriter(out)) {
             final HelpFormatter helpFormatter = new HelpFormatter();
-            for (String headerString : optionsMap.keySet()) {
+            optionsMap.keySet().stream().map((headerString) -> {
                 helpFormatter.printHelp(
                         writer,
                         printedRowWidth,
@@ -149,9 +149,13 @@ class Helper extends ChemicalFormatParser {
                         spacesBeforeOptionDescription,
                         "End of Helper " + headerString + " Help",
                         displayUsage);
+                return headerString;
+            }).map((_item) -> {
                 displayBlankLines(2, out);
+                return _item;
+            }).forEach((_item) -> {
                 writer.flush();
-            }
+            });
             writer.close();
         }
     }

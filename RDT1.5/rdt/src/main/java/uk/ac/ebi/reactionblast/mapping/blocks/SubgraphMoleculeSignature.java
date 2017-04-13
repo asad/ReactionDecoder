@@ -32,14 +32,17 @@ import signature.AbstractGraphSignature;
 import signature.AbstractVertexSignature;
 
 /**
- * A specialized signature that covers only a (connected) part of a molecule. This is different to the idea of a
- * signature of a certain height, since the subgraph may be of varying heights. It is really no different to extracting
- * the atoms and bonds from the original molecule, and making a signature from that - just more convenient.
+ * A specialized signature that covers only a (connected) part of a molecule.
+ * This is different to the idea of a signature of a certain height, since the
+ * subgraph may be of varying heights. It is really no different to extracting
+ * the atoms and bonds from the original molecule, and making a signature from
+ * that - just more convenient.
  *
  * @author maclean
  *
  */
 public class SubgraphMoleculeSignature extends AbstractGraphSignature {
+
     private static final Logger LOG = getLogger(SubgraphMoleculeSignature.class.getName());
 
     private final int vertexCount;
@@ -73,11 +76,11 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         // sort the atoms
         IAtom[] sortedAtoms = new IAtom[fullContainer.getAtomCount()];
         List<String> debugList = new ArrayList<>();
-        for (IAtom atom : subgraphAtoms) {
+        subgraphAtoms.stream().forEach((atom) -> {
             int atomNumber = fullContainer.getAtomNumber(atom);
             sortedAtoms[atomNumber] = atom;
             debugList.add(atom.getSymbol() + atomNumber);
-        }
+        });
         sort(debugList);
 //        System.out.println("atoms of " + fullContainer.getID() + " " + debugList);
 
@@ -126,13 +129,9 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
             IAtom atom = atomContainer.getAtom(i);
             if (subgraphAtoms.contains(atom)) {
                 List<Integer> connectedIndices = new ArrayList<>();
-                for (IAtom neighbour
-                        : atomContainer.getConnectedAtomsList(atom)) {
-                    if (subgraphAtoms.contains(neighbour)) {
-                        int index = atomContainer.getAtomNumber(neighbour);
-                        connectedIndices.add(index);
-                    }
-                }
+                atomContainer.getConnectedAtomsList(atom).stream().filter((neighbour)
+                        -> (subgraphAtoms.contains(neighbour))).map((neighbour) 
+                                -> atomContainer.getAtomNumber(neighbour)).forEach(connectedIndices::add);
                 int[] connectedIndicesArray = new int[connectedIndices.size()];
                 int x = 0;
                 for (int index : connectedIndices) {

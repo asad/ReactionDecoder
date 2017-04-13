@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class DefinedMapping {
+
     private static final Logger LOG = getLogger(DefinedMapping.class.getName());
 
     private final IAtomContainer rAtomContainer;

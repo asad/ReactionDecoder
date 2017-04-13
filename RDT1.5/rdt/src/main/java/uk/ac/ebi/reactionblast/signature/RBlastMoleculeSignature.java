@@ -34,6 +34,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * @author modified by Asad to use rBLAST SMILES
  */
 public class RBlastMoleculeSignature extends BaseMoleculeSignature {
+
     private static final Logger LOG = getLogger(RBlastMoleculeSignature.class.getName());
 
     private boolean useAromatics = true;

@@ -39,6 +39,7 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  * @author Gilleain Torrance
  */
 public class ExplicitHydrogenSingleDownWedgeRule extends WedgeRule {
+
     private static final Logger LOG = getLogger(ExplicitHydrogenSingleDownWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {DOWN, NONE, NONE, NONE};

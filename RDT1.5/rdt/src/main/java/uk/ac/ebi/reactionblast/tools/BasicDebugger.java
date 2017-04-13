@@ -39,10 +39,12 @@ public abstract class BasicDebugger {
      */
     public void printAtomAtomMapping(Map<IAtom, IAtom> mappings) {
         out.println();
-        for (Map.Entry<IAtom, IAtom> m : mappings.entrySet()) {
+        mappings.entrySet().stream().map((m) -> {
             out.println("e:" + m.getKey().getID());
+            return m;
+        }).forEach((m) -> {
             out.println("p:" + m.getValue().getID());
-        }
+        });
     }
 
     /**

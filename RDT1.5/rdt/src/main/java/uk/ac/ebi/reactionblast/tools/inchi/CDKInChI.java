@@ -48,6 +48,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  *
  */
 public class CDKInChI {
+
     /*
     On suggestion from D. Schomburg as 'At' a radioactive halogen that never appears in nature
      */
@@ -55,7 +56,6 @@ public class CDKInChI {
     /**
      *
      */
-
     public static final String R_Group_replacement_String = "At";
 
     /**

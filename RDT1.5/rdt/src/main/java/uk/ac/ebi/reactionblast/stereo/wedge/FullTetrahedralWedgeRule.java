@@ -27,10 +27,11 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.CLOCKWISE;
 
 /**
- * 
+ *
  * @author Gilleain Torrance
  */
 public class FullTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
+
     private static final Logger LOG = getLogger(FullTetrahedralWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = new IBond.Stereo[]{UP, DOWN, UP, DOWN};

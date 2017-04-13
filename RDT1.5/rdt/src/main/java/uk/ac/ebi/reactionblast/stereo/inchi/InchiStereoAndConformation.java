@@ -16,10 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.stereo.inchi;
+
 /**
  * Tool for comparing chiralities.
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
@@ -46,20 +47,16 @@ public enum InchiStereoAndConformation {
     /*
      * as in Z-but-2-ene
      */
-
     /**
      *
      */
-
     TOGETHER(4, "Z-but-2-ene atom"),
     /*
      * as in Z-but-2-ene atom
      */
-
     /**
      *
      */
-
     OPPOSITE(5, "E-but-2-ene atom");  //  
     private final int type;
     private final String description;

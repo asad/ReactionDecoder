@@ -198,7 +198,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     }
 
     //~--- set methods --------------------------------------------------------
-
     /**
      *
      * @param Key
@@ -206,9 +205,9 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-public synchronized void setValue(String Key, BitSet Value) throws IOException {
-    fingerPrintMap.put(Key, Value);
-}
+    public synchronized void setValue(String Key, BitSet Value) throws IOException {
+        fingerPrintMap.put(Key, Value);
+    }
 
     /**
      *

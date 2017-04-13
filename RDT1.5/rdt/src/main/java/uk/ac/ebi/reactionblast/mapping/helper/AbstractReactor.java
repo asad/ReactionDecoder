@@ -98,8 +98,8 @@ public abstract class AbstractReactor extends MappingHandler {
 
     /**
      *
-     * @return true if its a balanced reaction else false Note: This does not consider whether Hydrogens are balanced or
-     * not
+     * @return true if its a balanced reaction else false Note: This does not
+     * consider whether Hydrogens are balanced or not
      *
      *
      */

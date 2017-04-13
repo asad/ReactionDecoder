@@ -52,6 +52,7 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  * @author asad
  */
 public class RBlastReaction {
+
     private static final Logger LOG = getLogger(RBlastReaction.class.getName());
 
     private IReaction reaction;
@@ -167,27 +168,37 @@ public class RBlastReaction {
         for (IBond bond : atomContainer.bonds()) {
             if (bond.getProperty(BOND_CHANGE_INFORMATION) != null) {
                 ECBLAST_BOND_CHANGE_FLAGS bondChangeType = (ECBLAST_BOND_CHANGE_FLAGS) bond.getProperty(BOND_CHANGE_INFORMATION);
-                if (bondChangeType == BOND_CLEAVED) {
-                    bondsCleavedInReactant.add(bond);
-                } else if (bondChangeType == BOND_FORMED) {
-                    bondsFormedInProduct.add(bond);
-                } else if (bondChangeType == BOND_ORDER) {
-                    if (isReactant) {
-                        bondsOrderChangedInReactant.add(bond);
-                    } else {
-                        bondsOrderChangedInProduct.add(bond);
-                    }
-                } else if (bondChangeType == BOND_STEREO) {
-                    if (isReactant) {
-                        bondsStereoChangedInReactant.add(bond);
-                    } else {
-                        bondsStereoChangedInProduct.add(bond);
-                    }
-                } else if (bondChangeType == BOND_FORMED_OR_CLEAVED) {
-                    if (isReactant) {
-                        bondsCleavedInReactant.add(bond);
-                    } else {
-                        bondsFormedInProduct.add(bond);
+                if (null != bondChangeType) {
+                    switch (bondChangeType) {
+                        case BOND_CLEAVED:
+                            bondsCleavedInReactant.add(bond);
+                            break;
+                        case BOND_FORMED:
+                            bondsFormedInProduct.add(bond);
+                            break;
+                        case BOND_ORDER:
+                            if (isReactant) {
+                                bondsOrderChangedInReactant.add(bond);
+                            } else {
+                                bondsOrderChangedInProduct.add(bond);
+                            }
+                            break;
+                        case BOND_STEREO:
+                            if (isReactant) {
+                                bondsStereoChangedInReactant.add(bond);
+                            } else {
+                                bondsStereoChangedInProduct.add(bond);
+                            }
+                            break;
+                        case BOND_FORMED_OR_CLEAVED:
+                            if (isReactant) {
+                                bondsCleavedInReactant.add(bond);
+                            } else {
+                                bondsFormedInProduct.add(bond);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

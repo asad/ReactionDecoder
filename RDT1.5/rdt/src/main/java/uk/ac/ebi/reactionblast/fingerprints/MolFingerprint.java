@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import static java.lang.Math.max;
@@ -327,9 +326,9 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      */
     @Override
-public synchronized int compareTo(MolFingerprint t) {
-    return compare(this, t);
-}
+    public synchronized int compareTo(MolFingerprint t) {
+        return compare(this, t);
+    }
 
     /**
      * Return true if two Fingerprints are equal
@@ -337,30 +336,30 @@ public synchronized int compareTo(MolFingerprint t) {
      * @param object
      * @return
      */
-@Override
-public synchronized boolean equals(Object object) {
-    if (this == object) {
-        return true;
-    }
-    if (!(object instanceof MolFingerprint)) {
-        return false;
-    }
-    
-    MolFingerprint fpn = (MolFingerprint) object;
-    
-    if (this.arrayFingerprint.length != fpn.getBooleanArray().length) {
-        return false;
-    }
-    
-    for (int i = 0; i < arrayFingerprint.length; i++) {
-        if (this.arrayFingerprint[i] != arrayFingerprint[i]) {
+    @Override
+    public synchronized boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof MolFingerprint)) {
             return false;
         }
-    }
-    return true;
-}
 
-@Override
+        MolFingerprint fpn = (MolFingerprint) object;
+
+        if (this.arrayFingerprint.length != fpn.getBooleanArray().length) {
+            return false;
+        }
+
+        for (int i = 0; i < arrayFingerprint.length; i++) {
+            if (this.arrayFingerprint[i] != arrayFingerprint[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public synchronized int hashCode() {
         int hash = 7;
         hash = 19 * hash + Arrays.hashCode(this.arrayFingerprint);

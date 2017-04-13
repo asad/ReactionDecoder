@@ -29,7 +29,7 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 
 /**
- * 
+ *
  * @author Gilleain Torrance
  */
 public abstract class AbstractTetrahedralWedgeRule extends WedgeRule {

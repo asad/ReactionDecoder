@@ -34,7 +34,8 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult;
 import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
 
 /**
- * Tool to check mapped pairs of atoms, to see if they have compatible stereo wedges.
+ * Tool to check mapped pairs of atoms, to see if they have compatible stereo
+ * wedges.
  *
  * @author maclean
  *
@@ -66,7 +67,8 @@ public class WedgeStereoComparisonTool {
     }
 
     /**
-     * Compare a (mapped) pair of atom containers to check that they have the same stereo centers.
+     * Compare a (mapped) pair of atom containers to check that they have the
+     * same stereo centers.
      *
      * @param atomContainerA an atom container
      * @param atomContainerB another atom container

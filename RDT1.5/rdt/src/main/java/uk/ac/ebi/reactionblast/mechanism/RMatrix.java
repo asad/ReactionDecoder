@@ -128,9 +128,9 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                     double value = productBEMatrix.getValue(i, j) - reactantBEMatrix.getValue(i, j);
                     boolean aromaticFlag = isAromaticChange(i, j);
                     if (aromaticFlag && value != 0.0) {
-                        setValue(i, j, 0.0);
+                        super.setValue(i, j, 0.0);
                     } else {
-                        setValue(i, j, value);
+                        super.setValue(i, j, value);
                     }
                 }
             }
@@ -383,46 +383,35 @@ public final class RMatrix extends EBIMatrix implements Serializable {
 
         int leftHandAtomCount = 0;
 
-        for (IAtom a : atomsE) {
-            if (a.getSymbol().equals("H")) {
-                continue;
-            }
+        leftHandAtomCount = atomsE.stream().filter((a) -> !(a.getSymbol().equals("H"))).map((a) -> {
             if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
                 atomUniqueCounter1.put(a.getSymbol(), 1);
             } else {
                 int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
                 atomUniqueCounter1.put(a.getSymbol(), counter);
             }
-            leftHandAtomCount++;
-        }
+            return a;
+        }).map((_item) -> 1).reduce(leftHandAtomCount, Integer::sum);
 
         int rightHandAtomCount = 0;
 
-        for (IAtom b : atomsP) {
-            if (b.getSymbol().equals("H")) {
-                continue;
-            }
+        rightHandAtomCount = atomsP.stream().filter((b) -> !(b.getSymbol().equals("H"))).map((b) -> {
             if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
                 atomUniqueCounter2.put(b.getSymbol(), 1);
             } else {
                 int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
                 atomUniqueCounter2.put(b.getSymbol(), counter);
             }
-            rightHandAtomCount++;
+            return b;
+        }).map((_item) -> 1).reduce(rightHandAtomCount, Integer::sum);
 
-        }
-
-        for (String s : atomUniqueCounter1.keySet()) {
-            if (atomUniqueCounter2.containsKey(s)) {
-                Integer overlap = atomUniqueCounter1.get(s) <= atomUniqueCounter2.get(s)
-                        ? atomUniqueCounter1.get(s) : atomUniqueCounter2.get(s);
-                atomOverlap.put(s, overlap);
-            }
-        }
+        atomUniqueCounter1.keySet().stream().filter((s) -> (atomUniqueCounter2.containsKey(s))).forEach((String s) -> {
+            Integer overlap = atomUniqueCounter1.get(s) <= atomUniqueCounter2.get(s)
+                    ? atomUniqueCounter1.get(s) : atomUniqueCounter2.get(s);
+            atomOverlap.put(s, overlap);
+        });
         int total = 0;
-        for (Integer i : atomOverlap.values()) {
-            total += i;
-        }
+        total = atomOverlap.values().stream().map((i) -> i).reduce(total, Integer::sum);
         if (DEBUG) {
             out.println("atomUniqueCounter1 " + leftHandAtomCount);
             out.println("atomUniqueCounter2 " + rightHandAtomCount);

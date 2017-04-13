@@ -62,7 +62,6 @@ public abstract class IGraphMatching {
      */
     public abstract IAtomContainer getRemainingEduct();
 
-
     /**
      *
      * @return
@@ -77,7 +76,7 @@ public abstract class IGraphMatching {
      * @param J
      * @param eductFP
      * @param prodFP
-     * @return 
+     * @return
      */
     public abstract boolean mcsMatch(Holder holder, boolean removeHydrogen, Integer I, Integer J, BitSet eductFP, BitSet prodFP);
 

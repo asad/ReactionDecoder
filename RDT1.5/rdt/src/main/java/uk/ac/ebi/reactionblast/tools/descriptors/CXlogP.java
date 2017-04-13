@@ -19,8 +19,8 @@
 package uk.ac.ebi.reactionblast.tools.descriptors;
 
 import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * This XlogP is calculated by Abdullah Kharamann. It uses summation on XlogP
@@ -31,8 +31,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class CXlogP {
 
-    private static final IAtomContainer molecule = null;
-    private static final IAtomContainer eminMol = null;
+    private static final IAtomContainer MOL = null;
+    private static final IAtomContainer E_MIN_Mol = null;
     private static final Logger LOG = getLogger(CXlogP.class.getName());
 
     private CXlogP() {
@@ -45,22 +45,22 @@ public class CXlogP {
      * @throws java.lang.Exception
      */
 //    public CXlogP(IAtomContainer Mol, boolean verbose) throws Exception {
-//        CXlogP.molecule = Mol;
+//        CXlogP.MOL = Mol;
 //        // read in force field parameter. Required for energy calculation
 //        MyForceFieldConfigurator ffc = new MyForceFieldConfigurator();
 //        String mmfile = "cX" + File.separator + "my_mmff94.prm";
 //        ffc.setForceFieldConfigurator(mmfile);
-//        new CdkMolStandardize(true).standardize4MMFF94(molecule, verbose);
+//        new CdkMolStandardize(true).standardize4MMFF94(MOL, verbose);
 //
 //        // do energy calculation
-//        MyMMFF94EnergyFunction en = new MyMMFF94EnergyFunction(molecule,
+//        MyMMFF94EnergyFunction en = new MyMMFF94EnergyFunction(MOL,
 //                ffc.getParameterSet(), verbose);
-//        totalEnergy = en.energyFunctionOfAMolecule(molecule, verbose);
+//        totalEnergy = en.energyFunctionOfAMolecule(MOL, verbose);
 //        // minimize
-//        ForceField f = new ForceField((AtomContainer) molecule);
+//        ForceField f = new ForceField((AtomContainer) MOL);
 //        GVector moleculeCoords = new GVector(3);
-//        moleculeCoords.setSize(molecule.getAtomCount() * 3);
-//        moleculeCoords.set(ForceFieldTools.getCoordinates3xNVector(molecule));
+//        moleculeCoords.setSize(MOL.getAtomCount() * 3);
+//        moleculeCoords.set(ForceFieldTools.getCoordinates3xNVector(MOL));
 ////        long start = System.currentTimeMillis();
 ////        use either both or one of the minimization methods. The first (steepestDescentsMinimization)
 ////        gives good approximation to the energy minimum. The second  (conjugateGradientMinimization)
@@ -70,7 +70,7 @@ public class CXlogP {
 //
 //        f.steepestDescentsMinimization(moleculeCoords, en);
 //        f.conjugateGradientMinimization(moleculeCoords, en);
-//        eminMol = f.getAtomContainer();
+//        E_MIN_Mol = f.getAtomContainer();
 ////      long stop = System.currentTimeMillis();
 ////      System.out.print(en.energyFunctionOfAMolecule(f.getAtomContainer(),verbose) + "\n");
 ////      write out minimized structure in file min2.sdf
@@ -78,10 +78,10 @@ public class CXlogP {
 ////        writer.write(f.getAtomContainer());
 ////        writer.close();
 //
-//    // to perform conformational analysis by rotating torsion angles in the molecule
+//    // to perform conformational analysis by rotating torsion angles in the MOL
 //
 ////        ConformationalAnalysis confAnal = new ConformationalAnalysis(ffc.getParameterSet());
-////        IAtomContainerSet molSet = confAnal.rotateTorsionsByTestingForStericClashesOnly(molecule, 10, verbose);
+////        IAtomContainerSet molSet = confAnal.rotateTorsionsByTestingForStericClashesOnly(MOL, 10, verbose);
 //
 //
 //    }
@@ -91,23 +91,23 @@ public class CXlogP {
 //    }
 //
 //    public IAtomContainer getEnergyMinimsedMolecule() {
-//        return eminMol;
+//        return E_MIN_Mol;
 //    }
 //    public double getXlogP() throws CDKException {
 //
 //        MyXlogP xlog = new MyXlogP();
-//        double xlogP = Double.valueOf(xlog.calculate(molecule, false).getValue().toString());
+//        double xlogP = Double.valueOf(xlog.calculate(MOL, false).getValue().toString());
 //        return xlogP;
 //    }
 //
 //    public Map<IAtom, Double> getAtomXlogPMap() {
 //
 //        Map<IAtom, Double> map = new HashMap<IAtom, Double>();
-//        for (int i = 0; i < molecule.getAtomCount(); i++) {
-//            if(molecule.getAtom(i).getProperty(cX.logP.MyXlogP.xlogpPropName)==null){
+//        for (int i = 0; i < MOL.getAtomCount(); i++) {
+//            if(MOL.getAtom(i).getProperty(cX.logP.MyXlogP.xlogpPropName)==null){
 //                this.getXlogP();
 //            }
-//            map.put(molecule.getAtom(i), (Double) molecule.getAtom(i).getProperty(cX.logP.MyXlogP.xlogpPropName));
+//            map.put(MOL.getAtom(i), (Double) MOL.getAtom(i).getProperty(cX.logP.MyXlogP.xlogpPropName));
 //
 //        }
 //    }

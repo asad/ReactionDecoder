@@ -34,8 +34,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.SaturationChecker;
 
 /**
- * Small utility class to check an atom to see if it is a tetrahedral stereo center - that is, it has 4 different
- * neighbours. It uses the {@link CIPTool} to determine this.
+ * Small utility class to check an atom to see if it is a tetrahedral stereo
+ * center - that is, it has 4 different neighbours. It uses the {@link CIPTool}
+ * to determine this.
  *
  * @author maclean
  *
@@ -45,9 +46,11 @@ public class StereoCenterAnalyser {
     private static final Logger LOG = getLogger(StereoCenterAnalyser.class.getName());
 
     /**
-     * Check an atom to see if it has a potential tetrahedral stereo center. This can only be true if:
+     * Check an atom to see if it has a potential tetrahedral stereo center.
+     * This can only be true if:
      * <ol>
-     * <li>It has 4 neighbours OR 3 neighbours and a single implicit hydrogen</li>
+     * <li>It has 4 neighbours OR 3 neighbours and a single implicit
+     * hydrogen</li>
      * <li>These four neighbours are different according to CIP rules</li>
      * </ol>
      * If these conditions are met, it returns true.

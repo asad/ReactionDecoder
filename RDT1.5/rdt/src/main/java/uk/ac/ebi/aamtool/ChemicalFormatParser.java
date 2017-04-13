@@ -53,6 +53,7 @@ import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class ChemicalFormatParser {
+
     private static final Logger LOG = getLogger(ChemicalFormatParser.class.getName());
 
     protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {

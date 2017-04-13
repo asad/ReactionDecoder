@@ -42,8 +42,7 @@ public interface IGameTheory {
 
     /**
      *
-     * @return
-     * @throws IOException
+     * @return @throws IOException
      */
     public String getSuffix() throws IOException;
 

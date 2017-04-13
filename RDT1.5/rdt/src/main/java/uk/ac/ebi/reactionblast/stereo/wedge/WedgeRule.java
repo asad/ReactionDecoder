@@ -90,14 +90,12 @@ public abstract class WedgeRule {
             if (patternStereo == matchStereo) {
                 patternIndex++;
                 matchIndex++;
+            } else if (patternIndex == 0) {
+                // look for a new start
+                matchIndex++;
             } else {
-                if (patternIndex == 0) {
-                    // look for a new start
-                    matchIndex++;
-                } else {
-                    // start again
-                    patternIndex = 0;
-                }
+                // start again
+                patternIndex = 0;
             }
         }
 

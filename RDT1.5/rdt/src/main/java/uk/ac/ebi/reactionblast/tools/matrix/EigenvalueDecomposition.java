@@ -73,7 +73,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
 
     /* ------------------------
      Private Methods
-     * ------------------------ */       private transient double cdivr, cdivi;
+     * ------------------------ */    private transient double cdivr, cdivi;
 
     /* ------------------------
     Constructor
@@ -89,38 +89,38 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         V = new double[n][n];
         d = new double[n];
         e = new double[n];
-        
+
         issymmetric = true;
         for (int j = 0; (j < n) & issymmetric; j++) {
             for (int i = 0; (i < n) & issymmetric; i++) {
                 issymmetric = (A[i][j] == A[j][i]);
             }
         }
-        
+
         if (issymmetric) {
             for (int i = 0; i < n; i++) {
                 arraycopy(A[i], 0, V[i], 0, n);
             }
-            
+
             // Tridiagonalize.
             tred2();
-            
+
             // Diagonalize.
             tql2();
-            
+
         } else {
             H = new double[n][n];
             ort = new double[n];
-            
+
             for (int j = 0; j < n; j++) {
                 for (int i = 0; i < n; i++) {
                     H[i][j] = A[i][j];
                 }
             }
-            
+
             // Reduce to Hessenberg form.
             orthes();
-            
+
             // Reduce Hessenberg to real Schur form.
             hqr2();
         }
@@ -232,9 +232,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         e[0] = 0.0;
     }
 
-    
     // Symmetric tridiagonal QL algorithm.
-    
     private void tql2() {
 
         //  This is derived from the Algol procedures tql2, by
@@ -315,7 +313,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                     p = -s * s2 * c3 * el1 * e[l] / dl1;
                     e[l] = s * p;
                     d[l] = c * p;
-                    
+
                     // Check for convergence.
                 } while (abs(e[l]) > eps * tst1);
             }
@@ -346,7 +344,6 @@ public class EigenvalueDecomposition implements java.io.Serializable {
     }
 
     // Nonsymmetric reduction to Hessenberg form.
-    
     private void orthes() {
 
         //  This is derived from the Algol procedures orthes and ortran,
@@ -432,8 +429,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
             }
         }
     }    // Complex scalar division.
-    
-    
+
     private void cdiv(double xr, double xi, double yr, double yi) {
         double r, d1;
         if (abs(yr) > abs(yi)) {
@@ -450,7 +446,6 @@ public class EigenvalueDecomposition implements java.io.Serializable {
     }
 
     // Nonsymmetric reduction from Hessenberg to real Schur form.
-
     private void hqr2() {
 
         //  This is derived from the Algol procedure hqr2,
@@ -503,7 +498,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                 e[n1] = 0.0;
                 n1--;
                 iter = 0;
-                
+
                 // Two roots found
             } else if (l == n1 - 1) {
                 w = H[n1][n1 - 1] * H[n1 - 1][n1];
@@ -556,7 +551,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                         V[i][n1 - 1] = q * z + p * V[i][n1];
                         V[i][n1] = q * V[i][n1] - p * z;
                     }
-                    
+
                     // Complex pair
                 } else {
                     d[n1 - 1] = x + p;
@@ -566,7 +561,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                 }
                 n1 -= 2;
                 iter = 0;
-                
+
                 // No convergence yet
             } else {
 
@@ -742,7 +737,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                             } else {
                                 H[i][n1] = -r / (eps * norm);
                             }
-                            
+
                             // Solve real equations
                         } else {
                             x = H[i][i + 1];
@@ -766,7 +761,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                         }
                     }
                 }
-                
+
                 // Complex vector
             } else if (q < 0) {
                 int l = n1 - 1;

@@ -19,8 +19,9 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
+
 /**
- * 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean

@@ -70,8 +70,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-
 public class Reader {
+
     private static final Logger LOG = getLogger(Reader.class.getName());
 
     /**
@@ -230,7 +230,6 @@ public class Reader {
 //
 //        return rxnReactions;
 //    }
-
     /**
      *
      * @param name

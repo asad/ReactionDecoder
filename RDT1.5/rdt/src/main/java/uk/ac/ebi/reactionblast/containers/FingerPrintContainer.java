@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
@@ -45,22 +44,27 @@ import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
  *
  * @Contact: asad@ebi.ac.uk
  *
- * @This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version. All we ask is that proper credit is given for our work, which includes - but is not limited to -
- * adding the above copyright notice to the beginning of your source code files, and to any copyright notice that you
- * may distribute with programs based on this work.
+ * @This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation; either version 2.1 of the License, or (at your
+ * option) any later version. All we ask is that proper credit is given for our
+ * work, which includes - but is not limited to - adding the above copyright
+ * notice to the beginning of your source code files, and to any copyright
+ * notice that you may distribute with programs based on this work.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
  */
 public class FingerPrintContainer implements IFingerPrintContainer {
+
     /*
      * Singleton Pattern Implementation
      */
@@ -72,22 +76,21 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     /**
      *
      * @return
-     */    public static synchronized FingerPrintContainer getInstance() {
-         if (_instance == null) {
-             _instance = new FingerPrintContainer();
-         }
-         
-         return _instance;
-     }
+     */
+    public static synchronized FingerPrintContainer getInstance() {
+        if (_instance == null) {
+            _instance = new FingerPrintContainer();
+        }
+
+        return _instance;
+    }
 
     //~--- constructors -------------------------------------------------------
-
-     private FingerPrintContainer() {
-         FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
+    private FingerPrintContainer() {
+        FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
     }
 
     //~--- methods ------------------------------------------------------------
-
     /**
      *
      * @throws java.io.IOException
@@ -132,7 +135,6 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param Key

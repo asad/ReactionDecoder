@@ -418,11 +418,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     throw new CDKException("atom-atom mapping is null");
                 }
 
-                for (IAtom atom : bestAtomAtomMapping.getMappingsByAtoms().keySet()) {
-                    if (atom.getSymbol().equalsIgnoreCase("C")) {
-                        carbonCount++;
-                    }
-                }
+                carbonCount = bestAtomAtomMapping.getMappingsByAtoms().keySet().stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("C"))).map((_item) -> 1.0).reduce(carbonCount, (accumulator, _item) -> accumulator + 1);
 
                 stereoVal = initMcsAtom.getStereoScore(substrateIndex, productIndex);
                 fragmentVal = initMcsAtom.getTotalFragmentCount(substrateIndex, productIndex);

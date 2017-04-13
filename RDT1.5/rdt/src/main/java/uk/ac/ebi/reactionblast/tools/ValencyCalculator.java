@@ -22,6 +22,7 @@ import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
@@ -156,7 +157,7 @@ public class ValencyCalculator {
             IBond bond = m.getBond(atom, connAtom);
             totalConnectedBondOrder += convertBondOrder(bond);
         }
-        Integer charge = atom.getFormalCharge() == UNSET ? 0 : atom.getFormalCharge();
+        Integer charge = Objects.equals(atom.getFormalCharge(), UNSET) ? 0 : atom.getFormalCharge();
         return skipHydrogen ? (getValenceElectron(atom) - totalConnectedBondOrder + counterH - charge)
                 : (getValenceElectron(atom) - totalConnectedBondOrder - charge);
     }

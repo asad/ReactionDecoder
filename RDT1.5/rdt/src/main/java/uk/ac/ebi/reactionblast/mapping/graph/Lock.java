@@ -27,6 +27,7 @@ import static java.util.logging.Logger.getLogger;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class Lock {
+
     private static final Logger LOG = getLogger(Lock.class.getName());
 
     private boolean isLocked;

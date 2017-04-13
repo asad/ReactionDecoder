@@ -70,7 +70,7 @@ public class LayoutCheck {
                 try {
                     StructureDiagramGenerator sdg = new StructureDiagramGenerator(new AtomContainer(molecule));
                     sdg.generateCoordinates();
-                    molecule = sdg.getMolecule();
+                    chemModel = (IChemModel) sdg.getMolecule();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

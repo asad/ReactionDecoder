@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
@@ -120,31 +121,24 @@ public class StereogenicCenterCalculator implements Serializable {
             }
         }
 
-        for (IAtom atomQ : queryAtoms) {
-            for (IAtom atomT : targetAtoms) {
-                if (atomQ.getID().equals(atomT.getID()) && !atomQ.getSymbol().equalsIgnoreCase("H")) {
-                    IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
-                    IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
-
-                    IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
-                    IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
-
-                    IStereoAndConformation rAtom3DStereo = chirality3DChemaxon.get(atomQ);
-                    IStereoAndConformation pAtom3DStereo = chirality3DChemaxon.get(atomT);
-
-                    if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                        StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
-                        stereoChangeList.add(sc);
-                    }
-
-                    if (isStereogenicChange(rAtom3DStereo, pAtom3DStereo)) {
-                        StereoChange sc = new StereoChange(rAtom3DStereo, pAtom3DStereo, atomQ, atomT);
-                        stereoChangeList.add(sc);
-                    }
-
+        queryAtoms.stream().forEach((IAtom atomQ) -> {
+            targetAtoms.stream().filter((atomT) -> (atomQ.getID().equals(atomT.getID()) && !atomQ.getSymbol().equalsIgnoreCase("H"))).forEach((atomT) -> {
+                IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
+                IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
+                IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
+                IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
+                IStereoAndConformation rAtom3DStereo = chirality3DChemaxon.get(atomQ);
+                IStereoAndConformation pAtom3DStereo = chirality3DChemaxon.get(atomT);
+                if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
+                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    stereoChangeList.add(sc);
                 }
-            }
-        }
+                if (isStereogenicChange(rAtom3DStereo, pAtom3DStereo)) {
+                    StereoChange sc = new StereoChange(rAtom3DStereo, pAtom3DStereo, atomQ, atomT);
+                    stereoChangeList.add(sc);
+                }
+            });
+        });
         return stereoChangeList;
     }
 
@@ -170,32 +164,27 @@ public class StereogenicCenterCalculator implements Serializable {
             }
         }
 
-        for (IAtom atomQ : queryAtoms) {
-            for (IAtom atomT : targetAtoms) {
-                if (atomQ.getID().equals(atomT.getID()) && !atomQ.getSymbol().equalsIgnoreCase("H")) {
-                    IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
-                    IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
-
-                    IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
-                    IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
-
-//                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
+        queryAtoms.stream().forEach((IAtom atomQ) -> {
+            targetAtoms.stream().filter((atomT) -> (atomQ.getID().equals(atomT.getID()) && !atomQ.getSymbol().equalsIgnoreCase("H"))).forEach((IAtom atomT) -> {
+                IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
+                IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
+                IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
+                IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
+                //                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
 //                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
 //
 //                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
 //                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
-                    if (isStereogenicChange(rAtom2DStereo, pAtom2DStereo)) {
-                        StereoChange sc = new StereoChange(rAtom2DStereo, pAtom2DStereo, atomQ, atomT);
-                        stereoChangeList.add(sc);
-                    }
-
-                    if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                        StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
-                        stereoChangeList.add(sc);
-                    }
+                if (isStereogenicChange(rAtom2DStereo, pAtom2DStereo)) {
+                    StereoChange sc = new StereoChange(rAtom2DStereo, pAtom2DStereo, atomQ, atomT);
+                    stereoChangeList.add(sc);
                 }
-            }
-        }
+                if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
+                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    stereoChangeList.add(sc);
+                }
+            });
+        });
         return stereoChangeList;
     }
 

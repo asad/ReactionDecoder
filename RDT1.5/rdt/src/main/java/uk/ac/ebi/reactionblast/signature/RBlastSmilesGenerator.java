@@ -492,7 +492,9 @@ public class RBlastSmilesGenerator {
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
         int lengthParent = container.getConnectedAtomsCount(parent) + ((Objects.equals(parent.getImplicitHydrogenCount(), UNSET)) ? 0 : parent.getImplicitHydrogenCount());
         if (container.getBond(atom, parent) != null) {
-            if (container.getBond(atom, parent).getOrder() == BONDORDER_DOUBLE && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N"))) && (lengthParent == 3 || (lengthParent == 2 && parent.getSymbol().equals("N")))) {
+            if (container.getBond(atom, parent).getOrder() == IBond.Order.DOUBLE
+                    && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N")))
+                    && (lengthParent == 3 || (lengthParent == 2 && parent.getSymbol().equals("N")))) {
                 List<IAtom> atoms = container.getConnectedAtomsList(atom);
                 IAtom one = null;
                 IAtom two = null;
@@ -539,7 +541,8 @@ public class RBlastSmilesGenerator {
         boolean doubleBond = false;
         IAtom nextAtom = null;
         for (IAtom atomi : atoms) {
-            if (atomi != parent && container.getBond(atomi, a).getOrder() == BONDORDER_DOUBLE && isEndOfDoubleBond(container, atomi, a, doubleBondConfiguration)) {
+            if (atomi != parent && container.getBond(atomi, a).getOrder() == IBond.Order.DOUBLE
+                    && isEndOfDoubleBond(container, atomi, a, doubleBondConfiguration)) {
                 doubleBond = true;
                 nextAtom = atomi;
             }

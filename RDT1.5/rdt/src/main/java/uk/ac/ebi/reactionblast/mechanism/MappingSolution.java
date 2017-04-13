@@ -86,8 +86,7 @@ public class MappingSolution implements Serializable {
     }
 
     @Override
-    public String toString(
-            ) {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         String property = getProperty("line.separator");
         sb.append(property);

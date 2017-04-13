@@ -35,10 +35,11 @@ import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.CLOCKW
 import org.openscience.cdk.stereo.TetrahedralChirality;
 
 /**
- * 
+ *
  * @author Gilleain Torrance
  */
 public class ExplicitHydrogenSingleUpWedgeRule extends WedgeRule {
+
     private static final Logger LOG = getLogger(ExplicitHydrogenSingleUpWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE, NONE};

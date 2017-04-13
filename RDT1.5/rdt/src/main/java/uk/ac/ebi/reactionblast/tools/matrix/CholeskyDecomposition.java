@@ -143,7 +143,7 @@ public class CholeskyDecomposition implements java.io.Serializable {
      End of temporary code.
      * ------------------------ */
 
-    /* ------------------------
+ /* ------------------------
      Public Methods
      * ------------------------ */
     /**

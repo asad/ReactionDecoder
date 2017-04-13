@@ -46,7 +46,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
@@ -157,7 +156,7 @@ public class MCSThread implements Callable<MCSSolution> {
         if (DEBUG1) {
             aromaticity = new Aromaticity(daylight(),
                     or(all(), relevant()));
-            smiles = new SmilesGenerator(SmiFlavor.Unique|SmiFlavor.UseAromaticSymbols);
+            smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
         }
 
     }
@@ -378,8 +377,8 @@ public class MCSThread implements Callable<MCSSolution> {
         }
 
         if (difference.isEmpty()) {
-            if (!atomUniqueCounter1.keySet().stream().noneMatch((k) -> 
-                    (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)))) {
+            if (!atomUniqueCounter1.keySet().stream().noneMatch((k)
+                    -> (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)))) {
                 return false;
             }
         }

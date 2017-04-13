@@ -41,6 +41,7 @@ public class ReactionDBContainer implements Serializable {
 
     /**
      * Creates a new instance of CompoundContainer
+     *
      * @return
      * @throws java.lang.Exception
      */
@@ -56,12 +57,11 @@ public class ReactionDBContainer implements Serializable {
     }
 
     //~--- constructors -------------------------------------------------------
-
     /**
      *
      * @throws Exception
      */
-    protected  ReactionDBContainer() throws Exception {
+    protected ReactionDBContainer() throws Exception {
         reactionsFingerprints = synchronizedMap(new HashMap<String, ReactionInfoCollector>());
 
     }

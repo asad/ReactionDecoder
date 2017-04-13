@@ -39,6 +39,7 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class MappingGraph {
+
     private static final Logger LOG = getLogger(MappingGraph.class.getName());
 
     /**
@@ -129,14 +130,12 @@ public class MappingGraph {
     public List<BlockPair> createBlockPairs(IReaction reaction) {
         List<BlockPair> blockPairs = new ArrayList<>();
 
-        for (List<DefinedMapping> mappingComponent : calculateConnectedComponents()) {
+        calculateConnectedComponents().stream().map((mappingComponent) -> {
             // all components have at least one member
             DefinedMapping aMapping = mappingComponent.get(0);
-
             // initialise with this member
             BlockPair blockPair
                     = new BlockPair(aMapping.getrAtomContainer(), aMapping.getpAtomContainer());
-
             // add the mappings
             for (int i = 0; i < mappingComponent.size(); i++) {
                 DefinedMapping definedMapping = mappingComponent.get(i);
@@ -144,8 +143,10 @@ public class MappingGraph {
                 blockPair.addMapping(mapping,
                         definedMapping.getRAtom(), definedMapping.getPAtom());
             }
+            return blockPair;
+        }).forEach((blockPair) -> {
             blockPairs.add(blockPair);
-        }
+        });
 
         return blockPairs;
     }
@@ -168,10 +169,12 @@ public class MappingGraph {
         Map<IAtom, DefinedMapping> lookup;
         lookup = new HashMap<>();
 
-        for (DefinedMapping mapping : vertices) {
+        vertices.stream().map((mapping) -> {
             lookup.put(mapping.getRAtom(), mapping);
+            return mapping;
+        }).forEach((mapping) -> {
             lookup.put(mapping.getPAtom(), mapping);
-        }
+        });
 
         List<DefinedMapping>[] adjTable;
         adjTable = new List[vertices.size()];
@@ -217,12 +220,12 @@ public class MappingGraph {
             vertex.setVisited(true);
             labels[vertex.getIndex()] = currentLabel;
             component.add(vertex);
-            for (DefinedMapping neighbour : adjacencyTable[vertex.getIndex()]) {
+            adjacencyTable[vertex.getIndex()].stream().forEach((neighbour) -> {
                 if (neighbour.isVisited()) {
                 } else {
                     search(neighbour, currentLabel, labels, component);
                 }
-            }
+            });
         }
     }
 

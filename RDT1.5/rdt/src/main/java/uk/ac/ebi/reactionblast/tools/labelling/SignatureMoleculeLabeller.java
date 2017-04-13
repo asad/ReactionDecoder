@@ -102,31 +102,26 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
         atomContainer.setAtoms(permutedAtoms);
 
         IBond[] bonds = getBondArray(atomContainer);
-        sort(bonds, new Comparator<IBond>() {
-
-            @Override
-            public int compare(IBond o1, IBond o2) {
-                int u = o1.getAtom(0).getProperty("label");
-                int v = o1.getAtom(1).getProperty("label");
-                int x = o2.getAtom(0).getProperty("label");
-                int y = o2.getAtom(1).getProperty("label");
-                int min1 = min(u, v);
-                int min2 = min(x, y);
-                int max1 = max(u, v);
-                int max2 = max(x, y);
-
-                int minCmp = Integer.compare(min1, min2);
-                if (minCmp != 0) {
-                    return minCmp;
-                }
-                int maxCmp = Integer.compare(max1, max2);
-                if (maxCmp != 0) {
-                    return maxCmp;
-                }
-                err.println("pokemon!");
-                throw new InternalError();
+        sort(bonds, (IBond o1, IBond o2) -> {
+            int u = o1.getAtom(0).getProperty("label");
+            int v = o1.getAtom(1).getProperty("label");
+            int x = o2.getAtom(0).getProperty("label");
+            int y = o2.getAtom(1).getProperty("label");
+            int min1 = min(u, v);
+            int min2 = min(x, y);
+            int max1 = max(u, v);
+            int max2 = max(x, y);
+            
+            int minCmp = Integer.compare(min1, min2);
+            if (minCmp != 0) {
+                return minCmp;
             }
-
+            int maxCmp = Integer.compare(max1, max2);
+            if (maxCmp != 0) {
+                return maxCmp;
+            }
+            err.println("pokemon!");
+            throw new InternalError();
         });
         atomContainer.setBonds(bonds);
     }

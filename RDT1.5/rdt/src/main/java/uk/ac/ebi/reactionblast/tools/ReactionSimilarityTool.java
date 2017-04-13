@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools;
 
 import static java.lang.Double.parseDouble;
@@ -32,14 +31,16 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import static uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility.append;
 
 /**
- * This tool finds reaction similarity and distance based on our in-house scoring functions The similarity score can be
- * further weight by alpha and beta factor coding for bond change and structure weight respectively
+ * This tool finds reaction similarity and distance based on our in-house
+ * scoring functions The similarity score can be further weight by alpha and
+ * beta factor coding for bond change and structure weight respectively
  *
  *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionSimilarityTool {
+
     private static final Logger LOG = getLogger(ReactionSimilarityTool.class.getName());
 
     /**
@@ -131,10 +132,12 @@ public class ReactionSimilarityTool {
      * @param bondFeatures1
      * @param StructFP2
      * @param bondFeatures2
-     * @param oxidationPenalty Penalty of 25% on the bond changes if they don't have same similar oxidation type
-     * (oxidation and non-oxidative reactions will face penalty) @Equation (alpha/(alpha+beta)) * BondChange +
+     * @param oxidationPenalty Penalty of 25% on the bond changes if they don't
+     * have same similar oxidation type (oxidation and non-oxidative reactions
+     * will face penalty) @Equation (alpha/(alpha+beta)) * BondChange +
      * (beta/alpha+beta)* StructuralChange
-     * @return Gives overall similarity between two reactions (Higher the score, farthest the reaction is)
+     * @return Gives overall similarity between two reactions (Higher the score,
+     * farthest the reaction is)
      * @throws Exception
      */
     public static double getReactionSimilarity(
@@ -188,8 +191,10 @@ public class ReactionSimilarityTool {
      * @param BondsST1 Reactant Bond Stereo FP for Query Reaction
      * @param BondsST2 Product Bond Stereo FP for Query Reaction
      *
-     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)* StructuralChange
-     * @return Gives overall similarity between two reactions (Higher the score, farthest the reaction is)
+     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)*
+     * StructuralChange
+     * @return Gives overall similarity between two reactions (Higher the score,
+     * farthest the reaction is)
      * @throws Exception
      */
     public static double getReactionSimilarity(
@@ -243,8 +248,10 @@ public class ReactionSimilarityTool {
      * @param BondsST1 Reactant Bond Stereo FP for Query Reaction
      * @param BondsST2 Product Bond Stereo FP for Query Reaction
      *
-     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)* StructuralChange
-     * @return Gives overall similarity between two reactions (Higher the score, farthest the reaction is)
+     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)*
+     * StructuralChange
+     * @return Gives overall similarity between two reactions (Higher the score,
+     * farthest the reaction is)
      * @throws Exception
      */
     public static double getReactionSimilarity(
@@ -261,7 +268,6 @@ public class ReactionSimilarityTool {
             IPatternFingerprinter BondsST2)
             throws Exception {
 
-
         double score = 0.0;
         if (alpha < 0. && beta < 0.) {
             throw new CDKException("both alpha and beta can't =< be zero");
@@ -273,7 +279,6 @@ public class ReactionSimilarityTool {
                     BondsOC2.getWeightedHashedFingerPrint());
             double similarityOfBondChanges = getSimilarity(bondFeatures1, bondFeatures2);
             double similarityOfStereoChanges = getSimilarity(BondsST1.getWeightedHashedFingerPrint(), BondsST2.getWeightedHashedFingerPrint());
-
 
             double[] structFeatures1 = StructFP1.getWeightedHashedFingerPrint();
             double[] structFeatures2 = StructFP2.getWeightedHashedFingerPrint();
@@ -302,8 +307,10 @@ public class ReactionSimilarityTool {
      * @param BondsST1 Reactant Bond Stereo FP for Query Reaction
      * @param BondsST2 Product Bond Stereo FP for Query Reaction
      *
-     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)* StructuralChange
-     * @return Gives overall similarity between two reactions (Higher the score, farthest the reaction is)
+     * @Equation (alpha/(alpha+beta)) * BondChange + (beta/alpha+beta)*
+     * StructuralChange
+     * @return Gives overall similarity between two reactions (Higher the score,
+     * farthest the reaction is)
      * @throws CDKException
      * @throws Exception
      */
@@ -313,7 +320,6 @@ public class ReactionSimilarityTool {
             throws CDKException, Exception {
 
 //    System.out.println("Calling weighted score");
-
         double score = 0.0;
 
         int size1 = StructFP1.getFingerprintSize();
@@ -333,7 +339,6 @@ public class ReactionSimilarityTool {
             double[] bondFeatures2 = append(BondsCF2.getWeightedHashedFingerPrint(),
                     BondsOC2.getWeightedHashedFingerPrint(), BondsST2.getWeightedHashedFingerPrint());
             double similarityOfBondChanges = getPointWiseMutualInformation(bondFeatures1, bondFeatures2);
-
 
             double[] structFeatures1 = StructFP1.getWeightedHashedFingerPrint();
             double[] structFeatures2 = StructFP2.getWeightedHashedFingerPrint();
@@ -369,9 +374,7 @@ public class ReactionSimilarityTool {
             double[] BondsOC2, double[] BondsST2) throws CDKException, Exception {
 
 //    public static double getWeightedScore(double alpha, double beta, BitSet reactants1, BitSet reactants2, double[] BondsCF1, double[] BondsCF2, BitSet products1, BitSet products2, double[] BondsOC1, double[] BondsOC2) throws CDKException, Exception {
-
 //    System.out.println("Calling weighted score");
-
         boolean score = false;
 
         int size1 = StructFP1.length;
@@ -472,18 +475,17 @@ public class ReactionSimilarityTool {
      *
      * @param fp1
      * @param fp2
-     * @return reaction rawScore between two reaction based on the reactant product structure
+     * @return reaction rawScore between two reaction based on the reactant
+     * product structure
      * @throws CDKException
      * @throws java.lang.Exception
      */
     public static double getSimilarity(IPatternFingerprinter fp1, IPatternFingerprinter fp2) throws CDKException, Exception {
 
 //        System.out.println("Calling StructuralSimilarity");
-
         double score = 0.0;
         int size1 = fp1.getFingerprintSize();
         int size2 = fp2.getFingerprintSize();
-
 
         if (size1 != size2) {
             throw new CDKException("Features vectors must be of the same length");
@@ -561,7 +563,6 @@ public class ReactionSimilarityTool {
             }
         }
 
-
         List<Double> Pxy = new ArrayList<>(4);
 
         for (int i = 0; i < 4; i++) {
@@ -587,12 +588,10 @@ public class ReactionSimilarityTool {
             Pxy.set(i, Pxy.get(i) / q.size());
         }
 
-
         double Px0 = Pxy.get(0) + Pxy.get(1);
         double Px1 = Pxy.get(2) + Pxy.get(3);
         double Py0 = Pxy.get(0) + Pxy.get(2);
         double Py1 = Pxy.get(1) + Pxy.get(3);
-
 
         double SI_0_0 = log2(Pxy.get(0) / (Px0 * Py0));
         double SI_0_1 = log2(Pxy.get(1) / (Px0 * Py1));

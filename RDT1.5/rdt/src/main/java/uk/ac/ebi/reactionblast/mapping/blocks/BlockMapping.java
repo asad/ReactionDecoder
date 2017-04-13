@@ -41,6 +41,7 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAtomC
  *
  */
 public class BlockMapping {
+
     private static final Logger LOG = getLogger(BlockMapping.class.getName());
 
     private final IReaction reaction;
@@ -69,14 +70,14 @@ public class BlockMapping {
 
         MappingGraph mappingGraph = new MappingGraph(reaction);
         blockPairs = mappingGraph.createBlockPairs(reaction);
-        for (BlockPair pair : blockPairs) {
+        blockPairs.stream().forEach((pair) -> {
             Block reactantBlock = pair.getReactantBlock();
             Block productBlock = pair.getProductBlock();
             reactantBlocks.add(reactantBlock);
             productBlocks.add(productBlock);
             addBlockToAtomContainerMap(reactantBlock, reactantBlockMap);
             addBlockToAtomContainerMap(productBlock, productBlockMap);
-        }
+        });
     }
 
     /**
@@ -261,15 +262,11 @@ public class BlockMapping {
     @Override
     public String toString() {
         String rbm = "{";
-        for (IAtomContainer r : reactantBlockMap.keySet()) {
-            rbm += r.getID() + ":" + reactantBlockMap.get(r) + "\n";
-        }
+        rbm = reactantBlockMap.keySet().stream().map((r) -> r.getID() + ":" + reactantBlockMap.get(r) + "\n").reduce(rbm, String::concat);
         rbm += "}\n";
 
         String pbm = "{";
-        for (IAtomContainer p : productBlockMap.keySet()) {
-            pbm += p.getID() + ":" + productBlockMap.get(p) + "\n";
-        }
+        pbm = productBlockMap.keySet().stream().map((p) -> p.getID() + ":" + productBlockMap.get(p) + "\n").reduce(pbm, String::concat);
         pbm += "}\n";
 
         return reactantBlocks.toString() + "\n"

@@ -28,9 +28,7 @@ import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_BGR;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -68,7 +66,6 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import static java.lang.String.valueOf;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
-import org.apache.commons.io.IOUtils;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

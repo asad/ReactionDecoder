@@ -32,7 +32,7 @@ import signature.AbstractVertexSignature;
 import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 
 /**
- * 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
@@ -85,10 +85,12 @@ public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
         }
         int[] canonicalLabels = canonicalSignature == null ? new int[0] : canonicalSignature.getCanonicalLabelling(atomCount);
         List<SortableOrbit> orbits = new ArrayList<>();
-        for (SortableOrbit orbit : orbitMap.values()) {
+        orbitMap.values().stream().map((orbit) -> {
             orbit.sortMembers(canonicalLabels);
+            return orbit;
+        }).forEach((orbit) -> {
             orbits.add(orbit);
-        }
+        });
         sort(orbits);
         int[] permutation = new int[atomCount];
         int newIndex = 0;

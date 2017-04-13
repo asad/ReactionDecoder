@@ -47,13 +47,14 @@ import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 
 /**
- * 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
  *
  */
 public class AbstractReactionLabeller {
+
     private static final Logger LOG = getLogger(AbstractReactionLabeller.class.getName());
 
     /**
@@ -202,22 +203,18 @@ public class AbstractReactionLabeller {
     protected void sortMappings(IReaction reaction, List<IMapping> map) {
         // make a lookup for the indices of the atoms 
         final Map<IChemObject, Integer> indexMap = makeIndexMap(reaction);
-        Comparator<IMapping> mappingSorter = new Comparator<IMapping>() {
-
-            @Override
-            public int compare(IMapping o1, IMapping o2) {
-                IChemObject o10 = o1.getChemObject(0);
-                IChemObject o20 = o2.getChemObject(0);
-                if (o20 == null || o10 == null) {
-                    return 0;
-                }
-                Integer o10i = indexMap.get(o10);
-                Integer o20i = indexMap.get(o20);
-                if (o10i == null || o20i == null) {
-                    return 0;
-                }
-                return o10i.compareTo(o20i);
+        Comparator<IMapping> mappingSorter = (IMapping o1, IMapping o2) -> {
+            IChemObject o10 = o1.getChemObject(0);
+            IChemObject o20 = o2.getChemObject(0);
+            if (o20 == null || o10 == null) {
+                return 0;
             }
+            Integer o10i = indexMap.get(o10);
+            Integer o20i = indexMap.get(o20);
+            if (o10i == null || o20i == null) {
+                return 0;
+            }
+            return o10i.compareTo(o20i);
         };
         sort(map, mappingSorter);
         int mappingIndex = 0;

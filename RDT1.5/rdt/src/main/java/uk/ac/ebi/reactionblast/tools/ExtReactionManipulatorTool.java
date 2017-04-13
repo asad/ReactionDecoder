@@ -79,7 +79,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
             acClone.addProperties(ac.getProperties());
             clone.getAgents().addAtomContainer(acClone);
         }
-        
+
         // create a Map of corresponding atoms for molecules (key: original Atom, 
         // value: clone Atom)
         Map<IChemObject, IChemObject> atomatom = new HashMap<>();

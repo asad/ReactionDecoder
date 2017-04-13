@@ -29,7 +29,6 @@ public enum EnumSubstrateProduct {
      *
      */
     REACTANT,
-
     /**
      *
      */

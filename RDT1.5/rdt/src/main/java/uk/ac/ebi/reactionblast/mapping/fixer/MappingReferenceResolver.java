@@ -34,8 +34,9 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 
 /**
- * Simple class to ensure that the atoms referred to in an atom-atom mapping are the same object reference as in the
- * atom containers of the reactants and products.
+ * Simple class to ensure that the atoms referred to in an atom-atom mapping are
+ * the same object reference as in the atom containers of the reactants and
+ * products.
  *
  * @author maclean
  *
@@ -82,16 +83,16 @@ public class MappingReferenceResolver {
         }
 //        System.out.println("now has " + reaction.getMappingCount() + " mappings");
         int numberOfMappingsAdded = 0;
-        for (IMapping mapping : resolvedMappings) {
+        numberOfMappingsAdded = resolvedMappings.stream().map((mapping) -> {
             reaction.addMapping(mapping);
-            numberOfMappingsAdded++;
-        }
-//        System.out.println(numberOfMappingsAdded + " mappings added");
+            return mapping;
+        }).map((_item) -> 1).reduce(numberOfMappingsAdded, Integer::sum);//        System.out.println(numberOfMappingsAdded + " mappings added");
 //        printIDs(reaction);
     }
 
     /**
-     * Fill a map of string ids to atoms using the atom ID and a unique label for this moleculeSet.
+     * Fill a map of string ids to atoms using the atom ID and a unique label
+     * for this moleculeSet.
      *
      * @param moleculeSet
      * @param map

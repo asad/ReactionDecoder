@@ -31,6 +31,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 public class RBlastAtomSignatureLabellingAdaptor
         implements ICanonicalMoleculeLabeller {
+
     private static final Logger LOG = getLogger(RBlastAtomSignatureLabellingAdaptor.class.getName());
 
     private int atomIndex;

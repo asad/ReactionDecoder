@@ -21,8 +21,9 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
+
 /**
- * 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
@@ -30,6 +31,7 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public class SmilesReactionCanoniser
         extends AbstractReactionLabeller implements ICanonicalReactionLabeller {
+
     private static final Logger LOG = getLogger(SmilesReactionCanoniser.class.getName());
 
     private final SmilesMoleculeLabeller labeller = new SmilesMoleculeLabeller();

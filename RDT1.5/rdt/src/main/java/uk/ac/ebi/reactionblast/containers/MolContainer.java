@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
@@ -83,22 +82,21 @@ public class MolContainer implements IMolContainer {
     /**
      *
      * @return
-     */    public static synchronized MolContainer getInstance() {
-         if (_instance == null) {
-             _instance = new MolContainer();
-         }
-         
-         return _instance;
-     }
+     */
+    public static synchronized MolContainer getInstance() {
+        if (_instance == null) {
+            _instance = new MolContainer();
+        }
+
+        return _instance;
+    }
 
     //~--- constructors -------------------------------------------------------
-
-     private MolContainer() {
-         molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+    private MolContainer() {
+        molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
     }
 
     //~--- methods ------------------------------------------------------------
-
     /**
      *
      * @throws java.io.IOException
@@ -134,7 +132,6 @@ public class MolContainer implements IMolContainer {
     }
 
     //~--- get methods --------------------------------------------------------
-
     /**
      *
      * @param key

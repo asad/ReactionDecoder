@@ -26,15 +26,16 @@ import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+
 /**
- * 
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
  *
  */
 public class AtomContainerPrinter {
-    
+
     private static final Logger LOG = getLogger(AtomContainerPrinter.class.getName());
 
     /**

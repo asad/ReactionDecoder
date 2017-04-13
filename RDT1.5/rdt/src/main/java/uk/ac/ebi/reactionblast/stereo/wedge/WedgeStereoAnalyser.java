@@ -70,12 +70,10 @@ public class WedgeStereoAnalyser {
                     return result;
                 }
             }
+        } else if (stereoElement == null) {
+            return NONE;
         } else {
-            if (stereoElement == null) {
-                return NONE;
-            } else {
-                return ERROR;
-            }
+            return ERROR;
         }
     }
 

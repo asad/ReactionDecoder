@@ -35,6 +35,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
 
 /**
  * Tool for comparing chiralities.
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  *
@@ -53,8 +54,9 @@ public abstract class StereoCenteralityTool extends Utility {
     }
 
     /**
-     * This Chirality is based on the 2D with stereo code written by John May in our collaboration. Note: Explicit
-     * Hydrogens should be added before calling.
+     * This Chirality is based on the 2D with stereo code written by John May in
+     * our collaboration. Note: Explicit Hydrogens should be added before
+     * calling.
      *
      * @param reaction
      * @return
@@ -70,13 +72,13 @@ public abstract class StereoCenteralityTool extends Utility {
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
 //            System.err.println("R 2D CDK based stereo " + chirality2D.size());
             if (!chirality2D.isEmpty()) {
-                for (Map.Entry<IAtom, IStereoAndConformation> m : chirality2D.entrySet()) {
+                chirality2D.entrySet().stream().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);
                     if (atomByID != null) {
                         atomByID.setProperty("Stereo", m.getValue());
                         chiralityMap.put(atomByID, m.getValue());
                     }
-                }
+                });
             }
         }
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
@@ -85,13 +87,13 @@ public abstract class StereoCenteralityTool extends Utility {
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
 //            System.err.println("P 2D CDK based stereo " + chirality2D.size());
             if (!chirality2D.isEmpty()) {
-                for (Map.Entry<IAtom, IStereoAndConformation> m : chirality2D.entrySet()) {
+                chirality2D.entrySet().stream().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);
                     if (atomByID != null) {
                         atomByID.setProperty("Stereo", m.getValue());
                         chiralityMap.put(atomByID, m.getValue());
                     }
-                }
+                });
             }
         }
         return chiralityMap;
@@ -139,9 +141,9 @@ public abstract class StereoCenteralityTool extends Utility {
             }
         }
 
-        for (IAtom atom : chiralityMap.keySet()) {
+        chiralityMap.keySet().stream().forEach((atom) -> {
             atom.setProperty("Stereo", chiralityMap.get(atom));
-        }
+        });
         return chiralityMap;
     }
 }

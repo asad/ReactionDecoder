@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
 import java.util.logging.Logger;
@@ -29,10 +28,11 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import static org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo.ANTI_CLOCKWISE;
 
 /**
- * 
+ *
  * @author Gilleain Torrance
  */
 public class ACWTetrahedralWedgeRule extends AbstractTetrahedralWedgeRule {
+
     private static final Logger LOG = getLogger(ACWTetrahedralWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {DOWN, UP, NONE, NONE};

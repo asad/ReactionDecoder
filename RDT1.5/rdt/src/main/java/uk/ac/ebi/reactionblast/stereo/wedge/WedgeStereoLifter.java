@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
 import static java.lang.Math.PI;
@@ -35,11 +34,12 @@ import org.openscience.cdk.interfaces.IStereoElement;
 
 /**
  * 'Lifts' the 2D wedge stereo representation into a 3D one.
- * 
+ *
  * @author maclean
  *
  */
 public class WedgeStereoLifter {
+
     private static final Logger LOG = getLogger(WedgeStereoLifter.class.getName());
 
     private final List<WedgeRule> rules;
@@ -114,7 +114,7 @@ public class WedgeStereoLifter {
 
     /**
      * Gets the 'full' angle (between 0&deg; and 360&deg;) between
-     *   
+     *
      * @param atom
      * @param partner1
      * @param partner2

@@ -291,11 +291,11 @@ class IsomeraseHandler {
                 List<IBond> bonds = container.getConnectedBondsList(atom);
                 if (DEBUG) {
                     out.println("number_of_bonds " + bonds.size());
-                    for (IBond bond : bonds) {
+                    bonds.stream().forEach((bond) -> {
                         out.println("BONDS "
                                 + " B0 " + bond.getAtom(0).getSymbol()
                                 + " B1 " + bond.getAtom(1).getSymbol());
-                    }
+                    });
                 }
 
                 if (bonds.size() == 2 && number_of_rings == 2) {

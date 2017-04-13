@@ -42,6 +42,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  * @author asad
  */
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
+
     private static final Logger LOG = getLogger(BlockReactionCanoniser.class.getName());
 
     private IChemObjectBuilder builder;
@@ -111,10 +112,9 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
 
         // add any 'orphan' mappings that map atoms that are not referenced in
         // the atom containers of the reaction...
-        for (IMapping mapping : orphanMappings) {
+        orphanMappings.stream().forEach((mapping) -> {
             permutedReaction.addMapping(mapping);
-        }
-//        assert reaction.getMappingCount() == permutedReaction.getMappingCount();
+        });//        assert reaction.getMappingCount() == permutedReaction.getMappingCount();
 //        System.out.println(reaction.getMappingCount() + " " + permutedReaction.getMappingCount());
     }
 
@@ -164,9 +164,9 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             }
             permutedContainers.addAtomContainer(permutedContainer);
         }
-        for (IAtomContainer unusedContainer : unusedContainers) {
+        unusedContainers.stream().forEach((unusedContainer) -> {
             permutedContainers.addAtomContainer(unusedContainer);
-        }
+        });
         return permutedContainers;
     }
 
@@ -201,25 +201,19 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             }
             permutedContainers.addAtomContainer(permutedContainer);
         }
-        for (IAtomContainer unusedContainer : unusedContainers) {
+        unusedContainers.stream().forEach((unusedContainer) -> {
             permutedContainers.addAtomContainer(unusedContainer);
-        }
+        });
         return permutedContainers;
     }
 
     private void bucketSort(List<IAtom> atoms, IAtomContainer ac) {
         final Map<IAtom, Integer> indexMap = new HashMap<>();
 
-        for (IAtom atom : atoms) {
+        atoms.stream().forEach((atom) -> {
             indexMap.put(atom, ac.getAtomNumber(atom));
-        }
-        Comparator<IAtom> sorter = new Comparator<IAtom>() {
-
-            @Override
-            public int compare(IAtom o1, IAtom o2) {
-                return indexMap.get(o1).compareTo(indexMap.get(o2));
-            }
-        };
+        });
+        Comparator<IAtom> sorter = (IAtom o1, IAtom o2) -> indexMap.get(o1).compareTo(indexMap.get(o2));
         sort(atoms, sorter);
     }
 

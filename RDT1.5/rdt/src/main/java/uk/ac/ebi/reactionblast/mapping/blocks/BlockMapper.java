@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
@@ -35,6 +36,7 @@ import org.openscience.cdk.interfaces.IReaction;
  * @author asad
  */
 public class BlockMapper {
+
     private static final Logger LOG = getLogger(BlockMapper.class.getName());
 
     /**
@@ -49,14 +51,12 @@ public class BlockMapper {
         List<List<DefinedMapping>> mappingComponents
                 = findMappedConnectedComponents(reaction, definedMappings);
 
-        for (List<DefinedMapping> mappingComponent : mappingComponents) {
+        mappingComponents.stream().map((mappingComponent) -> {
             // all components have at least one member
             DefinedMapping aMapping = mappingComponent.get(0);
-
             // initialise with this member
             BlockPair blockPair
                     = new BlockPair(aMapping.getrAtomContainer(), aMapping.getpAtomContainer());
-
             // add the mappings
             for (int i = 0; i < mappingComponent.size(); i++) {
                 DefinedMapping definedMapping = mappingComponent.get(i);
@@ -64,8 +64,10 @@ public class BlockMapper {
                 blockPair.addMapping(mapping,
                         definedMapping.getRAtom(), definedMapping.getPAtom());
             }
+            return blockPair;
+        }).forEach((blockPair) -> {
             blockPairs.add(blockPair);
-        }
+        });
 
         return blockPairs;
     }
@@ -150,10 +152,12 @@ public class BlockMapper {
             Map<IAtom, DefinedMapping> lookup
                     = new HashMap<>();
 
-            for (DefinedMapping mapping : vertices) {
+            vertices.stream().map((mapping) -> {
                 lookup.put(mapping.getRAtom(), mapping);
+                return mapping;
+            }).forEach((mapping) -> {
                 lookup.put(mapping.getPAtom(), mapping);
-            }
+            });
 
             List<DefinedMapping>[] adjTable = new List[vertices.size()];
             for (int i = 0; i < vertices.size(); i++) {
@@ -212,12 +216,12 @@ public class BlockMapper {
                 vertex.setVisited(true);
                 labels[vertex.getIndex()] = currentLabel;
                 component.add(vertex);
-                for (DefinedMapping neighbour : adjacencyTable[vertex.getIndex()]) {
+                adjacencyTable[vertex.getIndex()].stream().forEach((DefinedMapping neighbour) -> {
                     if (neighbour.isVisited()) {
                     } else {
                         search(neighbour, currentLabel, labels, component);
                     }
-                }
+                });
             }
         }
     }

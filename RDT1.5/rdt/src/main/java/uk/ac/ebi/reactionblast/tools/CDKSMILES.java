@@ -149,8 +149,7 @@ public class CDKSMILES {
         }
         try {
             SmilesGenerator g = new SmilesGenerator(
-                    SmiFlavor.Generic
-                    | SmiFlavor.UseAromaticSymbols);
+                    SmiFlavor.UseAromaticSymbols);
             return g.create(molecule);
         } catch (CDKException ex) {
             logger.error("ERROR : in generating CDK SMILES" + molecule.getID());

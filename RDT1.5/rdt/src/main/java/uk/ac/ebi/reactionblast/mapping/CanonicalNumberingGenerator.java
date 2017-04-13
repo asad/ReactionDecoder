@@ -111,15 +111,16 @@ public class CanonicalNumberingGenerator {
             subLabels.put(atom.getSymbol(), labels);
         }
         orbitalCanonicalLabellingList = new ArrayList<>(canonicalPermutationList.size());
-        for (List<Label> labels : subLabels.values()) {
+        subLabels.values().stream().map((List<Label> labels) -> {
             List<Integer> l = new ArrayList<>();
             //            Collections.sort(labels, new Distance());
-            for (Label label : labels) {
+            labels.stream().forEach((label) -> {
                 l.add(label.rank);
-            }
+            });
+            return l;
+        }).forEach((l) -> {
             orbitalCanonicalLabellingList.addAll(l);
-        }
-//        Collections.sort(allLabels, new Distance());
+        });//        Collections.sort(allLabels, new Distance());
 //        for (Label label : allLabels) {
 //            orbitalCanonicalLabellingList.add(label.rank);
 //        }

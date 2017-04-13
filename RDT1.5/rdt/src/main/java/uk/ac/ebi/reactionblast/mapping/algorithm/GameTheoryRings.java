@@ -115,7 +115,7 @@ final class GameTheoryRings extends BaseGameTheory {
         setReactionMolMapping(rpsh.getReactionMolMapping());
 
         winner = new ChooseWinner(eductList, productList);
-        this._dirSuffix = getSuffix();
+        this._dirSuffix = super.getSuffix();
 
         ReactionIsomorphismHandler RIH = new ReactionIsomorphismHandler(mh, eductList, productList);
 //        System.out.println("\n--------------\nprintAtomContainerSize");

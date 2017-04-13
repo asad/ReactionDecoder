@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
@@ -49,6 +48,7 @@ import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
 public class BEMatrix extends EBIMatrix implements Serializable {
+
     private static final long serialVersionUID = -1420740601548197863L;
     private static final Logger LOG = getLogger(BEMatrix.class.getName());
 
@@ -260,7 +260,6 @@ public class BEMatrix extends EBIMatrix implements Serializable {
     /**
      *
      * @throws CDKException
-     * @throws CDKException
      */
     public void setAromaticBond() throws CDKException, CDKException {
         for (int i = 0; i < myMoleculeSet.getAtomContainerCount(); i++) {
@@ -400,21 +399,29 @@ public class BEMatrix extends EBIMatrix implements Serializable {
     public IBond.Stereo convertStereo(int stereoValue) {
         IBond.Stereo stereo = NONE;
 
-        if (stereoValue == 1) {
-            // up bond
-            stereo = UP;
-        } else if (stereoValue == 6) {
-            // down bond
-            stereo = DOWN;
-        } else if (stereoValue == 0) {
-            // bond has no stereochemistry
-            stereo = NONE;
-        } else if (stereoValue == 4) {
-            //up or down bond
-            stereo = UP_OR_DOWN;
-        } else if (stereoValue == 3) {
-            //e or z undefined
-            stereo = E_OR_Z;
+        switch (stereoValue) {
+            case 1:
+                // up bond
+                stereo = UP;
+                break;
+            case 6:
+                // down bond
+                stereo = DOWN;
+                break;
+            case 0:
+                // bond has no stereochemistry
+                stereo = NONE;
+                break;
+            case 4:
+                //up or down bond
+                stereo = UP_OR_DOWN;
+                break;
+            case 3:
+                //e or z undefined
+                stereo = E_OR_Z;
+                break;
+            default:
+                break;
         }
 
         return stereo;
@@ -432,9 +439,9 @@ public class BEMatrix extends EBIMatrix implements Serializable {
         StringBuilder result = new StringBuilder();
         String NEW_LINE = getProperty("line.separator");
         result.append(atomArray.size()).append(NEW_LINE);
-        for (IAtom atom : atomArray) {
+        atomArray.stream().forEach((atom) -> {
             result.append(atom.getSymbol()).append(atom.getID()).append("\t");
-        }
+        });
         result.append(NEW_LINE);
         for (int i = 0; i < this.getRowDimension(); i++) {
             for (int j = 0; j < this.getColumnDimension(); j++) {

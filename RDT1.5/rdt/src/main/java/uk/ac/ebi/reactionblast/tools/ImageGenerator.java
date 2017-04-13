@@ -106,7 +106,7 @@ public class ImageGenerator {
 
     static {
         /* works fine! ! */
-        /*
+ /*
          This makes the awt headless
          */
 
@@ -124,6 +124,7 @@ public class ImageGenerator {
     public synchronized static Image getBlankImage(int width, int height) {
         return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
     }
+
     /**
      *
      * @param reaction
@@ -141,40 +142,40 @@ public class ImageGenerator {
             int width, int height,
             File outFile) throws IOException {
         Params params = new Params();
-        
+
         params.leftToRightMoleculeLabelFontSize = 10;
-        
+
         params.drawMappings = false;
         params.drawHighlights = true;
         params.highlightsAbove = true;
-        
+
         params.drawAtomID = false;
-        
+
         params.drawMoleculeID = false;
         params.drawLabelPanel = true;
         params.drawAromaticCircles = true;
-        
+
         params.useCircularHighlight = false;
-        
+
         params.drawSubgraphBoxes = false;
         params.drawBondStereoChanges = false;
         params.drawBondFormedCleavedMarks = true;
         params.drawBondOrderChangedMarks = true;
-        
+
         params.arrowGap = 30;
         params.arrowLength = 60;
         params.drawFatArrow = true;
         params.drawArrowFilled = true;
-        
+
         params.borderY = 40;
-        
+
         params.drawRS = true;
         params.shouldCrop = true;
-        
+
         RBlastReaction rblReaction = new RBlastReaction(reaction, true);
         Map<IAtomContainer, List<RootSystem>> rootSystems
                 = findRootSystems(rblReaction);
-        
+
         DirectRBLastReactionDrawer reactionDrawer
                 = new DirectRBLastReactionDrawer(params, layout, awtLayout);
         Color rootColor = RED;
@@ -187,21 +188,21 @@ public class ImageGenerator {
             for (RootSystem rootSystem : rootSystemList) {
                 IAtomContainer rootContainer
                         = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom root : rootSystem.getRoots()) {
+                rootSystem.getRoots().stream().forEach((root) -> {
                     rootContainer.addAtom(root);
-                }
+                });
                 IAtomContainer neighbourContainer
                         = reaction.getBuilder().newInstance(IAtomContainer.class);
-                for (IAtom leaf : rootSystem.getLeaves()) {
+                rootSystem.getLeaves().stream().forEach((leaf) -> {
                     neighbourContainer.addAtom(leaf);
-                }
+                });
                 Highlighter highlighter = new SimpleHighlighter(params);
                 highlighter.addHighlights(rootContainer, rootColor);
                 highlighter.addHighlights(neighbourContainer, neighbourColor);
                 moleculeDrawer.addHighlighter(highlighter);
             }
         }
-        
+
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setColor(WHITE);
@@ -219,6 +220,7 @@ public class ImageGenerator {
         g.dispose();
         write(image, "PNG", outFile);
     }
+
     /**
      *
      * @param reaction
@@ -237,19 +239,19 @@ public class ImageGenerator {
             int width, int height,
             boolean shouldCrop,
             File outFile) throws IOException {
-        
+
         RBlastReaction rblReaction = new RBlastReaction(reaction, true);
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(
                         new Params(),
                         layout,
                         awtLayout);
-        
+
         drawer.getParams().drawMappings = false;
         drawer.getParams().drawAromaticCircles = false;
         /*
         * set ids to false
-        */
+         */
         drawer.getParams().drawAtomID = false;
         drawer.getParams().drawLonePairs = false;
         drawer.getParams().drawMoleculeID = true;
@@ -271,10 +273,11 @@ public class ImageGenerator {
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
         drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-        
+
         Image drawRBlastReaction = drawer.drawRBlastReaction(rblReaction, width, height);
         write((RenderedImage) drawRBlastReaction, "PNG", outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -289,19 +292,19 @@ public class ImageGenerator {
             int width, int height,
             boolean shouldCrop,
             File outFile) throws IOException {
-        
+
         RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-        
+
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(new Params(),
                         new LeftToRightReactionLayout(),
                         new LeftToRightAWTReactionLayout());
-        
+
         drawer.getParams().drawMappings = false;
         drawer.getParams().drawAromaticCircles = false;
         /*
         * set ids to false
-        */
+         */
         drawer.getParams().drawAtomID = false;
         drawer.getParams().drawLonePairs = false;
         drawer.getParams().drawMoleculeID = true;
@@ -321,12 +324,11 @@ public class ImageGenerator {
         drawer.getParams().drawFatArrow = true;
         drawer.getParams().shouldCrop = shouldCrop;
         drawer.getParams().leftToRightMoleculeLabelFontSize = 10;
-        
-        
+
         /*
         * Hack the code to crop by Asad else use //java.awt.Image image =
         * drawer.drawRBlastReaction(rbReaction, width, height); for usual image
-        */
+         */
         BufferedImage image = (BufferedImage) getBlankImage(width, height);
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setColor(WHITE);
@@ -342,10 +344,11 @@ public class ImageGenerator {
                     (int) finalBounds.getHeight());
         }
         g.dispose();
-        
+
         write(image, "PNG", outFile);
-        
+
     }
+
     /**
      *
      * @param cdkReaction
@@ -358,9 +361,9 @@ public class ImageGenerator {
             IReaction cdkReaction,
             int width, int height,
             File outFile) throws IOException {
-        
+
         RBlastReaction rbReaction = new RBlastReaction(cdkReaction, true);
-        
+
         DirectRBLastReactionDrawer drawer
                 = new DirectRBLastReactionDrawer(
                         new Params(),
@@ -388,10 +391,11 @@ public class ImageGenerator {
         drawer.getParams().drawLabelPanel = false;
         drawer.getParams().drawMoleculeID = true;
         drawer.getParams().topToBottomMoleculeLabelFontSize = 10;
-        
+
         java.awt.Image image = drawer.drawRBlastReaction(rbReaction, width, height);
         write((RenderedImage) image, "PNG", outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -406,6 +410,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, true, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -422,6 +427,7 @@ public class ImageGenerator {
                 new LeftToRightReactionLayout(),
                 new LeftToRightAWTReactionLayout(), width, height, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -431,13 +437,14 @@ public class ImageGenerator {
      */
     public synchronized static void TopToBottomReactionLayoutImageSmall(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
-        
+
         int height = 400;
         int width = 600;
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
-        
+
     }
+
     /**
      *
      * @param cdkReaction
@@ -452,6 +459,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeLeftToRighHighlightedReactionToFile(cdkReaction, width, height, false, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -468,6 +476,7 @@ public class ImageGenerator {
                 new LeftToRightReactionLayout(),
                 new LeftToRightAWTReactionLayout(), width, height, outFile);
     }
+
     /**
      *
      * @param cdkReaction
@@ -482,6 +491,7 @@ public class ImageGenerator {
         File outFile = new File(getDir(outputDir), rmrID + ".png");
         makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
     }
+
     private synchronized static File getDir(String outputDir) {
         File file = new File(outputDir);
         if (!file.exists()) {
@@ -642,12 +652,18 @@ public class ImageGenerator {
         IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             moleculeDrawer.addHighlights(pair.querySubgraph);
+            return pair;
+        }).map((pair) -> {
             moleculeDrawer.addHighlights(pair.targetSubgraph);
+            return pair;
+        }).map((pair) -> {
             leftHandMoleculeSet.addAtomContainer(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             rightHandMoleculeSet.addAtomContainer(pair.target);
-        }
+        });
 
         // calculate the total dimensions of the final image
         int width = SUB_IMAGE_WIDTH * 2;
@@ -658,10 +674,12 @@ public class ImageGenerator {
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             mols.add(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             mols.add(pair.target);
-        }
+        });
         ZoomToFitGridLayout layoutDrawer = new ZoomToFitGridLayout(moleculeDrawer, queryTargetPairs.size(), 2);
         layoutDrawer.layout(mols, new Dimension(SUB_IMAGE_WIDTH, SUB_IMAGE_HEIGHT), g);
 
@@ -693,12 +711,18 @@ public class ImageGenerator {
         IChemObjectBuilder builder = getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             moleculeDrawer.addHighlights(pair.querySubgraph);
+            return pair;
+        }).map((pair) -> {
             moleculeDrawer.addHighlights(pair.targetSubgraph);
+            return pair;
+        }).map((pair) -> {
             leftHandMoleculeSet.addAtomContainer(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             rightHandMoleculeSet.addAtomContainer(pair.target);
-        }
+        });
 
         // calculate the total dimensions of the final image
         int width = SUB_IMAGE_WIDTH * 2;
@@ -709,10 +733,12 @@ public class ImageGenerator {
         Graphics2D g = (Graphics2D) image.getGraphics();
         g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         List<IAtomContainer> mols = new ArrayList<>();
-        for (QueryTargetPair pair : queryTargetPairs) {
+        queryTargetPairs.stream().map((pair) -> {
             mols.add(pair.query);
+            return pair;
+        }).forEach((pair) -> {
             mols.add(pair.target);
-        }
+        });
         ZoomToFitGridLayout layoutDrawer = new ZoomToFitGridLayout(moleculeDrawer, queryTargetPairs.size(), 2);
         layoutDrawer.layout(mols, new Dimension(SUB_IMAGE_WIDTH, SUB_IMAGE_HEIGHT), g);
 
@@ -940,7 +966,7 @@ public class ImageGenerator {
          *   drawer.getParams().highlightAlpha = 0.25f;
          *   drawer.getParams().bondStrokeWidth = default;
          */
-        /* for darker presentation images
+ /* for darker presentation images
          * drawer.getParams().highlightAlpha = 0.30f;
          * drawer.getParams().bondStrokeWidth=2.0f;
          */
@@ -1044,10 +1070,10 @@ public class ImageGenerator {
 //            System.out.println("root " + atom.getID() + " " + atomContainer.getID());
 
             IAtomContainer neighbourContainer = reaction.getBuilder().newInstance(IAtomContainer.class);
-            for (IAtom neighbour : atomContainer.getConnectedAtomsList(atom)) {
+            atomContainer.getConnectedAtomsList(atom).stream().forEach((neighbour) -> {
                 neighbourContainer.addAtom(neighbour);
 //                System.out.println("neighbour " + neighbour.getID());
-            }
+            });
             Highlighter highlighter = new OutlineHighlighter(moleculeDrawer.getParams());
             highlighter.addHighlights(rootContainer, rootColor);
             highlighter.addHighlights(neighbourContainer, neighbourColor);
@@ -1057,22 +1083,20 @@ public class ImageGenerator {
 
     private Map<IAtom, IAtomContainer> getAtomToAtomContainerMap(IReaction reaction) {
         Map<IAtom, IAtomContainer> map = new HashMap<>();
-        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
+        getAllAtomContainers(reaction).stream().forEach((atomContainer) -> {
             for (IAtom atom : atomContainer.atoms()) {
                 map.put(atom, atomContainer);
             }
-        }
+        });
         return map;
     }
 
     private void filterByBonds(List<IAtom> atomList, List<IAtom> filteredList, List<IBond> bonds) {
-        for (IAtom atom : atomList) {
-            for (IBond bond : bonds) {
-                if (bond.contains(atom)) {
-                    filteredList.add(atom);
-                }
-            }
-        }
+        atomList.stream().forEach((IAtom atom) -> {
+            bonds.stream().filter((bond) -> (bond.contains(atom))).forEach((_item) -> {
+                filteredList.add(atom);
+            });
+        });
     }
 
     private void filterByAtoms(List<IAtom> atomList, List<IAtom> filteredList, Set<IAtom> validAtoms) {
@@ -1097,6 +1121,5 @@ public class ImageGenerator {
             this.label = label;
         }
     }
-
 
 }

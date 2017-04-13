@@ -39,6 +39,7 @@ import static uk.ac.ebi.reactionblast.signature.RBlastAtomSignature.CHARGE_SEPAR
  *
  */
 public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
+
     private static final Logger LOG = getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 
     /**

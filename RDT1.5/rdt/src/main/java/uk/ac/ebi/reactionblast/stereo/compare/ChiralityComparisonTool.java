@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
 
 /**
  * Tool for comparing chiralities.
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
@@ -64,7 +65,7 @@ public class ChiralityComparisonTool {
 
         Isomorphism isomorphism = new Isomorphism(atomContainerA, atomContainerB, DEFAULT, true, false, false);
         Map<IAtom, IAtom> atomMap = isomorphism.getFirstAtomMapping().getMappingsByAtoms();
-        for (IAtom atomA : atomMap.keySet()) {
+        atomMap.keySet().stream().forEach((atomA) -> {
             IAtom atomB = atomMap.get(atomA);
             boolean isStereoA = chiralityMapA.containsKey(atomA);
             boolean isStereoB = chiralityMapB.containsKey(atomB);
@@ -73,7 +74,7 @@ public class ChiralityComparisonTool {
                 IStereoAndConformation stereoB = chiralityMapB.get(atomB);
                 out.println(stereoA + " " + stereoB);
             }
-        }
+        });
     }
 
     private static boolean has3DCoordinates(IAtomContainer atomContainerA) {

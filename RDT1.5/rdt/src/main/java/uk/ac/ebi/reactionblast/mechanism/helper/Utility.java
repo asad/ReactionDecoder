@@ -255,7 +255,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     protected static void setFragmentMatches(SortedMap<String, Integer> atomRCChangesMap, List<IAtomContainer> fragments) throws CloneNotSupportedException {
         for (IAtomContainer fragment : fragments) {
             CountSubstructures countSubstructures = new CountSubstructures(fragment);
-            for (String pattern : atomRCChangesMap.keySet()) {
+            atomRCChangesMap.keySet().stream().forEach((pattern) -> {
                 int hit = 0;
                 try {
                     hit = countSubstructures.substructureSize(pattern);
@@ -264,7 +264,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
                 }
                 int val = hit == 0 ? 0 : atomRCChangesMap.get(pattern) + 1;
                 atomRCChangesMap.put(pattern, val);
-            }
+            });
         }
     }
 
@@ -274,13 +274,13 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
      * @param signatures
      */
     protected static void setReactionCenterMatches(IPatternFingerprinter atomRCChangesMap, List<String> signatures) {
-        for (String fragment : signatures) {
+        signatures.stream().forEach((fragment) -> {
             try {
                 atomRCChangesMap.add(new Feature(fragment, 1.0));
             } catch (CDKException ex) {
                 getLogger(Utility.class.getName()).log(SEVERE, null, ex);
             }
-        }
+        });
     }
 
     /**
@@ -521,31 +521,26 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         atomContainer.setAtoms(permutedAtoms);
 
         IBond[] bonds = getBondArray(atomContainer);
-        sort(bonds, new Comparator<IBond>() {
-
-            @Override
-            public int compare(IBond o1, IBond o2) {
-                int u = o1.getAtom(0).getProperty("label");
-                int v = o1.getAtom(1).getProperty("label");
-                int x = o2.getAtom(0).getProperty("label");
-                int y = o2.getAtom(1).getProperty("label");
-                int min1 = min(u, v);
-                int min2 = min(x, y);
-                int max1 = max(u, v);
-                int max2 = max(x, y);
-
-                int minCmp = Integer.compare(min1, min2);
-                if (minCmp != 0) {
-                    return minCmp;
-                }
-                int maxCmp = Integer.compare(max1, max2);
-                if (maxCmp != 0) {
-                    return maxCmp;
-                }
-                err.println("pokemon!");
-                throw new InternalError();
+        sort(bonds, (IBond o1, IBond o2) -> {
+            int u = o1.getAtom(0).getProperty("label");
+            int v = o1.getAtom(1).getProperty("label");
+            int x = o2.getAtom(0).getProperty("label");
+            int y = o2.getAtom(1).getProperty("label");
+            int min1 = min(u, v);
+            int min2 = min(x, y);
+            int max1 = max(u, v);
+            int max2 = max(x, y);
+            
+            int minCmp = Integer.compare(min1, min2);
+            if (minCmp != 0) {
+                return minCmp;
             }
-
+            int maxCmp = Integer.compare(max1, max2);
+            if (maxCmp != 0) {
+                return maxCmp;
+            }
+            err.println("pokemon!");
+            throw new InternalError();
         });
         atomContainer.setBonds(bonds);
     }
@@ -591,11 +586,9 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             neighbours.addAll(atomContainer.getConnectedAtomsList(currentPath));
 
             if (openList.isEmpty() && !neighbours.isEmpty() && (max > level || max == -1)) {
-                for (IAtom a : neighbours) {
-                    if (!closedList.contains(a)) {
-                        openList.add(a);
-                    }
-                }
+                neighbours.stream().filter((a) -> (!closedList.contains(a))).forEach((a) -> {
+                    openList.add(a);
+                });
                 level += 1;
                 neighbours.clear();
             }

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.fingerprints;
 
 import java.io.Serializable;
@@ -42,7 +41,6 @@ import static uk.ac.ebi.reactionblast.fingerprints.PatternComparators.overallCom
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
-
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
@@ -51,7 +49,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         Comparable<IPatternFingerprinter>,
         Comparator<IPatternFingerprinter>,
         Serializable {
-    
+
     private static final long serialVersionUID = 0156306561546552043757L;
     private static final Logger LOG = getLogger(PatternFingerprinter.class.getName());
 
@@ -72,7 +70,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     public static IPatternFingerprinter makePatternFingerprint(Collection<String> keyCollection, Collection<Double> valueCollection) {
         List<IFeature> features = new ArrayList<>();
-        
+
         List<String> keyList = new ArrayList<>(keyCollection);
         List<Double> valueList = new ArrayList<>(valueCollection);
         for (int index = 0; index < keyList.size(); index++) {
@@ -82,7 +80,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return new PatternFingerprinter(features);
     }
-    private final Set<IFeature> featureSet;    
+    private final Set<IFeature> featureSet;
     private String fingerprintID = "?";
     private int fingerprintSize;
 
@@ -159,7 +157,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         if (featureSet == null) {
             throw new CDKException("Cannot perform PatternFingerprint.add() as Fingerprint not initialized");
         }
-        
+
         if (!this.featureSet.contains(feature)) {
             this.featureSet.add(new Feature(feature.getPattern(), feature.getWeight()));
         } else {
@@ -200,7 +198,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
             }
         }
     }
-    
+
     @Override
     public double[] getValuesAsArray() {
         int pos = 0;
@@ -211,12 +209,12 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return res;
     }
-    
+
     @Override
     public Collection<IFeature> getFeatures() {
         return unmodifiableCollection(featureSet);
     }
-    
+
     @Override
     public Collection<Double> getValues() {
         List<Double> collection = new ArrayList<>(featureSet.size());
@@ -227,12 +225,12 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return collection;
     }
-    
+
     @Override
     public int getFeatureCount() {
         return featureSet.size();
     }
-    
+
     @Override
     public BitSet getHashedFingerPrint() {
         double[] weightedHashedFingerPrint = getWeightedHashedFingerPrint();
@@ -246,7 +244,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return binary;
     }
-    
+
     /**
      *
      * @return
@@ -259,14 +257,14 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
             hashedFingerPrint[i] = 0.;
         }
         Collection<IFeature> features = this.getFeatures();
-        for (final IFeature feature : features) {
+        features.stream().forEach((feature) -> {
             long hashCode = feature.hashCode();
             int randomNumber = randomNumberGen.generateMersenneTwisterRandomNumber(this.fingerprintSize, hashCode);
             hashedFingerPrint[randomNumber] += feature.getWeight();
-        }
+        });
         return hashedFingerPrint;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -280,7 +278,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         result.append(NEW_LINE);
         return result.toString();
     }
-    
+
     @Override
     public IFeature getFeature(int index) throws CDKException {
         if (featureSet.size() >= index) {
@@ -294,7 +292,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return null;
     }
-    
+
     @Override
     public Double getWeight(String pattern) {
         if (!featureSet.isEmpty()) {
@@ -308,7 +306,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return -1.0;
     }
-    
+
     @Override
     public Double getWeight(int index) {
         if (featureSet.size() >= index) {
@@ -388,7 +386,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return this.fingerprintSize == other.fingerprintSize;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -397,12 +395,12 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         hash = 83 * hash + this.fingerprintSize;
         return hash;
     }
-    
+
     @Override
     public int getFingerprintSize() {
         return fingerprintSize;
     }
-    
+
     /**
      *
      * @param key
@@ -412,7 +410,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
     public boolean hasFeature(IFeature key) {
         return this.featureSet.contains(key);
     }
-    
+
     @Override
     public IPatternFingerprinter clone() throws CloneNotSupportedException {
         IPatternFingerprinter p = new PatternFingerprinter(this.fingerprintSize);

@@ -1,6 +1,6 @@
 /* $Revision$ $Author$ $Date$
  *
- * Copyright (C) 2011-2012       Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2011-2017       Syed Asad Rahman <asad @ ebi.ac.uk>
  *           
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -32,7 +32,6 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
 import org.apache.commons.math3.random.RandomGenerator;
 
-
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
@@ -54,7 +53,8 @@ public class RandomNumber implements Serializable {
     }
 
     /**
-     * Mersenne Twister Random Number for a hashcode within a range between 0 to n.
+     * Mersenne Twister Random Number for a hashcode within a range between 0 to
+     * n.
      *
      * @param n the maximum value the
      * @param seed the seed for the next pseudorandom number

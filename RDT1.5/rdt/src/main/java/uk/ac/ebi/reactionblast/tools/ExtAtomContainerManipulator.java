@@ -218,7 +218,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     //logger.debug(i+"\t"+j);
                     IRing ring = (IRing) ringSet.getAtomContainer(j);
                     if (!ring.getFlag(CDKConstants.ISAROMATIC)) {
-                        continue jloop;
+                        continue;
                     }
 
                     boolean haveatom = ring.contains(mol.getAtom(i));
@@ -303,11 +303,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static int getExplicitHydrogenCount(IAtomContainer atomContainer, IAtom atom) {
         int hCount = 0;
-        for (IAtom connectedAtom : atomContainer.getConnectedAtomsList(atom)) {
-            if (connectedAtom.getSymbol().equals("H")) {
-                hCount += 1;
-            }
-        }
+        hCount = atomContainer.getConnectedAtomsList(atom).stream().filter((connectedAtom) -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
         return hCount;
     }
 

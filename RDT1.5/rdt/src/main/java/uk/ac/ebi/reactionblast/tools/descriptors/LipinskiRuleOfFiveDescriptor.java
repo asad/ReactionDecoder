@@ -77,7 +77,7 @@ public class LipinskiRuleOfFiveDescriptor {
      *
      * @param molecule
      * @return total number of lipinski rule failures (Max. is five)
-     * @throws Exception      *
+     * @throws Exception *
      */
     public int calculate(IAtomContainer molecule) throws Exception {
 

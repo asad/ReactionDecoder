@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.stereo.tools;
 
 import java.util.HashMap;
@@ -38,12 +37,14 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
 
 /**
  * Tool for comparing chiralities.
+ *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  * @author maclean
  *
  */
 public class Chirality2DTool implements ChiralityTool {
+
     private static final Logger LOG = getLogger(Chirality2DTool.class.getName());
 
     /**
@@ -59,7 +60,7 @@ public class Chirality2DTool implements ChiralityTool {
     }
 
     /**
-     * 
+     *
      * @param stereoElement
      * @param atomContainer
      * @return
@@ -70,10 +71,14 @@ public class Chirality2DTool implements ChiralityTool {
             CIP_CHIRALITY chiral = getCIPChirality(
                     atomContainer, (ITetrahedralChirality) stereoElement);
             switch (chiral) {
-                case NONE: return NONE;
-                case R: return R;
-                case S: return S;
-                default: return NONE;
+                case NONE:
+                    return NONE;
+                case R:
+                    return R;
+                case S:
+                    return S;
+                default:
+                    return NONE;
             }
         } else {
             return NONE;
