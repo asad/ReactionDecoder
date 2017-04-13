@@ -193,6 +193,16 @@ Changes (01/06/2016)
 a) Migrate to Maven project with POM.xml
 b) Version rdt-2.0-SNAPSHOT
 
+-----------------------
+Changes (14/04/2017)
+-----------------------
+a) Migrate to Maven project with POM.xml
+b) Roll back Version rdt-1.5-SNAPSHOT
+c) Fixed bugs
+d) SMSD precedence on filter frag > stereo > energy
+
+
+
 
 -----------------------
 TO DO
