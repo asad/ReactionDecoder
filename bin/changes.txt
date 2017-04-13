@@ -200,8 +200,8 @@ a) Migrate to Maven project with POM.xml
 b) Roll back Version rdt-1.5-SNAPSHOT
 c) Fixed bugs
 d) SMSD precedence on filter frag > stereo > energy
-
-
+e) Java 8.0
+f) CDK 1.5.14
 
 
 -----------------------
