@@ -35,28 +35,28 @@ public class ComplexCases extends MappingUtility {
      * COMPLEX CASES
      ************************
      */
-    /**
-     * Complex case, linear to Ring system; Takes longer to Run
-     *
-     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
-     * C-C:2.0, C-H:5.0, H-O:1.0]
-     *
-     * BE 2750.0, Fragment 0
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void R03200() throws Exception {
-
-        String reactionID = "R03200";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
-    }
-
+//    /**
+//     * @BUG TO DO
+//     * Complex case, linear to Ring system; Takes longer to Run
+//     *
+//     * MIXTURE, fp ID=R03200:Bond Cleaved and Formed (5) [C%C:5.0, C%O:1.0,
+//     * C-C:2.0, C-H:5.0, H-O:1.0]
+//     *
+//     * BE 2750.0, Fragment 0
+//     *
+//     * @throws java.lang.Exception
+//     */
+//    @Test
+//    public void R03200() throws Exception {
+//
+//        String reactionID = "R03200";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+//    }
     /**
      * Lowest Bond Energy Solution not accepted
      *
@@ -77,7 +77,10 @@ public class ComplexCases extends MappingUtility {
                 .getFormedCleavedWFingerprint();
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
-//
+
+//    /*
+//     * Long Runtime
+//     */
 //    @Test
 //    public void FAOXC140() throws Exception {
 //
@@ -102,16 +105,16 @@ public class ComplexCases extends MappingUtility {
 //        assertEquals(0, formedCleavedWFingerprint.getFeatureCount());
 //    }
 
-    /*
-     * Complex case,
-     * Takes longer to Run
-     * @BUG
-     * TO DO 
-     * Functional group regarrangment
-     *
-     *
-     * @throws Exception
-     */
+//    /*
+//     * Complex case,
+//     * Takes longer to Run
+//     * @BUG TO DO
+//     *  
+//     * Functional group regarrangment
+//     *
+//     *
+//     * @throws Exception
+//     */
 //    @Test
 //    public void R03775() throws Exception {
 //        String reactionID = "R03775";
@@ -187,7 +190,7 @@ public class ComplexCases extends MappingUtility {
     /*
      * TO DO, mapping NOT SURE, COMPLEX CASE, 
      * Optimise MCS
-     * @BUG
+     * @BUG TO DO
      * 
      *
      * @throws Exception
