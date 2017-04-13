@@ -255,10 +255,10 @@ public class MCSThread implements Callable<MCSSolution> {
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
                         AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
                         Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
-                        for (IAtom atom1 : mappings.keySet()) {
+                        mappings.keySet().stream().forEach((atom1) -> {
                             IAtom atom2 = mappings.get(atom1);
                             aam.put(atom2, atom1);
-                        }
+                        });
                         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
                                 substructure.getTarget(), substructure.getQuery(), aam);
                         mcs.setEnergy(substructure.getEnergyScore(0));
@@ -377,10 +377,9 @@ public class MCSThread implements Callable<MCSSolution> {
         }
 
         if (difference.isEmpty()) {
-            for (String k : atomUniqueCounter1.keySet()) {
-                if (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)) {
-                    return false;
-                }
+            if (!atomUniqueCounter1.keySet().stream().noneMatch((k) -> 
+                    (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)))) {
+                return false;
             }
         }
 
@@ -530,11 +529,11 @@ public class MCSThread implements Callable<MCSSolution> {
                 boolean stitchingFeasible = isStitchingFeasible(getCompound1(),
                         getCompound2(), acceptedSolution, s);
                 if (stitchingFeasible) {
-                    for (IAtom a : s.getMappingsByAtoms().keySet()) {
+                    s.getMappingsByAtoms().keySet().stream().forEach((a) -> {
                         IAtom refA = getAtomByID(getCompound1(), a);
                         IAtom refB = getAtomByID(getCompound2(), s.getMappingsByAtoms().get(a));
                         acceptedSolution.put(refA, refB);
-                    }
+                    });
                     energy += isomorphism.getEnergyScore(solIndex);
                     fragmentSize += isomorphism.getFragmentSize(solIndex);
                     stereoScore += isomorphism.getStereoScore(solIndex);
@@ -551,10 +550,10 @@ public class MCSThread implements Callable<MCSSolution> {
              */
             AtomAtomMapping combi = new AtomAtomMapping(getCompound1(), getCompound2());
 
-            for (IAtom a : acceptedSolution.keySet()) {
+            acceptedSolution.keySet().stream().forEach((a) -> {
                 IAtom b = acceptedSolution.get(a);
                 combi.put(a, b);
-            }
+            });
             MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(), isomorphism.getQuery(), isomorphism.getTarget(), combi);
             mcs.setEnergy(energy);
             mcs.setFragmentSize(fragmentSize);
