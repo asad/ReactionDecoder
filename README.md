@@ -25,10 +25,13 @@ use POM.xml and mvn commands to build your project
 1) mvn -DskipTests=true install (skip test)
 2) mvn install (include test)
 3) mvn clean (clean)
-```
-`b)` Compile and bundle the code using `ant`?:
+4) mvn install -DskipTests=true
+5) mvn package
 
-`c)` `Ant Build` commands
+```
+`c)` Compile and bundle the code using `ant`?:
+
+`d)` `Ant Build` commands
 
 ```
 CLEAN:
