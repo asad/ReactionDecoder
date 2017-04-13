@@ -91,9 +91,15 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.openscience.cdk</groupId>
-            <artifactId>cdk</artifactId>
+            <artifactId>cdk-bundle</artifactId>
+            <version>1.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-core</artifactId>
             <version>1.5.13</version>
         </dependency>
         <dependency>
