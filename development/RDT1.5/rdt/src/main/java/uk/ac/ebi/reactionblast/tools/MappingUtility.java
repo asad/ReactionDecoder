@@ -191,14 +191,17 @@ public class MappingUtility extends TestUtility {
 //        System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
 //        System.out.println("RC Changed " + s.getBondChangeCalculator().getReactionCenterWFingerprint().toString());
 //        System.out.println("BE " + s.getBondEnergySum() + ", Fragment " + s.getTotalFragmentChanges());
-        IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+        try {
+            IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
-        /*
-         * Code for Image generation
-         */
-        LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-        TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
-
+            /*
+             * Code for Image generation
+             */
+            LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+            TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {
 //            out.println("--------------------------------------");

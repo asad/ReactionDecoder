@@ -483,7 +483,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      *
      * @param mol molecule to zero out hydrogen counts
      */
-    static void setNullHCountToZero(IAtomContainer mol) {
+    public static void setNullHCountToZero(IAtomContainer mol) {
         for (IAtom a : mol.atoms()) {
             if (a.getImplicitHydrogenCount() == null) {
                 a.setImplicitHydrogenCount(0);
