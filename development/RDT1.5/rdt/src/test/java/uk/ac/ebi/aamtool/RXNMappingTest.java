@@ -58,7 +58,7 @@ public class RXNMappingTest extends MappingUtility {
      * @throws Exception
      */
     @Test
-    public void Test() throws Exception {
+    public void Test1() throws Exception {
 
         String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
         SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
@@ -74,6 +74,34 @@ public class RXNMappingTest extends MappingUtility {
 //                createReactionSMILES(testReactions.getSelectedSolution().getReactor().
 //                        getReactionWithAtomAtomMapping()));
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
+     * Test case for Reaction SMILES
+     * Expected Solution
+     * MIN, fp 
+     * ID=EC2_6_1_32:Bond Cleaved and Formed (2)
+     * [C-N:2.0, C=O:2.0]
+    
+     * @throws Exception
+     */
+    @Test
+    public void EC2_6_1_32() throws Exception {
+
+        String reactionSM = "CC(C)C(N)C(=O)O.CCC(C)C(=O)C(=O)[O-]>>CCC(C)C(N)C(=O)O.CC(C)C(=O)C(=O)[O-]";
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        parseReactionSmiles.setID("EC2_6_1_32");
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+//        System.out.println("FP " + new SmilesGenerator().withAtomClasses().
+//                createReactionSMILES(testReactions.getSelectedSolution().getReactor().
+//                        getReactionWithAtomAtomMapping()));
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
@@ -924,7 +952,7 @@ public class RXNMappingTest extends MappingUtility {
      */
     @Test
     public void R03187() throws Exception {
-     
+
         String reactionID = "R03187";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
