@@ -42,11 +42,11 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
-import org.openscience.cdk.io.MDLRXNV2000Reader;
-import org.openscience.cdk.io.MDLV2000Reader;
 import org.openscience.cdk.io.Mol2Reader;
 import org.openscience.cdk.smiles.SmilesParser;
 import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
+import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
+import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
