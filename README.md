@@ -27,6 +27,7 @@ use POM.xml and mvn commands to build your project
 3) mvn clean (clean)
 4) mvn install -DskipTests=true
 5) mvn package
+6) mvn -P local clean install (with -jar-with-dependencies)
 
 ```
 `c)` Compile and bundle the code using `ant`?:
