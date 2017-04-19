@@ -119,8 +119,12 @@ public final class AtomAtomMapping implements Serializable {
      * @param atom2
      */
     public synchronized void put(IAtom atom1, IAtom atom2) {
-        mapping.put(atom1, atom2);
-        mappingIndex.put(getQuery().getAtomNumber(atom1), getTarget().getAtomNumber(atom2));
+        try {
+            mapping.put(atom1, atom2);
+            mappingIndex.put(getQuery().getAtomNumber(atom1), getTarget().getAtomNumber(atom2));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -377,9 +381,9 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
         SmilesGenerator aromatic = new SmilesGenerator(
-                        SmiFlavor.Unique
-                        | SmiFlavor.UseAromaticSymbols 
-                                | SmiFlavor.AtomAtomMap);
+                SmiFlavor.Unique
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.AtomAtomMap);
         return aromatic.create(getCommonFragment());
     }
 

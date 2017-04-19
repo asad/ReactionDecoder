@@ -55,34 +55,20 @@ public class PostFilter {
     public synchronized static List<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
         List<Map<Integer, Integer>> final_MAPPINGS = new ArrayList<>();
         if (mappings != null && !mappings.isEmpty()) {
-            List<Map<Integer, Integer>> removeRedundantMapping = removeRedundantMapping(mappings);
-            final_MAPPINGS.addAll(removeRedundantMapping);
+            mappings.stream().map((List<Integer> mapping) -> {
+                Map<Integer, Integer> newMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+                for (int index = 0; index < mapping.size() - 1; index += 2) {
+                    newMap.put(mapping.get(index), mapping.get(index + 1));
+                }
+                return newMap;
+            }).filter((newMap) -> (!hasMap(newMap, final_MAPPINGS))).forEach((newMap) -> {
+                final_MAPPINGS.add(newMap);
+            });
         }
         return final_MAPPINGS;
     }
 
     private synchronized static boolean hasMap(Map<Integer, Integer> newMap, List<Map<Integer, Integer>> nonRedundantMapping) {
         return nonRedundantMapping.stream().anyMatch((storedMap) -> (storedMap.equals(newMap)));
-    }
-
-    /**
-     *
-     * @param mapping_org
-     * @return
-     */
-    private synchronized static List<Map<Integer, Integer>> removeRedundantMapping(List<List<Integer>> mapping_org) {
-        List<Map<Integer, Integer>> nonRedundantMapping = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
-        mapping_org.stream().map((M) -> getMappingMapFromList(M)).filter((newMap) -> (!hasMap(newMap, nonRedundantMapping))).forEach((newMap) -> {
-            nonRedundantMapping.add(newMap);
-        });
-        return nonRedundantMapping;
-    }
-
-    private synchronized static Map<Integer, Integer> getMappingMapFromList(List<Integer> list) {
-        Map<Integer, Integer> newMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-        for (int index = 0; index < list.size(); index += 2) {
-            newMap.put(list.get(index), list.get(index + 1));
-        }
-        return newMap;
     }
 }

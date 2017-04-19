@@ -30,7 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.mcsplus.MCSPlusHandler;
+import org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
@@ -101,10 +101,10 @@ import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
  *
  * </pre> </font>
  *
- *  java1.8+
+ * java1.8+
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  *
@@ -131,8 +131,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
-     * @param algorithmType
-     * {@link org.openscience.smsd.interfaces.Algorithm}
+     * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
      */
     public Isomorphism(
             IQueryAtomContainer query,
@@ -157,8 +156,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
-     * @param algorithmType
-     * {@link org.openscience.smsd.interfaces.Algorithm}
+     * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
      * @param bondTypeFlag Match bond types (i.e. double to double etc)
      * @param matchRings Match ring atoms and ring size
      * @param matchAtomType
@@ -243,11 +241,13 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     private synchronized boolean mcsPlusAlgorithm() {
-        MCSPlusHandler mcs;
+        MCSPlusMapper mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new MCSPlusHandler((IQueryAtomContainer) getQuery(), getTarget());
+            //mcs = new MCSPlusHandler((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
         } else {
-            mcs = new MCSPlusHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            // mcs = new MCSPlusHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
