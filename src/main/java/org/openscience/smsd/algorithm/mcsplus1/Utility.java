@@ -24,6 +24,10 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
+import org.openscience.cdk.isomorphism.matchers.IQueryBond;
+import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
 
 /**
  *
@@ -111,6 +115,37 @@ public class Utility {
         }
 //        System.out.println("Bubble Sort: " + sortedVector);
         return sortedVector;
+    }
+
+    /**
+     *
+     * @param bondA1
+     * @param bondA2
+     * @param shouldMatchBonds
+     * @param shouldMatchRings
+     * @return
+     */
+    private boolean isMatchFeasible(
+            IBond bondA1,
+            IBond bondA2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) {
+
+        if (bondA1 instanceof IQueryBond) {
+            if (((IQueryBond) bondA1).matches(bondA2)) {
+                IQueryAtom atom1 = (IQueryAtom) (bondA1.getAtom(0));
+                IQueryAtom atom2 = (IQueryAtom) (bondA1.getAtom(1));
+                return atom1.matches(bondA2.getAtom(0)) && atom2.matches(bondA2.getAtom(1))
+                        || atom1.matches(bondA2.getAtom(1)) && atom2.matches(bondA2.getAtom(0));
+            }
+            return false;
+        } else {
+            /*
+             This one also matches atom type, not just symbols
+             */
+            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        }
     }
 
 }

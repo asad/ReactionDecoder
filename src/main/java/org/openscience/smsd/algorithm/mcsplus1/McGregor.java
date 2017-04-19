@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_structure;
 
 /**
@@ -68,8 +70,8 @@ public class McGregor extends Utility {
     protected final List<Integer> comp_graph_nodes;
     protected final List<Integer> comp_graph_nodes_C_zero;
 
-    protected final List<String> atomstr1;
-    protected final List<String> atomstr2;
+    protected final List<IAtom> atomstr1;
+    protected final List<IAtom> atomstr2;
 
     private int nNum_globalA;
     private int nNum_globalB;
@@ -105,7 +107,9 @@ public class McGregor extends Utility {
 
     public final List<List<Integer>> final_MAPPINGS;
 
-    private List<String> SignROW;
+    private final List<String> SignROW;
+    private final IAtomContainer ac1;
+    private final IAtomContainer ac2;
 
     public McGregor(int atom_number1,
             int atom_number2,
@@ -113,12 +117,14 @@ public class McGregor extends Utility {
             int atom_num_H_2,
             int bond_number1,
             int bond_number2,
-            List<String> atomstr1,
-            List<String> atomstr2,
+            List<IAtom> atomstr1,
+            List<IAtom> atomstr2,
             List<Integer> i_tab1,
             List<Integer> i_tab2,
             List<String> c_tab1,
-            List<String> c_tab2) {
+            List<String> c_tab2,
+            IAtomContainer ac1,
+            IAtomContainer ac2) {
 
         this.atom_number1 = atom_number1;
         this.atom_number2 = atom_number2;
@@ -132,6 +138,8 @@ public class McGregor extends Utility {
         this.i_tab2 = i_tab2;
         this.c_tab1 = c_tab1;
         this.c_tab2 = c_tab2;
+        this.ac1 = ac1;
+        this.ac2 = ac2;
 
         /*
          *Initialize Vectors

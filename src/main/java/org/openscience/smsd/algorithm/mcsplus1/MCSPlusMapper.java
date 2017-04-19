@@ -65,7 +65,8 @@ public final class MCSPlusMapper implements IResults {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public MCSPlusMapper(IAtomContainer source, IAtomContainer target, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public MCSPlusMapper(IAtomContainer source, IAtomContainer target,
+            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.source = source;
         this.target = target;
 
@@ -103,7 +104,7 @@ public final class MCSPlusMapper implements IResults {
         if (source instanceof IQueryAtomContainer || target instanceof IQueryAtomContainer) {
             new CDKException("Not supported");
 
-        } else if (source.getAtomCount() > target.getAtomCount()) {
+        } else if (source.getAtomCount() >= target.getAtomCount()) {
             this.flagExchange = false;
             MoleculeHandler file1 = new MoleculeHandler(source);
             MoleculeHandler file2 = new MoleculeHandler(target);
@@ -120,7 +121,9 @@ public final class MCSPlusMapper implements IResults {
                     file1.intTable,
                     file2.intTable,
                     file1.charTable,
-                    file2.charTable);
+                    file2.charTable,
+                    file1.getAtomContainer(),
+                    file2.getAtomContainer());
             mcs.search_cliques();
             System.out.println("mcs.final_MAPPINGS " + mcs.final_MAPPINGS.size());
             mappings = Collections.synchronizedList(mcs.final_MAPPINGS);
@@ -142,7 +145,9 @@ public final class MCSPlusMapper implements IResults {
                     file1.intTable,
                     file2.intTable,
                     file1.charTable,
-                    file2.charTable);
+                    file2.charTable,
+                    file1.getAtomContainer(),
+                    file2.getAtomContainer());
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS " + mcs.final_MAPPINGS.size());
             mappings = Collections.synchronizedList(mcs.final_MAPPINGS);

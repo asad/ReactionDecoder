@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -59,6 +61,8 @@ public class MCS extends Filter {
      * @param i_tab2
      * @param atomstr2
      * @param i_tab1
+     * @param ac1
+     * @param ac2
      */
     public MCS(
             int atom_number1,
@@ -67,20 +71,22 @@ public class MCS extends Filter {
             int atom_num_H_2,
             int bond_number1,
             int bond_number2,
-            List<String> atomstr1,
-            List<String> atomstr2,
+            List<IAtom> atomstr1,
+            List<IAtom> atomstr2,
             List<Integer> i_tab1,
             List<Integer> i_tab2,
             List<String> c_tab1,
-            List<String> c_tab2) {
+            List<String> c_tab2,
+            IAtomContainer ac1,
+            IAtomContainer ac2) {
 
         super(atom_number1, atom_number2, atom_num_H_1, atom_num_H_2,
                 bond_number1, bond_number2, atomstr1, atomstr2,
-                i_tab1, i_tab2, c_tab1, c_tab2);
+                i_tab1, i_tab2, c_tab1, c_tab2, ac1, ac2);
 
     }
 
-    private List<List<Integer>> label_atoms(List<Integer> basic_atom_vector, int bond_num, List<String> atomstr, List<Integer> i_tab, List<String> c_tab) {
+    private List<List<Integer>> label_atoms(List<Integer> basic_atom_vector, int bond_num, List<IAtom> atomstr, List<Integer> i_tab, List<String> c_tab) {
 
         ArrayList<List<Integer>> label_list = new ArrayList<>();
 
@@ -106,7 +112,7 @@ public class MCS extends Filter {
                 label.add(0);
             }
 
-            String atom1_type = atomstr.get(a);
+            String atom1_type = atomstr.get(a).getSymbol();
             if (SYMBOL_VALUE.containsKey(atom1_type)) {
                 label.set(0, SYMBOL_VALUE.get(atom1_type));
             } else {
@@ -153,7 +159,7 @@ public class MCS extends Filter {
     private List<Integer> reduce_atomset(
             int atom_num,
             int bond_numb,
-            List<String> a_str,
+            List<IAtom> a_str,
             List<Integer> i_table,
             List<String> c_table) {
 
@@ -161,20 +167,20 @@ public class MCS extends Filter {
         List<Integer> h_atoms = new ArrayList<>();
 
         for (int a = 0; a < atom_num; a++) {
-            if ("O".equals(a_str.get(a))) {
+            if ("O".equals(a_str.get(a).getSymbol())) {
                 int O_neighbor_num = 0;
                 boolean P_neighbor = false;
 
                 for (int b = 0; b < bond_numb; b++) {
                     if (a + 1 == i_table.get(b * 3 + 0)) {
                         O_neighbor_num++;
-                        if (("P".equals(a_str.get(i_table.get(b * 3 + 1) - 1))) && (i_table.get(b * 3 + 2) != 2)) {
+                        if (("P".equals(a_str.get(i_table.get(b * 3 + 1) - 1).getSymbol())) && (i_table.get(b * 3 + 2) != 2)) {
                             P_neighbor = true;
                         }
                     }
                     if (a + 1 == i_table.get(b * 3 + 1)) {
                         O_neighbor_num++;
-                        if (("P".equals(a_str.get(i_table.get(b * 3 + 0) - 1))) && (i_table.get(b * 3 + 2) != 2)) {
+                        if (("P".equals(a_str.get(i_table.get(b * 3 + 0) - 1).getSymbol())) && (i_table.get(b * 3 + 2) != 2)) {
                             P_neighbor = true;
                         }
                     }
@@ -183,7 +189,7 @@ public class MCS extends Filter {
                     phosphate_O_atoms.add(a + 1);
                 }
             }
-            if ("H".equals(a_str.get(a))) {
+            if ("H".equals(a_str.get(a).getSymbol())) {
                 h_atoms.add(a + 1);
             }
         }
@@ -246,7 +252,7 @@ public class MCS extends Filter {
         int vector_size = comp_graph_nodes.size();
 
         for (int a = 0; a < vector_size; a = a + 3) {
-            for (int b = a + 3; b < vector_size; b = b + 3) { // b=a damit jede M�lichkeit statt 2 mal nur 1 mal betrachtet wird
+            for (int b = a + 3; b < vector_size; b = b + 3) {
                 if ((a != b) && (!comp_graph_nodes.get(a).equals(comp_graph_nodes.get(b)))
                         && (!comp_graph_nodes.get(a + 1).equals(comp_graph_nodes.get(b + 1)))) {
                     boolean molecule1_pair_connected = false;
@@ -298,10 +304,10 @@ public class MCS extends Filter {
         int count_nodes = 1;
 
         for (int a = 0; a < atom_num_H_1; a++) {
-            String atom1_type = atomstr1.get(a);
+            String atom1_type = atomstr1.get(a).getSymbol();
 
             for (int b = 0; b < atom_num_H_2; b++) {
-                String atom2_type = atomstr2.get(b);
+                String atom2_type = atomstr2.get(b).getSymbol();
 
                 if ((atom1_type.equals(atom2_type))) {
                     comp_graph_nodes_C_zero.add(a + 1);
@@ -766,8 +772,6 @@ public class MCS extends Filter {
 //            System.out.println ("Clique number " + clique_number + " :" );
             List<Integer> clique_vector = Max_Cliques_Set.peek();
             int clique_size = clique_vector.size();
-
-            List<Integer> clique_MAPPING = extract_clique_MAPPING(clique_vector);
             //Is the number of mappings smaller than the number of atoms of molecule A and B?
             //In this case the clique is given to the McGregor algorithm
             if ((clique_size < atom_number1) && (clique_size < atom_number2)) {
@@ -776,6 +780,7 @@ public class MCS extends Filter {
                 McGregor_IterationStart(clique_vector);
 
             } else {
+                List<Integer> clique_MAPPING = extract_clique_MAPPING(clique_vector);
                 extract_mapping(clique_vector);
             }
             Max_Cliques_Set.pop();

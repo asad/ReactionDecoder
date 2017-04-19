@@ -24,6 +24,8 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
@@ -32,8 +34,9 @@ import java.util.List;
 public class Filter extends McGregor {
 
     public Filter(int atom_number1, int atom_number2, int atom_num_H_1, int atom_num_H_2, int bond_number1, int bond_number2,
-            List<String> atomstr1, List<String> atomstr2, List<Integer> i_tab1, List<Integer> i_tab2, List<String> c_tab1, List<String> c_tab2) {
-        super(atom_number1, atom_number2, atom_num_H_1, atom_num_H_2, bond_number1, bond_number2, atomstr1, atomstr2, i_tab1, i_tab2, c_tab1, c_tab2);
+            List<IAtom> atomstr1, List<IAtom> atomstr2, List<Integer> i_tab1, List<Integer> i_tab2, List<String> c_tab1, List<String> c_tab2,
+            IAtomContainer ac1, IAtomContainer ac2) {
+        super(atom_number1, atom_number2, atom_num_H_1, atom_num_H_2, bond_number1, bond_number2, atomstr1, atomstr2, i_tab1, i_tab2, c_tab1, c_tab2, ac1, ac2);
     }
 
     int postfilter() {
@@ -51,7 +54,7 @@ public class Filter extends McGregor {
         List<Integer> C_index_A = new ArrayList<>();
         List<List<Integer>> carb_vec_A = new ArrayList<>();
         for (int a = 0; a < atom_num_H_1; a++) {
-            if ("C".equals(atomstr1.get(a))) {
+            if ("C".equals(atomstr1.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> carboxy_C_vec = new ArrayList<>();
                 boolean c_group = true;
@@ -96,7 +99,7 @@ public class Filter extends McGregor {
         List<Integer> C_index_B = new ArrayList<>();
         List<List<Integer>> carb_vec_B = new ArrayList<>();
         for (int a = 0; a < atom_number2; a++) {
-            if ("C".equals(atomstr2.get(a))) {
+            if ("C".equals(atomstr2.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> carboxy_C_vec = new ArrayList<>();
                 boolean c_group = true;
@@ -197,7 +200,7 @@ public class Filter extends McGregor {
         List<Integer> P_index_A = new ArrayList<>();
         List<List<Integer>> phos_vec_A = new ArrayList<>();
         for (int a = 0; a < atom_num_H_1; a++) {
-            if ("P".equals(atomstr1.get(a))) {
+            if ("P".equals(atomstr1.get(a).getSymbol())) {
                 int P_num = 0;
                 List<Integer> phos_P_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number1; b++) {
@@ -320,7 +323,7 @@ public class Filter extends McGregor {
         List<Integer> P_index_B = new ArrayList<>();
         List<List<Integer>> phos_vec_B = new ArrayList<>();
         for (int a = 0; a < atom_num_H_2; a++) {
-            if ("P".equals(atomstr2.get(a))) {
+            if ("P".equals(atomstr2.get(a).getSymbol())) {
                 int P_num = 0;
                 List<Integer> phos_P_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number2; b++) {
@@ -495,7 +498,7 @@ public class Filter extends McGregor {
         List<Integer> N_index_A = new ArrayList<>();
         List<List<Integer>> amino_vec_A = new ArrayList<>();
         for (int a = 0; a < atom_number1; a++) {
-            if (atomstr1.get(a).equals("C")) {
+            if (atomstr1.get(a).getSymbol().equals("C")) {
                 int N_num = 0;
                 List<Integer> amino_N_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number1; b++) {
@@ -566,7 +569,7 @@ public class Filter extends McGregor {
         List<Integer> N_index_B = new ArrayList<>();
         List<List<Integer>> amino_vec_B = new ArrayList<>();
         for (int a = 0; a < atom_number2; a++) {
-            if ("C".equals(atomstr2.get(a))) {
+            if ("C".equals(atomstr2.get(a).getSymbol())) {
                 int N_num = 0;
                 List<Integer> amino_N_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number2; b++) {
@@ -690,7 +693,7 @@ public class Filter extends McGregor {
         List<Integer> SO_index_A = new ArrayList<>();
         List<List<Integer>> sulfo_vec_A = new ArrayList<>();
         for (int a = 0; a < atom_number1; a++) {
-            if ("S".equals(atomstr1.get(a))) {
+            if ("S".equals(atomstr1.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> sulfo_S_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number1; b++) {
@@ -788,7 +791,7 @@ public class Filter extends McGregor {
         List<Integer> SO_index_B = new ArrayList<>();
         List<List<Integer>> sulfo_vec_B = new ArrayList<>();
         for (int a = 0; a < atom_number2; a++) {
-            if (atomstr2.get(a).equals("S")) {
+            if (atomstr2.get(a).getSymbol().equals("S")) {
                 int O_num = 0;
                 List<Integer> sulfo_S_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number2; b++) {
@@ -1057,7 +1060,7 @@ public class Filter extends McGregor {
         List<Integer> NO_index_A = new ArrayList<>();
         List<List<Integer>> nitro_vec_A = new ArrayList<>();
         for (int a = 0; a < atom_number1; a++) {
-            if (atomstr1.get(a).equals("N")) {
+            if (atomstr1.get(a).getSymbol().equals("N")) {
                 int O_num = 0;
                 List<Integer> nitro_N_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number1; b++) {
@@ -1119,7 +1122,7 @@ public class Filter extends McGregor {
         List<Integer> NO_index_B = new ArrayList<>();
         List<List<Integer>> nitro_vec_B = new ArrayList<>();
         for (int a = 0; a < atom_number2; a++) {
-            if ("N".equals(atomstr2.get(a))) {
+            if ("N".equals(atomstr2.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> nitro_N_vec = new ArrayList<>();
                 for (int b = 0; b < bond_number2; b++) {

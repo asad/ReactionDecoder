@@ -25,6 +25,7 @@ package org.openscience.smsd.algorithm.mcsplus1;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
@@ -34,11 +35,11 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public final class MoleculeHandler {
 
-    IAtomContainer atomContainer;
+    private final IAtomContainer atomContainer;
     int bondNumber = 0;
     int atomNumber = 0;
     int startHatom_num = 0;
-    List<String> atomString;
+    private List<IAtom> atomString;
     public List<Integer> intTable = new LinkedList<>();
     public List<String> charTable = new LinkedList<>();
     protected List<Integer> specified_int_tab = new LinkedList<>();
@@ -81,7 +82,7 @@ public final class MoleculeHandler {
         return atomNumber;
     }
 
-    public List<String> getAtomString() {
+    public List<IAtom> getAtomString() {
         return atomString;
     }
 
@@ -91,10 +92,10 @@ public final class MoleculeHandler {
     }
 
     private void setHydrogenNumber() {
-        startHatom_num = atomContainer.getAtomCount();
+        startHatom_num = getAtomContainer().getAtomCount();
 
         for (int atom = 0; atom < atomNumber; atom++) {
-            if ((atomContainer.getAtom(atom).getSymbol()).equals("H")) {
+            if ((getAtomContainer().getAtom(atom).getSymbol()).equals("H")) {
                 startHatom_num--;
             }
 
@@ -103,70 +104,10 @@ public final class MoleculeHandler {
     }
 
     private void setAtomString() {
-        ArrayList<String> temp = new ArrayList<>();
+        ArrayList<IAtom> temp = new ArrayList<>();
         for (int atom = 0; atom < atomNumber; atom++) {
-
-            String symbol = atomContainer.getAtom(atom).getSymbol();
-            //System.out.println(symbol);
-
-            temp.add(symbol);
-
-//            if (symbol.length() == 1) {
-//                temp.add(symbol);
-//            }
-//
-//            if (symbol.length() == 2) {
-//
-//                int brom = symbol.compareToIgnoreCase("Br");
-//                if (0 == brom) {
-//                    temp.add('B');
-//                }
-//
-//                int chlor = symbol.compareToIgnoreCase("Cl");
-//                if (0 == chlor) {
-//                    temp.add('L');
-//                }
-//
-//                int cobald = symbol.compareToIgnoreCase("Co");
-//                if (0 == cobald) {
-//                    temp.add('Q');
-//                }
-//
-//                int iron = symbol.compareToIgnoreCase("Fe");
-//                if (0 == iron) {
-//                    temp.add('E');
-//                }
-//
-//                int natrium = symbol.compareToIgnoreCase("Na");
-//                if (0 == natrium) {
-//                    temp.add('A');
-//                }
-//
-//                int calcium = symbol.compareToIgnoreCase("Ca");
-//                if (0 == calcium) {
-//                    temp.add('@');
-//                }
-//
-//                int magnesium = symbol.compareToIgnoreCase("Mg");
-//                if (0 == magnesium) {
-//                    temp.add('M');
-//                }
-//
-//                int selen = symbol.compareToIgnoreCase("Se");
-//                if (0 == selen) {
-//                    temp.add('$');
-//                }
-//
-//                int copper = symbol.compareToIgnoreCase("Cu");
-//                if (0 == copper) {
-//                    temp.add('U');
-//                }
-//
-//                int quicksilver = symbol.compareToIgnoreCase("Hg");
-//                if (0 == quicksilver) {
-//                    temp.add('G');
-//                }
-//        }
+            IAtom atomType = getAtomContainer().getAtom(atom);
+            temp.add(atomType);
         }
 
         //System.err.println("In atomContainer: getString(temp) " +temp.size()+ " "+ getString(temp));
@@ -176,7 +117,7 @@ public final class MoleculeHandler {
 
     public void setIntConnectionTable() {
 
-        IAtomContainer ac = (IAtomContainer) atomContainer;
+        IAtomContainer ac = (IAtomContainer) getAtomContainer();
 
         for (int i = 0; i < ac.getBondCount(); i++) {
             IBond bond = ac.getBond(i);
@@ -192,7 +133,7 @@ public final class MoleculeHandler {
     }
 
     public void setCharConnectionTable() {
-        IAtomContainer ac = (IAtomContainer) atomContainer;
+        IAtomContainer ac = (IAtomContainer) getAtomContainer();
         for (int i = 0; i < ac.getBondCount(); i++) {
             IBond bond = ac.getBond(i);
             /*This will fetch the Connected ATOM Symbol*/
@@ -261,5 +202,12 @@ public final class MoleculeHandler {
             specified_int_tab.add(int_tab.get(a * 3 + 1) + specifier_value);
             specified_int_tab.add(int_tab.get(a * 3 + 2));
         }
+    }
+
+    /**
+     * @return the atomContainer
+     */
+    public IAtomContainer getAtomContainer() {
+        return atomContainer;
     }
 }
