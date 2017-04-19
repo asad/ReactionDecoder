@@ -47,7 +47,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
-import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
+import org.openscience.smsd.interfaces.Algorithm;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import static uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher.matcher;
@@ -367,7 +367,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        Isomorphism mcsThread = new Isomorphism(educt, product, DEFAULT, false, false, false);
+        Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.CDKMCS, false, false, false);
         mcsThread.setChemFilters(true, true, true);
         try {
             MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, mcsThread.getFirstAtomMapping());

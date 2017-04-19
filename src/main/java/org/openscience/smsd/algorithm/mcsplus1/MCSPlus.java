@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -42,47 +41,20 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public class MCS extends Filter {
+public class MCSPlus extends Filter {
 
     final Map<String, Integer> SYMBOL_VALUE = new TreeMap<>();
 
     /**
      * Creates a new instance of SearchCliques
      *
-     * @param atom_number1
-     * @param atom_number2
-     * @param atom_num_H_1
-     * @param atom_num_H_2
-     * @param bond_number1
-     * @param c_tab2
-     * @param bond_number2
-     * @param c_tab1
-     * @param atomstr1
-     * @param i_tab2
-     * @param atomstr2
-     * @param i_tab1
-     * @param ac1
-     * @param ac2
+     *
+     * @param f1
+     * @param f2
      */
-    public MCS(
-            int atom_number1,
-            int atom_number2,
-            int atom_num_H_1,
-            int atom_num_H_2,
-            int bond_number1,
-            int bond_number2,
-            List<IAtom> atomstr1,
-            List<IAtom> atomstr2,
-            List<Integer> i_tab1,
-            List<Integer> i_tab2,
-            List<String> c_tab1,
-            List<String> c_tab2,
-            IAtomContainer ac1,
-            IAtomContainer ac2) {
+    public MCSPlus(MoleculeHandler f1, MoleculeHandler f2) {
 
-        super(atom_number1, atom_number2, atom_num_H_1, atom_num_H_2,
-                bond_number1, bond_number2, atomstr1, atomstr2,
-                i_tab1, i_tab2, c_tab1, c_tab2, ac1, ac2);
+        super(f1, f2);
 
     }
 
@@ -722,7 +694,7 @@ public class MCS extends Filter {
             }
         }
 
-        final_MAPPINGS.add(temp_vector);
+        getFinalMappings().add(temp_vector);
 
         return 0;
     }
@@ -788,6 +760,16 @@ public class MCS extends Filter {
         }
 
         postfilter();
+        this.Max_Cliques_Set.clear();
+        this.comp_graph_nodes.clear();
+        this.comp_graph_nodes_C_zero.clear();
+        this.c_tab1.clear();
+        this.c_tab2.clear();
+        this.C_edges.clear();
+        this.D_edges.clear();
+        this.T.clear();
+        this.C_edges_size = 0;
+        this.D_edges_size = 0;
         return 0;
     }
 

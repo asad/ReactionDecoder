@@ -38,6 +38,7 @@ import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
 import static org.openscience.cdk.graph.Cycles.relevant;
@@ -50,6 +51,7 @@ import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.interfaces.Algorithm;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
@@ -437,19 +439,44 @@ public class MCSThread implements Callable<MCSSolution> {
             int expectedMaxGraphmatch = expectedMaxGraphmatch(getCompound1(), getCompound2());
 
             if (eductCount == 1 && productCount == 1) {
+                if (DEBUG1) {
+                    System.out.println("CASE 1");
+                }
                 /*
-                 This handles large aliphatics to ring system (ex: R09907)
+                 * This handles large aliphatics to ring system (ex: R09907)
                  */
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), false);
-            } else if (expectedMaxGraphmatch > 30) {
+            } else if (expectedMaxGraphmatch >= 30 && isHasPerfectRings()
+                    && ConnectivityChecker.isConnected(getCompound1())) {
+                if (DEBUG1) {
+                    System.out.println("CASE 2");
+                }
                 /*
-                 This handles large aliphatics to ring system (ex: R06466)
+                 * This handles large aliphatics to ring system (ex: R06466)
                  */
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), VFLibMCS,
                         false, isHasPerfectRings(), !isHasPerfectRings());
+            } else if (expectedMaxGraphmatch >= 30 && ConnectivityChecker.isConnected(getCompound1())) {
+                if (DEBUG1) {
+                    System.out.println("CASE 3");
+                }
+                /*
+                 * Although the bond changes are set to true but its only used by filters
+                 */
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.MCSPlus,
+                        true, true, true);
+            } else if (!ConnectivityChecker.isConnected(getCompound1())) {
+                if (DEBUG1) {
+                    System.out.println("CASE 4");
+                }
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.CDKMCS,
+                        false, isHasPerfectRings(), !isHasPerfectRings());
             } else {
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
+                if (DEBUG1) {
+                    System.out.println("CASE 5");
+                }
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             }
 

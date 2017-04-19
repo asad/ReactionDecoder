@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.mcsplus.MCSPlusHandler;
 import org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
@@ -40,6 +41,7 @@ import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import static org.openscience.smsd.interfaces.Algorithm.MCSPlus;
 import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
+import org.openscience.smsd.interfaces.IResults;
 
 /**
  * <p>
@@ -214,16 +216,24 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
         switch (algorithmType) {
             case CDKMCS:
+//                System.out.println("Calling CDKMCS ");
                 cdkMCSAlgorithm();
+//                System.out.println("Calling DONE CDKMCS ");
                 break;
             case DEFAULT:
+//                System.out.println("Calling DEFAULT ");
                 defaultMCSAlgorithm();
+//                System.out.println("Calling DONE DEFAULT ");
                 break;
             case MCSPlus:
+//                System.out.println("Calling MCSPlus ");
                 mcsPlusAlgorithm();
+//                System.out.println("Calling DONE MCSPlus ");
                 break;
             case VFLibMCS:
+//                System.out.println("Calling VFLibMCS ");
                 vfLibMCSAlgorithm();
+//                System.out.println("Calling DONE VFLibMCS ");
                 break;
         }
     }
@@ -241,17 +251,18 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     private synchronized boolean mcsPlusAlgorithm() {
-        MCSPlusMapper mcs;
+        IResults mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
             //mcs = new MCSPlusHandler((IQueryAtomContainer) getQuery(), getTarget());
             mcs = new MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else {
-            // mcs = new MCSPlusHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else if (getQuery().getAtomCount() >= 30 && getTarget().getAtomCount() >= 30) {
             mcs = new MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else {
+            mcs = new MCSPlusHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
-        return mcs.isTimeout();
+        return false;
     }
 
     private synchronized boolean substructureAlgorithm() throws CDKException {

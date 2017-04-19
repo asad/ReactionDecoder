@@ -64,8 +64,8 @@ public final class MoleculeHandler {
 
         boolean no_H2 = true;
         if ((atomNumber == 2) && (bondNumber == 1)
-                && (atomString.get(0).equals('H'))
-                && (atomString.get(1).equals('H'))) {
+                && (atomString.get(0).getSymbol().equals("H"))
+                && (atomString.get(1).getSymbol().equals("H"))) {
             no_H2 = false;
         }
         discard_H_bonds(no_H2);
@@ -139,12 +139,8 @@ public final class MoleculeHandler {
             /*This will fetch the Connected ATOM Symbol*/
             String atom1 = bond.getAtom(0).getSymbol();
             String atom2 = bond.getAtom(1).getSymbol();
-
-            assert (atom1.length() < 2 && atom2.length() < 2) : "Unexpected value for action as length of atom is > 1: ";
             charTable.add(atom1);
             charTable.add(atom2);
-            //System.out.println(bond.getAtom(0).getSymbol()+" "+bond.getAtom(1).getSymbol());
-            //throw new AssertionError("Error");
         }
     }
 
@@ -152,7 +148,7 @@ public final class MoleculeHandler {
 
         startHatom_num = atomNumber;
         int a = atomNumber - 1;
-        while ((a >= 0) && (atomString.get(a).equals('H'))) {
+        while ((a >= 0) && (atomString.get(a).getSymbol().equals("H"))) {
             startHatom_num--;
             a--;
         }
@@ -165,10 +161,10 @@ public final class MoleculeHandler {
 
         if (is_no_H2) {
             for (int x = 0; x < bondNumber; x++) {
-                if ((charTable.get(x * 2 + 0).equals('H')) || (charTable.get(x * 2 + 1).equals('H'))) {
+                if ((charTable.get(x * 2 + 0).equals("H")) || (charTable.get(x * 2 + 1).equals("H"))) {
                     atomNumber--; // mit jeder gestrichenen H-Bindung veringert sich Atomzahl um 1
                 }
-                if (!(charTable.get(x * 2 + 0).equals('H')) && !(charTable.get(x * 2 + 1).equals('H'))) {
+                if (!(charTable.get(x * 2 + 0).equals("H")) && !(charTable.get(x * 2 + 1).equals("H"))) {
                     char_tab.add(charTable.get(x * 2 + 0));
                     char_tab.add(charTable.get(x * 2 + 1));
                     int_tab.add(intTable.get(x * 3 + 0));

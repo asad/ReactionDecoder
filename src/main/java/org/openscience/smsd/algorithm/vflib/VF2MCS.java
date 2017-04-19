@@ -102,7 +102,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
         /*
          * Atleast two atoms are unmapped else you will get bug due to unmapped single atoms
          */
-        if (timeoutVF || (maxVFMappingSize != (source.getAtomCount()) && maxVFMappingSize != (target.getAtomCount()))) {
+        if (timeoutVF || (maxVFMappingSize != (source.getAtomCount())
+                && maxVFMappingSize != (target.getAtomCount()))) {
 
             List<Map<Integer, Integer>> mcsVFSeeds = new ArrayList<>();
 
@@ -470,7 +471,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             }
             System.gc();
 
-            long stopTimeSeeds = System.nanoTime();
+//            long stopTimeSeeds = System.nanoTime();
 //            System.out.println("done seeds " + (stopTimeSeeds - startTimeSeeds));
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT

@@ -104,7 +104,6 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 //            System.out.println("addUIT " + addUIT.iterator().next().getCount());
                 return addUIT;
             case MCSPlus:
-                //            System.out.println("Calling MCSPLUS " + bondMatch + " " + ringMatch + " " + matchAtomType);
                 List<AtomAtomMapping> addKochCliques = addKochCliques();
 //            System.out.println("MCSPLUS " + addKochCliques.iterator().next().getCount());
                 return addKochCliques;

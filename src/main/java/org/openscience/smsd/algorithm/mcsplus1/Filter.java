@@ -24,8 +24,6 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  *
@@ -33,15 +31,13 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class Filter extends McGregor {
 
-    public Filter(int atom_number1, int atom_number2, int atom_num_H_1, int atom_num_H_2, int bond_number1, int bond_number2,
-            List<IAtom> atomstr1, List<IAtom> atomstr2, List<Integer> i_tab1, List<Integer> i_tab2, List<String> c_tab1, List<String> c_tab2,
-            IAtomContainer ac1, IAtomContainer ac2) {
-        super(atom_number1, atom_number2, atom_num_H_1, atom_num_H_2, bond_number1, bond_number2, atomstr1, atomstr2, i_tab1, i_tab2, c_tab1, c_tab2, ac1, ac2);
+    public Filter(MoleculeHandler f1,MoleculeHandler f2) {
+        super(f1,f2);
     }
 
     int postfilter() {
         if ((best_MAPPING_size == 0) && (best_clique_size != 0)) {
-            java.util.Iterator<List<Integer>> iter = final_MAPPINGS.iterator();
+            java.util.Iterator<List<Integer>> iter = getFinalMappings().iterator();
             List<Integer> vec = iter.next();
             best_MAPPING_size = vec.size() / 2;
         }
@@ -145,10 +141,10 @@ public class Filter extends McGregor {
         boolean carboxy_groups_in_both = true;
         if (C_index_A_size == 0 || C_index_B_size == 0) {
             carboxy_groups_in_both = false;
-            carboxy_final_MAPPINGS.addAll(final_MAPPINGS);
+            carboxy_final_MAPPINGS.addAll(getFinalMappings());
         }
         if (carboxy_groups_in_both) {
-            final_MAPPINGS.stream().forEach((final_solution) -> {
+            getFinalMappings().stream().forEach((final_solution) -> {
                 boolean map_correct = true;
                 int a = 0;
                 while (a < best_MAPPING_size && map_correct) {
@@ -1366,8 +1362,8 @@ public class Filter extends McGregor {
         }
 
 //6. Searching for redundant Methyl-group mappings   
-        final_MAPPINGS.clear();
-        final_MAPPINGS.addAll(nitro_final_MAPPINGS);
+        getFinalMappings().clear();
+        getFinalMappings().addAll(nitro_final_MAPPINGS);
 
         return 0;
     }

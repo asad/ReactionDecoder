@@ -105,41 +105,28 @@ public class McGregor extends Utility {
     protected int best_MAPPING_size;
     protected Stack<List<Integer>> Max_Cliques_Set;
 
-    public final List<List<Integer>> final_MAPPINGS;
+    private final List<List<Integer>> final_MAPPINGS;
 
     private final List<String> SignROW;
     private final IAtomContainer ac1;
     private final IAtomContainer ac2;
 
-    public McGregor(int atom_number1,
-            int atom_number2,
-            int atom_num_H_1,
-            int atom_num_H_2,
-            int bond_number1,
-            int bond_number2,
-            List<IAtom> atomstr1,
-            List<IAtom> atomstr2,
-            List<Integer> i_tab1,
-            List<Integer> i_tab2,
-            List<String> c_tab1,
-            List<String> c_tab2,
-            IAtomContainer ac1,
-            IAtomContainer ac2) {
+    public McGregor(MoleculeHandler file1, MoleculeHandler file2) {
 
-        this.atom_number1 = atom_number1;
-        this.atom_number2 = atom_number2;
-        this.atom_num_H_1 = atom_num_H_1;
-        this.atom_num_H_2 = atom_num_H_2;
-        this.bond_number1 = bond_number1;
-        this.bond_number2 = bond_number2;
-        this.atomstr1 = atomstr1;
-        this.atomstr2 = atomstr2;
-        this.i_tab1 = i_tab1;
-        this.i_tab2 = i_tab2;
-        this.c_tab1 = c_tab1;
-        this.c_tab2 = c_tab2;
-        this.ac1 = ac1;
-        this.ac2 = ac2;
+        this.atom_number1 = file1.getAtomNumber();
+        this.atom_number2 = file2.getAtomNumber();
+        this.atom_num_H_1 = file1.getStartHatom_num();
+        this.atom_num_H_2 = file2.getStartHatom_num();
+        this.bond_number1 = file1.getBondNumber();
+        this.bond_number2 = file2.getBondNumber();
+        this.atomstr1 = file1.getAtomString();
+        this.atomstr2 = file2.getAtomString();
+        this.i_tab1 = file1.intTable;
+        this.i_tab2 = file2.intTable;
+        this.c_tab1 = file1.charTable;
+        this.c_tab2 = file2.charTable;
+        this.ac1 = file1.getAtomContainer();
+        this.ac2 = file2.getAtomContainer();
 
         /*
          *Initialize Vectors
@@ -659,10 +646,10 @@ public class McGregor extends Utility {
             //solution mappings are pushed in list final_MAPPINGS
             if ((mapped_atoms_num) >= best_MAPPING_size) {
                 if ((mapped_atoms_num) > best_MAPPING_size) {
-                    final_MAPPINGS.clear();
+                    getFinalMappings().clear();
                     best_MAPPING_size = mapped_atoms_num;
                 }
-                final_MAPPINGS.add(mapped_atoms);
+                getFinalMappings().add(mapped_atoms);
             }
             return 0;
         }
@@ -1217,6 +1204,13 @@ public class McGregor extends Utility {
             }
         }
         return true;
+    }
+
+    /**
+     * @return the final_MAPPINGS
+     */
+    public List<List<Integer>> getFinalMappings() {
+        return final_MAPPINGS;
     }
 
 }

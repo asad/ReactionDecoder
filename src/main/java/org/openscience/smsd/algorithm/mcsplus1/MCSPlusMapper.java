@@ -57,7 +57,7 @@ public final class MCSPlusMapper implements IResults {
     private boolean matchAtomType;
 
     /**
-     * Constructor for the MCS Plus algorithm class
+     * Constructor for the MCSPlus Plus algorithm class
      *
      * @param source
      * @param target
@@ -80,7 +80,7 @@ public final class MCSPlusMapper implements IResults {
     }
 
     /**
-     * Constructor for the MCS Plus algorithm class
+     * Constructor for the MCSPlus Plus algorithm class
      *
      * @param source
      * @param target
@@ -88,8 +88,8 @@ public final class MCSPlusMapper implements IResults {
     public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
+        this.allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
         this.timeout = searchMCS();
     }
 
@@ -109,51 +109,23 @@ public final class MCSPlusMapper implements IResults {
             MoleculeHandler file1 = new MoleculeHandler(source);
             MoleculeHandler file2 = new MoleculeHandler(target);
 
-            MCS mcs = new MCS(
-                    file1.getAtomNumber(),
-                    file2.getAtomNumber(),
-                    file1.getStartHatom_num(),
-                    file2.getStartHatom_num(),
-                    file1.getBondNumber(),
-                    file2.getBondNumber(),
-                    file1.getAtomString(),
-                    file2.getAtomString(),
-                    file1.intTable,
-                    file2.intTable,
-                    file1.charTable,
-                    file2.charTable,
-                    file1.getAtomContainer(),
-                    file2.getAtomContainer());
+            MCSPlus mcs = new MCSPlus(file1, file2);
             mcs.search_cliques();
-            System.out.println("mcs.final_MAPPINGS " + mcs.final_MAPPINGS.size());
-            mappings = Collections.synchronizedList(mcs.final_MAPPINGS);
+//            System.out.println("mcs.final_MAPPINGS " + mcs.getFinalMappings().size());
+            mappings = Collections.synchronizedList(mcs.getFinalMappings());
 
         } else {
             this.flagExchange = true;
             MoleculeHandler file2 = new MoleculeHandler(source);
             MoleculeHandler file1 = new MoleculeHandler(target);
 
-            MCS mcs = new MCS(
-                    file1.getAtomNumber(),
-                    file2.getAtomNumber(),
-                    file1.getStartHatom_num(),
-                    file2.getStartHatom_num(),
-                    file1.getBondNumber(),
-                    file2.getBondNumber(),
-                    file1.getAtomString(),
-                    file2.getAtomString(),
-                    file1.intTable,
-                    file2.intTable,
-                    file1.charTable,
-                    file2.charTable,
-                    file1.getAtomContainer(),
-                    file2.getAtomContainer());
+            MCSPlus mcs = new MCSPlus(file1, file2);
             mcs.search_cliques();
-//            System.out.println("mcs.final_MAPPINGS " + mcs.final_MAPPINGS.size());
-            mappings = Collections.synchronizedList(mcs.final_MAPPINGS);
+//            System.out.println("mcs.final_MAPPINGS SWITCH " + mcs.getFinalMappings().size());
+            mappings = Collections.synchronizedList(mcs.getFinalMappings());
         }
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
-//        System.out.println("PostFilter.filter " + solutions.size());
+//        System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
         setAllAtomMapping();
 
@@ -164,7 +136,7 @@ public final class MCSPlusMapper implements IResults {
         try {
             int bestSolSize = 0;
             for (Map<Integer, Integer> solution : solutions) {
-//                System.out.println("Number of MCS solution: " + solution.size());
+//                System.out.println("Number of MCSPlus solution: " + solution.size());
                 Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
                 if (!flagExchange) {
                     solution.entrySet().stream().forEach((map) -> {
@@ -189,7 +161,7 @@ public final class MCSPlusMapper implements IResults {
         } catch (Exception ex) {
         }
 
-//        System.out.println("Number of MCS solution - : allMCS " + allMCS.size());
+//        System.out.println("Number of MCSPlus solution - : allMCS " + allMCS.size());
     }
 
     private synchronized void setAllAtomMapping() {
@@ -216,7 +188,7 @@ public final class MCSPlusMapper implements IResults {
             e.printStackTrace();
         }
 
-//        System.out.println("Number of MCS solution - : allAtomMCS " + allAtomMCS.size());
+//        System.out.println("Number of MCSPlus solution - : allAtomMCS " + allAtomMCS.size());
     }
 
     /**
