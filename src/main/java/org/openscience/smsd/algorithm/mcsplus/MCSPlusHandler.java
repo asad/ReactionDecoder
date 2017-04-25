@@ -118,7 +118,12 @@ public final class MCSPlusHandler implements IResults {
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
         }
+        if (flagExchange) {
+            mappings = reverseMappings(mappings);
+        }
+//        System.out.println("PreFilter.filter " + mappings);
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
+//        System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
         setAllAtomMapping();
         return mcsplus.isTimeout();
@@ -131,15 +136,11 @@ public final class MCSPlusHandler implements IResults {
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCS solution: " + solution);
                 Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-                if (!flagExchange) {
-                    solution.entrySet().stream().forEach((map) -> {
-                        validSolution.put(map.getKey(), map.getValue());
-                    });
-                } else {
-                    solution.entrySet().stream().forEach((map) -> {
-                        validSolution.put(map.getValue(), map.getKey());
-                    });//                    System.out.println("MCS solution: " + validSolution);
-                }
+
+                solution.entrySet().stream().forEach((map) -> {
+                    validSolution.put(map.getKey(), map.getValue());
+                });
+
                 if (validSolution.size() > bestSolSize) {
                     bestSolSize = validSolution.size();
                     counter = 0;
@@ -208,5 +209,19 @@ public final class MCSPlusHandler implements IResults {
      */
     public synchronized boolean isTimeout() {
         return timeout;
+    }
+
+    private List<List<Integer>> reverseMappings(List<List<Integer>> mappings) {
+//        System.out.println("Before reverse " + mappings);
+        List<List<Integer>> reverse = new ArrayList<>();
+        mappings.stream().map((mapping) -> {
+            Collections.reverse(mapping);
+            return mapping;
+        }).forEach((mapping) -> {
+            reverse.add(mapping);
+        });
+
+//        System.out.println("reverse " + reverse);
+        return reverse;
     }
 }

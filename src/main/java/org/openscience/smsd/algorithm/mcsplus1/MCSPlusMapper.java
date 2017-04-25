@@ -22,6 +22,7 @@
  */
 package org.openscience.smsd.algorithm.mcsplus1;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -124,6 +125,10 @@ public final class MCSPlusMapper implements IResults {
 //            System.out.println("mcs.final_MAPPINGS SWITCH " + mcs.getFinalMappings().size());
             mappings = Collections.synchronizedList(mcs.getFinalMappings());
         }
+        if (flagExchange) {
+            mappings = reverseMappings(mappings);
+        }
+//        System.out.println("PreFilter.filter " + mappings);
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
 //        System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
@@ -138,15 +143,11 @@ public final class MCSPlusMapper implements IResults {
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCSPlus solution: " + solution.size());
                 Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-                if (!flagExchange) {
-                    solution.entrySet().stream().forEach((map) -> {
-                        validSolution.put(map.getKey(), map.getValue());
-                    });
-                } else {
-                    solution.entrySet().stream().forEach((map) -> {
-                        validSolution.put(map.getValue(), map.getKey());
-                    });
-                }
+
+                solution.entrySet().stream().forEach((map) -> {
+                    validSolution.put(map.getKey(), map.getValue());
+                });
+
                 if (validSolution.size() > bestSolSize
                         && (validSolution.size() <= source.getAtomCount()
                         && validSolution.size() <= target.getAtomCount())) {
@@ -219,5 +220,19 @@ public final class MCSPlusMapper implements IResults {
      */
     public synchronized boolean isTimeout() {
         return timeout;
+    }
+
+    private List<List<Integer>> reverseMappings(List<List<Integer>> mappings) {
+//        System.out.println("Before reverse " + mappings);
+        List<List<Integer>> reverse = new ArrayList<>();
+        mappings.stream().map((mapping) -> {
+            Collections.reverse(mapping);
+            return mapping;
+        }).forEach((mapping) -> {
+            reverse.add(mapping);
+        });
+
+//        System.out.println("reverse " + reverse);
+        return reverse;
     }
 }

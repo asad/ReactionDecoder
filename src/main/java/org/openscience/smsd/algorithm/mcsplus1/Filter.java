@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class Filter extends McGregor {
 
-    public Filter(MoleculeHandler f1,MoleculeHandler f2) {
-        super(f1,f2);
+    public Filter(MoleculeHandler f1, MoleculeHandler f2) {
+        super(f1, f2);
     }
 
     int postfilter() {
@@ -94,7 +94,7 @@ public class Filter extends McGregor {
         //find carboxyl groups of molecule 2
         List<Integer> C_index_B = new ArrayList<>();
         List<List<Integer>> carb_vec_B = new ArrayList<>();
-        for (int a = 0; a < atom_number2; a++) {
+        for (int a = 0; a < atom_num_H_2; a++) {
             if ("C".equals(atomstr2.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> carboxy_C_vec = new ArrayList<>();
@@ -456,15 +456,15 @@ public class Filter extends McGregor {
                             not_found = false;
                             List<Integer> vector_A = phos_vec_A.get(b);
                             int first_A = vector_A.get(0);
-                            int secon_A = vector_A.get(2);
+                            //int secon_A = vector_A.get(2);
                             int first_B = 0;
-                            int secon_B = 0;
+                            //int secon_B = 0;
                             boolean mapped_on_a_phos_group = false;
                             for (int c = 0; c < P_index_B_size; c++) {
                                 if (carb_solution.get(a * 2 + 1).equals(P_index_B.get(c))) {
                                     List<Integer> vector_B = phos_vec_B.get(c);
                                     first_B = vector_B.get(0);
-                                    secon_B = vector_B.get(2);
+                                    //secon_B = vector_B.get(2);
                                     mapped_on_a_phos_group = true;
                                 }
                             }
