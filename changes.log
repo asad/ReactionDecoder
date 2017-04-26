@@ -204,6 +204,14 @@ d) SMSD precedence on filter frag > stereo > energy
 e) Java 8.0
 f) CDK 1.5.14
 
+-----------------------
+Changes (26/04/2017)
+-----------------------
+a) MCSPlus improved
+b) Version 1.6
+c) Fixed bugs
+d) Speed improved
+
 
 -----------------------
 TO DO
