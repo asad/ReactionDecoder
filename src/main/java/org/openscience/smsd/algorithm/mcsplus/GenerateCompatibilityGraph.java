@@ -89,8 +89,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
         this.target = target;
         compGraphNodes = new ArrayList<>();
         compGraphNodesCZero = new ArrayList<>();
-        cEdges = Collections.synchronizedList(new ArrayList<Integer>());
-        dEdges = Collections.synchronizedList(new ArrayList<Integer>());
+        cEdges = Collections.synchronizedList(new ArrayList<>());
+        dEdges = Collections.synchronizedList(new ArrayList<>());
 
         /*
          Generate all possible graphs when no ring match or atom type is required

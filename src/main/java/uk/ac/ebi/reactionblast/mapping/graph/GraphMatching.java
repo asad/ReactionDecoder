@@ -42,6 +42,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -168,6 +169,9 @@ public class GraphMatching extends IGraphMatching implements Serializable {
 
         if (beforeESize == educt.getAtomCount()) {
             try {
+                System.out.println(educt.getID() + ": SMILES " + SmilesGenerator.generic().create(educt));
+                System.out.println(product.getID() + ": SMILES " + SmilesGenerator.generic().create(product));
+
                 throw new CDKException("Failed to remove matched parts between " + educt.getID() + ": "
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!");

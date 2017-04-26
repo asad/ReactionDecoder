@@ -29,8 +29,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 /**
  * Checks if a bond is matching between query and target molecules.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -79,7 +79,10 @@ public final class DefaultBondMatcher implements BondMatcher {
      */
     @Override
     public boolean matches(IBond targetBond) {
-
+        if ((queryBond != null && targetBond != null)
+                && !isBondMatchFlag() && !isShouldMatchRings()) {
+            return true;
+        }
         if (this.queryBond != null && queryBond instanceof IQueryBond) {
             return ((IQueryBond) queryBond).matches(targetBond);
         } else if ((queryBond != null && targetBond != null)
@@ -94,9 +97,6 @@ public final class DefaultBondMatcher implements BondMatcher {
                     && !targetBond.getFlag(CDKConstants.ISAROMATIC)) {
                 return true;
             }
-        } else if ((queryBond != null && targetBond != null)
-                && !isBondMatchFlag() && !isShouldMatchRings()) {
-            return true;
         }
         return false;
     }

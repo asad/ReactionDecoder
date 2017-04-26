@@ -272,16 +272,12 @@ public class GraphMatcher extends Debugger {
             if (DEBUG) {
                 out.println("Gathering MCS solution from the Thread");
             }
-            for (MCSSolution mcs : threadedUniqueMCSSolutions) {
-                if (mcs == null) {
-                    continue;
-                }
+            threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
                 int queryPosition = mcs.getQueryPosition();
                 int targetPosition = mcs.getTargetPosition();
                 if (DEBUG) {
                     out.println("MCS " + "i " + queryPosition + " J " + targetPosition + " size " + mcs.getAtomAtomMapping().getCount());
                 }
-
                 Combination removeKey = null;
                 for (Combination c : jobMap.keySet()) {
                     if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {
@@ -290,10 +286,10 @@ public class GraphMatcher extends Debugger {
                         mcsSolutions.add(replicatedMCS);
                     }
                 }
-                if (removeKey != null) {
-                    jobMap.remove(removeKey);
-                }
-            }
+                return removeKey;
+            }).filter((removeKey) -> (removeKey != null)).forEach((removeKey) -> {
+                jobMap.remove(removeKey);
+            });
             jobReplicatorList.clear();
             gc();
 
@@ -337,7 +333,7 @@ public class GraphMatcher extends Debugger {
 
             AtomAtomMapping atomAtomMapping = mcs.getAtomAtomMapping();
             AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(q, t);
-            for (IAtom a : atomAtomMapping.getMappingsByAtoms().keySet()) {
+            atomAtomMapping.getMappingsByAtoms().keySet().stream().forEach((a) -> {
                 IAtom atomByID1 = getAtomByID(q, a);
                 IAtom b = atomAtomMapping.getMappingsByAtoms().get(a);
                 IAtom atomByID2 = getAtomByID(t, b);
@@ -349,7 +345,7 @@ public class GraphMatcher extends Debugger {
                 } else {
                     LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
                 }
-            }
+            });
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
         } catch (IOException | CDKException ex) {
             getLogger(GraphMatcher.class.getName()).log(SEVERE, null, ex);

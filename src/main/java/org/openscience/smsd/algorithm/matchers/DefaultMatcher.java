@@ -28,8 +28,8 @@ import org.openscience.cdk.interfaces.IBond;
 /**
  * Checks if atom is matching between query and target molecules.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
@@ -50,6 +50,10 @@ public class DefaultMatcher {
 
         AtomMatcher atomMatcher1;
         AtomMatcher atomMatcher2;
+
+        if (!shouldMatchRings && !matchAtomTypes) {
+            return true;
+        }
 
         if (matchAtomTypes) {
             atomMatcher1 = new DefaultAtomTypeMatcher(bondA1.getAtom(0), shouldMatchRings);

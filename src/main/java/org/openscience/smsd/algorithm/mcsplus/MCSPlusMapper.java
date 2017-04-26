@@ -43,7 +43,7 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
-public final class MCSPlusHandler implements IResults {
+public final class MCSPlusMapper implements IResults {
 
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<Map<Integer, Integer>> allMCS;
@@ -64,15 +64,15 @@ public final class MCSPlusHandler implements IResults {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public MCSPlusHandler(IAtomContainer source, IAtomContainer target,
+    public MCSPlusMapper(IAtomContainer source, IAtomContainer target,
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.source = source;
         this.target = target;
         this.shouldMatchRings = shouldMatchRings;
         this.shouldMatchBonds = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 
@@ -82,14 +82,14 @@ public final class MCSPlusHandler implements IResults {
      * @param source
      * @param target
      */
-    public MCSPlusHandler(IQueryAtomContainer source, IAtomContainer target) {
+    public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
         this.matchAtomType = true;
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 
@@ -135,7 +135,7 @@ public final class MCSPlusHandler implements IResults {
             int bestSolSize = 0;
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCS solution: " + solution);
-                Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+                Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<>());
 
                 solution.entrySet().stream().forEach((map) -> {
                     validSolution.put(map.getKey(), map.getValue());

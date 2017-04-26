@@ -144,7 +144,7 @@ public final class McGregor {
             this.globalMCSSize = 0;
         }
 //        System.out.println("globalMCSSize " + globalMCSSize);
-        this.modifiedARCS = Collections.synchronizedList(new ArrayList<Integer>());
+        this.modifiedARCS = Collections.synchronizedList(new ArrayList<>());
         this.bestARCS = new Stack<>();
         this.newMatrix = false;
     }
@@ -170,7 +170,7 @@ public final class McGregor {
         } else {
             this.globalMCSSize = 0;
         }
-        this.modifiedARCS = Collections.synchronizedList(new ArrayList<Integer>());
+        this.modifiedARCS = Collections.synchronizedList(new ArrayList<>());
         this.bestARCS = new Stack<>();
         this.newMatrix = false;
     }

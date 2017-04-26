@@ -123,9 +123,10 @@ public class Utility {
      * @param bondA2
      * @param shouldMatchBonds
      * @param shouldMatchRings
+     * @param matchAtomType
      * @return
      */
-    private boolean isMatchFeasible(
+    protected boolean isMatchFeasible(
             IBond bondA1,
             IBond bondA2,
             boolean shouldMatchBonds,

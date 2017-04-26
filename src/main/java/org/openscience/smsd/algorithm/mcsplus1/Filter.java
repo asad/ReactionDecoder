@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class Filter extends McGregor {
 
-    public Filter(MoleculeHandler f1, MoleculeHandler f2) {
-        super(f1, f2);
+    public Filter(MoleculeHandler f1, MoleculeHandler f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+        super(f1, f2,  shouldMatchBonds,  shouldMatchRings,  matchAtomType);
     }
 
     int postfilter() {
@@ -493,7 +493,7 @@ public class Filter extends McGregor {
 //find Amino-Carbon groups of molecule 1
         List<Integer> N_index_A = new ArrayList<>();
         List<List<Integer>> amino_vec_A = new ArrayList<>();
-        for (int a = 0; a < atom_number1; a++) {
+        for (int a = 0; a < atom_num_H_1; a++) {
             if (atomstr1.get(a).getSymbol().equals("C")) {
                 int N_num = 0;
                 List<Integer> amino_N_vec = new ArrayList<>();
@@ -564,7 +564,7 @@ public class Filter extends McGregor {
         //find Amino-Carbon groups of molecule 2
         List<Integer> N_index_B = new ArrayList<>();
         List<List<Integer>> amino_vec_B = new ArrayList<>();
-        for (int a = 0; a < atom_number2; a++) {
+        for (int a = 0; a < atom_num_H_2; a++) {
             if ("C".equals(atomstr2.get(a).getSymbol())) {
                 int N_num = 0;
                 List<Integer> amino_N_vec = new ArrayList<>();
@@ -688,7 +688,7 @@ public class Filter extends McGregor {
 //find sulfo groups of molecule 1
         List<Integer> SO_index_A = new ArrayList<>();
         List<List<Integer>> sulfo_vec_A = new ArrayList<>();
-        for (int a = 0; a < atom_number1; a++) {
+        for (int a = 0; a < atom_num_H_1; a++) {
             if ("S".equals(atomstr1.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> sulfo_S_vec = new ArrayList<>();
@@ -786,7 +786,7 @@ public class Filter extends McGregor {
         //find sulfo groups of molecule 2
         List<Integer> SO_index_B = new ArrayList<>();
         List<List<Integer>> sulfo_vec_B = new ArrayList<>();
-        for (int a = 0; a < atom_number2; a++) {
+        for (int a = 0; a < atom_num_H_2; a++) {
             if (atomstr2.get(a).getSymbol().equals("S")) {
                 int O_num = 0;
                 List<Integer> sulfo_S_vec = new ArrayList<>();
@@ -1055,7 +1055,7 @@ public class Filter extends McGregor {
         //find nitro groups of molecule 1
         List<Integer> NO_index_A = new ArrayList<>();
         List<List<Integer>> nitro_vec_A = new ArrayList<>();
-        for (int a = 0; a < atom_number1; a++) {
+        for (int a = 0; a < atom_num_H_1; a++) {
             if (atomstr1.get(a).getSymbol().equals("N")) {
                 int O_num = 0;
                 List<Integer> nitro_N_vec = new ArrayList<>();
@@ -1117,7 +1117,7 @@ public class Filter extends McGregor {
         //find nitro groups of molecule 2
         List<Integer> NO_index_B = new ArrayList<>();
         List<List<Integer>> nitro_vec_B = new ArrayList<>();
-        for (int a = 0; a < atom_number2; a++) {
+        for (int a = 0; a < atom_num_H_2; a++) {
             if ("N".equals(atomstr2.get(a).getSymbol())) {
                 int O_num = 0;
                 List<Integer> nitro_N_vec = new ArrayList<>();

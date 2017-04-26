@@ -22,7 +22,6 @@
  */
 package org.openscience.smsd.algorithm.mcsplus1;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,8 +74,8 @@ public final class MCSPlusMapper implements IResults {
         this.shouldMatchRings = shouldMatchRings;
         this.matchAtomType = matchAtomType;
 
-        allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 
@@ -89,8 +88,8 @@ public final class MCSPlusMapper implements IResults {
     public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
-        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        this.allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 
@@ -105,22 +104,22 @@ public final class MCSPlusMapper implements IResults {
         if (source instanceof IQueryAtomContainer || target instanceof IQueryAtomContainer) {
             new CDKException("Not supported");
 
-        } else if (source.getAtomCount() >= target.getAtomCount()) {
-            this.flagExchange = false;
-            MoleculeHandler file1 = new MoleculeHandler(source);
-            MoleculeHandler file2 = new MoleculeHandler(target);
+        } else if (source.getAtomCount() > target.getAtomCount()) {
+            this.flagExchange = true;
+            MoleculeHandler file2 = new MoleculeHandler(source);
+            MoleculeHandler file1 = new MoleculeHandler(target);
 
-            MCSPlus mcs = new MCSPlus(file1, file2);
+            MCSPlus mcs = new MCSPlus(file1, file2, shouldMatchBonds, shouldMatchRings, matchAtomType);
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS " + mcs.getFinalMappings().size());
             mappings = Collections.synchronizedList(mcs.getFinalMappings());
 
         } else {
-            this.flagExchange = true;
-            MoleculeHandler file2 = new MoleculeHandler(source);
-            MoleculeHandler file1 = new MoleculeHandler(target);
+            this.flagExchange = false;
+            MoleculeHandler file1 = new MoleculeHandler(source);
+            MoleculeHandler file2 = new MoleculeHandler(target);
 
-            MCSPlus mcs = new MCSPlus(file1, file2);
+            MCSPlus mcs = new MCSPlus(file1, file2, shouldMatchBonds, shouldMatchRings, matchAtomType);
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS SWITCH " + mcs.getFinalMappings().size());
             mappings = Collections.synchronizedList(mcs.getFinalMappings());
@@ -142,7 +141,7 @@ public final class MCSPlusMapper implements IResults {
             int bestSolSize = 0;
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCSPlus solution: " + solution.size());
-                Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+                Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<>());
 
                 solution.entrySet().stream().forEach((map) -> {
                     validSolution.put(map.getKey(), map.getValue());

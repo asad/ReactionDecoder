@@ -30,8 +30,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.mcsplus.MCSPlusHandler;
-import org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
@@ -253,12 +251,12 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private synchronized boolean mcsPlusAlgorithm() {
         IResults mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            //mcs = new MCSPlusHandler((IQueryAtomContainer) getQuery(), getTarget());
-            mcs = new MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (getQuery().getAtomCount() >= 30 && getTarget().getAtomCount() >= 30) {
-            mcs = new MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            //mcs = new MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+        } else if (isMatchBonds() || isMatchRings()) {
+            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         } else {
-            mcs = new MCSPlusHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());

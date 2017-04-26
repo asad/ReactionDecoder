@@ -67,6 +67,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
     private static final boolean DEBUG1 = false;
     private static final boolean DEBUG2 = false;
+    private static final boolean DEBUG3 = false;
     private static final Logger LOG = getLogger(MCSThread.class.getName());
 
     private boolean stereoFlag;
@@ -439,7 +440,7 @@ public class MCSThread implements Callable<MCSSolution> {
             int expectedMaxGraphmatch = expectedMaxGraphmatch(getCompound1(), getCompound2());
 
             if (eductCount == 1 && productCount == 1) {
-                if (DEBUG1) {
+                if (DEBUG3) {
                     System.out.println("CASE 1");
                 }
                 /*
@@ -447,41 +448,32 @@ public class MCSThread implements Callable<MCSSolution> {
                  */
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
                         false, isHasPerfectRings(), false);
-            } else if (expectedMaxGraphmatch >= 30 && isHasPerfectRings()
+            } else if (expectedMaxGraphmatch >= 30
                     && ConnectivityChecker.isConnected(getCompound1())) {
-                if (DEBUG1) {
+                if (DEBUG3) {
                     System.out.println("CASE 2");
-                }
-                /*
-                 * This handles large aliphatics to ring system (ex: R06466)
-                 */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), VFLibMCS,
-                        false, isHasPerfectRings(), !isHasPerfectRings());
-            } else if (expectedMaxGraphmatch >= 30 && ConnectivityChecker.isConnected(getCompound1())) {
-                if (DEBUG1) {
-                    System.out.println("CASE 3");
                 }
                 /*
                  * Although the bond changes are set to true but its only used by filters
                  */
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.MCSPlus,
-                        true, true, true);
-            } else if (!ConnectivityChecker.isConnected(getCompound1())) {
-                if (DEBUG1) {
-                    System.out.println("CASE 4");
+                        false, isHasPerfectRings(), !isHasPerfectRings());
+            } else if (expectedMaxGraphmatch < 30) {
+                if (DEBUG3) {
+                    System.out.println("CASE 3");
                 }
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.CDKMCS,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             } else {
-                if (DEBUG1) {
-                    System.out.println("CASE 5");
+                if (DEBUG3) {
+                    System.out.println("CASE 4");
                 }
                 isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
                         false, isHasPerfectRings(), !isHasPerfectRings());
             }
 
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-            if (DEBUG1) {
+            if (DEBUG3) {
                 out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
             }
             /*

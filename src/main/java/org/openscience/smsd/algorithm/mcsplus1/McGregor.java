@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Stack;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_structure;
 
 /**
@@ -108,11 +109,24 @@ public class McGregor extends Utility {
     private final List<List<Integer>> final_MAPPINGS;
 
     private final List<String> SignROW;
-    private final IAtomContainer ac1;
-    private final IAtomContainer ac2;
+    protected final IAtomContainer ac1;
+    protected final IAtomContainer ac2;
+    protected final boolean shouldMatchBonds;
+    protected final boolean shouldMatchRings;
+    protected final boolean matchAtomType;
 
-    public McGregor(MoleculeHandler file1, MoleculeHandler file2) {
-
+    /**
+     *
+     * @param file1
+     * @param file2
+     * @param shouldMatchBonds
+     * @param shouldMatchRings
+     * @param matchAtomType
+     */
+    public McGregor(MoleculeHandler file1, MoleculeHandler file2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+        this.shouldMatchBonds = shouldMatchBonds;
+        this.shouldMatchRings = shouldMatchRings;
+        this.matchAtomType = matchAtomType;
         this.atom_number1 = file1.getAtomNumber();
         this.atom_number2 = file2.getAtomNumber();
         this.atom_num_H_1 = file1.getStartHatom_num();
@@ -629,14 +643,54 @@ public class McGregor extends Utility {
         //check possible mappings:
         boolean no_Map = true;
         for (int row = 0; row < neighbor_bondnum_A; row++) {
+            String G1A = c_bond_neighborsA.get(row * 4 + 0);
+            String G2A = c_bond_neighborsA.get(row * 4 + 1);
+            IAtom a1 = this.ac1.getAtom(i_bond_neighborsA.get(row * 3 + 0) - 1);
+            IAtom a2 = this.ac1.getAtom(i_bond_neighborsA.get(row * 3 + 1) - 1);
+            IBond bond1 = this.ac1.getBond(a1, a2);
+
             for (int column = 0; column < neighbor_bondnum_B; column++) {
-                String G1A = c_bond_neighborsA.get(row * 4 + 0);
-                String G2A = c_bond_neighborsA.get(row * 4 + 1);
+//                System.out.println("c_bond_neighborsA  " + c_bond_neighborsA);
+//                System.out.println("i_bond_neighborsA  " + i_bond_neighborsA);
+//                System.out.println("neighbor_bondnum_A  " + neighbor_bondnum_A);
+//                
+//                System.out.println("c_bond_neighborsB  " + c_bond_neighborsB);
+//                System.out.println("i_bond_neighborsB  " + i_bond_neighborsB);
+//                System.out.println("neighbor_bondnum_B  " + neighbor_bondnum_B);
+
                 String G1B = c_bond_neighborsB.get(column * 4 + 0);
                 String G2B = c_bond_neighborsB.get(column * 4 + 1);
-                if (((G1A.equals(G1B)) && (G2A.equals(G2B))) || ((G1A.equals(G2B)) && (G2A.equals(G1B)))) {
+
+                IAtom b1 = this.ac2.getAtom(i_bond_neighborsB.get(column * 3 + 0) - 1);
+                IAtom b2 = this.ac2.getAtom(i_bond_neighborsB.get(column * 3 + 1) - 1);
+                IBond bond2 = this.ac2.getBond(b1, b2);
+
+                /*
+                 * Check if bond matching also possible
+                 */
+                boolean flag = isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+
+                if ((G1A.equals(G1B)) && (G2A.equals(G2B)) && flag) {
                     no_Map = false;
+                    break;
+                } else if ((G1A.equals(G2B)) && (G2A.equals(G1B)) && flag) {
+                    no_Map = false;
+                    break;
                 }
+
+//                if (flag) {
+//                    System.out.println("flag " + flag + ", no_Map " + no_Map);
+//                    System.out.println("bond1 " + bond1.getAtom(0).getSymbol());
+//                    System.out.println("bond1 " + bond1.getAtom(1).getSymbol());
+//
+//                    System.out.println("bond2 " + bond1.getAtom(0).getSymbol());
+//                    System.out.println("bond2 " + bond1.getAtom(1).getSymbol());
+//
+//                    System.out.println(bond1.getOrder().numeric() + "," + bond1.getOrder().numeric());
+//                }
+            }
+            if (!no_Map) {
+                break;
             }
         }
 
