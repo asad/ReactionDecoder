@@ -24,10 +24,9 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -44,8 +43,7 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class MCSPlus extends Filter {
 
-    final Map<String, Integer> SYMBOL_VALUE = new TreeMap<>();
-    private boolean DEBUG;
+    private final boolean DEBUG = false;
 
     /**
      * Creates a new instance of SearchCliques
@@ -57,7 +55,7 @@ public class MCSPlus extends Filter {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public MCSPlus(MoleculeHandler f1, MoleculeHandler f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public MCSPlus(IAtomContainer f1, IAtomContainer f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
 
         super(f1, f2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 
@@ -99,8 +97,11 @@ public class MCSPlus extends Filter {
                 label.add(0);
             }
 
-            String atom1_type = atoms.get(a).getSymbol();
             IAtom atom1 = atoms.get(a);
+            String atom1_type = atom1.getSymbol();
+            if (matchAtomType && atom1.getAtomTypeName() != null) {
+                atom1_type = atoms.get(a).getAtomTypeName();
+            }
             if (SYMBOL_VALUE.containsKey(atom1_type)) {
                 label.set(0, SYMBOL_VALUE.get(atom1_type));
             } else {
@@ -116,6 +117,10 @@ public class MCSPlus extends Filter {
                     IAtom atom2 = atoms.get(i_tab.get(b * 3 + 1) - 1);
                     //System.out.println("atom2_type " + atom2_type + ", atom2 " + atom2.getSymbol());
 
+                    if (matchAtomType && atom2.getAtomTypeName() != null) {
+                        atom2_type = atom2.getAtomTypeName();
+                    }
+
                     if (SYMBOL_VALUE.containsKey(atom2_type)) {
                         label.set(count_neighbors, SYMBOL_VALUE.get(atom2_type));
                     } else {
@@ -130,6 +135,11 @@ public class MCSPlus extends Filter {
                     String atom2_type = c_tab.get(b * 2 + 0);
                     /*Get neighbour Atom*/
                     IAtom atom2 = atoms.get(i_tab.get(b * 3 + 0) - 1);
+
+                    if (matchAtomType && atom2.getAtomTypeName() != null) {
+                        atom2_type = atom2.getAtomTypeName();
+                    }
+
                     if (SYMBOL_VALUE.containsKey(atom2_type)) {
                         label.set(count_neighbors, SYMBOL_VALUE.get(atom2_type));
                     } else {
@@ -265,11 +275,11 @@ public class MCSPlus extends Filter {
                         if ((comp_graph_nodes.get(a).equals(i_tab1.get(x * 3 + 0))
                                 && comp_graph_nodes.get(b).equals(i_tab1.get(x * 3 + 1)))) {
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(a) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
-                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(b) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
-                                System.out.println("BOND " + i_tab1.get(x * 3 + 2));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(a) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
+//                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(b) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
+//                                System.out.println("BOND " + i_tab1.get(x * 3 + 2));
+//                            }
                             IAtom a1 = this.ac1.getAtom(comp_graph_nodes.get(a) - 1);
                             IAtom a2 = this.ac1.getAtom(comp_graph_nodes.get(b) - 1);
                             bond1 = this.ac1.getBond(a1, a2);
@@ -278,11 +288,11 @@ public class MCSPlus extends Filter {
                         } else if ((comp_graph_nodes.get(a).equals(i_tab1.get(x * 3 + 1))
                                 && comp_graph_nodes.get(b).equals(i_tab1.get(x * 3 + 0)))) {
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(a) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
-                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(b) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
-                                System.out.println("BOND " + i_tab1.get(x * 3 + 2));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(a) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
+//                                System.out.println("comp_graph_nodes.get(a) " + comp_graph_nodes.get(b) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
+//                                System.out.println("BOND " + i_tab1.get(x * 3 + 2));
+//                            }
                             IAtom a1 = this.ac1.getAtom(comp_graph_nodes.get(a) - 1);
                             IAtom a2 = this.ac1.getAtom(comp_graph_nodes.get(b) - 1);
                             bond1 = this.ac1.getBond(a1, a2);
@@ -294,11 +304,11 @@ public class MCSPlus extends Filter {
                     for (int y = 0; y < bond_number2; y++) {
                         if ((comp_graph_nodes.get(a + 1).equals(i_tab2.get(y * 3 + 0))
                                 && comp_graph_nodes.get(b + 1).equals(i_tab2.get(y * 3 + 1)))) {
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(a + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
-                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(b + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
-                                System.out.println("BOND " + i_tab2.get(y * 3 + 2));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(a + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
+//                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(b + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
+//                                System.out.println("BOND " + i_tab2.get(y * 3 + 2));
+//                            }
                             IAtom a1 = this.ac2.getAtom(comp_graph_nodes.get(a + 1) - 1);
                             IAtom a2 = this.ac2.getAtom(comp_graph_nodes.get(b + 1) - 1);
                             bond2 = this.ac2.getBond(a1, a2);
@@ -307,11 +317,11 @@ public class MCSPlus extends Filter {
 
                         } else if ((comp_graph_nodes.get(a + 1).equals(i_tab2.get(y * 3 + 1))
                                 && comp_graph_nodes.get(b + 1).equals(i_tab2.get(y * 3 + 0)))) {
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(a + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
-                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(b + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
-                                System.out.println("BOND " + i_tab2.get(y * 3 + 2));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(a + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
+//                                System.out.println("comp_graph_nodes.get(a+1) " + comp_graph_nodes.get(b + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
+//                                System.out.println("BOND " + i_tab2.get(y * 3 + 2));
+//                            }
                             IAtom a1 = this.ac2.getAtom(comp_graph_nodes.get(a + 1) - 1);
                             IAtom a2 = this.ac2.getAtom(comp_graph_nodes.get(b + 1) - 1);
                             bond2 = this.ac2.getBond(a1, a2);
@@ -321,33 +331,45 @@ public class MCSPlus extends Filter {
                         }
                     }
 
-                    boolean matchbondFlag = true;
+                    boolean connectedFlag = false;
+                    boolean disConnectedFlag = false;
+                    boolean matchBondFlag = false;
+
                     if (molecule1_pair_connected
-                            && molecule2_pair_connected
-                            && !isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-                        matchbondFlag = false;
+                            && molecule2_pair_connected) {
+                        connectedFlag = true;
                     }
 
-                    if (DEBUG) {
-                        System.out.println("matchbondFlag " + matchbondFlag);
+                    if (!molecule1_pair_connected
+                            && !molecule2_pair_connected) {
+                        disConnectedFlag = true;
                     }
 
+                    if (connectedFlag
+                            && isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        matchBondFlag = true;
+                    }
+
+//                    if (DEBUG) {
+//                        System.out.println("matchbondFlag " + connectedFlag);
+//                    }
                     //in case that both molecule pairs are connected a c-edge is generated
-                    if (molecule1_pair_connected && molecule2_pair_connected && matchbondFlag) {
+                    if (connectedFlag && matchBondFlag) {
 
                         C_edges.add(((a / 3) + 1));
                         C_edges.add(((b / 3) + 1));
                     }
-                    //in case that both molecule pairs are not connected a d-edge is generated
-                    if (!molecule1_pair_connected && !molecule2_pair_connected) {
-                        D_edges.add(a / 3 + 1);
-                        D_edges.add(b / 3 + 1);
-                    }
 //
                     //in case that both molecule pairs are not connected a d-edge is generated
-                    if (!matchbondFlag) {
-                        D_edges.add(a / 3 + 1);
-                        D_edges.add(b / 3 + 1);
+                    if (disConnectedFlag) {
+                        D_edges.add((a / 3) + 1);
+                        D_edges.add((b / 3) + 1);
+                    }
+
+                    //in case that both molecule pairs are not connected a d-edge is generated
+                    if (connectedFlag && !matchBondFlag) {
+                        D_edges.add((a / 3) + 1);
+                        D_edges.add((b / 3) + 1);
                     }
                 }
             }
@@ -417,10 +439,10 @@ public class MCSPlus extends Filter {
                             IAtom a2 = this.ac1.getAtom(comp_graph_nodes_C_zero.get(b) - 1);
                             bond1 = this.ac1.getBond(a1, a2);
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(a) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
-                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(b) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(a) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
+//                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(b) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
+//                            }
                             break;
 
                         } else if ((comp_graph_nodes_C_zero.get(a).equals(i_tab1.get(x * 3 + 1))
@@ -430,10 +452,10 @@ public class MCSPlus extends Filter {
                             IAtom a2 = this.ac1.getAtom(comp_graph_nodes_C_zero.get(b) - 1);
                             bond1 = this.ac1.getBond(a1, a2);
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(a) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
-                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(b) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(a) + ", i_tab1.get(x * 3 + 1) " + i_tab1.get(x * 3 + 1));
+//                                System.out.println("comp_graph_nodes_C_zero.get(a) " + comp_graph_nodes_C_zero.get(b) + ", i_tab1.get(x * 3 + 0) " + i_tab1.get(x * 3 + 0));
+//                            }
                             break;
                         }
                     }
@@ -447,10 +469,10 @@ public class MCSPlus extends Filter {
                             IAtom a2 = this.ac2.getAtom(comp_graph_nodes_C_zero.get(b + 1) - 1);
                             bond2 = this.ac2.getBond(a1, a2);
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(a + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
-                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(b + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(a + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
+//                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(b + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
+//                            }
                             break;
                         } else if ((comp_graph_nodes_C_zero.get(a + 1).equals(i_tab2.get(y * 3 + 1))
                                 && comp_graph_nodes_C_zero.get(b + 1).equals(i_tab2.get(y * 3 + 0)))) {
@@ -459,36 +481,53 @@ public class MCSPlus extends Filter {
                             IAtom a2 = this.ac2.getAtom(comp_graph_nodes_C_zero.get(b + 1) - 1);
                             bond2 = this.ac2.getBond(a1, a2);
 
-                            if (DEBUG) {
-                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(a + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
-                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(b + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
-                            }
+//                            if (DEBUG) {
+//                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(a + 1) + ", i_tab2.get(x * 3 + 1) " + i_tab2.get(y * 3 + 1));
+//                                System.out.println("comp_graph_nodes_C_zero.get(a+1) " + comp_graph_nodes_C_zero.get(b + 1) + ", i_tab2.get(x * 3 + 0) " + i_tab2.get(y * 3 + 0));
+//                            }
                             break;
                         }
                     }
 
-                    boolean matchbondFlag = true;
+                    boolean connectedFlag = false;
+                    boolean disConnectedFlag = false;
+                    boolean matchBondFlag = false;
+
                     if (molecule1_pair_connected
-                            && molecule2_pair_connected
-                            && !isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-                        matchbondFlag = false;
+                            && molecule2_pair_connected) {
+                        connectedFlag = true;
                     }
+
+                    if (!molecule1_pair_connected
+                            && !molecule2_pair_connected) {
+                        disConnectedFlag = true;
+                    }
+
+                    if (connectedFlag
+                            && isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        matchBondFlag = true;
+                    }
+
+//                    if (DEBUG) {
+//                        System.out.println("matchbondFlag " + connectedFlag);
+//                    }
                     //in case that both molecule pairs are connected a c-edge is generated
-                    if ((molecule1_pair_connected && molecule2_pair_connected) && matchbondFlag) {
-                        //System.out.println("C-edge " + ((a/4)+1) + " " + ((b/4)+1) << endl;
+                    if (connectedFlag && matchBondFlag) {
+
                         C_edges.add(((a / 4) + 1));
                         C_edges.add(((b / 4) + 1));
                     }
+//
                     //in case that both molecule pairs are not connected a d-edge is generated
-                    if (!molecule1_pair_connected && !molecule2_pair_connected) {
-                        D_edges.add(((a / 4) + 1));
-                        D_edges.add(((b / 4) + 1));
+                    if (disConnectedFlag) {
+                        D_edges.add((a / 4) + 1);
+                        D_edges.add((b / 4) + 1);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
-                    if (!matchbondFlag) {
-                        D_edges.add(((a / 4) + 1));
-                        D_edges.add(((b / 4) + 1));
+                    if (connectedFlag && !matchBondFlag) {
+                        D_edges.add((a / 4) + 1);
+                        D_edges.add((b / 4) + 1);
                     }
                 }
             }

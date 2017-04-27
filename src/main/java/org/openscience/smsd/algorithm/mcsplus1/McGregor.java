@@ -27,7 +27,9 @@ package org.openscience.smsd.algorithm.mcsplus1;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -114,19 +116,26 @@ public class McGregor extends Utility {
     protected final boolean shouldMatchBonds;
     protected final boolean shouldMatchRings;
     protected final boolean matchAtomType;
+    protected final Map<String, Integer> SYMBOL_VALUE;
 
     /**
      *
-     * @param file1
-     * @param file2
+     * @param f1
+     * @param f2
      * @param shouldMatchBonds
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public McGregor(MoleculeHandler file1, MoleculeHandler file2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public McGregor(IAtomContainer f1, IAtomContainer f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.shouldMatchBonds = shouldMatchBonds;
         this.shouldMatchRings = shouldMatchRings;
         this.matchAtomType = matchAtomType;
+        
+        this.SYMBOL_VALUE = new TreeMap<>();
+
+        MoleculeHandler file1 = new MoleculeHandler(f1, shouldMatchBonds);
+        MoleculeHandler file2 = new MoleculeHandler(f2, shouldMatchBonds);
+
         this.atom_number1 = file1.getAtomNumber();
         this.atom_number2 = file2.getAtomNumber();
         this.atom_num_H_1 = file1.getStartHatom_num();

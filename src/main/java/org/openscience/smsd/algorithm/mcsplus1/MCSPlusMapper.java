@@ -106,20 +106,16 @@ public final class MCSPlusMapper implements IResults {
 
         } else if (source.getAtomCount() > target.getAtomCount()) {
             this.flagExchange = true;
-            MoleculeHandler file2 = new MoleculeHandler(source);
-            MoleculeHandler file1 = new MoleculeHandler(target);
 
-            MCSPlus mcs = new MCSPlus(file1, file2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            MCSPlus mcs = new MCSPlus(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS " + mcs.getFinalMappings().size());
             mappings = Collections.synchronizedList(mcs.getFinalMappings());
 
         } else {
             this.flagExchange = false;
-            MoleculeHandler file1 = new MoleculeHandler(source);
-            MoleculeHandler file2 = new MoleculeHandler(target);
 
-            MCSPlus mcs = new MCSPlus(file1, file2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            MCSPlus mcs = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS SWITCH " + mcs.getFinalMappings().size());
             mappings = Collections.synchronizedList(mcs.getFinalMappings());

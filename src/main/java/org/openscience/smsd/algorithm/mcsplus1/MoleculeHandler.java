@@ -46,16 +46,20 @@ public final class MoleculeHandler {
 
     protected List<Integer> int_tab = new LinkedList<>();
     protected List<String> char_tab = new LinkedList<>();
+    private final boolean matchBonds;
 
     /**
      * Creates a new instance of MolFileReader
      *
      * @param atomContainer
+     * @param matchBonds
      */
-    public MoleculeHandler(IAtomContainer atomContainer) {
+    public MoleculeHandler(IAtomContainer atomContainer, boolean matchBonds) {
         this.atomContainer = atomContainer;
         bondNumber = atomContainer.getBondCount();
         atomNumber = atomContainer.getAtomCount();
+        this.matchBonds = matchBonds;
+
         setAtomString();
         setIntConnectionTable();
         setCharConnectionTable();
@@ -125,10 +129,15 @@ public final class MoleculeHandler {
             // System.out.println(ac.getAtomNumber(bond.getAtom(0))+" "+ac.getAtomNumber(bond.getAtom(1))+" "+(int)bond.getOrder());
             intTable.add((ac.getAtomNumber(bond.getAtom(0)) + 1));//Plus one because Java Indexing is one less
             intTable.add((ac.getAtomNumber(bond.getAtom(1)) + 1));//Plus one because Java indexing is one less
-            intTable.add((int) bond.getOrder().numeric());
+            if (matchBonds) {
+                intTable.add((int) bond.getOrder().numeric());
+            } else {
+                intTable.add(1);
+            }
 
             /*This will fetch the Connected ATOM Symbol*/
-            //System.out.println(bond.getAtom(0).getSymbol()+" "+bond.getAtom(1).getSymbol());
+//            System.out.println(bond.getAtom(0).getSymbol() + " " + bond.getAtom(1).getSymbol()
+//                    + " , bond: " + (int) bond.getOrder().numeric() + " Stored: " + intTable.get(i * 3 + 2));
         }
     }
 

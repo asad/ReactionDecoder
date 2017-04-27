@@ -133,6 +133,10 @@ public class Utility {
             boolean shouldMatchRings,
             boolean matchAtomType) {
 
+        if (!shouldMatchBonds && !shouldMatchRings && !matchAtomType) {
+            return true;
+        }
+
         if (bondA1 instanceof IQueryBond) {
             if (((IQueryBond) bondA1).matches(bondA2)) {
                 IQueryAtom atom1 = (IQueryAtom) (bondA1.getAtom(0));
