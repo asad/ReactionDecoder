@@ -439,14 +439,15 @@ public class MCSThread implements Callable<MCSSolution> {
             Isomorphism isomorphism;
             int expectedMaxGraphmatch = expectedMaxGraphmatch(getCompound1(), getCompound2());
 
-            if (eductCount == 1 && productCount == 1) {
+            if (getCompound1().getAtomCount() == 1
+                    || getCompound2().getAtomCount() == 1) {
                 if (DEBUG3) {
                     System.out.println("CASE 1");
                 }
                 /*
                  * This handles large aliphatics to ring system (ex: R09907)
                  */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), DEFAULT,
+                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
                         false, isHasPerfectRings(), false);
             } else if (expectedMaxGraphmatch >= 30
                     && ConnectivityChecker.isConnected(getCompound1())) {
