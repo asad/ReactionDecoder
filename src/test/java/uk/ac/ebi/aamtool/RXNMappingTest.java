@@ -683,7 +683,6 @@ public class RXNMappingTest extends MappingUtility {
 //                .getFormedCleavedWFingerprint();
 //        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
 //    }
-
     /**
      * MIN, fp ID=R00344:Bond Cleaved and Formed (5) [C-C:1.0, C-H:1.0, C-O:1.0,
      * H-O:2.0, O-P:2.0]
@@ -1684,5 +1683,67 @@ public class RXNMappingTest extends MappingUtility {
          * BE 682.0, Fragment 0
          */
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * RHEA Reaction ID: 10125, Selected Algorithm: MAX Cleaved/Formed
+     * ID=10125:Bond Cleaved and Formed (4) [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
+     * BE 1556.0, Fragment 0
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea10125() throws Exception {
+
+        String reactionID = "10125";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * RHEA Reaction ID: 10125, 
+         * Selected Algorithm: MAX Cleaved/Formed
+         * ID=10125:Bond Cleaved and Formed (4) 
+         * [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
+         * BE 1556.0, Fragment 0
+         */
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * RHEA
+     *
+     * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
+     * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
+     *
+     * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
+     *
+     * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea10129() throws Exception {
+
+        String reactionID = "10129";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        /*
+         * Expected Solution
+         * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
+         * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
+         *
+         * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
+         *
+         * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
+         */
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 }
