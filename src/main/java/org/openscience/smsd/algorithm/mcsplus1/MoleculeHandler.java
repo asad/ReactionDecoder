@@ -56,8 +56,8 @@ public final class MoleculeHandler {
      */
     public MoleculeHandler(IAtomContainer atomContainer, boolean matchBonds) {
         this.atomContainer = atomContainer;
-        bondNumber = atomContainer.getBondCount();
-        atomNumber = atomContainer.getAtomCount();
+        this.bondNumber = atomContainer.getBondCount();
+        this.atomNumber = atomContainer.getAtomCount();
         this.matchBonds = matchBonds;
 
         setAtomString();
@@ -123,7 +123,7 @@ public final class MoleculeHandler {
 
         IAtomContainer ac = (IAtomContainer) getAtomContainer();
 
-        for (int i = 0; i < ac.getBondCount(); i++) {
+        for (int i = 0; i < bondNumber; i++) {
             IBond bond = ac.getBond(i);
             /*This will fetch the connected ATOM as integer and its Bond order ex: 2 as double, 1 as single */
             // System.out.println(ac.getAtomNumber(bond.getAtom(0))+" "+ac.getAtomNumber(bond.getAtom(1))+" "+(int)bond.getOrder());
@@ -143,7 +143,7 @@ public final class MoleculeHandler {
 
     public void setCharConnectionTable() {
         IAtomContainer ac = (IAtomContainer) getAtomContainer();
-        for (int i = 0; i < ac.getBondCount(); i++) {
+        for (int i = 0; i < bondNumber; i++) {
             IBond bond = ac.getBond(i);
             /*This will fetch the Connected ATOM Symbol*/
             String atom1 = bond.getAtom(0).getSymbol();

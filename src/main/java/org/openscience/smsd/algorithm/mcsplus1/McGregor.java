@@ -64,11 +64,6 @@ public class McGregor extends Utility {
     protected int D_edges_size;
 
     protected int best_clique_size;
-    /*
-     *T: is a set of vertices which have already been used for the
-     * initialization of ENUMERATE_CLIQUES
-     */
-    protected final List<Integer> T;
 
     protected final List<Integer> comp_graph_nodes;
     protected final List<Integer> comp_graph_nodes_C_zero;
@@ -106,7 +101,7 @@ public class McGregor extends Utility {
 
     private boolean new_matrix;
     protected int best_MAPPING_size;
-    protected Stack<List<Integer>> Max_Cliques_Set;
+    protected Stack<List<Integer>> max_Cliques_Set;
 
     private final List<List<Integer>> final_MAPPINGS;
 
@@ -130,7 +125,7 @@ public class McGregor extends Utility {
         this.shouldMatchBonds = shouldMatchBonds;
         this.shouldMatchRings = shouldMatchRings;
         this.matchAtomType = matchAtomType;
-        
+
         this.SYMBOL_VALUE = new TreeMap<>();
 
         MoleculeHandler file1 = new MoleculeHandler(f1, shouldMatchBonds);
@@ -151,10 +146,6 @@ public class McGregor extends Utility {
         this.ac1 = file1.getAtomContainer();
         this.ac2 = file2.getAtomContainer();
 
-        /*
-         *Initialize Vectors
-         */
-        this.T = new ArrayList<>();
         this.comp_graph_nodes = new ArrayList<>();
         this.C_edges = new ArrayList<>();//Initialize the C_edges Vector
         this.D_edges = new ArrayList<>();//Initialize the D_edges Vector
@@ -175,7 +166,7 @@ public class McGregor extends Utility {
         this.BESTARCS = new Stack<>();
         this.final_MAPPINGS = new ArrayList<>(); //Initialization of Vector final_MAPPINGS
 
-        this.Max_Cliques_Set = new Stack<>(); //Initialization Max_Cliques_Set
+        this.max_Cliques_Set = new Stack<>(); //Initialization max_Cliques_Set
 
         //String SignROW = "DGJTVWYZ$%&*#?!~^<>=()[]";
         String[] characters = {"D", "G", "J", "T", "V", "W", "Y", "Z", "$", "%", "&", "*", "#", "?", "!", "~", "^", "<", ">", "=", "(", ")", "[", "]"};

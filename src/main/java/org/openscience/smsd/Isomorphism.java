@@ -251,10 +251,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private synchronized boolean mcsPlusAlgorithm() {
         IResults mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            //mcs = new MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
             mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
         } else if (isMatchBonds() || isMatchRings()) {
-            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         } else {
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }

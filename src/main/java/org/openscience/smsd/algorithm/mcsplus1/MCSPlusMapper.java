@@ -114,7 +114,6 @@ public final class MCSPlusMapper implements IResults {
 
         } else {
             this.flagExchange = false;
-
             MCSPlus mcs = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             mcs.search_cliques();
 //            System.out.println("mcs.final_MAPPINGS SWITCH " + mcs.getFinalMappings().size());

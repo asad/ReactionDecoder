@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2017  Syed Asad Rahman <asad@ebi.ac.uk>
+/* Copyright (R) 2009-2017  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,14 +24,13 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
- * described in [F. Cazals, C. Karande: An Algorithm for reporting maximal
+ * described in [F. Cazals, R. Karande: An Algorithm for reporting maximal
  * c-cliques; processedVertex.Comp. Sc. (2005); vol 349; pp. 484-490]
  *
  *
@@ -65,28 +64,28 @@ public class MCSPlus extends Filter {
 
         ArrayList<List<Integer>> label_list = new ArrayList<>();
 
-        if (DEBUG) {
-            System.out.println("Vector Atom Str: ");
-            for (int b = 0; b < atoms.size(); b++) {
-                System.err.print(atoms.get(b).getSymbol() + ",");
-            }
-            System.err.println();
-            System.err.println("basic_atom_vector");
-            for (int b = 0; b < basic_atom_vector.size(); b++) {
-                System.err.print(basic_atom_vector.get(b) + ",");
-            }
-            System.err.println();
-            System.err.println("i_tab");
-            for (int b = 0; b < i_tab.size(); b++) {
-                System.err.print(i_tab.get(b) + ",");
-            }
-            System.err.println();
-            System.err.println("c_tab");
-            for (int b = 0; b < c_tab.size(); b++) {
-                System.err.print(c_tab.get(b) + ",");
-            }
-            System.err.println();
-        }
+//        if (DEBUG) {
+//            System.out.println("Vector Atom Str: ");
+//            for (int b = 0; b < atoms.size(); b++) {
+//                System.err.print(atoms.get(b).getSymbol() + ",");
+//            }
+//            System.err.println();
+//            System.err.println("basic_atom_vector");
+//            for (int b = 0; b < basic_atom_vector.size(); b++) {
+//                System.err.print(basic_atom_vector.get(b) + ",");
+//            }
+//            System.err.println();
+//            System.err.println("i_tab");
+//            for (int b = 0; b < i_tab.size(); b++) {
+//                System.err.print(i_tab.get(b) + ",");
+//            }
+//            System.err.println();
+//            System.err.println("c_tab");
+//            for (int b = 0; b < c_tab.size(); b++) {
+//                System.err.print(c_tab.get(b) + ",");
+//            }
+//            System.err.println();
+//        }
         for (int a = 0; a < basic_atom_vector.size(); a++) {
 
             List<Integer> label = new ArrayList<>(7);
@@ -155,6 +154,10 @@ public class MCSPlus extends Filter {
             List<Integer> bubbleSort = Utility.getBubbleSort(label);
             label_list.add(bubbleSort);
 
+        }
+
+        if (DEBUG) {
+            System.out.println("label_list of Atoms: " + label_list.size());
         }
 
         return label_list;
@@ -250,7 +253,7 @@ public class MCSPlus extends Filter {
         }
 
         if (DEBUG) {
-            System.out.println("comp_graph_nodes " + comp_graph_nodes.size());
+            System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
         }
 
         return 0;
@@ -375,7 +378,7 @@ public class MCSPlus extends Filter {
             }
         }
 
-        //print C and D edges of the compatibility graph
+        //print R and Q edges of the compatibility graph
         C_edges_size = C_edges.size();
         D_edges_size = D_edges.size();
 
@@ -533,338 +536,14 @@ public class MCSPlus extends Filter {
             }
         }
 
-        //print C and D edges of the compatibility graph
+        //print R and Q edges of the compatibility graph
         C_edges_size = C_edges.size();
         D_edges_size = D_edges.size();
-
+        if (DEBUG) {
+            System.out.println("C_edges_size " + C_edges_size);
+            System.out.println("D_edges_size " + D_edges_size);
+        }
         return 0;
-    }
-
-
-    /*
-   
-     * C: set of vertices belonging to the current clique
-     
-     * S: set of vertices which are not allowed to be added
-     * to C
-    
-     * P: is a set of vertices which <b>can</b> be added to C, because they are
-     * neighbours of vertex u via <i>c-edges</i>
-    
-     * D: is a set of vertices which <b>cannot</b> be added to C, because they are
-     * neighbours of vertex u via <i>d-edges</i>
-     
-     * V: stored all the vertices for the Graph G
-     * V[G]: nodes of vector comp_graph_nodes are stored in V
-     
-     */
-    private int Init_Algorithm() {
-
-//        System.out.println( "Init_Algorithm " + comp_graph_nodes.size() );
-        List<Integer> C = new ArrayList<>();
-        List<Integer> D = new ArrayList<>();
-        List<Integer> S = new ArrayList<>();
-        List<Integer> N = new ArrayList<>();
-        Stack<Integer> P = new Stack<>();
-
-        //nodes of vector comp_graph_nodes are stored in V
-        Stack<Integer> V = new Stack<>();//Initialization of Stack V
-
-        int V_set_size = comp_graph_nodes.size() / 3;
-        for (int a = 0; a < V_set_size; a++) {
-            V.add(comp_graph_nodes.get(a * 3 + 2));
-        }
-
-        V.add(0);
-
-        int b = 0;
-
-        while (V.get(b) != 0) { // V[b] is node u
-            int central_node = V.get(b);
-
-            P.clear();
-            D.clear();
-            S.clear();
-            N.clear();
-            C.clear();
-
-            //find the neighbors of the central node from V
-            N = find_neighbors(V.get(b));
-
-            //  System.out.println("N-Neigh: " + N);
-            for (int c = 0; c < N.size(); c = c + 2) { // N[c] is node v
-                //System.out.println("N[" + c  +  "]= " + N.get(c) + " ");
-
-                //Grouping of the neighbors in S,P and D
-                if (N.get(c + 1) == 1) {    //u and v are adjacent via a C-edge
-                    boolean Nc_belongs_to_T = false;
-                    int T_size = T.size();
-                    // System.out.println("T_size " +T_size);
-                    for (int e = 0; e < T_size; e++) {
-                        //    System.out.println("T[" + e  +  "]= " +T.get(e));
-                        if (N.get(c).intValue() == (T.get(e))) {
-
-                            S.add(N.get(c));
-                            Nc_belongs_to_T = true;
-                        }
-                    }
-                    if (Nc_belongs_to_T == false) {
-                        P.add(N.get(c));
-                    }
-                } else if (N.get(c + 1) == 2) {   // u and v are adjacent via a D-edge
-                    //  System.out.println("u and v are adjacent via a D-edge");
-                    D.add(N.get(c));
-                }
-                //find respective neighbor position in P, which is needed for the deletion from V
-                int V_size = V.size();
-                int neighbor_position = -1;
-
-                //System.out.println("V Size: "+ V.size());
-                for (int d = 0; d < V_size; d++) {
-                    //System.out.println(" N[c]: " + N.get(c)+ " , V[" +  d + "]: " + V.get(d));
-                    if (N.get(c).intValue() == (V.get(d))) {
-                        neighbor_position = d;
-                    }
-                }
-                //delete neighbor from set V
-                if (neighbor_position != -1) {
-                    //  System.out.println("neighbor_position : " + neighbor_position);
-                    for (int e = neighbor_position; e < V_size - 1; e++) {
-                        V.set(e, V.get(e + 1));
-                    }
-                    V.pop();
-                    if (neighbor_position < b) {
-                        b = b - 1;
-                    }
-                }
-            }
-            P.add(0);
-            C.add(central_node);
-            Enumerate_Cliques(C, P, D, S);
-            T.add(V.get(b));
-            b++;
-        }
-
-        return 0;
-    }
-
-    private int Enumerate_Cliques(List<Integer> C, Stack<Integer> P, List<Integer> D, List<Integer> S) {
-
-        List<Integer> N = new ArrayList<>();////Initialization Vector N
-        Stack<Integer> P_Prime = new Stack<>();//Defined as P' in the paper
-
-        P.stream().forEach((I) -> {
-            P_Prime.add(I);
-        });
-
-        List<Integer> C_copy = new ArrayList<>();
-        Stack<Integer> P_copy = new Stack<>();
-        Stack<Integer> D_copy = new Stack<>();
-        List<Integer> S_copy = new ArrayList<>();
-
-        if (P.size() == 1) {
-            if (S.isEmpty()) {
-
-                //store best solutions in stack Max_Cliques_Set
-                int clique_size = C.size();
-                if (clique_size >= best_clique_size) {
-                    if (clique_size > best_clique_size) {
-                        while (!Max_Cliques_Set.empty()) {
-                            Max_Cliques_Set.pop();
-                        }
-                        best_clique_size = clique_size;
-                    }
-                    if (clique_size == best_clique_size) {
-                        Max_Cliques_Set.push(C);
-                    }
-                }
-                // System.out.println("Max_Cliques_Set: " + Max_Cliques_Set.size());
-                return 0;
-            }
-        }
-        int a = 0;
-        while (!P_Prime.get(a).equals(0)) { // P[a] is node ut
-
-            int ui = P_Prime.get(a);
-            //remove P_Prime[a] from P
-            //find position of P_Prime node in P
-            int P_size = P.size();
-            int ut_node_pos = 100000;
-            for (int counter = 0; counter < P_size - 1; counter++) {  //-1 wegen Endekennung
-                if (P.get(counter).equals(P_Prime.get(a))) {
-                    ut_node_pos = counter;
-                }
-            }
-            if (ut_node_pos == 100000) {
-                System.out.println("ut_node_pos = 100000");
-            }
-            //delete P_Prime node in P
-            for (int counter = ut_node_pos; counter < P_size - 1; counter++) {
-                P.setElementAt(P.get(counter + 1), counter);
-            }
-            P.pop();//TO DO
-
-            C_copy.clear();
-            P_copy.clear();
-            D_copy.clear();
-            S_copy.clear();
-            N.clear();
-
-            C.stream().forEach((obj) -> {
-                C_copy.add(obj);
-            });
-
-            P.stream().forEach((obj) -> {
-                P_copy.add(obj);
-            });
-            D.stream().forEach((obj) -> {
-                D_copy.add(obj);
-            });
-            S.stream().forEach((obj) -> {
-                S_copy.add(obj);
-            });
-            P_copy.pop();
-
-            //find the neighbors of the central node from P
-            // System.out.println("P_Prime.get(a)" + P_Prime.get(a));
-            N = find_neighbors(P_Prime.get(a));
-
-            int N_size = N.size();
-
-            for (int b = 0; b < N_size; b = b + 2) { // N[b] is node v
-
-                int D_set_size = D.size();  //gehe Nachbarn durch, die ber D-edge mit central_node verbunden sind
-                for (int c = 0; c < D_set_size; c++) {
-
-                    if (N.get(b).equals(D.get(c))) {
-                        if (N.get(b + 1) == 1) {     //u and v are adjacent via a C-edge
-                            boolean Nb_belongs_to_T = false;
-                            int T_size = T.size();
-                            for (int d = 0; d < T_size; d++) {
-                                if (N.get(b).intValue() == T.get(d)) {
-                                    S_copy.add(N.get(b));
-                                    Nb_belongs_to_T = true;
-                                }
-                            }
-                            //store N[b] in P
-                            if (Nb_belongs_to_T == false) {
-                                P_copy.add(N.get(b));
-                            }
-                            //delete N[b] bzw. D[c] from set D_copy
-                            int D_copy_size = D_copy.size();
-                            int Nb_position = 10000;
-                            for (int e = 0; e < D_copy_size - 1; e++) {
-                                if (N.get(b).equals(D_copy.get(e))) {
-                                    Nb_position = e;
-                                }
-                            }
-                            for (int e = Nb_position; e < D_copy_size - 1; e++) {
-                                D_copy.setElementAt(D_copy.get(e + 1), e);
-                            }
-                            D_copy.pop();
-                        }
-                        /*//Abschnitt sinnlos, denn wenn etwas in S war ist, es nach S' kopiert worden
-                     if(N[b+1] == 2){     //u and v are adjacent via a D-edge
-                     if().....
-                     }*/
-                    }
-                }
-                //find respective neighbor position in P_Prime, which is needed for the deletion from P_Prime
-                int ut_set_size = P_Prime.size();
-                int neighbor_position = -1;
-                for (int e = 0; e < ut_set_size; e++) {
-                    if (N.get(b).equals(P_Prime.get(e))) {
-                        neighbor_position = e;
-                    }
-                }
-                if (neighbor_position != -1) {
-                    //delete neighbor from set P
-                    for (int e = neighbor_position; e < ut_set_size - 1; e++) {
-                        P_Prime.setElementAt(P_Prime.get(e + 1), e);
-                    }
-                    P_Prime.pop(); //TODO:Check whether size returns number of elements or index value
-                    if (neighbor_position < a) {
-                        a = a - 1;
-                    }
-                }
-            }
-
-            Stack<Integer> P_copy_N_intersec = new Stack<>();
-            List<Integer> D_copy_N_intersec = new ArrayList<>();
-            List<Integer> S_copy_N_intersec = new ArrayList<>();
-
-            int P_copy_length = P_copy.size();
-            int D_copy_length = D_copy.size();
-            int S_copy_length = S_copy.size();
-
-            for (int sec = 0; sec < N_size; sec = sec + 2) {
-                for (int pc = 0; pc < P_copy_length; pc++) {
-                    if (P_copy.get(pc).equals(N.get(sec))) {
-                        P_copy_N_intersec.add(P_copy.get(pc));
-                    }
-                }
-                for (int pd = 0; pd < D_copy_length; pd++) {
-                    if (D_copy.get(pd).equals(N.get(sec))) {
-                        D_copy_N_intersec.add(D_copy.get(pd));
-                    }
-                }
-                for (int ps = 0; ps < S_copy_length; ps++) {
-                    if (S_copy.get(ps).equals(N.get(sec))) {
-                        S_copy_N_intersec.add(S_copy.get(ps));
-                    }
-                }
-            }
-            P_copy_N_intersec.push(0);
-            C_copy.add(ui);
-            Enumerate_Cliques(C_copy, P_copy_N_intersec, D_copy_N_intersec, S_copy_N_intersec);
-            S.add(ui);
-            a++;
-        }
-
-        return 0;
-    }
-
-    private List<Integer> find_neighbors(int central_node) {
-
-        List<Integer> neighbor_vec = new ArrayList<>();
-
-        // System.out.println("C_edge.size: " + C_edges.size());
-        int C_edge_number = C_edges.size() / 2;
-
-        //    System.out.println("C_edge.size/2: " + C_edge_number);
-        //    System.out.println("");
-        //    System.out.println("C_edges: ");
-        for (int a = 0; a < C_edge_number; a++) {
-            if (C_edges.get(a * 2 + 0).equals(central_node)) {
-                //          System.out.println( C_edges.get(a*2+0) + " " + C_edges.get(a*2+1));
-                neighbor_vec.add(C_edges.get(a * 2 + 1));
-                neighbor_vec.add(1);       // 1 means: is connected via C-edge
-            }
-            if (C_edges.get(a * 2 + 1).equals(central_node)) {
-                //           System.out.println(C_edges.get(a*2+0) + " " + C_edges.get(a*2+1));
-                neighbor_vec.add(C_edges.get(a * 2 + 0));
-                neighbor_vec.add(1);       // 1 means: is connected via C-edge
-            }
-        }
-
-        int D_edge_number = D_edges.size() / 2;
-
-        //System.out.println("");
-        //System.out.println("D_edges: "+ D_edges.size());
-        for (int a = 0; a < D_edge_number; a++) {
-            if (D_edges.get(a * 2 + 0).equals(central_node)) {
-                //       System.out.println( D_edges.get(a*2+0) + " " + D_edges.get(a*2+1));
-                neighbor_vec.add(D_edges.get(a * 2 + 1));
-                neighbor_vec.add(2);       // 2 means: is connected via D-edge
-            }
-            if (D_edges.get(a * 2 + 1).equals(central_node)) {
-                //        System.out.println(D_edges.get(a*2+0) + " " + D_edges.get(a*2+1));
-                neighbor_vec.add(D_edges.get(a * 2 + 0));
-                neighbor_vec.add(2);       // 2 means: is connected via D-edge
-            }
-        }
-
-        return neighbor_vec;
     }
 
     //extract atom mapping from the clique vector and print it on the screen
@@ -913,7 +592,12 @@ public class MCSPlus extends Filter {
 
         generate_compatibility_graph_nodes();
         generate_compatibility_graph();
-        if (C_edges_size == 0) {
+//        System.out.println("C_edges_size " + C_edges_size);
+//        System.out.println("bond cound " + ac1.getBondCount());
+//        System.out.println("bond cound " + ac2.getBondCount());
+        if (C_edges_size == 0
+                || (C_edges_size < this.ac1.getAtomCount()
+                && C_edges_size < this.ac2.getAtomCount())) {
             comp_graph_nodes.clear();
             C_edges.clear();
             D_edges.clear();
@@ -924,43 +608,51 @@ public class MCSPlus extends Filter {
             comp_graph_nodes_C_zero.clear();
         }
 
-        best_clique_size = 0;
-        T.clear();
-        Init_Algorithm();
+        BKKCKCF cliqueFinder = new BKKCKCF(comp_graph_nodes, C_edges, D_edges);
+        cliqueFinder.init_Algorithm();
+        this.max_Cliques_Set = cliqueFinder.getMax_Cliques_Set();
+
         best_MAPPING_size = 0;
 
 //        int clique_number = 1;
-        while (!Max_Cliques_Set.empty()) {
+        while (!max_Cliques_Set.empty()) {
 //            System.out.println ("Clique number " + clique_number + " :" );
-            List<Integer> clique_vector = Max_Cliques_Set.peek();
+            List<Integer> clique_vector = max_Cliques_Set.peek();
             int clique_size = clique_vector.size();
             //Is the number of mappings smaller than the number of atoms of molecule A and B?
             //In this case the clique is given to the McGregor algorithm
             if ((clique_size < atom_number1) && (clique_size < atom_number2)) {
-//                System.out.print( "clique_size: "+clique_size+" atom_number1: "+atom_number1+" atom_number2: "+atom_number2);
+//                System.out.print("clique_size: " + clique_vector + " atom_number1: " + atom_number1 + " atom_number2: " + atom_number2);
 //                System.out.println(" -> McGregor");
-                McGregor_IterationStart(clique_vector);
+                try {
+                    McGregor_IterationStart(clique_vector);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } else {
                 List<Integer> clique_MAPPING = extract_clique_MAPPING(clique_vector);
                 extract_mapping(clique_vector);
             }
-            Max_Cliques_Set.pop();
+            max_Cliques_Set.pop();
 //            clique_number++;
         }
 
         postfilter();
-        this.Max_Cliques_Set.clear();
+
+        return 0;
+    }
+
+    private void clear() {
+        this.max_Cliques_Set.clear();
         this.comp_graph_nodes.clear();
         this.comp_graph_nodes_C_zero.clear();
         this.c_tab1.clear();
         this.c_tab2.clear();
         this.C_edges.clear();
         this.D_edges.clear();
-        this.T.clear();
         this.C_edges_size = 0;
         this.D_edges_size = 0;
-        return 0;
     }
 
 }
