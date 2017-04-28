@@ -202,32 +202,27 @@ public class RXNMappingTest extends MappingUtility {
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
-//    /*
-//     *
-//     *
-//     * MAX, fp 
-//     * ID=R09087:Bond Cleaved and Formed (2)
-//     * [H-O:2.0, O-P:2.0]
-//     * 
-//     * BE 670.0, Fragment 0
-//     *
-//     * @throws java.lang.Exception
-//     */
-//    /**
-//     *
-//     * @throws Exception
-//     */
-//    @Test
-//    public void R09087() throws Exception {
-//
-//        String reactionID = "R09087";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    /*
+     * 
+     * @COMPLEX CASE OF RINGS
+     * MAX, fp 
+     * ID=R09087:Bond Cleaved and Formed (2)
+     * [H-O:2.0, O-P:2.0]
+     * BE 670.0, Fragment 0
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R09087() throws Exception {
+
+        String reactionID = "R09087";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
 
     /*
      * @COMPLEX CASE.
@@ -236,10 +231,6 @@ public class RXNMappingTest extends MappingUtility {
      * [C-C:2.0, C-O:1.0, C-S:1.0, H-O:2.0]
      * 
      * BE 1322.0, Fragment 0
-     * 
-     * @throws java.lang.Exception
-     *
-     *
      * @throws Exception
      */
     @Test
@@ -683,15 +674,15 @@ public class RXNMappingTest extends MappingUtility {
      *
      * @throws Exception
      */
-//    @Test
-//    public void R03165() throws Exception {
-//        ReactionMechanismTool testReactions = testReactions("R03165", KEGG_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    @Test
+    public void R03165() throws Exception {
+        ReactionMechanismTool testReactions = testReactions("R03165", KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
+    }
 
     /**
      * MIN, fp ID=R00344:Bond Cleaved and Formed (5) [C-C:1.0, C-H:1.0, C-O:1.0,
