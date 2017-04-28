@@ -596,8 +596,12 @@ public class MCSPlus extends Filter {
 //        System.out.println("bond cound " + ac1.getBondCount());
 //        System.out.println("bond cound " + ac2.getBondCount());
         if (C_edges_size == 0
-                || (C_edges_size < this.ac1.getAtomCount()
-                && C_edges_size < this.ac2.getAtomCount())) {
+                || ((C_edges_size < this.ac1.getAtomCount() / 2
+                && C_edges_size < this.ac2.getAtomCount() / 2))
+                && (this.ac1.getAtomCount() / 2 < 30
+                && this.ac2.getAtomCount() / 2 < 30)) {
+
+//            System.out.println("Switching to complex mode ");
             comp_graph_nodes.clear();
             C_edges.clear();
             D_edges.clear();
