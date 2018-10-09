@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Objects;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -38,7 +40,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.ringsearch.AllRingsFinder;
-import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -51,52 +52,6 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad@ebi.ac.uk>
  */
 public class MoleculeInitializer {
-
-    /**
-     * Defines which set of rings to define rings in the target.
-     */
-    private enum RingSet {
-
-        /**
-         * Smallest Set of Smallest Rings (or Minimum Cycle Basis - but not
-         * strictly the same). Defines what is typically thought of as a 'ring'
-         * however the non-uniqueness leads to ambiguous matching.
-         */
-        SmallestSetOfSmallestRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findSSSR();
-            }
-        },
-        /**
-         * Intersect of all Minimum Cycle Bases (or SSSR) and thus is a subset.
-         * The set is unique but may excludes rings (e.g. from bridged systems).
-         */
-        EssentialRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findEssentialRings();
-            }
-        },
-        /**
-         * Union of all Minimum Cycle Bases (or SSSR) and thus is a superset.
-         * The set is unique but may include more rings then is necessary.
-         */
-        RelevantRings {
-            @Override
-            IRingSet ringSet(IAtomContainer m) {
-                return new SSSRFinder(m).findRelevantRings();
-            }
-        };
-
-        /**
-         * Compute a ring set for a molecule.
-         *
-         * @param m molecule
-         * @return the ring set for the molecule
-         */
-        abstract IRingSet ringSet(IAtomContainer m);
-    }
 
     /**
      * Prepare the molecule for analysis.
@@ -176,7 +131,11 @@ public class MoleculeInitializer {
             }
 
             // sets SSSR information
-            IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
+            //IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
+            //New Method
+            CycleFinder cf = Cycles.essential();
+            Cycles cycles = cf.find(atomContainer); // ignore error - essential cycles do not check tractability
+            IRingSet sssr = cycles.toRingSet();
 
             for (IAtom atom : atomContainer.atoms()) {
 
@@ -217,7 +176,11 @@ public class MoleculeInitializer {
 
                 List<IAtom> connectedAtoms = atomContainer.getConnectedAtomsList(atom);
                 int total = hCount + connectedAtoms.size();
-                hCount = connectedAtoms.stream().filter((connectedAtom) -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
+                for (IAtom connectedAtom : connectedAtoms) {
+                    if (connectedAtom.getSymbol().equals("H")) {
+                        hCount++;
+                    }
+                }
                 atom.setProperty(CDKConstants.TOTAL_CONNECTIONS, total);
                 atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
 
