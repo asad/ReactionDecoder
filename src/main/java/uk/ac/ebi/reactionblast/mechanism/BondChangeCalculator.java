@@ -1076,7 +1076,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                          */
                         if (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsKey(atom)) {
                             if (atom.getProperty(BOND_CHANGE_INFORMATION) == null) {
-                                mol.removeAtomAndConnectedElectronContainers(atom);
+                                mol.removeAtom(atom);
                             }
                         }
                     }
@@ -1098,7 +1098,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                          */
                         if (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsValue(atom)) {
                             if (atom.getProperty(BOND_CHANGE_INFORMATION) == null) {
-                                mol.removeAtomAndConnectedElectronContainers(atom);
+                                mol.removeAtom(atom);
                             }
                         }
                     }

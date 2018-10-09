@@ -681,7 +681,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IB
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
                     atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappingsClone.containsKey(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEach((atom) -> {
-                        mol.removeAtomAndConnectedElectronContainers(atom);
+                        mol.removeAtom(atom);
                     });
                     /*
                     Do not remove radical changes Hydrogen changes p-sh
@@ -699,7 +699,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IB
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
                     atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappingsClone.containsValue(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEach((atom) -> {
-                        mol.removeAtomAndConnectedElectronContainers(atom);
+                        mol.removeAtom(atom);
                     });
                     /*
                     Do not remove radical changes Hydrogen changes p-sh

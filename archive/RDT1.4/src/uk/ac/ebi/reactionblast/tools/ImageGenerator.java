@@ -565,13 +565,13 @@ public class ImageGenerator {
 
         for (IAtom atom : cloneOfQuery.atoms()) {
             if (!n1.contains(atom)) {
-                querySubgraph.removeAtomAndConnectedElectronContainers(atom);
+                querySubgraph.removeAtom(atom);
             }
         }
 
         for (IAtom atom : cloneOfTarget.atoms()) {
             if (!n2.contains(atom)) {
-                targetSubgraph.removeAtomAndConnectedElectronContainers(atom);
+                targetSubgraph.removeAtom(atom);
             }
         }
 
@@ -614,13 +614,13 @@ public class ImageGenerator {
 
         for (IAtom atom : cloneOfQuery.atoms()) {
             if (!n1.contains(atom)) {
-                querySubgraph.removeAtomAndConnectedElectronContainers(atom);
+                querySubgraph.removeAtom(atom);
             }
         }
 
         for (IAtom atom : cloneOfTarget.atoms()) {
             if (!n2.contains(atom)) {
-                targetSubgraph.removeAtomAndConnectedElectronContainers(atom);
+                targetSubgraph.removeAtom(atom);
             }
         }
 

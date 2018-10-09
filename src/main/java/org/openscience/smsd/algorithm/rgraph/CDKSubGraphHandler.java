@@ -151,7 +151,7 @@ public class CDKSubGraphHandler implements IResults {
 
         // now lets get rid of the bonds themselves
         atomsToDelete.stream().forEach((atom) -> {
-            mol.removeAtomAndConnectedElectronContainers(atom);
+            mol.removeAtom(atom);
         });
 
         // now we probably have a set of disconnected components

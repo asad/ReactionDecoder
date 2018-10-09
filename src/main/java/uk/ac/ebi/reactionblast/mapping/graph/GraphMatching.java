@@ -156,15 +156,15 @@ public class GraphMatching extends IGraphMatching implements Serializable {
                     IMapping im = getInstance().newInstance(IMapping.class, eAtom, pAtom);
                     reaction.addMapping(im);
                 }
-                educt.removeAtomAndConnectedElectronContainers(eAtom);
-                product.removeAtomAndConnectedElectronContainers(pAtom);
+                educt.removeAtom(eAtom);
+                product.removeAtom(pAtom);
                 delta = fragmentCount;
             }
         }
 
         for (IAtom atom : educt.atoms()) {
             IAtom matchedAtom = getAtomByID(matchedPart, atom.getID());
-            matchedPart.removeAtomAndConnectedElectronContainers(matchedAtom);
+            matchedPart.removeAtom(matchedAtom);
         }
 
         if (beforeESize == educt.getAtomCount()) {

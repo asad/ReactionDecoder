@@ -291,7 +291,7 @@ public final class AtomAtomMapping implements Serializable {
         }
 
         uniqueAtoms.stream().forEach((atom) -> {
-            ac.removeAtomAndConnectedElectronContainers(atom);
+            ac.removeAtom(atom);
         });
 
         return ac;
@@ -314,7 +314,7 @@ public final class AtomAtomMapping implements Serializable {
         }
 
         uniqueAtoms.stream().forEach((atom) -> {
-            ac.removeAtomAndConnectedElectronContainers(atom);
+            ac.removeAtom(atom);
         });
         return ac;
     }
@@ -351,7 +351,7 @@ public final class AtomAtomMapping implements Serializable {
         }
 
         uniqueAtoms.stream().forEach((atom) -> {
-            ac.removeAtomAndConnectedElectronContainers(atom);
+            ac.removeAtom(atom);
         });
 
         /*

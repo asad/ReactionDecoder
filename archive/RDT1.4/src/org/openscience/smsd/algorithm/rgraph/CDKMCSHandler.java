@@ -159,7 +159,7 @@ public class CDKMCSHandler implements IResults {
 
         // now lets get rid of the bonds themselves
         for (IAtom atom : atomsToDelete) {
-            mol.removeAtomAndConnectedElectronContainers(atom);
+            mol.removeAtom(atom);
         }
 
         // now we probably have a set of disconnected components

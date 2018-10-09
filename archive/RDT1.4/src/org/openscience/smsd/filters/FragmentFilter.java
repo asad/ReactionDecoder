@@ -103,8 +103,8 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
             for (Map.Entry<IAtom, IAtom> map : mcsAtomSolution.getMappingsByAtoms().entrySet()) {
                 IAtom atomE = map.getKey();
                 IAtom atomP = map.getValue();
-                Educt.removeAtomAndConnectedElectronContainers(atomE);
-                product.removeAtomAndConnectedElectronContainers(atomP);
+                Educt.removeAtom(atomE);
+                product.removeAtom(atomP);
             }
         }
         return getFragmentCount(Educt) + getFragmentCount(product);

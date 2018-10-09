@@ -584,7 +584,7 @@ public abstract class ReactionMappingUtility implements Serializable {
         }
 
         for (Iterator<IAtom> it = removeList.iterator(); it.hasNext();) {
-            fragment.removeAtomAndConnectedElectronContainers(it.next());
+            fragment.removeAtom(it.next());
         }
 
         IAtomContainer canonicalise = canonicalise(fragment);
