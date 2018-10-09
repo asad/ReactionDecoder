@@ -105,8 +105,8 @@ public class MoleculeAligner {
                 }
             }
         }
-//        System.out.println("maxI = " + atomContainer.getAtomNumber(maxI)
-//                         + "maxJ = " + atomContainer.getAtomNumber(maxJ));
+//        System.out.println("maxI = " + atomContainer.indexOf(maxI)
+//                         + "maxJ = " + atomContainer.indexOf(maxJ));
         if (maxI != null && maxJ != null) {
             widthVector = new Vector2d(maxI.getPoint2d());
             widthVector.sub(maxJ.getPoint2d());

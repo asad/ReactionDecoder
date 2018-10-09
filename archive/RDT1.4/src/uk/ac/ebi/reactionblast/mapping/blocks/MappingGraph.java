@@ -156,7 +156,7 @@ public class MappingGraph {
             for (IAtom atom : ac.atoms()) {
                 String atomID = atom.getID();
                 if (atomID != null && atomID.equals(id)) {
-                    int index = ac.getAtomNumber(atom);
+                    int index = ac.indexOf(atom);
                     return new AtomContainerAtomPair(ac, atom, index);
                 }
             }

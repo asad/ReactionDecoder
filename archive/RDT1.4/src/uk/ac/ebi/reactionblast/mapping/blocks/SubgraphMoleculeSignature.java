@@ -74,7 +74,7 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         IAtom[] sortedAtoms = new IAtom[fullContainer.getAtomCount()];
         List<String> debugList = new ArrayList<>();
         for (IAtom atom : subgraphAtoms) {
-            int atomNumber = fullContainer.getAtomNumber(atom);
+            int atomNumber = fullContainer.indexOf(atom);
             sortedAtoms[atomNumber] = atom;
             debugList.add(atom.getSymbol() + atomNumber);
         }
@@ -93,8 +93,8 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
         for (IBond bond : fullContainer.bonds()) {
             IAtom a0 = bond.getAtom(0);
             IAtom a1 = bond.getAtom(1);
-            int a0n = fullContainer.getAtomNumber(a0);
-            int a1n = fullContainer.getAtomNumber(a1);
+            int a0n = fullContainer.indexOf(a0);
+            int a1n = fullContainer.indexOf(a1);
             if (subgraphAtoms.contains(a0) && subgraphAtoms.contains(a1)) {
                 this.atomContainer.addBond(bond);
 //                System.out.println("adding bond " + a0n + " " + a1n);
@@ -129,7 +129,7 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
                 for (IAtom neighbour
                         : atomContainer.getConnectedAtomsList(atom)) {
                     if (subgraphAtoms.contains(neighbour)) {
-                        int index = atomContainer.getAtomNumber(neighbour);
+                        int index = atomContainer.indexOf(neighbour);
                         connectedIndices.add(index);
                     }
                 }

@@ -70,9 +70,9 @@ public class Block implements Comparable<Block> {
 
         Map<Integer, Integer> indexMap = new HashMap<>();
         for (IAtom atom : atomMap.keySet()) {
-            int atomIndex = atomContainer.getAtomNumber(atom);
+            int atomIndex = atomContainer.indexOf(atom);
             IAtom partnerAtom = atomMap.get(atom);
-            int partnerIndex = partner.atomContainer.getAtomNumber(partnerAtom);
+            int partnerIndex = partner.atomContainer.indexOf(partnerAtom);
             indexMap.put(atomIndex, partnerIndex);
         }
 //        System.out.println("indexMap " + indexMap);
@@ -236,7 +236,7 @@ public class Block implements Comparable<Block> {
     private List<Integer> getIndices(List<IAtom> atoms, IAtomContainer container) {
         List<Integer> indices = new ArrayList<>();
         for (IAtom atom : atoms) {
-            indices.add(container.getAtomNumber(atom));
+            indices.add(container.indexOf(atom));
         }
         return indices;
     }

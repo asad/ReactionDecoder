@@ -359,7 +359,7 @@ public abstract class Debugger extends BasicDebugger {
                         IAtom eAtom = mapping.getKey();
                         IAtom pAtom = mapping.getValue();
 
-                        out.println((mol1.getAtomNumber(eAtom) + 1) + " " + (mol2.getAtomNumber(pAtom) + 1));
+                        out.println((mol1.indexOf(eAtom) + 1) + " " + (mol2.indexOf(pAtom) + 1));
 
                         out.println(eAtom.getSymbol() + " "
                                 + pAtom.getSymbol());

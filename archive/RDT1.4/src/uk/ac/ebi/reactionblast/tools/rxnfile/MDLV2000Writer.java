@@ -649,11 +649,11 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                         || bond.getStereo() == DOWN_INVERTED
                         || bond.getStereo() == UP_OR_DOWN_INVERTED) {
                     // turn around atom coding to correct for inv stereo
-                    line = formatMDLInt(container.getAtomNumber(bond.getAtom(1)) + 1, 3);
-                    line += formatMDLInt(container.getAtomNumber(bond.getAtom(0)) + 1, 3);
+                    line = formatMDLInt(container.indexOf(bond.getAtom(1)) + 1, 3);
+                    line += formatMDLInt(container.indexOf(bond.getAtom(0)) + 1, 3);
                 } else {
-                    line = formatMDLInt(container.getAtomNumber(bond.getAtom(0)) + 1, 3);
-                    line += formatMDLInt(container.getAtomNumber(bond.getAtom(1)) + 1, 3);
+                    line = formatMDLInt(container.indexOf(bond.getAtom(0)) + 1, 3);
+                    line += formatMDLInt(container.indexOf(bond.getAtom(1)) + 1, 3);
                 }
                 int bondType;
                 if (writeAromaticBondTypes.isSet() && bond.getFlag(ISAROMATIC)) {

@@ -308,13 +308,13 @@ public class VF2Sub implements IResults {
                 if (RONP) {
                     qAtom = mapping.getKey();
                     tAtom = mapping.getValue();
-                    qIndex = source.getAtomNumber(qAtom);
-                    tIndex = target.getAtomNumber(tAtom);
+                    qIndex = source.indexOf(qAtom);
+                    tIndex = target.indexOf(tAtom);
                 } else {
                     tAtom = mapping.getKey();
                     qAtom = mapping.getValue();
-                    qIndex = source.getAtomNumber(qAtom);
-                    tIndex = target.getAtomNumber(tAtom);
+                    qIndex = source.indexOf(qAtom);
+                    tIndex = target.indexOf(tAtom);
                 }
 
                 if (qIndex != -1 && tIndex != -1) {

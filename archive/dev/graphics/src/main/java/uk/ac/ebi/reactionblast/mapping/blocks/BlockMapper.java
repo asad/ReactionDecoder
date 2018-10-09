@@ -132,7 +132,7 @@ public class BlockMapper {
         }
 
         public int getIndex() {
-            return atomContainer.getAtomNumber(atom);
+            return atomContainer.indexOf(atom);
         }
     }
 

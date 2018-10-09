@@ -1,6 +1,6 @@
 /* $Revision$ $Author$ $Date$
  *
- * Copyright (C) 2011-2017       Syed Asad Rahman <asad @ ebi.ac.uk>
+ * Copyright (C) 2011-2018       Syed Asad Rahman <asad @ ebi.ac.uk>
  *
  *
  * Contact: cdk-devel@lists.sourceforge.net

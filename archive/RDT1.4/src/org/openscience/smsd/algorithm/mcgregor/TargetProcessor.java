@@ -103,8 +103,8 @@ public class TargetProcessor {
 
         for (int atomIndex = 0; atomIndex < target.getBondCount(); atomIndex++) {
 
-            Integer indexI = target.getAtomNumber(target.getBond(atomIndex).getAtom(0));
-            Integer indexJ = target.getAtomNumber(target.getBond(atomIndex).getAtom(1));
+            Integer indexI = target.indexOf(target.getBond(atomIndex).getAtom(0));
+            Integer indexJ = target.indexOf(target.getBond(atomIndex).getAtom(1));
             IBond bond = target.getBond(atomIndex);
             Integer order = null;
             if (!(bond instanceof IQueryBond)) {

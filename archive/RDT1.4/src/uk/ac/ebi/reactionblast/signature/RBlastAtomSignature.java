@@ -145,7 +145,7 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
         int[] connected = new int[connectedAtoms.size()];
         int i = 0;
         for (IAtom connectedAtom : connectedAtoms) {
-            connected[i] = atomContainer.getAtomNumber(connectedAtom);
+            connected[i] = atomContainer.indexOf(connectedAtom);
             i++;
         }
         return connected;

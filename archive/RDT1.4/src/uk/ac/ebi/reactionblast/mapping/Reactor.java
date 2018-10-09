@@ -993,12 +993,12 @@ public class Reactor extends AbstractReactor implements Serializable {
 
             for (IAtom a : mol.atoms()) {
                 if (!a.getSymbol().equalsIgnoreCase("H")) {
-                    atom_index.add(mol.getAtomNumber(a));
+                    atom_index.add(mol.indexOf(a));
                 }
             }
             for (IAtom a : mol.atoms()) {
                 if (a.getSymbol().equalsIgnoreCase("H")) {
-                    atom_index.add(mol.getAtomNumber(a));
+                    atom_index.add(mol.indexOf(a));
                 }
             }
             int[] array = new int[atom_index.size()];
@@ -1025,12 +1025,12 @@ public class Reactor extends AbstractReactor implements Serializable {
             List<Integer> atom_index = new ArrayList<>();
             for (IAtom a : mol.atoms()) {
                 if (!a.getSymbol().equalsIgnoreCase("H")) {
-                    atom_index.add(mol.getAtomNumber(a));
+                    atom_index.add(mol.indexOf(a));
                 }
             }
             for (IAtom a : mol.atoms()) {
                 if (a.getSymbol().equalsIgnoreCase("H")) {
-                    atom_index.add(mol.getAtomNumber(a));
+                    atom_index.add(mol.indexOf(a));
                 }
             }
             int[] array = new int[atom_index.size()];
@@ -1111,7 +1111,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         for (IAtomContainer mol : pMolSet.atomContainers()) {
             TreeMap<Integer, Integer> mapping_rank = new TreeMap<>();
             for (IAtom a : mol.atoms()) {
-                mapping_rank.put((Integer) a.getProperty(ATOM_ATOM_MAPPING), mol.getAtomNumber(a));
+                mapping_rank.put((Integer) a.getProperty(ATOM_ATOM_MAPPING), mol.indexOf(a));
             }
             int[] mappingIndexPermutation = new int[mapping_rank.size()];
             int index = 0;

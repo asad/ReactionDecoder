@@ -430,18 +430,18 @@ public final class CDKRMapHandler {
                                         if (bondsToTest.contains(testBond2)) {
                                             CDKRMap map1;
                                             if (j == n) {
-                                                map1 = new CDKRMap(graph1.getAtomNumber(qAtoms[0]), graph2.getAtomNumber(tAtoms[0]));
+                                                map1 = new CDKRMap(graph1.indexOf(qAtoms[0]), graph2.indexOf(tAtoms[0]));
                                             } else {
-                                                map1 = new CDKRMap(graph1.getAtomNumber(qAtoms[1]), graph2.getAtomNumber(tAtoms[0]));
+                                                map1 = new CDKRMap(graph1.indexOf(qAtoms[1]), graph2.indexOf(tAtoms[0]));
                                             }
                                             if (!resultLocal.contains(map1)) {
                                                 resultLocal.add(map1);
                                             }
                                             CDKRMap map2;
                                             if (j == n) {
-                                                map2 = new CDKRMap(graph1.getAtomNumber(qAtoms[1]), graph2.getAtomNumber(tAtoms[1]));
+                                                map2 = new CDKRMap(graph1.indexOf(qAtoms[1]), graph2.indexOf(tAtoms[1]));
                                             } else {
-                                                map2 = new CDKRMap(graph1.getAtomNumber(qAtoms[0]), graph2.getAtomNumber(tAtoms[1]));
+                                                map2 = new CDKRMap(graph1.indexOf(qAtoms[0]), graph2.indexOf(tAtoms[1]));
                                             }
                                             if (!resultLocal.contains(map2)) {
                                                 resultLocal.add(map2);
@@ -495,10 +495,10 @@ public final class CDKRMapHandler {
 
                 if ((qbond.getAtom(0).getSymbol().equals(tbond.getAtom(0).getSymbol()))
                         && (qbond.getAtom(1).getSymbol().equals(tbond.getAtom(1).getSymbol()))) {
-                    map00 = new CDKRMap(sourceGraph.getAtomNumber(qbond.getAtom(0)),
-                            targetGraph.getAtomNumber(tbond.getAtom(0)));
-                    map11 = new CDKRMap(sourceGraph.getAtomNumber(qbond.getAtom(1)),
-                            targetGraph.getAtomNumber(tbond.getAtom(1)));
+                    map00 = new CDKRMap(sourceGraph.indexOf(qbond.getAtom(0)),
+                            targetGraph.indexOf(tbond.getAtom(0)));
+                    map11 = new CDKRMap(sourceGraph.indexOf(qbond.getAtom(1)),
+                            targetGraph.indexOf(tbond.getAtom(1)));
                     if (!result1.contains(map00)) {
                         result1.add(map00);
                     }
@@ -508,10 +508,10 @@ public final class CDKRMapHandler {
                 }
                 if ((qbond.getAtom(0).getSymbol().equals(tbond.getAtom(1).getSymbol()))
                         && (qbond.getAtom(1).getSymbol().equals(tbond.getAtom(0).getSymbol()))) {
-                    map01 = new CDKRMap(sourceGraph.getAtomNumber(qbond.getAtom(0)),
-                            targetGraph.getAtomNumber(tbond.getAtom(1)));
-                    map10 = new CDKRMap(sourceGraph.getAtomNumber(qbond.getAtom(1)),
-                            targetGraph.getAtomNumber(tbond.getAtom(0)));
+                    map01 = new CDKRMap(sourceGraph.indexOf(qbond.getAtom(0)),
+                            targetGraph.indexOf(tbond.getAtom(1)));
+                    map10 = new CDKRMap(sourceGraph.indexOf(qbond.getAtom(1)),
+                            targetGraph.indexOf(tbond.getAtom(0)));
                     if (!result2.contains(map01)) {
                         result2.add(map01);
                     }
@@ -608,8 +608,8 @@ public final class CDKRMapHandler {
 
 //                array1.add(sourceAtom);
 //                array2.add(targetAtom);
-                int indexI = source.getAtomNumber(sourceAtom);
-                int indexJ = target.getAtomNumber(targetAtom);
+                int indexI = source.indexOf(sourceAtom);
+                int indexJ = target.indexOf(targetAtom);
 
                 atomNumbersFromContainer.put(indexI, indexJ);
             }
@@ -647,8 +647,8 @@ public final class CDKRMapHandler {
 
 //            array1.add(sAtom);
 //            array2.add(tAtom);
-            int indexI = source.getAtomNumber(sAtom);
-            int indexJ = target.getAtomNumber(tAtom);
+            int indexI = source.indexOf(sAtom);
+            int indexJ = target.indexOf(tAtom);
 
             atomNumbersFromContainer.put(indexI, indexJ);
 

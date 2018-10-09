@@ -2,7 +2,7 @@
 /* $Revision$ $Author$ $Date$
  *
  * Copyright (C) 2002-2007  Stephane Werner <mail@ixelis.net>
- *               2009-2017  Syed Asad Rahman <asad@ebi.ac.uk>
+ *               2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
  *
  * This code has been kindly provided by Stephane Werner
  * and Thierry Hanser from IXELIS mail@ixelis.net.

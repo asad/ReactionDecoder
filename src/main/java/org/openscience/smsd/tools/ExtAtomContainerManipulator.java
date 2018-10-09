@@ -2,7 +2,7 @@ package org.openscience.smsd.tools;
 
 /**
  *
- * Copyright (C) 2006-2017 Syed Asad Rahman {asad@ebi.ac.uk}
+ * Copyright (C) 2006-2018 Syed Asad Rahman {asad@ebi.ac.uk}
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *

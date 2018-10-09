@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2017  Syed Asad Rahman <asad@ebi.ac.uk>
+ * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
  *                          Gilleain Torrance <gilleain.torrance@gmail.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -24,7 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  * 
- ** Copyright (C) 2009-2017 Kyle Lutz <kyle.r.lutz@gmail.com>
+ ** Copyright (C) 2009-2018 Kyle Lutz <kyle.r.lutz@gmail.com>
  **
  ** This file is part of chemkit. For more information see
  ** <http://www.chemkit.org>.

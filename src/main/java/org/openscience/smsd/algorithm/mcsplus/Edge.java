@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2009-2017  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
+ * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *

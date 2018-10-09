@@ -478,7 +478,7 @@ final public class CDKMCS {
             for (IAtom atom : g1.atoms()) {
                 if (defaultRGraphAtomMatcher.matches(atom)) {
                     List<CDKRMap> lmap = new ArrayList<>();
-                    lmap.add(new CDKRMap(g1.getAtomNumber(atom), 0));
+                    lmap.add(new CDKRMap(g1.indexOf(atom), 0));
                     matches.add(lmap);
                 }
             }
@@ -728,18 +728,18 @@ final public class CDKMCS {
                                     if (bondsToTest.contains(testBond2)) {
                                         CDKRMap map;
                                         if (j == n) {
-                                            map = new CDKRMap(g1.getAtomNumber(atom1[0]), g2.getAtomNumber(atom2[0]));
+                                            map = new CDKRMap(g1.indexOf(atom1[0]), g2.indexOf(atom2[0]));
                                         } else {
-                                            map = new CDKRMap(g1.getAtomNumber(atom1[1]), g2.getAtomNumber(atom2[0]));
+                                            map = new CDKRMap(g1.indexOf(atom1[1]), g2.indexOf(atom2[0]));
                                         }
                                         if (!result.contains(map)) {
                                             result.add(map);
                                         }
                                         CDKRMap map2;
                                         if (j == n) {
-                                            map2 = new CDKRMap(g1.getAtomNumber(atom1[1]), g2.getAtomNumber(atom2[1]));
+                                            map2 = new CDKRMap(g1.indexOf(atom1[1]), g2.indexOf(atom2[1]));
                                         } else {
-                                            map2 = new CDKRMap(g1.getAtomNumber(atom1[0]), g2.getAtomNumber(atom2[1]));
+                                            map2 = new CDKRMap(g1.indexOf(atom1[0]), g2.indexOf(atom2[1]));
                                         }
                                         if (!result.contains(map2)) {
                                             result.add(map2);

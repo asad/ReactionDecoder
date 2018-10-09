@@ -220,8 +220,8 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     qAtom = source.getAtom(solution.get(qAtomIndex));
                 }
                 
-                qIndex = source.getAtomNumber(qAtom);
-                tIndex = target.getAtomNumber(tAtom);
+                qIndex = source.indexOf(qAtom);
+                tIndex = target.indexOf(tAtom);
                 if (qIndex != -1 && tIndex != -1) {
                     atomatomMapping.put(qAtom, tAtom);
                 } else {

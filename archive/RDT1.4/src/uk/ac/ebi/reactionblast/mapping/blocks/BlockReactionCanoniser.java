@@ -211,7 +211,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
         final Map<IAtom, Integer> indexMap = new HashMap<>();
 
         for (IAtom atom : atoms) {
-            indexMap.put(atom, ac.getAtomNumber(atom));
+            indexMap.put(atom, ac.indexOf(atom));
         }
         Comparator<IAtom> sorter = new Comparator<IAtom>() {
 
@@ -343,7 +343,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             if (atom == null) {
                 // System.out.println("atom " + i + " is null");
             }
-            int index = container.getAtomNumber(atom);
+            int index = container.indexOf(atom);
             indices.add(index);
 
         } // System.out.println("list atoms " + indices);
@@ -358,7 +358,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             if (atom == null) {
                 out.println("atom " + i + " is null");
             }
-            int index = container.getAtomNumber(atom);
+            int index = container.indexOf(atom);
             indices.add(index);
 
         }
@@ -373,7 +373,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             if (atom == null) {
                 s += "!";
             } else {
-                s += atom.getSymbol() + ac.getAtomNumber(atom) + "("
+                s += atom.getSymbol() + ac.indexOf(atom) + "("
                         + atom.getID() + ")";
             }
         }
