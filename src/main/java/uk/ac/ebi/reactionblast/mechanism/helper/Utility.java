@@ -217,7 +217,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
     protected static int getAtomIndexByID(IAtomContainer molWithoutH, IAtom refAtom) {
         for (IAtom atom : molWithoutH.atoms()) {
             if (atom.getID().equalsIgnoreCase(refAtom.getID())) {
-                return molWithoutH.getAtomNumber(atom);
+                return molWithoutH.indexOf(atom);
             }
         }
         return -1;

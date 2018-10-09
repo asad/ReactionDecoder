@@ -91,9 +91,9 @@ public class StereoCenterAnalyser {
         ILigand[] ligands = new ILigand[4];
         int index = 0;
         VisitedAtoms bitSet = new VisitedAtoms();
-        int chiralAtomIndex = atomContainer.getAtomNumber(atom);
+        int chiralAtomIndex = atomContainer.indexOf(atom);
         for (IAtom neighbour : neighbours) {
-            int ligandAtomIndex = atomContainer.getAtomNumber(neighbour);
+            int ligandAtomIndex = atomContainer.indexOf(neighbour);
             ligands[index] = defineLigand(
                     atomContainer, bitSet, chiralAtomIndex, ligandAtomIndex);
             index++;

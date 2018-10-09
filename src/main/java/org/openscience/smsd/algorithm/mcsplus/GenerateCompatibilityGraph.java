@@ -216,8 +216,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
                 if (((atom instanceof IQueryAtom) && ((IQueryAtom) atom).matches(labelB.getKey()))
                         || (!(atom instanceof IQueryAtom) && atom.getSymbol().equals(labelB.getKey().getSymbol()))) {
 //                        System.err.println("labelB.getValue() " + labelB.getValue());
-                    int atomNumberI = source.getAtomNumber(labelA.getKey());
-                    int atomNumberJ = target.getAtomNumber(labelB.getKey());
+                    int atomNumberI = source.indexOf(labelA.getKey());
+                    int atomNumberJ = target.indexOf(labelB.getKey());
                     Edge e = new Edge(atomNumberI, atomNumberJ);
                     if (!edges.contains(e)) {
                         edges.add(e);

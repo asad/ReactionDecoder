@@ -622,7 +622,7 @@ public class MCSThread implements Callable<MCSSolution> {
             IAtom a1 = ref_new_atom.get(b.getAtom(0));
             IAtom a2 = ref_new_atom.get(b.getAtom(1));
             IBond.Order order = b.getOrder();
-            ac_new.addBond(ac_new.getAtomNumber(a1), ac_new.getAtomNumber(a2), order);
+            ac_new.addBond(ac_new.indexOf(a1), ac_new.indexOf(a2), order);
         }
 
         ac_new.setID(ac.getID());

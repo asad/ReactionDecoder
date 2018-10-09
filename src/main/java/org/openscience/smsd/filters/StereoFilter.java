@@ -369,7 +369,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
             return new ArrayList<>(2);
         }
         List<IAtom> list = new ArrayList<>(atomsMCS.size());
-        atomsMCS.stream().map((atom) -> molecule.getAtomNumber(atom)).forEach((post) -> {
+        atomsMCS.stream().map((atom) -> molecule.indexOf(atom)).forEach((post) -> {
             list.add(subgraphContainer.getAtom(post));
         });
 

@@ -508,7 +508,7 @@ public class RBlastSmilesGenerator {
                     }
                 }
                 String[] morgannumbers = getMorganNumbersWithElementSymbol(container);
-                if ((one != null && two == null && atom.getSymbol().equals("N") && abs(giveAngleBothMethods(parent, atom, one, true)) > PI / 10) || (!atom.getSymbol().equals("N") && one != null && two != null && !morgannumbers[container.getAtomNumber(one)].equals(morgannumbers[container.getAtomNumber(two)]))) {
+                if ((one != null && two == null && atom.getSymbol().equals("N") && abs(giveAngleBothMethods(parent, atom, one, true)) > PI / 10) || (!atom.getSymbol().equals("N") && one != null && two != null && !morgannumbers[container.indexOf(one)].equals(morgannumbers[container.indexOf(two)]))) {
                     return (true);
                 } else {
                     return (false);
@@ -553,7 +553,7 @@ public class RBlastSmilesGenerator {
             }
         }
         String[] morgannumbers = getMorganNumbersWithElementSymbol(container);
-        if (one != null && ((!a.getSymbol().equals("N") && two != null && !morgannumbers[container.getAtomNumber(one)].equals(morgannumbers[container.getAtomNumber(two)]) && doubleBond && doubleBondConfiguration[container.getBondNumber(a, nextAtom)]) || (doubleBond && a.getSymbol().equals("N") && abs(giveAngleBothMethods(nextAtom, a, parent, true)) > PI / 10))) {
+        if (one != null && ((!a.getSymbol().equals("N") && two != null && !morgannumbers[container.indexOf(one)].equals(morgannumbers[container.indexOf(two)]) && doubleBond && doubleBondConfiguration[container.getBondNumber(a, nextAtom)]) || (doubleBond && a.getSymbol().equals("N") && abs(giveAngleBothMethods(nextAtom, a, parent, true)) > PI / 10))) {
             return (true);
         } else {
             return (false);
@@ -614,8 +614,8 @@ public class RBlastSmilesGenerator {
         List<IAtom> v = container.getConnectedAtomsList(a);
         if (v.size() > 1) {
             sort(v, (IAtom a1, IAtom a2) -> {
-                int l1 = canonicalLabels[container.getAtomNumber(a1)];
-                int l2 = canonicalLabels[container.getAtomNumber(a2)];
+                int l1 = canonicalLabels[container.indexOf(a1)];
+                int l2 = canonicalLabels[container.indexOf(a2)];
                 if (l1 < l2) {
                     return -1;
                 } else if (l1 > l2) {

@@ -288,7 +288,7 @@ final class State {
 
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(sourceAtom));
-        sourceNeighbours.stream().map((neighbor) -> source.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
+        sourceNeighbours.stream().map((neighbor) -> source.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
             sharedState.sourceTerminalSet[neighbourIndex] = size;
             return neighbourIndex;
         }).forEach((_item) -> {
@@ -296,7 +296,7 @@ final class State {
         });
 
         List<IAtom> targetNeighbours = target.getConnectedAtomsList(target.getAtom(targetAtom));
-        targetNeighbours.stream().map((neighbor) -> target.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
+        targetNeighbours.stream().map((neighbor) -> target.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
             sharedState.targetTerminalSet[neighbourIndex] = size;
             return neighbourIndex;
         }).forEach((_item) -> {
@@ -319,7 +319,7 @@ final class State {
 
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(addedSourceAtom));
-        sourceNeighbours.stream().map((neighbor) -> source.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
+        sourceNeighbours.stream().map((neighbor) -> source.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
             sharedState.sourceTerminalSet[neighbourIndex] = 0;
         });
 
@@ -331,7 +331,7 @@ final class State {
 
         List<IAtom> targetNeighbours
                 = target.getConnectedAtomsList(target.getAtom(addedTargetAtom));
-        targetNeighbours.stream().map((neighbor) -> target.getAtomNumber(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
+        targetNeighbours.stream().map((neighbor) -> target.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
             sharedState.targetTerminalSet[neighbourIndex] = 0;
         });
 
@@ -364,7 +364,7 @@ final class State {
                 = source.getConnectedAtomsList(source.getAtom(sourceAtom));
 
         for (IAtom neighbour : sourceNeighbours) {
-            int neighbourIndex = source.getAtomNumber(neighbour);
+            int neighbourIndex = source.indexOf(neighbour);
 
             IAtom sourceAtomAtom = source.getAtom(sourceAtom);
             IBond sourceBond = source.getBond(sourceAtomAtom, neighbour);
@@ -393,7 +393,7 @@ final class State {
         List<IAtom> targetNeighbours
                 = target.getConnectedAtomsList(target.getAtom(targetAtom));
         for (IAtom neighbour : targetNeighbours) {
-            int neighbourIndex = target.getAtomNumber(neighbour);
+            int neighbourIndex = target.indexOf(neighbour);
             if (sharedState.targetMapping[neighbourIndex] != -1) {
 //                    int sourceNeighbor = sharedState.targetMapping[neighbourIndex];
 //                    IAtom sourceNeighbourAtom = source.getAtom(sourceNeighbor);

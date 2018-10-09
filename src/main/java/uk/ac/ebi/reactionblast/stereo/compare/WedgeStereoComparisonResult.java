@@ -69,7 +69,7 @@ public class WedgeStereoComparisonResult {
      * @return
      */
     public int getIndexOfFirst() {
-        return firstAtomContainer.getAtomNumber(firstAtom);
+        return firstAtomContainer.indexOf(firstAtom);
     }
 
     /**
@@ -85,7 +85,7 @@ public class WedgeStereoComparisonResult {
      * @return
      */
     public int getIndexOfSecond() {
-        return secondAtomContainer.getAtomNumber(secondAtom);
+        return secondAtomContainer.indexOf(secondAtom);
     }
 
     /**
@@ -132,13 +132,13 @@ public class WedgeStereoComparisonResult {
     public String toString() {
         String firstID;
         if (firstAtom.getID() == null) {
-            firstID = valueOf(firstAtomContainer.getAtomNumber(firstAtom));
+            firstID = valueOf(firstAtomContainer.indexOf(firstAtom));
         } else {
             firstID = firstAtom.getID();
         }
         String secondID;
         if (secondAtom.getID() == null) {
-            secondID = valueOf(secondAtomContainer.getAtomNumber(secondAtom));
+            secondID = valueOf(secondAtomContainer.indexOf(secondAtom));
         } else {
             secondID = secondAtom.getID();
         }

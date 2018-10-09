@@ -131,8 +131,8 @@ public class McGregor extends Utility {
         MoleculeHandler file1 = new MoleculeHandler(f1, shouldMatchBonds);
         MoleculeHandler file2 = new MoleculeHandler(f2, shouldMatchBonds);
 
-        this.atom_number1 = file1.getAtomNumber();
-        this.atom_number2 = file2.getAtomNumber();
+        this.atom_number1 = file1.indexOf();
+        this.atom_number2 = file2.indexOf();
         this.atom_num_H_1 = file1.getStartHatom_num();
         this.atom_num_H_2 = file2.getStartHatom_num();
         this.bond_number1 = file1.getBondNumber();

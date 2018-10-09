@@ -55,7 +55,7 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
             IAtomContainer clone = container.clone();
             for (IAtom a : container.atoms()) {
                 if (a.getID() != null) {
-                    int index = container.getAtomNumber(a);
+                    int index = container.indexOf(a);
                     clone.getAtom(index).setID(a.getID());
                 }
             }
