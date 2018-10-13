@@ -10,6 +10,10 @@ Introduction
 
 `3. Reaction Comparator (Reaction Similarity based on the Bond Changes, Reaction Centres or Substructures)`
 
+Contact
+============
+Author: Dr. Syed Asad Rahman,
+e-mail: asad.rahman@bioinception.com
 
 Installation
 ============
