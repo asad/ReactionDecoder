@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.algorithm.mcsplus2;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,7 +49,7 @@ import org.openscience.smsd.helper.LabelContainer;
  * 
  * 
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public final class GenerateCompatibilityGraph implements Serializable {
 

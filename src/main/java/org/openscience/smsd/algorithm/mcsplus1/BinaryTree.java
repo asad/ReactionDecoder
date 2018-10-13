@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
+/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,7 +24,7 @@ package org.openscience.smsd.algorithm.mcsplus1;
 
 /**
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * the second part of the program extents the mapping by the McGregor algorithm
  * in case that not all atoms of molecule A and molecule B are mapped by the

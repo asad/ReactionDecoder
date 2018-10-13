@@ -64,7 +64,7 @@ import org.openscience.cdk.tools.manipulator.RingSetManipulator;
  *
  *
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class ExtAtomContainerManipulator extends AtomContainerManipulator implements Serializable {
 

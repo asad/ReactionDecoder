@@ -1,6 +1,6 @@
 
 /* Copyright (C) 2005-2006 Markus Leber
- *               2006-2018 Syed Asad Rahman <asad@ebi.ac.uk>
+ *               2006-2018 Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -48,7 +48,7 @@ import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_str
  *
  *
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class McGregor extends Utility {
 

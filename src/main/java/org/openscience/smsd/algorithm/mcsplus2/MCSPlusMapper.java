@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
+/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.algorithm.mcsplus2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +37,11 @@ import org.openscience.smsd.interfaces.IResults;
 
 /**
  * This class acts as a handler class for MCSPlus algorithm.
- * {@link org.openscience.smsd.algorithm.mcsplus.MCSPlus}
+ * {@link org.openscience.smsd.algorithm.mcsplus2.MCSPlus}
  *
  *
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public final class MCSPlusMapper implements IResults {
 

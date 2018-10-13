@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
+ * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -106,7 +106,7 @@ import org.openscience.smsd.interfaces.IResults;
  *
  *
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  *
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
@@ -251,9 +251,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private synchronized boolean mcsPlusAlgorithm() {
         IResults mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
         } else if (isMatchBonds()) {
-            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         } else {
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }

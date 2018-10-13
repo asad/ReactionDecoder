@@ -1,6 +1,6 @@
 
 /* Copyright (C) 2005-2006 Markus Leber
- *               2006-2009 Syed Asad Rahman <asad@ebi.ac.uk>
+ *               2006-2009 Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -35,7 +35,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
  *
  * 
  * 
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class QueryProcessor {
 

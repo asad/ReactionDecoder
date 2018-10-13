@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Syed Asad Rahman <asad at ebi.ac.uk>.
+ * Copyright (C) 2014-2018 Syed Asad Rahman <asad at ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,8 +33,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.mcsplus.BKKCKCF;
-import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraph;
+import org.openscience.smsd.algorithm.mcsplus2.BKKCKCF;
+import org.openscience.smsd.algorithm.mcsplus2.GenerateCompatibilityGraph;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.interfaces.Algorithm;
 

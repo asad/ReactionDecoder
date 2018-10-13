@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ac.uk>
+ * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
  *                          Gilleain Torrance <gilleain.torrance@gmail.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
@@ -51,7 +51,7 @@ package org.openscience.smsd.algorithm.vflib.substructure;
  *
  *
  *
- * @author Syed Asad Rahman <asad@ebi.ac.uk>
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 /**
  * @param <T>
