@@ -24,7 +24,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  *
- * @author arahman
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class MCSTest {
 

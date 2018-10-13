@@ -20,7 +20,7 @@ import org.openscience.smsd.interfaces.Algorithm;
 
 /**
  *
- * @author asad
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class SMSDTest {
 
