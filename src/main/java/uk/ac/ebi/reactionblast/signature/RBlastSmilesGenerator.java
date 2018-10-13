@@ -484,13 +484,16 @@ public class RBlastSmilesGenerator {
      * @return false=is not end of configuration, true=is
      */
     private boolean isEndOfDoubleBond(IAtomContainer container, IAtom atom, IAtom parent, boolean[] doubleBondConfiguration) {
-        if (container.getBondNumber(atom, parent) == -1 || doubleBondConfiguration.length <= container.getBondNumber(atom, parent) || !doubleBondConfiguration[container.getBondNumber(atom, parent)]) {
+        IBond bond = container.getBond(atom, parent);
+        if (bond != null
+                || doubleBondConfiguration.length <= container.indexOf(bond)
+                || !doubleBondConfiguration[container.indexOf(bond)]) {
             return false;
         }
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
-        int lengthAtom = container.getConnectedAtomsCount(atom) + ((Objects.equals(atom.getImplicitHydrogenCount(), UNSET)) ? 0 : atom.getImplicitHydrogenCount());
+        int lengthAtom = container.getConnectedBondsCount(atom) + ((Objects.equals(atom.getImplicitHydrogenCount(), UNSET)) ? 0 : atom.getImplicitHydrogenCount());
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
-        int lengthParent = container.getConnectedAtomsCount(parent) + ((Objects.equals(parent.getImplicitHydrogenCount(), UNSET)) ? 0 : parent.getImplicitHydrogenCount());
+        int lengthParent = container.getConnectedBondsCount(parent) + ((Objects.equals(parent.getImplicitHydrogenCount(), UNSET)) ? 0 : parent.getImplicitHydrogenCount());
         if (container.getBond(atom, parent) != null) {
             if (container.getBond(atom, parent).getOrder() == IBond.Order.DOUBLE
                     && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N")))
@@ -531,7 +534,7 @@ public class RBlastSmilesGenerator {
      */
     private boolean isStartOfDoubleBond(IAtomContainer container, IAtom a, IAtom parent, boolean[] doubleBondConfiguration) {
         // TO-DO: We make the silent assumption of unset hydrogen count equals zero hydrogen count here.
-        int lengthAtom = container.getConnectedAtomsCount(a) + ((Objects.equals(a.getImplicitHydrogenCount(), UNSET)) ? 0 : a.getImplicitHydrogenCount());
+        int lengthAtom = container.getConnectedBondsCount(a) + ((Objects.equals(a.getImplicitHydrogenCount(), UNSET)) ? 0 : a.getImplicitHydrogenCount());
         if (lengthAtom != 3 && (lengthAtom != 2 && !a.getSymbol().equals("N"))) {
             return (false);
         }
@@ -553,7 +556,15 @@ public class RBlastSmilesGenerator {
             }
         }
         String[] morgannumbers = getMorganNumbersWithElementSymbol(container);
-        if (one != null && ((!a.getSymbol().equals("N") && two != null && !morgannumbers[container.indexOf(one)].equals(morgannumbers[container.indexOf(two)]) && doubleBond && doubleBondConfiguration[container.getBondNumber(a, nextAtom)]) || (doubleBond && a.getSymbol().equals("N") && abs(giveAngleBothMethods(nextAtom, a, parent, true)) > PI / 10))) {
+
+        IBond bond = container.getBond(a, nextAtom);
+        if (bond == null) {
+            return false;
+        }
+        if (one != null && ((!a.getSymbol().equals("N") && two != null
+                && !morgannumbers[container.indexOf(one)].equals(morgannumbers[container.indexOf(two)])
+                && doubleBond && doubleBondConfiguration[container.indexOf(bond)])
+                || (doubleBond && a.getSymbol().equals("N") && abs(giveAngleBothMethods(nextAtom, a, parent, true)) > PI / 10))) {
             return (true);
         } else {
             return (false);
@@ -1124,7 +1135,7 @@ public class RBlastSmilesGenerator {
                         }
                     }
                     if (isTrigonalBipyramidalOrOctahedral(container, atom) != 0) {
-                        sorted = new IAtom[container.getConnectedAtomsCount(atom) - 1];
+                        sorted = new IAtom[container.getConnectedBondsCount(atom) - 1];
                         TreeMap hm = new TreeMap();
                         if (container.getBond(parent, atom).getStereo() == IBond.Stereo.UP) {
                             for (int i = 0; i < chiralNeighbours.size(); i++) {
@@ -1193,7 +1204,7 @@ public class RBlastSmilesGenerator {
                     if (sorted != null) {
                         int numberOfAtoms = 3;
                         if (isTrigonalBipyramidalOrOctahedral(container, atom) != 0) {
-                            numberOfAtoms = container.getConnectedAtomsCount(atom) - 1;
+                            numberOfAtoms = container.getConnectedBondsCount(atom) - 1;
                         }
                         Object[] omy = new Object[numberOfAtoms];
                         Object[] onew = new Object[numberOfAtoms];

@@ -70,7 +70,7 @@ public class SingleDownWedgeRule extends WedgeRule {
         IAtom[] ligandAtoms = new IAtom[4];
         for (int index = 0; index < 3; index++) {
             IBond bond = bonds.get(permutation[index]);
-            ligandAtoms[index] = bond.getConnectedAtom(centralAtom);
+            ligandAtoms[index] = bond.getOther(centralAtom);
         }
         IChemObjectBuilder builder = centralAtom.getBuilder();
         IAtom explicitHydrogen = builder.newInstance(IAtom.class, "H");

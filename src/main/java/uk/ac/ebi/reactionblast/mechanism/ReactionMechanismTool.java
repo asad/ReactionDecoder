@@ -108,7 +108,7 @@ public class ReactionMechanismTool implements Serializable {
      */
     public ReactionMechanismTool(IReaction reaction, boolean forcedMapping,
             boolean generate2D, boolean generate3D, IStandardizer standardizer) throws CDKException, AssertionError, Exception {
-        this.allSolutions = synchronizedList(new ArrayList<MappingSolution>());
+        this.allSolutions = synchronizedList(new ArrayList<>());
         this.selectedMapping = null;
 
         /*
@@ -131,7 +131,6 @@ public class ReactionMechanismTool implements Serializable {
                 return;
             }
         }
-
         if (!forcedMapping && reaction.getFlag(MAPPED)
                 && getAtomCount(reaction.getReactants())
                 == reaction.getMappingCount()) {
@@ -170,7 +169,6 @@ public class ReactionMechanismTool implements Serializable {
                 if (DEBUG) {
                     SmilesGenerator withAtomClasses = new SmilesGenerator(
                             SmiFlavor.Unique
-                            | SmiFlavor.UseAromaticSymbols
                             | SmiFlavor.AtomAtomMap);
                     err.println("Input reaction mapped " + withAtomClasses.create(reaction));
                 }
@@ -179,19 +177,26 @@ public class ReactionMechanismTool implements Serializable {
                 CallableAtomMappingTool amt
                         = new CallableAtomMappingTool(reaction, standardizer, onlyCoreMappingByMCS);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
+
                 LOGGER.info("!!!!Calculating Best Mapping Model!!!!");
                 boolean selected;
                 for (IMappingAlgorithm algorithm : solutions.keySet()) {
+
                     Reactor reactor = solutions.get(algorithm);
+
+                    if (reactor == null) {
+                        System.out.println("Reactor is NULL");
+                        return;
+                    }
 
                     if (DEBUG) {
 
                         SmilesGenerator withAtomClasses = new SmilesGenerator(
                                 SmiFlavor.Unique
-                                | SmiFlavor.UseAromaticSymbols
                                 | SmiFlavor.AtomAtomMap);
                         out.println("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
                     }
+
                     int atomCountR = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getReactants());
                     int atomCountP = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getProducts());
 
@@ -208,7 +213,7 @@ public class ReactionMechanismTool implements Serializable {
                 gc();
             } catch (Exception e) {
                 String ls = getProperty("line.separator");
-                throw new CDKException(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
+                throw new Exception(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
             }
 //            System.out.println(this.getMappingDescription());
         }
@@ -291,7 +296,11 @@ public class ReactionMechanismTool implements Serializable {
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
 
-    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor, IMappingAlgorithm ma, IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor,
+            IMappingAlgorithm ma,
+            IReaction reaction,
+            boolean generate2D,
+            boolean generate3D) throws Exception {
 
         boolean chosen = false;
         try {
@@ -330,7 +339,9 @@ public class ReactionMechanismTool implements Serializable {
                 if (reactor == null) {
                     throw new CDKException("Reactor is NULL");
                 }
+
                 bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
+
                 fragmentDeltaChanges = reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
@@ -379,7 +390,7 @@ public class ReactionMechanismTool implements Serializable {
             }
         } catch (Exception e) {
             String ls = getProperty("line.separator");
-            throw new CDKException(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
+            throw new Exception(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
         }
         return chosen;
     }

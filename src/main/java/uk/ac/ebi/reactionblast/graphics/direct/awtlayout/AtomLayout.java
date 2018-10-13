@@ -139,7 +139,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
                             && (molecule == null
-                            || molecule.getConnectedAtomsCount(atom) == 0)) {
+                            || molecule.getConnectedBondsCount(atom) == 0)) {
                         suggestedPosition = W;
                     }
 

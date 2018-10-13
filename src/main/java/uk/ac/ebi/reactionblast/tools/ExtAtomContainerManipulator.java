@@ -398,10 +398,13 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         try {
             percieveAtomTypesAndConfigureAtoms(mol);
             for (IAtom a : mol.atoms()) {
+                if (a == null) {
+                    continue;
+                }
                 if (!(a instanceof IPseudoAtom)) {
                     try {
                         hydAdder.addImplicitHydrogens(mol, a);
-                    } catch (Exception e) {
+                    } catch (CDKException e) {
                         a.setImplicitHydrogenCount(0);
                         System.err.println("WARNING: Error in adding Hydrogen" + ":" + a.getSymbol());
                         logger.log(Level.WARNING, "This might effect the final calculations!");

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
@@ -29,9 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
+import org.openscience.cdk.exception.Intractable;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -43,6 +44,7 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  * @author asad
  */
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
+
     private static final Logger LOG = getLogger(DirectMoleculeDrawer.class.getName());
 
     private Font moleculeIDFont;
@@ -69,7 +71,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
             highlightDrawer = new SimpleHighlighter(params);
         }
         highlightDrawers.add(highlightDrawer);
-        
+
         labelManager = new LabelManager();
         atomDrawer = new DirectAtomDrawer(params, labelManager);
         bondDrawer = new DirectBondDrawer(params, labelManager);
@@ -82,7 +84,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     public DirectMoleculeDrawer() {
         this(new Params());
     }
-    
+
     /**
      *
      * @param chirals
@@ -99,7 +101,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     public Rectangle2D getDrawnBounds(List<IAtom> atoms) {
         return atomDrawer.getDrawnBounds(atoms);
     }
-    
+
     /**
      * Removes all the highlights from the drawer.
      */
@@ -108,10 +110,10 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
             highlightDrawer.clearHighlights();
         }
     }
-    
+
     /**
      * Get the first highlighter in the list, or create one if none exists.
-     * 
+     *
      * @return a highlighter
      */
     public Highlighter getFirstHighlighter() {
@@ -128,34 +130,34 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         }
         return highlightDrawer;
     }
-    
+
     /**
      * Get the list of highlighters.
-     * 
-     * @return a reference to the list of highlight drawers 
+     *
+     * @return a reference to the list of highlight drawers
      */
     public List<Highlighter> getHighlighters() {
         return highlightDrawers;
     }
-    
+
     /**
      * Add a highlighter to the list.
-     * 
+     *
      * @param highlighter a class implementing the highlighter interface
      */
     public void addHighlighter(Highlighter highlighter) {
         this.highlightDrawers.add(highlighter);
     }
-    
+
     /**
-     * Set the highlights for all atoms and bonds in the highlight container
-     * to this color.
-     * 
+     * Set the highlights for all atoms and bonds in the highlight container to
+     * this color.
+     *
      * @param highlightContainer
      * @param color
      */
     public void addHighlights(IAtomContainer highlightContainer, Color color) {
-        Highlighter highlightDrawer = getFirstHighlighter(); 
+        Highlighter highlightDrawer = getFirstHighlighter();
         highlightDrawer.addHighlights(highlightContainer, color);
     }
 
@@ -174,9 +176,9 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     }
 
     /**
-     * Set the highlights for all atoms and bonds in the container to the 
-     * color set in Params.highlightColor.
-     * 
+     * Set the highlights for all atoms and bonds in the container to the color
+     * set in Params.highlightColor.
+     *
      * @param highlightContainer
      */
     public void addHighlights(IAtomContainer highlightContainer) {
@@ -184,9 +186,9 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     }
 
     /**
-     * Set the highlights for all the atoms and bonds to the color in 
+     * Set the highlights for all the atoms and bonds to the color in
      * Params.highlightColor.
-     * 
+     *
      * @param atoms
      * @param bonds
      */
@@ -198,7 +200,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     /**
      * Set the highlights for all the atoms in the list to the color in
      * Params.highlightColor.
-     * 
+     *
      * @param atoms
      */
     public void addHighlights(List<IAtom> atoms) {
@@ -222,7 +224,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     public void drawMolecule(IAtomContainer molecule, Graphics2D g) {
         // reset label manager
         labelManager.reset();
-        
+
         // setup fonts
         atomDrawer.setAtomSymbolFont(new Font("ROMAN", PLAIN, params.atomSymbolFontSize));
         atomDrawer.setSubscriptFont(new Font("ROMAN", PLAIN, params.subscriptTextSize));
@@ -242,7 +244,11 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         }
 
         atomDrawer.setChirals(chiralMap);
-        bondDrawer.drawBonds(molecule, g);
+        try {
+            bondDrawer.drawBonds(molecule, g);
+        } catch (Intractable ex) {
+            Logger.getLogger(DirectMoleculeDrawer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         atomDrawer.drawAtoms(molecule, g);
 
         if (params.drawHighlights && params.highlightsAbove) {

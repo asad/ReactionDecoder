@@ -110,7 +110,7 @@ public final class AtomAtomMapping implements Serializable {
         this.query = query;
         this.target = target;
         mapping = new TreeMap<>(new MyQueryIAtomComp());
-        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<>());
     }
 
     /**
@@ -327,7 +327,7 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));

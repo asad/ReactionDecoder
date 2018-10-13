@@ -323,7 +323,7 @@ public abstract class MDLReaderBase extends DefaultChemObjectReader {
         List<IBond> bondsOfAliasAtom = outputContainer.getConnectedBondsList(aliasAtom);
         for (int i = 0; i < bondsOfAliasAtom.size(); i++) {
             IBond bondOfAliasAtom = bondsOfAliasAtom.get(i);
-            IAtom connectedToAliasAtom = bondOfAliasAtom.getConnectedAtom(aliasAtom);
+            IAtom connectedToAliasAtom = bondOfAliasAtom.getOther(aliasAtom);
             IBond newBond = bondOfAliasAtom.getBuilder().newInstance(IBond.class);
             newBond.setAtoms(new IAtom[]{connectedToAliasAtom, newPseudoAtom});
             newBond.setOrder(bondOfAliasAtom.getOrder());

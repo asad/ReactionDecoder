@@ -89,7 +89,7 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
 
             // might need refinement
             if (SP3.equals(atom.getHybridization())
-                    && container.getConnectedAtomsCount(atom) > 2
+                    && container.getConnectedBondsCount(atom) > 2
                     && atom.getFormalNeighbourCount() == 4
                     && hasStereoBonds(container, atom)) {
                 TetrahedralCentre<IAtom> centre = new TetrahedralCentre<>(manager.getDescriptor(atom), atom);
@@ -102,8 +102,8 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
         // planar centres
         for (IBond bond : container.bonds()) {
             if (DOUBLE.equals(bond.getOrder())
-                    && container.getConnectedAtomsCount(bond.getAtom(0)) > 1
-                    && container.getConnectedAtomsCount(bond.getAtom(1)) > 1
+                    && container.getConnectedBondsCount(bond.getAtom(0)) > 1
+                    && container.getConnectedBondsCount(bond.getAtom(1)) > 1
                     && bond.getFlag(ISAROMATIC) == FALSE
                     && onlyConnectedToSingleBonds(bond, container)
                     && !getCyclicFragments().contains(bond)

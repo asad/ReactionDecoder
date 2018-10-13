@@ -423,7 +423,7 @@ public final class CDKRMapHandler {
                             IBond testBond = bondsConnectedToAtom1j1;
                             for (CDKRMap rMapList1 : rMapList) {
                                 IBond testBond2;
-                                if ((rMapList1).getId1() == graph1.getBondNumber(testBond)) {
+                                if ((rMapList1).getId1() == graph1.indexOf(testBond)) {
                                     testBond2 = graph2.getBond((rMapList1).getId2());
                                     for (int n = 0; n < 2; n++) {
                                         List<IBond> bondsToTest = graph2.getConnectedBondsList(tAtoms[n]);

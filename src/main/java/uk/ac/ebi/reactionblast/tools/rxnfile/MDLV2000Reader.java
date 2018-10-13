@@ -1743,21 +1743,32 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             String chargeCodeString = line.substring(36, 39).trim();
             logger.debug("Atom charge code: ", chargeCodeString);
             int chargeCode = Integer.parseInt(chargeCodeString);
-            if (chargeCode == 0) {
-                // uncharged species
-            } else if (chargeCode == 1) {
-                atom.setFormalCharge(+3);
-            } else if (chargeCode == 2) {
-                atom.setFormalCharge(+2);
-            } else if (chargeCode == 3) {
-                atom.setFormalCharge(+1);
-            } else if (chargeCode == 4) {
-            } else if (chargeCode == 5) {
-                atom.setFormalCharge(-1);
-            } else if (chargeCode == 6) {
-                atom.setFormalCharge(-2);
-            } else if (chargeCode == 7) {
-                atom.setFormalCharge(-3);
+            switch (chargeCode) {
+            // uncharged species
+                case 0:
+                    break;
+                case 1:
+                    atom.setFormalCharge(+3);
+                    break;
+                case 2:
+                    atom.setFormalCharge(+2);
+                    break;
+                case 3:
+                    atom.setFormalCharge(+1);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    atom.setFormalCharge(-1);
+                    break;
+                case 6:
+                    atom.setFormalCharge(-2);
+                    break;
+                case 7:
+                    atom.setFormalCharge(-3);
+                    break;
+                default:
+                    break;
             }
         } else {
             handleError("Atom charge is missing", linecount, 36, 39);

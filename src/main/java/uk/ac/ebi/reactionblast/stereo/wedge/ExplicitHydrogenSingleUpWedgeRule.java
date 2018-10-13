@@ -69,7 +69,7 @@ public class ExplicitHydrogenSingleUpWedgeRule extends WedgeRule {
         IAtom[] ligandAtoms = new IAtom[4];
         for (int index = 0; index < 4; index++) {
             IBond bond = bonds.get(permutation[index]);
-            ligandAtoms[index] = bond.getConnectedAtom(centralAtom);
+            ligandAtoms[index] = bond.getOther(centralAtom);
         }
         ITetrahedralChirality.Stereo chirality = CLOCKWISE;
         return new TetrahedralChirality(centralAtom, ligandAtoms, chirality);

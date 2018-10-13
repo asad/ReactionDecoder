@@ -50,7 +50,7 @@ public class ExactMapping {
      */
     private static List<Integer> extractCliqueMapping(List<Integer> comp_graph_nodes, List<Integer> clique_List_org) {
 
-        List<Integer> clique_mapping = Collections.synchronizedList(new ArrayList<Integer>());
+        List<Integer> clique_mapping = Collections.synchronizedList(new ArrayList<>());
         List<Integer> clique_List = new ArrayList<>(clique_List_org);
         int clique_siz = clique_List.size();
         int vec_size = comp_graph_nodes.size();

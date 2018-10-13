@@ -149,15 +149,15 @@ public class Reactor extends AbstractReactor implements Serializable {
         this.reactionWithUniqueSTOICHIOMETRY = reaction.getBuilder().newInstance(IReaction.class);
         this.balanceFlag = true;
 
-        this.inputRankLabelledAtomsReactant = synchronizedMap(new HashMap<Integer, Integer>());
-        this.inputRankLabelledAtomsProduct = synchronizedMap(new HashMap<Integer, Integer>());
-        this.rLabelledAtoms = synchronizedMap(new HashMap<Integer, Integer>());
-        this.pLabelledAtoms = synchronizedMap(new HashMap<Integer, Integer>());
-        this.rBonds = synchronizedList(new ArrayList<IBond>());
-        this.pBonds = synchronizedList(new ArrayList<IBond>());
+        this.inputRankLabelledAtomsReactant = synchronizedMap(new HashMap<>());
+        this.inputRankLabelledAtomsProduct = synchronizedMap(new HashMap<>());
+        this.rLabelledAtoms = synchronizedMap(new HashMap<>());
+        this.pLabelledAtoms = synchronizedMap(new HashMap<>());
+        this.rBonds = synchronizedList(new ArrayList<>());
+        this.pBonds = synchronizedList(new ArrayList<>());
 
-        this.educts = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
-        this.products = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+        this.educts = synchronizedSortedMap(new TreeMap<>());
+        this.products = synchronizedSortedMap(new TreeMap<>());
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
@@ -188,7 +188,15 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     @Override
     public String toString() {
-        SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+        //SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+        SmilesGenerator smiles;
+        if (partialMapping) {
+            //else CDKToBeam throws an error "Aromatic bond connects non-aromatic atomic atoms"
+            smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.AtomAtomMap);
+        } else {
+            smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+        }
+
         String createReactionSMILES = "";
         try {
             createReactionSMILES = smiles.create(reactionWithUniqueSTOICHIOMETRY);
@@ -262,8 +270,8 @@ public class Reactor extends AbstractReactor implements Serializable {
 
         reactionWithUniqueSTOICHIOMETRY.setID(
                 reactionWithSTOICHIOMETRY.getID() == null
-                        ? "MappedReaction (ecBLAST)"
-                        : reactionWithSTOICHIOMETRY.getID());
+                ? "MappedReaction (ecBLAST)"
+                : reactionWithSTOICHIOMETRY.getID());
         reactionWithUniqueSTOICHIOMETRY.setDirection(reactionWithSTOICHIOMETRY.getDirection() == null
                 ? BIDIRECTIONAL
                 : reactionWithSTOICHIOMETRY.getDirection());

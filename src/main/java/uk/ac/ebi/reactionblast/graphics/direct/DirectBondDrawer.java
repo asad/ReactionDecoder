@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
@@ -36,8 +35,11 @@ import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
+import org.openscience.cdk.exception.Intractable;
 import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -53,7 +55,6 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
-import org.openscience.cdk.ringsearch.SSSRFinder;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
@@ -62,6 +63,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
  * @author asad
  */
 public class DirectBondDrawer extends AbstractDirectDrawer {
+
     private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());
 
     private final LabelManager labelManager;
@@ -100,12 +102,18 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
      *
      * @param molecule
      * @param g
+     * @throws org.openscience.cdk.exception.Intractable
      */
-    public void drawBonds(IAtomContainer molecule, Graphics2D g) {
+    public void drawBonds(IAtomContainer molecule, Graphics2D g) throws Intractable {
         setBondStroke();
         g.setStroke(bondStroke);
 
-        IRingSet ringSet = new SSSRFinder(molecule).findSSSR();
+        //IRingSet ringSet = new SSSRFinder(molecule).findSSSR();
+        //New Method
+        CycleFinder cf = Cycles.mcb();
+        Cycles cycles = cf.find(molecule); // ignore error - essential cycles do not check tractability
+        IRingSet ringSet = cycles.toRingSet();
+
         ringSet.sortAtomContainers(new AtomContainerComparatorBy2DCenter());
         addRingCentersToAtomAnnotationPositions(molecule, ringSet);
         Map<IBond, IAtomContainer> bondRingMap = fillBondRingMap(ringSet);
@@ -231,7 +239,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
                 case UP_INVERTED:
                     drawWedge(p2, p1, true, g);
                     break;
-                    // ?
+                // ?
                 default:
                     break;
             }

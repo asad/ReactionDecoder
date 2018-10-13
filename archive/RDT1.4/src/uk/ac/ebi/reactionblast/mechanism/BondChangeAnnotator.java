@@ -587,10 +587,10 @@ public final class BondChangeAnnotator extends DUModel {
 
                     for (IBond eBond : connectedEductBondsList) {
                         boolean isBondChange = true;
-                        String attachedEAtomID = eBond.getConnectedAtom(eductAtom).getID();
+                        String attachedEAtomID = eBond.getOther(eductAtom).getID();
 
                         for (IBond pBond : connectedProductBondsList) {
-                            String attachedPAtomID = pBond.getConnectedAtom(productAtom).getID();
+                            String attachedPAtomID = pBond.getOther(productAtom).getID();
 
                             if (attachedEAtomID.equalsIgnoreCase(attachedPAtomID)) {
                                 isBondChange = false;
@@ -605,9 +605,9 @@ public final class BondChangeAnnotator extends DUModel {
 
                     for (IBond pBond : connectedProductBondsList) {
                         boolean isBondChange = true;
-                        String attachedPAtomID = pBond.getConnectedAtom(productAtom).getID();
+                        String attachedPAtomID = pBond.getOther(productAtom).getID();
                         for (IBond eBond : connectedEductBondsList) {
-                            String attachedEAtomID = eBond.getConnectedAtom(eductAtom).getID();
+                            String attachedEAtomID = eBond.getOther(eductAtom).getID();
                             if (attachedPAtomID.equalsIgnoreCase(attachedEAtomID)) {
                                 isBondChange = false;
                                 break;

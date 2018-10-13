@@ -83,14 +83,14 @@ public class WedgeStereoLifter {
         // it doesn't matter which atom is picked as the reference
         // as the wedge pattern matching is circular
         IBond referenceBond = bonds.get(0);
-        IAtom reference = referenceBond.getConnectedAtom(atom);
+        IAtom reference = referenceBond.getOther(atom);
 
         // calculate the full angle between the reference bond and the others
         SortedMap<Double, IBond> angleMap = new TreeMap<>();
         angleMap.put(0.0, referenceBond);
         for (int index = 1; index < bonds.size(); index++) {
             IBond bond = bonds.get(index);
-            IAtom bondAtom = bond.getConnectedAtom(atom);
+            IAtom bondAtom = bond.getOther(atom);
             double angle = getFullAngle(atom, reference, bondAtom);
             angleMap.put((2 * PI) - angle, bond);
         }

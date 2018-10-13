@@ -1500,8 +1500,12 @@ public class RXNMappingTest extends MappingUtility {
 
         double similarityBC = getSimilarity(fp1, fp2);
         double similarityRC = getSimilarity(testRCReactions1.getReactionCenterWFingerprint(), testRCReactions2.getReactionCenterWFingerprint());
-        out.println("Reaction Centre SIM: " + Math.round(similarityRC * 100) + "%");
-        out.println("Bond Change SIM: " + Math.round(similarityBC * 100) + "%");
+
+        double rc = Math.round(similarityRC * 100);
+        double bc = Math.round(similarityBC * 100);
+
+        assertEquals(1, rc, 0.001);
+        assertEquals(94, bc, 0.001);
     }
 
     /*

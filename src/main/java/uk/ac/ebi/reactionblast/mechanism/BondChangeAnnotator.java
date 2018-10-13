@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
-import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
@@ -39,7 +38,6 @@ import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
-import org.openscience.cdk.ringsearch.SSSRFinder;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
 import uk.ac.ebi.reactionblast.mechanism.helper.BondChange;
@@ -57,6 +55,9 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 import static java.lang.Math.abs;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.PseudoAtom;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -275,7 +276,11 @@ public final class BondChangeAnnotator extends DUModel {
             } catch (CDKException ex) {
                 getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
             }
-            IRingSet singleRingsQ = new SSSRFinder(atomContainerQ).findSSSR();
+//            IRingSet singleRingsQ = new SSSRFinder(atomContainerQ).findSSSR();
+            //New Method
+            CycleFinder cf = Cycles.mcb();
+            Cycles cycles = cf.find(atomContainerQ); // ignore error - essential cycles do not check tractability
+            IRingSet singleRingsQ = cycles.toRingSet();
             queryRingSet.add(singleRingsQ);
         }
 
@@ -288,7 +293,11 @@ public final class BondChangeAnnotator extends DUModel {
             } catch (CDKException ex) {
                 getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
             }
-            IRingSet singleRingsT = new SSSRFinder(atomContainerT).findSSSR();
+//            IRingSet singleRingsT = new SSSRFinder(atomContainerT).findSSSR();
+            //New Method
+            CycleFinder cf = Cycles.mcb();
+            Cycles cycles = cf.find(atomContainerT); // ignore error - essential cycles do not check tractability
+            IRingSet singleRingsT = cycles.toRingSet();
             targetRingSet.add(singleRingsT);
         }
         /*
@@ -561,6 +570,9 @@ public final class BondChangeAnnotator extends DUModel {
 
     private synchronized void markHydrogenDisplacementBondChanges() {
 
+        if (DEBUG) {
+            System.out.println("markHydrogenDisplacementBondChanges method START");
+        }
         /*
          * Mark Hydrogen bond broken/Formed in the reaction
          *
@@ -587,10 +599,10 @@ public final class BondChangeAnnotator extends DUModel {
 
                     for (IBond eBond : connectedEductBondsList) {
                         boolean isBondChange = true;
-                        String attachedEAtomID = eBond.getConnectedAtom(eductAtom).getID();
+                        String attachedEAtomID = eBond.getOther(eductAtom).getID();
 
                         for (IBond pBond : connectedProductBondsList) {
-                            String attachedPAtomID = pBond.getConnectedAtom(productAtom).getID();
+                            String attachedPAtomID = pBond.getOther(productAtom).getID();
 
                             if (attachedEAtomID.equalsIgnoreCase(attachedPAtomID)) {
                                 isBondChange = false;
@@ -605,9 +617,9 @@ public final class BondChangeAnnotator extends DUModel {
 
                     for (IBond pBond : connectedProductBondsList) {
                         boolean isBondChange = true;
-                        String attachedPAtomID = pBond.getConnectedAtom(productAtom).getID();
+                        String attachedPAtomID = pBond.getOther(productAtom).getID();
                         for (IBond eBond : connectedEductBondsList) {
-                            String attachedEAtomID = eBond.getConnectedAtom(eductAtom).getID();
+                            String attachedEAtomID = eBond.getOther(eductAtom).getID();
                             if (attachedPAtomID.equalsIgnoreCase(attachedEAtomID)) {
                                 isBondChange = false;
                                 break;
@@ -635,7 +647,7 @@ public final class BondChangeAnnotator extends DUModel {
                 } else if (rMol.getConnectedBondsCount(eductAtom) == 0
                         && pMol.getConnectedBondsCount(productAtom) > 0) {
 
-                    IAtom psudoAtom = new Atom("PsH");
+                    IAtom psudoAtom = new PseudoAtom("PsH");
                     IBond eBond = new Bond(psudoAtom, eductAtom, SINGLE);
                     IBond pBond = connectedProductBondsList.iterator().next();
 
@@ -658,9 +670,10 @@ public final class BondChangeAnnotator extends DUModel {
                         && pMol.getConnectedBondsCount(productAtom) == 0) {
 
                     IBond eBond = connectedEductBondsList.iterator().next();
-                    IAtom psudoAtom = new Atom("PsH");
+                    
+                    IAtom psudoAtom = new PseudoAtom("PsH");
                     IBond pBond = new Bond(psudoAtom, productAtom, SINGLE);
-
+                    
                     eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
                     pBond.setProperty(BOND_CHANGE_INFORMATION, PSEUDO_BOND);
 
@@ -680,9 +693,16 @@ public final class BondChangeAnnotator extends DUModel {
                 }
             }
         }
+        if (DEBUG) {
+            System.out.println("markHydrogenDisplacementBondChanges method END");
+        }
+
     }
 
     private synchronized void markUnMappedAtoms() {
+        if (DEBUG) {
+            System.out.println("markUnMappedAtoms method START");
+        }
         for (IAtomContainer acE : reactantSet.atomContainers()) {
             for (IBond affectedBondReactants : acE.bonds()) {
                 boolean isNotMapped = false;
@@ -730,6 +750,9 @@ public final class BondChangeAnnotator extends DUModel {
                     getBondChangeList().add(bondChange);
                 }
             }
+        }
+        if (DEBUG) {
+            System.out.println("markUnMappedAtoms method END");
         }
     }
 

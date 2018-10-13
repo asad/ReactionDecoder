@@ -43,7 +43,6 @@ import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
-import org.openscience.cdk.ringsearch.SSSRFinder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
@@ -76,7 +75,7 @@ class IsomeraseHandler {
 
     protected final IReaction reaction;
 
-    IsomeraseHandler(IReaction reaction) {
+    IsomeraseHandler(IReaction reaction) throws Intractable {
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
@@ -95,10 +94,20 @@ class IsomeraseHandler {
                 getLogger(GameTheoryRings.class.getName()).log(SEVERE, null, ex);
             }
             // sets SSSR information
-            SSSRFinder finder = new SSSRFinder(educt);
-            sssrEduct = finder.findEssentialRings();
-            finder = new SSSRFinder(product);
-            sssrProduct = finder.findEssentialRings();
+//            SSSRFinder finder = new SSSRFinder(educt);
+//            sssrEduct = finder.findEssentialRings();
+
+            //New Method
+            CycleFinder cf = Cycles.essential();
+
+            Cycles cycles = cf.find(educt); // ignore error - essential cycles do not check tractability
+            sssrEduct = cycles.toRingSet();
+
+//            finder = new SSSRFinder(product);
+//            sssrProduct = finder.findEssentialRings();
+
+            cycles = cf.find(product); // ignore error - essential cycles do not check tractability
+            sssrProduct = cycles.toRingSet();
             boolean chipBondInTheRing = chipBondInTheRing(educt, product);
 
         } else {
