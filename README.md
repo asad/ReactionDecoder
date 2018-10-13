@@ -13,7 +13,7 @@ Introduction
 Contact
 ============
 Author: Dr. Syed Asad Rahman,
-e-mail: asad.rahman@bioinception.com
+e-mail: asad.rahman@bioinceptionlabs.com
 
 Installation
 ============
