@@ -34,3 +34,5 @@ hs_err_pid*
 /rdt/target/
 /rdt/Output/
 /target/
+/archive/RDT1.4/nbproject/private/
+/archive/RDT1.4/build/
