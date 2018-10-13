@@ -24,7 +24,6 @@ package org.openscience.smsd.algorithm.single;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -235,13 +234,8 @@ public class SingleMapping {
 
     private <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List list = new LinkedList(map.entrySet());
-        Collections.sort(list, new Comparator() {
-            @Override
-            public int compare(Object object1, Object object2) {
-                return ((Comparable) ((Map.Entry<K, V>) (object1)).getValue()).compareTo(
-                        ((Map.Entry<K, V>) (object2)).getValue());
-            }
-        });
+        Collections.sort(list, (Object object1, Object object2) -> ((Comparable) ((Map.Entry<K, V>) (object1)).getValue()).compareTo(
+                ((Map.Entry<K, V>) (object2)).getValue()));
         Map<K, V> result = new LinkedHashMap<>();
         for (Iterator it = list.iterator(); it.hasNext();) {
             Map.Entry<K, V> entry = (Map.Entry<K, V>) it.next();

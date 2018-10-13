@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.function.Function;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -386,7 +387,7 @@ public final class CDKRMapHandler {
      * @return List removed
      */
     protected synchronized List<CDKRMap> removeRedundantMappingsForSingleAtomCase(List<CDKRMap> overlaps) {
-        List<CDKRMap> reducedList = Collections.synchronizedList(new ArrayList<CDKRMap>());
+        List<CDKRMap> reducedList = Collections.synchronizedList(new ArrayList<>());
         reducedList.add(overlaps.get(0));
         //reducedList.add(overlaps.get(1));
         return reducedList;
@@ -592,7 +593,6 @@ public final class CDKRMapHandler {
 
 //        List<IAtom> array1 = new ArrayList<IAtom>();
 //        List<IAtom> array2 = new ArrayList<IAtom>();
-
         /*
          * We have serial numbers of the bonds/Atoms to delete
          * Now we will collect the actual bond/Atoms rather than
@@ -600,9 +600,9 @@ public final class CDKRMapHandler {
          * mapped on product or Vise Versa
          *
          */
-        for (List<CDKRMap> rMap : list) {
+        list.stream().map((List<CDKRMap> rMap) -> {
             Map<Integer, Integer> atomNumbersFromContainer = new TreeMap<>();
-            for (CDKRMap rmap : rMap) {
+            rMap.forEach((rmap) -> {
                 IAtom sourceAtom = source.getAtom(rmap.getId1());
                 IAtom targetAtom = target.getAtom(rmap.getId2());
 
@@ -612,11 +612,13 @@ public final class CDKRMapHandler {
                 int indexJ = target.indexOf(targetAtom);
 
                 atomNumbersFromContainer.put(indexI, indexJ);
-            }
+            });
+            return atomNumbersFromContainer;
+        }).forEachOrdered((atomNumbersFromContainer) -> {
             /*Added the Mapping Numbers to the FinalMapping*
              */
             getMappings().add(atomNumbersFromContainer);
-        }
+        });
     }
 
     /**

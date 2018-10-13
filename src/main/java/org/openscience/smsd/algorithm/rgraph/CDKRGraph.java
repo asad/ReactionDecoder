@@ -425,13 +425,11 @@ public class CDKRGraph {
 
         // only nodes that fulfill the initial constrains
         // are allowed in the initial extension set : targetBitSet
-        for (CDKRNode rNode : getGraph()) {
-            if ((sourceBitSet.get(rNode.getRMap().getId1())
-                    || sourceBitSet.isEmpty()) && (targetBitSet.get(rNode.getRMap().getId2())
-                    || targetBitSet.isEmpty())) {
-                bistSet.set(getGraph().indexOf(rNode));
-            }
-        }
+        getGraph().stream().filter((rNode) -> ((sourceBitSet.get(rNode.getRMap().getId1())
+                || sourceBitSet.isEmpty()) && (targetBitSet.get(rNode.getRMap().getId2())
+                || targetBitSet.isEmpty()))).forEachOrdered((rNode) -> {
+            bistSet.set(getGraph().indexOf(rNode));
+        });
         return bistSet;
     }
 
@@ -452,7 +450,7 @@ public class CDKRGraph {
      * @param set the BitSet
      * @return the CDKRMap list
      */
-    public synchronized List<CDKRMap> bitSetToRMap(BitSet set) {
+    synchronized List<CDKRMap> bitSetToRMap(BitSet set) {
         List<CDKRMap> rMapList = new ArrayList<>();
 
         for (int x = set.nextSetBit(0); x >= 0; x = set.nextSetBit(x + 1)) {

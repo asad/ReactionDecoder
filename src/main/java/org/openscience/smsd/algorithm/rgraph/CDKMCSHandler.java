@@ -77,8 +77,8 @@ public class CDKMCSHandler implements IResults {
         this.shouldMatchRings = shouldMatchRings;
         this.shouldMatchBonds = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
-        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        this.allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 
@@ -93,8 +93,8 @@ public class CDKMCSHandler implements IResults {
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
         this.matchAtomType = true;
-        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
-        this.allMCS = Collections.synchronizedList(new ArrayList<Map<Integer, Integer>>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
+        this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
     }
 

@@ -283,7 +283,7 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -306,7 +306,7 @@ public final class AtomAtomMapping implements Serializable {
     public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
 
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<IAtom>());
+        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
                 uniqueAtoms.add(ac.getAtom(getTargetIndex(atom)));

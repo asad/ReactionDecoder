@@ -161,8 +161,7 @@ public final class MCSPlusMapper implements IResults {
             int counter = 0;
             for (Map<Integer, Integer> solution : allMCS) {
                 AtomAtomMapping atomMappings = new AtomAtomMapping(source, target);
-                for (Map.Entry<Integer, Integer> map : solution.entrySet()) {
-
+                solution.entrySet().forEach((map) -> {
                     int IIndex = map.getKey();
                     int JIndex = map.getValue();
 
@@ -172,7 +171,7 @@ public final class MCSPlusMapper implements IResults {
                     sourceAtom = source.getAtom(IIndex);
                     targetAtom = target.getAtom(JIndex);
                     atomMappings.put(sourceAtom, targetAtom);
-                }
+                });
                 allAtomMCS.add(counter++, atomMappings);
             }
         } catch (Exception I) {

@@ -60,7 +60,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
 
     StereoFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        stereoScore = Collections.synchronizedList(new ArrayList<Double>());
+        stereoScore = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -71,9 +71,9 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         getStereoBondChargeMatch(stereoScoreMap, allStereoAtomMCS);
 
         Map<Integer, Double> sortedStereoScoreMap = sortMapByValueInDescendingOrder(stereoScoreMap);
-        double highestStereoScore
-                = sortedStereoScoreMap.isEmpty() ? 0
-                        : sortedStereoScoreMap.values().iterator().next();
+        double highestStereoScore;
+        highestStereoScore = sortedStereoScoreMap.isEmpty() ? 0
+                : sortedStereoScoreMap.values().iterator().next();
         return highestStereoScore;
     }
 

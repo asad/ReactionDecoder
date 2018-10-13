@@ -341,7 +341,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     private synchronized Map<IBond, IBond> makeBondMapOfAtomMap(IAtomContainer ac1, IAtomContainer ac2,
             AtomAtomMapping mapping) {
 
-        Map<IBond, IBond> bondbondMappingMap = Collections.synchronizedMap(new HashMap<IBond, IBond>());
+        Map<IBond, IBond> bondbondMappingMap = Collections.synchronizedMap(new HashMap<>());
 
         mapping.getMappingsByAtoms().entrySet().stream().forEach((Map.Entry<IAtom, IAtom> map1) -> {
             mapping.getMappingsByAtoms().entrySet().stream().filter((map2) -> (map1.getKey()

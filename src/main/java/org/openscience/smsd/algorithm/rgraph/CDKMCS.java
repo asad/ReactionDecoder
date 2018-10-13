@@ -231,7 +231,7 @@ final public class CDKMCS {
      * @throws CDKException
      * @see #makeAtomsMapsOfBondsMaps(List, IAtomContainer, IAtomContainer)
      */
-    public static List<List<CDKRMap>> getSubgraphMaps(IAtomContainer g1, IAtomContainer g2,
+    static List<List<CDKRMap>> getSubgraphMaps(IAtomContainer g1, IAtomContainer g2,
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         return search(g1, g2, new BitSet(), getBitSet(g2), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
     }
@@ -248,7 +248,7 @@ final public class CDKMCS {
      * {@link List} of {@link CDKRMap} objects containing Ids of matching bonds.
      * @throws CDKException
      */
-    public static List<CDKRMap> getSubgraphMap(IAtomContainer g1, IAtomContainer g2,
+    static List<CDKRMap> getSubgraphMap(IAtomContainer g1, IAtomContainer g2,
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         List<CDKRMap> result = null;
         List<List<CDKRMap>> rMapsList = search(g1, g2, new BitSet(), getBitSet(g2), false, false,
@@ -276,7 +276,7 @@ final public class CDKMCS {
      * {@link List} of {@link CDKRMap} objects containing Ids of matching atoms.
      * @throws CDKException
      */
-    public static List<List<CDKRMap>> getSubgraphAtomsMaps(IAtomContainer g1,
+    static List<List<CDKRMap>> getSubgraphAtomsMaps(IAtomContainer g1,
             IAtomContainer g2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType)
             throws CDKException {
         List<CDKRMap> list = checkSingleAtomCases(g1, g2);
