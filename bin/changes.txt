@@ -216,7 +216,7 @@ Changes (13/10/2018)
 -----------------------
 a) MCSPlus renamed flavours
 b) Version 2.0.0-SNAPSHOT with
-c) CDK 2.X 
+c) CDK 2.x 
 d) Author name format change 
 e) Date changes
 
