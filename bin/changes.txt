@@ -211,6 +211,15 @@ b) Version 1.5.1
 c) Fixed bugs
 d) Speed improved
 
+-----------------------
+Changes (13/10/2018)
+-----------------------
+a) MCSPlus renamed flavours
+b) Version 2.0.0-SNAPSHOT with
+c) CDK 2.X 
+d) Author name format change 
+e) Date changes
+
 
 -----------------------
 TO DO
