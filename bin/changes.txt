@@ -220,6 +220,11 @@ c) CDK 2.x
 d) Author name format change 
 e) Date changes
 
+-----------------------
+Changes (15/10/2018)
+-----------------------
+a) Loggers cleaned up
+b) Version 2.0.1-SNAPSHOT with minor updates 
 
 -----------------------
 TO DO
