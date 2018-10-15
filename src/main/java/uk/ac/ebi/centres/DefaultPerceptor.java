@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.centres.descriptor.General.NONE;
 import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
@@ -34,7 +34,9 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @param <A>
  */
 public class DefaultPerceptor<A> implements Perceptor<A> {
-    private static final Logger LOG = getLogger(DefaultPerceptor.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(DefaultPerceptor.class);
 
     private final CentrePerceptor<A> mainPerceptor;
     private final CentrePerceptor<A> auxPerceptor;
@@ -79,26 +81,26 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
 
             map.clear();
 
-            for (Centre<A> centre : unperceived) {
-
+            unperceived.forEach((centre) -> {
                 Descriptor descriptor = perceptor.perceive(centre, unperceived);
-
                 if (descriptor != UNKNOWN) {
                     map.put(centre, descriptor);
                 }
-
-
-            }
-
+            });
 
             // transfer descriptors
-            for (Map.Entry<Centre<A>, Descriptor> entry : map.entrySet()) {
+            map.entrySet().stream().map((entry) -> {
                 unperceived.remove(entry.getKey());
+                return entry;
+            }).map((entry) -> {
                 perceived.add(entry.getKey());
+                return entry;
+            }).map((entry) -> {
                 entry.getKey().dispose();
+                return entry;
+            }).forEachOrdered((entry) -> {
                 entry.getKey().setDescriptor(entry.getValue());
-            }
-
+            });
 
         } while (!map.isEmpty());
 
@@ -145,6 +147,7 @@ public class DefaultPerceptor<A> implements Perceptor<A> {
     /**
      * Shutdown the internal executor
      */
+    @Override
     public void shutdown() {
         executor.shutdownNow();
     }

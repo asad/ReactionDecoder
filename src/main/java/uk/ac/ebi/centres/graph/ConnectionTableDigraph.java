@@ -18,8 +18,8 @@
 package uk.ac.ebi.centres.graph;
 
 import java.util.Collection;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.ConnectionTable;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.Ligand;
@@ -30,7 +30,9 @@ import uk.ac.ebi.centres.Ligand;
  */
 public class ConnectionTableDigraph<A>
         extends AbstractDigraph<A> {
-    private static final Logger LOG = getLogger(ConnectionTableDigraph.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ConnectionTableDigraph.class);
 
     private final ConnectionTable<A> table;
 

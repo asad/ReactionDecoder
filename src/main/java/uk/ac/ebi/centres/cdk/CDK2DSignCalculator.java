@@ -17,9 +17,9 @@
  */
 package uk.ac.ebi.centres.cdk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.calculator.TwoDimensionalSignCalculator;
 
 /**
@@ -27,7 +27,8 @@ import uk.ac.ebi.centres.calculator.TwoDimensionalSignCalculator;
  */
 public class CDK2DSignCalculator extends TwoDimensionalSignCalculator<IAtom> {
 
-    private static final Logger LOG = getLogger(CDK2DSignCalculator.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDK2DSignCalculator.class);
 
     /**
      *

@@ -19,15 +19,16 @@
 package uk.ac.ebi.aamtool.rgroup;
 
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FingerprintType {
-    private static final Logger LOG = getLogger(FingerprintType.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(FingerprintType.class);
 
     private final Set<String> commonCommonFP;
     private final Set<String> commonDifferenceFP;

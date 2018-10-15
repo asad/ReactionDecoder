@@ -20,8 +20,8 @@ package uk.ac.ebi.centres.ligand;
 import static java.lang.Boolean.FALSE;
 import static java.util.Collections.EMPTY_SET;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.MutableDescriptor;
 
@@ -30,7 +30,9 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @param <A>
  */
 public class NonterminalLigand<A> extends AbstractLigand<A> {
-    private static final Logger LOG = getLogger(NonterminalLigand.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(NonterminalLigand.class);
 
     private final A atom;
     private A parent;
@@ -129,7 +131,6 @@ public class NonterminalLigand<A> extends AbstractLigand<A> {
 
         getVisited().add(atom);
         getVisited().add(parent);
-
 
     }
 

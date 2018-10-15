@@ -17,16 +17,18 @@
  */
 package uk.ac.ebi.centres.exception;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @author John May
  */
 public class WarpCoreEjection extends RuntimeException {
+
     private static final long serialVersionUID = 757858878509985951L;
 
-    private static final Logger LOG = getLogger(WarpCoreEjection.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(WarpCoreEjection.class);
 
     /**
      *

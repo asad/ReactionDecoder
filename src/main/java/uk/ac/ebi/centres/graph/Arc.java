@@ -17,8 +17,8 @@
  */
 package uk.ac.ebi.centres.graph;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Descriptor;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
@@ -28,7 +28,8 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @param <A>
  */
 public class Arc<A> {
-    private static final Logger LOG = getLogger(Arc.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Arc.class);
 
     private Ligand<A> tail;
     private Ligand<A> head;

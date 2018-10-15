@@ -25,14 +25,12 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.DefaultPerceptor;
 import uk.ac.ebi.centres.priority.AtomicNumberRule;
 import uk.ac.ebi.centres.priority.CombinedRule;
 import uk.ac.ebi.centres.priority.DuplicateAtomRule;
 import uk.ac.ebi.centres.priority.MassNumberRule;
-import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
-import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
 import uk.ac.ebi.centres.priority.access.PsuedoAtomicNumberModifier;
 import uk.ac.ebi.centres.priority.access.descriptor.AuxiliaryDescriptor;
 import uk.ac.ebi.centres.priority.access.descriptor.PrimaryDescriptor;
@@ -45,8 +43,8 @@ import uk.ac.ebi.centres.priority.descriptor.ZERule;
  */
 public class CDKPerceptor extends DefaultPerceptor<IAtom> {
 
-    private final static ILoggingTool LOGGER
-            = createLoggingTool(CDKPerceptor.class);
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDKPerceptor.class);
 
     private static final Logger LOG = getLogger(CDKPerceptor.class.getName());
 
@@ -57,52 +55,25 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
         super(new CombinedRule<>(
                 new AtomicNumberRule<>(
                         new PsuedoAtomicNumberModifier<>(
-                                new AtomicNumberAccessor<IAtom>() {
-
-                                    @Override
-                                    public int getAtomicNumber(IAtom atom) {
-                                        /*
-                                        * if its null, assuming its an "R" then put the masss less than element Carbon (6) TO DO this
-                                        * fix properly
-                                        */
-                                        return atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber();
-                                    }
-                                })),
+                                (IAtom atom) -> atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber() /*
+         * if its null, assuming its an "R" then put the masss less than element Carbon (6) TO DO this
+         * fix properly
+                         */)),
                 new DuplicateAtomRule<IAtom>(),
-                new MassNumberRule<>(new MassNumberAccessor<IAtom>() {
-
-                    @Override
-                    public int getMassNumber(IAtom atom) {
-                        /*
-                        * if its null, assuming its an "R" then put the masss less than element Carbon
-                        */
-                        return atom.getMassNumber() == null ? 11 : atom.getMassNumber();
-                    }
-                }),
+                new MassNumberRule<>((IAtom atom) -> atom.getMassNumber() == null ? 11 : atom.getMassNumber() /*
+         * if its null, assuming its an "R" then put the masss less than element Carbon
+                 */),
                 new ZERule<IAtom>(),
                 new PairRule<>(new PrimaryDescriptor<IAtom>()),
                 new RSRule<>(new PrimaryDescriptor<IAtom>())),
                 new CombinedRule<>(
                         new AtomicNumberRule<>(
                                 new PsuedoAtomicNumberModifier<>(
-                                        new AtomicNumberAccessor<IAtom>() {
-
-                                            @Override
-                                            public int getAtomicNumber(IAtom atom) {
-                                                /*
-                                                * if its null, assuming its an "R" then put the masss less than element Carbon TO DO this fix
-                                                * properly
-                                                */
-                                                return atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber();
-                                            }
-                                        })),
-                        new MassNumberRule<>(new MassNumberAccessor<IAtom>() {
-
-                            @Override
-                            public int getMassNumber(IAtom atom) {
-                                return atom.getMassNumber();
-                            }
-                        }),
+                                        (IAtom atom) -> atom.getAtomicNumber() == null ? 0 : atom.getAtomicNumber() /*
+         * if its null, assuming its an "R" then put the masss less than element Carbon TO DO this fix
+         * properly
+                                 */)),
+                        new MassNumberRule<>((IAtom atom) -> atom.getMassNumber()),
                         new ZERule<IAtom>(),
                         new PairRule<>(new AuxiliaryDescriptor<IAtom>()),
                         new RSRule<>(new AuxiliaryDescriptor<IAtom>())),
@@ -117,12 +88,12 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
         try {
             /*
             Check for 2D co-ordinates for EC-BLAST, must else it will fail!
-            */
+             */
             if (!has2DCoordinates(container)) {
                 try {
                     /*
                     Clone it else it will loose mol ID
-                    */
+                     */
                     IAtomContainer clone = container.clone();
                     StructureDiagramGenerator sdg = new StructureDiagramGenerator(clone);
                     sdg.generateCoordinates();

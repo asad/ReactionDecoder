@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IElement;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Descriptor;
@@ -49,7 +49,8 @@ import static uk.ac.ebi.centres.descriptor.Planar.z;
  * @param <A>
  */
 public class PlanarCentre<A> extends AbstractLigand<A> implements Centre<A> {
-    private static final Logger LOG = getLogger(PlanarCentre.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(PlanarCentre.class);
 
     private final AbstractLigand<A> first;
     private final AbstractLigand<A> second;

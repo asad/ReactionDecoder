@@ -38,6 +38,8 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN_INVERTED;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.CentreProvider;
 import uk.ac.ebi.centres.ConnectionTable;
@@ -50,7 +52,9 @@ import uk.ac.ebi.centres.ligand.TetrahedralCentre;
  * @author John May
  */
 public class CDKCentreProvider implements CentreProvider<IAtom> {
-    private static final Logger LOG = getLogger(CDKCentreProvider.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDKCentreProvider.class);
 
     private final IAtomContainer container;
     private final ConnectionTable<IAtom> table;
@@ -97,7 +101,6 @@ public class CDKCentreProvider implements CentreProvider<IAtom> {
                 centres.add(centre);
             }
         }
-
 
         // planar centres
         for (IBond bond : container.bonds()) {

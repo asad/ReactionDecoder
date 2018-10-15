@@ -39,22 +39,22 @@ import uk.ac.ebi.centres.graph.BasicConnectionTable;
  */
 public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
 
-    private static final Map<IBond.Order, Integer> orders = newHashMapWithExpectedSize(4);
-    private static final Map<IBond.Stereo, Integer> depths = newHashMapWithExpectedSize(4);
+    private static final Map<IBond.Order, Integer> ORDERS = newHashMapWithExpectedSize(4);
+    private static final Map<IBond.Stereo, Integer> DEPTHS = newHashMapWithExpectedSize(4);
     private static final Logger LOG = getLogger(CDKConnectionTable.class.getName());
 
     static {
-        orders.put(SINGLE, 1);
-        orders.put(DOUBLE, 2);
-        orders.put(TRIPLE, 3);
-        orders.put(QUADRUPLE, 4);
+        ORDERS.put(SINGLE, 1);
+        ORDERS.put(DOUBLE, 2);
+        ORDERS.put(TRIPLE, 3);
+        ORDERS.put(QUADRUPLE, 4);
     }
 
     static {
-        depths.put(UP, -1);
-        depths.put(DOWN, 1);
-        depths.put(UP_INVERTED, 1);
-        depths.put(DOWN_INVERTED, -1);
+        DEPTHS.put(UP, -1);
+        DEPTHS.put(DOWN, 1);
+        DEPTHS.put(UP_INVERTED, 1);
+        DEPTHS.put(DOWN_INVERTED, -1);
     }
 
     /**
@@ -75,13 +75,13 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
     }
 
     private int getOrder(IBond.Order order) {
-        Integer value = orders.get(order);
+        Integer value = ORDERS.get(order);
         return value != null ? value : 0;
     }
 
     private int getDepth(IBond.Stereo stereo) {
         // might need to check for aromatic
-        Integer value = depths.get(stereo);
+        Integer value = DEPTHS.get(stereo);
         return value != null ? value : 0;
     }
 }

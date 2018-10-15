@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,6 +49,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.w3c.dom.Document;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 
@@ -60,7 +61,8 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 public class ReactionDecoder extends Annotator {
 
     private final static boolean DEBUG = false;
-    private static final Logger LOG = getLogger(ReactionDecoder.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ReactionDecoder.class);
 
     /**
      * @param args the command line areactionWithLayoutgumentheaderString

@@ -19,15 +19,16 @@
 package uk.ac.ebi.aamtool;
 
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class SimilarityResult {
-    private static final Logger LOG = getLogger(SimilarityResult.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(SimilarityResult.class);
 
     private final String query;
     private final String target;

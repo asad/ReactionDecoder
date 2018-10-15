@@ -21,8 +21,8 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.ConnectionTable;
 
 /**
@@ -30,7 +30,9 @@ import uk.ac.ebi.centres.ConnectionTable;
  * @param <A>
  */
 public class BasicConnectionTable<A> implements ConnectionTable<A> {
-    private static final Logger LOG = getLogger(BasicConnectionTable.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(BasicConnectionTable.class);
 
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> connections = new HashMap<>();
     private final Map<A, Map<A, Map.Entry<Integer, Integer>>> stereo = new HashMap<>();
@@ -57,12 +59,12 @@ public class BasicConnectionTable<A> implements ConnectionTable<A> {
                 sign >= 1 ? 1 : sign <= -1 ? -1 : 0);
         newConnection(second, first, order,
                 sign >= 1 ? -1 : sign <= -1 ? 1
-                : 0); // note the sign is inverted
+                                : 0); // note the sign is inverted
     }
 
     private void newConnection(A first, A second, int order, int sign) {
         if (!connections.containsKey(first)) {
-            connections.put(first, new HashMap<A, Map.Entry<Integer, Integer>>());
+            connections.put(first, new HashMap<>());
         }
         connections.get(first).put(second, new AbstractMap.SimpleEntry<>(order, sign));
     }

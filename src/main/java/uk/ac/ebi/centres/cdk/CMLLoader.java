@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -31,6 +30,8 @@ import org.openscience.cdk.interfaces.IChemFile;
 import org.openscience.cdk.io.CMLReader;
 import org.openscience.cdk.silent.AtomContainer;
 import org.openscience.cdk.silent.ChemFile;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureUnsetProperties;
 import static org.openscience.cdk.tools.manipulator.ChemFileManipulator.getAllAtomContainers;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getAtomicNumber;
@@ -40,7 +41,8 @@ import static org.openscience.cdk.tools.periodictable.PeriodicTable.getAtomicNum
  */
 public class CMLLoader {
 
-    private static final Logger LOG = getLogger(CMLLoader.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CMLLoader.class);
 
     /**
      *

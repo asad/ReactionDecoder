@@ -19,8 +19,8 @@ package uk.ac.ebi.centres.graph;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.MutableDescriptor;
 import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
@@ -30,7 +30,9 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @param <A>
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
-    private static final Logger LOG = getLogger(DefaultDescriptorManager.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(DefaultDescriptorManager.class);
 
     private final Map<A, MutableDescriptor> atomMap = new HashMap<>();
     private final Map<Map.Entry<A, A>, MutableDescriptor> bondMap = new HashMap<>();
@@ -73,16 +75,14 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<A, MutableDescriptor> entry : atomMap.entrySet()) {
-            if (entry.getValue().get() != UNKNOWN) {
-                sb.append(entry.getKey()).append(": ").append(entry.getValue().get()).append("\n");
-            }
-        }
-        for (Map.Entry<Map.Entry<A, A>, MutableDescriptor> entry : bondMap.entrySet()) {
-            if (entry.getValue().get() != UNKNOWN) {
-                sb.append(entry.getKey().getKey()).append("=").append(entry.getKey().getValue()).append(": ").append(entry.getValue().get()).append("\n");
-            }
-        }
+        atomMap.entrySet().stream().filter((entry) -> (entry.getValue().get() != UNKNOWN)).forEachOrdered((entry) -> {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue().get()).append("\n");
+        });
+        bondMap.entrySet().stream().filter((entry) -> (entry.getValue().get() != UNKNOWN)).forEachOrdered((entry) -> {
+            sb.append(entry.getKey().getKey()).append("=").
+                    append(entry.getKey().getValue()).append(": ").
+                    append(entry.getValue().get()).append("\n");
+        });
         return sb.toString();
     }
 
