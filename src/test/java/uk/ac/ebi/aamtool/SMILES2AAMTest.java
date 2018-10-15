@@ -41,13 +41,36 @@ public class SMILES2AAMTest extends TestUtility {
         String reactionSM = "N#CSCC1=CC=CC=C1>>S=C=NCC1=CC=CC=C1";
         SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
-        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "TestReaction");
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "RHEA10006");
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
         //System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    @Test
+    public void TestRHEA11004() throws Exception {
+
+        String reactionSM = "[H+]."
+                + "[H+]."
+                + "NC(=O)C1=CN(C=CC1)[C@@H]1O[C@H](COP([O-])(=O)OP([O-])(=O)OC[C@H]2O[C@H]([C@H](O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O."
+                + "O=O."
+                + "OC1=C(C=CC=C1)C([O-])=O"
+                + ">>OC1=C(O)C=CC=C1."
+                + "O=C=O."
+                + "[H]O[H]."
+                + "NC(=O)C1=CC=C[N+](=C1)[C@@H]1O[C@H](COP([O-])(=O)OP([O-])(=O)OC[C@H]2O[C@H]([C@H](O)[C@@H]2O)N2C=NC3=C2N=CN=C3N)[C@@H](O)[C@H]1O";
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "RHEA11004");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        //System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
