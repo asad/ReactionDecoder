@@ -10,6 +10,10 @@ Introduction
 
 `3. Reaction Comparator (Reaction Similarity based on the Bond Changes, Reaction Centres or Substructures)`
 
+Contact
+============
+Author: Dr. Syed Asad Rahman,
+e-mail: asad.rahman@bioinceptionlabs.com
 
 Installation
 ============
@@ -49,6 +53,52 @@ HELP:
   ant run
 Fat Jar:
  ant package-for-store
+```
+
+Use Java API
+============
+
+View mapped reaction using [CDKDEPICT Tool] (http://www.simolecule.com/cdkdepict/depict.html) 
+
+```
+
+public static void main(String[] args) throws CloneNotSupportedException, CDKException, AssertionError, Exception {
+        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+        final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+
+        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+        String reactionName = "Test";
+
+        IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
+
+        IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
+        System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
+    }
+
+    /**
+     *
+     * @param cdkReaction
+     * @param reactionName
+     * @return
+     * @throws InvalidSmilesException
+     * @throws AssertionError
+     * @throws Exception
+     */
+    public static IReaction performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws InvalidSmilesException, AssertionError, Exception {
+        cdkReaction.setID(reactionName);
+        /*
+         RMT for the reaction mapping
+         */
+        boolean forceMapping = true;//Overrides any mapping present int the reaction
+        boolean generate2D = true;//2D perception of the stereo centers
+        boolean generate3D = false;//2D perception of the stereo centers
+        StandardizeReaction standardizeReaction = new StandardizeReaction(); //Standardize the reaction
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, standardizeReaction);
+        MappingSolution s = rmt.getSelectedSolution();//Fetch the AAM Solution
+        IReaction reaction = s.getReaction();//Fetch Mapped Reaction
+        return reaction;
+    }
+
 ```
 
 
