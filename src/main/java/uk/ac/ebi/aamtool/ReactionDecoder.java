@@ -63,7 +63,7 @@ public class ReactionDecoder extends Annotator {
             = LoggingToolFactory.createLoggingTool(ReactionDecoder.class);
 
     /**
-     * @param args the command line areactionWithLayoutgumentheaderString
+     * @param args the command line
      */
     public static void main(String[] args) {
         try {
