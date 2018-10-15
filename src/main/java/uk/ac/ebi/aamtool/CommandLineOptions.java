@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.aamtool;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.apache.commons.cli.Options;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -28,7 +28,8 @@ import org.apache.commons.cli.Options;
  */
 public class CommandLineOptions {
 
-    private static final Logger LOG = getLogger(CommandLineOptions.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CommandLineOptions.class);
 
     /**
      *

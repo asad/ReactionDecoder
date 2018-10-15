@@ -22,9 +22,10 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import java.util.Comparator;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
 /**
@@ -33,7 +34,8 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
  */
 class PatternComparators {
 
-    private static final Logger LOG = getLogger(PatternComparators.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(PatternComparators.class);
 
     public static Comparator<IPatternFingerprinter> overallComparator() {
         return (IPatternFingerprinter o1, IPatternFingerprinter o2) -> {

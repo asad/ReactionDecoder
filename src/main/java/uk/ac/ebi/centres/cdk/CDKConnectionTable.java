@@ -19,8 +19,6 @@ package uk.ac.ebi.centres.cdk;
 
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -32,6 +30,8 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN;
 import static org.openscience.cdk.interfaces.IBond.Stereo.DOWN_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.graph.BasicConnectionTable;
 
 /**
@@ -41,7 +41,8 @@ public class CDKConnectionTable extends BasicConnectionTable<IAtom> {
 
     private static final Map<IBond.Order, Integer> ORDERS = newHashMapWithExpectedSize(4);
     private static final Map<IBond.Stereo, Integer> DEPTHS = newHashMapWithExpectedSize(4);
-    private static final Logger LOG = getLogger(CDKConnectionTable.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDKConnectionTable.class);
 
     static {
         ORDERS.put(SINGLE, 1);

@@ -20,9 +20,9 @@ package uk.ac.ebi.reactionblast.fingerprints.tools;
 
 import java.io.Serializable;
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -32,14 +32,16 @@ public class FingerprintSubset implements Serializable {
 
     private static final long serialVersionUID = 4342623464361L;
 
-    private static final Logger LOG = getLogger(FingerprintSubset.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(FingerprintSubset.class);
 
     /**
      * Determine if this set is an (improper) subset of another.
      *
      * @param source the set we are testing for.
      * @param destination the set we are testing against.
-     * @return source is a subset of destination, yes then return true else false
+     * @return source is a subset of destination, yes then return true else
+     * false
      * @throws CDKException
      */
     public static boolean isSubset(BitSet source, BitSet destination) throws CDKException {
@@ -66,7 +68,8 @@ public class FingerprintSubset implements Serializable {
      *
      * @param source the set we are testing for.
      * @param destination the set we are testing against.
-     * @return source is a superset of destination, yes then return true else false
+     * @return source is a superset of destination, yes then return true else
+     * false
      * @throws CDKException
      */
     public static boolean isSuperSet(BitSet source, BitSet destination) throws CDKException {
@@ -89,7 +92,8 @@ public class FingerprintSubset implements Serializable {
     }
 
     /**
-     * Helper function to test for a null object and throw an exception if one is found.
+     * Helper function to test for a null object and throw an exception if one
+     * is found.
      *
      * @param obj the object we are testing.
      * @throws CDKException

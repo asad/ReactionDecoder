@@ -21,8 +21,8 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
 import static java.awt.Color.BLUE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.FORWARD;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap.BUTT;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin.MITRE;
@@ -33,7 +33,8 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Params.MoleculeAlignMethod
  * @author asad
  */
 public class Params {
-    private static final Logger LOG = getLogger(Params.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Params.class);
 
     /**
      *

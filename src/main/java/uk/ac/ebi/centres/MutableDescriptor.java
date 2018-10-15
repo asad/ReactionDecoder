@@ -17,8 +17,8 @@
  */
 package uk.ac.ebi.centres;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
 
 /**
@@ -29,7 +29,8 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  * @author John May
  */
 public class MutableDescriptor {
-    private static final Logger LOG = getLogger(MutableDescriptor.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MutableDescriptor.class);
 
     private Descriptor descriptor = UNKNOWN;
 

@@ -33,9 +33,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import static uk.ac.ebi.reactionblast.fingerprints.PatternComparators.overallComparator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
@@ -51,7 +52,8 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         Serializable {
 
     private static final long serialVersionUID = 0156306561546552043757L;
-    private static final Logger LOG = getLogger(PatternFingerprinter.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(PatternFingerprinter.class);
 
     /**
      *

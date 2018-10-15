@@ -40,8 +40,6 @@ import java.util.Iterator;
 import static java.util.Locale.ENGLISH;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.REMARK;
 import static org.openscience.cdk.CDKConstants.TITLE;
@@ -74,16 +72,13 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  * @cdk.cite DAL92}.
  *
  * @cdk.module io
- * 
+ *
  *
  * @cdk.keyword file format, MDL RXN file
  */
-
 public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
 
-    private static ILoggingTool LOGGER
-            = createLoggingTool(MDLV2000RXNWriter.class);
-    private static final Logger LOG = getLogger(MDLV2000RXNWriter.class.getName());
+    private static ILoggingTool LOGGER = createLoggingTool(MDLV2000RXNWriter.class);
     private BufferedWriter writer;
     private int reactionNumber;
 

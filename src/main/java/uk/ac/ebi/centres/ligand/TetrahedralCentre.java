@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Centre;
 import uk.ac.ebi.centres.Descriptor;
 import static uk.ac.ebi.centres.Descriptor.Type.PSEUDO_ASYMMETRIC;
@@ -48,7 +48,9 @@ import static uk.ac.ebi.centres.descriptor.Tetrahedral.s;
 public class TetrahedralCentre<A>
         extends AbstractLigand<A>
         implements Centre<A> {
-    private static final Logger LOG = getLogger(TetrahedralCentre.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(TetrahedralCentre.class);
 
     private final A atom;
     private A parent;
@@ -180,10 +182,9 @@ public class TetrahedralCentre<A>
             return sign > 0 ? pseudo ? s
                     : S
                     : sign < 0
-                    ? pseudo ? r
-                    : R
-                    : UNSPECIFIED;
-
+                            ? pseudo ? r
+                                    : R
+                            : UNSPECIFIED;
 
         }
 
@@ -194,7 +195,6 @@ public class TetrahedralCentre<A>
     public Descriptor perceive(PriorityRule<A> rule, SignCalculator<A> calculator) {
 
         return perceive(getLigands(), rule, calculator);
-
 
     }
 

@@ -26,12 +26,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import static java.lang.System.out;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
@@ -42,7 +42,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  */
 class Helper extends ChemicalFormatParser {
 
-    private static final Logger LOG = getLogger(Helper.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Helper.class);
 
     protected static void getHeader() {
         StringBuilder sb = new StringBuilder();

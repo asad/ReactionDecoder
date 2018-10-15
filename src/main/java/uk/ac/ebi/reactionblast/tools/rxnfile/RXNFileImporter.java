@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.System.err;
 import static java.lang.System.out;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
@@ -28,6 +26,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.STRICT;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.tools.EBIMolSplitter.splitMolecules;
 
 /**
@@ -41,7 +41,8 @@ public class RXNFileImporter {
      *
      */
     public static final String RXN = "$RXN";
-    private static final Logger LOG = getLogger(RXNFileImporter.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(RXNFileImporter.class);
 
     private IReaction reaction;
 

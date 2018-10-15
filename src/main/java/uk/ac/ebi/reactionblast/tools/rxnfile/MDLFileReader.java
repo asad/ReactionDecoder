@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
@@ -40,6 +39,8 @@ import org.openscience.cdk.io.IChemObjectReader.Mode;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.MDLV3000Reader;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAllAtomContainers;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
@@ -53,7 +54,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieve
 public class MDLFileReader {
 
     private static IAtomContainer molecule = null;
-    private static final Logger LOG = getLogger(MDLFileReader.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MDLFileReader.class);
 
     /**
      * Constructor for MDL file reader

@@ -22,8 +22,8 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.MutableDescriptor;
@@ -33,7 +33,9 @@ import uk.ac.ebi.centres.MutableDescriptor;
  * @param <A>
  */
 public class TerminalLigand<A> extends NonterminalLigand<A> {
-    private static final Logger LOG = getLogger(TerminalLigand.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(TerminalLigand.class);
 
     /**
      *

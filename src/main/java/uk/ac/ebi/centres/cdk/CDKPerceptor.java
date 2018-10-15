@@ -46,8 +46,6 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(CDKPerceptor.class);
 
-    private static final Logger LOG = getLogger(CDKPerceptor.class.getName());
-
     /**
      *
      */

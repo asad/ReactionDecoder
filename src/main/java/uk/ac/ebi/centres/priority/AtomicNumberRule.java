@@ -18,8 +18,8 @@
 package uk.ac.ebi.centres.priority;
 
 import static java.lang.System.out;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Ligand;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
@@ -35,7 +35,8 @@ import uk.ac.ebi.centres.priority.access.AtomicNumberAccessor;
 public class AtomicNumberRule<A>
         extends AbstractPriorityRule<A> {
 
-    private static final Logger LOG = getLogger(AtomicNumberRule.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(AtomicNumberRule.class);
 
     /**
      * Accessor used to get the atomic number from an atom.

@@ -20,8 +20,8 @@ package uk.ac.ebi.reactionblast.fingerprints.tools;
 
 import static java.lang.Math.sqrt;
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  *
@@ -74,7 +74,8 @@ import static java.util.logging.Logger.getLogger;
  */
 public class Similarity {
 
-    private static final Logger LOG = getLogger(Similarity.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Similarity.class);
 
     /**
      *

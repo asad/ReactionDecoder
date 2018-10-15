@@ -36,8 +36,6 @@ import java.io.StringReader;
 import static java.lang.Integer.valueOf;
 import static java.lang.System.getProperty;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.TITLE;
 
@@ -66,7 +64,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  * @cdk.cite DAL92}. This MDL RXN reader uses the MDLV2000 reader to read each
  * mol file
  * @cdk.module io
- * 
+ *
  *
  * @author Egon Willighagen
  * @author Thomas Kuhn
@@ -77,9 +75,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  */
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
 
-    private static ILoggingTool LOGGER
-            = createLoggingTool(MDLRXNV2000Reader.class);
-    private static final Logger LOG = getLogger(MDLRXNV2000Reader.class.getName());
+    private static ILoggingTool LOGGER = createLoggingTool(MDLRXNV2000Reader.class);
     BufferedReader input = null;
 
     /**

@@ -5,8 +5,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 
@@ -27,7 +27,8 @@ import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 public class SingularValueDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 19981017786L;
-    private static final Logger LOG = getLogger(SingularValueDecomposition.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(SingularValueDecomposition.class);
     /* ------------------------
      Class variables
      * ------------------------ */
