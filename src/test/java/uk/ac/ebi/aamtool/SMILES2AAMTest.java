@@ -18,18 +18,13 @@
  */
 package uk.ac.ebi.aamtool;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.TestUtility;
