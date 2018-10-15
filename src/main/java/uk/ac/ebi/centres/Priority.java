@@ -19,11 +19,10 @@ package uk.ac.ebi.centres;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * Holds some properties that are determined when sorting/prioritising ligands.
@@ -31,7 +30,9 @@ import static java.util.logging.Logger.getLogger;
  * @author John May
  */
 public class Priority {
-    private static final Logger LOG = getLogger(Priority.class.getName());
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Priority.class);
 
     private Boolean unique;
     private Descriptor.Type type;
@@ -69,8 +70,9 @@ public class Priority {
     }
 
     /**
-     * Indicates the descriptor type used to. This allows methods that represent pseudo-asymmetric molecules to indicate
-     * that the centre is pseudo-asymmetric.
+     * Indicates the descriptor type used to. This allows methods that represent
+     * pseudo-asymmetric molecules to indicate that the centre is
+     * pseudo-asymmetric.
      *
      * @return The type of the descriptor that should be assigned
      */
@@ -92,26 +94,27 @@ public class Priority {
         List<List<Ligand<A>>> bins = new ArrayList<>(ligands.size());
 
         // now need to place in bins
-        for (Ligand<A> ligand : ligands) {
+        ligands.stream().map((ligand) -> {
             List<Ligand<A>> bin = new ArrayList<>();
-            bin.add(ligands.get(0));
+            bin.add(ligand);
+            return bin;
+        }).forEachOrdered((bin) -> {
             bins.add(bin);
-        }
+        });
 
         Set<Integer> removed = new HashSet<>();
         // and compact (could be doing something wrong
-        for (Set<Integer> pair : duplicates) {
-            Iterator<Integer> it = pair.iterator();
+        duplicates.stream().map((pair) -> pair.iterator()).forEachOrdered((it) -> {
             int i = it.next();
             int j = it.next();
             if (!removed.contains(i) || !removed.contains(j)) {
                 bins.get(i).addAll(bins.get(j));
                 removed.add(j);
             }
-        }
-        for (Integer remove : removed) {
-            bins.remove(remove);
-        }
+        });
+        removed.forEach((Integer r) -> {
+            bins.remove(r);
+        });
 
         return bins;
 
