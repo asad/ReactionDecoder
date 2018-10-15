@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
 import java.io.IOException;
 import java.util.BitSet;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -31,24 +31,19 @@ import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public abstract class IGraphMatching {
+public abstract class AbstractGraphMatching {
 
     /**
      *
      * @param holder
      * @param substrateIndex
      * @param productIndex
+     * @throws java.lang.Exception
      */
-    public static void setMCSUpdationFlags(Holder holder, int substrateIndex, int productIndex) {
-        try {
-            ReactionContainer reactionStructureInformation = holder.getReactionContainer();
-            reactionStructureInformation.setEductModified(substrateIndex, true);
-            reactionStructureInformation.setProductModified(productIndex, true);
-        } catch (IOException ex) {
-            getLogger(IGraphMatching.class.getName()).log(SEVERE, null, ex);
-        } catch (Exception ex) {
-            getLogger(IGraphMatching.class.getName()).log(SEVERE, null, ex);
-        }
+    public static void setMCSUpdationFlags(Holder holder, int substrateIndex, int productIndex) throws Exception {
+        ReactionContainer reactionStructureInformation = holder.getReactionContainer();
+        reactionStructureInformation.setEductModified(substrateIndex, true);
+        reactionStructureInformation.setProductModified(productIndex, true);
     }
 
     /**
