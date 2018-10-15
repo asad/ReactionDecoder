@@ -35,10 +35,6 @@ import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
-import static org.openscience.smsd.interfaces.Algorithm.CDKMCS;
-import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
-import static org.openscience.smsd.interfaces.Algorithm.MCSPlus;
-import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
 import org.openscience.smsd.interfaces.IResults;
 
 /**

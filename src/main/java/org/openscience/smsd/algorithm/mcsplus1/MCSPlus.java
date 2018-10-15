@@ -635,7 +635,8 @@ public class MCSPlus extends Filter {
                 }
 
             } else {
-                List<Integer> clique_MAPPING = extract_clique_MAPPING(clique_vector);
+                //List<Integer> clique_MAPPING = extract_clique_MAPPING(clique_vector);
+                //extract_mapping(clique_vector);
                 extract_mapping(clique_vector);
             }
             max_Cliques_Set.pop();
