@@ -440,7 +440,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-            //                System.err.println("position null for ID " + atomID);
+            //                System.LOGGER.debug("position null for ID " + atomID);
         }
 
         g.setFont(atomSymbolFont);

@@ -20,13 +20,11 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.File;
 import java.io.IOException;
-import static java.lang.System.out;
 import java.util.Collection;
 import static java.util.Collections.synchronizedMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import org.openscience.cdk.Bond;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
@@ -54,10 +52,11 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 import static java.lang.Math.abs;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -66,7 +65,8 @@ import org.openscience.cdk.graph.Cycles;
 public final class BondChangeAnnotator extends DUModel {
 
     private static final long serialVersionUID = 988987678877861L;
-    private static final Logger LOG = getLogger(BondChangeAnnotator.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(BondChangeAnnotator.class);
     private static final boolean DEBUG = false;
 
     /**
@@ -198,7 +198,7 @@ public final class BondChangeAnnotator extends DUModel {
         try {
             writeBEMatrix(outputFile, reactantBE);
         } catch (IOException ex) {
-            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -219,7 +219,7 @@ public final class BondChangeAnnotator extends DUModel {
         try {
             writeBEMatrix(outputFile, productBE);
         } catch (IOException ex) {
-            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -240,7 +240,7 @@ public final class BondChangeAnnotator extends DUModel {
         try {
             writeReactionMatrix(outputFile, reactionMatrix);
         } catch (IOException ex) {
-            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -274,7 +274,7 @@ public final class BondChangeAnnotator extends DUModel {
                  */
                 initializeMolecule(atomContainerQ);
             } catch (CDKException ex) {
-                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
 //            IRingSet singleRingsQ = new SSSRFinder(atomContainerQ).findSSSR();
             //New Method
@@ -291,7 +291,7 @@ public final class BondChangeAnnotator extends DUModel {
                  */
                 initializeMolecule(atomContainerT);
             } catch (CDKException ex) {
-                getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
 //            IRingSet singleRingsT = new SSSRFinder(atomContainerT).findSSSR();
             //New Method
@@ -316,7 +316,7 @@ public final class BondChangeAnnotator extends DUModel {
 
             if (atomE != null && atomP != null) {
                 if (atomE.getSymbol().equals("P") || atomP.getSymbol().equals("P")) {
-                    out.println("\nWARNING: The stereo change " + atomE.getSymbol()
+                    LOGGER.warn("\nWARNING: The stereo change " + atomE.getSymbol()
                             + " not supported");
                     continue;
                 }
@@ -365,14 +365,14 @@ public final class BondChangeAnnotator extends DUModel {
                             affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
                         }
                     } catch (CDKException ex) {
-                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                     try {
                         if (i < sizeT && j < sizeT) {
                             affectedBondProducts = getBondOfProductsByRMatrix(reactionMatrix.getProductAtom(i), reactionMatrix.getProductAtom(j));
                         }
                     } catch (CDKException ex) {
-                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                     if (affectedBondReactants == null && affectedBondProducts == null) {
                         continue;
@@ -427,7 +427,7 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(reactantAtom);
                             }
                         } catch (CDKException ex) {
-                            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                            LOGGER.error(SEVERE, null, ex);
                         }
                         try {
                             productAtom = reactionMatrix.getProductAtom(j);
@@ -436,7 +436,7 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(productAtom);
                             }
                         } catch (CDKException ex) {
-                            getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                            LOGGER.error(SEVERE, null, ex);
                         }
                     }
 
@@ -546,7 +546,7 @@ public final class BondChangeAnnotator extends DUModel {
 
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
-                        getLogger(BondChangeAnnotator.class.getName()).log(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -670,10 +670,10 @@ public final class BondChangeAnnotator extends DUModel {
                         && pMol.getConnectedBondsCount(productAtom) == 0) {
 
                     IBond eBond = connectedEductBondsList.iterator().next();
-                    
+
                     IAtom psudoAtom = new PseudoAtom("PsH");
                     IBond pBond = new Bond(psudoAtom, productAtom, SINGLE);
-                    
+
                     eBond.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
                     pBond.setProperty(BOND_CHANGE_INFORMATION, PSEUDO_BOND);
 

@@ -19,9 +19,6 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
-import static java.lang.System.err;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
@@ -33,6 +30,8 @@ import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
@@ -40,7 +39,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  * @author asad
  */
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());
+     private final static ILoggingTool LOGGER
+            = createLoggingTool(SingleMoleculeLayout.class);
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
@@ -81,7 +81,7 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
                 if (isConnected(atomContainer)) {
                     sdg.generateCoordinates();
                 } else {
-                    err.println("Disconnected components needs to be layout separately");
+                    LOGGER.debug("Disconnected components needs to be layout separately");
                 }
             } catch (CDKException e) {
                 e.printStackTrace();

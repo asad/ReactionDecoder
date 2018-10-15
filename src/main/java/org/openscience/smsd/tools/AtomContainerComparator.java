@@ -34,7 +34,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
- * @author Syed Asad Rahman<asad@ebi.ac.uk> 
+ * @author Syed Asad Rahman<asad@ebi.ac.uk>
  */
 public class AtomContainerComparator implements Comparator<IAtomContainer> {
 
@@ -168,7 +168,7 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
                         IIsotope majorIsotope = elfac.getMajorIsotope(atom.getSymbol());
                         mw += majorIsotope.getExactMass();
                     } catch (IOException e) {
-                        System.err.println("Molecular weight calculation failes for atom " + atom.getSymbol());
+                        LOGGER.debug("Molecular weight calculation failes for atom " + atom.getSymbol());
                     }
                 } else if (atom.getSymbol().equals("R")) {
                     IsotopeFactory elfac = Isotopes.getInstance();

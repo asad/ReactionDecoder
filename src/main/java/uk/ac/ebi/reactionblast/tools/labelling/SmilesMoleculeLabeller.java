@@ -20,17 +20,16 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.err;
 import static java.util.Arrays.sort;
-import java.util.Comparator;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
@@ -42,7 +41,8 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.get
  */
 public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = getLogger(SmilesMoleculeLabeller.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(SmilesMoleculeLabeller.class);
 
     /**
      *
@@ -69,14 +69,14 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
             return clone;
 
         } catch (CloneNotSupportedException ex) {
-            getLogger(SmilesMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
 
     /**
      * Given a molecule (possibly disconnected) compute the labels which would
-     * order the atoms by increasing canonical labeling.
+     * order the atoms by increasing canonical labelling.
      *
      * @param container
      * @return the permutation
@@ -87,7 +87,7 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
         try {
             unique().create(container, p);
         } catch (CDKException ex) {
-            getLogger(SmilesMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return p;
     }
@@ -121,7 +121,7 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
             int min2 = min(x, y);
             int max1 = max(u, v);
             int max2 = max(x, y);
-            
+
             int minCmp = Integer.compare(min1, min2);
             if (minCmp != 0) {
                 return minCmp;
@@ -130,7 +130,7 @@ public class SmilesMoleculeLabeller implements ICanonicalMoleculeLabeller {
             if (maxCmp != 0) {
                 return maxCmp;
             }
-            err.println("pokemon!");
+            LOGGER.debug("pokemon!");
             throw new InternalError();
         });
 

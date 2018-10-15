@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.tools.descriptors;
 
-import java.util.logging.Logger;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * This XlogP is calculated by Abdullah Kharamann. It uses summation on XlogP
@@ -33,7 +33,8 @@ public class CXlogP {
 
     private static final IAtomContainer MOL = null;
     private static final IAtomContainer E_MIN_Mol = null;
-    private static final Logger LOG = getLogger(CXlogP.class.getName());
+     private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CXlogP.class);
 
     private CXlogP() {
     }

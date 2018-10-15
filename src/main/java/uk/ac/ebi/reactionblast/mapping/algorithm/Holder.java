@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.HydrogenFreeFingerPrintContainer;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
@@ -36,17 +35,19 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
- *
- * @author Asad
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class Holder extends Debugger implements Cloneable, Serializable {
 
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 18989786786L;
-    private static final Logger LOG = getLogger(Holder.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(Holder.class);
     /*
      Final methods
      */
@@ -125,7 +126,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.carbonOverlapMatrix = new EBIMatrix(row, column);
         this.fpSimMatrixWithoutHydrogen = new EBIMatrix(row, column);
         this.energyMatrix = new EBIMatrix(row, column);
-        this.mappingMolPair = synchronizedList(new ArrayList<MolMapping>());
+        this.mappingMolPair = synchronizedList(new ArrayList<>());
         if (DEBUG) {
             out.println("initialize the Matrix");
         }
@@ -192,7 +193,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     }
                     fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
                 } catch (Exception ex) {
-                    getLogger(Holder.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -207,7 +208,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     MolMapping m = new MolMapping(eductName, productName, i, j);
                     getMappingMolPair().add(m);
                 } catch (Exception ex) {
-                    getLogger(Holder.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }

@@ -30,10 +30,11 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -47,6 +48,9 @@ import org.openscience.smsd.tools.IterationManager;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public final class MCSPlus {
+    
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MCSPlus.class);
 
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
@@ -167,7 +171,7 @@ public final class MCSPlus {
 //            int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
 //            System.out.println("extendMappings: " + size);
         } catch (IOException ex) {
-            Logger.getLogger(MCSPlus.class.getName()).log(Level.SEVERE, null, ex);
+             LOGGER.error(Level.SEVERE, null, ex);
         }
         return extendMappings;
     }

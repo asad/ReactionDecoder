@@ -69,22 +69,22 @@ public class MCSPlus extends Filter {
 //            for (int b = 0; b < atoms.size(); b++) {
 //                System.err.print(atoms.get(b).getSymbol() + ",");
 //            }
-//            System.err.println();
-//            System.err.println("basic_atom_vector");
+//            System.LOGGER.debug();
+//            System.LOGGER.debug("basic_atom_vector");
 //            for (int b = 0; b < basic_atom_vector.size(); b++) {
 //                System.err.print(basic_atom_vector.get(b) + ",");
 //            }
-//            System.err.println();
-//            System.err.println("i_tab");
+//            System.LOGGER.debug();
+//            System.LOGGER.debug("i_tab");
 //            for (int b = 0; b < i_tab.size(); b++) {
 //                System.err.print(i_tab.get(b) + ",");
 //            }
-//            System.err.println();
-//            System.err.println("c_tab");
+//            System.LOGGER.debug();
+//            System.LOGGER.debug("c_tab");
 //            for (int b = 0; b < c_tab.size(); b++) {
 //                System.err.print(c_tab.get(b) + ",");
 //            }
-//            System.err.println();
+//            System.LOGGER.debug();
 //        }
         for (int a = 0; a < basic_atom_vector.size(); a++) {
 

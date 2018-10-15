@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -40,7 +39,7 @@ import static org.openscience.cdk.tools.periodictable.PeriodicTable.getAtomicNum
  * @author John May
  */
 public class CMLLoader {
-
+    
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(CMLLoader.class);
 
@@ -66,21 +65,19 @@ public class CMLLoader {
                 percieveAtomTypesAndConfigureUnsetProperties(container);
                 return container;
             }
-        } catch (CDKException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException ex) {
-            getLogger(CMLLoader.class.getName()).log(SEVERE, null, ex);
+        } catch (IOException | CDKException e) {
+            LOGGER.error(SEVERE, null, e);
         }
         try {
             if (reader != null) {
                 reader.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOGGER.error(e);
         }
         return new AtomContainer();
     }
-
+    
     private CMLLoader() {
     }
 }

@@ -4,8 +4,6 @@ import static java.lang.Double.valueOf;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.lang.System.arraycopy;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 
 /**
@@ -23,7 +21,6 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public class LUDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 19978681017L;
-    private static final Logger LOG = getLogger(LUDecomposition.class.getName());
 
     /* ------------------------
      Class variables

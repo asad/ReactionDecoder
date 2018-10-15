@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -161,7 +160,7 @@ class MultiReactionContainer {
                     getAllFP().add(smiles);
 
                 } catch (Exception ex) {
-                    getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -187,7 +186,7 @@ class MultiReactionContainer {
                     getAllFP().add(smiles);
 
                 } catch (Exception ex) {
-                    getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }

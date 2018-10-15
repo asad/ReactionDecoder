@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -49,6 +48,8 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
 import org.openscience.cdk.tools.manipulator.RingSetManipulator;
@@ -66,7 +67,8 @@ import org.openscience.cdk.tools.manipulator.RingSetManipulator;
  */
 public class ExtAtomContainerManipulator extends AtomContainerManipulator implements Serializable {
 
-    static final Logger LOGGER = Logger.getLogger(ExtAtomContainerManipulator.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ExtAtomContainerManipulator.class);
     static final long serialVersionUID = 1786786539472837495L;
 
     /**
@@ -146,7 +148,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         }
 
         if (isMarkush) {
-            LOGGER.log(Level.WARNING, "Skipping Markush structure for sanity check");
+            LOGGER.warn(Level.WARNING, "Skipping Markush structure for sanity check");
         }
 
         // Check for salts and such
@@ -156,7 +158,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             //  part is a metal/halogen etc.
             IAtomContainerSet fragments = ConnectivityChecker.partitionIntoMolecules(molecule);
             if (fragments.getAtomContainerCount() > 2) {
-                LOGGER.log(Level.WARNING, "More than 2 components. Skipped");
+                LOGGER.warn(Level.WARNING, "More than 2 components. Skipped");
             } else {
                 IAtomContainer frag1 = fragments.getAtomContainer(0);
                 IAtomContainer frag2 = fragments.getAtomContainer(1);
@@ -186,7 +188,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 ringSet = arf.findAllRings(mol);
                 RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
-                LOGGER.log(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
             }
 
             try {
@@ -198,7 +200,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     aromatizeDayLight(mol);
                 }
             } catch (CDKException e) {
-                LOGGER.log(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
             }
 
             if (ringSet == null) {
@@ -228,7 +230,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 }
             }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
+            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
         }
     }
 
@@ -346,7 +348,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             convertImplicitToExplicitHydrogens(mol);
             mol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         } else if (mol.getAtomCount() == 1 && atomContainer.atoms().iterator().next().getSymbol().equalsIgnoreCase("H")) {
-            System.err.println("WARNING: single hydrogen atom removal not supported!");
+            LOGGER.warn("WARNING: single hydrogen atom removal not supported!");
         }
         mol.setProperties(atomContainer.getProperties());
         mol.setFlags(atomContainer.getFlags());
@@ -377,7 +379,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                         AtomTypeManipulator.configure(atom, matched);
                     }
                 } catch (CDKException e) {
-                    LOGGER.log(Level.WARNING,
+                    LOGGER.error(Level.WARNING,
                             "Failed to find Matching AtomType! {0}{1}", new Object[]{atom.getSymbol(), e});
                 }
             }
@@ -400,17 +402,19 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 if (!(a instanceof IPseudoAtom)) {
                     try {
                         hydAdder.addImplicitHydrogens(mol, a);
-                    } catch (Exception e) {
-                        a.setImplicitHydrogenCount(0);
-                        System.err.println("WARNING: Error in adding Hydrogen" + ":" + a.getSymbol());
-                        LOGGER.log(Level.WARNING, "This might effect the final calculations!");
+                    } catch (CDKException e) {
+                        if (a != null) {
+                            a.setImplicitHydrogenCount(0);
+                            LOGGER.error("WARNING: Error in adding Hydrogen :", a.getSymbol());
+                        }
+                        LOGGER.error("This might effect the final calculations!");
                     }
                 } else {
                     a.setImplicitHydrogenCount(0);
                 }
             }
         } catch (CDKException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         convertImplicitToExplicitHydrogens(mol);
         return mol;
@@ -429,7 +433,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            LOGGER.log(Level.WARNING,
+            LOGGER.error(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }
@@ -448,7 +452,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            LOGGER.log(Level.WARNING,
+            LOGGER.error(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }

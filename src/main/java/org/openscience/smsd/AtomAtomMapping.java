@@ -44,6 +44,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
@@ -54,6 +56,9 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public final class AtomAtomMapping implements Serializable {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(AtomAtomMapping.class);
 
     class MyQueryIAtomComp implements Comparator<IAtom> {
 
@@ -123,7 +128,7 @@ public final class AtomAtomMapping implements Serializable {
             mapping.put(atom1, atom2);
             mappingIndex.put(getQuery().indexOf(atom1), getTarget().indexOf(atom2));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error: Add Mapping to the Map", e);
         }
     }
 
@@ -167,7 +172,7 @@ public final class AtomAtomMapping implements Serializable {
                         | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
                 createReactionSMILES = withAtomClasses.create(reaction);
             } catch (CDKException ex) {
-                Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(ex);
             }
 
             s.append("MMP: ").append(createReactionSMILES).append(", AAM:[");
@@ -182,11 +187,11 @@ public final class AtomAtomMapping implements Serializable {
             try {
                 s.append(", MCS: ").append(getCommonFragmentAsSMILES());
             } catch (CDKException ex) {
-                Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
 
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         return s.toString();
     }
@@ -361,12 +366,12 @@ public final class AtomAtomMapping implements Serializable {
         try {
             CDKHydrogenAdder.getInstance(ac.getBuilder()).addImplicitHydrogens(ac);
         } catch (CDKException ex) {
-            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
         } catch (CDKException ex) {
-            Logger.getLogger(AtomAtomMapping.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
 
         return ac;

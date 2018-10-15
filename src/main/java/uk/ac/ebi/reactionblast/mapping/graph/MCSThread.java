@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -47,6 +46,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
@@ -68,7 +69,8 @@ public class MCSThread implements Callable<MCSSolution> {
     private static final boolean DEBUG1 = false;
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
-    private static final Logger LOG = getLogger(MCSThread.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MCSThread.class);
 
     private boolean stereoFlag;
     private boolean fragmentFlag;
@@ -301,7 +303,7 @@ public class MCSThread implements Callable<MCSSolution> {
             }
 
         } catch (CDKException | CloneNotSupportedException ex) {
-            getLogger(MCSThread.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -497,7 +499,7 @@ public class MCSThread implements Callable<MCSSolution> {
             }
             return mcs;
         } catch (CloneNotSupportedException | CDKException e) {
-            getLogger(MCSThread.class.getName()).log(SEVERE, "Error in computing MCS ", e);
+            LOGGER.error(SEVERE, "Error in computing MCS ", e);
         }
         return null;
     }

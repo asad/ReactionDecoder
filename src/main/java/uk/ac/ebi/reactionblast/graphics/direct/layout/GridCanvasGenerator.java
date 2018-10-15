@@ -19,19 +19,20 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
-import static java.lang.System.err;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  *
  * @author asad
  */
 public class GridCanvasGenerator extends AbstractCanvasGenerator implements CanvasGenerator {
-    private static final Logger LOG = getLogger(GridCanvasGenerator.class.getName());
+
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(GridCanvasGenerator.class);
 
     private int rows;
 
@@ -83,7 +84,7 @@ public class GridCanvasGenerator extends AbstractCanvasGenerator implements Canv
             }
 
             if (rowCounter > rows) {
-                err.println("WARNING : Row limit exceeded");
+                LOGGER.debug("WARNING : Row limit exceeded");
             }
         }
         size = new Dimension(cols * cellCanvas.width, rows * cellCanvas.height);

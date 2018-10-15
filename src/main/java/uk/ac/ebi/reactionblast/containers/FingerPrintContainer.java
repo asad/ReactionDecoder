@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
 
@@ -68,10 +68,10 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     /*
      * Singleton Pattern Implementation
      */
-
     private static FingerPrintContainer _instance = null;
     private static Map<String, BitSet> FingerPrintMap = null;
-    private static final Logger LOG = getLogger(FingerPrintContainer.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(FingerPrintContainer.class);
 
     /**
      *
@@ -87,7 +87,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
 
     //~--- constructors -------------------------------------------------------
     private FingerPrintContainer() {
-        FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
+        FingerPrintMap = synchronizedSortedMap(new TreeMap<>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -98,7 +98,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     @Override
     public synchronized void Clear() throws IOException {
         FingerPrintMap.clear();
-        FingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
+        FingerPrintMap = synchronizedSortedMap(new TreeMap<>());
     }
 
     /**
@@ -130,7 +130,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
         try {
             FingerPrintMap.put(Key, Value);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -165,10 +165,10 @@ public class FingerPrintContainer implements IFingerPrintContainer {
                     break;
                 }
             } catch (Exception ex) {
-                getLogger(FingerPrintContainer.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
-        //System.err.println("Error: Unable to Find AtomContainer ID!!!");
+        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 
@@ -230,7 +230,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
                     return true;
                 }
             } catch (Exception ex) {
-                getLogger(FingerPrintContainer.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return false;

@@ -19,13 +19,15 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.GraphUtil.toAdjList;
 import static org.openscience.cdk.graph.invariant.Canon.label;
 import static org.openscience.cdk.graph.invariant.InChINumbersTools.getUSmilesNumbers;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import uk.ac.ebi.reactionblast.graphics.direct.DirectReactionDrawer;
 import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 
 /**
@@ -37,7 +39,8 @@ import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.
  */
 public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = getLogger(InChiMoleculeLabeller.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(DirectReactionDrawer.class);
 
     /**
      *
@@ -75,7 +78,7 @@ public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
             labels = getUSmilesNumbers(container);
         } catch (CDKException ex) {
             labels = label(container, toAdjList(container));
-            getLogger(InChiMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         int[] permute = new int[labels.length];
         for (int i = 0; i < labels.length; i++) {

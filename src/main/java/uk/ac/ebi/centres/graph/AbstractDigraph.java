@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.centres.ConnectionProvider;
 import uk.ac.ebi.centres.DescriptorManager;
 import uk.ac.ebi.centres.Digraph;
@@ -36,6 +38,7 @@ import uk.ac.ebi.centres.MutableDescriptor;
 import uk.ac.ebi.centres.exception.WarpCoreEjection;
 import uk.ac.ebi.centres.ligand.NonterminalLigand;
 import uk.ac.ebi.centres.ligand.TerminalLigand;
+import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 
 /**
  * A digraph with a single immutable root.
@@ -46,6 +49,8 @@ import uk.ac.ebi.centres.ligand.TerminalLigand;
 public abstract class AbstractDigraph<A> implements Digraph<A>,
         ConnectionProvider<A> {
 
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(ReactionMechanismTool.class);
     private Ligand<A> root;
     private ArcMap arcs = new ArcMap(); // Could set expected size
     private ListMultimap<A, Ligand<A>> ligandMap = create();
@@ -95,7 +100,6 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
 
 //        System.out.println("tails: " + arcs.tails);
 //        System.out.println("heads: " + arcs.heads);
-
         root = ligand;
         ligand.reset();
 
@@ -111,9 +115,9 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             arc = next;
         }
 
-        for (Arc<A> transposedArc : queue) {
+        queue.forEach((transposedArc) -> {
             arcs.add(transposedArc);
-        }
+        });
 
         ligand.setParent(ligand.getAtom());
 
@@ -179,30 +183,19 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             return ligands;
         }
 
-
         // ligands have not be built
-        for (A atom : getConnected(ligand.getAtom())) {
-
-            if (ligand.isParent(atom)) {
-                continue;
-            }
-
+        getConnected(ligand.getAtom()).stream().filter((atom) -> !(ligand.isParent(atom))).forEachOrdered((atom) -> {
             MutableDescriptor descriptor = manager.getDescriptor(atom);
-
             // create the new ligand - terminal ligands are created in cases of cyclic molecules
             Ligand<A> neighbour = ligand.isVisited(atom)
                     ? new TerminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1)
                     : new NonterminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
             arcs.add(newArc(ligand, neighbour));
             ligandMap.put(atom, neighbour);
-
             ligands.add(neighbour);
-
             int order = getOrder(ligand.getAtom(), atom);
-
             // create ghost ligands (opened up from double bonds)
             if (order > 1) {
-
                 // create required number of ghost ligands
                 for (int i = 1; i < order; i++) {
                     Ligand<A> ghost = new TerminalLigand<>(this, descriptor, ligand.getVisited(), atom, ligand.getAtom(), ligand.getDistanceFromRoot() + 1);
@@ -223,10 +216,8 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
                 Ligand<A> ghost = new TerminalLigand<>(this, descriptor, ligand.getVisited(), ligand.getAtom(), atom, ligand.getDistanceFromRoot() + 1);
                 arcs.add(newArc(neighbour, ghost));
                 ligandMap.put(ligand.getAtom(), ghost);
-
             }
-
-        }
+        });
 
         return ligands;
 
@@ -261,7 +252,6 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
                 getDepth(tail.getAtom(), head.getAtom()));
     }
 
-
     @Override
     public void dispose() {
         ligandMap.clear();
@@ -291,7 +281,7 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
         public void add(Arc<A> arc) {
             tails.put(arc.getTail(), arc);
             if (heads.containsKey(arc.getHead())) {
-                err.println("Key clash!");
+                LOGGER.debug("Key clash!");
             }
             heads.put(arc.getHead(), arc);
         }
@@ -310,9 +300,9 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
             // to the arc list
             List<Arc<A>> arcs = tails.get(tail);
             List<Ligand<A>> ligands = new ArrayList<>(arcs.size());
-            for (Arc<A> arc : arcs) {
+            arcs.forEach((arc) -> {
                 ligands.add(arc.getHead());
-            }
+            });
             return ligands;
 
         }

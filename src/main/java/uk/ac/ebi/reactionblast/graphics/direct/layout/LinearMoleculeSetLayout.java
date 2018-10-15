@@ -21,8 +21,6 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.valueOf;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
@@ -34,6 +32,8 @@ import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
@@ -41,7 +41,9 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  * @author asad
  */
 public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainerSet> {
-    private static final Logger LOG = getLogger(LinearMoleculeSetLayout.class.getName());
+
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(LinearMoleculeSetLayout.class);
 
     /**
      * This is an axis for the individual molecules to be aligned to
@@ -105,7 +107,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
                 try {
                     sdg.generateCoordinates();
                 } catch (CDKException ex) {
-                    getLogger(LinearMoleculeSetLayout.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
                 molecule = sdg.getMolecule();
 

@@ -102,7 +102,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
             reactantBEMatrix.setAromaticBond();
             productBEMatrix.setAromaticBond();
         } catch (CDKException ex) {
-            getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         ArrayList<IAtom> orderedBEMatrixAtomArray = new ArrayList<>();
 
@@ -338,7 +338,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                 result.append("\t").append(this.getReactantBEMatrix().getAtom(i).getSymbol())
                         .append(this.getReactantBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
-                getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         result.append(NEW_LINE);
@@ -348,7 +348,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                 result.append("\t").append(this.getProductBEMatrix().getAtom(i).getSymbol())
                         .append(this.getProductBEMatrix().getAtom(i).getID());
             } catch (CDKException ex) {
-                getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         result.append(NEW_LINE);
@@ -364,7 +364,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                     result.append(this.getProductBEMatrix().getAtom(i).getID());
                     result.append("\t");
                 } catch (CDKException ex) {
-                    getLogger(RMatrix.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
             for (int j = 0; j < this.getColumnDimension() - 1; j++) {

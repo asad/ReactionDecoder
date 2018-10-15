@@ -6,8 +6,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 
@@ -30,7 +28,6 @@ import static uk.ac.ebi.reactionblast.tools.matrix.Maths.hypot;
 public class EigenvalueDecomposition implements java.io.Serializable {
 
     private static final long serialVersionUID = 17869981017L;
-    private static final Logger LOG = getLogger(EigenvalueDecomposition.class.getName());
     /* ------------------------
      Class variables
      * ------------------------ */

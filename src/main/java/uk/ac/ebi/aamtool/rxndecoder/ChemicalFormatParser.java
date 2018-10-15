@@ -23,12 +23,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import static java.lang.System.err;
 import static java.lang.System.exit;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
@@ -58,7 +56,7 @@ class ChemicalFormatParser {
     protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            err.println("CML file not found! " + f.getName());
+            LOGGER.debug("CML file not found! " + f.getName());
             exit(1);
         }
         String[] split = f.getName().split(".cml");
@@ -74,7 +72,7 @@ class ChemicalFormatParser {
     protected IReaction parseRXN(String fileName) {
         File filepath = new File(fileName);
         if (!filepath.isFile()) {
-            err.println("RXN file not found! " + filepath.getName());
+            LOGGER.debug("RXN file not found! " + filepath.getName());
             exit(1);
         }
         String[] split = filepath.getName().split(".rxn");
@@ -88,12 +86,12 @@ class ChemicalFormatParser {
                     rxnReactions.setID(split[0]);
                     return rxnReactions;
                 } catch (IOException | CDKException ex) {
-                    err.println("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
+                    LOGGER.debug("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
                 }
             }
         } catch (IOException ex) {
-            err.println("Failed to Read and Annotate RXN File ");
-            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
+            LOGGER.debug("Failed to Read and Annotate RXN File ");
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -107,10 +105,10 @@ class ChemicalFormatParser {
                 parseReactionSmiles.setID("smiles");
                 return parseReactionSmiles;
             } catch (Exception ex) {
-                getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         } catch (InvalidSmilesException ex) {
-            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -127,10 +125,10 @@ class ChemicalFormatParser {
                 parseReactionSmiles.setID("smiles");
                 return parseReactionSmiles;
             } catch (IllegalArgumentException ex) {
-                getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         } catch (InvalidSmilesException ex) {
-            getLogger(ChemicalFormatParser.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -138,7 +136,7 @@ class ChemicalFormatParser {
     protected IReaction parseMOL2(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            err.println("Mol2 file not found! " + f.getName());
+            LOGGER.debug("Mol2 file not found! " + f.getName());
             exit(1);
         }
 
@@ -156,7 +154,7 @@ class ChemicalFormatParser {
     protected IReaction parseSDF(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            err.println("SDF file not found! " + f.getName());
+            LOGGER.debug("SDF file not found! " + f.getName());
             exit(1);
         }
         String[] split = f.getName().split(".sdf");

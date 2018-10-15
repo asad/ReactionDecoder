@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
@@ -31,16 +30,15 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.graphics.direct.ColorRamp.getColors;
 import uk.ac.ebi.reactionblast.graphics.direct.awtlayout.AbstractAWTReactionLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectReactionLayout;
@@ -54,7 +52,9 @@ import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
  * @author asad
  */
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = getLogger(DirectRBLastReactionDrawer.class.getName());
+
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(DirectRBLastReactionDrawer.class);
 
     private DirectReactionDrawer reactionDrawer;
 
@@ -212,7 +212,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
 //                            + " crop " + cropX + " " + cropY + " " 
 //                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
-                out.println("Not cropping to ["
+                LOGGER.warn("Not cropping to ["
                         + cropX + ", " + cropY + "] "
                         + cropW + " x " + cropH + " as "
                         + (cropX + cropW) + " > " + w + " or "

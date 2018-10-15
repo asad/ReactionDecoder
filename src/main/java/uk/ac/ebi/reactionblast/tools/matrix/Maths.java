@@ -2,16 +2,12 @@ package uk.ac.ebi.reactionblast.tools.matrix;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author asad
  */
 public class Maths {
-
-    private static final Logger LOG = getLogger(Maths.class.getName());
 
     /**
      * sqrt(a^2 + b^2) without under/overflow. * * @param a

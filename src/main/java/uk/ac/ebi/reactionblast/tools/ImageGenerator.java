@@ -497,7 +497,7 @@ public class ImageGenerator {
         if (!file.exists()) {
             boolean success = file.mkdirs();
             if (!success) {
-                err.println("Could not make dir " + file);
+                LOGGER.debug("Could not make dir " + file);
             }
         }
         return file;

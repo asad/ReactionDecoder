@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Graphics2D;
@@ -29,7 +28,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
  * Draws a set of text labels for one or more molecules.
- *  
+ *
  * @author maclean
  *
  */
@@ -39,7 +38,6 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             = LoggingToolFactory.createLoggingTool(MoleculeLabelDrawer.class);
 
     // TODO: remove axis
-
     /**
      *
      * @param axis
@@ -57,7 +55,7 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
      */
     public void draw(Map<String, String> labelMap, BoundsTree labelBounds, Graphics2D g) {
         // layout labels according to the positions in the moleculeBounds
-        for (String boundsLabel : labelMap.keySet()) {
+        labelMap.keySet().forEach((boundsLabel) -> {
             String label = labelMap.get(boundsLabel);
             Rectangle2D bounds = labelBounds.get(boundsLabel);
             double x = bounds.getCenterX();
@@ -65,6 +63,6 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             Point2f p = super.getTextPoint(g, label, x, y);
 //            System.out.println("drawing string at " + x + " " + y);
             g.drawString(label, p.x, p.y);
-        }
+        });
     }
 }

@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.err;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.text.DecimalFormat;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
@@ -155,14 +153,14 @@ public class Annotator extends Helper {
                 File generateImage = generateImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
                 out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                getLogger(Annotator.class.getName()).log(SEVERE, "Unable to generate AAM image", e);
+                LOGGER.error(SEVERE, "Unable to generate AAM image", e);
             }
         } else if (!GENERATE_IMAGE && GENERATE_AAMIMAGE) {
             try {
                 File generateImage = generateAAMImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
                 out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                getLogger(Annotator.class.getName()).log(SEVERE, "Unable to generate AAM image", e);
+                LOGGER.error(SEVERE, "Unable to generate AAM image", e);
             }
         }
         return true;
@@ -605,8 +603,8 @@ public class Annotator extends Helper {
                 }
             }
         } catch (CDKException ex) {
-            err.println("Invalid RXN File " + reactionID);
-            getLogger(Annotator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.debug("Invalid RXN File " + reactionID);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -753,8 +751,8 @@ public class Annotator extends Helper {
                 }
             }
         } catch (CDKException ex) {
-            err.println("Invalid RXN File " + reactionID);
-            getLogger(Annotator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.debug("Invalid RXN File " + reactionID);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 

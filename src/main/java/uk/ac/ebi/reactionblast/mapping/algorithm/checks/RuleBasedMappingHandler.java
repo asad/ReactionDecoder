@@ -20,14 +20,12 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -38,6 +36,8 @@ import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  *
@@ -49,7 +49,8 @@ public final class RuleBasedMappingHandler implements Serializable {
     private final static boolean DEBUG1 = false;
     private final static boolean DEBUG2 = false;
     private static final long serialVersionUID = 88765671L;
-    private static final Logger LOG = getLogger(RuleBasedMappingHandler.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(RuleBasedMappingHandler.class);
 
     /*
      * Flags
@@ -348,15 +349,14 @@ public final class RuleBasedMappingHandler implements Serializable {
                 }
             }
         } catch (IOException | CDKException ex) {
-            getLogger(RuleBasedMappingHandler.class.getName()).
-                    log(WARNING, "Error in Matching Rules", ex);
+            LOGGER.error(WARNING, "Error in Matching Rules", ex);
         }
         if (this.isMatchFound()) {
             try {
                 this.matrixHolderClone = (Holder) matrixHolder.clone();
             } catch (CloneNotSupportedException ex) {
-                err.println("ERROR: Matrix Holder clone error");
-                getLogger(RuleBasedMappingHandler.class.getName()).log(SEVERE, null, ex);
+                LOGGER.debug("ERROR: Matrix Holder clone error");
+                LOGGER.error(SEVERE, null, ex);
             }
             for (int i = 0; i < this.matrixHolder.getReactionContainer().getEductCount(); i++) {
                 for (int j = 0; j < this.matrixHolder.getReactionContainer().getProductCount(); j++) {
@@ -421,7 +421,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                 }
                 return s.isSubgraph();
             } catch (CDKException ex) {
-                getLogger(RuleBasedMappingHandler.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         } else {
             try {
@@ -434,7 +434,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                 }
                 return s.isSubgraph();
             } catch (CDKException ex) {
-                getLogger(RuleBasedMappingHandler.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return false;

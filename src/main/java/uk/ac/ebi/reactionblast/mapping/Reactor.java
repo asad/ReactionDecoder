@@ -16,47 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-/**
- * @RCSfile: Reactor.java,v
- *
- * @Author: Syed Asad Rahman
- * @Date: 2004/06/3
- * @Revision: 1.10
- *
- * @Copyright (C) 2004-2018 The Atom Mapper Tool (AMT) project
- *
- * @Contact: asad@ebi.ac.uk
- *
- * @This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by the
- * Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version. All we ask is that proper credit is given for our
- * work, which includes - but is not limited to - adding the above copyright
- * notice to the beginning of your source code files, and to any copyright
- * notice that you may distribute with programs based on this work.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
- */
+
 package uk.ac.ebi.reactionblast.mapping;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,7 +33,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
@@ -98,6 +66,8 @@ import static java.util.Collections.synchronizedList;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
@@ -108,7 +78,8 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     private static final boolean DEBUG = false;
     private static final long serialVersionUID = 197816786981017L;
-    private static final Logger LOG = getLogger(Reactor.class.getName());
+     private final static ILoggingTool LOGGER
+            = createLoggingTool(Reactor.class);
     private final Map<Integer, Integer> rLabelledAtoms;
     private final Map<Integer, Integer> pLabelledAtoms;
     private final Map<Integer, Integer> inputRankLabelledAtomsReactant;
@@ -140,9 +111,9 @@ public class Reactor extends AbstractReactor implements Serializable {
             boolean partialMapping,
             IMappingAlgorithm algorithm)
             throws Exception {
-//        System.err.println("In Reaction");
+//        System.LOGGER.debug("In Reaction");
 //        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
-//        System.err.println("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
+//        System.LOGGER.debug("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
         this.partialMapping = partialMapping;
         this.algorithm = algorithm;
         this.reactionWithSTOICHIOMETRY = reaction.getBuilder().newInstance(IReaction.class);
@@ -201,7 +172,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             createReactionSMILES = smiles.create(reactionWithUniqueSTOICHIOMETRY);
         } catch (CDKException ex) {
-            getLogger(Reactor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return "Reactor{" + "partialMapping=" + partialMapping + ", algorithm=" + algorithm
                 + ", mapping=" + createReactionSMILES + '}';
@@ -220,7 +191,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 reactionWithSTOICHIOMETRY.addReactant(mol, st);
             }
         } catch (CloneNotSupportedException | CDKException e) {
-            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
         }
         try {
             for (int i = 0; i < referenceReaction.getProductCount(); i++) {
@@ -236,7 +207,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
         } catch (CloneNotSupportedException | CDKException e) {
-            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -405,7 +376,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             reactionWithUniqueSTOICHIOMETRY = getMapping(mappedReaction);
             setReactionBlastMolMapping(calP.getReactionBlastMolMapping());
         } catch (Exception ex) {
-            getLogger(Reactor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -993,7 +964,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 int[] p = new int[mol.getAtomCount()];
                 String smiles = unique().create(mol, p);
             } catch (CDKException e) {
-                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+                LOGGER.error(SEVERE, null, e);
             }
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
@@ -1024,7 +995,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 int[] p = new int[mol.getAtomCount()];
                 String smiles = unique().create(mol, p);
             } catch (CDKException e) {
-                getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+                LOGGER.error(SEVERE, null, e);
             }
 
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
@@ -1145,12 +1116,12 @@ public class Reactor extends AbstractReactor implements Serializable {
         IAtomContainer cloneMolecule = cloneWithIDs(org_mol);
 
         if (DEBUG) {
-            err.println("Orignal");
+            LOGGER.debug("Orignal");
             printAtoms(cloneMolecule);
         }
 
         if (DEBUG) {
-            err.println("\nmol before: ");
+            LOGGER.debug("\nmol before: ");
             printAtoms(cloneMolecule);
         }
         /*
@@ -1162,16 +1133,16 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             String smiles = unique().create(cloneMolecule, p);
             if (DEBUG) {
-                err.println("smiles " + smiles);
+                LOGGER.debug("smiles " + smiles);
             }
         } catch (CDKException e) {
-            getLogger(Reactor.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
         }
 
         permuteWithoutClone(p, cloneMolecule);
 
         if (DEBUG) {
-            err.println("mol after: ");
+            LOGGER.debug("mol after: ");
             printAtoms(cloneMolecule);
         }
 
@@ -1205,9 +1176,9 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         if (DEBUG) {
-            err.println("Processed");
+            LOGGER.debug("Processed");
             printAtoms(cloneMolecule);
-            err.println("canonicalMolecule: "
+            LOGGER.debug("canonicalMolecule: "
                     + generic().create(cloneMolecule)
                     + "\n\n");
         }
@@ -1222,7 +1193,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     private void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
         if (DEBUG) {
-            err.println("permuting " + java.util.Arrays.toString(p));
+            LOGGER.debug("permuting " + java.util.Arrays.toString(p));
         }
         IAtom[] permutedAtoms = new IAtom[n];
 
@@ -1252,7 +1223,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             if (maxCmp != 0) {
                 return maxCmp;
             }
-            err.println("pokemon!");
+            LOGGER.debug("pokemon!");
             throw new InternalError();
         });
         atomContainer.setBonds(bonds);

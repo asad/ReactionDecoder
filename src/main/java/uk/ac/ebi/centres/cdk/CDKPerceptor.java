@@ -17,8 +17,6 @@
  */
 package uk.ac.ebi.centres.cdk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.interfaces.IAtom;
@@ -101,7 +99,7 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
             }
             perceive(new CDKCentreProvider(container), new CDKManager(container));
         } catch (Exception e) {
-            LOGGER.warn("WARNING: 2D CDK based stereo perception failed! ");
+            LOGGER.error("WARNING: 2D CDK based stereo perception failed! " + e);
         }
     }
 }

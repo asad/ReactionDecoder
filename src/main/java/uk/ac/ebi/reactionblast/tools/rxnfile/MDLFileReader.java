@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
 
@@ -80,7 +79,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
 
             } else if (string.contains("This file must be read with the MDLReader.")) {
@@ -90,7 +89,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -140,7 +139,7 @@ public class MDLFileReader {
                         molecule = reader2.read(new AtomContainer());
                         reader2.close();
                     } catch (CDKException ex) {
-                        getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                 }
 
@@ -151,7 +150,7 @@ public class MDLFileReader {
                         reader2.close();
                     }
                 } catch (CDKException ex) {
-                    getLogger(MDLFileReader.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }

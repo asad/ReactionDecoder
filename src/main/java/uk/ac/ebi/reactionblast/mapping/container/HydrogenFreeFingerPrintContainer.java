@@ -26,8 +26,8 @@ import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
 
@@ -71,7 +71,8 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
     //depth search is set to 6, if not given explicitly as a parameter to Fingerprinter
     private static final int DEPTH_SEARCH = 8;
     private static final long serialVersionUID = 987987606869669691L;
-    private static final Logger LOG = getLogger(HydrogenFreeFingerPrintContainer.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(HydrogenFreeFingerPrintContainer.class);
 
     /**
      *
@@ -95,7 +96,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * HydrogenFreeFingerPrintContainer container
      */
     public HydrogenFreeFingerPrintContainer() {
-        fingerPrintMap = synchronizedSortedMap(new TreeMap<String, BitSet>());
+        fingerPrintMap = synchronizedSortedMap(new TreeMap<>());
     }
 
     @Override
@@ -134,7 +135,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
         try {
             fingerPrintMap.put(Key, Value);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -167,11 +168,11 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
                     break;
                 }
             } catch (Exception ex) {
-                getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
 
         }
-        //System.err.println("Error: Unable to Find AtomContainer ID!!!");
+        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 
@@ -223,7 +224,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
                     return true;
                 }
             } catch (Exception ex) {
-                getLogger(HydrogenFreeFingerPrintContainer.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
 
         }

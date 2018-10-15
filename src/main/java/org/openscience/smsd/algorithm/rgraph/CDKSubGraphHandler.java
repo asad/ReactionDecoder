@@ -120,7 +120,7 @@ public class CDKSubGraphHandler implements IResults {
 
         } catch (CDKException e) {
             rmap = null;
-//            System.err.println("WARNING: graphContainer: most probably time out error ");
+//            System.LOGGER.debug("WARNING: graphContainer: most probably time out error ");
         }
 
         return !getFirstAtomMapping().isEmpty();

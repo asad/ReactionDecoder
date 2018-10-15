@@ -22,8 +22,6 @@ import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.graph.SpanningTree;
 import org.openscience.cdk.interfaces.IAtom;

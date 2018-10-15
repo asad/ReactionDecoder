@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainerSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
@@ -64,8 +63,9 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.convertE
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import static java.lang.String.valueOf;
-import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -81,7 +81,8 @@ public class TestUtility {
     public static final String METRXN_RXN = "rxn/metrxn/";
     public static final String INFORCHEM_RXN = "rxn/infochem/";
     public static final String MACIE_RXN = "rxn/macie/";
-    private static final Logger LOG = getLogger(TestUtility.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(TestUtility.class);
 
     /**
      *
@@ -103,7 +104,7 @@ public class TestUtility {
             try {
                 checker.saturate(atomContainer);
             } catch (CDKException c) {
-                c.printStackTrace();
+                LOGGER.error(SEVERE, null, c);
             }
         }
     }
@@ -127,7 +128,7 @@ public class TestUtility {
                 aromatizeCDK(ac);
             } catch (CDKException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
     }
@@ -199,7 +200,7 @@ public class TestUtility {
             getInstance(getInstance()).addImplicitHydrogens(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -212,7 +213,7 @@ public class TestUtility {
             percieveAtomTypesAndConfigureAtoms(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -310,7 +311,7 @@ public class TestUtility {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
         } catch (Exception ex) {
-            getLogger(TestUtility.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
 
         if (removeHydrogens && reaction != null) {

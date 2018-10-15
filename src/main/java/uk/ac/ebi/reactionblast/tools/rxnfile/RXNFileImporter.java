@@ -77,9 +77,9 @@ public class RXNFileImporter {
         } catch (CDKException cdkerr) {
             out.println("Error: only RXN V2000 file format is "
                     + "supported by this Software");
-            err.println("Error: " + cdkerr);
+            LOGGER.debug("Error: " + cdkerr);
         } catch (FileNotFoundException e) {
-            err.println("Error: RXN File not found" + e);
+            LOGGER.debug("Error: RXN File not found" + e);
         }
     }
 

@@ -33,6 +33,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.interfaces.IResults;
 
@@ -40,12 +42,15 @@ import org.openscience.smsd.interfaces.IResults;
  * This class acts as a handler class for CDKMCS algorithm
  * {@link org.openscience.smsd.algorithm.rgraph.CDKMCS}.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class CDKMCSHandler implements IResults {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDKMCSHandler.class);
 
 //    //~--- fields -------------------------------------------------------------
     private final IAtomContainer source;
@@ -124,7 +129,7 @@ public class CDKMCSHandler implements IResults {
 
         } catch (CDKException e) {
             rmap = null;
-            System.err.println("WARNING: " + e.getMessage());
+            LOGGER.error("WARNING: " + e.getMessage());
         }
         return rmap.isTimeout();
     }

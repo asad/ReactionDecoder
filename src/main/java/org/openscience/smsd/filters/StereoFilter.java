@@ -29,9 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 
 import org.openscience.cdk.CDKConstants;
@@ -45,6 +43,8 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 
 /**
@@ -54,6 +54,9 @@ import org.openscience.smsd.AtomAtomMapping;
  *
  */
 public final class StereoFilter extends Sotter implements IChemicalFilter<Double> {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(StereoFilter.class);
 
     private final List<Double> stereoScore;
     private final ChemicalFilters chemfilter;
@@ -131,7 +134,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
                 }
                 stereoScoreMap.put(Key, score);
             } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
         }
         return stereoMatchFlag;
@@ -341,7 +344,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
             Cycles cycles = Cycles.all(subGraph);
             lScore = getRingMatch(cycles.toRingSet(), listMap);
         } catch (Intractable ex) {
-            Logger.getLogger(StereoFilter.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         return lScore;
     }

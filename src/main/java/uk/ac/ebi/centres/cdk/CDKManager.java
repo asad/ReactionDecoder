@@ -19,8 +19,6 @@ package uk.ac.ebi.centres.cdk;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObject;

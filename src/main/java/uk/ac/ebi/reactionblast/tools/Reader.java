@@ -34,14 +34,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
-import static java.lang.System.err;
 import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
@@ -56,6 +54,8 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
@@ -72,7 +72,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  */
 public class Reader {
 
-    private static final Logger LOG = getLogger(Reader.class.getName());
+     private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Reader.class);
 
     /**
      *
@@ -157,11 +158,11 @@ public class Reader {
             String fileName = f[0].trim() + ".rxn";
             File filepath = new File(fileName);
             if (!filepath.isFile()) {
-                getLogger(Reader.class.getName()).log(WARNING, format("RXN file not found! %s", filepath.getName()));
+                LOGGER.error(WARNING, format("RXN file not found! %s", filepath.getName()));
                 exit(1);
             }
             try {
-                getLogger(Reader.class.getName()).log(INFO, "Annotating Reaction {0}", filepath.getName());
+                LOGGER.error(INFO, "Annotating Reaction {0}", filepath.getName());
                 IReaction rxnReactions;
                 try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath));) {
                     try {
@@ -170,12 +171,12 @@ public class Reader {
                         rxnReactions.setID(filepath.getName().split(".rxn")[0]);
                         reactions.add(rxnReactions);
                     } catch (IOException | CDKException ex) {
-                        err.println("ERROR in Reading Reaction file " + filepath + "\n" + ex);
+                        LOGGER.debug("ERROR in Reading Reaction file " + filepath + "\n" + ex);
                     }
                 }
             } catch (IOException ex) {
-                err.println("Failed to Read and Annotate RXN File ");
-                getLogger(Reader.class.getName()).log(SEVERE, null, ex);
+                LOGGER.debug("Failed to Read and Annotate RXN File ");
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return reactions;
@@ -221,10 +222,10 @@ public class Reader {
 //                        renumberMappingIDs(rxnReactions);
 //                    }
 //                } catch (Exception e) {
-//                    System.err.println("ERROR in Mapping " + MolExporter.exportToObject(reaction, "SMARTS"));
+//                    System.LOGGER.debug("ERROR in Mapping " + MolExporter.exportToObject(reaction, "SMARTS"));
 //                }
 //            } catch (Exception ex) {
-//                System.err.println("ERROR in Reading Reaction file " + filepath);
+//                System.LOGGER.debug("ERROR in Reading Reaction file " + filepath);
 //            }
 //        }
 //
@@ -278,7 +279,7 @@ public class Reader {
                     reaction, true, false, false, new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
-            getLogger(Reader.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
             return reaction;
         }
     }
@@ -330,7 +331,7 @@ public class Reader {
             getInstance(getInstance()).addImplicitHydrogens(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            getLogger(Reader.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
         }
     }
 
@@ -343,7 +344,7 @@ public class Reader {
             percieveAtomTypesAndConfigureAtoms(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
-            getLogger(Reader.class.getName()).log(SEVERE, null, e);
+            LOGGER.error(SEVERE, null, e);
         }
     }
 

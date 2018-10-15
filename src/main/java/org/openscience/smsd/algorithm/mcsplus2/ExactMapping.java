@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * This class handles MCS between two identical molecules. Hence they generate
@@ -39,6 +41,9 @@ import java.util.TreeMap;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class ExactMapping {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ExactMapping.class);
 
     /**
      *
@@ -81,7 +86,7 @@ public class ExactMapping {
             List<Integer> clique_List = extractCliqueMapping(comp_graph_nodes, clique_List_org);
             _mappings.add(clique_List);
         } catch (Exception e) {
-            System.err.println("Error in FinalMapping List: " + e.getCause());
+            LOGGER.debug("Error in FinalMapping List: " + e.getCause());
             e.printStackTrace();
             System.exit(1);
         }
@@ -112,7 +117,7 @@ public class ExactMapping {
 
 //            System.out.println("clique_mapping  SIZE " + clique_mapping.size());
         } catch (Exception e) {
-            System.err.println("Error in FinalMapping List: " + e.getCause());
+            LOGGER.debug("Error in FinalMapping List: " + e.getCause());
             e.printStackTrace();
             System.exit(1);
         }

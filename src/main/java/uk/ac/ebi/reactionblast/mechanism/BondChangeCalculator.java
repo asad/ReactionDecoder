@@ -38,8 +38,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.Mapping;
 import static org.openscience.cdk.aromaticity.Kekulization.kekulize;
@@ -54,6 +52,8 @@ import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getRelevantAtomContainer;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getRelevantAtomContainer;
 import org.openscience.smsd.tools.BondEnergies;
@@ -91,7 +91,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     private final boolean DEBUG = false;
     private static final long serialVersionUID = 98698690880809981L;
-    private static final Logger LOG = getLogger(BondChangeCalculator.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(BondChangeCalculator.class);
     private final BondChangeAnnotator bondChangeAnnotator;
     private final IPatternFingerprinter formedCleavedWFingerprint;
     private final IPatternFingerprinter orderChangesWFingerprint;
@@ -495,11 +496,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
          * IMP for RC Fingerprint: compute all the unique reaction centers atoms
          */
         Map<IAtom, IAtom> reactionCenterMap = new HashMap<>();
-        for (IAtom atom : bondChangeAnnotator.getReactionCenterSet()) {
-            if (!atom.getSymbol().equals("H")) {
-                reactionCenterMap.put(atom, bondChangeAnnotator.getMappingMap().get(atom));
-            }
-        }
+        bondChangeAnnotator.getReactionCenterSet().stream().filter((atom) -> (!atom.getSymbol().equals("H"))).forEachOrdered((atom) -> {
+            reactionCenterMap.put(atom, bondChangeAnnotator.getMappingMap().get(atom));
+        });
 
         if (DEBUG) {
             System.out.println("RC Fingerprint charges like Mg2+ too Mg3+");
@@ -734,7 +733,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         result.append(NEW_LINE).append(NEW_LINE).append("//DATA START//");
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Cleaved FingerPrint (Reactant)");
-        for (Map.Entry<IBond, String> map : bondCleavedMap.entrySet()) {
+        bondCleavedMap.entrySet().forEach((map) -> {
             IBond bond = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -762,10 +761,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Formed FingerPrint (Product)");
-        for (Map.Entry<IBond, String> map : bondFormedMap.entrySet()) {
+        bondFormedMap.entrySet().forEach((map) -> {
             IBond bond = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -793,10 +792,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Order Change FingerPrint (Reactant)");
-        for (Map.Entry<IBond, String> map : bondOrderRMap.entrySet()) {
+        bondOrderRMap.entrySet().forEach((map) -> {
             IBond bond = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -824,10 +823,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Order Change FingerPrint (Product)");
-        for (Map.Entry<IBond, String> map : bondOrderPMap.entrySet()) {
+        bondOrderPMap.entrySet().forEach((map) -> {
             IBond bond = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -855,10 +854,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 result.append(symbol2);
                 result.append("(").append(id2).append(")" + "\t").append(molID);
             }
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Stereo Change FingerPrint (Reactant)");
-        for (Map.Entry<IAtom, String> map : AtomStereoRMap.entrySet()) {
+        AtomStereoRMap.entrySet().forEach((map) -> {
             IAtom atom = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -871,10 +870,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 symbol1 = atom.getSymbol();
             }
             result.append(symbol1).append("(").append(id1).append(")" + "(R/S)" + "\t").append(molID);
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("Stereo Change FingerPrint (Product)");
-        for (Map.Entry<IAtom, String> map : AtomStereoPMap.entrySet()) {
+        AtomStereoPMap.entrySet().forEach((map) -> {
             IAtom atom = map.getKey();
             String molID = map.getValue();
             result.append(NEW_LINE);
@@ -887,7 +886,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 symbol1 = atom.getSymbol();
             }
             result.append(symbol1).append("(").append(id1).append(")" + "(R/S)" + "\t").append(molID);
-        }
+        });
         result.append(NEW_LINE).append(NEW_LINE);
         result.append("//DATA END//").append(NEW_LINE);
         result.append(NEW_LINE).append(getLicenseFooter());
@@ -1149,16 +1148,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             for (IAtomContainer mol : compressedReaction.getReactants().atomContainers()) {
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
-                    for (IAtom atom : atoms) {
-                        /*
-                         Do not remove radical changes Hydrogen changes p-sh
-                         */
-                        if (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsKey(atom)) {
-                            if (atom.getProperty(BOND_CHANGE_INFORMATION) == null) {
-                                mol.removeAtom(atom);
-                            }
-                        }
-                    }
+                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsKey(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
+                        mol.removeAtom(atom);
+                    });
+                    /*
+                    Do not remove radical changes Hydrogen changes p-sh
+                     */
                     CDKHydrogenAdder hAdder = getInstance(mol.getBuilder());
                     try {
                         hAdder.addImplicitHydrogens(mol);
@@ -1171,16 +1166,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             for (IAtomContainer mol : compressedReaction.getProducts().atomContainers()) {
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
-                    for (IAtom atom : atoms) {
-                        /*
-                         Do not remove radical changes Hydrogen changes p-sh
-                         */
-                        if (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsValue(atom)) {
-                            if (atom.getProperty(BOND_CHANGE_INFORMATION) == null) {
-                                mol.removeAtom(atom);
-                            }
-                        }
-                    }
+                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsValue(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
+                        mol.removeAtom(atom);
+                    });
+                    /*
+                    Do not remove radical changes Hydrogen changes p-sh
+                     */
                     CDKHydrogenAdder cdkHAdder = getInstance(mol.getBuilder());
                     try {
                         cdkHAdder.addImplicitHydrogens(mol);
@@ -1203,7 +1194,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 }
             }
         } catch (CloneNotSupportedException ex) {
-            getLogger(BondChangeCalculator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return compressedReaction;
     }
@@ -1404,13 +1395,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     @Override
     public Map<String, Collection<String>> getMoleculeMoleculeTransformationPairs() {
         Map<String, Collection<String>> uniqueRPAIRS = new TreeMap<>();
-        for (MoleculeMoleculePair m : this.getReactionCentreTransformationPairs()) {
+        this.getReactionCentreTransformationPairs().stream().map((m) -> {
             if (!uniqueRPAIRS.containsKey(m.getName().toString())) {
                 LinkedList<String> l = new LinkedList<>();
                 uniqueRPAIRS.put(m.getName().toString(), l);
             }
+            return m;
+        }).forEachOrdered((m) -> {
             uniqueRPAIRS.get(m.getName().toString()).add(m.getSmirks());
-        }
+        });
         return uniqueRPAIRS;
     }
 

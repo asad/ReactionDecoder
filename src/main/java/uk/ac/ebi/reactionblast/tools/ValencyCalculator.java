@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getElementCount;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getGroup;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getSymbol;
@@ -46,13 +46,14 @@ public class ValencyCalculator {
 
     private static Map<String, Integer> valencElectronMap = null;
     private static boolean isInitialized = false;
-    private static final Logger LOG = getLogger(ValencyCalculator.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(ValencyCalculator.class);
 
     private static void initialize() {
         if (isInitialized) {
             return;
         }
-        valencElectronMap = synchronizedSortedMap(new TreeMap<String, Integer>());
+        valencElectronMap = synchronizedSortedMap(new TreeMap<>());
         for (int i = 1; i < getElementCount(); i++) {
             String symbol = getSymbol(i);
             if (getGroup(symbol) != null
@@ -131,7 +132,7 @@ public class ValencyCalculator {
         if (valencElectronMap.containsKey(symbol)) {
             atomValence = valencElectronMap.get(symbol);
         } else {
-            getLogger(ValencyCalculator.class.getName()).log(WARNING, "Element {0} not found. Valence assigned 99.", symbol);
+            LOGGER.warn(WARNING, "Element {0} not found. Valence assigned 99.", symbol);
             atomValence = 99;
         }
         return atomValence;

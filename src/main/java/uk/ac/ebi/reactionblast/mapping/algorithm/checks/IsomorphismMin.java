@@ -74,7 +74,7 @@ public class IsomorphismMin extends Selector implements IResult {
             PhaseOneMatcher();
             isSubstructure = PhaseTwoMatcher();
         } catch (IOException | CDKException ex) {
-            getLogger(IsomorphismMin.class.getName()).log(SEVERE, null, ex);
+           LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -230,7 +230,7 @@ public class IsomorphismMin extends Selector implements IResult {
                 out.println();
             }
         } catch (IOException | CDKException e) {
-            err.println(" Parser Error: ");
+            LOGGER.debug(" Parser Error: ");
         }
         out.println();
 
@@ -265,7 +265,7 @@ public class IsomorphismMin extends Selector implements IResult {
                 out.println();
             }
         } catch (IOException | CDKException e) {
-            err.println(" Parser Error: ");
+            LOGGER.debug(" Parser Error: ");
         }
         out.println();
 

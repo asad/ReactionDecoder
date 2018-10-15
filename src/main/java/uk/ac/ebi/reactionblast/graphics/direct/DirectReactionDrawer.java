@@ -36,14 +36,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
@@ -55,6 +52,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BACKWARD;
@@ -76,7 +75,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.TopToBottomReactionLayout;
  */
 public class DirectReactionDrawer extends AbstractDirectDrawer {
 
-    private static final Logger LOG = getLogger(DirectReactionDrawer.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(DirectReactionDrawer.class);
 
     private AbstractDirectReactionLayout reactionLayout;
     private AbstractAWTReactionLayout exactReactionLayout;
@@ -344,7 +344,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             Rectangle2D bb = boundsTree.getRoot();
             double dx = (boundsTree.getWidth() / 2) - bb.getCenterX();
             double dy = (boundsTree.getHeight() / 2) - bb.getCenterY();
-            err.println(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
+            LOGGER.debug(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
 
             // AARGH!
             boundsTree = shift(reaction, boundsTree, dx, 0);
@@ -461,15 +461,23 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
         arrowCenter = new Point2d(xPos, yPos);
 
-//        System.out.println("arrow center @ " + arrowCenter);
-        if (params.arrowType == FORWARD) {
+        if (null == params.arrowType) {
             arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
-        } else if (params.arrowType == BACKWARD) {
-            Vector2d backAxis = new Vector2d(reactionAxis);
-            backAxis.negate();
-            arrowDrawer.drawArrow(g, arrowCenter, backAxis);
-        } else {
-            arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
+        } else//        System.out.println("arrow center @ " + arrowCenter);
+        {
+            switch (params.arrowType) {
+                case FORWARD:
+                    arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
+                    break;
+                case BACKWARD:
+                    Vector2d backAxis = new Vector2d(reactionAxis);
+                    backAxis.negate();
+                    arrowDrawer.drawArrow(g, arrowCenter, backAxis);
+                    break;
+                default:
+                    arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
+                    break;
+            }
         }
 
         IAtomContainerSet products = reaction.getProducts();
@@ -490,7 +498,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
      */
     private void drawBoundsTree(BoundsTree tree, List<String> labels, Color color, Graphics2D g) {
         java.util.Random random = new java.util.Random();
-        for (String label : labels) {
+        labels.forEach((label) -> {
             Rectangle2D bounds = tree.get(label);
 //            int dx = random.nextInt(5) * ((random.nextBoolean())? 1 : -1);
 //            int dy = random.nextInt(5) * ((random.nextBoolean())? 1 : -1);
@@ -500,7 +508,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             g.setColor(RED);
             Point2f p = super.getTextPoint(g, label, bounds.getCenterX(), bounds.getCenterY());
             g.drawString(label, p.x, p.y);
-        }
+        });
     }
 
     /**
@@ -509,14 +517,14 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
      * @param labels
      */
     public void printBoundsTree(BoundsTree tree, List<String> labels) {
-        for (String label : labels) {
+        labels.forEach((label) -> {
             Rectangle2D r = tree.get(label);
             if (r == null) {
                 out.println(label + ":NULL");
             } else {
                 out.println(label + ":" + BoundsPrinter.toString(r));
             }
-        }
+        });
     }
 
     /**

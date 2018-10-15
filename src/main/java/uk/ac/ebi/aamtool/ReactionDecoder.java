@@ -25,13 +25,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -129,9 +127,9 @@ public class ReactionDecoder extends Annotator {
                         5, 3, true, out);
             }
         } catch (ParseException ex) {
-            getLogger(ReactionDecoder.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         } catch (Exception ex) {
-            getLogger(ReactionDecoder.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
 
     }
@@ -220,7 +218,7 @@ public class ReactionDecoder extends Annotator {
                         reaction = parseReactions.iterator().next();
                     }
                 } else {
-                    err.println("Not a valid reaction SMILES");
+                    LOGGER.debug("Not a valid reaction SMILES");
                 }
                 break;
             case "RXN":
@@ -332,7 +330,7 @@ public class ReactionDecoder extends Annotator {
                         queryReaction = parseReactions.iterator().next();
                     }
                 } else {
-                    err.println("Not a valid reaction SMILES");
+                    LOGGER.debug("Not a valid reaction SMILES");
                 }
                 break;
 
@@ -358,7 +356,7 @@ public class ReactionDecoder extends Annotator {
                         targetReaction = parseReactions.iterator().next();
                     }
                 } else {
-                    err.println("Not a valid reaction SMILES");
+                    LOGGER.debug("Not a valid reaction SMILES");
                 }
                 break;
 
@@ -491,7 +489,7 @@ public class ReactionDecoder extends Annotator {
                         reaction = parseReactions.iterator().next();
                     }
                 } else {
-                    err.println("Not a valid reaction SMILES");
+                    LOGGER.debug("Not a valid reaction SMILES");
                 }
                 break;
             case "RXN":

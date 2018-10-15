@@ -20,18 +20,19 @@ package uk.ac.ebi.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-import static java.lang.System.err;
 import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.interfaces.IMolContainer;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
@@ -77,7 +78,8 @@ public class MolContainer implements IMolContainer {
      */
     private static MolContainer _instance = null;
     private static Map<String, IAtomContainer> molContainer = null;
-    private static final Logger LOG = getLogger(MolContainer.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(MolContainer.class);
 
     /**
      *
@@ -93,7 +95,7 @@ public class MolContainer implements IMolContainer {
 
     //~--- constructors -------------------------------------------------------
     private MolContainer() {
-        molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+        molContainer = synchronizedSortedMap(new TreeMap<>());
     }
 
     //~--- methods ------------------------------------------------------------
@@ -127,7 +129,7 @@ public class MolContainer implements IMolContainer {
         try {
             molContainer.put(key, Value);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.debug(e);
         }
     }
 
@@ -186,18 +188,23 @@ public class MolContainer implements IMolContainer {
      * @return
      * @throws Exception
      */
-    public synchronized boolean isIdentical(IAtomContainer _queryMol, IAtomContainer _targetMol, boolean removeHydrogen) throws Exception {
+    public synchronized boolean isIdentical(IAtomContainer _queryMol,
+            IAtomContainer _targetMol,
+            boolean removeHydrogen) throws Exception {
 
         _targetMol = cloneWithIDs(_targetMol);
         if (_queryMol.getAtomCount() == 1 && _targetMol.getAtomCount() == 1) {
             IAtom a = _queryMol.atoms().iterator().next();
             IAtom b = _targetMol.atoms().iterator().next();
-            return a.getSymbol().equalsIgnoreCase(b.getSymbol()) && a.getFormalCharge() == b.getFormalCharge();
+            return a.getSymbol().equalsIgnoreCase(b.getSymbol())
+                    && Objects.equals(a.getFormalCharge(), b.getFormalCharge());
         }
         return isSubgraphIdentical(_queryMol, _targetMol, removeHydrogen);
     }
 
-    private synchronized boolean isSubgraphIdentical(IAtomContainer _mol, IAtomContainer _rMol, boolean removeHydrogen) throws CDKException, IOException {
+    private synchronized boolean isSubgraphIdentical(IAtomContainer _mol,
+            IAtomContainer _rMol,
+            boolean removeHydrogen) throws CDKException, IOException {
 //        System.out.println("Graph matching");
 
         IAtomContainer mol1 = _mol;
@@ -240,7 +247,7 @@ public class MolContainer implements IMolContainer {
             try {
                 instance.addImplicitHydrogens(queryMol, atom);
             } catch (CDKException e) {
-                err.println("WARNING: Error in adding H to the molecule");
+                LOGGER.error("WARNING: Error in adding H to the molecule");
             }
         }
 
@@ -253,7 +260,7 @@ public class MolContainer implements IMolContainer {
                 return key;
             }
         }
-        //System.err.println("Error: Unable to Find AtomContainer ID!!!");
+        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return null;
     }
 

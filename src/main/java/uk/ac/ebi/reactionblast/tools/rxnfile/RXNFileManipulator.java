@@ -71,12 +71,12 @@ public class RXNFileManipulator extends BasicDebugger {
         try {
             FPC.Clear();
         } catch (IOException ex) {
-            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         try {
             atomContainer.Clear();
         } catch (IOException ex) {
-            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -167,7 +167,7 @@ public class RXNFileManipulator extends BasicDebugger {
             }//end of if
 
         } catch (IOException ex) {
-            err.println("Error: Generation of FingerPrint Failed the AtomContainer: ");
+            LOGGER.debug("Error: Generation of FingerPrint Failed the AtomContainer: ");
             ex.printStackTrace();
         }
 
@@ -265,7 +265,7 @@ public class RXNFileManipulator extends BasicDebugger {
                 //Print the reaction
 //                printReaction(cleanedReaction);
             } catch (IOException ex) {
-                getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }//end of if
 
@@ -362,7 +362,7 @@ public class RXNFileManipulator extends BasicDebugger {
 
             } //end of if
         } catch (IOException ex) {
-            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         FPC.Clear();
         atomContainer.Clear();
@@ -480,28 +480,26 @@ public class RXNFileManipulator extends BasicDebugger {
 //                            System.out.println("Mol  " + molecule.getID());
                         }
                     } else {
-                        err.println("error: Fingerprint can't be generated for this molecule " + SmilesGenerator.generic().create(molecule));
+                        LOGGER.debug("error: Fingerprint can't be generated for this molecule " + SmilesGenerator.generic().create(molecule));
                     }
                 } else {
-                    err.println("error: Mol file should contain atleast one atom! " + SmilesGenerator.generic().create(molecule));
+                    LOGGER.debug("error: Mol file should contain atleast one atom! " + SmilesGenerator.generic().create(molecule));
                 }
             } catch (CDKException ex) {
-                ex.printStackTrace();
-                ex.getCause();
+                LOGGER.error(ex);
             } catch (Exception ex) {
-                ex.printStackTrace();
-                ex.getCause();
+                LOGGER.error(ex);
             }
             if (molecule.getID() == null) {
                 try {
                     throw new CDKException("Mol ID is NULL");
                 } catch (CDKException ex) {
-                    getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
 
         } catch (Exception ex) {
-            getLogger(RXNFileManipulator.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
 //        printAtoms(molecule);
 //        System.out.println(molecule.getID());

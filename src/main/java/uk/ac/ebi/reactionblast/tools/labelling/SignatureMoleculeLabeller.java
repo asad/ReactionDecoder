@@ -20,16 +20,14 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.err;
 import static java.util.Arrays.sort;
-import java.util.Comparator;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.signature.MoleculeSignature;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 
 /**
@@ -41,7 +39,8 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.get
  */
 public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
-    private static final Logger LOG = getLogger(SignatureMoleculeLabeller.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(SignatureMoleculeLabeller.class);
 
     /**
      *
@@ -69,7 +68,7 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
             return permute;
         } catch (CloneNotSupportedException ex) {
-            getLogger(SignatureMoleculeLabeller.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
 
         return null;
@@ -111,7 +110,7 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
             int min2 = min(x, y);
             int max1 = max(u, v);
             int max2 = max(x, y);
-            
+
             int minCmp = Integer.compare(min1, min2);
             if (minCmp != 0) {
                 return minCmp;
@@ -120,7 +119,7 @@ public class SignatureMoleculeLabeller implements ICanonicalMoleculeLabeller {
             if (maxCmp != 0) {
                 return maxCmp;
             }
-            err.println("pokemon!");
+            LOGGER.debug("pokemon!");
             throw new InternalError();
         });
         atomContainer.setBonds(bonds);

@@ -22,19 +22,19 @@ import java.io.Serializable;
 import static java.lang.Long.toHexString;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.err;
 import java.util.BitSet;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
 import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import uk.ac.ebi.reactionblast.graphics.direct.DirectReactionDrawer;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
@@ -44,7 +44,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
 public class ReactionFingerprinter implements Serializable {
 
     private static final long serialVersionUID = 7867867834118778L;
-    private static final Logger LOG = getLogger(ReactionFingerprinter.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(DirectReactionDrawer.class);
 
     /**
      *
@@ -111,11 +112,11 @@ public class ReactionFingerprinter implements Serializable {
                 try {
                     ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
                 } catch (Exception ex) {
-                    getLogger(ReactionFingerprinter.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
                 initializeMolecule(ac1);
             } catch (CDKException ex) {
-                err.println("ERROR: while configuring the reaction");
+                LOGGER.debug("ERROR: while configuring the reaction");
             }
             ac1.setID(id);
             for (int i = 0; i < reactantCoefficient; i++) {
@@ -131,11 +132,11 @@ public class ReactionFingerprinter implements Serializable {
                 try {
                     ac1 = removeHydrogensExceptSingleAndPreserveAtomID(ac1);
                 } catch (Exception ex) {
-                    getLogger(ReactionFingerprinter.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
                 initializeMolecule(ac1);
             } catch (CDKException ex) {
-                err.println("ERROR: while configuring the reaction");
+                LOGGER.debug("ERROR: while configuring the reaction");
             }
             ac1.setID(id);
             for (int i = 0; i < productCoefficient; i++) {
@@ -158,13 +159,13 @@ public class ReactionFingerprinter implements Serializable {
         try {
             fpr = getSumOfFingerprints(r.getReactants());
         } catch (Exception ex) {
-            err.println("ERROR: while get SumOfFingerprints for Reactants");
+            LOGGER.debug("ERROR: while get SumOfFingerprints for Reactants");
         }
         IPatternFingerprinter fpp = null;
         try {
             fpp = getSumOfFingerprints(r.getProducts());
         } catch (Exception ex) {
-            err.println("ERROR: while get SumOfFingerprints for Products");
+            LOGGER.debug("ERROR: while get SumOfFingerprints for Products");
         }
         this.reactionFingerprint = summationPatterns(fpr, fpp);
         reactionFingerprint.setFingerprintID(r.getID());

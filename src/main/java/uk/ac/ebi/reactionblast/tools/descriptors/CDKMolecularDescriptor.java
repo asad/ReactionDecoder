@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import static java.lang.Boolean.TRUE;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
@@ -45,6 +44,8 @@ import org.openscience.cdk.qsar.descriptors.molecular.XLogPDescriptor;
 import org.openscience.cdk.qsar.descriptors.molecular.ZagrebIndexDescriptor;
 import org.openscience.cdk.qsar.result.DoubleResult;
 import org.openscience.cdk.qsar.result.IntegerResult;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getHeavyAtoms;
 import org.openscience.smsd.helper.MoleculeInitializer;
@@ -59,7 +60,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.checkAnd
  */
 public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolDescriptors {
 
-    private static final Logger LOG = getLogger(CDKMolecularDescriptor.class.getName());
+     private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(CDKMolecularDescriptor.class);
 
     private final IAtomContainer molecule;
 
@@ -103,7 +105,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             acc.setParameters(hBondparams);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         int acceptors = ((IntegerResult) acc.calculate(molecule).getValue()).intValue();
         return acceptors;
@@ -122,7 +124,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             don.setParameters(hBondparams);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         int donors = ((IntegerResult) don.calculate(molecule).getValue()).intValue();
         return donors;
@@ -142,7 +144,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             xlogP.setParameters(xlogPparams);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+             LOGGER.error(SEVERE, null, ex);
         }
         double xlogPvalue = ((DoubleResult) xlogP.calculate(molecule).getValue()).doubleValue();
         return xlogPvalue;
@@ -161,7 +163,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             tpsa.setParameters(tpsaParameter);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         double tpsaValue = ((DoubleResult) tpsa.calculate(molecule).getValue()).doubleValue();
         return tpsaValue;
@@ -254,7 +256,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             mw.setParameters(mwparams);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         double value = ((DoubleResult) mw.calculate(molecule).getValue()).doubleValue();
         return value;
@@ -276,7 +278,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
             rbcd.setParameters(params);
             value = ((IntegerResult) rbcd.calculate(molecule).getValue()).intValue();
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return value;
     }
@@ -293,7 +295,7 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
         try {
             lps.setParameters(mwparams);
         } catch (CDKException ex) {
-            getLogger(CDKMolecularDescriptor.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         int value = ((IntegerResult) lps.calculate(molecule).getValue()).intValue();
         return value;

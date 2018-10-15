@@ -22,12 +22,10 @@ import java.io.Serializable;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.lang.System.err;
 import java.util.ArrayList;
 import static java.util.Arrays.sort;
 import java.util.Collection;
 import static java.util.Collections.sort;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,6 +51,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
@@ -70,6 +70,9 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public abstract class Utility extends MatrixPrinter implements Serializable {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Utility.class);
 
     /**
      * Used Chemaxon to generate smikrs
@@ -92,7 +95,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             }
 
         } catch (Exception ex) {
-            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return sb.toString();
     }
@@ -128,7 +131,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         try {
             return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
         } catch (CloneNotSupportedException ex) {
-            getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return smiles;
     }
@@ -260,7 +263,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
                 try {
                     hit = countSubstructures.substructureSize(pattern);
                 } catch (CDKException ex) {
-                    getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
                 int val = hit == 0 ? 0 : atomRCChangesMap.get(pattern) + 1;
                 atomRCChangesMap.put(pattern, val);
@@ -278,7 +281,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             try {
                 atomRCChangesMap.add(new Feature(fragment, 1.0));
             } catch (CDKException ex) {
-                getLogger(Utility.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         });
     }
@@ -530,7 +533,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             int min2 = min(x, y);
             int max1 = max(u, v);
             int max2 = max(x, y);
-            
+
             int minCmp = Integer.compare(min1, min2);
             if (minCmp != 0) {
                 return minCmp;
@@ -539,7 +542,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             if (maxCmp != 0) {
                 return maxCmp;
             }
-            err.println("pokemon!");
+            LOGGER.debug("pokemon!");
             throw new InternalError();
         });
         atomContainer.setBonds(bonds);

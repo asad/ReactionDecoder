@@ -176,7 +176,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
+                 LOGGER.error(Level.SEVERE, null, ex);
             }
 
             int jobCounter = 0;
@@ -431,7 +431,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                java.util.logging.Logger.getLogger(VF2MCS.class.getName()).log(Level.SEVERE, null, ex);
+                 LOGGER.error(Level.SEVERE, null, ex);
             }
 
             MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);

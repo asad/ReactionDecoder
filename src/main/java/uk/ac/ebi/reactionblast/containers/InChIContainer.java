@@ -163,7 +163,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
             if (map.getValue().equals(Value)) {
                 return Key;
             }
-        }//System.err.println("Error: Unable to Find AtomContainer ID!!!");
+        }//System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 

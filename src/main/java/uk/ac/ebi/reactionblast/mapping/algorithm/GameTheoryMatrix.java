@@ -212,7 +212,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 structureMapObj.setEductModified(key, true);
                 substrateductFPMap.put(key, FP);
             } catch (Exception ex) {
-                getLogger(GameTheoryMatrix.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
 
         }
@@ -238,7 +238,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
                 structureMapObj.setProductModified(key, true);
                 productFPMap.put(key, fingerPrint);
             } catch (Exception ex) {
-                getLogger(GameTheoryMatrix.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
     }

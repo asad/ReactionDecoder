@@ -77,7 +77,7 @@ public class CDKSMILES {
         } catch (CDKException ex) {
             LOGGER.error("ERROR : in generating CDK SMILES" + molecule.getID());
         } catch (IOException ex) {
-            getLogger(CDKSMILES.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
 //        /*
 //         Chemaxon based unique SMILES generator for debugging
@@ -107,7 +107,7 @@ public class CDKSMILES {
 //            chemAxonMolecule.aromatize();
 //            return chemaxon.formats.MolExporter.exportToFormat(chemAxonMolecule, "smiles:au");
 //        } catch (Exception ex) {
-//            Logger.getLogger(CDKSMILES.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.LOGGER.error(Level.SEVERE, null, ex);
 //        }
 
         return smiles;

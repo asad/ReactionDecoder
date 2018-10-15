@@ -25,12 +25,19 @@ package org.openscience.smsd.algorithm.mcsplus1;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
+import uk.ac.ebi.reactionblast.graphics.direct.MoleculeLabelDrawer;
 
 /**
  *
- * @author arahman
+ * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
+ * @contact asad@ebi.ac.uk
  */
 public class BKKCKCF {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MoleculeLabelDrawer.class);
 
     private final List<Integer> comp_graph_nodes;
 
@@ -212,7 +219,7 @@ public class BKKCKCF {
                 }
             }
             if (ut_node_pos == Integer.MAX_VALUE) {
-                System.err.println("ut_node_pos = " + Integer.MAX_VALUE);
+                LOGGER.debug("ut_node_pos = " + Integer.MAX_VALUE);
             }
             //delete P_Prime node in P
             for (int counter = ut_node_pos; counter < P_size - 1; counter++) {

@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
@@ -46,15 +44,18 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
 
 /**
  *
- * @author Asad
+ * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 class IsomeraseHandler {
 
-    private static final Logger LOG = getLogger(IsomeraseHandler.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(IsomeraseHandler.class);
 
     /**
      *
@@ -86,12 +87,12 @@ class IsomeraseHandler {
             try {
                 initializeMolecule(educt);
             } catch (CDKException ex) {
-                getLogger(GameTheoryRings.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
             try {
                 initializeMolecule(product);
             } catch (CDKException ex) {
-                getLogger(GameTheoryRings.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
             // sets SSSR information
 //            SSSRFinder finder = new SSSRFinder(educt);
@@ -105,7 +106,6 @@ class IsomeraseHandler {
 
 //            finder = new SSSRFinder(product);
 //            sssrProduct = finder.findEssentialRings();
-
             cycles = cf.find(product); // ignore error - essential cycles do not check tractability
             sssrProduct = cycles.toRingSet();
             boolean chipBondInTheRing = chipBondInTheRing(educt, product);
@@ -123,7 +123,7 @@ class IsomeraseHandler {
                     boolean chipPhophateInSingleReactantProductNotInRing
                             = chipPhophateInSingleReactantProductNotInRing(educt, product);
                 } catch (CDKException ex) {
-                    getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -145,7 +145,7 @@ class IsomeraseHandler {
                     ringSet.put(basicRings, ac);
                 }
             } catch (Intractable ex) {
-                getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return ringSet;
@@ -323,7 +323,7 @@ class IsomeraseHandler {
                         + " B1 " + bond.getAtom(1).getSymbol());
                 out.println("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
             } catch (CDKException ex) {
-                getLogger(IsomeraseHandler.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         });
         return !bond_to_be_removed.isEmpty();

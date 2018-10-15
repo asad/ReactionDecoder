@@ -29,14 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
 import org.openscience.cdk.exception.Intractable;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 /**
@@ -45,7 +45,8 @@ import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
  */
 public class DirectMoleculeDrawer extends AbstractDirectDrawer {
 
-    private static final Logger LOG = getLogger(DirectMoleculeDrawer.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(DirectMoleculeDrawer.class);
 
     private Font moleculeIDFont;
     private List<Highlighter> highlightDrawers;
@@ -168,9 +169,9 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
      */
     public void addHighlights(List<IAtom> atoms, Color color) {
         Map<IAtom, Color> atomColorMap = new HashMap<>();
-        for (IAtom atom : atoms) {
+        atoms.forEach((atom) -> {
             atomColorMap.put(atom, color);
-        }
+        });
         Highlighter highlightDrawer = getFirstHighlighter();
         highlightDrawer.addToHighlights(atomColorMap);
     }
@@ -204,7 +205,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
      * @param atoms
      */
     public void addHighlights(List<IAtom> atoms) {
-        addHighlights(atoms, new ArrayList<IBond>());
+        addHighlights(atoms, new ArrayList<>());
     }
 
     /**
@@ -247,7 +248,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         try {
             bondDrawer.drawBonds(molecule, g);
         } catch (Intractable ex) {
-            Logger.getLogger(DirectMoleculeDrawer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         atomDrawer.drawAtoms(molecule, g);
 
@@ -263,9 +264,9 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
     }
 
     private void drawHighlights(IAtomContainer molecule, Graphics2D g) {
-        for (Highlighter highlightDrawer : highlightDrawers) {
+        highlightDrawers.forEach((highlightDrawer) -> {
             highlightDrawer.drawHighlights(molecule, g);
-        }
+        });
     }
 
     /**

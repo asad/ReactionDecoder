@@ -114,7 +114,7 @@ public final class MoleculeHandler {
             temp.add(atomType);
         }
 
-        //System.err.println("In atomContainer: getString(temp) " +temp.size()+ " "+ getString(temp));
+        //System.LOGGER.debug("In atomContainer: getString(temp) " +temp.size()+ " "+ getString(temp));
         this.atomString = temp;
 
     }

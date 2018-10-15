@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
 import static java.lang.Integer.MIN_VALUE;
-import static java.lang.System.err;
 import static java.lang.System.gc;
 import static java.lang.System.out;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
@@ -79,7 +77,6 @@ public class ReactionMechanismTool implements Serializable {
     private final static ILoggingTool LOGGER
             = createLoggingTool(ReactionMechanismTool.class);
     private static final long serialVersionUID = 07342630505L;
-    private static final Logger LOG = getLogger(ReactionMechanismTool.class.getName());
     private MappingSolution selectedMapping;
     private Collection<MappingSolution> allSolutions;
 
@@ -170,7 +167,7 @@ public class ReactionMechanismTool implements Serializable {
                     SmilesGenerator withAtomClasses = new SmilesGenerator(
                             SmiFlavor.Unique
                             | SmiFlavor.AtomAtomMap);
-                    err.println("Input reaction mapped " + withAtomClasses.create(reaction));
+                    LOGGER.debug("Input reaction mapped " + withAtomClasses.create(reaction));
                 }
 
                 boolean onlyCoreMappingByMCS = true;
@@ -242,7 +239,7 @@ public class ReactionMechanismTool implements Serializable {
                 try {
                     out.println("Q=mol " + generic().create(q));
                 } catch (CDKException ex) {
-                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -265,7 +262,7 @@ public class ReactionMechanismTool implements Serializable {
                 try {
                     out.println("T=mol " + generic().create(t));
                 } catch (CDKException ex) {
-                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
         }
@@ -276,16 +273,14 @@ public class ReactionMechanismTool implements Serializable {
         }
 
         if (leftHandAtomCount != rightHandAtomCount) {
-            err.println();
-            err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            err.println();
-            err.println("Number of atom(s) on the Left side " + leftHandAtomCount
+            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
                     + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            err.println(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         }
 
@@ -665,7 +660,7 @@ public class ReactionMechanismTool implements Serializable {
                 }
             }
         } catch (CDKException ex) {
-            getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return abs(total);
     }

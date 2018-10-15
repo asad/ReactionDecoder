@@ -18,10 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.fingerprints;
 
-import static java.lang.System.err;
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.CircularFingerprinter;
 import static org.openscience.cdk.fingerprint.CircularFingerprinter.CLASS_ECFP4;
@@ -29,6 +26,8 @@ import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 
 /**
@@ -37,7 +36,8 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
  */
 public class FingerprintGenerator implements IFingerprintGenerator {
 
-    private static final Logger LOG = getLogger(FingerprintGenerator.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(FingerprintGenerator.class);
 
     /**
      * Size of the fingerprint
@@ -76,7 +76,7 @@ public class FingerprintGenerator implements IFingerprintGenerator {
                 structureDiagramGenerator.generateCoordinates();
                 mol = structureDiagramGenerator.getMolecule();
             } else {
-                err.println("Disconnected components needs to be layout separately");
+                LOGGER.debug("Disconnected components needs to be layout separately");
             }
         }
         return fingerprinter.getBitFingerprint(mol).asBitSet();

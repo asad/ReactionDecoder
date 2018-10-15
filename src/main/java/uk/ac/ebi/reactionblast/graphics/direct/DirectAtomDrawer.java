@@ -488,7 +488,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-//            System.err.println("position null for ID " + atomID);
+//            System.LOGGER.debug("position null for ID " + atomID);
         }
 
         Point2f tp = getTextPoint(g, atomID, pID.x, pID.y);

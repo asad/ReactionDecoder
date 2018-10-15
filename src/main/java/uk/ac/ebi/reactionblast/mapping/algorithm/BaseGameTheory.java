@@ -102,7 +102,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         suffix = suffix.concat(valueOf(ms));
         ms = cal.get(MILLISECOND);
         suffix = suffix.concat(valueOf(ms));
-        //System.err.println("Suffix: " + suffix);
+        //System.LOGGER.debug("Suffix: " + suffix);
         return suffix;
 
     }

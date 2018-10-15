@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -57,7 +56,7 @@ public class ECRgroupFrequency {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
+
         ECRgroupFrequency ecRgroupFrequency = new ECRgroupFrequency(args);
     }
 
@@ -98,9 +97,9 @@ public class ECRgroupFrequency {
                                     reactionMap.put(ecNumber, r);
                                 }
                             } catch (FileNotFoundException ex) {
-                                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
+                                LOGGER.error(SEVERE, null, ex);
                             } catch (CDKException | IOException ex) {
-                                getLogger(ECRgroupFrequency.class.getName()).log(SEVERE, null, ex);
+                                LOGGER.error(SEVERE, null, ex);
                             }
                         }
                     }
@@ -288,7 +287,7 @@ public class ECRgroupFrequency {
         out.println("------------------------------------------------------");
         /*
         EC Third Level Signature
-        */
+         */
         int empty_signature = 0;
         int one_signature_common = 0;
         int more_than_one_signature_common = 0;

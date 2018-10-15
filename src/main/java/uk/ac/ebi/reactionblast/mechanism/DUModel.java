@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
-import static java.lang.System.err;
 import java.util.ArrayList;
 import static java.util.Collections.synchronizedList;
 import static java.util.Collections.synchronizedMap;
@@ -39,6 +38,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import uk.ac.ebi.reactionblast.mechanism.helper.AtomStereoChangeInformation;
@@ -53,6 +54,9 @@ import uk.ac.ebi.reactionblast.stereo.ebi.StereoCenteralityTool;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 abstract class DUModel extends StereoCenteralityTool implements IChangeCalculator, Serializable {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(DUModel.class);
 
     private final static boolean DEBUG = false;
 
@@ -90,11 +94,11 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
 
         this.reactantSet = reaction.getReactants();
         this.productSet = reaction.getProducts();
-        this.bondChangeList = synchronizedList(new ArrayList<BondChange>());
-        this.reactionCenterList = synchronizedSet(new LinkedHashSet<IAtom>());
-        this.stereoChangeList = synchronizedList(new ArrayList<AtomStereoChangeInformation>());
-        this.conformationChangeList = synchronizedList(new ArrayList<AtomStereoChangeInformation>());
-        this.mappingMap = synchronizedMap(new HashMap<IAtom, IAtom>());
+        this.bondChangeList = synchronizedList(new ArrayList<>());
+        this.reactionCenterList = synchronizedSet(new LinkedHashSet<>());
+        this.stereoChangeList = synchronizedList(new ArrayList<>());
+        this.conformationChangeList = synchronizedList(new ArrayList<>());
+        this.mappingMap = synchronizedMap(new HashMap<>());
 
         this.generate3DCoordinates = generate3D;
         this.generate2DCoordinates = generate2D;
@@ -138,7 +142,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         try {
             chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
-            err.println("WARNING: 2D CDK based stereo perception failed");
+            LOGGER.debug("WARNING: 2D CDK based stereo perception failed");
         }
         /*
          * Generate stereo information

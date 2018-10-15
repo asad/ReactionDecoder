@@ -22,13 +22,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.mechanism.BEMatrix;
 import uk.ac.ebi.reactionblast.mechanism.RMatrix;
 
@@ -39,7 +38,9 @@ import uk.ac.ebi.reactionblast.mechanism.RMatrix;
  */
 public class MatrixPrinter extends Object {
 
-    private static final Logger LOG = getLogger(MatrixPrinter.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MatrixPrinter.class);
+
 
     /**
      * This method prints the matrix to the standard output
@@ -77,7 +78,7 @@ public class MatrixPrinter extends Object {
                 out.println();
             }
         } catch (CDKException ex) {
-            err.println("A CDKException has been arisen while printing the RMatrix");
+            LOGGER.debug("A CDKException has been arisen while printing the RMatrix");
         }
     }
 
@@ -123,7 +124,7 @@ public class MatrixPrinter extends Object {
                 matrixFileWriter.close();
 
             } catch (CDKException ex) {
-                err.println("A CDKException has been arisen while printing the RMatrix");
+                LOGGER.debug("A CDKException has been arisen while printing the RMatrix");
             }
         }
     }
