@@ -20,8 +20,18 @@ package uk.ac.ebi.aamtool;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.smiles.SmilesParser;
+import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
+import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
+import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.TestUtility;
 
 /**
@@ -30,57 +40,39 @@ import uk.ac.ebi.reactionblast.tools.TestUtility;
  */
 public class SMILES2AAMTest extends TestUtility {
 
-    public SMILES2AAMTest() {
+    @Test
+    public void TestRHEA10006() throws Exception {
+
+        String reactionSM = "N#CSCC1=CC=CC=C1>>S=C=NCC1=CC=CC=C1";
+        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "TestReaction");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        //System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
-    @BeforeClass
-    public static void setUpClass() {
+    /**
+     * @param cdkReaction
+     * @param reactionName
+     * @return
+     * @throws InvalidSmilesException
+     * @throws AssertionError
+     * @throws Exception
+     */
+    public ReactionMechanismTool performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws InvalidSmilesException, AssertionError, Exception {
+        cdkReaction.setID(reactionName);
+        /*
+         RMT for the reaction mapping
+         */
+        boolean forceMapping = true;//Overrides any mapping present int the reaction
+        boolean generate2D = true;//2D perception of the stereo centers
+        boolean generate3D = false;//2D perception of the stereo centers
+        StandardizeReaction standardizeReaction = new StandardizeReaction(); //Standardize the reaction
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, standardizeReaction);
+        return rmt;
     }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-//    /**
-//     * Test of main method, of class ReactionDecoder.
-//     */
-//    @Test
-//    public void testMain() {
-//        System.out.println("main");
-//        // TODO code application logic here
-//        String RXN_DIR = INFORCHEM_RXN + "rxn" + separator + "balanced" + separator;
-//        out.println("RXN File Directory: " + RXN_DIR);
-//        /*
-//        Instance of SMILES with AAM
-//         */
-//        SmilesGenerator smilesAAM = generic().withAtomClasses();
-//        File dir = new File(RXN_DIR);
-//        File[] files = dir.listFiles();
-//        for (File file : files) {
-//            //System.out.println("Iterating: " + file);
-//            IReaction readReaction;
-//            try {
-//                readReaction = readReactionFile(file.getName().split("\\.")[0], RXN_DIR, true, false);
-//                if (readReaction != null) {
-//                    IReaction mapReaction = mapReaction(readReaction, true);
-//                    out.println(" Mapped Reaction SMILES for Reaction " + file.getName() + ": "
-//                            + smilesAAM.createReactionSMILES(mapReaction));
-//                    assertEquals(true, mapReaction.getMappingCount() > 0);
-//                }
-//            } catch (CDKException ex) {
-//                getLogger(SMILES2AAMTest.class.getName()).log(SEVERE, null, ex);
-//            } catch (Exception ex) {
-//                getLogger(SMILES2AAMTest.class.getName()).log(SEVERE, null, ex);
-//            }
-//        }
-//    }
-
 }
