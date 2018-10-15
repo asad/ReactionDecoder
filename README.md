@@ -58,7 +58,7 @@ Fat Jar:
 Use Java API
 ============
 
-View mapped reaction using [CDKDEPICT Tool] (http://www.simolecule.com/cdkdepict/depict.html) 
+View mapped reaction using [CDKDEPICT Tool](http://www.simolecule.com/cdkdepict/depict.html).
 
 ```
 
