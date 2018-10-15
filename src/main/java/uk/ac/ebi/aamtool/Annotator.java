@@ -128,6 +128,11 @@ public class Annotator extends Helper {
             cdkReaction.setFlag(MAPPED, false);
         }
         rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, new StandardizeReaction());
+        IPatternFingerprinter formedCleavedWFingerprint = rmt
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         return rmt;
     }
 
@@ -148,6 +153,7 @@ public class Annotator extends Helper {
         }
         File writeRXNMappedFile = writeRXNMappedFile(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReaction(), reactionID);
         out.println("Mapped RXN File " + writeRXNMappedFile.getAbsolutePath());
+
         if (GENERATE_IMAGE) {
             try {
                 File generateImage = generateImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
@@ -358,43 +364,34 @@ public class Annotator extends Helper {
          */
         Set<Integer> levels = reactionCenterFormedCleavedFingerprint.keySet();
 
-        for (Integer i : levels) {
-            if (i == -1) {
-                continue;
-            }
-
+        levels.stream().filter((i) -> !(i == -1)).forEachOrdered((i) -> {
             //Start of Fingerprint elements
             org.w3c.dom.Element rc = doc.createElement("ReactionCenters");
             //Start of Fingerprint elements
             rootElement.appendChild(rc);
-
             //Start of BC as child node of Fingerprint elements
             org.w3c.dom.Attr attr = doc.createAttribute("LEVEL");
             attr.setValue(i + "");
             rc.setAttributeNode(attr);
-
             if (reactionCenterFormedCleavedFingerprint.containsKey(i)) {
                 // FC elements
                 org.w3c.dom.Element fp_FORMED_CLEAVED = doc.createElement("FC");
                 fp_FORMED_CLEAVED.appendChild(doc.createTextNode(reactionCenterFormedCleavedFingerprint.get(i).getFeatures().toString()));
                 rc.appendChild(fp_FORMED_CLEAVED);
             }
-
             if (reactionCenterOrderChangeFingerprint.containsKey(i)) {
                 // OC elements
                 org.w3c.dom.Element fp_ORDER_CHANGED = doc.createElement("OC");
                 fp_ORDER_CHANGED.appendChild(doc.createTextNode(reactionCenterOrderChangeFingerprint.get(i).getFeatures().toString()));
                 rc.appendChild(fp_ORDER_CHANGED);
             }
-
             if (reactionCenterStereoChangeFingerprint.containsKey(i)) {
                 // ST elements
                 org.w3c.dom.Element fp_STEREO_CHANGED = doc.createElement("ST");
                 fp_STEREO_CHANGED.appendChild(doc.createTextNode(reactionCenterStereoChangeFingerprint.get(i).getFeatures().toString()));
                 rc.appendChild(fp_STEREO_CHANGED);
             }
-
-        }
+        });
 
         Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
 

@@ -31,6 +31,7 @@ import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
@@ -40,6 +41,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.Mol2Reader;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -97,6 +100,7 @@ class ChemicalFormatParser {
                         rxnReactions = reader.read(new Reaction());
                         reader.close();
                         rxnReactions.setID(filepath.getName().split(".rxn")[0]);
+                        rxnReactions = convertRoundTripRXNSMILES(rxnReactions);
                         reactions.add(rxnReactions);
                     } catch (IOException | CDKException ex) {
                         LOGGER.debug("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
@@ -108,6 +112,21 @@ class ChemicalFormatParser {
             }
         }
         return reactions;
+    }
+
+    protected IReaction convertRoundTripRXNSMILES(IReaction r) throws CDKException {
+        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+        String createSmilesFromReaction = sg.create(r);
+        final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(createSmilesFromReaction);
+        parseReactionSmiles.setID(r.getID());
+        for (int i = 0; i < r.getReactantCount(); i++) {
+            parseReactionSmiles.getReactants().getAtomContainer(i).setID(r.getReactants().getAtomContainer(i).getID());
+        }
+        for (int i = 0; i < r.getProductCount(); i++) {
+            parseReactionSmiles.getProducts().getAtomContainer(i).setID(r.getProducts().getAtomContainer(i).getID());
+        }
+        return parseReactionSmiles;
     }
 
     protected List<IReaction> parseReactionSMILES(String reactionSmiles) {

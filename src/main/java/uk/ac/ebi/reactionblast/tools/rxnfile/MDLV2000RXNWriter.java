@@ -77,7 +77,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  * @cdk.keyword file format, MDL RXN file
  */
 public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
-
+    
     private static ILoggingTool LOGGER = createLoggingTool(MDLV2000RXNWriter.class);
     private BufferedWriter writer;
     private int reactionNumber;
@@ -100,7 +100,8 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
             } else {
                 writer = new BufferedWriter(out);
             }
-        } catch (Exception exc) {
+        } catch (Exception ex) {
+            LOGGER.error(ex);
         }
         this.reactionNumber = 1;
     }
@@ -227,7 +228,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      * @param som Array of Reactions that is written to an OutputStream
      */
     private void writeReactionSet(IReactionSet reactions) throws CDKException {
-
+        
         for (Iterator<IReaction> it = reactions.reactions().iterator(); it.hasNext();) {
             writeReaction(it.next());
         }
@@ -249,11 +250,11 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
         for (IAtomContainer p : reaction.getProducts().atomContainers()) {
             productCount += reaction.getProductCoefficient(p).intValue();
         }
-
+        
         if (reactantCount <= 0 || productCount <= 0) {
             throw new CDKException("Either no reactants or no products present.");
         }
-
+        
         try {
             // taking care of the $$$$ signs:
             // we do not write such a sign at the end of the first reaction, thus we have to write on BEFORE the second reaction
@@ -287,20 +288,20 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
             }
             writer.write(line);
             writer.newLine();
-
+            
             line = "";
             line += formatMDLInt(reactantCount, 3);
             line += formatMDLInt(productCount, 3);
             writer.write(line);
             writer.newLine();
-
+            
             int i = 0;
             for (IMapping mapping : reaction.mappings()) {
                 Iterator<IChemObject> it = mapping.relatedChemObjects().iterator();
                 /*
                  Do not overwrite the existing labels
                  */
-
+                
                 if (it.next().getProperty(ATOM_ATOM_MAPPING) == null) {
                     it.next().setProperty(ATOM_ATOM_MAPPING, i + 1);
                     it.next().setProperty(ATOM_ATOM_MAPPING, i + 1);
@@ -330,7 +331,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
                 writer.newLine();
             }
             reactionNumber++;
-
+            
         } catch (IOException ex) {
             LOGGER.error(ex.getMessage());
             LOGGER.debug(ex);
@@ -344,7 +345,7 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
      * @param som The MoleculeSet that is written to an OutputStream
      */
     private void writeMoleculeSet(IAtomContainerSet som) throws IOException, CDKException {
-
+        
         for (int i = 0; i < som.getAtomContainerCount(); i++) {
             IAtomContainer mol = som.getAtomContainer(i);
             for (int j = 0; j < som.getMultiplier(i); j++) {

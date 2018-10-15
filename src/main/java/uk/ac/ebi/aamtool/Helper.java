@@ -161,8 +161,8 @@ class Helper extends ChemicalFormatParser {
         }
     }
 
-    protected File generateImage(
-            String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+    protected File generateImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+        System.out.println("generateImage");
         File file = new File(canonicalRootPath);
         new ImageGenerator().drawLeftToRightReactionLayout(file, mappedReaction, reactionID);
         return new File(file.getCanonicalFile(), reactionID + ".png");
