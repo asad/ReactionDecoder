@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package uk.ac.ebi.aamtool;
+package uk.ac.bioinception;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -29,9 +29,9 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.TestUtility;
 
+
 /**
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class SMILES2AAMTest extends TestUtility {
 
