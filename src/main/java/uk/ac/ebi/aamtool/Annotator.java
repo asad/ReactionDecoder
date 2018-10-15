@@ -128,11 +128,11 @@ public class Annotator extends Helper {
             cdkReaction.setFlag(MAPPED, false);
         }
         rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, new StandardizeReaction());
-        IPatternFingerprinter formedCleavedWFingerprint = rmt
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+//        IPatternFingerprinter formedCleavedWFingerprint = rmt
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         return rmt;
     }
 
