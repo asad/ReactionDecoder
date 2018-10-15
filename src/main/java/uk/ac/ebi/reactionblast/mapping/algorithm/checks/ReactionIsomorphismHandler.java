@@ -22,8 +22,7 @@ import java.io.Serializable;
 import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getTotalFormalCharge;
 import org.openscience.smsd.Substructure;
@@ -36,7 +35,6 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 public class ReactionIsomorphismHandler implements Serializable {
 
     private static final long serialVersionUID = 0x1bfce07abac99fL;
-    private static final Logger LOG = getLogger(ReactionIsomorphismHandler.class.getName());
     private int rowSize = -1;
     private int colSize = -1;
     private boolean[][] flagSimilarityMatrix = null;

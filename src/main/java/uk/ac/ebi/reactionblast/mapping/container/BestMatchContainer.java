@@ -25,9 +25,10 @@ import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import uk.ac.ebi.reactionblast.mapping.container.helper.Key;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
@@ -60,8 +61,9 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
  */
 public class BestMatchContainer extends BestMatch implements Serializable {
 
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(BestMatchContainer.class);
     private static final long serialVersionUID = 10947239472059259L;
-    private static final Logger LOG = getLogger(BestMatchContainer.class.getName());
     private final Map<IKey, AtomAtomMapping> mcsAtomMap;
     private final Map<IKey, Integer> fragmentCount;
     private final Map<IKey, Double> bondBreakingEnergy;
@@ -73,11 +75,11 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      *
      */
     public BestMatchContainer() {
-        mcsAtomMap = synchronizedMap(new HashMap<IKey, AtomAtomMapping>());
-        fragmentCount = synchronizedMap(new HashMap<IKey, Integer>());
-        bondBreakingEnergy = synchronizedMap(new HashMap<IKey, Double>());
-        stereoScore = synchronizedMap(new HashMap<IKey, Double>());
-        similarity = synchronizedMap(new HashMap<IKey, Double>());
+        mcsAtomMap = synchronizedMap(new HashMap<>());
+        fragmentCount = synchronizedMap(new HashMap<>());
+        bondBreakingEnergy = synchronizedMap(new HashMap<>());
+        stereoScore = synchronizedMap(new HashMap<>());
+        similarity = synchronizedMap(new HashMap<>());
         // System.out.println("FingerPrint Map Created");
     }
 
@@ -136,7 +138,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
             try {
                 throw new CDKException("Key not found:" + key + " in " + mcsAtomMap.keySet());
             } catch (CDKException ex) {
-                getLogger(BestMatchContainer.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return null;

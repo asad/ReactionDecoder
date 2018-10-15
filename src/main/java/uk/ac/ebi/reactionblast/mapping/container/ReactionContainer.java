@@ -24,8 +24,7 @@ import java.util.BitSet;
 import static java.util.Collections.synchronizedMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
@@ -61,8 +60,6 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 public class ReactionContainer implements Cloneable, Serializable {
 
     static final long serialVersionUID = 17278639972837695L;
-    private static final Logger LOG = getLogger(ReactionContainer.class.getName());
-
     /*
      * Singleton Pattern Implementation
      */
@@ -80,12 +77,12 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws Exception
      */
     public ReactionContainer() throws Exception {
-        eAtomContainerMap = synchronizedMap(new TreeMap<Integer, IAtomContainer>());
-        pAtomContainerMap = synchronizedMap(new TreeMap<Integer, IAtomContainer>());
-        eFingerPrintMap = synchronizedMap(new TreeMap<Integer, BitSet>());
-        pFingerPrintMap = synchronizedMap(new TreeMap<Integer, BitSet>());
-        eductContainerModificationMap = synchronizedMap(new TreeMap<Integer, Boolean>());
-        productContainerModificationMap = synchronizedMap(new TreeMap<Integer, Boolean>());
+        eAtomContainerMap = synchronizedMap(new TreeMap<>());
+        pAtomContainerMap = synchronizedMap(new TreeMap<>());
+        eFingerPrintMap = synchronizedMap(new TreeMap<>());
+        pFingerPrintMap = synchronizedMap(new TreeMap<>());
+        eductContainerModificationMap = synchronizedMap(new TreeMap<>());
+        productContainerModificationMap = synchronizedMap(new TreeMap<>());
         fpr = new FingerprintGenerator();
     }
 

@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.container.helper;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -31,7 +30,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class MolMapping extends Object implements Serializable {
 
     private static final long serialVersionUID = 1738327023703717L;
-    private static final Logger LOG = getLogger(MolMapping.class.getName());
     private final String mol1;
     private final String mol2;
     private final Integer indexI;

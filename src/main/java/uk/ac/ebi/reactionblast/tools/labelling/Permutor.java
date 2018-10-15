@@ -21,8 +21,6 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 import static java.lang.Math.max;
 import static java.lang.System.arraycopy;
 import java.util.Random;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * General permutation generator, that uses orderly generation by ranking and
@@ -46,8 +44,6 @@ import static java.util.logging.Logger.getLogger;
  *
  */
 public class Permutor {
-
-    private static final Logger LOG = getLogger(Permutor.class.getName());
 
     /**
      * The current rank of the permutation to use

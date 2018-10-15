@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping.helper;
 
 import static java.lang.System.out;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -33,8 +32,6 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class IOReaction {
-
-    private static final Logger LOG = getLogger(IOReaction.class.getName());
 
     private static void printReaction(IReaction reaction) {
         IAtomContainerSet Educt = reaction.getReactants();

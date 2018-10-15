@@ -36,8 +36,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -62,7 +61,6 @@ public class CallableAtomMappingTool implements Serializable {
     private final static ILoggingTool LOGGER
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
-    private static final Logger LOG = getLogger(CallableAtomMappingTool.class.getName());
 
     /**
      * Creates mapping PDFs for all the processed reaction mappings
@@ -100,7 +98,7 @@ public class CallableAtomMappingTool implements Serializable {
             IReaction reaction,
             IStandardizer standardizer,
             boolean removeHydrogen) throws Exception {
-        solution = synchronizedMap(new EnumMap<IMappingAlgorithm, Reactor>(IMappingAlgorithm.class));
+        solution = synchronizedMap(new EnumMap<>(IMappingAlgorithm.class));
         generateAtomAtomMapping(reaction, standardizer, removeHydrogen);
     }
 

@@ -61,7 +61,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;

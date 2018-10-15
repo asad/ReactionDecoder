@@ -22,7 +22,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.sort;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;

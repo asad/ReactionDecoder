@@ -25,8 +25,7 @@ import static java.util.Collections.sort;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org._3pq.jgrapht.graph.SimpleGraph;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.CDKConstants.VISITED;
@@ -44,8 +43,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.SignatureMoleculeLabeller;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class CanonicalNumberingGenerator {
-
-    private static final Logger LOG = getLogger(CanonicalNumberingGenerator.class.getName());
 
     private static synchronized void resetFlags(IAtomContainer atomContainer) {
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {

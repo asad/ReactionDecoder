@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
@@ -30,8 +28,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 public class IdentityLabellingAdaptor
         implements ICanonicalMoleculeLabeller {
-
-    private static final Logger LOG = getLogger(IdentityLabellingAdaptor.class.getName());
 
     /**
      *

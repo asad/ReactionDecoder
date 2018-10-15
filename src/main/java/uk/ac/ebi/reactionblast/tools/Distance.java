@@ -20,8 +20,6 @@ package uk.ac.ebi.reactionblast.tools;
 
 import static java.lang.Math.sqrt;
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -67,21 +65,21 @@ import static java.util.logging.Logger.getLogger;
  *
  * </PRE>
  *
- * @ref <B>Willett et.al., Chemical Similarity Searching,</B> <I>J.Chem. Inf. Comput. Sci.</I>, Vol. 38, No. 6, 1998
+ * @ref <B>Willett et.al., Chemical Similarity Searching,</B> <I>J.Chem. Inf.
+ * Comput. Sci.</I>, Vol. 38, No. 6, 1998
  *
  */
 public class Distance {
 
     private static BitSet A;
     private static BitSet B;
-    private static final Logger LOG = getLogger(Distance.class.getName());
 
     /**
      *
      * @param Molecule1 BitSet
      * @param Molecule2 BitSet
-     * <B>Note:</B> Can be Normalized to the range 1 to 0 if all attributes are normalized to this range and the result
-     * is divided in N
+     * <B>Note:</B> Can be Normalized to the range 1 to 0 if all attributes are
+     * normalized to this range and the result is divided in N
      * @return <B>Distance (Dissimilarity) <U>Euclidean</U></B>
      * <B>sqrt(a+b-2c)</B>
      * <B>sqrt(OnA+OnB-2*c)</B>
@@ -110,8 +108,8 @@ public class Distance {
      *
      * @param Molecule1 BitSet
      * @param Molecule2 BitSet
-     * <B>Note:</B> Can be Normalized to the range 1 to 0 if all attributes are normalized to this range and the result
-     * is divided in N
+     * <B>Note:</B> Can be Normalized to the range 1 to 0 if all attributes are
+     * normalized to this range and the result is divided in N
      * @return <B>Distance (Dissimilarity) <U>Euclidean</U></B>
      * <B>sqrt(a+b-2c)</B>
      * <B>sqrt(OnA+OnB-2*c)</B>
@@ -149,7 +147,6 @@ public class Distance {
      * <B>a+b-2c</B>
      * @throws Exception 
      */
-
     /**
      *
      * @param Molecule1
@@ -157,7 +154,6 @@ public class Distance {
      * @return
      * @throws Exception
      */
-
     public static double getHammingDistance(BitSet Molecule1, BitSet Molecule2) throws Exception {
 
         A = (BitSet) Molecule1.clone();
@@ -190,7 +186,6 @@ public class Distance {
      * <B>a+b-2c</B>
      * @throws Exception 
      */
-
     /**
      *
      * @param Molecule1
@@ -198,7 +193,6 @@ public class Distance {
      * @return
      * @throws Exception
      */
-
     public static double getNormalizedHammingDistance(BitSet Molecule1, BitSet Molecule2) throws Exception {
 
         A = (BitSet) Molecule1.clone();

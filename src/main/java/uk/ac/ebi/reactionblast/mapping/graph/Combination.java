@@ -20,8 +20,6 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -30,7 +28,6 @@ import static java.util.logging.Logger.getLogger;
 public class Combination implements Serializable, Comparable<Combination>, Comparator<Combination> {
 
     private static final long serialVersionUID = 786786786L;
-    private static final Logger LOG = getLogger(Combination.class.getName());
     private final int row;
     private final int col;
 

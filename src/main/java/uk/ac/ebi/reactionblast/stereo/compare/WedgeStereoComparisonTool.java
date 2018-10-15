@@ -21,8 +21,7 @@ package uk.ac.ebi.reactionblast.stereo.compare;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -41,8 +40,6 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
  *
  */
 public class WedgeStereoComparisonTool {
-
-    private static final Logger LOG = getLogger(WedgeStereoComparisonTool.class.getName());
 
     /**
      *

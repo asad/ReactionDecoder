@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.blocks;
 
 import static java.lang.String.format;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -30,8 +29,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class DefinedMapping {
-
-    private static final Logger LOG = getLogger(DefinedMapping.class.getName());
 
     private final IAtomContainer rAtomContainer;
 

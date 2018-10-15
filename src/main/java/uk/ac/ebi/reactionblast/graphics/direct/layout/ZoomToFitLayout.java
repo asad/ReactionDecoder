@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
@@ -24,8 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
@@ -45,7 +43,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  *
  */
 public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = getLogger(ZoomToFitLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 

@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping;
 
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -31,8 +30,8 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class MappingThread implements Callable<Reactor> {
+
     private static final ILoggingTool LOGGER = createLoggingTool(MappingThread.class);
-    private static final Logger LOG = getLogger(MappingThread.class.getName());
 
     private final IReaction cleanedReaction;
     private final IMappingAlgorithm algorithm;

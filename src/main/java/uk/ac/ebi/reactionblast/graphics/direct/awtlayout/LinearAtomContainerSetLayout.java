@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Font;
@@ -24,8 +23,7 @@ import static java.awt.Font.PLAIN;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.valueOf;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -38,7 +36,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
-    private static final Logger LOG = getLogger(LinearAtomContainerSetLayout.class.getName());
 
     private Vector2d moleculeSetAxis;
     private MoleculeLayout moleculeLayout;

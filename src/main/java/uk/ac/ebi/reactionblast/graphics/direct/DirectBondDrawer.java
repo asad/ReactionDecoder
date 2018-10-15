@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
@@ -63,8 +62,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
  * @author asad
  */
 public class DirectBondDrawer extends AbstractDirectDrawer {
-
-    private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());
 
     private final LabelManager labelManager;
     private final Stroke dashedWedgeStroke;

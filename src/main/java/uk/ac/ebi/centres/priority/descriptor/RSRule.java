@@ -17,8 +17,6 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static uk.ac.ebi.centres.Descriptor.Type.PSEUDO_ASYMMETRIC;
 import static uk.ac.ebi.centres.PriorityRule.Type.TOPOGRAPHICAL;
 import static uk.ac.ebi.centres.descriptor.Tetrahedral.R;
@@ -26,14 +24,13 @@ import static uk.ac.ebi.centres.descriptor.Tetrahedral.S;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
 
 /**
- * A rule with prioritises ligands in R configuration over those in S configuration. This rule is pseudo-asymmetric
+ * A rule with prioritises ligands in R configuration over those in S
+ * configuration. This rule is pseudo-asymmetric
  *
  * @author John May
  * @param <A>
  */
 public class RSRule<A> extends DescriptorRule<A> {
-
-    private static final Logger LOG = getLogger(RSRule.class.getName());
 
     /**
      *

@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import signature.AbstractGraphSignature;
 import signature.AbstractVertexSignature;
@@ -30,7 +28,6 @@ import signature.AbstractVertexSignature;
  *
  */
 public class BaseMoleculeSignature extends AbstractGraphSignature {
-    private static final Logger LOG = getLogger(BaseMoleculeSignature.class.getName());
 
     /**
      *

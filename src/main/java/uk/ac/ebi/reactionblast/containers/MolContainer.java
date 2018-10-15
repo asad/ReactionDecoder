@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -233,7 +233,7 @@ public class MolContainer implements IMolContainer {
                 return isIdentical(mol, molFromContainer, true);
             }
         } catch (Exception ex) {
-            getLogger(MolContainer.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return false;
     }

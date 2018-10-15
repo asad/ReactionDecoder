@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.io.filesystem;
 
 import java.io.File;
@@ -26,8 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
@@ -36,18 +34,17 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 /**
- *
- * @author asad
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemReactionDataSource implements IDataSource<IReaction> {
-    private static final Logger LOG = getLogger(FilesystemReactionDataSource.class.getName());
-    
+
     private File reactionDir;
-    
+
     private MDLRXNV2000Reader rxnReader;
-    
+
     private ITransformation<IReaction> transformation;
-    
+
     /**
      *
      * @param reactionPath
@@ -90,7 +87,7 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
             @Override
             public Iterator<IReaction> iterator() {
                 return new Iterator<IReaction>() {
-                    
+
                     private int currentIndex;
 
                     @Override
@@ -116,13 +113,14 @@ public class FilesystemReactionDataSource implements IDataSource<IReaction> {
                             return null;
                         } catch (CDKException | IOException e) {
                             e.printStackTrace();
-                            return null;                        
+                            return null;
                         }
                     }
 
                     @Override
-                    public void remove() {}
-                    
+                    public void remove() {
+                    }
+
                 };
             }
         };

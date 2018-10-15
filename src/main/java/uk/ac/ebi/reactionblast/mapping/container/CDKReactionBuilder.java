@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.Fingerprinter;
@@ -50,11 +50,9 @@ import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
-import uk.ac.ebi.reactionblast.containers.MolContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
-import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.AtomContainerSetComparator;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
@@ -456,14 +454,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @throws java.io.IOException
      * @return
      */
-    private boolean isValuePresent(BitSet value) throws IOException {
+    private boolean isValuePresent(BitSet value) throws IOException, Exception {
         for (BitSet bitset : fingerprintMap.values()) {
-            try {
-                if (getTanimotoSimilarity(value, bitset) == 1.0) {
-                    return true;
-                }
-            } catch (Exception ex) {
-                LOGGER.error(SEVERE, null, ex);
+            if (getTanimotoSimilarity(value, bitset) == 1.0) {
+                return true;
             }
         }
         return false;
@@ -507,7 +501,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 return isIdentical(molecule, molFromContainer, true);
             }
         } catch (Exception ex) {
-            getLogger(MolContainer.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return false;
     }
@@ -584,7 +578,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             try {
                 out.println("T=mol " + generic().create(targetMol));
             } catch (CDKException ex) {
-                getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
 

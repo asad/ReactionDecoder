@@ -19,7 +19,7 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.GraphUtil.toAdjList;
 import static org.openscience.cdk.graph.invariant.Canon.label;

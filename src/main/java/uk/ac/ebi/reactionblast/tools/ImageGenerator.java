@@ -44,8 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
@@ -102,7 +101,6 @@ public class ImageGenerator {
      *
      */
     public final static int SUB_IMAGE_HEIGHT = 300;
-    private static final Logger LOG = getLogger(ImageGenerator.class.getName());
 
     static {
         /* works fine! ! */

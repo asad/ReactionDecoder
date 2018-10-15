@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.Queue;
 import java.util.TreeSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.centres.Ligand;
 import uk.ac.ebi.centres.Priority;
 import static uk.ac.ebi.centres.PriorityRule.Type.GEOMETRICAL;
@@ -47,7 +46,6 @@ import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
  */
 public class PairRule<A>
         extends AbstractPriorityRule<A> {
-    private static final Logger LOG = getLogger(PairRule.class.getName());
 
     /**
      * Ugly piece of code to generate permutation of the given ligand groups.
@@ -61,7 +59,7 @@ public class PairRule<A>
      */
     private static <T> List<List<T>> permutate(List<List<T>> uncombinedList) {
         List<List<T>> list = new ArrayList<>();
-        
+
         // permeate the sublist
         for (List sublist : uncombinedList) {
             if (sublist.size() > 1) {
@@ -71,7 +69,7 @@ public class PairRule<A>
                 sublist.addAll(tmp);
             }
         }
-        
+
         int index[] = new int[uncombinedList.size()];
         int combinations = combinations(uncombinedList) - 1;
         // Initialize index
@@ -89,7 +87,7 @@ public class PairRule<A>
             }
         }
         list.add(combination);
-        
+
         for (int k = 0; k < combinations; k++) {
             combination = new ArrayList<>();
             boolean found = false;
@@ -234,8 +232,8 @@ public class PairRule<A>
      * @return the value of the comparison
      */
     @Override
-    public  int compare(Ligand<A> o1, Ligand<A> o2) {
-        
+    public int compare(Ligand<A> o1, Ligand<A> o2) {
+
         // produced pair lists are in order
         Iterator<DescriptorList> list1It = generate(o1).iterator();
         Iterator<DescriptorList> list2It = generate(o2).iterator();

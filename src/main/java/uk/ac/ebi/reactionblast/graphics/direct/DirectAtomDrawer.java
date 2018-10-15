@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
@@ -34,8 +33,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
@@ -71,7 +69,6 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  * @author asad
  */
 public class DirectAtomDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = getLogger(DirectAtomDrawer.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -203,10 +200,10 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 Integer implicitHydrogenCount = atom.getImplicitHydrogenCount();
                 if (implicitHydrogenCount != null
                         && implicitHydrogenCount > 0) {
-                    int align =
-                            getBestAlignmentForLabel(molecule, atom);
-                    AnnotationPosition suggestedPosition =
-                            labelManager.alignmentToAnnotationPosition(align);
+                    int align
+                            = getBestAlignmentForLabel(molecule, atom);
+                    AnnotationPosition suggestedPosition
+                            = labelManager.alignmentToAnnotationPosition(align);
 
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
@@ -218,8 +215,8 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                         suggestedPosition = labelManager.getNextSparePosition(atom);
                     }
                     labelManager.setUsedPosition(atom, suggestedPosition);
-                    Rectangle2D hBounds =
-                            drawImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
+                    Rectangle2D hBounds
+                            = drawImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
                     if (hBounds != null) {  // TODO - shouldn't be null!
                         symbolBounds.add(hBounds);
                     }
@@ -322,12 +319,12 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 cy += params.subscriptHeight;
                 Point2f sP = getTextPoint(g, hCount, cx, cy);
                 double subscriptHeight = subscriptBounds.getHeight();
-                Rectangle2D finalHBounds =
-                        new Rectangle2D.Double(
-                        cx - (subscriptWidth / 2),
-                        cy - (subscriptHeight / 2),
-                        subscriptWidth,
-                        subscriptHeight);
+                Rectangle2D finalHBounds
+                        = new Rectangle2D.Double(
+                                cx - (subscriptWidth / 2),
+                                cy - (subscriptHeight / 2),
+                                subscriptWidth,
+                                subscriptHeight);
                 g.setColor(WHITE);
                 g.fill(finalHBounds);
                 g.setColor(BLACK);
@@ -431,8 +428,8 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         g.setFont(atomIDFont);
         Rectangle2D bounds = getTextBounds(g, atomID);
         Point2d pID = new Point2d(p);
-        AnnotationPosition suggestedPosition =
-                labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
+        AnnotationPosition suggestedPosition
+                = labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
         AnnotationPosition pos;
         if (labelManager.isUsed(atom, suggestedPosition)) {
             pos = labelManager.getNextSparePosition(atom);
@@ -443,7 +440,6 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         //        System.out.println("Alignment for atom " + atomID + " " + pos
         //                + " given annotations at "
         //                + labelManager.getAnnotationPositionsAsString(atom));
-
         double aW2 = atomSymbolBounds.getWidth() / 2;
         double bW2 = bounds.getWidth() / 2;
         double aH2 = atomSymbolBounds.getHeight() / 2;

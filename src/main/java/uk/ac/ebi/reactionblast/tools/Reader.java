@@ -40,7 +40,7 @@ import java.util.List;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import static java.util.logging.Logger.getLogger;
+
 import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;

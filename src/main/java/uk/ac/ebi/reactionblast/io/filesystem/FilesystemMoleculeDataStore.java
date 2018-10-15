@@ -16,30 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.io.filesystem;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer;
 
 /**
- *
- * @author asad
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
-    private static final Logger LOG = getLogger(FilesystemMoleculeDataStore.class.getName());
-    
+
     private File moleculeDir;
-    
+
     private MDLV2000Writer molWriter;
-    
+
     /**
      *
      * @param moleculePath
@@ -63,7 +60,7 @@ public class FilesystemMoleculeDataStore implements IDataStore<IAtomContainer> {
         } catch (CDKException | IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
 }

@@ -16,36 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
- * A union of sub-spanning trees over a molecular graph, each of which 
- * has a root atom.
- * 
+ * A union of sub-spanning trees over a molecular graph, each of which has a
+ * root atom.
+ *
  * @author maclean
  *
  */
 public class RootSystem {
-    private static final Logger LOG = getLogger(RootSystem.class.getName());
-    
+
     /**
      * The atom roots of the trees that make up the system.
      */
     private final List<IAtom> roots;
-    
+
     /**
      * All the other atoms in the system.
      */
     private final List<IAtom> leaves;
-    
+
     /**
      *
      */
@@ -53,7 +50,7 @@ public class RootSystem {
         this.roots = new ArrayList<>();
         this.leaves = new ArrayList<>();
     }
-    
+
     /**
      *
      * @param root
@@ -64,7 +61,7 @@ public class RootSystem {
             roots.add(root);
         }
     }
-    
+
     /**
      *
      * @param bond
@@ -126,7 +123,7 @@ public class RootSystem {
         }
         sb.append("}");
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Roots ");

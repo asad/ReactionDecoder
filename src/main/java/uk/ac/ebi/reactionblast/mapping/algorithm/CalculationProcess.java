@@ -23,8 +23,7 @@ import java.io.Serializable;
 import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -48,7 +47,6 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
     private final static ILoggingTool LOGGER
             = createLoggingTool(CalculationProcess.class);
     private static final long serialVersionUID = 0x4a0bba049L;
-    private static final Logger LOG = getLogger(CalculationProcess.class.getName());
     private final boolean removeHydrogen;
     private int delta = 0;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
@@ -113,13 +111,13 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
     private synchronized double calRelation(IReaction reaction, IMappingAlgorithm theory) {
         try {
             Map<Integer, IAtomContainer> educts
-                    = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+                    = synchronizedSortedMap(new TreeMap<>());
             for (int i = 0; i < reaction.getReactantCount(); i++) {
                 educts.put(i, reaction.getReactants().getAtomContainer(i));
             }
 
             Map<Integer, IAtomContainer> products
-                    = synchronizedSortedMap(new TreeMap<Integer, IAtomContainer>());
+                    = synchronizedSortedMap(new TreeMap<>());
             for (int i = 0; i < reaction.getProductCount(); i++) {
                 products.put(i, reaction.getProducts().getAtomContainer(i));
             }

@@ -16,30 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.io.filesystem;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataStore;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
- *
- * @author asad
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class FilesystemReactionDataStore implements IDataStore<IReaction> {
-    private static final Logger LOG = getLogger(FilesystemReactionDataStore.class.getName());
-    
+
     private File reactionDir;
-    
+
     private MDLV2000RXNWriter rxnWriter;
-    
+
     /**
      *
      * @param reactionPath
@@ -69,7 +66,7 @@ public class FilesystemReactionDataStore implements IDataStore<IReaction> {
         } catch (CDKException | IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
 }

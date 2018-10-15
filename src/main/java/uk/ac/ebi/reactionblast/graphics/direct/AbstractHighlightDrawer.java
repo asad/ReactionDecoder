@@ -16,34 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author asad
  */
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = getLogger(AbstractHighlightDrawer.class.getName());
-    
+
     /**
      *
      */
     protected Color opaqueHighlightColor;
-    
+
     /**
      *
      */
     protected Color translucentHighlightColor;
-    
+
     private final Map<Color, Color> opaqueToTranslucentColorMap;
-    
+
     /**
      *
      * @param params
@@ -54,7 +50,7 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
         opaqueHighlightColor = params.highlightColor;
         translucentHighlightColor = getTranslucentColor(opaqueHighlightColor);
     }
-    
+
     /**
      *
      * @param color

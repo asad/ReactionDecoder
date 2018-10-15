@@ -31,8 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.BONDORDER_DOUBLE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.UNSET;
@@ -106,9 +105,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  */
 public class RBlastSmilesGenerator {
 
-    private static final Logger LOG = getLogger(RBlastSmilesGenerator.class.getName());
     //private final static boolean debug = false;
-
     /**
      * The number of rings that have been opened
      */

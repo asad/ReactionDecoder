@@ -22,9 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -36,8 +35,6 @@ import org.openscience.cdk.interfaces.IReaction;
  * @author asad
  */
 public class BlockMapper {
-
-    private static final Logger LOG = getLogger(BlockMapper.class.getName());
 
     /**
      *

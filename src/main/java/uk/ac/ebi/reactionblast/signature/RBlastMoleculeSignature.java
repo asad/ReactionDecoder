@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import static signature.AbstractVertexSignature.parse;
@@ -34,8 +32,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * @author modified by Asad to use rBLAST SMILES
  */
 public class RBlastMoleculeSignature extends BaseMoleculeSignature {
-
-    private static final Logger LOG = getLogger(RBlastMoleculeSignature.class.getName());
 
     private boolean useAromatics = true;
     private boolean useCharge = true;

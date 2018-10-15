@@ -25,8 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -42,8 +41,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  * @author asad
  */
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
-
-    private static final Logger LOG = getLogger(BlockReactionCanoniser.class.getName());
 
     private IChemObjectBuilder builder;
 

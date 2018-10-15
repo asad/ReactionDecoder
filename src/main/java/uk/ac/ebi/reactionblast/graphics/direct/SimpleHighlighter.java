@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
@@ -27,8 +26,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -39,11 +37,10 @@ import org.openscience.cdk.interfaces.IBond;
  * @author asad
  */
 public class SimpleHighlighter extends AbstractHighlightDrawer implements Highlighter {
-    private static final Logger LOG = getLogger(SimpleHighlighter.class.getName());
-    
+
     private Map<IAtom, Color> atomColorMap;
     private final Map<IBond, Color> bondColorMap;
-    
+
     /**
      *
      * @param params
@@ -53,7 +50,7 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         atomColorMap = new HashMap<>();
         bondColorMap = new HashMap<>();
     }
-    
+
     /**
      *
      * @param molecule
@@ -74,11 +71,11 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             }
         }
     }
-    
+
     /**
-     * Set the highlights for all atoms and bonds in the highlight container
-     * to this color.
-     * 
+     * Set the highlights for all atoms and bonds in the highlight container to
+     * this color.
+     *
      * @param highlightContainer
      * @param color
      */
@@ -92,11 +89,11 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             bondColorMap.put(bond, color);
         }
     }
-    
+
     /**
-     * Set the highlights for all the atoms and bonds to the color in 
+     * Set the highlights for all the atoms and bonds to the color in
      * Params.highlightColor.
-     * 
+     *
      * @param atoms
      * @param bonds
      */
@@ -109,26 +106,26 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             bondColorMap.put(bond, params.highlightColor);
         }
     }
-    
+
     /**
      * Add the set of atom-to-color mappings to the highlights.
-     * 
+     *
      * @param atomColorMap
      */
     @Override
     public void addToHighlights(Map<IAtom, Color> atomColorMap) {
         this.atomColorMap.putAll(atomColorMap);
     }
-    
+
     /**
      * Reset all highlights to this map of atoms to colors.
-     * 
+     *
      * @param atomColorMap
      */
     public void setHighlights(Map<IAtom, Color> atomColorMap) {
         this.atomColorMap = atomColorMap;
     }
-    
+
     /**
      *
      * @param atom
@@ -139,9 +136,9 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             drawHighlight(atom, translucentHighlightColor, g);
         } else {
             drawHighlight(atom, opaqueHighlightColor, g);
-        } 
+        }
     }
-    
+
     /**
      *
      * @param atom
@@ -161,7 +158,7 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         Point2d p = atom.getPoint2d();
         g.fill(new Ellipse2D.Double(p.x - r, p.y - r, d, d));
     }
-    
+
     /**
      *
      * @param bond
@@ -189,7 +186,7 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             drawHighlightContainer(highlightContainer, opaqueHighlightColor, g);
         }
     }
-    
+
     /**
      *
      * @param highlightContainer
@@ -197,7 +194,7 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
      * @param g
      */
     public void drawHighlightContainer(
-                IAtomContainer highlightContainer, Color color, Graphics2D g) {
+            IAtomContainer highlightContainer, Color color, Graphics2D g) {
         Color actualColor;
         if (params.highlightsAbove) {
             actualColor = getTranslucentColor(color);
@@ -212,7 +209,7 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
             Point2d p = atom.getPoint2d();
             g.fill(new Ellipse2D.Double(p.x - r, p.y - r, d, d));
         }
-        
+
         Stroke stroke = g.getStroke();
         g.setStroke(new BasicStroke(params.highlightBondStroke));
         for (IBond bond : highlightContainer.bonds()) {

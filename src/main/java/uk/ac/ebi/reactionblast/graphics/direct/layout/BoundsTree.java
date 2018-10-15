@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * A tree of bounding boxes for objects.
@@ -37,7 +35,6 @@ import static java.util.logging.Logger.getLogger;
  *
  */
 public final class BoundsTree implements Iterable<Rectangle2D> {
-    private static final Logger LOG = getLogger(BoundsTree.class.getName());
 
     private Rectangle2D root;
 
@@ -174,7 +171,6 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
     }
 
     // XXX - this method is dangerous, consider removing!
-
     /**
      *
      * @param root
@@ -283,7 +279,7 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
         for (String key : childMap.keySet()) {
             Rectangle2D rect = get(key);
             sb.append(key).append("=").append(format("[(%2.0f, %2.0f), (%2.0f, %2.0f)]",
-                            rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY()));
+                    rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY()));
             sb.append("\n");
         }
         return sb.toString();

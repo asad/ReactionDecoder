@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
 import static java.lang.System.getProperty;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IBond;
 
 /**
@@ -32,7 +31,6 @@ import org.openscience.cdk.interfaces.IBond;
 public class BondChange implements Serializable {
 
     private static final long serialVersionUID = 9890766688070991L;
-    private static final Logger LOG = getLogger(BondChange.class.getName());
 
     /**
      *

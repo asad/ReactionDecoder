@@ -18,22 +18,18 @@
  */
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 
 /**
- * A trivial 'transformation' that does nothing to the reaction - 
- * useful for testing.
- * 
+ * A trivial 'transformation' that does nothing to the reaction - useful for
+ * testing.
+ *
  * @author maclean
  *
  */
 public class ReactionIdentityTransformation implements ITransformation<IReaction> {
-
-    private static final Logger LOG = getLogger(ReactionIdentityTransformation.class.getName());
 
     /**
      *

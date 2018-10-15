@@ -23,8 +23,7 @@ import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -42,8 +41,6 @@ import signature.AbstractVertexSignature;
  *
  */
 public class SubgraphMoleculeSignature extends AbstractGraphSignature {
-
-    private static final Logger LOG = getLogger(SubgraphMoleculeSignature.class.getName());
 
     private final int vertexCount;
 
@@ -130,8 +127,8 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
             if (subgraphAtoms.contains(atom)) {
                 List<Integer> connectedIndices = new ArrayList<>();
                 atomContainer.getConnectedAtomsList(atom).stream().filter((neighbour)
-                        -> (subgraphAtoms.contains(neighbour))).map((neighbour) 
-                                -> atomContainer.indexOf(neighbour)).forEach(connectedIndices::add);
+                        -> (subgraphAtoms.contains(neighbour))).map((neighbour)
+                        -> atomContainer.indexOf(neighbour)).forEach(connectedIndices::add);
                 int[] connectedIndicesArray = new int[connectedIndices.size()];
                 int x = 0;
                 for (int index : connectedIndices) {

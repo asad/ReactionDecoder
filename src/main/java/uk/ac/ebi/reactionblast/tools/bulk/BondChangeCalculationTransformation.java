@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
+import uk.ac.ebi.reactionblast.tools.rxnfile.MDLFileReader;
 
 /**
  *
@@ -32,7 +32,8 @@ import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
  */
 public class BondChangeCalculationTransformation implements ITransformation<IReaction> {
 
-    private static final Logger LOG = getLogger(BondChangeCalculationTransformation.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(BondChangeCalculationTransformation.class);
 
     /**
      *
@@ -53,11 +54,11 @@ public class BondChangeCalculationTransformation implements ITransformation<IRea
         try {
             boolean generate2D = false;
             boolean generate3D = false;
-            BondChangeCalculator bcc =
-                    new BondChangeCalculator(reaction, generate2D, generate3D);
+            BondChangeCalculator bcc
+                    = new BondChangeCalculator(reaction, generate2D, generate3D);
             return bcc.getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             return null;
         }
     }

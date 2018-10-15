@@ -27,8 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
@@ -45,7 +44,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
-    private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 

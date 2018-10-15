@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.signature;
 
 import static java.lang.Integer.parseInt;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
@@ -39,8 +38,6 @@ import static uk.ac.ebi.reactionblast.signature.RBlastAtomSignature.CHARGE_SEPAR
  *
  */
 public class RBlastMoleculeFromSignatureBuilder extends AbstractGraphBuilder {
-
-    private static final Logger LOG = getLogger(RBlastMoleculeFromSignatureBuilder.class.getName());
 
     /**
      * The chem object builder

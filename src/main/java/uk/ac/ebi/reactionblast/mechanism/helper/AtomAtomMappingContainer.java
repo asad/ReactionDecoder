@@ -23,8 +23,7 @@ import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -43,7 +42,6 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
 public class AtomAtomMappingContainer extends Object implements Serializable {
 
     private static final long serialVersionUID = 17879096958755L;
-    private static final Logger LOG = getLogger(AtomAtomMappingContainer.class.getName());
 
     private List<IAtom> reactantAtomArray = new ArrayList<>();
     private List<IAtom> productAtomArray = new ArrayList<>();

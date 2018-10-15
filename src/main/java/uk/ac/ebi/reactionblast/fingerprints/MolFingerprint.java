@@ -25,8 +25,7 @@ import static java.lang.System.out;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
@@ -42,7 +41,6 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         Comparator<MolFingerprint> {
 
     private static final long serialVersionUID = 7057060562283378622L;
-    private static final Logger LOG = getLogger(MolFingerprint.class.getName());
 
     private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
         if (boolArray1.length != boolArray2.length) {

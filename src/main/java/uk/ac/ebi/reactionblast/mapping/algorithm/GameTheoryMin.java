@@ -53,7 +53,7 @@ import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
@@ -64,19 +64,18 @@ import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
 import uk.ac.ebi.reactionblast.mapping.graph.GraphMatching;
-import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
+import uk.ac.ebi.reactionblast.mapping.interfaces.AbstractGraphMatching;
 import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
+
 
 final class GameTheoryMin extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 1808979786969868698L;
-    private static final Logger LOG = getLogger(GameTheoryMin.class.getName());
     private final List<String> eductList;
     private final List<String> productList;
     private Holder mh;
@@ -234,7 +233,7 @@ final class GameTheoryMin extends BaseGameTheory {
                     ac1.setID(this.eductList.get(substrateIndex));
                     ac2.setID(this.productList.get(productIndex));
 
-                    IGraphMatching graphMatching = new GraphMatching(reactionName, ac1, ac2, _dirSuffix, removeHydrogen);
+                    AbstractGraphMatching graphMatching = new GraphMatching(reactionName, ac1, ac2, _dirSuffix, removeHydrogen);
                     boolean mcsMatch = graphMatching.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, a_BitSet, b_BitSet);
                     if (DEBUG) {
                         out.println("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());

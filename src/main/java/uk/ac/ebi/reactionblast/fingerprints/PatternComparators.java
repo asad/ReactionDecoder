@@ -22,7 +22,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import java.util.Comparator;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -59,7 +59,7 @@ class PatternComparators {
                             }
                         }
                     } catch (CDKException ex) {
-                        getLogger(PatternFingerprinter.class.getName()).log(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                     pos++;
                 }

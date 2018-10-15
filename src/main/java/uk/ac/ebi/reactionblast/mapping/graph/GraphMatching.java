@@ -33,9 +33,9 @@ import java.io.Serializable;
 import java.util.BitSet;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
+import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -47,14 +47,14 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
-import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphMatching;
+import uk.ac.ebi.reactionblast.mapping.interfaces.AbstractGraphMatching;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 
 /**
  *
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK @contact asad@ebi.ac.uk
  */
-public class GraphMatching extends IGraphMatching implements Serializable {
+public class GraphMatching extends AbstractGraphMatching implements Serializable {
 
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatching.class);
@@ -116,7 +116,11 @@ public class GraphMatching extends IGraphMatching implements Serializable {
         }
 
         try {
-            setMCSUpdationFlags(holder, substrateIndex, productIndex);
+            try {
+                setMCSUpdationFlags(holder, substrateIndex, productIndex);
+            } catch (Exception ex) {
+                LOGGER.error(Level.SEVERE, null, ex);
+            }
             BestMatch initMcsAtom = holder.getBestMatchContainer();
             if (initMcsAtom.containsKey(substrateIndex, productIndex)) {
                 this.bestAtomMappingList = initMcsAtom.getAtomMatch(substrateIndex, productIndex).getMappingsByAtoms();
@@ -175,7 +179,7 @@ public class GraphMatching extends IGraphMatching implements Serializable {
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!");
             } catch (CDKException ex) {
-                getLogger(GraphMatching.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         return delta;

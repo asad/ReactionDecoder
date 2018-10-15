@@ -25,29 +25,28 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.centres.Descriptor;
 
 /**
- * Implementation of a descriptor list that allows descriptors to be added and ignored. The list maintains an integer
- * value throughout which stores the pairing of descriptors and allows easy comparison between descriptor lists in that
- * higher priority descriptor pairing will always have a higher integer value. The integer value can be access via the
- * {@link #getPairing()} method.
+ * Implementation of a descriptor list that allows descriptors to be added and
+ * ignored. The list maintains an integer value throughout which stores the
+ * pairing of descriptors and allows easy comparison between descriptor lists in
+ * that higher priority descriptor pairing will always have a higher integer
+ * value. The integer value can be access via the {@link #getPairing()} method.
  *
  * @author John May
  * @see Descriptor
  */
 public final class DescriptorList implements Comparable<DescriptorList> {
-    private static final Logger LOG = getLogger(DescriptorList.class.getName());
 
     private final List<Descriptor> descriptors = new ArrayList<>();
     private final Set<Descriptor> ignore = new HashSet<>();
     private int pairing = 0;
 
     /**
-     * Creates a descriptor list that ignores the provided descriptors as varargs. 0 or more descriptors can be provided
-     * to be ignored.
+     * Creates a descriptor list that ignores the provided descriptors as
+     * varargs. 0 or more descriptors can be provided to be ignored.
      *
      * @param ignore one or more descriptors to ignore
      */
@@ -56,7 +55,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Creates a descriptor list that ignores the provided descriptors as a {@link List}.
+     * Creates a descriptor list that ignores the provided descriptors as a
+     * {@link List}.
      *
      * @param ignores a list descriptors to ignore
      */
@@ -65,9 +65,10 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Creates a new list from a provided head and tail. The head and tail ignored descriptors are first transferred and
-     * then their descriptors. In either list, descriptors that are ignored by the other will be not be added to the new
-     * instance.
+     * Creates a new list from a provided head and tail. The head and tail
+     * ignored descriptors are first transferred and then their descriptors. In
+     * either list, descriptors that are ignored by the other will be not be
+     * added to the new instance.
      *
      * @param head the head of the list (prefix)
      * @param tail the tail of the list (suffix)
@@ -89,7 +90,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
      *
      * @param ignore the descriptor to ignore
      *
-     * @return whether the ignored descriptors were modified, false indicates the descriptor is already ignored
+     * @return whether the ignored descriptors were modified, false indicates
+     * the descriptor is already ignored
      */
     public boolean ignore(Descriptor ignore) {
         return this.ignore.add(ignore);
@@ -100,7 +102,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
      *
      * @param ignores descriptors to ignore
      *
-     * @return whether the ignored descriptors were modified, false indicates the descriptor is already ignored
+     * @return whether the ignored descriptors were modified, false indicates
+     * the descriptor is already ignored
      */
     public boolean ignoreAll(Collection<? extends Descriptor> ignores) {
         boolean changed = FALSE;
@@ -111,8 +114,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Adds a descriptor to the descriptor list. If the provided descriptor is present in the ignore set the descriptor
-     * will not be added.
+     * Adds a descriptor to the descriptor list. If the provided descriptor is
+     * present in the ignore set the descriptor will not be added.
      *
      * @param descriptor the descriptor to add.
      *
@@ -123,7 +126,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Adds the descriptor to the descriptor list and stores the pair in an set bit (32-bit integer).
+     * Adds the descriptor to the descriptor list and stores the pair in an set
+     * bit (32-bit integer).
      *
      * @param descriptor the descriptor to add an pair
      *
@@ -142,8 +146,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Adds multiple descriptors to the descriptor list. If the descriptor is present in the ignore set it will not be
-     * added to the list.
+     * Adds multiple descriptors to the descriptor list. If the descriptor is
+     * present in the ignore set it will not be added to the list.
      *
      * @param descriptors a collection of descriptors to be added
      *
@@ -158,9 +162,10 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Access a positive integer that represents the like/unlike pairings of this descriptor list. The like/unlike is
-     * represented by set bits in an integer value and means larger integer values indicates a higher descriptor pairing
-     * preference.
+     * Access a positive integer that represents the like/unlike pairings of
+     * this descriptor list. The like/unlike is represented by set bits in an
+     * integer value and means larger integer values indicates a higher
+     * descriptor pairing preference.
      *
      * @return an integer representing the descriptor pairings
      */
@@ -169,12 +174,14 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Appends multiple descriptor lists. If more then one list is provided the head (this list) is duplicate across the
-     * multiple tails (provided). If the contents of this list is 'RRSS' and we invoke append with two lists 'SRS' and
-     * 'RSR'. Two new lists will be returned with their contents 'RRSSSRS' and 'RRSSRSR' respectively.
+     * Appends multiple descriptor lists. If more then one list is provided the
+     * head (this list) is duplicate across the multiple tails (provided). If
+     * the contents of this list is 'RRSS' and we invoke append with two lists
+     * 'SRS' and 'RSR'. Two new lists will be returned with their contents
+     * 'RRSSSRS' and 'RRSSRSR' respectively.
      * <p/>
-     * Empty descriptor lists are not appended, if all descriptor lists are empty then 'this' list is the single
-     * returned list
+     * Empty descriptor lists are not appended, if all descriptor lists are
+     * empty then 'this' list is the single returned list
      *
      * @param lists multiple descriptor lists to be appended to this list.
      *
@@ -235,7 +242,8 @@ public final class DescriptorList implements Comparable<DescriptorList> {
     }
 
     /**
-     * Clear the descriptor list and resets the pair value. The ignore list is not cleared.
+     * Clear the descriptor list and resets the pair value. The ignore list is
+     * not cleared.
      */
     public void clear() {
         pairing = 0;

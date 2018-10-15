@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.containers;
 
 import java.io.Serializable;
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction.Direction;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 
@@ -32,7 +31,6 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 public class ReactionInfoCollector implements Serializable {
 
     private static final long serialVersionUID = 878898788771L;
-    private static final Logger LOG = getLogger(ReactionInfoCollector.class.getName());
     private final String sourceDbID;
     private BitSet rorFp = null;
     private BitSet porFp = null;

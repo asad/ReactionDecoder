@@ -24,8 +24,6 @@ import java.util.Collection;
 import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableCollection;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -34,14 +32,13 @@ import static java.util.logging.Logger.getLogger;
 public class ReactionFileData extends Object implements Serializable {
 
     private static final long serialVersionUID = 193790837047304701L;
-    private static final Logger LOG = getLogger(ReactionFileData.class.getName());
     private List<String> _data = null;
 
     /**
      *
      */
     public ReactionFileData() {
-        _data = synchronizedList(new ArrayList<String>());
+        _data = synchronizedList(new ArrayList<>());
     }
 
     /**

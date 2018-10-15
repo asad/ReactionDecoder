@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.stereo.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.geometry.cip.CIPTool.CIP_CHIRALITY;
 import static org.openscience.cdk.geometry.cip.CIPTool.getCIPChirality;
 import org.openscience.cdk.interfaces.IAtom;
@@ -44,8 +43,6 @@ import uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoLifter;
  *
  */
 public class Chirality2DTool implements ChiralityTool {
-
-    private static final Logger LOG = getLogger(Chirality2DTool.class.getName());
 
     /**
      *

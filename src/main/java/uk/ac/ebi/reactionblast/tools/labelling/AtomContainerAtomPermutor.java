@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.lang.System.out;
 import java.util.Iterator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -38,7 +37,6 @@ public class AtomContainerAtomPermutor extends Permutor
 
     private static boolean useA = false;
     private static boolean clone = false;
-    private static final Logger LOG = getLogger(AtomContainerAtomPermutor.class.getName());
 
     /**
      *

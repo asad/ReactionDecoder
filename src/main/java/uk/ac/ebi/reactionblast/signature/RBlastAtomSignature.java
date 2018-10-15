@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.signature;
 
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
@@ -39,7 +38,6 @@ public class RBlastAtomSignature extends AbstractVertexSignature {
      *
      */
     public static final String CHARGE_SEPARATOR = ":";
-    private static final Logger LOG = getLogger(RBlastAtomSignature.class.getName());
     private final IAtomContainer atomContainer;
     private boolean useAromatics = true;
     private boolean useCharge = true;

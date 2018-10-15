@@ -21,13 +21,12 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 import java.io.IOException;
 import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -35,7 +34,6 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -47,7 +45,6 @@ public class IsomorphismMin extends Selector implements IResult {
     private final static ILoggingTool LOGGER
             = createLoggingTool(IsomorphismMin.class);
     private static final long serialVersionUID = 1908987778L;
-    private static final Logger LOG = getLogger(IsomorphismMin.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean isSubstructure;
@@ -74,7 +71,7 @@ public class IsomorphismMin extends Selector implements IResult {
             PhaseOneMatcher();
             isSubstructure = PhaseTwoMatcher();
         } catch (IOException | CDKException ex) {
-           LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 

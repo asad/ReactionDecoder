@@ -22,8 +22,7 @@ import static java.lang.Boolean.TRUE;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
 import static uk.ac.ebi.centres.Descriptor.Type.NON_STEREOGENIC;
@@ -33,14 +32,13 @@ import uk.ac.ebi.centres.Priority;
 import uk.ac.ebi.centres.PriorityRule;
 
 /**
- * A simple insertion sort for ligands. The number of ligands is not likely to be very larger as such doing a merge sort
- * would have little benefit.
+ * A simple insertion sort for ligands. The number of ligands is not likely to
+ * be very larger as such doing a merge sort would have little benefit.
  *
  * @author John May
  * @param <A>
  */
 public class InsertionSorter<A> implements LigandSorter<A> {
-    private static final Logger LOG = getLogger(InsertionSorter.class.getName());
 
     private final List<PriorityRule<A>> rules = new ArrayList<>(5);
 
@@ -74,7 +72,8 @@ public class InsertionSorter<A> implements LigandSorter<A> {
     }
 
     /**
-     * Sorts in descending order and indicates whether all elements are unique and the type of descriptor used.
+     * Sorts in descending order and indicates whether all elements are unique
+     * and the type of descriptor used.
      *
      * @inheritDoc
      */
@@ -153,23 +152,23 @@ public class InsertionSorter<A> implements LigandSorter<A> {
      * @param sorted
      * @return
      */
+    @Override
     public List<List<Ligand<A>>> getGroups(List<Ligand<A>> sorted) {
 
         // would be nice to have this integrated whilst sorting - may provide a small speed increase
         // but as most of our lists are small we take use ugly sort then group approach
         LinkedList<List<Ligand<A>>> groups = new LinkedList<>();
 
-        for (Ligand<A> ligand : sorted) {
-
+        sorted.stream().map((ligand) -> {
             if (groups.isEmpty()
                     || compareLigands(groups.getLast().iterator().next(),
-                    ligand).getOrder() != 0) {
-                groups.add(new ArrayList<Ligand<A>>());
+                            ligand).getOrder() != 0) {
+                groups.add(new ArrayList<>());
             }
-
+            return ligand;
+        }).forEachOrdered((ligand) -> {
             groups.getLast().add(ligand);
-
-        }
+        });
 
         return groups;
 

@@ -35,7 +35,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 

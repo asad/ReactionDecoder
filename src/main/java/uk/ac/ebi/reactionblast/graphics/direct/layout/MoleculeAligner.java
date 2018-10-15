@@ -24,8 +24,7 @@ import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
@@ -58,7 +57,6 @@ public class MoleculeAligner {
      *
      */
     public static final Vector2d Y_AXIS = new Vector2d(0, 1);
-    private static final Logger LOG = getLogger(MoleculeAligner.class.getName());
 
     /**
      * Finds the minimum-area bounding box of the atom container and uses the
@@ -187,7 +185,6 @@ public class MoleculeAligner {
 //    private static String toStr(double angle) {
 //        return String.format("%2.2f", Math.toDegrees(angle));
 //    }
-
     /**
      *
      * @param atomContainer

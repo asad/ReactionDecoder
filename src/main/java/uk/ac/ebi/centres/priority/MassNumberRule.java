@@ -17,23 +17,21 @@
  */
 package uk.ac.ebi.centres.priority;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import uk.ac.ebi.centres.Ligand;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
 
 /**
- * An abstract class for constitutional priority based on mass number. A mass number accessor
- * ({@link uk.ac.ebi.centres.priority.access.MassNumberAccessor}) can be provided to allow the comparator to work on a
- * custom atom type.
+ * An abstract class for constitutional priority based on mass number. A mass
+ * number accessor
+ * ({@link uk.ac.ebi.centres.priority.access.MassNumberAccessor}) can be
+ * provided to allow the comparator to work on a custom atom type.
  *
  * @author John May
  * @param <A>
  */
 public class MassNumberRule<A>
         extends AbstractPriorityRule<A> {
-    private static final Logger LOG = getLogger(MassNumberRule.class.getName());
 
     /**
      * Accessor used to get the atomic number from an atom.
@@ -41,7 +39,8 @@ public class MassNumberRule<A>
     private final MassNumberAccessor<A> accessor;
 
     /**
-     * Constructs an mass number comparator that uses the provided accessor to fetch the mass number for a given atom.
+     * Constructs an mass number comparator that uses the provided accessor to
+     * fetch the mass number for a given atom.
      *
      * @param accessor an accessor for the atom's mass number
      */

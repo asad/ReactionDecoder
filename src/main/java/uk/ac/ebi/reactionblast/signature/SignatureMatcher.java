@@ -21,8 +21,7 @@ package uk.ac.ebi.reactionblast.signature;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -36,8 +35,6 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAt
  *
  */
 public class SignatureMatcher {
-
-    private static final Logger LOG = getLogger(SignatureMatcher.class.getName());
 
     private int minHeight;
 

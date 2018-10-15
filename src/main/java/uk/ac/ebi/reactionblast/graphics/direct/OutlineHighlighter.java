@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
@@ -28,8 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
@@ -41,7 +39,6 @@ import org.openscience.cdk.interfaces.IBond;
  * @author asad
  */
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
-    private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 
@@ -73,11 +70,11 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
     public void addHighlights(List<IAtom> atoms, List<IBond> bonds) {
         IAtomContainer highlightContainer = null;
         if (atoms.size() > 0) {
-            highlightContainer = 
-                atoms.get(0).getBuilder().newInstance(IAtomContainer.class);
+            highlightContainer
+                    = atoms.get(0).getBuilder().newInstance(IAtomContainer.class);
         } else if (bonds.size() > 0) {
-            highlightContainer = 
-                bonds.get(0).getBuilder().newInstance(IAtomContainer.class);
+            highlightContainer
+                    = bonds.get(0).getBuilder().newInstance(IAtomContainer.class);
         } else {
             return;
         }
@@ -127,14 +124,14 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
                         return 0;
                     }
                 }
-                
+
             });
             center = get2DCenter(
                     highlightContainers.get(highlightContainers.size() - 1));
         } else {
             highlightContainers = new ArrayList<>(colorMap.keySet());
         }
-        
+
         for (int containerIndex = 0; containerIndex < highlightContainers.size(); containerIndex++) {
             IAtomContainer highlightContainer = highlightContainers.get(containerIndex);
             Color savedColor = g.getColor();
@@ -143,7 +140,7 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
             } else {
                 g.setColor(colorMap.get(highlightContainer));
             }
-            
+
             if (!params.circularHighlightIsConcentric || center == null) {
                 center = get2DCenter(highlightContainer);
             }
@@ -152,7 +149,7 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
                 if (molecule.contains(highlightAtom)) {
                     Point2d point = highlightAtom.getPoint2d();
                     if (point != null) {
-                        double d = center.distance(point); 
+                        double d = center.distance(point);
                         if (d > maxDist) {
                             maxDist = d;
                         }
@@ -177,7 +174,7 @@ public class OutlineHighlighter extends AbstractHighlightDrawer implements Highl
                 y = center.y - maxDist;
                 dim = 2 * maxDist;
             }
-            
+
             if (params.circularHighlightTransparentFilled) {
                 g.fill(new Ellipse2D.Double(x, y, dim, dim));
             } else {

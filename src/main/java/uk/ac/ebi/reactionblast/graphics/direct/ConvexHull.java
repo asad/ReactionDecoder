@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.geom.Rectangle2D;
@@ -34,8 +33,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
@@ -46,13 +44,12 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class ConvexHull implements Iterable<Point2d> {
-    private static final Logger LOG = getLogger(ConvexHull.class.getName());
-    
+
     private Point2d[] hull;
-    
+
     private String[] hullIDs;
     private final Vector2d X_AXIS = new Vector2d(1, 0);
-    
+
     /**
      *
      * @param atomContainer
@@ -92,7 +89,7 @@ public class ConvexHull implements Iterable<Point2d> {
             }
         }
     }
-    
+
     /**
      *
      * @param points
@@ -100,18 +97,18 @@ public class ConvexHull implements Iterable<Point2d> {
     public ConvexHull(Point2d[] points) {
         makeFromPoints(points);
     }
-    
+
     /**
      *
      * @return
      */
     public Vector2d getMajorAxis() {
-        Rectangle minimumAreaBoundingRectangle = 
-//            getMinimumAreaBoundingRectangle();
-            getMinimumAreaBoundingRectangleBruteForce();
-       return minimumAreaBoundingRectangle.getMajorAxis();
+        Rectangle minimumAreaBoundingRectangle
+                = //            getMinimumAreaBoundingRectangle();
+                getMinimumAreaBoundingRectangleBruteForce();
+        return minimumAreaBoundingRectangle.getMajorAxis();
     }
-    
+
     /**
      *
      * @return
@@ -126,7 +123,7 @@ public class ConvexHull implements Iterable<Point2d> {
         center.y /= hull.length;
         return center;
     }
-    
+
     /**
      *
      * @return
@@ -155,10 +152,10 @@ public class ConvexHull implements Iterable<Point2d> {
             winnerIndex = hull.length;
         }
 //        System.out.println("winner = " + winnerIndex);
-        
+
         return minRect;
     }
-    
+
     /**
      *
      * @return
@@ -222,7 +219,7 @@ public class ConvexHull implements Iterable<Point2d> {
         }
         return minRect;
     }
-    
+
     private Rectangle getRectangleBrute(
             Vector2d vector, int tailPointIndex, int headPointIndex) {
         Point2d headPoint = hull[headPointIndex];
@@ -250,7 +247,7 @@ public class ConvexHull implements Iterable<Point2d> {
             if (vMax == null) {
                 vMax = hull[index];
             } else {
-                double angle = prj(tailPoint, headPoint, hull[index]); 
+                double angle = prj(tailPoint, headPoint, hull[index]);
 //                System.out.println(index + " proj " + hullIDs[index] + " " + angle);
                 if (angle < minAngle) {
                     min = index;
@@ -278,21 +275,20 @@ public class ConvexHull implements Iterable<Point2d> {
         Point2d tailProj = project(tailPoint, headPoint, vMax, true);
         Point2d headProj = project(tailPoint, headPoint, vMin, true);
 //        System.out.println("vMax = " + hullIDs[max] + " vMin = " + hullIDs[min]);
-        Rectangle r = 
-            new Rectangle(thirdPoint, tailProj, headProj, thirdPointDist);
+        Rectangle r
+                = new Rectangle(thirdPoint, tailProj, headProj, thirdPointDist);
         r.pointY = vMin;
         r.pointZ = vMax;
 //        System.out.println(toString(tailPoint, headPoint, tailProj, headProj, vMin, vMax));
         return r;
     }
-    
+
     private Rectangle getRectangle(
             Vector2d vector, int tailPointIndex, int headPointIndex) {
-        
+
         Point2d headPoint = hull[headPointIndex];
         Point2d tailPoint = hull[tailPointIndex];
-        
-        
+
         // search backwards through the hull for an extremal point 
         int tailExPtIndex = tailPointIndex;
         Point2d tailExPt = hull[tailExPtIndex];
@@ -316,13 +312,13 @@ public class ConvexHull implements Iterable<Point2d> {
                 increasing = false;
             }
         }
-        
+
         // convert the extremal point to a corner point by projecting it on V
         Vector2d negV = new Vector2d(vector);
         negV.negate();
-        
+
         Point2d projTail = project(tailPoint, headPoint, tailExPt);
-        
+
         // search forwards through the hull for an extremal point 
         int headExPtIndex = headPointIndex;
         Point2d headExPt = hull[headExPtIndex];
@@ -346,10 +342,10 @@ public class ConvexHull implements Iterable<Point2d> {
                 increasing = false;
             }
         }
-        
+
         // convert the extremal point to a corner point by projecting it on V
         Point2d projHead = project(tailPoint, headPoint, headExPt);
-        
+
         // search forwards through the hull for the last extremal point
         int remainExPtIndex = headExPtIndex;
         Point2d remainExPoint = hull[remainExPtIndex];
@@ -373,11 +369,11 @@ public class ConvexHull implements Iterable<Point2d> {
             }
         }
 //        System.out.println(toString(tailPoint, headPoint, remainExPoint, tailExPt, projTail, headExPt, projHead)); 
-        
-        return new Rectangle(remainExPoint, projTail, projHead, 
+
+        return new Rectangle(remainExPoint, projTail, projHead,
                 pointLineDistance(tailPoint, headPoint, remainExPoint));
     }
-    
+
     /**
      *
      * @param points
@@ -390,19 +386,19 @@ public class ConvexHull implements Iterable<Point2d> {
         }
         return str + "]";
     }
-    
+
     private Point2d project(Point2d p1, Point2d p2, Point2d p3) {
         return project(p1, p2, p3, false);
     }
-    
+
     private Point2d project(Point2d p1, Point2d p2, Point2d p3, boolean outSeg) {
         double dx = p2.x - p1.x;
         double dy = p2.y - p1.y;
         if (dx == 0 && dy == 0) {
             return new Point2d(p1);
         } else {
-            double t = ((p3.x - p1.x) * dx + (p3.y - p1.y) * dy) / 
-                        (dx * dx + dy * dy);
+            double t = ((p3.x - p1.x) * dx + (p3.y - p1.y) * dy)
+                    / (dx * dx + dy * dy);
             Point2d p;
             if (outSeg && (t > 0 && t < 1)) {
                 if (t > 0.5) {
@@ -417,18 +413,18 @@ public class ConvexHull implements Iterable<Point2d> {
             return p;
         }
     }
-    
+
     private double prj(Point2d p1, Point2d p2, Point2d p3) {
         double dx = p2.x - p1.x;
         double dy = p2.y - p1.y;
         return ((p3.x - p1.x) * dx + (p3.y - p1.y) * dy) / (dx * dx + dy + dy);
     }
-    
+
     private double pointLineDistance(Point2d p1, Point2d p2, Point2d p3) {
         Point2d p = project(p1, p2, p3);
         return p3.distance(p);
     }
-    
+
     private Vector2d rotate(Vector2d vector, double angle) {
         Vector2d rotatedVector = new Vector2d();
         double cosTh = cos(angle);
@@ -437,13 +433,13 @@ public class ConvexHull implements Iterable<Point2d> {
         rotatedVector.y = sinTh * vector.x + cosTh * vector.y;
         return rotatedVector;
     }
-    
+
     private Vector2d edgeVector(Point2d fromPoint, Point2d toPoint) {
         Vector2d edge = new Vector2d(fromPoint);
         edge.sub(toPoint);
         return edge;
     }
-    
+
     /**
      *
      * @return
@@ -467,10 +463,10 @@ public class ConvexHull implements Iterable<Point2d> {
                 maxY = point.y;
             }
         }
-        
+
         return new Rectangle2D.Double(minX, minY, maxX, maxY);
     }
-    
+
     // use Graham's scan algorithm - implementation from wikipedia
     private void makeFromPoints(Point2d[] points) {
         if (points.length < 4) {
@@ -484,7 +480,7 @@ public class ConvexHull implements Iterable<Point2d> {
             if (indexOfLowPoint == -1 || current.y > lowPoint.y) {
                 lowPoint = current;
                 indexOfLowPoint = index;
-            } 
+            }
         }
         swap(points, 0, indexOfLowPoint);
         points = sortByPolarAngle(points);
@@ -505,7 +501,7 @@ public class ConvexHull implements Iterable<Point2d> {
         hull = new Point2d[m];
         arraycopy(points, 0, hull, 0, m);
     }
-    
+
     // allegedly, book 'Computational Geometry' has info on this
     // (Berkman & Schrieber, 2008)
 //    private void sortByXCoord(Point2d[] points) {
@@ -526,7 +522,6 @@ public class ConvexHull implements Iterable<Point2d> {
 //        });
 //        points[0] = ref;
 //    }
-    
     private Point2d[] sortByPolarAngle(Point2d[] points) {
         Point2d ref = points[0];
         final Map<Point2d, Double> angles = new HashMap<>();
@@ -542,14 +537,14 @@ public class ConvexHull implements Iterable<Point2d> {
             public int compare(Point2d p0, Point2d p1) {
                 return angles.get(p0).compareTo(angles.get(p1));
             }
-            
+
         });
         Point2d[] sortedPoints = new Point2d[points.length + 1];
         sortedPoints[0] = points[points.length - 1];
         arraycopy(points, 0, sortedPoints, 1, points.length);
         return sortedPoints;
     }
-    
+
     private double getAngle(Point2d ref, Point2d point) {
 //        double angle = Math.atan((point.y - ref.y) / (point.x - ref.x));
 //        if (angle < 0) angle += Math.PI;
@@ -565,9 +560,9 @@ public class ConvexHull implements Iterable<Point2d> {
         points[i] = points[j];
         points[j] = tmp;
     }
-    
+
     private double ccw(Point2d p1, Point2d p2, Point2d p3) {
-        return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x); 
+        return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
     }
 
     @Override

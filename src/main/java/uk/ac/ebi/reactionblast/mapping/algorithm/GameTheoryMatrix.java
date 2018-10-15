@@ -41,8 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -80,7 +79,6 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 //            }
 //        }
 //    }
-    private static final Logger LOG = getLogger(GameTheoryMatrix.class.getName());
     private Holder matrixHolder;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
     private final List<String> eductCounter;
@@ -113,11 +111,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
         this.reaction = reaction;
         this.reactionID = reaction.getID();
 
-        this.substrateductFPMap = synchronizedSortedMap(new TreeMap<Integer, BitSet>());
-        this.productFPMap = synchronizedSortedMap(new TreeMap<Integer, BitSet>());
+        this.substrateductFPMap = synchronizedSortedMap(new TreeMap<>());
+        this.productFPMap = synchronizedSortedMap(new TreeMap<>());
         this.fpr = new FingerprintGenerator();
-        this.eductCounter = synchronizedList(new LinkedList<String>());
-        this.productCounter = synchronizedList(new LinkedList<String>());
+        this.eductCounter = synchronizedList(new LinkedList<>());
+        this.productCounter = synchronizedList(new LinkedList<>());
         this.structureMapObj = new ReactionContainer();
         this.bestMatchContainer = new BestMatchContainer();
         this.hydFreeFPContainer = new HydrogenFreeFingerPrintContainer();
@@ -152,7 +150,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 //            initializeMappingFLAGS(matrixHolder);
             UpdateMatrix(matrixHolder, removeHydrogen);
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(SEVERE, null, e);
         }
     }
 

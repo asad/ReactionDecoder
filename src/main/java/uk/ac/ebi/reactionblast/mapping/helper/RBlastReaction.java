@@ -24,8 +24,7 @@ import static java.util.Collections.unmodifiableMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -49,11 +48,10 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 
 /**
  *
- * @author asad
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class RBlastReaction {
-
-    private static final Logger LOG = getLogger(RBlastReaction.class.getName());
 
     private IReaction reaction;
     private List<BlockPair> blockPairs;

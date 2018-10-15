@@ -16,13 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Graphics2D;
 import static java.lang.Math.max;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
@@ -34,8 +32,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
-    private static final Logger LOG = getLogger(LeftToRightAWTReactionLayout.class.getName());
-    
+
     /**
      *
      */
@@ -63,35 +60,35 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
     @Override
     public BoundsTree layout(IReaction reaction, Graphics2D graphics) {
         String rxnID = reaction.getID();
-        
+
         reactantBoundsTree = reactantLayout.layout(reaction.getReactants(), graphics);
         productBoundsTree = productLayout.layout(reaction.getProducts(), graphics);
-        
+
         int borderX = params.borderX;
         int borderY = params.borderY;
         int arrowGap = params.arrowGap;
         int arrowLength = params.arrowLength;
-        
+
         double rbW = reactantBoundsTree.getWidth();
         double rbH = reactantBoundsTree.getHeight();
         double pbH = productBoundsTree.getHeight();
         double maxH = max(rbH, pbH);
-        
+
         double dx = borderX;
         double dy = borderY + (maxH / 2);
-        
+
         shiftMoleculeSet(reaction.getReactants(), reactantBoundsTree, dx, dy);
         dx = borderX + rbW + arrowLength + (2 * arrowGap);
         shiftMoleculeSet(reaction.getProducts(), productBoundsTree, dx, dy);
-        
+
         boundsTree = new BoundsTree(rxnID, productBoundsTree, reactantBoundsTree);
         double arrowCenterX = borderX + rbW + arrowGap + (arrowLength / 2);
 //        System.out.println("setting arrow pos to " + arrowCenterX);
         arrowPos = arrowCenterX;
-        
+
         return boundsTree;
     }
-    
+
     /**
      *
      * @return

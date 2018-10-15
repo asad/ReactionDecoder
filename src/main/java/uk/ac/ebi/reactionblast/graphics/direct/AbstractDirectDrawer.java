@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
@@ -30,8 +29,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 
@@ -40,13 +38,12 @@ import javax.vecmath.Point2f;
  * @author asad
  */
 public class AbstractDirectDrawer {
-    private static final Logger LOG = getLogger(AbstractDirectDrawer.class.getName());
-    
+
     /**
      *
      */
     protected Params params;
-    
+
     /**
      *
      * @return
@@ -62,7 +59,7 @@ public class AbstractDirectDrawer {
     public void setParams(Params params) {
         this.params = params;
     }
-    
+
     /**
      *
      * @param p1
@@ -91,7 +88,7 @@ public class AbstractDirectDrawer {
         float y = (float) (cY - halfHeight + ascent);
         return new Point2f(x, y);
     }
-    
+
     /**
      *
      * @param g
@@ -102,7 +99,7 @@ public class AbstractDirectDrawer {
         FontMetrics metrics = g.getFontMetrics();
         return metrics.getStringBounds(text, g);
     }
-    
+
     /**
      *
      * @param w
@@ -122,7 +119,7 @@ public class AbstractDirectDrawer {
      */
     public BufferedImage makeBlankImage(int w, int h, Color color) {
         BufferedImage image = new BufferedImage(w, h, TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D)image.getGraphics();
+        Graphics2D g = (Graphics2D) image.getGraphics();
         g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         g.setColor(color);
         g.fillRect(0, 0, w, h);

@@ -26,7 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.System.out;
 import java.util.Map;
-import java.util.logging.Logger;
+
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,8 +37,11 @@ import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 import static java.lang.System.getProperty;
-import static java.util.logging.Logger.getLogger;
+import static java.util.logging.Level.SEVERE;
+
 import static javax.imageio.ImageIO.write;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 
@@ -48,7 +51,8 @@ import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLa
  */
 public class MappingUtility extends TestUtility {
 
-    private static final Logger LOG = getLogger(MappingUtility.class.getName());
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(MappingUtility.class);
 
     /**
      *
@@ -126,7 +130,7 @@ public class MappingUtility extends TestUtility {
                     reaction, true, false, false, new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
             return reaction;
         }
     }
@@ -200,7 +204,7 @@ public class MappingUtility extends TestUtility {
             LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
             TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {

@@ -19,8 +19,7 @@ package uk.ac.ebi.centres.priority;
 
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.centres.Comparison;
 import uk.ac.ebi.centres.Descriptor;
 import static uk.ac.ebi.centres.Descriptor.Type.NON_STEREOGENIC;
@@ -32,14 +31,13 @@ import static uk.ac.ebi.centres.PriorityRule.Type.COMBINED;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 
 /**
- * A priority rule made up of other rules. Each sub-rule is used exhaustively on the digraph before the next one is
- * applied.
+ * A priority rule made up of other rules. Each sub-rule is used exhaustively on
+ * the digraph before the next one is applied.
  *
  * @author John May
  * @param <A>
  */
 public final class CombinedRule<A> extends AbstractPriorityRule<A> {
-    private static final Logger LOG = getLogger(CombinedRule.class.getName());
 
     /**
      * Rule storage
@@ -68,7 +66,8 @@ public final class CombinedRule<A> extends AbstractPriorityRule<A> {
     }
 
     /**
-     * Add a priority rule to the compound rule. This will also set the sorter to that of this combined rule.
+     * Add a priority rule to the compound rule. This will also set the sorter
+     * to that of this combined rule.
      *
      * @param rule a new rule to use
      */
@@ -91,10 +90,11 @@ public final class CombinedRule<A> extends AbstractPriorityRule<A> {
     }
 
     /**
-     * Iteratively compares ligands using the given priority rules. Each rule is applied exhaustively. If a difference
-     * is found for a rule the comparison is returned along without the rule type.
+     * Iteratively compares ligands using the given priority rules. Each rule is
+     * applied exhaustively. If a difference is found for a rule the comparison
+     * is returned along without the rule type.
      *
-     * @return 
+     * @return
      * @see LigandComparison
      * @see uk.ac.ebi.centres.PriorityRule#getType()
      * @see Descriptor.Type
@@ -124,11 +124,12 @@ public final class CombinedRule<A> extends AbstractPriorityRule<A> {
     }
 
     /**
-     * Iteratively compares ligands using the given priority rules. Each rule is applied exhaustively. If a difference
-     * is found for a rule the comparison is returned along with the rule type
+     * Iteratively compares ligands using the given priority rules. Each rule is
+     * applied exhaustively. If a difference is found for a rule the comparison
+     * is returned along with the rule type
      * {@link uk.ac.ebi.centres.PriorityRule#getType()}
      *
-     * @return 
+     * @return
      * @see LigandComparison
      * @see uk.ac.ebi.centres.PriorityRule#getType()
      * @see Descriptor.Type

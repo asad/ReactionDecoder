@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
@@ -24,22 +23,18 @@ import static java.awt.Color.RGBtoHSB;
 import static java.awt.Color.getHSBColor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * Simple utility class to generate a 'ramp' of colors between two values.
- * 
+ *
  * @author maclean
  *
  */
 public class ColorRamp {
-    
-    private static final Logger LOG = getLogger(ColorRamp.class.getName());
 
     /**
      * Get N colors as a list.
-     * 
+     *
      * @param number the number of colors to generate
      * @return a list of colors.
      */
@@ -50,10 +45,10 @@ public class ColorRamp {
         }
         return colors;
     }
-    
+
     /**
      * Get a color for a value 'v' between vmin and vmax.
-     * 
+     *
      * @param v the point on the ramp to make a color for
      * @param vmin the minimum value in the range
      * @param vmax the maximum value in the range

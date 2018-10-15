@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static java.util.Locale.US;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -569,7 +569,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 
                 throw new CDKException("Array out of Bound");
             } catch (CDKException ex) {
-                getLogger(EBIMatrix.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
         }
         

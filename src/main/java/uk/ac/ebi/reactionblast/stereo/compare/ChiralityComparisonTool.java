@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.stereo.compare;
 
 import static java.lang.System.out;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.Isomorphism;
@@ -39,8 +38,6 @@ import uk.ac.ebi.reactionblast.stereo.tools.Chirality3DTool;
  *
  */
 public class ChiralityComparisonTool {
-
-    private static final Logger LOG = getLogger(ChiralityComparisonTool.class.getName());
 
     /**
      *

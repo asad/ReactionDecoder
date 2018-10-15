@@ -21,8 +21,7 @@ package uk.ac.ebi.reactionblast.stereo.wedge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -40,8 +39,6 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
  * @author Gilleain Torrance
  */
 public class SingleUpWedgeRule extends WedgeRule {
-
-    private static final Logger LOG = getLogger(SingleUpWedgeRule.class.getName());
 
     private final IBond.Stereo[] pattern = {UP, NONE, NONE};
 

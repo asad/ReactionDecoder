@@ -63,7 +63,7 @@ import static java.lang.Math.min;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.sort;
 import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.tools.ILoggingTool;

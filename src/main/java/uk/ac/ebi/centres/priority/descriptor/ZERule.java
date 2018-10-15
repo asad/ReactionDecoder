@@ -17,22 +17,19 @@
  */
 package uk.ac.ebi.centres.priority.descriptor;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static uk.ac.ebi.centres.PriorityRule.Type.GEOMETRICAL;
 import static uk.ac.ebi.centres.descriptor.Planar.E;
 import static uk.ac.ebi.centres.descriptor.Planar.Z;
 import uk.ac.ebi.centres.priority.access.descriptor.ArcPrimaryDescriptor;
 
 /**
- * A rule with prioritises ligands in Z (cis) configuration over those in E (trans) configuration.
+ * A rule with prioritises ligands in Z (cis) configuration over those in E
+ * (trans) configuration.
  *
  * @author John May
  * @param <A>
  */
 public class ZERule<A> extends DescriptorRule<A> {
-
-    private static final Logger LOG = getLogger(ZERule.class.getName());
 
     /**
      *

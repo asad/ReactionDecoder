@@ -24,7 +24,6 @@ import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -32,7 +31,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.interfaces.IAtomMapping;
-import uk.ac.ebi.reactionblast.mapping.algorithm.BaseGameTheory;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
@@ -42,9 +40,9 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import static java.lang.System.getProperty;
 import static java.text.NumberFormat.getInstance;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -52,8 +50,8 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  */
 public abstract class Debugger extends BasicDebugger {
 
-    private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(Debugger.class);
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(Debugger.class);
 
     /**
      * Prints reactant and product atom container in the matrix
@@ -85,7 +83,7 @@ public abstract class Debugger extends BasicDebugger {
             }
             out.println();
         } catch (IOException | CDKException | CloneNotSupportedException ex) {
-            getLogger(BaseGameTheory.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -122,7 +120,6 @@ public abstract class Debugger extends BasicDebugger {
             }
         } catch (IOException | CDKException e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
         out.println();
     }
@@ -159,7 +156,6 @@ public abstract class Debugger extends BasicDebugger {
             }
         } catch (IOException | CDKException e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
         out.println();
 
@@ -239,7 +235,6 @@ public abstract class Debugger extends BasicDebugger {
 
         } catch (Exception e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
 
         out.println();
@@ -286,7 +281,6 @@ public abstract class Debugger extends BasicDebugger {
 
         } catch (Exception e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
 
         out.println();
@@ -331,7 +325,6 @@ public abstract class Debugger extends BasicDebugger {
 
         } catch (Exception e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
 
         out.println();
@@ -377,7 +370,6 @@ public abstract class Debugger extends BasicDebugger {
 
         } catch (Exception e) {
             LOGGER.debug("Parser Error" + e);
-            e.printStackTrace();
         }
 
         out.println();
@@ -423,7 +415,6 @@ public abstract class Debugger extends BasicDebugger {
             }
         } catch (Exception ex) {
             LOGGER.debug("Parser Error" + ex);
-            ex.printStackTrace();
         }
     }
 
@@ -455,7 +446,7 @@ public abstract class Debugger extends BasicDebugger {
             try {
                 imageGenerator.addImages(query, target, label, mapping);
             } catch (Exception ex) {
-                getLogger(Debugger.class.getName()).log(SEVERE, null, ex);
+                LOGGER.error(SEVERE, null, ex);
             }
             counter++;
         }

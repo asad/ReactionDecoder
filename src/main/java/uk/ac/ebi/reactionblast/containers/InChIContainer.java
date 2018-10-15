@@ -24,8 +24,7 @@ import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -61,10 +60,8 @@ import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
 public class InChIContainer implements IInChIContainer, Cloneable {
 
     /* Singleton Pattern Implementation */
-
     private static InChIContainer _instance = null;
     private static Map<String, String> InChIMap = null;
-    private static final Logger LOG = getLogger(InChIContainer.class.getName());
 
     /**
      *
@@ -88,7 +85,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
 
     //~--- constructors -------------------------------------------------------
     private InChIContainer() {
-        InChIMap = synchronizedSortedMap(new TreeMap<String, String>());
+        InChIMap = synchronizedSortedMap(new TreeMap<>());
     }
 
     //~--- methods ------------------------------------------------------------

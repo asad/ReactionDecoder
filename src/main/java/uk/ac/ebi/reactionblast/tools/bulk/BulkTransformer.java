@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IDataSource;
@@ -28,12 +26,11 @@ import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 
 /**
  * Transforms a number of reactions (or molecules in reactions) in turn.
- * 
+ *
  * @author maclean
  *
  */
 public class BulkTransformer {
-    private static final Logger LOG = getLogger(BulkTransformer.class.getName());
 
     /**
      * The transformation, or series of transformations, to apply.
@@ -49,10 +46,10 @@ public class BulkTransformer {
     }
 
     /**
-     * Transform all the entries in the datasource.
-     * 
+     * Transform all the entries in the data source.
+     *
      * @param dataSource
-     * @param dataStore  
+     * @param dataStore
      */
     public void transform(IDataSource dataSource, IDataStore dataStore) {
         switch (transformation.getTargetType()) {
@@ -70,8 +67,8 @@ public class BulkTransformer {
         IDataSource<IReaction> rxnDataSource = dataSource;
         for (IReaction reaction : rxnDataSource.getAll()) {
             if (reaction != null) {
-                IReaction transformedReaction =
-                        (IReaction) transformation.transform(reaction);
+                IReaction transformedReaction
+                        = (IReaction) transformation.transform(reaction);
                 if (transformedReaction != null) {
                     dataStore.store(transformedReaction);
                 }
@@ -83,8 +80,8 @@ public class BulkTransformer {
         IDataSource<IAtomContainer> molDataSource = dataSource;
         for (IAtomContainer molecule : molDataSource.getAll()) {
             if (molecule != null) {
-                IAtomContainer transformedMolecule =
-                        (IAtomContainer) transformation.transform(molecule);
+                IAtomContainer transformedMolecule
+                        = (IAtomContainer) transformation.transform(molecule);
                 if (transformedMolecule != null) {
                     dataStore.store(transformedMolecule);
                 }

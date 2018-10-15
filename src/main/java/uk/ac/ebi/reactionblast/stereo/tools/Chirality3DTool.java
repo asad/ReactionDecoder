@@ -21,8 +21,7 @@ package uk.ac.ebi.reactionblast.stereo.tools;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.geometry.cip.CIPTool;
 import org.openscience.cdk.geometry.cip.CIPTool.CIP_CHIRALITY;
 import static org.openscience.cdk.geometry.cip.CIPTool.CIP_CHIRALITY.NONE;
@@ -47,8 +46,6 @@ import uk.ac.ebi.reactionblast.stereo.compare.ChiralityTool;
  *
  */
 public class Chirality3DTool implements ChiralityTool {
-
-    private static final Logger LOG = getLogger(Chirality3DTool.class.getName());
 
     /**
      * Get R/S Chirality assignments for an atom container that should have 3D

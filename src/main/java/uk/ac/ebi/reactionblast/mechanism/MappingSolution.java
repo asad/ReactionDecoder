@@ -20,8 +20,7 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
 import static java.lang.System.getProperty;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
@@ -34,7 +33,6 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 public class MappingSolution implements Serializable {
 
     private static final long serialVersionUID = 1678787866L;
-    private static final Logger LOG = getLogger(MappingSolution.class.getName());
 
     private final IMappingAlgorithm algorithmID;
     private final double bondEnergySum;

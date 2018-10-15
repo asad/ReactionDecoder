@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.mapping.container.helper;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 
 /**
@@ -30,7 +29,6 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IKey;
 public class Key implements IKey, Serializable {
 
     private static final long serialVersionUID = 92392372979041041L;
-    private static final Logger LOG = getLogger(Key.class.getName());
     private final int sourceIndex;
     private final int targetIndex;
 

@@ -24,8 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.signature.MoleculeSignature;
 import signature.AbstractVertexSignature;
@@ -39,8 +38,6 @@ import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.
  *
  */
 public class RBlastMoleculeLabeller implements ICanonicalMoleculeLabeller {
-
-    private static final Logger LOG = getLogger(RBlastMoleculeLabeller.class.getName());
 
     /**
      *

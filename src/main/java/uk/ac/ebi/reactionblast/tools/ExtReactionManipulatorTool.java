@@ -20,8 +20,8 @@ package uk.ac.ebi.reactionblast.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
+
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Mapping;
 import org.openscience.cdk.Reaction;
@@ -38,8 +38,7 @@ import org.openscience.cdk.tools.manipulator.ReactionManipulator;
  */
 public class ExtReactionManipulatorTool extends ReactionManipulator {
 
-    private static final Logger LOG = getLogger(ExtReactionManipulatorTool.class.getName());
-
+   
     /**
      *
      * @param reaction

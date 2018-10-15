@@ -16,11 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -35,8 +32,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatiz
  */
 public class ReactionAromatizationTransformation implements
         ITransformation<IReaction> {
-
-    private static final Logger LOG = getLogger(ReactionAromatizationTransformation.class.getName());
 
     /**
      *

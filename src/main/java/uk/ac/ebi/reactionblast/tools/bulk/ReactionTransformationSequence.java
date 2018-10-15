@@ -16,27 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 
 /**
- * Transform a reaction by applying a sequence of transformations, for example 
+ * Transform a reaction by applying a sequence of transformations, for example
  * canonicalization then mapping.
- * 
+ *
  * @author maclean
  *
  */
 public class ReactionTransformationSequence implements ITransformation<IReaction> {
-    private static final Logger LOG = getLogger(ReactionTransformationSequence.class.getName());
-
+    
     private final List<ITransformation<IReaction>> transformations;
 
     /**

@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
@@ -53,7 +53,7 @@ import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import static java.util.Collections.synchronizedCollection;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.graph.Cycles.all;
 import org.openscience.cdk.smiles.SmiFlavor;
 
@@ -347,7 +347,7 @@ public class GraphMatcher extends Debugger {
             });
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
         } catch (IOException | CDKException ex) {
-            getLogger(GraphMatcher.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }

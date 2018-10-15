@@ -23,8 +23,7 @@ import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
@@ -41,8 +40,6 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAtomC
  *
  */
 public class BlockMapping {
-
-    private static final Logger LOG = getLogger(BlockMapping.class.getName());
 
     private final IReaction reaction;
 

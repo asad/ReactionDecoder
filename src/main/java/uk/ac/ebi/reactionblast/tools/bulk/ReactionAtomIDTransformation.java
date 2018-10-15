@@ -20,8 +20,8 @@
 package uk.ac.ebi.reactionblast.tools.bulk;
 
 import static java.lang.String.valueOf;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
+
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,8 +37,6 @@ import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REAC
  *
  */
 public class ReactionAtomIDTransformation implements ITransformation<IReaction> {
-
-    private static final Logger LOG = getLogger(ReactionAtomIDTransformation.class.getName());
 
     /**
      *

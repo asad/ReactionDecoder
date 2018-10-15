@@ -19,8 +19,7 @@ package uk.ac.ebi.centres.priority.descriptor;
 
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.centres.Descriptor;
 import static uk.ac.ebi.centres.Descriptor.Type.ASYMMETRIC;
 import uk.ac.ebi.centres.Ligand;
@@ -28,24 +27,25 @@ import uk.ac.ebi.centres.priority.AbstractPriorityRule;
 import uk.ac.ebi.centres.priority.access.DescriptorAccessor;
 
 /**
- * A configurable descriptor rule that allows ranking of ligands based on their descriptors. The type of descriptor can
- * be provided by a {@link
+ * A configurable descriptor rule that allows ranking of ligands based on their
+ * descriptors. The type of descriptor can be provided by a {@link
  * DescriptorAccessor}. The rule type will default to {@link
- * Descriptor.Type#ASYMMETRIC} but can also be configured for R>S rules. The ranking is achieved by assigning each
- * descriptor a value 1 .. n. If a given descriptor is not found in the ranking is assign rank 0.
+ * Descriptor.Type#ASYMMETRIC} but can also be configured for R>S rules. The
+ * ranking is achieved by assigning each descriptor a value 1 .. n. If a given
+ * descriptor is not found in the ranking is assign rank 0.
  *
  * @author John May
  * @param <A>
  */
 public class DescriptorRule<A> extends AbstractPriorityRule<A> {
-    private static final Logger LOG = getLogger(DescriptorRule.class.getName());
 
     private DescriptorAccessor<A> accessor;
     private Map<Descriptor, Integer> ranking;
 
     /**
-     * Create an {@link Descriptor.Type#ASYMMETRIC} rule with a provided accessor and given ligand order. Ligand order
-     * preceedes that the higher index number the higher the priority.
+     * Create an {@link Descriptor.Type#ASYMMETRIC} rule with a provided
+     * accessor and given ligand order. Ligand order preceedes that the higher
+     * index number the higher the priority.
      *
      * @param accessor a {@link DescriptorAccessor} for a descriptor label
      * @param ordering
@@ -58,8 +58,9 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
     }
 
     /**
-     * Create an rule with a provided rule type, accessor and given ligand order. Ligand order preceedes that the higher
-     * index number the higher the priority.
+     * Create an rule with a provided rule type, accessor and given ligand
+     * order. Ligand order preceedes that the higher index number the higher the
+     * priority.
      *
      * @param type the type of priority rule
      * @param ordering
@@ -86,7 +87,8 @@ public class DescriptorRule<A> extends AbstractPriorityRule<A> {
      *
      * @param ligand the ligand which to access the rank of it's descriptor
      *
-     * @return an integer ranking (higher number=higher priority), will default to 0.
+     * @return an integer ranking (higher number=higher priority), will default
+     * to 0.
      */
     private int getRank(Ligand<A> ligand) {
         Descriptor descriptor = accessor.getDescriptor(ligand);

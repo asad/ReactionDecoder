@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -34,8 +32,6 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
  * @Revision: 1.10
  */
 public class MappingHandler extends BasicDebugger {
-
-    private static final Logger LOG = getLogger(MappingHandler.class.getName());
 
     /**
      *

@@ -30,8 +30,7 @@ package uk.ac.ebi.reactionblast.tools;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.VISITED;
 import static org.openscience.cdk.graph.PathTools.breadthFirstSearch;
 import org.openscience.cdk.interfaces.IAtom;
@@ -46,8 +45,6 @@ import org.openscience.cdk.interfaces.IElectronContainer;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class EBIMolSplitter {
-
-    private static final Logger LOG = getLogger(EBIMolSplitter.class.getName());
 
     /**
      * Check whether a set of atoms in an atomcontainer is connected

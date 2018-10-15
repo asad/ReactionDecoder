@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-/*
+ /*
  * CreateDirectory.java
  *
  * Created on 13 January 2006, 09:41
@@ -31,8 +31,7 @@ package uk.ac.ebi.reactionblast.tools;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.reactionblast.tools.utility.Suffix;
 import static uk.ac.ebi.reactionblast.tools.utility.Suffix.getInstance;
 
@@ -46,7 +45,6 @@ public class CreateDirectory {
 
     private static final int MKDIR_RETRY_SLEEP_MILLIS = 10;
     private static String suffix = null;
-    private static final Logger LOG = getLogger(CreateDirectory.class.getName());
 
     /**
      *

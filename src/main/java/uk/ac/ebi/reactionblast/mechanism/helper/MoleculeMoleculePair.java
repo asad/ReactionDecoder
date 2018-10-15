@@ -21,8 +21,6 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -32,7 +30,6 @@ import static java.util.logging.Logger.getLogger;
 public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMoleculePair>, Comparator<MoleculeMoleculePair> {
 
     private static final long serialVersionUID = 107097779868968L;
-    private static final Logger LOG = getLogger(MoleculeMoleculePair.class.getName());
     private final ReactantProductPair name;
     private final ReactantProductPair smarts;
     private final ReactantProductPair signature;

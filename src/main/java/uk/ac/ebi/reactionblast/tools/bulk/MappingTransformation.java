@@ -16,11 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -34,9 +31,9 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author asad
  */
 public class MappingTransformation implements ITransformation<IReaction> {
-private final static ILoggingTool LOGGER
+
+    private final static ILoggingTool LOGGER
             = createLoggingTool(MappingTransformation.class);
-    private static final Logger LOG = getLogger(MappingTransformation.class.getName());
 
     /**
      *
@@ -58,8 +55,8 @@ private final static ILoggingTool LOGGER
             boolean forcedMapping = false;
             boolean generate2D = false;
             boolean generate3D = false;
-            ReactionMechanismTool rmt =
-                    new ReactionMechanismTool(
+            ReactionMechanismTool rmt
+                    = new ReactionMechanismTool(
                             reaction, forcedMapping, generate2D, generate3D,
                             new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();

@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import static java.awt.Color.BLACK;
@@ -34,8 +33,7 @@ import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.geom.Ellipse2D;
 import static java.lang.String.valueOf;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -45,10 +43,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class DirectHullDrawer extends AbstractDirectDrawer {
-    private static final Logger LOG = getLogger(DirectHullDrawer.class.getName());
-    
+
     private final DirectMoleculeDrawer moleculeDrawer;
-    
+
     /**
      *
      */
@@ -56,7 +53,7 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         moleculeDrawer = new DirectMoleculeDrawer();
         setParams(moleculeDrawer.getParams());
     }
-    
+
     /**
      *
      * @param atomContainer
@@ -77,7 +74,7 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         drawHull(atomContainer, g);
         return image;
     }
-    
+
     /**
      *
      * @param atomContainer
@@ -89,7 +86,7 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         moleculeDrawer.drawMolecule(atomContainer, g);
         Point2d prev = null;
         Point2d first = null;
-        
+
         for (Point2d hullPoint : hull) {
             if (prev == null) {
                 prev = hullPoint;
@@ -104,7 +101,7 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
                 direction.sub(prev);
                 direction.normalize();
                 arrowDrawer.drawArrow(g, midPoint, direction);
-                
+
                 prev = hullPoint;
             }
         }
@@ -136,7 +133,7 @@ public class DirectHullDrawer extends AbstractDirectDrawer {
         g.fill(new Ellipse2D.Double(r.cornerC.x - 3, r.cornerC.y - 3, 6, 6));
         g.setColor(CYAN);
         g.fill(new Ellipse2D.Double(r.cornerD.x - 3, r.cornerD.y - 3, 6, 6));
-        
+
         g.setColor(GREEN);
         g.fill(new Ellipse2D.Double(r.pointX.x - 2, r.pointX.y - 2, 4, 4));
         g.setColor(PINK);

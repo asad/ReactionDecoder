@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import static java.lang.Boolean.TRUE;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;

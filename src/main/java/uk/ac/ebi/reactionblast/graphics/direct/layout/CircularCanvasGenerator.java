@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
@@ -25,8 +24,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,15 +33,14 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  *
  * @author asad
  */
-public class CircularCanvasGenerator extends 
-                 AbstractCanvasGenerator implements CanvasGenerator {
-    private static final Logger LOG = getLogger(CircularCanvasGenerator.class.getName());
-    
+public class CircularCanvasGenerator extends
+        AbstractCanvasGenerator implements CanvasGenerator {
+
     private Vector2d vectorToStart;
-    
+
     // TODO : better way to do this?
     private boolean putFirstInCenter;
-    
+
     private Dimension size;
 
     /**
@@ -52,7 +49,7 @@ public class CircularCanvasGenerator extends
     public CircularCanvasGenerator() {
         this(new Vector2d(-1, 0));
     }
-    
+
     /**
      *
      * @param vectorToStart
@@ -60,7 +57,7 @@ public class CircularCanvasGenerator extends
     public CircularCanvasGenerator(Vector2d vectorToStart) {
         this.vectorToStart = vectorToStart;
     }
-    
+
     /**
      *
      * @param putFirstInCenter
@@ -68,7 +65,7 @@ public class CircularCanvasGenerator extends
     public CircularCanvasGenerator(boolean putFirstInCenter) {
         this(new Vector2d(-1, 0), putFirstInCenter);
     }
-    
+
     /**
      *
      * @param vectorToStart
@@ -78,7 +75,7 @@ public class CircularCanvasGenerator extends
         this.vectorToStart = vectorToStart;
         this.putFirstInCenter = putFirstInCenter;
     }
-    
+
     /**
      *
      * @param atomContainers
@@ -95,20 +92,20 @@ public class CircularCanvasGenerator extends
         if (n < 1) {
             return;
         }
-        
+
         double maxDim = max(cellCanvas.width, cellCanvas.height);
         double alpha = toRadians(360 / n);
         double cosA = cos(alpha);
         double sinA = sin(alpha);
         double circleRadius = (maxDim / 2) / sin(alpha / 2);
-        
+
         double totalDim = (2 * circleRadius) + maxDim;
-        size = new Dimension((int)totalDim, (int)totalDim);
+        size = new Dimension((int) totalDim, (int) totalDim);
         Point2d center = new Point2d(totalDim / 2, totalDim / 2);
-        
+
         Vector2d v = new Vector2d(vectorToStart);
         v.normalize();
-        
+
         int index;
         if (putFirstInCenter) {
             createCanvas(atomContainers.get(0), center, cellCanvas);
@@ -122,7 +119,7 @@ public class CircularCanvasGenerator extends
             canvasCenter.scaleAdd(circleRadius, v, canvasCenter);
             createCanvas(atomContainer, canvasCenter, cellCanvas);
             Vector2d w = new Vector2d();
-            w.x = ( cosA * v.x) + (sinA * v.y);
+            w.x = (cosA * v.x) + (sinA * v.y);
             w.y = (-sinA * v.x) + (cosA * v.y);
             v = w;
             index++;

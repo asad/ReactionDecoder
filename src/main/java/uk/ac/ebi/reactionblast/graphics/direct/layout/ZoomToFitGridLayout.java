@@ -24,8 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
@@ -39,7 +38,6 @@ import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
  * @author asad
  */
 public class ZoomToFitGridLayout {
-    private static final Logger LOG = getLogger(ZoomToFitGridLayout.class.getName());
 
     private DirectMoleculeDrawer drawer;
 

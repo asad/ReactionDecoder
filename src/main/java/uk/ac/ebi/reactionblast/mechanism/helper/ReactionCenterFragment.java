@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 
 /**
@@ -31,7 +30,6 @@ import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 public class ReactionCenterFragment implements Serializable {
 
     private static final long serialVersionUID = 9879878799977781L;
-    private static final Logger LOG = getLogger(ReactionCenterFragment.class.getName());
 
     private final String signature;
     private final int level;

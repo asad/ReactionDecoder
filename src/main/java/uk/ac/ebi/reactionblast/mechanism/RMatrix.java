@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.exception.CDKException;
@@ -51,7 +50,6 @@ public final class RMatrix extends EBIMatrix implements Serializable {
 
     private static final long serialVersionUID = 7057060562283378684L;
     private static final ILoggingTool LOGGER = createLoggingTool(RMatrix.class);
-    private static final Logger LOG = getLogger(RMatrix.class.getName());
 
     private BEMatrix reactantBEMatrix = null;
     private BEMatrix productBEMatrix = null;

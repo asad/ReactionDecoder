@@ -16,11 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.MOLECULE;
@@ -28,12 +25,11 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
 /**
  * Transform a molecule to make it canonical.
- * 
+ *
  * @author maclean
  *
  */
 public class MoleculeCanonicalizationTransformation implements ITransformation<IAtomContainer> {
-    private static final Logger LOG = getLogger(MoleculeCanonicalizationTransformation.class.getName());
 
     private final ICanonicalMoleculeLabeller canonicalMoleculeLabeller;
 

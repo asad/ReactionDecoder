@@ -16,11 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -38,8 +35,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieve
  */
 public class ReactionImplicitHydrogenTransformation implements
         ITransformation<IReaction> {
-
-    private static final Logger LOG = getLogger(ReactionImplicitHydrogenTransformation.class.getName());
 
     /**
      *

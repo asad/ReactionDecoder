@@ -34,8 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import uk.ac.ebi.reactionblast.mapping.container.helper.ReactionFileData;
 
 //~--- classes ----------------------------------------------------------------
@@ -61,7 +60,6 @@ public class KeggReactionFileContainer implements Serializable {
     private final static String end = "///";
     private final static String comment = "COMMENT";
     private final static String remark = "REMARK";
-    private static final Logger LOG = getLogger(KeggReactionFileContainer.class.getName());
 
     /**
      * Creates a new instance of ReactionContainer

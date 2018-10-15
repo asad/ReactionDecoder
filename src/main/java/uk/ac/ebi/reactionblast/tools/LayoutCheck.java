@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.tools;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
 import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
@@ -35,8 +33,6 @@ import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAl
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class LayoutCheck {
-
-    private static final Logger LOG = getLogger(LayoutCheck.class.getName());
 
     /**
      *

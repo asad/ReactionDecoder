@@ -17,20 +17,17 @@
  */
 package uk.ac.ebi.centres.priority.access;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 /**
- * Wrapper provides access to a given an atom's atomic number (of type A) to priority rules that require it. The method
- * can be injected into a priority to rule too allow that rule to act on the any given atom class type. This special
- * case flips the hydrogen and pseudo atom priority h = 0 and R = 1 so that implicit and explicit centres give the same
- * label.
+ * Wrapper provides access to a given an atom's atomic number (of type A) to
+ * priority rules that require it. The method can be injected into a priority to
+ * rule too allow that rule to act on the any given atom class type. This
+ * special case flips the hydrogen and pseudo atom priority h = 0 and R = 1 so
+ * that implicit and explicit centres give the same label.
  *
  * @param <A> the atom class type
  * @author John May
  */
 public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
-    private static final Logger LOG = getLogger(PsuedoAtomicNumberModifier.class.getName());
 
     private final AtomicNumberAccessor<A> accessor;
 
@@ -43,22 +40,24 @@ public class PsuedoAtomicNumberModifier<A> implements AtomicNumberAccessor<A> {
     }
 
     /**
-     * Access the atomic number for a provided atom. The atomic can be 0 to allow for cases such as 'R' or '*' but
-     * should never be negative.
+     * Access the atomic number for a provided atom. The atomic can be 0 to
+     * allow for cases such as 'R' or '*' but should never be negative.
      *
      * @param atom the atom to access the atomic number for
-     * @return a positive integer value that is the atomic number for the given atom
+     * @return a positive integer value that is the atomic number for the given
+     * atom
      */
     @Override
     public int getAtomicNumber(A atom) {
         int value = accessor.getAtomicNumber(atom);
 
-        if (value == 1) {
-            return 0;
-        } else if (value == 0) {
-            return 1;
-        } else {
-            return value;
+        switch (value) {
+            case 1:
+                return 0;
+            case 0:
+                return 1;
+            default:
+                return value;
         }
 
     }

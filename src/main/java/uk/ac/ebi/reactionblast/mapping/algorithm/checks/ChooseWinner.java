@@ -33,12 +33,11 @@ import static java.lang.Double.MIN_VALUE;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import static java.util.Collections.synchronizedList;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -49,7 +48,6 @@ public class ChooseWinner extends Selector implements Serializable {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x296558709L;
-    private static final Logger LOG = getLogger(ChooseWinner.class.getName());
     private EBIMatrix stereoMatrix;
     private EBIMatrix energyMatrix;
     private EBIMatrix carbonOverlapMatrix;

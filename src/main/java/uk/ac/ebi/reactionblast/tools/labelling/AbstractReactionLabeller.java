@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.AtomContainerSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.ChemObject;
@@ -54,8 +53,6 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAt
  *
  */
 public class AbstractReactionLabeller {
-
-    private static final Logger LOG = getLogger(AbstractReactionLabeller.class.getName());
 
     /**
      * A nasty hack necessary to get around a bug in the CDK

@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import static java.lang.System.currentTimeMillis;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
 import uk.ac.ebi.reactionblast.mapping.container.CDKReactionBuilder;
@@ -32,8 +31,6 @@ import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class StandardizeReaction implements IStandardizer {
-
-    private static final Logger LOG = getLogger(StandardizeReaction.class.getName());
 
     /**
      *

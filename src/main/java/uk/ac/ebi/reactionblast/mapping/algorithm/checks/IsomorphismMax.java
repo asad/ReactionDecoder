@@ -23,8 +23,7 @@ import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -43,7 +42,6 @@ public class IsomorphismMax extends Selector implements IResult {
     private final static ILoggingTool LOGGER
             = createLoggingTool(IsomorphismMax.class);
     private static final long serialVersionUID = 0x192aa60a59L;
-    private static final Logger LOG = getLogger(IsomorphismMax.class.getName());
     private final Holder mHolder;
     private final Holder updatedHolder;
     private boolean SubAndCompleteFlag;
@@ -76,7 +74,7 @@ public class IsomorphismMax extends Selector implements IResult {
             PhaseOneMatcher();
             SubAndCompleteFlag = PhaseTwoMatcher();
         } catch (CDKException ex) {
-            getLogger(IsomorphismMax.class.getName()).log(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -107,7 +105,7 @@ public class IsomorphismMax extends Selector implements IResult {
                              */
                             if (eMolSize == 1 && pMolSize == 1
                                     && (ac1.atoms().iterator().next().getSymbol()
-                                    .equals(ac2.atoms().iterator().next().getSymbol()))) {
+                                            .equals(ac2.atoms().iterator().next().getSymbol()))) {
                                 this.flagMatrix[i][j] = true;
                             } /*
                              * This check will skip single atoms like H or O to be mapped with larger graph as that

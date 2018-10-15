@@ -24,8 +24,7 @@ import static java.util.Collections.sort;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,8 +34,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class Block implements Comparable<Block> {
-
-    private static final Logger LOG = getLogger(Block.class.getName());
 
     private final IAtomContainer atomContainer;
 

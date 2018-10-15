@@ -13,7 +13,6 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
-import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import java.util.regex.Pattern;
 import static java.util.regex.Pattern.compile;
 import org.openscience.cdk.AtomContainer;

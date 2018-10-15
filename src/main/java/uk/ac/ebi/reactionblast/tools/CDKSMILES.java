@@ -20,7 +20,7 @@ package uk.ac.ebi.reactionblast.tools;
 
 import java.io.IOException;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
+
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
@@ -32,15 +32,12 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class CDKSMILES {
-
-    private static final Logger LOG = getLogger(CDKSMILES.class.getName());
 
     private final ILoggingTool LOGGER
             = createLoggingTool(CDKSMILES.class);

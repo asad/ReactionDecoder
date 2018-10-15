@@ -18,9 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
-
 /**
  *
  * @author Gilleain Torrance
@@ -28,8 +25,6 @@ import static java.util.logging.Logger.getLogger;
 public class StereoMatchException extends Exception {
 
     private static final long serialVersionUID = 0x26ced31f7aL;
-
-    private static final Logger LOG = getLogger(StereoMatchException.class.getName());
 
     /**
      *

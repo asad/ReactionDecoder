@@ -20,8 +20,6 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.format;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  *
@@ -29,11 +27,11 @@ import static java.util.logging.Logger.getLogger;
  */
 public class BoundsPrinter {
 
-    private static final Logger LOG = getLogger(BoundsPrinter.class.getName());
-
     /**
      * DEBUG method for printing readable rectangle 2Ds
-     * @return 
+     *
+     * @param b
+     * @return
      */
     public static String toString(Rectangle2D b) {
         return format("[(%2.0f, %2.0f), (%2.0f, %2.0f)] "

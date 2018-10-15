@@ -20,8 +20,6 @@ package uk.ac.ebi.reactionblast.tools;
 
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 import static org.openscience.cdk.config.Isotopes.getInstance;
 import org.openscience.cdk.exception.CDKException;
@@ -34,13 +32,12 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.get
 
 /**
  *
- * @author Asad
- */
-/**
+ * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
+ * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ *
  * GraphAtomContainer Comparator
  */
 public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
-    private static final Logger LOG = getLogger(AtomContainerSetComparator.class.getName());
 
     /**
      * Configure LoggingTool

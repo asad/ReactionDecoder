@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.stereo.compare;
 
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.geometry.cip.CIPTool;
 import static org.openscience.cdk.geometry.cip.CIPTool.HYDROGEN;
@@ -42,8 +41,6 @@ import org.openscience.cdk.tools.SaturationChecker;
  *
  */
 public class StereoCenterAnalyser {
-
-    private static final Logger LOG = getLogger(StereoCenterAnalyser.class.getName());
 
     /**
      * Check an atom to see if it has a potential tetrahedral stereo center.

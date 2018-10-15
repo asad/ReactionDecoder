@@ -24,8 +24,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.exception.CDKException;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import static uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility.append;
@@ -40,8 +39,6 @@ import static uk.ac.ebi.reactionblast.tools.utility.EBIDoubleUtility.append;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class ReactionSimilarityTool {
-
-    private static final Logger LOG = getLogger(ReactionSimilarityTool.class.getName());
 
     /**
      *

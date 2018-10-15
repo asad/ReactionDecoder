@@ -18,8 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.stereo.wedge;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IStereoElement;
@@ -39,8 +37,6 @@ import static uk.ac.ebi.reactionblast.stereo.wedge.WedgeStereoAnalysisResult.NON
  *
  */
 public class WedgeStereoAnalyser {
-
-    private static final Logger LOG = getLogger(WedgeStereoAnalyser.class.getName());
 
     /**
      *

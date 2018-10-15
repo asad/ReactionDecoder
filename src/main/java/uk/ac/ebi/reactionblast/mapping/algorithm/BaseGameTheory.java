@@ -35,7 +35,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Logger.getLogger;
+
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -306,7 +306,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 try {
                     fpSim = getTanimotoSimilarity(a, b);
                 } catch (Exception ex) {
-                    getLogger(BaseGameTheory.class.getName()).log(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, null, ex);
                 }
             }
 

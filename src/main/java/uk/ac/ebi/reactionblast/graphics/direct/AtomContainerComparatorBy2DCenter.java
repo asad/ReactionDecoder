@@ -19,8 +19,7 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.Comparator;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
+
 import javax.vecmath.Point2d;
 import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -31,13 +30,11 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContainer> {
 
-    private static final Logger LOG = getLogger(AtomContainerComparatorBy2DCenter.class.getName());
-
     /**
      * Compare two AtomContainers based on their 2D position.
      *
      * @param atCont1
-     * @param atCont2 
+     * @param atCont2
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
     @Override
@@ -55,5 +52,5 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
         }
         return 0;
     }
-    
+
 }

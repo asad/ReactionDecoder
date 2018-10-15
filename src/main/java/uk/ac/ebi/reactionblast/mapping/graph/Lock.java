@@ -19,16 +19,12 @@
 package uk.ac.ebi.reactionblast.mapping.graph;
 
 import static java.lang.Thread.currentThread;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class Lock {
-
-    private static final Logger LOG = getLogger(Lock.class.getName());
 
     private boolean isLocked;
     private Thread lockedBy;
