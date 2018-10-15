@@ -55,8 +55,8 @@ Fat Jar:
  ant package-for-store
 ```
 
-Use Java API
-============
+Atom ATOM Mapping using Java API
+=================================
 
 View mapped reaction using [CDKDEPICT Tool](http://www.simolecule.com/cdkdepict/depict.html).
 
