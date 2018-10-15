@@ -65,7 +65,7 @@ public class MoleculeInitializer {
      * aromaticity detection, which is usually related to a timeout in the ring
      * finding code.
      */
-    private static final ILoggingTool Logger
+    private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MoleculeInitializer.class);
 
     /**
@@ -127,7 +127,7 @@ public class MoleculeInitializer {
             try {
                 allRings = arf.findAllRings(atomContainer);
             } catch (CDKException e) {
-                Logger.warn(e.toString());
+                LOGGER.warn(e.toString());
             }
 
             // sets SSSR information
@@ -176,11 +176,9 @@ public class MoleculeInitializer {
 
                 List<IAtom> connectedAtoms = atomContainer.getConnectedAtomsList(atom);
                 int total = hCount + connectedAtoms.size();
-                for (IAtom connectedAtom : connectedAtoms) {
-                    if (connectedAtom.getSymbol().equals("H")) {
-                        hCount++;
-                    }
-                }
+                hCount = connectedAtoms.stream().filter((connectedAtom)
+                        -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1)
+                        .reduce(hCount, Integer::sum);
                 atom.setProperty(CDKConstants.TOTAL_CONNECTIONS, total);
                 atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
 

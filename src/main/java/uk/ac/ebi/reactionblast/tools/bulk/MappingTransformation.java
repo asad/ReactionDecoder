@@ -34,7 +34,7 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author asad
  */
 public class MappingTransformation implements ITransformation<IReaction> {
-private final static ILoggingTool logger
+private final static ILoggingTool LOGGER
             = createLoggingTool(MappingTransformation.class);
     private static final Logger LOG = getLogger(MappingTransformation.class.getName());
 
@@ -64,7 +64,7 @@ private final static ILoggingTool logger
                             new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return null;
         }
     }

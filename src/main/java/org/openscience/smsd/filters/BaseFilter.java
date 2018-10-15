@@ -39,7 +39,7 @@ public class BaseFilter {
 
     private final IAtomContainer mol1;
     private final IAtomContainer mol2;
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BaseFilter.class);
 
     /**
@@ -51,12 +51,12 @@ public class BaseFilter {
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(sourceMol);
         } catch (CDKException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(targetMol);
         } catch (CDKException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         this.mol1 = sourceMol;
         this.mol2 = targetMol;
@@ -75,7 +75,7 @@ public class BaseFilter {
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol2);
         } catch (CDKException ex) {
-            logger.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
     }
 

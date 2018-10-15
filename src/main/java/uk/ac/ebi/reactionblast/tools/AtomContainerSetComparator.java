@@ -45,7 +45,7 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
     /**
      * Configure LoggingTool
      */
-    private final ILoggingTool logger
+    private final ILoggingTool LOGGER
             = createLoggingTool(AtomContainerSetComparator.class);
 
     /**
@@ -130,7 +130,7 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
                 mw1 = getMolecularWeight(atomContainer1);
                 mw2 = getMolecularWeight(atomContainer2);
             } catch (CDKException e) {
-                logger.warn("Exception in molecular mass calculation.");
+                LOGGER.warn("Exception in molecular mass calculation.");
                 return 0;
             }
             if (mw1 > mw2) {
@@ -182,17 +182,17 @@ public class AtomContainerSetComparator implements Comparator<IAtomContainer> {
                             mw += majorIsotope.getExactMass();
                         } catch (NullPointerException e) {
                             mw += getInstance().getMajorIsotope("Ra").getExactMass();
-                            logger.warn("Isotopes not defined in the CDK " + atom.getSymbol());
+                            LOGGER.warn("Isotopes not defined in the CDK " + atom.getSymbol());
                         }
                     } catch (IOException e) {
-                        logger.warn("Molecular weight calculation failed for atom " + atom.getSymbol());
+                        LOGGER.warn("Molecular weight calculation failed for atom " + atom.getSymbol());
                     }
                 } else if (atom.getSymbol().equals("R")) {
                     mw += getInstance().getMajorIsotope("C").getExactMass();
                 }
             }
         } catch (IOException e) {
-            logger.warn("Molecular weight calculation failed for atleast one atom ");
+            LOGGER.warn("Molecular weight calculation failed for atleast one atom ");
         }
         return mw;
     }

@@ -34,8 +34,6 @@ import java.util.concurrent.ExecutorService;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -50,9 +48,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public class MCSS {
 
-    private final static ILoggingTool logger
-            = createLoggingTool(MCSS.class);
-    private static final Logger LOG = getLogger(MCSS.class.getName());
+    private final static ILoggingTool LOGGER = createLoggingTool(MCSS.class);
     private final Collection<IAtomContainer> calculateMCSS;
     private final boolean matchBonds;
     private final boolean matchRings;
@@ -86,14 +82,14 @@ public class MCSS {
             boolean matchAtomType) {
         int threadsAvailable = getRuntime().availableProcessors() - 1;
 
-        logger.debug("Demand threads: " + numberOfThreads);
-        logger.debug(", Available threads: " + threadsAvailable);
+        LOGGER.debug("Demand threads: " + numberOfThreads);
+        LOGGER.debug(", Available threads: " + threadsAvailable);
         if (numberOfThreads > 0 && threadsAvailable >= numberOfThreads) {
             threadsAvailable = numberOfThreads;
         } else if (threadsAvailable <= 0) {
             threadsAvailable = 1;
         }
-        logger.debug(", Assigned threads: " + threadsAvailable + "\n");
+        LOGGER.debug(", Assigned threads: " + threadsAvailable + "\n");
         /*
          * Remove hydrogen from the molecules
          **/
@@ -196,7 +192,7 @@ public class MCSS {
                 if (callable.isDone() && mapping != null) {
                     solutions.addAll(mapping);
                 } else {
-                    logger.warn("WARNING: InComplete job in AtomMappingTool: ");
+                    LOGGER.warn("WARNING: InComplete job in AtomMappingTool: ");
                 }
             }
             threadPool.shutdown();
@@ -205,8 +201,8 @@ public class MCSS {
             }
             gc();
         } catch (InterruptedException | ExecutionException e) {
-            logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-            logger.error(e);
+            LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+            LOGGER.error(e);
         } finally {
             threadPool.shutdown();
         }

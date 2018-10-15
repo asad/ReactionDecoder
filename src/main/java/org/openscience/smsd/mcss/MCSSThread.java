@@ -51,9 +51,8 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>> {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(MCSSThread.class);
-    private static final Logger LOG = getLogger(MCSSThread.class.getName());
     private final List<IAtomContainer> mcssList;
     private final JobType jobType;
     private final int taskNumber;
@@ -109,7 +108,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
          */
         LinkedBlockingQueue<IAtomContainer> mcss = new LinkedBlockingQueue<>();
 
-        logger.debug("Calling MCSSTask " + taskNumber + " with " + mcssList.size() + " items");
+        LOGGER.debug("Calling MCSSTask " + taskNumber + " with " + mcssList.size() + " items");
         long startTime = getInstance().getTimeInMillis();
         IAtomContainer querySeed = mcssList.get(0);
         long calcTime = startTime;
@@ -131,12 +130,12 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 comparison.setChemFilters(true, true, true);
                 fragmentsFromMCS = getMCSS(comparison);
 
-                logger.debug("comparison for task " + taskNumber + " has " + fragmentsFromMCS.size()
+                LOGGER.debug("comparison for task " + taskNumber + " has " + fragmentsFromMCS.size()
                         + " unique matches of size " + comparison.getFirstAtomMapping().getCount());
-                logger.debug("MCSS for task " + taskNumber + " has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
-                logger.debug("Target for task " + taskNumber + " has " + target.getAtomCount() + " atoms, and " + target.getBondCount() + " bonds");
+                LOGGER.debug("MCSS for task " + taskNumber + " has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
+                LOGGER.debug("Target for task " + taskNumber + " has " + target.getAtomCount() + " atoms, and " + target.getBondCount() + " bonds");
                 long endCalcTime = getInstance().getTimeInMillis();
-                logger.debug("Task " + taskNumber + " index " + index + " took " + (endCalcTime - calcTime) + "ms");
+                LOGGER.debug("Task " + taskNumber + " index " + index + " took " + (endCalcTime - calcTime) + "ms");
                 calcTime = endCalcTime;
 
                 if (fragmentsFromMCS.isEmpty()) {
@@ -168,7 +167,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 localSeeds.clear();
             }
 
-            logger.debug("No of Potential MULTIPLE " + seeds.size());
+            LOGGER.debug("No of Potential MULTIPLE " + seeds.size());
 
             /*
              * Choose only cleaned MULTIPLE Substructures
@@ -178,7 +177,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
             while (!seeds.isEmpty()) {
                 IAtomContainer fragmentMCS = seeds.poll();
                 localSeeds = new TreeSet<>();
-                logger.debug("Potential MULTIPLE " + getMCSSSmiles(fragmentMCS));
+                LOGGER.debug("Potential MULTIPLE " + getMCSSSmiles(fragmentMCS));
                 Collection<Fragment> fragmentsFromMCS;
                 for (IAtomContainer target : mcssList) {
                     Isomorphism comparison = new Isomorphism(fragmentMCS, target, DEFAULT, matchBonds, matchRings, matchAtomType);
@@ -224,11 +223,11 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
 
             }
         } catch (CDKException e) {
-            logger.error("ERROR IN MCS Thread: ", e);
+            LOGGER.error("ERROR IN MCS Thread: ", e);
         }
         long endTime = getInstance().getTimeInMillis();
-        logger.debug("Done: task " + taskNumber + " took " + (endTime - startTime) + "ms");
-        logger.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
+        LOGGER.debug("Done: task " + taskNumber + " took " + (endTime - startTime) + "ms");
+        LOGGER.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
         return mcss;
     }
 
@@ -237,7 +236,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      */
     private synchronized LinkedBlockingQueue<IAtomContainer> singleSolution() {
 
-        logger.debug("Calling MCSSTask " + taskNumber + " with " + mcssList.size() + " items");
+        LOGGER.debug("Calling MCSSTask " + taskNumber + " with " + mcssList.size() + " items");
         LinkedBlockingQueue<IAtomContainer> mcss = new LinkedBlockingQueue<>();
         long startTime = getInstance().getTimeInMillis();
         IAtomContainer querySeed = mcssList.get(0);
@@ -253,12 +252,12 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 comparison.setChemFilters(true, true, true);
                 fragmentsFomMCS = getMCSS(comparison);
 
-                logger.debug("comparison for task " + taskNumber + " has " + fragmentsFomMCS.size()
+                LOGGER.debug("comparison for task " + taskNumber + " has " + fragmentsFomMCS.size()
                         + " unique matches of size " + comparison.getFirstAtomMapping().getCount());
-                logger.debug("MCSS for task " + taskNumber + " has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
-                logger.debug("Target for task " + taskNumber + " has " + target.getAtomCount() + " atoms, and " + target.getBondCount() + " bonds");
+                LOGGER.debug("MCSS for task " + taskNumber + " has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
+                LOGGER.debug("Target for task " + taskNumber + " has " + target.getAtomCount() + " atoms, and " + target.getBondCount() + " bonds");
                 long endCalcTime = getInstance().getTimeInMillis();
-                logger.debug("Task " + taskNumber + " index " + index + " took " + (endCalcTime - calcTime) + "ms");
+                LOGGER.debug("Task " + taskNumber + " index " + index + " took " + (endCalcTime - calcTime) + "ms");
                 calcTime = endCalcTime;
 
                 if (fragmentsFomMCS.isEmpty()) {
@@ -270,11 +269,11 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
             if (querySeed != null) {
                 mcss.add(querySeed);
                 long endTime = getInstance().getTimeInMillis();
-                logger.debug("Done: task " + taskNumber + " took " + (endTime - startTime) + "ms");
-                logger.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
+                LOGGER.debug("Done: task " + taskNumber + " took " + (endTime - startTime) + "ms");
+                LOGGER.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
             }
         } catch (Exception e) {
-            logger.error("ERROR IN MCS Thread: ", e);
+            LOGGER.error("ERROR IN MCS Thread: ", e);
         }
         return mcss;
     }
@@ -288,10 +287,10 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 try {
                     matchList.add(new Fragment(match));
                 } catch (CDKException ex) {
-                    logger.error("ERROR IN MCS Thread: ", ex);
+                    LOGGER.error("ERROR IN MCS Thread: ", ex);
                 }
             } catch (CloneNotSupportedException ex) {
-                logger.error("ERROR IN MCS Thread: ", ex);
+                LOGGER.error("ERROR IN MCS Thread: ", ex);
             }
         });
         return matchList;

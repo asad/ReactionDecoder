@@ -31,7 +31,6 @@ import java.util.List;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
@@ -44,6 +43,8 @@ import org.openscience.cdk.io.CMLReader;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.Mol2Reader;
 import org.openscience.cdk.smiles.SmilesParser;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
@@ -54,7 +55,8 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
  */
 class ChemicalFormatParser {
 
-    private static final Logger LOG = getLogger(ChemicalFormatParser.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ChemicalFormatParser.class);
 
     protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);

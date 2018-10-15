@@ -69,7 +69,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 
     private static final long serialVersionUID = 0x2c36427fd2L;
     //~--- constructors -------------------------------------------------------
-    private static final ILoggingTool logger = createLoggingTool(GameTheoryMatrix.class);
+    private static final ILoggingTool LOGGER = createLoggingTool(GameTheoryMatrix.class);
 //    private void initializeMappingFLAGS(Holder mh) throws Exception {
 //        ReactionContainer reactionStructureInformation = mh.getReactionContainer();
     /*Reset all the flags*/
@@ -127,7 +127,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
             StoichiometricCoefficientReplicator_Structure_FingerPrint_MapGenerator();
             BuildScoringMatrix();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
     //~--- methods ------------------------------------------------------------
@@ -152,7 +152,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 //            initializeMappingFLAGS(matrixHolder);
             UpdateMatrix(matrixHolder, removeHydrogen);
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -271,7 +271,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
             sort(ac, comparator);
             sort(pd, comparator);
         } catch (Exception e) {
-            logger.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+            LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
         }
     }
 

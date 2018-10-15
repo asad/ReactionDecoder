@@ -56,10 +56,9 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWit
  */
 public class GraphMatching extends IGraphMatching implements Serializable {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatching.class);
     private static final long serialVersionUID = 0xf06b2d5f9L;
-    private static final Logger LOG = getLogger(GraphMatching.class.getName());
     private final IAtomContainer educt;
     private final IAtomContainer product;
     private IAtomContainer matchedPart = null;
@@ -127,8 +126,8 @@ public class GraphMatching extends IGraphMatching implements Serializable {
                 }
             }
         } catch (IOException ex) {
-            logger.debug("Files: " + educt.getID() + ", " + product.getID());
-            logger.debug(SEVERE, null, ex);
+            LOGGER.debug("Files: " + educt.getID() + ", " + product.getID());
+            LOGGER.debug(SEVERE, null, ex);
         }
         return false;
     }

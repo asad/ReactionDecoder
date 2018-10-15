@@ -122,7 +122,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
     BufferedReader input = null;
-    private static ILoggingTool logger = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
+    private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
 
     private BooleanIOSetting forceReadAs3DCoords;
     private BooleanIOSetting interpretHydrogenIsotopes;
@@ -288,15 +288,15 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             throw e;
         } catch (IllegalArgumentException exception) {
             String error = "Error while parsing SDF";
-            logger.error(error);
-            logger.debug(exception);
+            LOGGER.error(error);
+            LOGGER.debug(exception);
             throw new CDKException(error, exception);
         }
         try {
             input.close();
         } catch (Exception exc) {
             String error = "Error while closing file: " + exc.getMessage();
-            logger.error(error);
+            LOGGER.error(error);
             throw new CDKException(error, exc);
         }
 
@@ -556,12 +556,12 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
         } catch (CDKException exception) {
             String error = "Error while parsing line " + linecount + ": " + line + " -> " + exception.getMessage();
-            logger.error(error);
+            LOGGER.error(error);
             throw exception;
         } catch (IOException exception) {
             exception.printStackTrace();
             String error = "Error while parsing line " + linecount + ": " + line + " -> " + exception.getMessage();
-            logger.error(error);
+            LOGGER.error(error);
             handleError("Error while parsing line: " + line, linecount, 0, 0, exception);
         }
 
@@ -1651,7 +1651,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     + " and padded with space if required", linecount, 31, 34);
         }
 
-        logger.debug("Atom type: ", element);
+        LOGGER.debug("Atom type: ", element);
         IsotopeFactory isotopeFactory = Isotopes.getInstance();
         if (isotopeFactory.isElement(element)) {
             atom = isotopeFactory.configure(builder.newInstance(IAtom.class, element));
@@ -1666,7 +1666,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         } else if ("L".equals(element)) {
             atom = builder.newInstance(IPseudoAtom.class, element);
         } else if (element.equals("R") || (element.length() > 0 && element.charAt(0) == 'R')) {
-            logger.debug("Atom ", element, " is not an regular element. Creating a PseudoAtom.");
+            LOGGER.debug("Atom ", element, " is not an regular element. Creating a PseudoAtom.");
             //check if the element is R
             String[] rGroup = element.split("^R");
             if (rGroup.length > 1) {
@@ -1695,7 +1695,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         // parse further fields
         if (line.length() >= 36) {
             String massDiffString = line.substring(34, 36).trim();
-            logger.debug("Mass difference: ", massDiffString);
+            LOGGER.debug("Mass difference: ", massDiffString);
             if (!(atom instanceof IPseudoAtom)) {
                 try {
                     int massDiff = Integer.parseInt(massDiffString);
@@ -1707,7 +1707,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     handleError("Could not parse mass difference field.", linecount, 35, 37, exception);
                 }
             } else {
-                logger.error("Cannot set mass difference for a non-element!");
+                LOGGER.error("Cannot set mass difference for a non-element!");
             }
         } else {
             handleError("Mass difference is missing", linecount, 34, 36);
@@ -1719,7 +1719,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
         if (line.length() >= 51) {
             String valenceString = removeNonDigits(line.substring(48, 51));
-            logger.debug("Valence: ", valenceString);
+            LOGGER.debug("Valence: ", valenceString);
             if (!(atom instanceof IPseudoAtom)) {
                 try {
                     int valence = Integer.parseInt(valenceString);
@@ -1735,13 +1735,13 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     handleError("Could not parse valence information field", linecount, 49, 52, exception);
                 }
             } else {
-                logger.error("Cannot set valence information for a non-element!");
+                LOGGER.error("Cannot set valence information for a non-element!");
             }
         }
 
         if (line.length() >= 39) {
             String chargeCodeString = line.substring(36, 39).trim();
-            logger.debug("Atom charge code: ", chargeCodeString);
+            LOGGER.debug("Atom charge code: ", chargeCodeString);
             int chargeCode = Integer.parseInt(chargeCodeString);
             switch (chargeCode) {
             // uncharged species
@@ -1777,19 +1777,19 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         try {
             // read the mmm field as position 61-63
             String reactionAtomIDString = line.substring(60, 63).trim();
-            logger.debug("Parsing mapping id: ", reactionAtomIDString);
+            LOGGER.debug("Parsing mapping id: ", reactionAtomIDString);
             try {
                 int reactionAtomID = Integer.parseInt(reactionAtomIDString);
                 if (reactionAtomID != 0) {
                     atom.setProperty(CDKConstants.ATOM_ATOM_MAPPING, reactionAtomID);
                 }
             } catch (Exception exception) {
-                logger.error("Mapping number ", reactionAtomIDString, " is not an integer.");
-                logger.debug(exception);
+                LOGGER.error("Mapping number ", reactionAtomIDString, " is not an integer.");
+                LOGGER.debug(exception);
             }
         } catch (Exception exception) {
             // older mol files don't have all these fields...
-            logger.warn("A few fields are missing. Older MDL MOL file?");
+            LOGGER.warn("A few fields are missing. Older MDL MOL file?");
         }
 
         //shk3: This reads shifts from after the molecule. I don't think this is an official format, but I saw it frequently 80=>78 for alk
@@ -1851,8 +1851,8 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         } else {
             handleError("Missing expected stereo field at line: ", linecount, 10, 12);
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Bond: " + atom1 + " - " + atom2 + "; order " + order);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Bond: " + atom1 + " - " + atom2 + "; order " + order);
         }
         // interpret CTfile's special bond orders
         IAtom a1 = atoms[atom1 - 1];
@@ -1925,7 +1925,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      */
     private void readPropertiesSlow(BufferedReader input, IAtomContainer container, int nAtoms, int linecount)
             throws IOException, CDKException {
-        logger.info("Reading property block");
+        LOGGER.info("Reading property block");
         String line;
         while (true) {
             line = input.readLine();
@@ -1989,7 +1989,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 } catch (NumberFormatException exception) {
                     String error = "Error (" + exception.getMessage() + ") while parsing line " + linecount + ": "
                             + line + " in property block.";
-                    logger.error(error);
+                    LOGGER.error(error);
                     handleError("NumberFormatException in isotope information.", linecount, 7, 11, exception);
                 }
             } else if (line.startsWith("M  RAD")) {
@@ -2013,7 +2013,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 } catch (NumberFormatException exception) {
                     String error = "Error (" + exception.getMessage() + ") while parsing line " + linecount + ": "
                             + line + " in property block.";
-                    logger.error(error);
+                    LOGGER.error(error);
                     handleError("NumberFormatException in radical information", linecount, 7, 10, exception);
                 }
             } else if (line.startsWith("G  ")) {
@@ -2037,7 +2037,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 } catch (NumberFormatException exception) {
                     String error = "Error (" + exception.toString() + ") while parsing line " + linecount + ": " + line
                             + " in property block.";
-                    logger.error(error);
+                    LOGGER.error(error);
                     handleError("NumberFormatException in group information", linecount, 4, 7, exception);
                 }
             } else if (line.startsWith("M  RGP")) {
@@ -2065,7 +2065,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             }
 
             if (!lineRead) {
-                logger.warn("Skipping line in property block: ", line);
+                LOGGER.warn("Skipping line in property block: ", line);
             }
         }
     }

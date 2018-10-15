@@ -113,7 +113,7 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
  */
 public class MDLV2000Writer extends DefaultChemObjectWriter {
 
-    private final static ILoggingTool logger = LoggingToolFactory.createLoggingTool(MDLV2000Writer.class);
+    private final static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Writer.class);
 
     // regular expression to capture R groups with attached numbers
     private Pattern NUMERED_R_GROUP = Pattern.compile("R(\\d+)");
@@ -319,8 +319,8 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                 return;
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            logger.debug(ex);
+            LOGGER.error(ex.getMessage());
+            LOGGER.debug(ex);
             throw new CDKException("Exception while writing MDL file: " + ex.getMessage(), ex);
         }
         throw new CDKException("Only supported is writing of IChemFile, " + "IChemModel, and IAtomContainer objects.");
@@ -634,7 +634,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                         line += formatMDLInt(value, 3);
                     } catch (NumberFormatException exception) {
                         line += formatMDLInt(0, 3);
-                        logger.warn("Skipping atom-atom mapping, invalid value: " + atomAtomMapping);
+                        LOGGER.warn("Skipping atom-atom mapping, invalid value: " + atomAtomMapping);
                     }
                 } else if (atomAtomMapping instanceof Integer) {
                     int value = (Integer) atomAtomMapping;
@@ -653,7 +653,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
         // write Bond block
         for (IBond bond : container.bonds()) {
             if (bond.getAtomCount() != 2) {
-                logger.warn("Skipping bond with more/less than two atoms: " + bond);
+                LOGGER.warn("Skipping bond with more/less than two atoms: " + bond);
             } else {
                 if (bond.getStereo() == IBond.Stereo.UP_INVERTED || bond.getStereo() == IBond.Stereo.DOWN_INVERTED
                         || bond.getStereo() == IBond.Stereo.UP_OR_DOWN_INVERTED) {
@@ -797,7 +797,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                         atomIndexSpinMap.put(i, SPIN_MULTIPLICITY.DivalentSinglet);
                         break;
                     default:
-                        logger.debug("Invalid number of radicals found: " + eCount);
+                        LOGGER.debug("Invalid number of radicals found: " + eCount);
                         break;
                 }
             }

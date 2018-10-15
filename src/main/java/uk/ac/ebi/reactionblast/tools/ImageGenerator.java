@@ -90,7 +90,7 @@ import static uk.ac.ebi.reactionblast.tools.LayoutCheck.getMoleculeWithLayoutChe
  */
 public class ImageGenerator {
 
-    private static final ILoggingTool logger
+    private static final ILoggingTool LOGGER
             = createLoggingTool(ImageGenerator.class);
 
     /**
@@ -111,7 +111,7 @@ public class ImageGenerator {
          */
 
         setProperty("java.awt.headless", "true");
-        logger.info("Headless enabled: " + isHeadless());
+        LOGGER.info("Headless enabled: " + isHeadless());
         /* ---> prints true */
     }
 

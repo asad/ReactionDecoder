@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.tools.utility;
 
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
@@ -34,7 +34,8 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 public class EBIDoubleUtility {
 
     private static final long serialVersionUID = 7683452581122892189L;
-    private static final Logger LOG = getLogger(EBIDoubleUtility.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(EBIDoubleUtility.class);
 
     /**
      *

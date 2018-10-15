@@ -34,13 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -63,7 +64,8 @@ public class Annotator extends Helper {
 
     static final String NEW_LINE = getProperty("line.separator");
     static final String TAB = "\t";
-    private static final Logger LOG = getLogger(Annotator.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Annotator.class);
 
     /**
      *

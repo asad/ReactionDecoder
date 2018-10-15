@@ -77,7 +77,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  */
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
 
-    private static ILoggingTool logger
+    private static ILoggingTool LOGGER
             = createLoggingTool(MDLRXNV2000Reader.class);
     private static final Logger LOG = getLogger(MDLRXNV2000Reader.class.getName());
     BufferedReader input = null;
@@ -257,7 +257,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             input.readLine(); // third line
             input.readLine(); // fourth line
         } catch (IOException exception) {
-            logger.debug(exception);
+            LOGGER.debug(exception);
             throw new CDKException("Error while reading header of RXN file", exception);
         }
 
@@ -269,11 +269,11 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
              and products */
             StringTokenizer tokenizer = new StringTokenizer(countsLine);
             reactantCount = valueOf(tokenizer.nextToken());
-            logger.info("Expecting " + reactantCount + " reactants in file");
+            LOGGER.info("Expecting " + reactantCount + " reactants in file");
             productCount = valueOf(tokenizer.nextToken());
-            logger.info("Expecting " + productCount + " products in file");
+            LOGGER.info("Expecting " + productCount + " products in file");
         } catch (IOException | NumberFormatException exception) {
-            logger.debug(exception);
+            LOGGER.debug(exception);
             throw new CDKException("Error while counts line of RXN file", exception);
         }
 
@@ -311,7 +311,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             // rethrow exception from MDLReader
             throw exception;
         } catch (IOException | IllegalArgumentException exception) {
-            logger.debug(exception);
+            LOGGER.debug(exception);
             throw new CDKException("Error while reading reactant", exception);
         }
 
@@ -349,12 +349,12 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             // rethrow exception from MDLReader
             throw exception;
         } catch (IOException | IllegalArgumentException exception) {
-            logger.debug(exception);
+            LOGGER.debug(exception);
             throw new CDKException("Error while reading products", exception);
         }
 
         // now try to map things, if wanted
-        logger.info("Reading atom-atom mapping from file");
+        LOGGER.info("Reading atom-atom mapping from file");
         // distribute all atoms over two GraphAtomContainer's
         IAtomContainer reactingSide = builder.newInstance(IAtomContainer.class);
         java.util.Iterator<IAtomContainer> molecules = reaction.getReactants().atomContainers().iterator();
@@ -382,7 +382,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                 }
             }
         }
-        logger.info("Mapped atom pairs: " + mappingCount);
+        LOGGER.info("Mapped atom pairs: " + mappingCount);
 
         return reaction;
     }

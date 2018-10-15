@@ -19,9 +19,9 @@
 package uk.ac.ebi.reactionblast.tools.utility;
 
 import java.util.BitSet;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  *
@@ -31,7 +31,8 @@ import org.openscience.cdk.exception.CDKException;
 public class EBIBitSet extends BitSet {
 
     private static final long serialVersionUID = 3997698588986878753L;
-    private static final Logger LOG = getLogger(EBIBitSet.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(EBIBitSet.class);
 
     /**
      * 

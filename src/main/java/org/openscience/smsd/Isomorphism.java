@@ -107,7 +107,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
     private final Algorithm algorithmType;
@@ -303,7 +303,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 }
             }
         } catch (CDKException e) {
-            logger.error(Level.SEVERE, null, e);
+            LOGGER.error(Level.SEVERE, null, e);
         }
     }
 

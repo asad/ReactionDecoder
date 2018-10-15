@@ -31,7 +31,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 class MappingThread implements Callable<Reactor> {
-    private static final ILoggingTool logger = createLoggingTool(MappingThread.class);
+    private static final ILoggingTool LOGGER = createLoggingTool(MappingThread.class);
     private static final Logger LOG = getLogger(MappingThread.class.getName());
 
     private final IReaction cleanedReaction;
@@ -51,8 +51,8 @@ class MappingThread implements Callable<Reactor> {
         this.cleanedReaction = cleanedReaction;
         this.algorithm = algorithm;
         this.removeHydrogen = removeHydrogen;
-        logger.info("|++++++++++++++++++++++++++++|");
-        logger.info("|Atom Atom Mapping Tool Initialized for " + message);
+        LOGGER.info("|++++++++++++++++++++++++++++|");
+        LOGGER.info("|Atom Atom Mapping Tool Initialized for " + message);
     }
 
     @Override
@@ -60,7 +60,7 @@ class MappingThread implements Callable<Reactor> {
         try {
             Reactor reactor;
             reactor = new Reactor(cleanedReaction, removeHydrogen, algorithm);
-            logger.info("|Done " + reactor.getAlgorithm() + " |");
+            LOGGER.info("|Done " + reactor.getAlgorithm() + " |");
             return reactor;
         } catch (Exception ex) {
             throw ex;

@@ -45,7 +45,7 @@ import uk.ac.ebi.centres.priority.descriptor.ZERule;
  */
 public class CDKPerceptor extends DefaultPerceptor<IAtom> {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(CDKPerceptor.class);
 
     private static final Logger LOG = getLogger(CDKPerceptor.class.getName());
@@ -132,7 +132,7 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
             }
             perceive(new CDKCentreProvider(container), new CDKManager(container));
         } catch (Exception e) {
-            logger.warn("WARNING: 2D CDK based stereo perception failed! ");
+            LOGGER.warn("WARNING: 2D CDK based stereo perception failed! ");
         }
     }
 }

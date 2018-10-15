@@ -67,7 +67,7 @@ import org.openscience.smsd.interfaces.IResults;
 public final class VF2MCS extends BaseMCS implements IResults {
 
     private final List<AtomAtomMapping> allAtomMCS;
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(VF2MCS.class);
     private final boolean DEBUG = false;
 
@@ -218,7 +218,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                         mcsSeeds.add(map);
                     });
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(Level.SEVERE, null, ex);
+                    LOGGER.error(Level.SEVERE, null, ex);
                 }
             }
             executor.shutdown();
@@ -285,7 +285,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             try {
                 super.extendCliquesWithMcGregor(cleanedMCSSeeds);
             } catch (CDKException | IOException ex) {
-                logger.error(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
 
             /*
@@ -462,7 +462,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                         mcsSeeds.add(map);
                     });
                 } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(Level.SEVERE, null, ex);
+                    LOGGER.error(Level.SEVERE, null, ex);
                 }
             }
             executor.shutdown();
@@ -514,7 +514,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             try {
                 super.extendCliquesWithMcGregor(cleanedMCSSeeds);
             } catch (CDKException | IOException ex) {
-                logger.error(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
 
             /*

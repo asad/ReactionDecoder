@@ -50,7 +50,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 public final class RMatrix extends EBIMatrix implements Serializable {
 
     private static final long serialVersionUID = 7057060562283378684L;
-    private static final ILoggingTool logger = createLoggingTool(RMatrix.class);
+    private static final ILoggingTool LOGGER = createLoggingTool(RMatrix.class);
     private static final Logger LOG = getLogger(RMatrix.class.getName());
 
     private BEMatrix reactantBEMatrix = null;
@@ -86,9 +86,9 @@ public final class RMatrix extends EBIMatrix implements Serializable {
             out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
         }
         if (expectedOverlap != mapping.getSize()) {
-            logger.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
-            logger.debug("Core Product Atoms: " + (productBE.getRowDimension() - 1));
-            logger.debug("Mapping Atoms: " + mapping.getSize());
+            LOGGER.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
+            LOGGER.debug("Core Product Atoms: " + (productBE.getRowDimension() - 1));
+            LOGGER.debug("Mapping Atoms: " + mapping.getSize());
             throw new CDKException("Unable to construct a reaction matrix; "
                     + ((productBE.getRowDimension() - (mapping.getSize() + 1)))
                     + " atom(s) remain unmapped!.");

@@ -66,7 +66,6 @@ public class GraphMatcher extends Debugger {
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
-    private static final Logger LOG = getLogger(GraphMatcher.class.getName());
 
     /**
      *
@@ -76,7 +75,7 @@ public class GraphMatcher extends Debugger {
      */
     public synchronized static Collection<MCSSolution> matcher(Holder mh) throws InterruptedException {
         ExecutorService executor = null;
-        Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<MCSSolution>());
+        Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<>());
 
 //        System.out.println(threadsAvailable + " threads to be used for graph matching for " + mh.getTheory());
         Set<Combination> jobReplicatorList = new TreeSet<>();

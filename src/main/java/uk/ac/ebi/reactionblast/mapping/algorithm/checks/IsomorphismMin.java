@@ -44,7 +44,7 @@ import static java.util.logging.Logger.getLogger;
  */
 public class IsomorphismMin extends Selector implements IResult {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(IsomorphismMin.class);
     private static final long serialVersionUID = 1908987778L;
     private static final Logger LOG = getLogger(IsomorphismMin.class.getName());
@@ -297,7 +297,7 @@ public class IsomorphismMin extends Selector implements IResult {
                 out.println();
             }
         } catch (IOException | CDKException e) {
-            logger.error("Parser Error", e);
+            LOGGER.error("Parser Error", e);
         }
         out.println();
 

@@ -81,7 +81,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
 
-    private static ILoggingTool logger
+    private static ILoggingTool LOGGER
             = createLoggingTool(MDLV2000RXNWriter.class);
     private static final Logger LOG = getLogger(MDLV2000RXNWriter.class.getName());
     private BufferedWriter writer;
@@ -337,8 +337,8 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
             reactionNumber++;
 
         } catch (IOException ex) {
-            logger.error(ex.getMessage());
-            logger.debug(ex);
+            LOGGER.error(ex.getMessage());
+            LOGGER.debug(ex);
             throw new CDKException("Exception while writing MDL file: " + ex.getMessage(), ex);
         }
     }
@@ -363,8 +363,8 @@ public class MDLV2000RXNWriter extends DefaultChemObjectWriter {
                     // Asad: Swith off aromatic bond writing
                     // mdlwriter.getIOSettings()[1].setSetting("true");
                 } catch (Exception ex) {
-                    logger.error(ex.getMessage());
-                    logger.debug(ex);
+                    LOGGER.error(ex.getMessage());
+                    LOGGER.debug(ex);
                     throw new CDKException("Exception while creating MDLWriter: " + ex.getMessage(), ex);
                 }
                 mdlwriter.write(mol);

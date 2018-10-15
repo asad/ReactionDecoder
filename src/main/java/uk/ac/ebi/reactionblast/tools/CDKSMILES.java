@@ -42,7 +42,7 @@ public class CDKSMILES {
 
     private static final Logger LOG = getLogger(CDKSMILES.class.getName());
 
-    private final ILoggingTool logger
+    private final ILoggingTool LOGGER
             = createLoggingTool(CDKSMILES.class);
     private final IAtomContainer molecule;
 
@@ -75,7 +75,7 @@ public class CDKSMILES {
             ExtAtomContainerManipulator.aromatizeDayLight(molecule);
             return create(molecule);
         } catch (CDKException ex) {
-            logger.error("ERROR : in generating CDK SMILES" + molecule.getID());
+            LOGGER.error("ERROR : in generating CDK SMILES" + molecule.getID());
         } catch (IOException ex) {
             getLogger(CDKSMILES.class.getName()).log(SEVERE, null, ex);
         }

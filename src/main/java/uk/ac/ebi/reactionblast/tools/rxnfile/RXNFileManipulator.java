@@ -36,7 +36,10 @@ import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BACKWARD;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import static org.openscience.cdk.interfaces.IReaction.Direction.FORWARD;
+import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.containers.FingerPrintContainer;
 import uk.ac.ebi.reactionblast.containers.MolContainer;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
@@ -54,7 +57,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHy
 public class RXNFileManipulator extends BasicDebugger {
 
     private static FingerPrintContainer FPC = FingerPrintContainer.getInstance();
-    private static final Logger LOG = getLogger(RXNFileManipulator.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(RXNFileManipulator.class);
     private MolContainer atomContainer = MolContainer.getInstance();
     private Integer moleculeCounter = 0;
 
@@ -343,12 +347,19 @@ public class RXNFileManipulator extends BasicDebugger {
                 setProductMolecule(IR, _Stoichiometry, _Metabolites);
                 //As per IntEnz 0 for undefined direction, 1 for LR, 2 for RL and 3 for bidirectional
                 //As per CDK BIDIRECTION 1, Forward 2, Backward 0
-                if (direction == 1) {
-                    IR.setDirection(FORWARD);
-                } else if (direction == 2) {
-                    IR.setDirection(BACKWARD);
-                } else if (direction == 3 || direction == 0) {
-                    IR.setDirection(BIDIRECTIONAL);
+                switch (direction) {
+                    case 1:
+                        IR.setDirection(FORWARD);
+                        break;
+                    case 2:
+                        IR.setDirection(BACKWARD);
+                        break;
+                    case 3:
+                    case 0:
+                        IR.setDirection(BIDIRECTIONAL);
+                        break;
+                    default:
+                        break;
                 }
 
             } //end of if

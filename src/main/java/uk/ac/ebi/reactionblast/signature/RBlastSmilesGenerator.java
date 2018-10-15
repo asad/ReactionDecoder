@@ -387,7 +387,7 @@ public class RBlastSmilesGenerator {
             if (chiral && atom.getPoint2d() == null) {
                 throw new CDKException("Atom number " + i + " has no 2D coordinates, but 2D coordinates are needed for creating chiral smiles");
             }
-            //logger.debug("Setting all VISITED flags to false");
+            //LOGGER.debug("Setting all VISITED flags to false");
             atom.setFlag(VISITED, false);
             // set the start to the atom labelled '0'
             if (canonicalLabels[i] == 0) {
@@ -408,7 +408,7 @@ public class RBlastSmilesGenerator {
         }
         if (chiral && rings.getAtomContainerCount() > 0) {
             List v = partitionRings(rings);
-            //logger.debug("RingSystems: " + v.size());
+            //LOGGER.debug("RingSystems: " + v.size());
             for (int i = 0; i < v.size(); i++) {
                 int counter = 0;
                 Iterator<IAtomContainer> containers = getAllAtomContainers((IRingSet) v.get(i)).iterator();
@@ -724,7 +724,7 @@ public class RBlastSmilesGenerator {
         }
 
         createDFSTree(a, tree, null, atomContainer, canonicalLabels);
-        //logger.debug("Done with tree");
+        //LOGGER.debug("Done with tree");
 
         parseChain(tree, line, atomContainer, null, chiral, doubleBondConfiguration, new Vector(), useAromaticity);
     }
@@ -744,8 +744,8 @@ public class RBlastSmilesGenerator {
         neighbours.remove(parent);
         IAtom next;
         a.setFlag(VISITED, true);
-        //logger.debug("Starting with DFSTree and GraphAtomContainer of size " + container.getAtomCount());
-        //logger.debug("Current Atom has " + neighbours.size() + " neighbours");
+        //LOGGER.debug("Starting with DFSTree and GraphAtomContainer of size " + container.getAtomCount());
+        //LOGGER.debug("Current Atom has " + neighbours.size() + " neighbours");
         Iterator iter = neighbours.iterator();
         while (iter.hasNext()) {
             next = (IAtom) iter.next();
@@ -756,12 +756,12 @@ public class RBlastSmilesGenerator {
                 } else {
                     List branch = new Vector();
                     tree.add(branch);
-                    //logger.debug("adding branch");
+                    //LOGGER.debug("adding branch");
                     createDFSTree(next, branch, a, container, canonicalLabels);
                 }
             } else {
                 //Found ring closure between next and a
-                //logger.debug("found ringclosure in DFTTreeCreation");
+                //LOGGER.debug("found ringclosure in DFTTreeCreation");
                 ringMarker++;
                 BrokenBond bond = new BrokenBond(a, next, ringMarker);
                 if (!brokenBonds.contains(bond)) {
@@ -779,7 +779,7 @@ public class RBlastSmilesGenerator {
     private void parseChain(List v, StringBuffer buffer, IAtomContainer container, IAtom parent, boolean chiral, boolean[] doubleBondConfiguration, List atomsInOrderOfSmiles, boolean useAromaticity) {
         int positionInVector = 0;
         IAtom atom;
-        //logger.debug("in parse chain. Size of tree: " + v.size());
+        //LOGGER.debug("in parse chain. Size of tree: " + v.size());
         for (int h = 0; h < v.size(); h++) {
             Object o = v.get(h);
             if (o instanceof IAtom) {
@@ -790,14 +790,14 @@ public class RBlastSmilesGenerator {
                     parent = (IAtom) ((List) v.get(1)).get(0);
                 }
                 parseAtom(atom, buffer, container, chiral, doubleBondConfiguration, parent, atomsInOrderOfSmiles, v, useAromaticity);
-                //logger.debug("in parseChain after parseAtom()");
+                //LOGGER.debug("in parseChain after parseAtom()");
                 /*
                  * The principle of making chiral smiles is quite simple, although the code is pretty uggly. The Atoms
                  * connected to the chiral center are put in sorted[] in the order they have to appear in the smiles.
                  * Then the Vector v is rearranged according to sorted[]
                  */
                 if (chiral && isStereo(container, atom) && container.getBond(parent, atom) != null) {
-                    //logger.debug("in parseChain in isChiral");
+                    //LOGGER.debug("in parseChain in isChiral");
                     IAtom[] sorted = null;
                     List chiralNeighbours = container.getConnectedAtomsList(atom);
                     if (isTetrahedral(container, atom, false) > 0) {
@@ -1306,7 +1306,7 @@ public class RBlastSmilesGenerator {
                 parent = atom;
             } else {
                 //Have Vector
-                //logger.debug("in parseChain after else");
+                //LOGGER.debug("in parseChain after else");
                 boolean brackets = true;
                 List result = new Vector();
                 addAtoms((List) o, result);
@@ -1340,7 +1340,7 @@ public class RBlastSmilesGenerator {
             }
 
             positionInVector++;
-            //logger.debug("in parseChain after positionVector++");
+            //LOGGER.debug("in parseChain after positionVector++");
         }
     }
 
@@ -1357,7 +1357,7 @@ public class RBlastSmilesGenerator {
      * letters, wrong=only sp2
      */
     private void parseBond(StringBuffer line, IAtom a1, IAtom a2, IAtomContainer atomContainer, boolean useAromaticity) {
-        //logger.debug("in parseBond()");
+        //LOGGER.debug("in parseBond()");
         if (useAromaticity && a1.getFlag(ISAROMATIC) && a2.getFlag(ISAROMATIC)) {
             return;
         }
@@ -1375,7 +1375,7 @@ public class RBlastSmilesGenerator {
                 case TRIPLE:
                     line.append("#");
                     break;
-                // //logger.debug("Unknown bond type");
+                // //LOGGER.debug("Unknown bond type");
                 default:
                     break;
             }
@@ -1408,7 +1408,7 @@ public class RBlastSmilesGenerator {
         }
         boolean brackets = symbol.equals("B") || symbol.equals("C") || symbol.equals("N") || symbol.equals("O") || symbol.equals("P") || symbol.equals("S") || symbol.equals("F") || symbol.equals("Br") || symbol.equals("I") || symbol.equals("Cl");
         brackets = !brackets;
-        //logger.debug("in parseAtom()");
+        //LOGGER.debug("in parseAtom()");
         //Deal with the start of a double bond configuration
         if (chiral && isStartOfDoubleBond(container, a, parent, doubleBondConfiguration)) {
             buffer.append('/');
@@ -1463,7 +1463,7 @@ public class RBlastSmilesGenerator {
             buffer.append(']');
         }
 
-        //logger.debug("in parseAtom() after dealing with Pseudoatom or not");
+        //LOGGER.debug("in parseAtom() after dealing with Pseudoatom or not");
         //Deal with the end of a double bond configuration
         if (chiral && isEndOfDoubleBond(container, a, parent, doubleBondConfiguration)) {
             IAtom viewFrom = null;
@@ -1514,7 +1514,7 @@ public class RBlastSmilesGenerator {
         List v = new Vector();
         Iterator it = getRingOpenings(a, v).iterator();
         Iterator it2 = v.iterator();
-        //logger.debug("in parseAtom() after checking for Ring openings");
+        //LOGGER.debug("in parseAtom() after checking for Ring openings");
         while (it.hasNext()) {
             Integer integer = (Integer) it.next();
             IAtom a2 = (IAtom) it2.next();
@@ -1536,7 +1536,7 @@ public class RBlastSmilesGenerator {
             }
         }
         atomsInOrderOfSmiles.add(a);
-        //logger.debug("End of parseAtom()");
+        //LOGGER.debug("End of parseAtom()");
     }
 
     /**

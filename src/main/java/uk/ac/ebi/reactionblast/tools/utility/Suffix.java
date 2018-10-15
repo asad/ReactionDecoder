@@ -37,9 +37,9 @@ import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import java.util.GregorianCalendar;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 import static org.openscience.cdk.math.RandomNumbersTool.randomInt;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -53,7 +53,8 @@ public class Suffix {
     private static String timeSuffix = "";
     private static String randonNumberSuffix = "";
     private static Suffix ref = null;
-    private static final Logger LOG = getLogger(Suffix.class.getName());
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Suffix.class);
 
     //~--- get methods --------------------------------------------------------
     /**

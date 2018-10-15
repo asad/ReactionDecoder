@@ -41,7 +41,7 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
     /**
      * Configure LoggingTool
      */
-    private ILoggingTool logger
+    private ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(AtomContainerComparator.class);
 
     /**
@@ -117,7 +117,7 @@ public class AtomContainerComparator implements Comparator<IAtomContainer> {
                 mw1 = getMolecularWeight(atomContainer1);
                 mw2 = getMolecularWeight(atomContainer2);
             } catch (CDKException e) {
-                logger.warn("Exception in molecular mass calculation.");
+                LOGGER.warn("Exception in molecular mass calculation.");
                 return 0;
             }
             if (mw1 > mw2) {

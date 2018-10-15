@@ -45,7 +45,7 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  */
 public class CalculationProcess extends IsomeraseHandler implements Serializable {
 
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(CalculationProcess.class);
     private static final long serialVersionUID = 0x4a0bba049L;
     private static final Logger LOG = getLogger(CalculationProcess.class.getName());
@@ -74,9 +74,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
 
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
-        logger.debug("\n|++++++++++++++++++++++++++++|");
-        logger.debug("Performing Atom-Atom Mapping ....... " + reaction.getID() + " .......");
-        logger.debug("\n|++++++++++++++++++++++++++++|");
+        LOGGER.debug("\n|++++++++++++++++++++++++++++|");
+        LOGGER.debug("Performing Atom-Atom Mapping ....... " + reaction.getID() + " .......");
+        LOGGER.debug("\n|++++++++++++++++++++++++++++|");
         this.algorithm = algorithm;
         run();
     }
@@ -84,19 +84,19 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
     private synchronized void run() {
         switch (algorithm) {
             case MIN:
-                logger.debug("Processing Reaction for Local Minimum: ");
+                LOGGER.debug("Processing Reaction for Local Minimum: ");
                 delta = (int) calRelation(reaction, MIN);
                 break;
             case MAX:
-                logger.debug("Processing Reaction for Global Minimum: ");
+                LOGGER.debug("Processing Reaction for Global Minimum: ");
                 delta = (int) calRelation(reaction, MAX);
                 break;
             case MIXTURE:
-                logger.debug("Processing Reaction for Max-Mixture Model: ");
+                LOGGER.debug("Processing Reaction for Max-Mixture Model: ");
                 delta = (int) calRelation(reaction, MIXTURE);
                 break;
             case RINGS:
-                logger.debug("Processing Reaction for Ring Model: ");
+                LOGGER.debug("Processing Reaction for Ring Model: ");
                 delta = (int) calRelation(reaction, RINGS);
                 break;
         }
@@ -139,7 +139,7 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
 
             return gameTheory.getDelta();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
             return -1;
         }
     }

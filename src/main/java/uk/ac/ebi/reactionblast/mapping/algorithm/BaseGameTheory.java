@@ -63,7 +63,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IGameTheory;
 public abstract class BaseGameTheory extends Debugger implements IGameTheory, Serializable {
 
     private final static boolean DEBUG = false;
-    private final static ILoggingTool logger
+    private final static ILoggingTool LOGGER
             = createLoggingTool(BaseGameTheory.class);
     private static final long serialVersionUID = 1698688633678282L;
 
@@ -124,7 +124,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             try {
                 mcsSolutions = matcher(mh);
             } catch (Exception e) {
-                logger.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
             }
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
                 for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
@@ -155,12 +155,12 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                             mh.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
                         }
                     } catch (IOException | CDKException ex) {
-                        logger.error(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
         }
 
         try {
@@ -170,7 +170,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
              */
             resetFLAGS(mh);
         } catch (Exception ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -223,7 +223,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
              */
             resetFLAGS(mh);
         } catch (Exception e) {
-            logger.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
         }
     }
 
@@ -319,7 +319,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
 
         } catch (IOException | CDKException ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 
@@ -376,7 +376,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             mcs.setStereoScore(mcsThread.getStereoScore(0));
             return mcs;
         } catch (Exception ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
         return null;
     }
@@ -442,7 +442,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     try {
                         fpSim = getTanimotoSimilarity(a, b);
                     } catch (Exception ex) {
-                        logger.error(SEVERE, null, ex);
+                        LOGGER.error(SEVERE, null, ex);
                     }
                 }
             }
@@ -455,9 +455,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             holder.getEnergyMatrix().setValue(substrateIndex, productIndex, energyVal);
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
         } catch (CDKException ex) {
-            logger.debug(SEVERE, null, ex);
+            LOGGER.debug(SEVERE, null, ex);
         } catch (IOException ex) {
-            logger.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, null, ex);
         }
     }
 }

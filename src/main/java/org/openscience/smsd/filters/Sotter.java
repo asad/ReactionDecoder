@@ -40,7 +40,7 @@ public class Sotter {
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         Collections.sort(list, (Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() > entry1.getValue() ? 1 : -1)) // Return 0 for eAtom match, -1 for less than and +1 for more then (Aceending Order Sort)
         );
-        // logger.info(list);
+        // LOGGER.info(list);
         Map<Integer, Double> result = new LinkedHashMap<>();
         list.stream().forEach((entry) -> {
             result.put(entry.getKey(), entry.getValue());
@@ -54,7 +54,7 @@ public class Sotter {
         Collections.sort(list, (Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0
                 : (entry.getValue() < entry1.getValue() ? 1 : -1)) // Return 0 for eAtom match, -1 for less than and +1 for more then (Decending Order Sort)
         );
-        // logger.info(list);
+        // LOGGER.info(list);
         Map<Integer, Double> result = new LinkedHashMap<>();
         list.stream().forEach((entry) -> {
             result.put(entry.getKey(), entry.getValue());
