@@ -18,23 +18,23 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class AAMExample {
-    
+
     private AAMExample() {
     }
-    
+
     public static void main(String[] args) throws CloneNotSupportedException, CDKException, AssertionError, Exception {
         final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
         final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
-        
+
         String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
         String reactionName = "Test";
-        
+
         IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
-        
-        IReaction performAtomAtomMapping = AAMExample.performAtomAtomMapping(cdkReaction, reactionName);
+
+        IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
         System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
         //View mapped reaction http://www.simolecule.com/cdkdepict/depict.html
-        
+
     }
 
     /**
@@ -60,5 +60,5 @@ public class AAMExample {
         IReaction reaction = s.getReaction();//Fetch Mapped Reaction
         return reaction;
     }
-    
+
 }
