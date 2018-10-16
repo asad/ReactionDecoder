@@ -49,6 +49,7 @@ import org.apache.commons.cli.ParseException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 
@@ -518,48 +519,57 @@ public class ReactionDecoder extends Annotator {
 
         ReactionMechanismTool annotateReaction = getReactionMechanismTool(reaction, REMAP);
         boolean writeFiles = writeFiles(jobFileName, annotateReaction);
+        try {
+            if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("XML")) {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                // root element
+                org.w3c.dom.Document doc = docBuilder.newDocument();
 
-        if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("XML")) {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            // root element
-            org.w3c.dom.Document doc = docBuilder.newDocument();
+                org.w3c.dom.Element rootElement = doc.createElement("EC_BLAST");
+                doc.appendChild(rootElement);
+                annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
+                FormatXMLToFile(doc, jobFileName);
+                out.println("XML File saved!");
 
-            org.w3c.dom.Element rootElement = doc.createElement("EC_BLAST");
-            doc.appendChild(rootElement);
-            annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
-            FormatXMLToFile(doc, jobFileName);
-            out.println("XML File saved!");
+            } else if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("TEXT")) {
+                StringBuilder sb = new StringBuilder();
+                annotateReactionAsText(annotateReaction, reaction.getID() + "_AAM", sb);
+                FormatTextToFile(sb, jobFileName);
+            } else if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("BOTH")) {
 
-        } else if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("TEXT")) {
-            StringBuilder sb = new StringBuilder();
-            annotateReactionAsText(annotateReaction, reaction.getID() + "_AAM", sb);
-            FormatTextToFile(sb, jobFileName);
-        } else if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("BOTH")) {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                // root element
+                org.w3c.dom.Document doc = docBuilder.newDocument();
 
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            // root element
-            org.w3c.dom.Document doc = docBuilder.newDocument();
+                org.w3c.dom.Element rootElement = doc.createElement("EC_BLAST");
+                doc.appendChild(rootElement);
+                annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
 
-            org.w3c.dom.Element rootElement = doc.createElement("EC_BLAST");
-            doc.appendChild(rootElement);
-            annotateReactionAsXML(annotateReaction, jobFileName, doc, rootElement);
+                StringBuilder sb = new StringBuilder();
+                annotateReactionAsText(annotateReaction, jobFileName, sb);
 
-            StringBuilder sb = new StringBuilder();
-            annotateReactionAsText(annotateReaction, jobFileName, sb);
-
-            /*
+                /*
              Write XML and TEXT file
-             */
-            FormatTextToFile(sb, jobFileName);
-            FormatXMLToFile(doc, jobFileName);
-            out.println("XML File saved!");
+                 */
+                FormatTextToFile(sb, jobFileName);
+                FormatXMLToFile(doc, jobFileName);
+                out.println("XML File saved!");
 
-        } else {
-            displayBlankLines(2, out);
-            out.println("-- USAGE --");
-            printHelp(out, createAnnotateOptions);
+            } else {
+                displayBlankLines(2, out);
+                out.println("-- USAGE --");
+                printHelp(out, createAnnotateOptions);
+            }
+        } catch (IOException
+                | CloneNotSupportedException
+                | ParserConfigurationException
+                | TransformerException
+                | DOMException e) {
+            //System.out.println("Error " + e.getCause());
+            //e.printStackTrace();
+            LOGGER.error(SEVERE, null, e);
         }
     }
 

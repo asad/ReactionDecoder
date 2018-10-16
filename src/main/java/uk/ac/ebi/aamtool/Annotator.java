@@ -504,25 +504,31 @@ public class Annotator extends Helper {
                 //Start of Fingerprint elements
                 sb.append("FINGERPRINTS BC");
                 sb.append(NEW_LINE);
-                if (!s.getBondChangeCalculator().getFormedCleavedWFingerprint().getFeatures().isEmpty()) {
+                if (!s.getBondChangeCalculator().getFormedCleavedWFingerprint()
+                        .getFeatures().isEmpty()) {
                     sb.append(NEW_LINE);
                     sb.append("FORMED_CLEAVED");
                     sb.append(NEW_LINE);
-                    sb.append(s.getBondChangeCalculator().getFormedCleavedWFingerprint().getFeatures().toString()).append(NEW_LINE);
+                    sb.append(s.getBondChangeCalculator().getFormedCleavedWFingerprint()
+                            .getFeatures().toString()).append(NEW_LINE);
                 }
-                if (!s.getBondChangeCalculator().getOrderChangesWFingerprint().getFeatures().isEmpty()) {
+                if (!s.getBondChangeCalculator().getOrderChangesWFingerprint()
+                        .getFeatures().isEmpty()) {
                     sb.append(NEW_LINE);
                     sb.append("ORDER_CHANGED");
                     sb.append(NEW_LINE);
-                    sb.append(s.getBondChangeCalculator().getOrderChangesWFingerprint().getFeatures().toString()).append(NEW_LINE);
+                    sb.append(s.getBondChangeCalculator().getOrderChangesWFingerprint()
+                            .getFeatures().toString()).append(NEW_LINE);
                 }
                 //
-                if (!s.getBondChangeCalculator().getStereoChangesWFingerprint().getFeatures().isEmpty()) {
+                if (!s.getBondChangeCalculator().getStereoChangesWFingerprint()
+                        .getFeatures().isEmpty()) {
                     // fp_STEREO_CHANGED elements
                     sb.append(NEW_LINE);
                     sb.append("STEREO_CHANGED");
                     sb.append(NEW_LINE);
-                    sb.append(s.getBondChangeCalculator().getStereoChangesWFingerprint().getFeatures().toString()).append(NEW_LINE);
+                    sb.append(s.getBondChangeCalculator().getStereoChangesWFingerprint()
+                            .getFeatures().toString()).append(NEW_LINE);
                 }
                 //Start of Fingerprint elements
                 sb.append(NEW_LINE);
@@ -530,7 +536,8 @@ public class Annotator extends Helper {
                 sb.append(NEW_LINE);
                 sb.append("FINGERPRINTS RC");
                 sb.append(NEW_LINE);
-                sb.append(s.getBondChangeCalculator().getReactionCenterWFingerprint().getFeatures().toString()).append(NEW_LINE);
+                sb.append(s.getBondChangeCalculator().getReactionCenterWFingerprint()
+                        .getFeatures().toString()).append(NEW_LINE);
                 /*
                  Call RPAIR type Transformations
                  */
@@ -543,10 +550,12 @@ public class Annotator extends Helper {
             /*
              * Selected AAM solution
              */
-            SmilesGenerator smiles = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap);
+            SmilesGenerator smileGenerator = new SmilesGenerator(
+                    //SmiFlavor.Unique | 
+                    SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Stereo
+            );
             //Start of Fingerprint elements
             sb.append(NEW_LINE);
             sb.append("//");
@@ -554,7 +563,14 @@ public class Annotator extends Helper {
             sb.append("SELECTED AAM MAPPING");
             sb.append(NEW_LINE);
             //Start of Fingerprint elements
-            sb.append(smiles.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            try {
+                IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator()
+                        .getReactionWithCompressUnChangedHydrogens();
+                sb.append(smileGenerator.create(reactionWithCompressUnChangedHydrogens));
+            } catch (CDKException e) {
+                LOGGER.info("Error in creating reaction SMILES ");
+                LOGGER.error(SEVERE, null, e);
+            }
             sb.append(NEW_LINE);
             sb.append(NEW_LINE);
 
@@ -587,7 +603,8 @@ public class Annotator extends Helper {
                     sb.append(index).append(") AAM MAPPING ALGORITHM: ").append(m.getAlgorithmID().description());
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
-                    sb.append(smiles.create(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+                    sb.append(smileGenerator.create(m.getBondChangeCalculator()
+                            .getReactionWithCompressUnChangedHydrogens()));
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
                     sb.append("SCORE: ").append((m.getTotalBondChanges() + m.getTotalFragmentChanges()));
@@ -640,20 +657,23 @@ public class Annotator extends Helper {
                 if (!s.getBondChangeCalculator().getFormedCleavedWFingerprint().getFeatures().isEmpty()) {
                     // fp_Reaction_Centre elements
                     Element fp_Formed_Cleaved = doc.createElement("FORMED_CLEAVED");
-                    fp_Formed_Cleaved.appendChild(doc.createTextNode(s.getBondChangeCalculator().getFormedCleavedWFingerprint().getFeatures().toString()));
+                    fp_Formed_Cleaved.appendChild(doc.createTextNode(s.getBondChangeCalculator()
+                            .getFormedCleavedWFingerprint().getFeatures().toString()));
                     fp.appendChild(fp_Formed_Cleaved);
                 }
                 if (!s.getBondChangeCalculator().getOrderChangesWFingerprint().getFeatures().isEmpty()) {
                     // fp_STEREO_CHANGED elements
                     Element fp_ORDER_CHANGED = doc.createElement("ORDER_CHANGED");
-                    fp_ORDER_CHANGED.appendChild(doc.createTextNode(s.getBondChangeCalculator().getOrderChangesWFingerprint().getFeatures().toString()));
+                    fp_ORDER_CHANGED.appendChild(doc.createTextNode(s.getBondChangeCalculator()
+                            .getOrderChangesWFingerprint().getFeatures().toString()));
                     fp.appendChild(fp_ORDER_CHANGED);
                 }
                 //
                 if (!s.getBondChangeCalculator().getStereoChangesWFingerprint().getFeatures().isEmpty()) {
                     // fp_STEREO_CHANGED elements
                     Element fp_STEREO_CHANGED = doc.createElement("STEREO_CHANGED");
-                    fp_STEREO_CHANGED.appendChild(doc.createTextNode(s.getBondChangeCalculator().getStereoChangesWFingerprint().getFeatures().toString()));
+                    fp_STEREO_CHANGED.appendChild(doc.createTextNode(s.getBondChangeCalculator()
+                            .getStereoChangesWFingerprint().getFeatures().toString()));
                     fp.appendChild(fp_STEREO_CHANGED);
                 }
                 //Start of Fingerprint elements
@@ -667,7 +687,8 @@ public class Annotator extends Helper {
                  fp_Reaction_Centre elements
                  */
                 Element fp_Reaction_Centre = doc.createElement("CENTRE");
-                fp_Reaction_Centre.appendChild(doc.createTextNode(s.getBondChangeCalculator().getReactionCenterWFingerprint().getFeatures().toString()));
+                fp_Reaction_Centre.appendChild(doc.createTextNode(s.getBondChangeCalculator()
+                        .getReactionCenterWFingerprint().getFeatures().toString()));
                 fp.appendChild(fp_Reaction_Centre);
 
                 /*
@@ -678,10 +699,15 @@ public class Annotator extends Helper {
                 }
             }
 
-            SmilesGenerator smiles = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap);
+            /*
+             * Selected AAM solution
+             */
+            SmilesGenerator smileGenerator = new SmilesGenerator(
+                    //SmiFlavor.Unique | 
+                    SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Stereo
+            );
             //Start of Fingerprint elements
             Element aam = doc.createElement("MAPPING");
             annot.appendChild(aam);
@@ -692,7 +718,16 @@ public class Annotator extends Helper {
             aam.setAttributeNode(attr);
             // AAM elements
             Element selected_AAM = doc.createElement("AAM");
-            selected_AAM.appendChild(doc.createTextNode(smiles.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
+
+            //Start of Fingerprint elements
+            try {
+                IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator()
+                        .getReactionWithCompressUnChangedHydrogens();
+                selected_AAM.appendChild(doc.createTextNode(smileGenerator.create(reactionWithCompressUnChangedHydrogens)));
+            } catch (CDKException e) {
+                LOGGER.info("Error in creating reaction SMILES ");
+                LOGGER.error(SEVERE, null, e);
+            }
             aam.appendChild(selected_AAM);
 
             //OLD RANK
@@ -723,7 +758,7 @@ public class Annotator extends Helper {
                     aam.setAttributeNode(attr);
                     // AAM elements
                     Element solutionAAM = doc.createElement("AAM");
-                    solutionAAM.appendChild(doc.createTextNode(smiles.create(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
+                    solutionAAM.appendChild(doc.createTextNode(smileGenerator.create(m.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens())));
                     aam.appendChild(solutionAAM);
                     // AAM elements
                     Element score = doc.createElement("SCORE");

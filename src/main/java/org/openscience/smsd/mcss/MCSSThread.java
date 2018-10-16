@@ -304,7 +304,8 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
     public synchronized String getMCSSSmiles(IAtomContainer ac) throws CDKException {
         SmilesGenerator g = new SmilesGenerator(
                 SmiFlavor.Unique
-                | SmiFlavor.UseAromaticSymbols);
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo);
         return g.create(ac);
     }
 

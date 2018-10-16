@@ -388,7 +388,8 @@ public final class AtomAtomMapping implements Serializable {
         SmilesGenerator aromatic = new SmilesGenerator(
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols
-                | SmiFlavor.AtomAtomMap);
+                | SmiFlavor.AtomAtomMap
+                | SmiFlavor.Stereo);
         return aromatic.create(getCommonFragment());
     }
 

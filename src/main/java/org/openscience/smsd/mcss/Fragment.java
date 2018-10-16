@@ -50,7 +50,8 @@ public class Fragment implements Comparable<Fragment>, Serializable {
     public static String toSmiles(IAtomContainer ac) throws CDKException {
         SmilesGenerator g = new SmilesGenerator(
                 SmiFlavor.Unique
-                | SmiFlavor.UseAromaticSymbols);
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo);
         return g.create(ac);
     }
     private final BitSet fingerprint;
