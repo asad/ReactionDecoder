@@ -55,10 +55,10 @@ Fat Jar:
  ant package-for-store
 ```
 
-Use Java API
-============
+Atom Atom Mapping using Java API
+=================================
 
-View mapped reaction using [CDKDEPICT Tool] (http://www.simolecule.com/cdkdepict/depict.html) 
+View mapped reaction using [CDKDEPICT Tool](http://www.simolecule.com/cdkdepict/depict.html).
 
 ```
 
@@ -121,7 +121,9 @@ and EMBL-European BioInformatics Institute (EBI).
 How to Cite RDT?
 ================
 
-`SA Rahman, G Torrance, L Baldacci, SM Cuesta, F Fenninger, N Gopal, S Choudhary, JW May, GL Holliday, C Steinbeck and JM Thornton: Reaction Decoder Tool (RDT): Extracting Features from Chemical Reactions, Bioinformatics (2016), doi: 10.1093/bioinformatics/btw096`
+`SA Rahman, G Torrance, L Baldacci, SM Cuesta, F Fenninger, N Gopal, S Choudhary, JW May, GL Holliday, C Steinbeck and JM Thornton: Reaction Decoder Tool (RDT): Extracting Features from Chemical Reactions, Bioinformatics (2016)`
+
+[doi: 10.1093/bioinformatics/btw096](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4920114/)
 
 
 Subcommands
