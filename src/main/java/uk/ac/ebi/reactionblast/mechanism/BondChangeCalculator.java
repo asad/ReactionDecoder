@@ -1307,7 +1307,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         result.append(NEW_LINE).append("\t EMBL-EBI, Hinxton ");
         result.append(NEW_LINE).append("\t Cambridge CB10 1SD");
         result.append(NEW_LINE).append("\t United Kingdom ");
-        result.append(NEW_LINE).append("e-mail: asad@ebi.ac.uk, thornton@ebi.ac.uk");
+        result.append(NEW_LINE).append("e-mail: asad@ebi.ac.uk|s9asad@gmail.com, thornton@ebi.ac.uk");
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("ecBLAST software can perform atom-atom mapping,");
         result.append(NEW_LINE).append("marks bond changes between reactions, calculate");
@@ -1316,7 +1316,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("Acknowledgment: Many thanks to Franz Fenninger,");
         result.append(NEW_LINE).append("Gilleain Torrance, Lorenzo Baldacci and Gemma L.");
-        result.append(NEW_LINE).append("Holliday for their contributions/inputs.").append(NEW_LINE);
+        result.append(NEW_LINE).append("Holliday for their contributions/input.").append(NEW_LINE);
         result.append(NEW_LINE).append("The open source tools i.e. the SMSD, CDK and InChI");
         result.append(NEW_LINE).append("were used in this project. The licensed version of");
         result.append(NEW_LINE).append("the Chemaxon was used for 3D model building,");
