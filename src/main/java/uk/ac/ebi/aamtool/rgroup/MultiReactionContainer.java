@@ -138,7 +138,12 @@ class MultiReactionContainer {
         Set<String> r = new HashSet<>();
         SmilesGenerator sm = new SmilesGenerator(
                 SmiFlavor.Unique
-                | SmiFlavor.UseAromaticSymbols);
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo
+                | SmiFlavor.StereoCisTrans
+                | SmiFlavor.StereoTetrahedral
+                | SmiFlavor.StereoTetrahedral
+                | SmiFlavor.StereoExTetrahedral);
         for (IAtomContainer a : reaction.getReactants().atomContainers()) {
             IAtomContainer ac = null;
             ac = removeHydrogensExceptSingleAndPreserveAtomID(a);

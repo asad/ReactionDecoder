@@ -115,7 +115,14 @@ class ChemicalFormatParser {
     }
 
     protected IReaction convertRoundTripRXNSMILES(IReaction r) throws CDKException {
-        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+        final SmilesGenerator sg = new SmilesGenerator(
+                SmiFlavor.AtomAtomMap
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo
+                | SmiFlavor.StereoCisTrans
+                | SmiFlavor.StereoTetrahedral
+                | SmiFlavor.StereoTetrahedral
+                | SmiFlavor.StereoExTetrahedral);
         String createSmilesFromReaction = sg.create(r);
         final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(createSmilesFromReaction);
