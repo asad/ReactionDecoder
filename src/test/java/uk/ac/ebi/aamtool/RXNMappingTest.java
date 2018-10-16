@@ -1749,4 +1749,25 @@ public class RXNMappingTest extends MappingUtility {
          */
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
+
+    /**
+     * RHEA
+     *
+     * Cleaved FingerPrint (Reactant) N(31)-C(34)
+     *
+     * Formed FingerPrint (Product) S(8)-C(34)
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea10074() throws Exception {
+
+        String reactionID = "10074";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
 }
