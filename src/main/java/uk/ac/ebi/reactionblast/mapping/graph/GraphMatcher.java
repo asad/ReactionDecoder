@@ -77,7 +77,9 @@ public class GraphMatcher extends Debugger {
         ExecutorService executor = null;
         Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<>());
 
-//        System.out.println(threadsAvailable + " threads to be used for graph matching for " + mh.getTheory());
+        if (DEBUG) {
+            System.out.println("Matcher Class for " + mh.getTheory());
+        }
         Set<Combination> jobReplicatorList = new TreeSet<>();
         int taskCounter = 0;
 
@@ -188,14 +190,20 @@ public class GraphMatcher extends Debugger {
                     ringSizeEqual = true;
                 }
                 if (DEBUG) {
-                    SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
-                    out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
-                    out.println(product.getID() + " PD: " + smilesGenerator.create(product));
-                    out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
-                    out.println("numberOfCyclesProduct " + numberOfCyclesProduct);
-                    out.println("ringSizeEqual " + ringSizeEqual);
-                    out.println("Ring " + ring);
-                    out.println("----------------------------------");
+                    try {
+                        SmilesGenerator smilesGenerator;
+                        System.out.println("SMILES");
+                        smilesGenerator = new SmilesGenerator(SmiFlavor.Generic);
+                        out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
+                        out.println(product.getID() + " PD: " + smilesGenerator.create(product));
+                        out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
+                        out.println("numberOfCyclesProduct " + numberOfCyclesProduct);
+                        out.println("ringSizeEqual " + ringSizeEqual);
+                        out.println("Ring " + ring);
+                        out.println("----------------------------------");
+                    } catch (CDKException e) {
+                        LOGGER.error(SEVERE, null, e);
+                    }
                 }
 
                 MCSThread mcsThread;
@@ -247,7 +255,7 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
-            Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<MCSSolution>());
+            Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<>());
             for (int count = 0; count < taskCounter; count++) {
                 MCSSolution isomorphism = callablesQueue.take().get();
                 threadedUniqueMCSSolutions.add(isomorphism);
