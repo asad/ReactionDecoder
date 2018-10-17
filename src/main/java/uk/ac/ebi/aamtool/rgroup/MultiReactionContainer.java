@@ -139,11 +139,7 @@ class MultiReactionContainer {
         SmilesGenerator sm = new SmilesGenerator(
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols
-                | SmiFlavor.Stereo
-                | SmiFlavor.StereoCisTrans
-                | SmiFlavor.StereoTetrahedral
-                | SmiFlavor.StereoTetrahedral
-                | SmiFlavor.StereoExTetrahedral);
+                | SmiFlavor.Stereo);
         for (IAtomContainer a : reaction.getReactants().atomContainers()) {
             IAtomContainer ac = null;
             ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
