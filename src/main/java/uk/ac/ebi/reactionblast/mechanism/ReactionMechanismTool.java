@@ -166,6 +166,7 @@ public class ReactionMechanismTool implements Serializable {
                 if (DEBUG) {
                     SmilesGenerator withAtomClasses = new SmilesGenerator(
                             SmiFlavor.Unique
+                            | SmiFlavor.Stereo
                             | SmiFlavor.AtomAtomMap);
                     LOGGER.debug("Input reaction mapped " + withAtomClasses.create(reaction));
                 }
@@ -190,6 +191,7 @@ public class ReactionMechanismTool implements Serializable {
 
                         SmilesGenerator withAtomClasses = new SmilesGenerator(
                                 SmiFlavor.Unique
+                                | SmiFlavor.Stereo
                                 | SmiFlavor.AtomAtomMap);
                         out.println("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
                     }
@@ -199,7 +201,6 @@ public class ReactionMechanismTool implements Serializable {
 
                     if (atomCountR != atomCountP) {
                         LOGGER.warn("ERROR in Mapping " + reactor.toString());
-                        String newline = getProperty("line.separator");
                         LOGGER.warn("Unmapped atoms present in this reaction" + "(" + algorithm + ") algorithm.");
 //                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
 //                                + "(" + algorithm + ") algorithm." + newline);

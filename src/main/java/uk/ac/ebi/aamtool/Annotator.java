@@ -34,7 +34,10 @@ import java.util.Map;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.MAPPED;
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -551,8 +554,8 @@ public class Annotator extends Helper {
              * Selected AAM solution
              */
             SmilesGenerator smileGenerator = new SmilesGenerator(
-                    //SmiFlavor.Unique | 
-                    SmiFlavor.UseAromaticSymbols
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap
                     | SmiFlavor.Stereo
             );
@@ -703,8 +706,8 @@ public class Annotator extends Helper {
              * Selected AAM solution
              */
             SmilesGenerator smileGenerator = new SmilesGenerator(
-                    //SmiFlavor.Unique | 
-                    SmiFlavor.UseAromaticSymbols
+                    SmiFlavor.Unique
+                    | SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap
                     | SmiFlavor.Stereo
             );

@@ -32,6 +32,7 @@ import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -448,8 +449,11 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static void aromatizeCDK(IAtomContainer molecule) throws CDKException {
         ElectronDonation model = ElectronDonation.cdk();
-        CycleFinder cycles = Cycles.cdkAromaticSet();
-        Aromaticity aromaticity = new Aromaticity(model, cycles);
+        //CycleFinder cycles = Cycles.cdkAromaticSet();
+        Aromaticity aromaticity = new Aromaticity(daylight(),
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
         ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
         try {
             aromaticity.apply(molecule);

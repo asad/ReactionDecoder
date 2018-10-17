@@ -38,6 +38,7 @@ import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
+import org.openscience.cdk.graph.Cycles;
 import static org.openscience.cdk.graph.Cycles.all;
 import static org.openscience.cdk.graph.Cycles.or;
 import static org.openscience.cdk.graph.Cycles.relevant;
@@ -161,8 +162,12 @@ public class MCSThread implements Callable<MCSSolution> {
 
         if (DEBUG1) {
             aromaticity = new Aromaticity(daylight(),
-                    or(all(), relevant()));
-            smiles = new SmilesGenerator(SmiFlavor.Generic);
+                    Cycles.or(Cycles.all(),
+                            Cycles.or(Cycles.relevant(),
+                                    Cycles.essential())));
+            smiles = new SmilesGenerator(SmiFlavor.Unique
+                    | SmiFlavor.Stereo
+                    | SmiFlavor.AtomAtomMap);
         }
 
     }

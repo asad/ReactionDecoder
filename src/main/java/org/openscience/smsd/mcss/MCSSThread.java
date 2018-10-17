@@ -29,7 +29,10 @@ import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -302,10 +305,15 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      * @throws org.openscience.cdk.exception.CDKException
      */
     public synchronized String getMCSSSmiles(IAtomContainer ac) throws CDKException {
+        Aromaticity aromaticity = new Aromaticity(daylight(),
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
         SmilesGenerator g = new SmilesGenerator(
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.Stereo);
+        aromaticity.apply(ac);
         return g.create(ac);
     }
 

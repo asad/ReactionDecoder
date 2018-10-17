@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import static java.util.logging.Level.SEVERE;
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -140,16 +143,22 @@ class MultiReactionContainer {
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.Stereo);
+
+        Aromaticity aromaticity = new Aromaticity(daylight(),
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
+
         for (IAtomContainer a : reaction.getReactants().atomContainers()) {
             IAtomContainer ac = null;
             ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 try {
+                    aromaticity.apply(ac);
                     IAtomContainer circularFragment = getCircularFragment(ac, i, 1);
                     String smiles = sm.create(circularFragment);
                     l.add(smiles);
                     getAllFP().add(smiles);
-
                     circularFragment = getCircularFragment(ac, i, 2);
                     smiles = sm.create(circularFragment);
                     l.add(smiles);
@@ -171,6 +180,7 @@ class MultiReactionContainer {
             ac = removeHydrogensExceptSingleAndPreserveAtomID(a);
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 try {
+                    aromaticity.apply(ac);
                     IAtomContainer circularFragment = getCircularFragment(ac, i, 1);
                     String smiles = sm.create(circularFragment);
                     r.add(smiles);

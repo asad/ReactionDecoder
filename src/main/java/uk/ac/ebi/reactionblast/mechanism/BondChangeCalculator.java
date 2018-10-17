@@ -47,7 +47,6 @@ import static org.openscience.cdk.aromaticity.Kekulization.kekulize;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
-import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -1212,8 +1211,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     private static void KekulizeReaction(IReaction r) throws CDKException {
         ElectronDonation model = ElectronDonation.daylight();
-        CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.all(6));
-        Aromaticity aromaticity = new Aromaticity(model, cycles);
+//        CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.all(6));
+//        Aromaticity aromaticity = new Aromaticity(model, cycles);
+
+        Aromaticity aromaticity = new Aromaticity(model,
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
         // apply our configured model to each molecule
         for (IAtomContainer molecule : r.getReactants().atomContainers()) {
             aromaticity.apply(molecule);

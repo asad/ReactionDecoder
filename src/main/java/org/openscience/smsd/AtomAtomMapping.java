@@ -35,7 +35,10 @@ import java.util.logging.Level;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -387,12 +390,18 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CDKException
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
-        SmilesGenerator aromatic = new SmilesGenerator(
+        SmilesGenerator smiles = new SmilesGenerator(
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.AtomAtomMap
                 | SmiFlavor.Stereo);
-        return aromatic.create(getCommonFragment());
+        IAtomContainer commonFragment = getCommonFragment();
+        Aromaticity aromaticity = new Aromaticity(daylight(),
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
+        aromaticity.apply(commonFragment);
+        return smiles.create(commonFragment);
     }
 
     /*

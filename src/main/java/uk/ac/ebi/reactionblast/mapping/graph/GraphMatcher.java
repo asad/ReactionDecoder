@@ -39,7 +39,6 @@ import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
-import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -54,7 +53,10 @@ import static java.util.Collections.synchronizedCollection;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import static org.openscience.cdk.graph.Cycles.all;
+import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.smiles.SmiFlavor;
 
 /**
@@ -193,7 +195,18 @@ public class GraphMatcher extends Debugger {
                     try {
                         SmilesGenerator smilesGenerator;
                         System.out.println("SMILES");
-                        smilesGenerator = new SmilesGenerator(SmiFlavor.Generic);
+                        Aromaticity aromaticity = new Aromaticity(daylight(),
+                                Cycles.or(Cycles.all(),
+                                        Cycles.or(Cycles.relevant(),
+                                                Cycles.essential())));
+                        /*
+                         * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
+                         */
+                        aromaticity.apply(educt);
+                        aromaticity.apply(product);
+                        smilesGenerator = new SmilesGenerator(SmiFlavor.Unique
+                                | SmiFlavor.Stereo
+                                | SmiFlavor.AtomAtomMap);
                         out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
                         out.println(product.getID() + " PD: " + smilesGenerator.create(product));
                         out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
