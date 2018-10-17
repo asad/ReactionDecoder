@@ -184,7 +184,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     @Override
     public synchronized void UpdateMatrix(Collection<MCSSolution> mcsSolutions, Holder mh, boolean removeHydrogen) throws Exception {
         try {
-//        System.out.println("**********Updated Matrix And Calculate Similarity**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Matrix And Calculate Similarity**************");
+            }
             ReactionContainer reactionStructureInformation = mh.getReactionContainer();
 
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
@@ -395,7 +397,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     }
 
     private void refillMatrixWithOldData(Holder holder, int substrateIndex, int productIndex) {
-        //        System.out.println("**********Generate MCS And Calculate Similarity**************");
+        if (DEBUG) {
+            System.out.println("**********Generate MCS And Calculate Similarity**************");
+        }
         try {
             ReactionContainer reactionContainer = holder.getReactionContainer();
             BestMatch initMcsAtom = holder.getBestMatchContainer();
