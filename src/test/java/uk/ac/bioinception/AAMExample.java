@@ -26,7 +26,18 @@ public class AAMExample {
         final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
         final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
 
-        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+        String reactionSM
+                = //"CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+                "CC(C)CCCC(C)CCCC(C)CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP([O-])"
+                + "(=O)OP([O-])(=O)OC[C@H]1O[C@H]([C@H](O)[C@@H]1OP([O-])([O-])"
+                + "=O)N1C=NC2=C1N=CN=C2N.CCC(=O)SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)"
+                + "COP([O-])(=O)OP([O-])(=O)OC[C@H]1O[C@H]([C@H](O)[C@@H]1OP([O-])"
+                + "([O-])=O)N1C=NC2=C1N=CN=C2N>>CC(C)CCCC(C)CCCC(C)CCC(=O)C(C)C(=O)"
+                + "SCCNC(=O)CCNC(=O)[C@H](O)C(C)(C)COP([O-])(=O)OP([O-])(=O)OC[C@H]1O[C@H]"
+                + "([C@H](O)[C@@H]1OP([O-])([O-])=O)N1C=NC2=C1N=CN=C2N.CC(C)(COP([O-])"
+                + "(=O)OP([O-])(=O)OC[C@H]1O[C@H]([C@H](O)[C@@H]1OP([O-])([O-])=O)"
+                + "N1C=NC2=C1N=CN=C2N)[C@@H](O)C(=O)NCCC(=O)NCCS";
+        
         String reactionName = "Test";
 
         IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
