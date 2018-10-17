@@ -176,11 +176,17 @@ final class GameTheoryMixture extends BaseGameTheory {
         }
         if (winner.getFlag()) {
 
-//            System.out.println("**********Updated Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Mapping**************");
+            }
             UpdateMapping();
-//            System.out.println("**********Updated Matrix**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Matrix**************");
+            }
             UpdateMatrix(mh, removeHydrogen);
-//            System.out.println("**********Generate Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Generate Mapping**************");
+            }
             GenerateMapping(ruleMatchingFlag);
         }
     }
