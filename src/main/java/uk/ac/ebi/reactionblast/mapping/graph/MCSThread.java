@@ -161,7 +161,7 @@ public class MCSThread implements Callable<MCSSolution> {
         if (DEBUG1) {
             aromaticity = new Aromaticity(daylight(),
                     or(all(), relevant()));
-            smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
+            smiles = new SmilesGenerator(SmiFlavor.Generic);
         }
 
     }
@@ -195,6 +195,11 @@ public class MCSThread implements Callable<MCSSolution> {
                 }
 
                 /*
+                 * IMP: Do not perform substructure matching for disconnected molecules
+                 */
+                boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
+
+                /*
                  Check if MCS matching required or not very IMP step
                  */
                 boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
@@ -207,7 +212,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     out.println("VF Matcher 2->1 " + possibleVFmatch21);
                 }
 
-                if (possibleVFmatch12
+                if (moleculeConnected && possibleVFmatch12
                         && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
                         && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
                     if (DEBUG1) {
@@ -240,7 +245,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else if (DEBUG1) {
                         out.println("not a Substructure 5");
                     }
-                } else if (possibleVFmatch21) {
+                } else if (moleculeConnected && possibleVFmatch21) {
 
                     if (DEBUG1) {
                         out.println("Substructure 6");
@@ -258,6 +263,10 @@ public class MCSThread implements Callable<MCSSolution> {
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
+
+                        if (DEBUG1) {
+                            out.println("Found Substructure 6");
+                        }
                         AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
                         Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
                         mappings.keySet().stream().forEach((atom1) -> {
@@ -728,5 +737,12 @@ public class MCSThread implements Callable<MCSSolution> {
 
     void setProductCount(Integer productCount) {
         this.productCount = productCount;
+    }
+
+    private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+        boolean connected1 = ConnectivityChecker.isConnected(compound1);
+        boolean connected2 = ConnectivityChecker.isConnected(compound2);
+
+        return connected1 & connected2;
     }
 }
