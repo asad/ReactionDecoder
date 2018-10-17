@@ -125,6 +125,8 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized void put(IAtom atom1, IAtom atom2) {
         try {
+            atom1.setID(atom1.getID() == null ? getQuery().indexOf(atom1) + "" : atom1.getID());
+            atom2.setID(atom2.getID() == null ? getTarget().indexOf(atom2) + "" : atom2.getID());
             mapping.put(atom1, atom2);
             mappingIndex.put(getQuery().indexOf(atom1), getTarget().indexOf(atom2));
         } catch (Exception e) {

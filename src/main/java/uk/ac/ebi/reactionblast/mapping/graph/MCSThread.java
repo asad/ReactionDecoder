@@ -43,6 +43,7 @@ import static org.openscience.cdk.graph.Cycles.or;
 import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -216,7 +217,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
                         && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
                     if (DEBUG1) {
-                        out.println("Substructure 5");
+                        out.println("Substructure 1");
                     }
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
@@ -230,6 +231,9 @@ public class MCSThread implements Callable<MCSSolution> {
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
+                        if (DEBUG1) {
+                            out.println("Found Substructure 1");
+                        }
                         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
                                 substructure.getQuery(), substructure.getTarget(), substructure.getFirstAtomMapping());
                         mcs.setEnergy(substructure.getEnergyScore(0));
@@ -243,12 +247,12 @@ public class MCSThread implements Callable<MCSSolution> {
                         }
                         return mcs;
                     } else if (DEBUG1) {
-                        out.println("not a Substructure 5");
+                        out.println("not a Substructure 1");
                     }
                 } else if (moleculeConnected && possibleVFmatch21) {
 
                     if (DEBUG1) {
-                        out.println("Substructure 6");
+                        out.println("Substructure 2");
                     }
 
                     IAtomContainer ac1 = duplicate(getCompound1());
@@ -265,7 +269,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
 
                         if (DEBUG1) {
-                            out.println("Found Substructure 6");
+                            out.println("Found Substructure 2");
                         }
                         AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
                         Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
@@ -287,7 +291,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         }
                         return mcs;
                     } else if (DEBUG1) {
-                        out.println("not a Substructure 6");
+                        out.println("not a Substructure 2");
                     }
                 }
 
@@ -739,10 +743,40 @@ public class MCSThread implements Callable<MCSSolution> {
         this.productCount = productCount;
     }
 
+    /*
+     * Check if fragmented container has single atom
+     */
     private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
-        boolean connected1 = ConnectivityChecker.isConnected(compound1);
-        boolean connected2 = ConnectivityChecker.isConnected(compound2);
+        boolean connected1 = true;
 
+        IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+            if (DEBUG1) {
+                System.out.println("QContainer size " + a.getAtomCount());
+            }
+            if (a.getAtomCount() == 1) {
+                connected1 = false;
+            }
+        }
+
+        boolean connected2 = true;
+
+        partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+            if (DEBUG1) {
+                System.out.println("TContainer size " + a.getAtomCount());
+            }
+            if (a.getAtomCount() == 1) {
+                connected2 = false;
+            }
+        }
+
+        if (DEBUG1) {
+            System.out.println("Flag 1 " + connected1);
+        }
+        if (DEBUG1) {
+            System.out.println("Flag 2 " + connected2);
+        }
         return connected1 & connected2;
     }
 }

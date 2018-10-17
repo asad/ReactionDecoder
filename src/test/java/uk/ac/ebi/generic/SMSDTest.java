@@ -44,7 +44,7 @@ public class SMSDTest {
             System.out.println("Mapping " + aam.getCommonFragmentAsSMILES());
             System.out.println("size " + aam.getCount());
             for (Map.Entry<IAtom, IAtom> m : aam.getMappingsByAtoms().entrySet()) {
-                System.out.println(m.getKey().getID() + "" + m.getValue().getID());
+                System.out.println(m.getKey().getID() + "," + m.getValue().getID());
             }
 
         } catch (InvalidSmilesException ex) {
