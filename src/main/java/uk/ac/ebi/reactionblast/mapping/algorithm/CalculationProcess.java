@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 //~--- non-JDK imports --------------------------------------------------------
 
 import java.io.Serializable;
+import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -44,6 +45,7 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  */
 public class CalculationProcess extends IsomeraseHandler implements Serializable {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER
             = createLoggingTool(CalculationProcess.class);
     private static final long serialVersionUID = 0x4a0bba049L;
@@ -72,9 +74,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
 
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
-        LOGGER.debug("\n|++++++++++++++++++++++++++++|");
+        LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         LOGGER.debug("Performing Atom-Atom Mapping ....... " + reaction.getID() + " .......");
-        LOGGER.debug("\n|++++++++++++++++++++++++++++|");
+        LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         this.algorithm = algorithm;
         run();
     }

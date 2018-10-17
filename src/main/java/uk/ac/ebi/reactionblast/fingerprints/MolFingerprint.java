@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.fingerprints;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.arraycopy;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -40,6 +41,7 @@ import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoS
 public class MolFingerprint implements Comparable<MolFingerprint>,
         Comparator<MolFingerprint> {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private static final long serialVersionUID = 7057060562283378622L;
 
     private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
@@ -107,7 +109,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
             }
         } catch (CDKException e) {
             throw new CDKException("Failed to create CDKMolecularDescriptor "
-                    + "while constructing EBIFingerprint " + mol.getAtomCount() + ",\n" + e.getMessage());
+                    + "while constructing EBIFingerprint " + mol.getAtomCount() + "," + NEW_LINE + e.getMessage());
         }
     }
 

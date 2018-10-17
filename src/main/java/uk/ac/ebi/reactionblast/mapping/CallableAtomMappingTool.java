@@ -25,6 +25,7 @@ import java.io.Serializable;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableMap;
@@ -57,6 +58,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  */
 public class CallableAtomMappingTool implements Serializable {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(CallableAtomMappingTool.class);
@@ -119,11 +121,11 @@ public class CallableAtomMappingTool implements Serializable {
             /*
              * MAX Algorithm
              */
-            LOGGER.info("\n|++++++++++++++++++++++++++++|");
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("a) Global Model: ");
             if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP 1: Global Model Standardize Reactions\n");
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction1 = null;
             try {
@@ -133,7 +135,7 @@ public class CallableAtomMappingTool implements Serializable {
                 LOGGER.error(e);
             }
             if (DEBUG) {
-                out.println("\nSTEP a: Calling Mapping Models\n");
+                out.println(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
             }
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction1, MAX, removeHydrogen);
             cs.submit(maxThread);
@@ -142,11 +144,11 @@ public class CallableAtomMappingTool implements Serializable {
             /*
              * MIN Algorithm
              */
-            LOGGER.info("\n|++++++++++++++++++++++++++++|");
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("c) Local Model: ");
             if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP c: Local Model Standardize Reactions\n");
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP c: Local Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction2 = null;
             try {
@@ -161,11 +163,11 @@ public class CallableAtomMappingTool implements Serializable {
             /*
              * MIXTURE Algorithm
              */
-            LOGGER.info("\n|++++++++++++++++++++++++++++|");
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("b) Mixture Model: ");
             if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP b: Mixture Model Standardize Reactions\n");
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP b: Mixture Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction3 = null;
             try {
@@ -181,11 +183,11 @@ public class CallableAtomMappingTool implements Serializable {
             /*
              * RINGS Minimization
              */
-            LOGGER.info("\n|++++++++++++++++++++++++++++|");
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("d) Rings Model: ");
             if (DEBUG) {
-                out.println("\n-----------------------------------\n");
-                out.println("\nSTEP d: Rings Model Standardize Reactions\n");
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction4 = null;
             try {

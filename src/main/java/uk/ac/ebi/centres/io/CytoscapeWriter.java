@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import static java.lang.System.getProperty;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import uk.ac.ebi.centres.Ligand;
  */
 public abstract class CytoscapeWriter<A> implements Closeable {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final Digraph<A> digraph;
     private Writer sif;
     private File folder;
@@ -80,9 +82,9 @@ public abstract class CytoscapeWriter<A> implements Closeable {
         // do nothing
         for (Map.Entry<String, Map<String, String>> entry : attributes.entrySet()) {
             try (FileWriter attributeWriter = new FileWriter(new File(folder, entry.getKey() + ".noa"))) {
-                attributeWriter.write(entry.getKey().replaceAll(" ", ".") + " (class=String)" + "\n");
+                attributeWriter.write(entry.getKey().replaceAll(" ", ".") + " (class=String)" + NEW_LINE);
                 for (Map.Entry<String, String> nodeEntry : entry.getValue().entrySet()) {
-                    attributeWriter.write(nodeEntry.getKey() + " = " + nodeEntry.getValue() + "\n");
+                    attributeWriter.write(nodeEntry.getKey() + " = " + nodeEntry.getValue() + NEW_LINE);
                 }
             }
         }
@@ -101,12 +103,14 @@ public abstract class CytoscapeWriter<A> implements Closeable {
             // invert map properties
             Map<String, String> map = new HashMap<>();
             mapAttributes(ligand.getAtom(), map);
-            for (Map.Entry<String, String> e : map.entrySet()) {
+            map.entrySet().stream().map((Map.Entry<String, String> e) -> {
                 if (!attributes.containsKey(e.getKey())) {
-                    attributes.put(e.getKey(), new HashMap<String, String>());
+                    attributes.put(e.getKey(), new HashMap<>());
                 }
+                return e;
+            }).forEachOrdered((e) -> {
                 attributes.get(e.getKey()).put(targetId, e.getValue());
-            }
+            });
 
             write(ligands.get(i).getLigands(), targetId);
 

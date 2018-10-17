@@ -73,6 +73,7 @@ import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
  */
 public class ReactionMechanismTool implements Serializable {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(ReactionMechanismTool.class);
@@ -406,14 +407,14 @@ public class ReactionMechanismTool implements Serializable {
         if (DEBUG) {
 
             if (this.selectedMapping != null) {
-                out.println("\n selectedMapping.getAlgorithmID().description() " + selectedMapping.getAlgorithmID().description());
+                out.println(NEW_LINE + " selectedMapping.getAlgorithmID().description() " + selectedMapping.getAlgorithmID().description());
                 out.println(" selectedMapping.getTotalBondChanges() " + selectedMapping.getTotalBondChanges());
                 out.println(" selectedMapping.getSmallestFragmentCount() " + selectedMapping.getSmallestFragmentCount());
                 out.println(" selectedMapping.getBondEnergyChange() " + selectedMapping.getBondEnergySum());
                 out.println(" selectedMapping.getTotalFragmentChanges() " + selectedMapping.getTotalFragmentChanges());
                 out.println(" Total Carbon Bond Changes " + selectedMapping.getTotalCarbonBondChanges());
             }
-            out.println("\n ms.getAlgorithmID().description() " + ms.getAlgorithmID().description());
+            out.println(NEW_LINE + " ms.getAlgorithmID().description() " + ms.getAlgorithmID().description());
             out.println(" ms.getTotalBondChanges() " + ms.getTotalBondChanges());
             out.println(" ms.getSmallestFragmentCount() " + ms.getSmallestFragmentCount());
             out.println(" ms.getBondEnergyChange() " + ms.getBondEnergySum());

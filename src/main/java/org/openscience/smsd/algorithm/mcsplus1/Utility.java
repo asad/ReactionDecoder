@@ -22,6 +22,7 @@
  */
 package org.openscience.smsd.algorithm.mcsplus1;
 
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.openscience.cdk.interfaces.IBond;
@@ -34,6 +35,8 @@ import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class Utility {
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     //print matrix of type MARCS on shell
     /**
@@ -63,11 +66,11 @@ public class Utility {
         System.out.println("i_bonds_B " + i_bonds_B.size());
         print_list(i_bonds_B);
 
-        System.out.print("matrix: " + "\n" + "-" + "    ");
+        System.out.print("matrix: " + NEW_LINE + "-" + "    ");
         for (int a = 0; a < bondnum_B; a++) {
             System.out.print(" " + c_bonds_B.get((a * 4) + 0) + c_bonds_B.get((a * 4) + 1));
         }
-        System.out.print("\n" + "     ");
+        System.out.print(NEW_LINE + "     ");
         for (int a = 0; a < bondnum_B; a++) {
             System.out.print(" " + i_bonds_B.get((a * 3) + 0) + i_bonds_B.get((a * 3) + 1));
         }

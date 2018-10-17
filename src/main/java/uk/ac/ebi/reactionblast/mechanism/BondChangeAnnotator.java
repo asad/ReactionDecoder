@@ -52,6 +52,7 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.R;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.S;
 import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
 import static java.lang.Math.abs;
+import static java.lang.System.getProperty;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
@@ -64,6 +65,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  */
 public final class BondChangeAnnotator extends DUModel {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private static final long serialVersionUID = 988987678877861L;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BondChangeAnnotator.class);
@@ -316,7 +318,7 @@ public final class BondChangeAnnotator extends DUModel {
 
             if (atomE != null && atomP != null) {
                 if (atomE.getSymbol().equals("P") || atomP.getSymbol().equals("P")) {
-                    LOGGER.warn("\nWARNING: The stereo change " + atomE.getSymbol()
+                    LOGGER.warn(NEW_LINE + "WARNING: The stereo change " + atomE.getSymbol()
                             + " not supported");
                     continue;
                 }

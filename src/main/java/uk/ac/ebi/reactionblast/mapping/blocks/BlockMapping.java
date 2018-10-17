@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import static java.util.Collections.sort;
 import java.util.HashMap;
@@ -40,6 +41,8 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAtomC
  *
  */
 public class BlockMapping {
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     private final IReaction reaction;
 
@@ -259,15 +262,15 @@ public class BlockMapping {
     @Override
     public String toString() {
         String rbm = "{";
-        rbm = reactantBlockMap.keySet().stream().map((r) -> r.getID() + ":" + reactantBlockMap.get(r) + "\n").reduce(rbm, String::concat);
-        rbm += "}\n";
+        rbm = reactantBlockMap.keySet().stream().map((r) -> r.getID() + ":" + reactantBlockMap.get(r) + NEW_LINE).reduce(rbm, String::concat);
+        rbm += "}" + NEW_LINE;
 
         String pbm = "{";
-        pbm = productBlockMap.keySet().stream().map((p) -> p.getID() + ":" + productBlockMap.get(p) + "\n").reduce(pbm, String::concat);
-        pbm += "}\n";
+        pbm = productBlockMap.keySet().stream().map((p) -> p.getID() + ":" + productBlockMap.get(p) + NEW_LINE).reduce(pbm, String::concat);
+        pbm += "}" + NEW_LINE;
 
-        return reactantBlocks.toString() + "\n"
-                + productBlocks.toString() + "\n"
+        return reactantBlocks.toString() + NEW_LINE
+                + productBlocks.toString() + NEW_LINE
                 + rbm
                 + pbm;
     }

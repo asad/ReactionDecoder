@@ -60,6 +60,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.valueOf;
+import static java.lang.System.getProperty;
 import static java.util.Arrays.sort;
 import static java.util.Collections.synchronizedList;
 
@@ -96,6 +97,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     private int delta;
     private boolean balanceFlag;
     private IReaction reactionWithUniqueSTOICHIOMETRY;
+    static final String NEW_LINE = getProperty("line.separator");
 
     //~--- constructors -------------------------------------------------------
     /**
@@ -152,7 +154,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             super.printReaction(reactionWithUniqueSTOICHIOMETRY);
             out.println("|++++++++++++++++++++++++++++|");
             out.println("|iv. Done|");
-            out.println("|++++++++++++++++++++++++++++|\n\n");
+            out.println("|++++++++++++++++++++++++++++|" + NEW_LINE + NEW_LINE);
         }
     }
 
@@ -1123,7 +1125,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         if (DEBUG) {
-            LOGGER.debug("\nmol before: ");
+            LOGGER.debug(NEW_LINE + "mol before: ");
             printAtoms(cloneMolecule);
         }
         /*
@@ -1182,7 +1184,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             printAtoms(cloneMolecule);
             LOGGER.debug("canonicalMolecule: "
                     + generic().create(cloneMolecule)
-                    + "\n\n");
+                    + NEW_LINE + NEW_LINE);
         }
 
         return cloneMolecule;

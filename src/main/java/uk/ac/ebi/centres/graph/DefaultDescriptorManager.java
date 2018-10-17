@@ -17,6 +17,7 @@
  */
 package uk.ac.ebi.centres.graph;
 
+import static java.lang.System.getProperty;
 import java.util.HashMap;
 import java.util.Map;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -31,6 +32,7 @@ import static uk.ac.ebi.centres.descriptor.General.UNKNOWN;
  */
 public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(DefaultDescriptorManager.class);
 
@@ -76,12 +78,12 @@ public class DefaultDescriptorManager<A> implements DescriptorManager<A> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         atomMap.entrySet().stream().filter((entry) -> (entry.getValue().get() != UNKNOWN)).forEachOrdered((entry) -> {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue().get()).append("\n");
+            sb.append(entry.getKey()).append(": ").append(entry.getValue().get()).append(NEW_LINE);
         });
         bondMap.entrySet().stream().filter((entry) -> (entry.getValue().get() != UNKNOWN)).forEachOrdered((entry) -> {
             sb.append(entry.getKey().getKey()).append("=").
                     append(entry.getKey().getValue()).append(": ").
-                    append(entry.getValue().get()).append("\n");
+                    append(entry.getValue().get()).append(NEW_LINE);
         });
         return sb.toString();
     }

@@ -34,10 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.MAPPED;
-import org.openscience.cdk.aromaticity.Aromaticity;
-import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -181,7 +178,7 @@ public class Annotator extends Helper {
      * @param jobID
      * @throws IOException
      */
-    protected void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
+    private void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
         String rootPath = new File(".").getCanonicalPath();
         File bcMatrix = new File(rootPath, jobID + "_Bond_Change" + ".mat");
         File rcMatrix = new File(rootPath, jobID + "_Reaction_Centre" + ".mat");

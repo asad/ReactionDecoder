@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.Map;
 import org.apache.commons.cli.HelpFormatter;
@@ -42,6 +43,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  */
 class Helper extends ChemicalFormatParser {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Helper.class);
 
@@ -55,7 +57,7 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         sb.append("Author: Syed Asad Rahman");
         sb.append(NEW_LINE);
-        sb.append("e-mail: asad@ebi.ac.uk");
+        sb.append("e-mail: asad@ebi.ac.uk|s9asad@gmail.com");
         sb.append(NEW_LINE);
         sb.append("c/o EMBL-European BioInformatics Institute (EBI)");
         sb.append(NEW_LINE);
@@ -97,7 +99,7 @@ class Helper extends ChemicalFormatParser {
     protected static void displayBlankLines(final int numberBlankLines, final OutputStream out) {
         try {
             for (int i = 0; i < numberBlankLines; ++i) {
-                out.write("\n".getBytes());
+                out.write(NEW_LINE.getBytes());
             }
         } catch (IOException ioEx) {
             for (int i = 0; i < numberBlankLines; ++i) {

@@ -20,6 +20,7 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
 import java.io.Serializable;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  */
 public final class RuleBasedMappingHandler implements Serializable {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG1 = false;
     private final static boolean DEBUG2 = false;
     private static final long serialVersionUID = 88765671L;
@@ -139,7 +141,7 @@ public final class RuleBasedMappingHandler implements Serializable {
         }
         if (DEBUG1) {
             out.println("smallestMatchedProduct " + smallestMatchedProduct);
-            out.println("\n\n----------------------\n\n\n");
+            out.println(NEW_LINE + NEW_LINE + "----------------------" + NEW_LINE + NEW_LINE + NEW_LINE);
         }
         try {
             for (int i = 0; i < this.matrixHolder.getReactionContainer().getEductCount(); i++) {
@@ -147,7 +149,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                 IAtomContainer ac1 = new AtomContainer(educt);
                 ac1 = removeHydrogens(ac1);
                 if (DEBUG2) {
-                    out.println("\n\n\nEduct " + unique().create(ac1));
+                    out.println(NEW_LINE + NEW_LINE + NEW_LINE + "Educt " + unique().create(ac1));
                     out.println("Educt found " + ac1.getAtomCount());
                 }
 

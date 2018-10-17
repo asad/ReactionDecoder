@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,7 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
@@ -341,13 +343,14 @@ public class GraphMatcher extends Debugger {
 
             if (DEBUG) {
                 if (diff1 != 0 && diff2 != 0) {
-                    out.println("\n\n " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
-                    out.println(solution.getColIndex() + ", Diff in ac2 " + diff2);
-                    out.println("\nac1 " + q.getAtomCount());
-                    out.println("\nac2 " + t.getAtomCount());
 
-                    out.println("\nmac1 " + mcs.getQueryContainer().getAtomCount());
-                    out.println("\nmac2 " + mcs.getTargetContainer().getAtomCount());
+                    out.println(NEW_LINE + NEW_LINE + " " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
+                    out.println(solution.getColIndex() + ", Diff in ac2 " + diff2);
+                    out.println(NEW_LINE + "ac1 " + q.getAtomCount());
+                    out.println(NEW_LINE + "ac2 " + t.getAtomCount());
+
+                    out.println(NEW_LINE + "mac1 " + mcs.getQueryContainer().getAtomCount());
+                    out.println(NEW_LINE + "mac2 " + mcs.getTargetContainer().getAtomCount());
                 }
             }
 

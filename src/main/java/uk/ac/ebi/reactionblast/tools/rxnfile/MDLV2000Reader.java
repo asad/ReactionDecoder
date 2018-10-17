@@ -67,6 +67,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -121,6 +122,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
  */
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
+    static final String NEW_LINE = getProperty("line.separator");
     BufferedReader input = null;
     private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
 
@@ -1744,7 +1746,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             LOGGER.debug("Atom charge code: ", chargeCodeString);
             int chargeCode = Integer.parseInt(chargeCodeString);
             switch (chargeCode) {
-            // uncharged species
+                // uncharged species
                 case 0:
                     break;
                 case 1:
@@ -2133,7 +2135,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 }
 
                 if (!wrap && data.length() > 0) {
-                    data.append('\n');
+                    data.append(NEW_LINE);
                 }
                 data.append(line);
 

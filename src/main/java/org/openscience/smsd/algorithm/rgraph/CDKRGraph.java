@@ -29,6 +29,7 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
@@ -109,6 +110,8 @@ public class CDKRGraph {
     // an CDKRGraph is a list of CDKRGraph nodes
     // each node keeping track of its
     // neighbors.
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     private List<CDKRNode> graph = null;
     // maximal number of iterations before
@@ -503,7 +506,7 @@ public class CDKRGraph {
         int jIndex = 0;
 
         for (CDKRNode rNode : getGraph()) {
-            message += "-------------\n" + "CDKRNode " + jIndex + "\n" + rNode.toString() + "\n";
+            message += "-------------" + NEW_LINE + "CDKRNode " + jIndex + NEW_LINE + rNode.toString() + NEW_LINE;
             jIndex++;
         }
         return message;

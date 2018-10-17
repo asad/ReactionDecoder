@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.helper;
 
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 
 import org.openscience.cdk.interfaces.IAtom;
@@ -32,6 +33,8 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class IOReaction {
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     private static void printReaction(IReaction reaction) {
         IAtomContainerSet Educt = reaction.getReactants();
@@ -71,7 +74,7 @@ public class IOReaction {
 
         }
 
-        out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n");
+        out.println(NEW_LINE + "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + NEW_LINE + NEW_LINE);
     }
 
     private static void printAtoms(IAtomContainer mol) {

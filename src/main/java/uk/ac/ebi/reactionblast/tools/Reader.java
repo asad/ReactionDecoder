@@ -35,6 +35,7 @@ import java.io.IOException;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.exit;
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.logging.Level.INFO;
@@ -74,6 +75,7 @@ public class Reader {
 
      private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Reader.class);
+     static final String NEW_LINE = getProperty("line.separator");
 
     /**
      *
@@ -171,7 +173,7 @@ public class Reader {
                         rxnReactions.setID(filepath.getName().split(".rxn")[0]);
                         reactions.add(rxnReactions);
                     } catch (IOException | CDKException ex) {
-                        LOGGER.debug("ERROR in Reading Reaction file " + filepath + "\n" + ex);
+                        LOGGER.debug("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
                     }
                 }
             } catch (IOException ex) {

@@ -28,6 +28,7 @@
  */
 package org.openscience.smsd.algorithm.rgraph;
 
+import static java.lang.System.getProperty;
 import java.util.BitSet;
 
 /**
@@ -44,6 +45,8 @@ import java.util.BitSet;
  */
 public class CDKRNode {
     // G1/G2 mapping
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     private CDKRMap rMap = null;
     // set of neighbour nodes in the RGraph
@@ -124,7 +127,8 @@ public class CDKRNode {
      */
     @Override
     public synchronized String toString() {
-        return ("id1 : " + getrMap().getId1() + ", id2 : " + getrMap().getId2() + "\n" + "extension : " + getExtension() + "\n" + "forbiden : " + getForbidden());
+        return ("id1 : " + getrMap().getId1() + ", id2 : " + getrMap().getId2()
+                + NEW_LINE + "extension : " + getExtension() + NEW_LINE + "forbiden : " + getForbidden());
     }
 
     /**

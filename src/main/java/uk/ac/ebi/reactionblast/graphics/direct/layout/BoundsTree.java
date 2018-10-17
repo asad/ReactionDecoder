@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.format;
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import java.util.Map;
  */
 public final class BoundsTree implements Iterable<Rectangle2D> {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private Rectangle2D root;
 
     private String rootLabel;
@@ -84,11 +86,9 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      */
     public BoundsTree getSubtree(String prefix) {
         BoundsTree subtree = new BoundsTree(rootLabel);
-        for (String label : childMap.keySet()) {
-            if (label.startsWith(prefix)) {
-                subtree.add(label, childMap.get(label));
-            }
-        }
+        childMap.keySet().stream().filter((label) -> (label.startsWith(prefix))).forEachOrdered((label) -> {
+            subtree.add(label, childMap.get(label));
+        });
         return subtree;
     }
 
@@ -190,9 +190,9 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      * @param tree
      */
     public void add(String prefix, BoundsTree tree) {
-        for (String label : tree.getBoundLabels()) {
+        tree.getBoundLabels().forEach((label) -> {
             add(prefix + "_" + label, tree.get(label));
-        }
+        });
     }
 
     /**
@@ -209,13 +209,12 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      * @param dy
      */
     public void shift(double dx, double dy) {
-        for (String key : childMap.keySet()) {
-            Rectangle2D bounds = childMap.get(key);
-//            System.out.print(key + " Before : " + BoundsPrinter.toString(bounds));
+        childMap.keySet().stream().map((key) -> childMap.get(key)).forEachOrdered((bounds) -> {
+            //            System.out.print(key + " Before : " + BoundsPrinter.toString(bounds));
             bounds.setRect(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
 //            System.out.println(" After: " + BoundsPrinter.toString(bounds) + " " + dx + " " + dy);
-        }
+        });
     }
 
     /**
@@ -264,24 +263,27 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      */
     public BoundsTree transform(AffineTransform transform) {
         BoundsTree transformedTree = new BoundsTree(rootLabel);
-        for (String key : childMap.keySet()) {
+        childMap.keySet().forEach((key) -> {
             Rectangle2D shape = childMap.get(key);
 
             // annoyingly, createTransformedShape returns a Path2D! 
             // (so we can't just cast to R2D)...
             transformedTree.add(key, transform.createTransformedShape(shape).getBounds2D());
-        }
+        });
         return transformedTree;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (String key : childMap.keySet()) {
+        childMap.keySet().stream().map((key) -> {
             Rectangle2D rect = get(key);
             sb.append(key).append("=").append(format("[(%2.0f, %2.0f), (%2.0f, %2.0f)]",
                     rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY()));
-            sb.append("\n");
-        }
+            return key;
+        }).forEachOrdered((_item) -> {
+            sb.append(NEW_LINE);
+        });
         return sb.toString();
     }
 

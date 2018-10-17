@@ -21,6 +21,7 @@ package org.openscience.smsd.mcss;
 import static java.lang.Math.ceil;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.sort;
@@ -48,6 +49,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public class MCSS {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER = createLoggingTool(MCSS.class);
     private final Collection<IAtomContainer> calculateMCSS;
     private final boolean matchBonds;
@@ -89,7 +91,7 @@ public class MCSS {
         } else if (threadsAvailable <= 0) {
             threadsAvailable = 1;
         }
-        LOGGER.debug(", Assigned threads: " + threadsAvailable + "\n");
+        LOGGER.debug(", Assigned threads: " + threadsAvailable + NEW_LINE);
         /*
          * Remove hydrogen from the molecules
          **/

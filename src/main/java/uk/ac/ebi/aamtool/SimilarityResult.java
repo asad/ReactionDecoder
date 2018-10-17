@@ -61,7 +61,7 @@ public class SimilarityResult {
     }
 
     /**
-     * @return the similarityReactions
+     * @return the Similarity Reactions Map
      */
     public Map<String, String> getSimilarityReactions() {
         return similarityReactions;
