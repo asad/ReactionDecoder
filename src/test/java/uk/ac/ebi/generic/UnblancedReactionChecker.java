@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.System.err;
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.Map;
 import java.util.TreeMap;
@@ -46,7 +47,7 @@ public class UnblancedReactionChecker extends TestUtility {
 
     private static final boolean DEBUG = false;
     private static final File DIR = new File(RHEA_RXN_DIR);
-
+    static final String NEW_LINE = getProperty("line.separator");
     private static final Logger LOG = getLogger(UnblancedReactionChecker.class.getName());
 
     /**
@@ -67,7 +68,7 @@ public class UnblancedReactionChecker extends TestUtility {
                             out.println("Unbalanced Reaction " + f);
                         }
                     } catch (IOException | CDKException ex) {
-                        err.println("ERROR in Reading Reaction file " + f + "\n" + ex);
+                        err.println("ERROR in Reading Reaction file " + f + NEW_LINE + ex);
                     }
                 } catch (Exception ex) {
                     getLogger(UnblancedReactionChecker.class.getName()).log(SEVERE, null, ex);
