@@ -23,6 +23,7 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
+import static java.lang.Runtime.getRuntime;
 import java.util.*;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -127,8 +128,17 @@ public final class VF2MCS extends BaseMCS implements IResults {
             allLocalAtomAtomMapping.clear();
 
             long startTimeSeeds = System.nanoTime();
+            /*
+             *   Assign the threads
+             */
+            int threadsAvailable = getRuntime().availableProcessors() - 1;
+            if (threadsAvailable == 0) {
+                threadsAvailable = 1;
+            } else if (threadsAvailable > 2) {
+                threadsAvailable = 2;
+            }
 
-            ExecutorService executor = Executors.newCachedThreadPool();
+            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
