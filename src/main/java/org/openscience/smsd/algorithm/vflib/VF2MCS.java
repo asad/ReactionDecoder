@@ -128,7 +128,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
 
             long startTimeSeeds = System.nanoTime();
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+            ExecutorService executor = Executors.newCachedThreadPool();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -191,7 +191,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
             if (targetClone != null) {
                 if (targetClone.getBondCount() > 0) {
                     MCSSeedGenerator mcsSeedGeneratorUIT
-                            = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.CDKMCS);
+                            = new MCSSeedGenerator(source, targetClone,
+                                    shouldMatchBonds, shouldMatchRings,
+                                    matchAtomType, Algorithm.CDKMCS);
                     cs.submit(mcsSeedGeneratorUIT);
                     jobCounter++;
                 }
@@ -201,7 +203,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 System.out.println(" CALLING MCSPLUS ");
             }
             MCSSeedGenerator mcsSeedGeneratorKoch
-                    = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
+                    = new MCSSeedGenerator(source, targetClone, shouldMatchBonds,
+                            shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 

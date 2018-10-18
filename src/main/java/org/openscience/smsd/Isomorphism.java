@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.logging.Level;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -216,48 +218,46 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     private synchronized void chooseAlgorithm() throws CDKException {
-        try {
-            switch (algorithmType) {
-                case CDKMCS:
-                    if (DEBUG) {
-                        System.out.println("Calling CDKMCS ");
-                    }
-                    cdkMCSAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("Calling DONE CDKMCS ");
-                    }
-                    break;
-                case DEFAULT:
-                    if (DEBUG) {
-                        System.out.println("Calling DEFAULT ");
-                    }
-                    defaultMCSAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("Calling DONE DEFAULT ");
-                    }
-                    break;
-                case MCSPlus:
-                    if (DEBUG) {
-                        System.out.println("Calling MCSPlus ");
-                    }
-                    mcsPlusAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("Calling DONE MCSPlus ");
-                    }
-                    break;
-                case VFLibMCS:
-                    if (DEBUG) {
-                        System.out.println("Calling VFLibMCS ");
-                    }
-                    vfLibMCSAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("Calling DONE VFLibMCS ");
-                    }
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        switch (algorithmType) {
+            case CDKMCS:
+                if (DEBUG) {
+                    System.out.println("Calling CDKMCS ");
+                }
+                cdkMCSAlgorithm();
+                if (DEBUG) {
+                    System.out.println("Calling DONE CDKMCS ");
+                }
+                break;
+            case DEFAULT:
+                if (DEBUG) {
+                    System.out.println("Calling DEFAULT ");
+                }
+                defaultMCSAlgorithm();
+                if (DEBUG) {
+                    System.out.println("Calling DONE DEFAULT ");
+                }
+                break;
+            case MCSPlus:
+                if (DEBUG) {
+                    System.out.println("Calling MCSPlus ");
+                }
+                mcsPlusAlgorithm();
+                if (DEBUG) {
+                    System.out.println("Calling DONE MCSPlus ");
+                }
+                break;
+            case VFLibMCS:
+                if (DEBUG) {
+                    System.out.println("Calling VFLibMCS ");
+                }
+                vfLibMCSAlgorithm();
+                if (DEBUG) {
+                    System.out.println("Calling DONE VFLibMCS ");
+                }
+                break;
         }
+
     }
 
     private synchronized boolean cdkMCSAlgorithm() {
@@ -281,14 +281,14 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
         } else if (isMatchBonds() || getQuery().getAtomCount() > 20) {
             if (DEBUG) {
-                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
-            }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else {
-            if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else {
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -346,16 +346,28 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("defaultMCSAlgorithm - no substructure ");
             }
             if (!substructureAlgorithm) {
-                if (DEBUG) {
-                    System.out.println("defaultMCSAlgorithm - Calling CDKMCS ");
-                }
-                if (isMatchBonds() || isMatchRings()) {
-                    cdkMCSAlgorithm();
-                }
 
-                if (DEBUG) {
-                    System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
-                    System.out.println("defaultMCSAlgorithm - Done CDKMCS ");
+                if (isMoleculeConnected(getQuery(), getTarget())
+                        && (isMatchBonds() || isMatchRings())
+                        && getQuery().getAtomCount() > 1
+                        && getTarget().getAtomCount() > 1) {
+                    if (DEBUG) {
+                        System.out.println("defaultMCSAlgorithm - Calling CDKMCS ");
+                    }
+                    cdkMCSAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
+                        System.out.println("defaultMCSAlgorithm - Done CDKMCS ");
+                    }
+                } else {
+                    if (DEBUG) {
+                        System.out.println("defaultMCSAlgorithm - Calling MCSPlus ");
+                    }
+                    mcsPlusAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
+                        System.out.println("defaultMCSAlgorithm - Done MCSPlus ");
+                    }
                 }
 
                 int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
@@ -472,5 +484,32 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      */
     public void setBondInSenSitiveMcGregor(double bondInSensitiveMcGregor) {
         this.bondInSensitiveMcGregor = bondInSensitiveMcGregor;
+    }
+
+    /*
+     * Check if fragmented container has single atom
+     */
+    private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+
+        boolean connected1 = true;
+
+        IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+
+            if (a.getAtomCount() == 1) {
+                connected1 = false;
+            }
+        }
+
+        boolean connected2 = true;
+
+        partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+
+            if (a.getAtomCount() == 1) {
+                connected2 = false;
+            }
+        }
+        return connected1 & connected2;
     }
 }

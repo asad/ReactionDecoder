@@ -100,7 +100,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
          */
         if ((!shouldMatchBonds || !matchAtomType)
                 && source.getAtomCount() > 30 && target.getAtomCount() > 30) {
-            System.out.println("CASE LARGE GRAPH");
+//            System.out.println("CASE LARGE GRAPH");
             compatibilityGraphNodesIfCEdgeIsZero();
             compatibilityGraphCEdgeZero();
             clearCompGraphNodesCZero();

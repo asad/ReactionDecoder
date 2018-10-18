@@ -188,6 +188,7 @@ public final class MCSPlus {
 //        List<Integer> dEdges = gcg.getDEgdes();
             if (DEBUG) {
                 System.out.println("**************************************************");
+                System.out.println("--MCS PLUS--");
                 System.out.println("C_edges: " + cEdges.size());
                 System.out.println("D_edges: " + dEdges.size());
                 System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
@@ -195,10 +196,11 @@ public final class MCSPlus {
             BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
             Stack<List<Integer>> maxCliqueSet = new Stack<>();
             maxCliqueSet.addAll(init.getMaxCliqueSet());
-
-//            System.out.println("Max_Cliques_Set: " + maxCliqueSet);
-//            System.out.println("Best Clique Size: " + init.getBestCliqueSize());
-//            System.out.println("**************************************************");
+            if (DEBUG) {
+                System.out.println("Max_Cliques_Set: " + maxCliqueSet);
+                System.out.println("Best Clique Size: " + init.getBestCliqueSize());
+                System.out.println("**************************************************");
+            }
             List<Map<Integer, Integer>> mappings = new ArrayList<>();
 
             while (!maxCliqueSet.empty()) {

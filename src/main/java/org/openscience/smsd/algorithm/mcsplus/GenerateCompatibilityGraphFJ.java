@@ -123,6 +123,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             System.out.println(" GenerateCompatibilityGraphFJ ");
             System.out.println("Splitting workLoad startIndex: " + startIndex + ", endIndex: " + endIndex);
         }
+
         if ((!shouldMatchBonds || !matchAtomType)
                 && source.getAtomCount() > COMPLEX_MAX_GRAPH_NODE_COUNT
                 || target.getAtomCount() > COMPLEX_MAX_GRAPH_NODE_COUNT) {
@@ -245,13 +246,10 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     if (reactantBond != null && productBond != null) {
                         addZeroEdges(result.cEdges, result.dEdges, reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null
-                            && source.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT)
-                            && target.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT)) {
+                            && ((source.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT)
+                            && target.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT))
+                            || (result.dEdges.size() < result.compGraphNodes.size()))) {
                         //50 unique condition to speed up the AAM
-                        result.dEdges.add((a / 4) + 1);
-                        result.dEdges.add((b / 4) + 1);
-                    } else if (reactantBond == null && productBond == null
-                            && result.dEdges.size() < result.compGraphNodes.size()) {
                         result.dEdges.add((a / 4) + 1);
                         result.dEdges.add((b / 4) + 1);
                     }
