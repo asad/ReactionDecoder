@@ -99,7 +99,9 @@ final class GameTheoryRings extends BaseGameTheory {
             GameTheoryMatrix rpsh)
             throws Exception {
 
-//        System.out.println("I am Ring");
+        if (DEBUG) {
+            System.out.println("I am Ring");
+        }
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -138,7 +140,9 @@ final class GameTheoryRings extends BaseGameTheory {
         RuleBasedMappingHandler ph
                 = new RuleBasedMappingHandler(mh, eductList, productList);
         if (ph.isMatchFound()) {
-//            System.out.println("RuleBasedMappingHandler Match");
+            if (DEBUG) {
+                System.out.println("RuleBasedMappingHandler Match");
+            }
             mh = ph.getMatrixHolder();
         }
 
@@ -163,6 +167,9 @@ final class GameTheoryRings extends BaseGameTheory {
 
     private synchronized void GenerateMapping() throws Exception {
         if (DEBUG) {
+            System.out.println("GenerateMapping");
+        }
+        if (DEBUG) {
             out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
@@ -181,14 +188,22 @@ final class GameTheoryRings extends BaseGameTheory {
 
         winner.searchWinners(educts, products, mh);
 
-//        printFlagMatrix(winner, eductList, productList);
+        if (DEBUG) {
+            printFlagMatrix(winner, eductList, productList);
+        }
         if (winner.getFlag()) {
 
-//            System.out.println("**********Updated Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Mapping**************");
+            }
             UpdateMapping();
-//            System.out.println("**********Updated Matrix**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Matrix**************");
+            }
             UpdateMatrix(mh, removeHydrogen);
-//            System.out.println("**********Generate Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Generate Mapping**************");
+            }
             GenerateMapping();
         }
     }

@@ -216,44 +216,47 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     private synchronized void chooseAlgorithm() throws CDKException {
-
-        switch (algorithmType) {
-            case CDKMCS:
-                if (DEBUG) {
-                    System.out.println("Calling CDKMCS ");
-                }
-                cdkMCSAlgorithm();
-                if (DEBUG) {
-                    System.out.println("Calling DONE CDKMCS ");
-                }
-                break;
-            case DEFAULT:
-                if (DEBUG) {
-                    System.out.println("Calling DEFAULT ");
-                }
-                defaultMCSAlgorithm();
-                if (DEBUG) {
-                    System.out.println("Calling DONE DEFAULT ");
-                }
-                break;
-            case MCSPlus:
-                if (DEBUG) {
-                    System.out.println("Calling MCSPlus ");
-                }
-                mcsPlusAlgorithm();
-                if (DEBUG) {
-                    System.out.println("Calling DONE MCSPlus ");
-                }
-                break;
-            case VFLibMCS:
-                if (DEBUG) {
-                    System.out.println("Calling VFLibMCS ");
-                }
-                vfLibMCSAlgorithm();
-                if (DEBUG) {
-                    System.out.println("Calling DONE VFLibMCS ");
-                }
-                break;
+        try {
+            switch (algorithmType) {
+                case CDKMCS:
+                    if (DEBUG) {
+                        System.out.println("Calling CDKMCS ");
+                    }
+                    cdkMCSAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("Calling DONE CDKMCS ");
+                    }
+                    break;
+                case DEFAULT:
+                    if (DEBUG) {
+                        System.out.println("Calling DEFAULT ");
+                    }
+                    defaultMCSAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("Calling DONE DEFAULT ");
+                    }
+                    break;
+                case MCSPlus:
+                    if (DEBUG) {
+                        System.out.println("Calling MCSPlus ");
+                    }
+                    mcsPlusAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("Calling DONE MCSPlus ");
+                    }
+                    break;
+                case VFLibMCS:
+                    if (DEBUG) {
+                        System.out.println("Calling VFLibMCS ");
+                    }
+                    vfLibMCSAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("Calling DONE VFLibMCS ");
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -358,7 +361,8 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
 
                 if ((getMappingCount() == 0
-                        || (getFirstAtomMapping().getCount() != expectedMaxGraphmatch))) {
+                        || (getFirstAtomMapping().getCount()
+                        != expectedMaxGraphmatch))) {
                     if (DEBUG) {
                         System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
                     }

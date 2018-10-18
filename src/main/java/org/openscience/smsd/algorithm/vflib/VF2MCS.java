@@ -80,7 +80,11 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @param shouldMatchRings ring match
      * @param matchAtomType
      */
-    public VF2MCS(IAtomContainer source, IAtomContainer target, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public VF2MCS(IAtomContainer source,
+            IAtomContainer target,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) {
         super(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
         boolean timeoutVF = searchVFMappings();
 

@@ -370,7 +370,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
         try {
-            Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.CDKMCS, false, false, false);
+            Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
             mcsThread.setChemFilters(true, true, true);
             MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, mcsThread.getFirstAtomMapping());
             mcs.setEnergy(mcsThread.getEnergyScore(0));

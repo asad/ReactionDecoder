@@ -392,16 +392,17 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
                     if (reactantBond != null && productBond != null) {
                         addZeroEdges(reactantBond, productBond, a, b);
-                    } else if (reactantBond == null && productBond == null) {
+                    } else if (reactantBond == null && productBond == null
+                            && dEdges.size() < compGraphNodes.size()) {
+                        dEdges.add((a / 4) + 1);
+                        dEdges.add((b / 4) + 1);
+                    } else if (reactantBond == null && productBond == null
+                            && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
+                        //50 unique condition to speed up the AAM
                         dEdges.add((a / 4) + 1);
                         dEdges.add((b / 4) + 1);
                     }
-//                    else if (reactantBond == null && productBond == null
-//                            && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
-//                        //50 unique condition to speed up the AAM
-//                        dEdges.add((a / 4) + 1);
-//                        dEdges.add((b / 4) + 1);
-//                    }
+
                 }
             }
         }

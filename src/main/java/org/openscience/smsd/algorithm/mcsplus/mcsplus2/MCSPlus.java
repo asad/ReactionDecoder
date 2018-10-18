@@ -22,7 +22,6 @@
  */
 package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
 
-import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import org.openscience.smsd.algorithm.mcsplus.Result;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -182,11 +182,10 @@ public final class MCSPlus {
             });
 
 //        GenerateCompatibilityGraph gcg
-//                = new GenerateCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+//                = new GenerateCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 //        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
 //        List<Integer> cEdges = gcg.getCEgdes();
 //        List<Integer> dEdges = gcg.getDEgdes();
-//
             if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("C_edges: " + cEdges.size());
@@ -212,7 +211,7 @@ public final class MCSPlus {
             }
 
             //clear all the compatibility graph content
-            //gcg.clear();
+//            gcg.clear();
             mergedResult.clear();
 //            System.out.println("mappings: " + mappings.size());
             if (ac1 instanceof IQueryAtomContainer) {

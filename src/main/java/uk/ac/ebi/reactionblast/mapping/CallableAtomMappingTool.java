@@ -178,27 +178,29 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
-
-            /*
-             * RINGS Minimization
-             */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("d) Rings Model: ");
-            if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
-            }
-            IReaction cleanedReaction4 = null;
             try {
-                cleanedReaction4 = standardizer.standardize(reaction);
+                /*
+             * RINGS Minimization
+                 */
+                LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
+                LOGGER.info("d) Rings Model: ");
+                if (DEBUG) {
+                    out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                    out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
+                }
+                IReaction cleanedReaction4 = null;
+                try {
+                    cleanedReaction4 = standardizer.standardize(reaction);
+                } catch (Exception e) {
+                    LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+                    LOGGER.error(e);
+                }
+                MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
+                cs.submit(ringThread);
+                jobCounter++;
             } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
+                e.printStackTrace();
             }
-            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
-            cs.submit(ringThread);
-            jobCounter++;
-
             /*
              * Collect the results
              */
