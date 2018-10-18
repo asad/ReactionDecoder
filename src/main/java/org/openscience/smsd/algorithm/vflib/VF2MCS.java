@@ -404,7 +404,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
 
             long startTimeSeeds = System.nanoTime();
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+            ExecutorService executor = Executors.newCachedThreadPool();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*

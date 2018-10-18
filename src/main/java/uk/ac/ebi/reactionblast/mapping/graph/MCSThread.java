@@ -539,8 +539,6 @@ public class MCSThread implements Callable<MCSSolution> {
             /*
              * Although the bond changes are set to true but its only used by filters
              */
-//            isomorphism = new Isomorphism(ac1, ac2, Algorithm.MCSPlus,
-//                    false, isHasPerfectRings(), !isHasPerfectRings());
             isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                     false, isHasPerfectRings(), !isHasPerfectRings());
         } else if (expectedMaxGraphmatch < 30) {
