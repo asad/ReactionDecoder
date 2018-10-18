@@ -21,11 +21,8 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
-import static java.lang.System.out;
 import java.util.ArrayList;
-import java.util.Collection;
 import static java.util.Collections.sort;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +36,9 @@ import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.Cycles;
-import static org.openscience.cdk.graph.Cycles.all;
-import static org.openscience.cdk.graph.Cycles.or;
-import static org.openscience.cdk.graph.Cycles.relevant;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -55,12 +48,7 @@ import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.Substructure;
 import org.openscience.smsd.interfaces.Algorithm;
-import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
-import static org.openscience.smsd.interfaces.Algorithm.VFLibMCS;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
-import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -79,7 +67,6 @@ public class MCSThread implements Callable<MCSSolution> {
     private boolean energyFlag;
 
     private SmilesGenerator smiles;
-    private Aromaticity aromaticity;
 
     /**
      *
@@ -120,12 +107,9 @@ public class MCSThread implements Callable<MCSSolution> {
      *
      */
     protected final boolean atomMatcher;
-    private final ICanonicalMoleculeLabeller labeller;
 
-    final long startTime;
+    long startTime;
     private boolean hasRings;
-    private Integer eductCount;
-    private Integer productCount;
 
     /**
      *
@@ -147,9 +131,6 @@ public class MCSThread implements Callable<MCSSolution> {
         this.stereoFlag = true;
         this.fragmentFlag = true;
         this.energyFlag = true;
-
-        this.startTime = currentTimeMillis();
-
         this.compound1 = getNewContainerWithIDs(educt);
         this.compound2 = getNewContainerWithIDs(product);
         this.queryPosition = queryPosition;
@@ -158,25 +139,20 @@ public class MCSThread implements Callable<MCSSolution> {
         this.ringMatcher = ringMatcher;
         this.theory = theory;
         this.atomMatcher = atomMatcher;
-        this.labeller = new SmilesMoleculeLabeller();
 
-        if (DEBUG1) {
-            aromaticity = new Aromaticity(daylight(),
-                    Cycles.or(Cycles.all(),
-                            Cycles.or(Cycles.relevant(),
-                                    Cycles.essential())));
-            smiles = new SmilesGenerator(SmiFlavor.Unique
-                    | SmiFlavor.Stereo
-                    | SmiFlavor.AtomAtomMap);
-        }
-
+        Aromaticity aromaticity = new Aromaticity(daylight(),
+                Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential())));
+        aromaticity.apply(this.compound1);
+        aromaticity.apply(this.compound2);
     }
 
     synchronized void printMatch(BaseMapping isomorphism) {
         int overlap = isomorphism.getFirstAtomMapping().isEmpty() ? 0
                 : isomorphism.getFirstAtomMapping().getCount();
 
-        out.println("Q: " + isomorphism.getQuery().getID()
+        System.out.println("Q: " + isomorphism.getQuery().getID()
                 + " T: " + isomorphism.getTarget().getID()
                 + " atoms: " + isomorphism.getQuery().getAtomCount()
                 + " atoms: " + isomorphism.getTarget().getAtomCount()
@@ -186,14 +162,31 @@ public class MCSThread implements Callable<MCSSolution> {
     @Override
     public synchronized MCSSolution call() throws Exception {
         try {
-            if (!theory.equals(RINGS)) {
+            if (!theory.equals(IMappingAlgorithm.RINGS)) {
                 if (DEBUG1) {
-                    out.println("Q: " + getCompound1().getID()
+
+                    /*
+                     * create SMILES
+                     */
+                    smiles = new SmilesGenerator(
+                            SmiFlavor.Unique
+                            | SmiFlavor.Stereo
+                            | SmiFlavor.AtomAtomMap);
+                    String createSM1 = null;
+                    String createSM2 = null;
+                    try {
+                        createSM1 = smiles.create(this.compound1);
+                        createSM2 = smiles.create(this.compound2);
+                    } catch (CDKException e) {
+                        LOGGER.error(SEVERE, null, e);
+                    }
+
+                    System.out.println("Q: " + getCompound1().getID()
                             + " T: " + getCompound2().getID()
-                            + " molQ: " + smiles.create(compound1)
-                            + " molT: " + smiles.create(compound2)
-                            + " atomsE: " + compound1.getAtomCount()
-                            + " atomsP: " + compound2.getAtomCount()
+                            + " molQ: " + createSM1
+                            + " molT: " + createSM2
+                            + " atomsQ: " + compound1.getAtomCount()
+                            + " atomsT: " + compound2.getAtomCount()
                             + " [bonds: " + bondMatcher
                             + " rings: " + ringMatcher
                             + " isHasPerfectRings: " + isHasPerfectRings()
@@ -210,19 +203,21 @@ public class MCSThread implements Callable<MCSSolution> {
                  */
                 boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
                 if (DEBUG1) {
-                    out.println("VF Matcher 1->2 " + possibleVFmatch12);
+                    System.out.println("VF Matcher 1->2 " + possibleVFmatch12);
                 }
 
                 boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
                 if (DEBUG1) {
-                    out.println("VF Matcher 2->1 " + possibleVFmatch21);
+                    System.out.println("VF Matcher 2->1 " + possibleVFmatch21);
                 }
 
                 if (moleculeConnected && possibleVFmatch12
                         && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
                         && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
                     if (DEBUG1) {
-                        out.println("Substructure 1");
+                        System.out.println("Substructure 1");
+                        this.startTime = currentTimeMillis();
+
                     }
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
@@ -237,7 +232,7 @@ public class MCSThread implements Callable<MCSSolution> {
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                         if (DEBUG1) {
-                            out.println("Found Substructure 1");
+                            System.out.println("Found Substructure 1");
                         }
                         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
                                 substructure.getQuery(), substructure.getTarget(), substructure.getFirstAtomMapping());
@@ -248,16 +243,18 @@ public class MCSThread implements Callable<MCSSolution> {
                             long stopTime = currentTimeMillis();
                             long time = stopTime - startTime;
                             printMatch(substructure);
-                            out.println("\" Time:\" " + time);
+                            System.out.println("\" Time:\" " + time);
                         }
                         return mcs;
                     } else if (DEBUG1) {
-                        out.println("not a Substructure 1");
+                        System.out.println("not a Substructure 1");
                     }
                 } else if (moleculeConnected && possibleVFmatch21) {
 
                     if (DEBUG1) {
-                        out.println("Substructure 2");
+                        System.out.println("Substructure 2");
+                        this.startTime = currentTimeMillis();
+
                     }
 
                     IAtomContainer ac1 = duplicate(getCompound1());
@@ -274,7 +271,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
 
                         if (DEBUG1) {
-                            out.println("Found Substructure 2");
+                            System.out.println("Found Substructure 2");
                         }
                         AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
                         Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
@@ -292,31 +289,89 @@ public class MCSThread implements Callable<MCSSolution> {
                             long stopTime = currentTimeMillis();
                             long time = stopTime - startTime;
                             printMatch(substructure);
-                            out.println("\" Time:\" " + time);
+                            System.out.println("\" Time:\" " + time);
                         }
                         return mcs;
                     } else if (DEBUG1) {
-                        out.println("not a Substructure 2");
+                        System.out.println("not a Substructure 2");
                     }
                 }
-
                 if (DEBUG1) {
-                    out.println("calling mcs");
-                    out.println("Q: " + getCompound1().getID()
+
+                    /*
+                     * create SMILES
+                     */
+                    smiles = new SmilesGenerator(SmiFlavor.Unique
+                            | SmiFlavor.Stereo
+                            | SmiFlavor.AtomAtomMap);
+                    String createSM1 = null;
+                    String createSM2 = null;
+                    try {
+                        createSM1 = smiles.create(this.compound1);
+                        createSM2 = smiles.create(this.compound2);
+                    } catch (CDKException e) {
+                        LOGGER.error(SEVERE, null, e);
+                    }
+                    System.out.println("No Substructure found - switching to MCS");
+                    System.out.println("Q: " + getCompound1().getID()
                             + " T: " + getCompound2().getID()
-                            + " molQ: " + smiles.create(compound1)
-                            + " molT: " + smiles.create(compound2)
-                            + " atomsQ: " + compound1.getAtomCount()
-                            + " atomsT: " + compound2.getAtomCount()
+                            + " molQ: " + createSM1
+                            + " molT: " + createSM2
+                            + " atomsE: " + compound1.getAtomCount()
+                            + " atomsP: " + compound2.getAtomCount()
                             + " [bonds: " + bondMatcher
                             + " rings: " + ringMatcher
                             + " isHasPerfectRings: " + isHasPerfectRings()
                             + "]");
                 }
+                if (DEBUG1) {
+                    this.startTime = currentTimeMillis();
+                }
                 MCSSolution mcs = mcs();
+                if (DEBUG1) {
+                    long stopTime = currentTimeMillis();
+                    long time = stopTime - startTime;
+                    System.out.println("\"MCS Time:\" " + time);
+                }
                 return mcs;
             } else {
+                if (DEBUG1) {
+
+                    /*
+                     * create SMILES
+                     */
+                    smiles = new SmilesGenerator(SmiFlavor.Unique
+                            | SmiFlavor.Stereo
+                            | SmiFlavor.AtomAtomMap);
+                    String createSM1 = null;
+                    String createSM2 = null;
+                    try {
+                        createSM1 = smiles.create(this.compound1);
+                        createSM2 = smiles.create(this.compound2);
+                    } catch (CDKException e) {
+                        LOGGER.error(SEVERE, null, e);
+                    }
+                    System.out.println("No Substructure found - switching to MCS");
+                    System.out.println("Q: " + getCompound1().getID()
+                            + " T: " + getCompound2().getID()
+                            + " molQ: " + createSM1
+                            + " molT: " + createSM2
+                            + " atomsE: " + compound1.getAtomCount()
+                            + " atomsP: " + compound2.getAtomCount()
+                            + " [bonds: " + bondMatcher
+                            + " rings: " + ringMatcher
+                            + " isHasPerfectRings: " + isHasPerfectRings()
+                            + "]");
+                }
+                if (DEBUG1) {
+                    this.startTime = currentTimeMillis();
+                }
                 MCSSolution mcs = mcs();
+                if (DEBUG1) {
+                    long stopTime = currentTimeMillis();
+                    long time = stopTime - startTime;
+                    System.out.println("\"MCS Time:\" " + time);
+                }
                 return mcs;
             }
 
@@ -394,9 +449,9 @@ public class MCSThread implements Callable<MCSSolution> {
         difference.removeAll(atomUniqueCounter2.keySet());
 
         if (DEBUG2) {
-            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            out.println("diff " + difference.size());
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            System.out.println("diff " + difference.size());
         }
 
         if (difference.isEmpty()) {
@@ -442,254 +497,91 @@ public class MCSThread implements Callable<MCSSolution> {
         common.retainAll(atomUniqueCounter2);
 
         if (DEBUG2) {
-            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            out.println("common " + common.size());
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            System.out.println("common " + common.size());
         }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
         return common.size();
     }
 
-    synchronized MCSSolution mcs() {
-        try {
-            /*
-             * 0: default Isomorphism, 1: MCSPlus, 2: VFLibMCS, 3: CDKMCS
-             */
-            Isomorphism isomorphism;
-            int expectedMaxGraphmatch = expectedMaxGraphmatch(getCompound1(), getCompound2());
-
-            if (getCompound1().getAtomCount() == 1
-                    || getCompound2().getAtomCount() == 1) {
-                if (DEBUG3) {
-                    System.out.println("CASE 1");
-                }
-                /*
-                 * This handles large aliphatics to ring system (ex: R09907)
-                 */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
-                        false, isHasPerfectRings(), false);
-            } else if (expectedMaxGraphmatch >= 30
-                    && ConnectivityChecker.isConnected(getCompound1())) {
-                if (DEBUG3) {
-                    System.out.println("CASE 2");
-                }
-                /*
-                 * Although the bond changes are set to true but its only used by filters
-                 */
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.MCSPlus,
-                        false, isHasPerfectRings(), !isHasPerfectRings());
-            } else if (expectedMaxGraphmatch < 30) {
-                if (DEBUG3) {
-                    System.out.println("CASE 3");
-                }
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.CDKMCS,
-                        false, isHasPerfectRings(), !isHasPerfectRings());
-            } else {
-                if (DEBUG3) {
-                    System.out.println("CASE 4");
-                }
-                isomorphism = new Isomorphism(getCompound1(), getCompound2(), Algorithm.DEFAULT,
-                        false, isHasPerfectRings(), !isHasPerfectRings());
-            }
-
-            isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-            if (DEBUG3) {
-                out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-            }
-            /*
-             * In case of Complete subgraph, don't use Energy filter
-             *
-             */
-
-            MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
-                    isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
-            mcs.setEnergy(isomorphism.getEnergyScore(0));
-            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
-            mcs.setStereoScore(isomorphism.getStereoScore(0));
-
-            if (DEBUG1) {
-                long stopTime = currentTimeMillis();
-                long time = stopTime - startTime;
-                printMatch(isomorphism);
-                out.println("\" Time:\" " + time);
-
-            }
-            return mcs;
-        } catch (CloneNotSupportedException | CDKException e) {
-            LOGGER.error(SEVERE, "Error in computing MCS ", e);
-        }
-        return null;
-    }
-
-    synchronized MCSSolution combimcs(boolean stereoFlag, boolean fragmentFlag,
-            boolean energyFlag) throws CloneNotSupportedException, CDKException {
-        double energy = 0.0d;
-        int fragmentSize = 0;
-        int stereoScore = 0;
-        IAtomContainer ac1 = duplicate(getCompound1());
-        IAtomContainer ac2 = duplicate(getCompound2());
+    synchronized MCSSolution mcs() throws CDKException, CloneNotSupportedException {
         /*
          * 0: default Isomorphism, 1: MCSPlus, 2: VFLibMCS, 3: CDKMCS
          */
+        IAtomContainer ac1 = duplicate(getCompound1());
+        IAtomContainer ac2 = duplicate(getCompound2());
         Isomorphism isomorphism;
+        int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
 
-        isomorphism = new Isomorphism(ac1, ac2, DEFAULT, true, ringMatcher, true);
-        isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-
-        Map<IAtom, IAtom> acceptedSolution = new HashMap<>();
-
-        if (!isomorphism.getFirstAtomMapping().isEmpty()) {
-            for (IAtom a : isomorphism.getFirstAtomMapping().getMappingsByAtoms().keySet()) {
-                IAtom refA = getAtomByID(getCompound1(), a);
-                IAtom refB = getAtomByID(getCompound2(),
-                        isomorphism.getFirstAtomMapping().getMappingsByAtoms().get(a));
-                acceptedSolution.put(refA, refB);
-            }
-            ac1 = reduceAtomContainer(ac1, isomorphism.getFirstAtomMapping().getMappingsByAtoms().keySet());
-            ac2 = reduceAtomContainer(ac2, isomorphism.getFirstAtomMapping().getMappingsByAtoms().values());
-            energy += isomorphism.getEnergyScore(0);
-            fragmentSize += isomorphism.getFragmentSize(0);
-            stereoScore += isomorphism.getStereoScore(0);
+        if (DEBUG3) {
+            System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-        if (ac1.getAtomCount() > 0 && ac2.getAtomCount() > 0) {
-
-            if (DEBUG2) {
-                out.println(smiles.create(getCompound1()) + "ac1 reduced by "
-                        + (getCompound1().getAtomCount() - ac1.getAtomCount())
-                        + ", " + smiles.create(getCompound2()) + " ac2 reduced by "
-                        + (getCompound2().getAtomCount() - ac2.getAtomCount()));
+        if (expectedMaxGraphmatch <= 1
+                || ac1.getAtomCount() == 1
+                || ac2.getAtomCount() == 1
+                || ac1.getAtomCount() == ac2.getAtomCount()) {
+            if (DEBUG3) {
+                System.out.println("CASE 1");
             }
-            isomorphism = new Isomorphism(ac1, ac2, VFLibMCS, false, ringMatcher, true);
-            isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-            List<AtomAtomMapping> allAtomMapping = isomorphism.getAllAtomMapping();
-            int solIndex = 0;
-            for (AtomAtomMapping s : allAtomMapping) {
-                boolean stitchingFeasible = isStitchingFeasible(getCompound1(),
-                        getCompound2(), acceptedSolution, s);
-                if (stitchingFeasible) {
-                    s.getMappingsByAtoms().keySet().stream().forEach((a) -> {
-                        IAtom refA = getAtomByID(getCompound1(), a);
-                        IAtom refB = getAtomByID(getCompound2(), s.getMappingsByAtoms().get(a));
-                        acceptedSolution.put(refA, refB);
-                    });
-                    energy += isomorphism.getEnergyScore(solIndex);
-                    fragmentSize += isomorphism.getFragmentSize(solIndex);
-                    stereoScore += isomorphism.getStereoScore(solIndex);
-                    ac1 = reduceAtomContainer(ac1, s.getMappingsByAtoms().keySet());
-                    ac2 = reduceAtomContainer(ac2, s.getMappingsByAtoms().values());
-                    break;
-                }
-                solIndex++;
-            }
-
             /*
-             * In case of Complete subgraph, don't use Energy filter
-             *
+             * This handles large aliphatics to ring system (ex: R09907)
              */
-            AtomAtomMapping combi = new AtomAtomMapping(getCompound1(), getCompound2());
-
-            acceptedSolution.keySet().stream().forEach((a) -> {
-                IAtom b = acceptedSolution.get(a);
-                combi.put(a, b);
-            });
-            MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(), isomorphism.getQuery(), isomorphism.getTarget(), combi);
-            mcs.setEnergy(energy);
-            mcs.setFragmentSize(fragmentSize);
-            mcs.setStereoScore(stereoScore);
-
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                    false, isHasPerfectRings(), false);
+        } else if (expectedMaxGraphmatch >= 30
+                && ConnectivityChecker.isConnected(getCompound1())) {
+            if (DEBUG3) {
+                System.out.println("CASE 2");
+            }
+            /*
+             * Although the bond changes are set to true but its only used by filters
+             */
+//            isomorphism = new Isomorphism(ac1, ac2, Algorithm.MCSPlus,
+//                    false, isHasPerfectRings(), !isHasPerfectRings());
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                    false, isHasPerfectRings(), !isHasPerfectRings());
+        } else if (expectedMaxGraphmatch < 30) {
+            if (DEBUG3) {
+                System.out.println("CASE 3");
+            }
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.CDKMCS,
+                    false, isHasPerfectRings(), !isHasPerfectRings());
+        } else {
+            if (DEBUG3) {
+                System.out.println("CASE 4");
+            }
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                    false, isHasPerfectRings(), !isHasPerfectRings());
         }
-
+        isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+        if (DEBUG3) {
+            try {
+                System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
+                        + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
+            } catch (CloneNotSupportedException | CDKException e) {
+                LOGGER.error(SEVERE, "Error in computing MCS ", e);
+            }
+        }
         /*
-         * In case of Complete subgraph, don't use Energy filter
-         *
+        * In case of Complete subgraph, don't use Energy filter
+        *
          */
-        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(), isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
+        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
+                isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
         mcs.setEnergy(isomorphism.getEnergyScore(0));
         mcs.setFragmentSize(isomorphism.getFragmentSize(0));
         mcs.setStereoScore(isomorphism.getStereoScore(0));
-
         if (DEBUG1) {
             long stopTime = currentTimeMillis();
             long time = stopTime - startTime;
             printMatch(isomorphism);
-            out.println("\" Time:\" " + time);
+            System.out.println("\" Time:\" " + time);
 
         }
-
         return mcs;
-    }
-
-    private IAtomContainer reduceAtomContainer(IAtomContainer ac,
-            Collection<IAtom> keySet) throws CloneNotSupportedException {
-        IAtomContainer ac_new = ac.getBuilder().newInstance(IAtomContainer.class);
-        HashMap<IAtom, IAtom> ref_new_atom = new HashMap<>();
-        for (int i = 0; i < ac.getAtomCount(); i++) {
-            IAtom ref = ac.getAtom(i);
-            if (!keySet.contains(ref)) {
-                IAtom a = ref.clone();
-                a.setID(ref.getID());
-                ac_new.addAtom(a);
-                ref_new_atom.put(ref, a);
-            }
-        }
-
-        for (IBond b : ac.bonds()) {
-            if (keySet.contains(b.getAtom(0)) || keySet.contains(b.getAtom(1))) {
-                continue;
-            }
-            IAtom a1 = ref_new_atom.get(b.getAtom(0));
-            IAtom a2 = ref_new_atom.get(b.getAtom(1));
-            IBond.Order order = b.getOrder();
-            ac_new.addBond(ac_new.indexOf(a1), ac_new.indexOf(a2), order);
-        }
-
-        ac_new.setID(ac.getID());
-        return ac_new;
-    }
-
-    private synchronized IAtom getAtomByID(IAtomContainer ac, IAtom atom) {
-        if (atom.getID() == null) {
-            return null;
-        }
-        for (IAtom a : ac.atoms()) {
-            if (a.getID().equals(atom.getID())) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    private boolean isStitchingFeasible(IAtomContainer compound1, IAtomContainer compound2,
-            Map<IAtom, IAtom> map, AtomAtomMapping mapping) {
-
-        boolean t1 = false;
-        boolean t2 = false;
-        for (IAtom a : map.keySet()) {
-            IAtom refAtomA = getAtomByID(compound1, a);
-            for (IAtom b : mapping.getMappingsByAtoms().keySet()) {
-                IAtom refAtomB = getAtomByID(compound1, b);
-                IBond bond = compound1.getBond(refAtomA, refAtomB);
-                if (bond != null) {
-                    t1 = true;
-                    break;
-                }
-            }
-        }
-
-        for (IAtom a : map.values()) {
-            IAtom refAtomA = getAtomByID(compound2, a);
-            for (IAtom b : mapping.getMappingsByAtoms().values()) {
-                IAtom refAtomB = getAtomByID(compound2, b);
-                IBond bond = compound2.getBond(refAtomA, refAtomB);
-                if (bond != null) {
-                    t2 = true;
-                    break;
-                }
-            }
-        }
-        return t1 && t2;
     }
 
     private IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
@@ -740,18 +632,13 @@ public class MCSThread implements Callable<MCSSolution> {
         return hasRings;
     }
 
-    void setEductCount(Integer eductCount) {
-        this.eductCount = eductCount;
-    }
-
-    void setProductCount(Integer productCount) {
-        this.productCount = productCount;
-    }
-
     /*
      * Check if fragmented container has single atom
      */
     private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+        if (DEBUG1) {
+            System.out.println("isMoleculeConnected");
+        }
         boolean connected1 = true;
 
         IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);

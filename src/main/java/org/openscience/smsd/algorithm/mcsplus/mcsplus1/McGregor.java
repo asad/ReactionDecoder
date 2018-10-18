@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus1;
+package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_structure;
+import static org.openscience.smsd.algorithm.mcsplus.mcsplus1.BinaryTree.remove_tree_structure;
 
 /**
  * Class which reports MCS solutions based on the McGregor algorithm published
@@ -52,16 +52,16 @@ import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_str
  */
 public class McGregor extends Utility {
 
-    protected final List<Integer> C_edges;
-    protected final List<Integer> D_edges;
+    protected final List<Integer> c_edges;
+    protected final List<Integer> d_edges;
 
     private List<String> c_tab1_copy;
     private List<String> c_tab2_copy;
 
     private BinaryTree last, first;
 
-    protected int C_edges_size;
-    protected int D_edges_size;
+    protected int c_edges_size;
+    protected int d_edges_size;
 
     protected int best_clique_size;
 
@@ -147,8 +147,8 @@ public class McGregor extends Utility {
         this.ac2 = file2.getAtomContainer();
 
         this.comp_graph_nodes = new ArrayList<>();
-        this.C_edges = new ArrayList<>();//Initialize the C_edges Vector
-        this.D_edges = new ArrayList<>();//Initialize the D_edges Vector
+        this.c_edges = new ArrayList<>();//Initialize the c_edges Vector
+        this.d_edges = new ArrayList<>();//Initialize the d_edges Vector
         this.comp_graph_nodes_C_zero = new ArrayList<>();//Initialize the comp_graph_nodes_C_zero Vector
 
         this.c_tab1_copy = new ArrayList<>();

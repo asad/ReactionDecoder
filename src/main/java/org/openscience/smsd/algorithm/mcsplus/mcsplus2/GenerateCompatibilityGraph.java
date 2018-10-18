@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -46,8 +46,8 @@ import org.openscience.smsd.helper.LabelContainer;
  * This class generates compatibility graph between query and target molecule.
  * It also marks edges in the compatibility graph as c-edges or d-edges.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
@@ -95,11 +95,12 @@ public final class GenerateCompatibilityGraph implements Serializable {
         /*
          Generate all possible graphs when no ring match or atom type is required
          */
-        /*
+ /*
          Modification for AAM only
          */
         if ((!shouldMatchBonds || !matchAtomType)
                 && source.getAtomCount() > 30 && target.getAtomCount() > 30) {
+            System.out.println("CASE LARGE GRAPH");
             compatibilityGraphNodesIfCEdgeIsZero();
             compatibilityGraphCEdgeZero();
             clearCompGraphNodesCZero();
@@ -137,6 +138,9 @@ public final class GenerateCompatibilityGraph implements Serializable {
             }
 
             IAtom refAtom = atomCont.getAtom(i);
+            if (refAtom == null) {
+                return label_list;
+            }
             /*
              * Important Step: Discriminate between source atom types
              */
@@ -354,6 +358,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
             }
         }
         list.clear();
+        System.out.println("count_nodes " + count_nodes);
         return count_nodes;
     }
 
@@ -387,12 +392,16 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
                     if (reactantBond != null && productBond != null) {
                         addZeroEdges(reactantBond, productBond, a, b);
-                    } else if (reactantBond == null && productBond == null
-                            && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
-                        //50 unique condition to speed up the AAM
+                    } else if (reactantBond == null && productBond == null) {
                         dEdges.add((a / 4) + 1);
                         dEdges.add((b / 4) + 1);
                     }
+//                    else if (reactantBond == null && productBond == null
+//                            && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
+//                        //50 unique condition to speed up the AAM
+//                        dEdges.add((a / 4) + 1);
+//                        dEdges.add((b / 4) + 1);
+//                    }
                 }
             }
         }
@@ -400,6 +409,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
         //Size of C and D edges of the compatibility graph
         cEdgesSize = cEdges.size();
         dEdgesSize = dEdges.size();
+        System.out.println("cEdgesSize " + cEdgesSize);
+        System.out.println("dEdgesSize " + dEdgesSize);
         return 0;
     }
 

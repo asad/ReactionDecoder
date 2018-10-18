@@ -206,8 +206,7 @@ public class GraphMatcher extends Debugger {
                          */
                         aromaticity.apply(educt);
                         aromaticity.apply(product);
-                        smilesGenerator = new SmilesGenerator(SmiFlavor.Unique
-                                | SmiFlavor.Stereo
+                        smilesGenerator = new SmilesGenerator(SmiFlavor.Stereo
                                 | SmiFlavor.AtomAtomMap);
                         out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
                         out.println(product.getID() + " PD: " + smilesGenerator.create(product));
@@ -227,22 +226,16 @@ public class GraphMatcher extends Debugger {
                     case MIN:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductCount(eductCount);
-                        mcsThread.setProductCount(productCount);
                         break;
 
                     case MAX:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductCount(eductCount);
-                        mcsThread.setProductCount(productCount);
                         break;
 
                     case MIXTURE:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, false);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductCount(eductCount);
-                        mcsThread.setProductCount(productCount);
                         break;
 
                     case RINGS:
@@ -256,8 +249,6 @@ public class GraphMatcher extends Debugger {
                          */
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductCount(eductCount);
-                        mcsThread.setProductCount(productCount);
                         break;
 
                     default:

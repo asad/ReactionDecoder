@@ -19,12 +19,14 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
+import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -33,8 +35,9 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.mcsplus2.BKKCKCF;
-import org.openscience.smsd.algorithm.mcsplus2.GenerateCompatibilityGraph;
+import org.openscience.smsd.algorithm.mcsplus.Result;
+import org.openscience.smsd.algorithm.mcsplus.mcsplus2.BKKCKCF;
+import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.interfaces.Algorithm;
 
@@ -54,12 +57,13 @@ import org.openscience.smsd.interfaces.Algorithm;
  */
 public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 
+    private final boolean DEBUG = false;
     private final IAtomContainer source;
     private final IAtomContainer target;
     private final List<AtomAtomMapping> allCliqueAtomMCS;
     private final boolean ringMatch;
     private final Algorithm algorithm;
-    private final static ILoggingTool Logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSSeedGenerator.class);
     private final boolean bondMatch;
     private final boolean matchAtomType;
@@ -95,17 +99,28 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 
     @Override
     public List<AtomAtomMapping> call() throws Exception {
-//        System.out.println("ac1: " + this.source.getAtomCount());
-//        System.out.println("ac2: " + this.target.getAtomCount());
+        if (DEBUG) {
+            System.out.println("ac1: " + this.source.getAtomCount());
+            System.out.println("ac2: " + this.target.getAtomCount());
+        }
         switch (algorithm) {
             case CDKMCS:
-                //            System.out.println("Calling CDKMCS " + bondMatch + " " + ringMatch);
+                if (DEBUG) {
+                    System.out.println("Calling CDKMCS for seeding " + bondMatch + " " + ringMatch);
+                }
                 List<AtomAtomMapping> addUIT = addUIT();
-//            System.out.println("addUIT " + addUIT.iterator().next().getCount());
+                if (DEBUG) {
+                    System.out.println("addUIT " + addUIT.iterator().next().getCount());
+                }
                 return addUIT;
             case MCSPlus:
+                if (DEBUG) {
+                    System.out.println("Calling MCSPLUS for seeding " + bondMatch + " " + ringMatch);
+                }
                 List<AtomAtomMapping> addKochCliques = addKochCliques();
-//            System.out.println("MCSPLUS " + addKochCliques.iterator().next().getCount());
+                if (DEBUG) {
+                    System.out.println("MCSPLUS " + addKochCliques.iterator().next().getCount());
+                }
                 return addKochCliques;
             default:
                 return Collections.unmodifiableList(allCliqueAtomMCS);
@@ -128,13 +143,62 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             ac1 = target;
             ac2 = source;
         }
+        if (DEBUG) {
+            System.out.println("Starting GenerateCompatibilityGraph");
+        }
 
-        GenerateCompatibilityGraph gcg
-                = new GenerateCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
-        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-        List<Integer> cEdges = gcg.getCEgdes();
-        List<Integer> dEdges = gcg.getDEgdes();
+        /*
+         *   Assign the threads
+         */
+        int threadsAvailable = getRuntime().availableProcessors() - 1;
+        if (threadsAvailable == 0) {
+            threadsAvailable = 1;
+        }
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
+        GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
+                ac1.getAtomCount(), ac1, ac2, bondMatch, ringMatch, matchAtomType);
+
+        List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
+        if (DEBUG) {
+            System.out.println("mergedResult = " + mergedResult.size());
+        }
+
+        List<Integer> comp_graph_nodes = new ArrayList<>();
+        List<Integer> cEdges = new ArrayList<>();
+        List<Integer> dEdges = new ArrayList<>();
+
+        /*
+         * Collate all the results
+         */
+        mergedResult.stream().map((r) -> {
+            comp_graph_nodes.addAll(r.getCompGraphNodes());
+            return r;
+        }).map((r) -> {
+            cEdges.addAll(r.getCEgdes());
+            return r;
+        }).forEachOrdered((r) -> {
+            dEdges.addAll(r.getDEgdes());
+        });
+
+//        GenerateCompatibilityGraph gcg
+//                = new GenerateCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+//        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+//        List<Integer> cEdges = gcg.getCEgdes();
+//        List<Integer> dEdges = gcg.getDEgdes();
+        if (DEBUG) {
+            System.out.println("Ending GenerateCompatibilityGraphFJ");
+        }
+        if (DEBUG) {
+            System.out.println("Starting BKKCKCF");
+            System.out.println("comp_graph_nodes " + comp_graph_nodes.size());
+            System.out.println("cEdges " + cEdges.size());
+            System.out.println("dEdges " + dEdges.size());
+        }
         BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
+        if (DEBUG) {
+            System.out.println("Ending BKKCKCF");
+        }
         Stack<List<Integer>> maxCliqueSet = new Stack<>();
         maxCliqueSet.addAll(init.getMaxCliqueSet());
         Collections.sort(maxCliqueSet, (List<Integer> a1, List<Integer> a2) -> a2.size() - a1.size() // assumes you want biggest to smallest
@@ -162,7 +226,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        LOGGER.error(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -172,7 +236,8 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             }
             maxCliqueSet.pop();
         }
-        gcg.clear();
+        //gcg.clear();
+        mergedResult.clear();
         return Collections.unmodifiableList(allCliqueAtomMCS);
     }
 
@@ -227,7 +292,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        LOGGER.error(Level.SEVERE, null, ex);
                     }
                 }
             });

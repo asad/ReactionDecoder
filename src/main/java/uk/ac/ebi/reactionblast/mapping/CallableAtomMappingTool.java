@@ -140,15 +140,14 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction1, MAX, removeHydrogen);
             cs.submit(maxThread);
             jobCounter++;
-
             /*
              * MIN Algorithm
              */
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("c) Local Model: ");
+            LOGGER.info("b) Local Model: ");
             if (DEBUG) {
                 out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP c: Local Model Standardize Reactions" + NEW_LINE);
+                out.println(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction2 = null;
             try {
@@ -164,10 +163,10 @@ public class CallableAtomMappingTool implements Serializable {
              * MIXTURE Algorithm
              */
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("b) Mixture Model: ");
+            LOGGER.info("c) Mixture Model: ");
             if (DEBUG) {
                 out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP b: Mixture Model Standardize Reactions" + NEW_LINE);
+                out.println(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction3 = null;
             try {

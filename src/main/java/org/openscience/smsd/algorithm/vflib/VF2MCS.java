@@ -176,7 +176,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                 LOGGER.error(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
 
             int jobCounter = 0;
@@ -186,7 +186,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
             }
             if (targetClone != null) {
                 if (targetClone.getBondCount() > 0) {
-                    MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.CDKMCS);
+                    MCSSeedGenerator mcsSeedGeneratorUIT
+                            = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.CDKMCS);
                     cs.submit(mcsSeedGeneratorUIT);
                     jobCounter++;
                 }
@@ -195,7 +196,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
             if (DEBUG) {
                 System.out.println(" CALLING MCSPLUS ");
             }
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorKoch
+                    = new MCSSeedGenerator(source, targetClone, shouldMatchBonds, shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 
@@ -232,7 +234,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
 
             long stopTimeSeeds = System.nanoTime();
             if (DEBUG) {
-                System.out.println("time taken for seeds: " + TimeUnit.MILLISECONDS.convert((stopTimeSeeds - startTimeSeeds), TimeUnit.NANOSECONDS) + " ms.");
+                System.out.println("time taken for seeds: "
+                        + TimeUnit.MILLISECONDS.convert((stopTimeSeeds - startTimeSeeds),
+                                TimeUnit.NANOSECONDS) + " ms.");
             }
             /*
              * Store largest MCS seeds generated from MCSPlus and UIT
@@ -431,7 +435,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 }
 
             } catch (CloneNotSupportedException ex) {
-                 LOGGER.error(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
 
             MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);

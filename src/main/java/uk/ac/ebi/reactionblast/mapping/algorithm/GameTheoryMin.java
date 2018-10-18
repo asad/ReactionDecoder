@@ -71,7 +71,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
 
-
 final class GameTheoryMin extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
@@ -134,11 +133,17 @@ final class GameTheoryMin extends BaseGameTheory {
 
         if (winner.getFlag()) {
 
-//            System.out.println("**********Updated Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Mapping**************");
+            }
             UpdateMapping();
-//            System.out.println("**********Updated Matrix**************");
+            if (DEBUG) {
+                System.out.println("**********Updated Matrix**************");
+            }
             UpdateMatrix(mh, removeHydrogen);
-//            System.out.println("**********Generate Mapping**************");
+            if (DEBUG) {
+                System.out.println("**********Generate Mapping**************");
+            }
             GenerateMapping(false);
         }
     }

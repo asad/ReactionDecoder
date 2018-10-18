@@ -24,8 +24,14 @@
 package org.openscience.smsd;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import static java.util.Collections.sort;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -107,6 +113,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
+    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
@@ -115,11 +122,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private double bondInSensitiveMcGregor = -1;//mins
 
     /**
-     * Initialize query and target molecules.
+     * Initialize query and target molecules.Note: Here its assumed that
+     * hydrogens are implicit and user has called these two methods
+     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
+     * initializing calling this method.
      *
-     * Note: Here its assumed that hydrogens are implicit and user has called
-     * these two methods percieveAtomTypesAndConfigureAtoms and
-     * CDKAromicityDetector before initializing calling this method.
      *
      * @param query query molecule
      * @param target target molecule This is the algorithm factory and entry
@@ -128,11 +135,12 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
      * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public Isomorphism(
             IQueryAtomContainer query,
             IAtomContainer target,
-            Algorithm algorithmType) {
+            Algorithm algorithmType) throws CDKException {
         super(query, target);
         this.algorithmType = algorithmType;
         mcsBuilder(query, target);
@@ -140,11 +148,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     /**
-     * Initialize query and target molecules.
+     * Initialize query and target molecules.Note: Here its assumed that
+     * hydrogens are implicit and user has called these two methods
+     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
+     * initializing calling this method.
      *
-     * Note: Here its assumed that hydrogens are implicit and user has called
-     * these two methods percieveAtomTypesAndConfigureAtoms and
-     * CDKAromicityDetector before initializing calling this method.
      *
      * @param query query mol
      * @param target target mol This is the algorithm factory and entry port for
@@ -156,6 +164,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * @param bondTypeFlag Match bond types (i.e. double to double etc)
      * @param matchRings Match ring atoms and ring size
      * @param matchAtomType
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public Isomorphism(
             IAtomContainer query,
@@ -163,7 +172,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             Algorithm algorithmType,
             boolean bondTypeFlag,
             boolean matchRings,
-            boolean matchAtomType) {
+            boolean matchAtomType) throws CDKException {
         super(query, target, bondTypeFlag, matchRings, matchAtomType);
         this.algorithmType = algorithmType;
         if (super.isMatchRings()) {
@@ -177,7 +186,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         super.setSubgraph(isSubgraph());
     }
 
-    private synchronized void mcsBuilder(IAtomContainer mol1, IAtomContainer mol2) {
+    private synchronized void mcsBuilder(IAtomContainer mol1, IAtomContainer mol2) throws CDKException {
         int rBondCount = mol1.getBondCount();
         int pBondCount = mol2.getBondCount();
 
@@ -191,7 +200,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         }
     }
 
-    private synchronized void mcsBuilder(IQueryAtomContainer mol1, IAtomContainer mol2) {
+    private synchronized void mcsBuilder(IQueryAtomContainer mol1, IAtomContainer mol2) throws CDKException {
 
         int rBondCount = mol1.getBondCount();
         int pBondCount = mol2.getBondCount();
@@ -206,28 +215,44 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         }
     }
 
-    private synchronized void chooseAlgorithm() {
+    private synchronized void chooseAlgorithm() throws CDKException {
 
         switch (algorithmType) {
             case CDKMCS:
-//                System.out.println("Calling CDKMCS ");
+                if (DEBUG) {
+                    System.out.println("Calling CDKMCS ");
+                }
                 cdkMCSAlgorithm();
-//                System.out.println("Calling DONE CDKMCS ");
+                if (DEBUG) {
+                    System.out.println("Calling DONE CDKMCS ");
+                }
                 break;
             case DEFAULT:
-//                System.out.println("Calling DEFAULT ");
+                if (DEBUG) {
+                    System.out.println("Calling DEFAULT ");
+                }
                 defaultMCSAlgorithm();
-//                System.out.println("Calling DONE DEFAULT ");
+                if (DEBUG) {
+                    System.out.println("Calling DONE DEFAULT ");
+                }
                 break;
             case MCSPlus:
-//                System.out.println("Calling MCSPlus ");
+                if (DEBUG) {
+                    System.out.println("Calling MCSPlus ");
+                }
                 mcsPlusAlgorithm();
-//                System.out.println("Calling DONE MCSPlus ");
+                if (DEBUG) {
+                    System.out.println("Calling DONE MCSPlus ");
+                }
                 break;
             case VFLibMCS:
-//                System.out.println("Calling VFLibMCS ");
+                if (DEBUG) {
+                    System.out.println("Calling VFLibMCS ");
+                }
                 vfLibMCSAlgorithm();
-//                System.out.println("Calling DONE VFLibMCS ");
+                if (DEBUG) {
+                    System.out.println("Calling DONE VFLibMCS ");
+                }
                 break;
         }
     }
@@ -244,14 +269,23 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         return mcs.isTimeout();
     }
 
-    private synchronized boolean mcsPlusAlgorithm() {
+    private synchronized boolean mcsPlusAlgorithm() throws CDKException {
         IResults mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (isMatchBonds()) {
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+        } else if (isMatchBonds() || getQuery().getAtomCount() > 20) {
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         } else {
-            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -259,6 +293,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     private synchronized boolean substructureAlgorithm() throws CDKException {
+        if (DEBUG) {
+            System.out.println("Check substructureAlgorithm");
+        }
         Substructure mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
             mcs = new Substructure((IQueryAtomContainer) getQuery(), getTarget(), true);
@@ -292,19 +329,90 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
     private synchronized void defaultMCSAlgorithm() {
         try {
-            boolean substructureAlgorithm = substructureAlgorithm();
+            boolean substructureAlgorithm = false;
+
+            if (DEBUG) {
+                System.out.println("defaultMCSAlgorithm - substructure check ");
+            }
+            if (isMatchBonds()
+                    && getQuery().getAtomCount() > 1
+                    && getTarget().getAtomCount() > 1) {
+                substructureAlgorithm = substructureAlgorithm();
+            }
+            if (DEBUG) {
+                System.out.println("defaultMCSAlgorithm - no substructure ");
+            }
             if (!substructureAlgorithm) {
-                boolean timeoutMCS1 = cdkMCSAlgorithm();
-                if ((getMappingCount() == 0 && timeoutMCS1)
-                        || (timeoutMCS1 && getMappingCount() > 0
-                        && (getFirstAtomMapping().getCount() != getQuery().getAtomCount()
-                        || getFirstAtomMapping().getCount() != getTarget().getAtomCount()))) {
+                if (DEBUG) {
+                    System.out.println("defaultMCSAlgorithm - Calling CDKMCS ");
+                }
+                if (isMatchBonds() || isMatchRings()) {
+                    cdkMCSAlgorithm();
+                }
+
+                if (DEBUG) {
+                    System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
+                    System.out.println("defaultMCSAlgorithm - Done CDKMCS ");
+                }
+
+                int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
+
+                if ((getMappingCount() == 0
+                        || (getFirstAtomMapping().getCount() != expectedMaxGraphmatch))) {
+                    if (DEBUG) {
+                        System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
+                    }
                     vfLibMCSAlgorithm();
+                    if (DEBUG) {
+                        System.out.println("defaultMCSAlgorithm - Done vfLibMCSAlgorithm ");
+                    }
                 }
             }
         } catch (CDKException e) {
             LOGGER.error(Level.SEVERE, null, e);
         }
+    }
+
+    private int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
+
+        /*
+         a={c,c,c,o,n}
+         b={c,c,c,p}
+       
+         expectedMaxGraphmatch=3;
+         */
+        List<String> atomUniqueCounter1 = new ArrayList<>();
+        List<String> atomUniqueCounter2 = new ArrayList<>();
+
+        for (IAtom a : q.atoms()) {
+            String hyb = a.getHybridization() == UNSET
+                    ? a.getSymbol() : a.getAtomTypeName();
+            atomUniqueCounter1.add(hyb);
+        }
+
+        for (IAtom b : t.atoms()) {
+            String hyb = b.getHybridization() == UNSET
+                    ? b.getSymbol() : b.getAtomTypeName();
+            atomUniqueCounter2.add(hyb);
+        }
+
+        sort(atomUniqueCounter1);
+        sort(atomUniqueCounter2);
+
+        if (atomUniqueCounter1.isEmpty()) {
+            return 0;
+        }
+        List<String> common = new LinkedList<>(atomUniqueCounter1);
+        common.retainAll(atomUniqueCounter2);
+
+        if (DEBUG) {
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            System.out.println("common " + common.size());
+        }
+        atomUniqueCounter1.clear();
+        atomUniqueCounter2.clear();
+        return common.size();
     }
 
     /**

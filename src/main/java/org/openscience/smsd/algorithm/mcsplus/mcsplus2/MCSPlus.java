@@ -20,15 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
 
+import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import java.io.IOException;
+import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -36,22 +39,23 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import org.openscience.smsd.algorithm.mcsplus.Result;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
  * This class handles MCS plus algorithm which is a combination of c-clique
  * algorithm and McGregor algorithm.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public final class MCSPlus {
-    
+
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSPlus.class);
-
+    private final static boolean DEBUG = false;
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
     private final IAtomContainer ac1;
@@ -92,7 +96,11 @@ public final class MCSPlus {
      * @param ac2
      * @param matchAtomType
      */
-    public MCSPlus(IAtomContainer ac1, IAtomContainer ac2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public MCSPlus(IAtomContainer ac1,
+            IAtomContainer ac2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) {
         this.shouldMatchRings = shouldMatchRings;
         this.shouldMatchBonds = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
@@ -106,7 +114,8 @@ public final class MCSPlus {
      * @param ac1
      * @param ac2
      */
-    public MCSPlus(IQueryAtomContainer ac1, IAtomContainer ac2) {
+    public MCSPlus(IQueryAtomContainer ac1,
+            IAtomContainer ac2) {
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
         this.matchAtomType = true;
@@ -128,20 +137,62 @@ public final class MCSPlus {
 
         List<List<Integer>> extendMappings = null;
 
-//        System.out.println("ac1 : " + ac1.getAtomCount());
-//        System.out.println("ac2 : " + ac2.getAtomCount());
+        if (DEBUG) {
+            System.out.println("ac1 : " + ac1.getAtomCount());
+            System.out.println("ac2 : " + ac2.getAtomCount());
+        }
         setIterationManager(new IterationManager((ac1.getAtomCount() + ac2.getAtomCount())));
         try {
-            GenerateCompatibilityGraph gcg = new GenerateCompatibilityGraph(ac1, ac2, isMatchBonds(), isMatchRings(), matchAtomType);
-            List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+            /*
+             *   Assign the threads
+             */
+            int threadsAvailable = getRuntime().availableProcessors() - 1;
+            if (threadsAvailable == 0) {
+                threadsAvailable = 1;
+            }
 
-            List<Integer> cEdges = gcg.getCEgdes();
-            List<Integer> dEdges = gcg.getDEgdes();
+            if (DEBUG) {
+                System.out.println("Calling Fork and Join " + threadsAvailable);
+            }
+
+            ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
+            GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
+                    ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+
+            List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
+            if (DEBUG) {
+                System.out.println("Merged Results = " + mergedResult.size());
+            }
+
+            List<Integer> comp_graph_nodes = new ArrayList<>();
+            List<Integer> cEdges = new ArrayList<>();
+            List<Integer> dEdges = new ArrayList<>();
+
+            /*
+             * Collate all the results
+             */
+            mergedResult.stream().map((r) -> {
+                comp_graph_nodes.addAll(r.getCompGraphNodes());
+                return r;
+            }).map((r) -> {
+                cEdges.addAll(r.getCEgdes());
+                return r;
+            }).forEachOrdered((r) -> {
+                dEdges.addAll(r.getDEgdes());
+            });
+
+//        GenerateCompatibilityGraph gcg
+//                = new GenerateCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+//        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+//        List<Integer> cEdges = gcg.getCEgdes();
+//        List<Integer> dEdges = gcg.getDEgdes();
 //
-//            System.out.println("**************************************************");
-//            System.out.println("C_edges: " + cEdges.size());
-//            System.out.println("D_edges: " + dEdges.size());
-//            System.out.println("comp_graph_nodes: " + comp_graph_nodes);
+            if (DEBUG) {
+                System.out.println("**************************************************");
+                System.out.println("C_edges: " + cEdges.size());
+                System.out.println("D_edges: " + dEdges.size());
+                System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
+            }
             BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
             Stack<List<Integer>> maxCliqueSet = new Stack<>();
             maxCliqueSet.addAll(init.getMaxCliqueSet());
@@ -161,7 +212,8 @@ public final class MCSPlus {
             }
 
             //clear all the compatibility graph content
-            gcg.clear();
+            //gcg.clear();
+            mergedResult.clear();
 //            System.out.println("mappings: " + mappings.size());
             if (ac1 instanceof IQueryAtomContainer) {
                 extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
@@ -171,7 +223,7 @@ public final class MCSPlus {
 //            int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
 //            System.out.println("extendMappings: " + size);
         } catch (IOException ex) {
-             LOGGER.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         return extendMappings;
     }

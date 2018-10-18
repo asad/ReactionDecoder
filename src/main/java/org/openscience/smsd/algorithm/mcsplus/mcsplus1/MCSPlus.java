@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus1;
+package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -359,32 +359,32 @@ public class MCSPlus extends Filter {
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
 
-                        C_edges.add(((a / 3) + 1));
-                        C_edges.add(((b / 3) + 1));
+                        c_edges.add(((a / 3) + 1));
+                        c_edges.add(((b / 3) + 1));
                     }
 //
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        D_edges.add((a / 3) + 1);
-                        D_edges.add((b / 3) + 1);
+                        d_edges.add((a / 3) + 1);
+                        d_edges.add((b / 3) + 1);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (connectedFlag && !matchBondFlag) {
-                        D_edges.add((a / 3) + 1);
-                        D_edges.add((b / 3) + 1);
+                        d_edges.add((a / 3) + 1);
+                        d_edges.add((b / 3) + 1);
                     }
                 }
             }
         }
 
         //print R and Q edges of the compatibility graph
-        C_edges_size = C_edges.size();
-        D_edges_size = D_edges.size();
+        c_edges_size = c_edges.size();
+        d_edges_size = d_edges.size();
 
         if (DEBUG) {
-            System.out.println("C_edges_size " + C_edges_size);
-            System.out.println("D_edges_size " + D_edges_size);
+            System.out.println("C_edges_size " + c_edges_size);
+            System.out.println("D_edges_size " + d_edges_size);
         }
 
         return 0;
@@ -517,31 +517,31 @@ public class MCSPlus extends Filter {
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
 
-                        C_edges.add(((a / 4) + 1));
-                        C_edges.add(((b / 4) + 1));
+                        c_edges.add(((a / 4) + 1));
+                        c_edges.add(((b / 4) + 1));
                     }
 //
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        D_edges.add((a / 4) + 1);
-                        D_edges.add((b / 4) + 1);
+                        d_edges.add((a / 4) + 1);
+                        d_edges.add((b / 4) + 1);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (connectedFlag && !matchBondFlag) {
-                        D_edges.add((a / 4) + 1);
-                        D_edges.add((b / 4) + 1);
+                        d_edges.add((a / 4) + 1);
+                        d_edges.add((b / 4) + 1);
                     }
                 }
             }
         }
 
         //print R and Q edges of the compatibility graph
-        C_edges_size = C_edges.size();
-        D_edges_size = D_edges.size();
+        c_edges_size = c_edges.size();
+        d_edges_size = d_edges.size();
         if (DEBUG) {
-            System.out.println("C_edges_size " + C_edges_size);
-            System.out.println("D_edges_size " + D_edges_size);
+            System.out.println("C_edges_size " + c_edges_size);
+            System.out.println("D_edges_size " + d_edges_size);
         }
         return 0;
     }
@@ -592,27 +592,27 @@ public class MCSPlus extends Filter {
 
         generate_compatibility_graph_nodes();
         generate_compatibility_graph();
-//        System.out.println("C_edges_size " + C_edges_size);
+//        System.out.println("c_edges_size " + c_edges_size);
 //        System.out.println("bond cound " + ac1.getBondCount());
 //        System.out.println("bond cound " + ac2.getBondCount());
-        if (C_edges_size == 0
-                || ((C_edges_size < this.ac1.getAtomCount() / 2
-                && C_edges_size < this.ac2.getAtomCount() / 2))
+        if (c_edges_size == 0
+                || ((c_edges_size < this.ac1.getAtomCount() / 2
+                && c_edges_size < this.ac2.getAtomCount() / 2))
                 && (this.ac1.getAtomCount() / 2 < 30
                 && this.ac2.getAtomCount() / 2 < 30)) {
 
 //            System.out.println("Switching to complex mode ");
             comp_graph_nodes.clear();
-            C_edges.clear();
-            D_edges.clear();
-            C_edges_size = 0;
-            D_edges_size = 0;
+            c_edges.clear();
+            d_edges.clear();
+            c_edges_size = 0;
+            d_edges_size = 0;
             generate_compatibility_graph_nodes_if_C_edge_number_is_zero();
             generate_compatibility_graph_if_C_edge_number_is_zero();
             comp_graph_nodes_C_zero.clear();
         }
 
-        BKKCKCF cliqueFinder = new BKKCKCF(comp_graph_nodes, C_edges, D_edges);
+        BKKCKCF cliqueFinder = new BKKCKCF(comp_graph_nodes, c_edges, d_edges);
         cliqueFinder.init_Algorithm();
         this.max_Cliques_Set = cliqueFinder.getMax_Cliques_Set();
 
@@ -654,10 +654,10 @@ public class MCSPlus extends Filter {
         this.comp_graph_nodes_C_zero.clear();
         this.c_tab1.clear();
         this.c_tab2.clear();
-        this.C_edges.clear();
-        this.D_edges.clear();
-        this.C_edges_size = 0;
-        this.D_edges_size = 0;
+        this.c_edges.clear();
+        this.d_edges.clear();
+        this.c_edges_size = 0;
+        this.d_edges_size = 0;
     }
 
 }
