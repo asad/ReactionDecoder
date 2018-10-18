@@ -30,8 +30,8 @@ public class MCSTest {
         IAtomContainer query = sp.parseSmiles("Nc1ccccc1");
         IAtomContainer target = sp.parseSmiles("Nc1ccccc1");
 
-        org.openscience.smsd.algorithm.mcsplus1.MCSPlus mcs
-                = new org.openscience.smsd.algorithm.mcsplus1.MCSPlus(query, target, true, true, true);
+        org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlus mcs
+                = new org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlus(query, target, true, true, true);
         mcs.search_cliques();
         List<List<Integer>> overlaps = mcs.getFinalMappings();
         assertEquals(overlaps.size(), 2);
@@ -50,8 +50,8 @@ public class MCSTest {
         IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
         IAtomContainer target = sp.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 
-        org.openscience.smsd.algorithm.mcsplus1.MCSPlus mcs
-                    = new org.openscience.smsd.algorithm.mcsplus1.MCSPlus(query, target, true, false, false);
+        org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlus mcs
+                    = new org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlus(query, target, true, false, false);
             mcs.search_cliques();
         List<List<Integer>> overlaps = mcs.getFinalMappings();
         assertEquals(overlaps.size(), 1);
