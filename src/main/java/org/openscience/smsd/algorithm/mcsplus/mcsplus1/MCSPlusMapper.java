@@ -172,14 +172,17 @@ public final class MCSPlusMapper implements IResults {
         } catch (Exception ex) {
             LOGGER.error(SEVERE, null, ex);
         }
-
-//        System.out.println("Number of MCSPlus solution - : allMCS " + allMCS.size());
+        if (DEBUG) {
+            System.out.println("Number of MCSPlus solution - : allMCS " + allMCS.size());
+        }
     }
 
     private synchronized void setAllAtomMapping() {
-//        System.out.println("setAllAtomMapping");
-//        System.out.println("source size " + source.getAtomCount());
-//        System.out.println("target size " + target.getAtomCount());
+        if (DEBUG) {
+            System.out.println("setAllAtomMapping");
+            System.out.println("source size " + source.getAtomCount());
+            System.out.println("target size " + target.getAtomCount());
+        }
         try {
             allMCS.stream().map((solution) -> {
                 AtomAtomMapping atomMapping = new AtomAtomMapping(source, target);
@@ -199,8 +202,9 @@ public final class MCSPlusMapper implements IResults {
         } catch (Exception e) {
             LOGGER.error(SEVERE, null, e);
         }
-
-//        System.out.println("Number of MCSPlus solution - : allAtomMCS " + allAtomMCS.size());
+        if (DEBUG) {
+            System.out.println("Number of MCSPlus solution - : allAtomMCS " + allAtomMCS.size());
+        }
     }
 
     /**

@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mapping.graph;
 
 import java.io.IOException;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
@@ -51,13 +50,10 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import static java.util.Collections.synchronizedCollection;
-import java.util.concurrent.Executors;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
-import static org.openscience.cdk.graph.Cycles.all;
-import static org.openscience.cdk.graph.Cycles.or;
 import org.openscience.cdk.smiles.SmiFlavor;
 
 /**
@@ -148,7 +144,7 @@ public class GraphMatcher extends Debugger {
              * Use Single Thread to computed MCS as muntiple threads lock the calculations!
              */
             executor = newSingleThreadExecutor();
-            
+
 //            int threadsAvailable = getRuntime().availableProcessors() - 1;
 //            if (threadsAvailable == 0) {
 //                threadsAvailable = 1;
@@ -183,9 +179,23 @@ public class GraphMatcher extends Debugger {
                 /*
                  * Report All Cycles
                  * or 
-                 * CycleFinder cycles = or(all(), relevant());
+                 * CycleFinder cycles = or(Cycles.all(), Cycles.all());
+                 * CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
                  */
-                CycleFinder cycles = or(all(), all());
+                Aromaticity aromaticity = new Aromaticity(daylight(),
+                        Cycles.or(Cycles.all(),
+                                Cycles.or(Cycles.relevant(),
+                                        Cycles.essential())));
+                /*
+                 * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
+                 */
+                aromaticity.apply(educt);
+                aromaticity.apply(product);
+
+                /*
+                 * Report short cycyles
+                 */
+                CycleFinder cycles = Cycles.vertexShort();
                 Cycles rings = cycles.find(educt);
                 int numberOfCyclesEduct = rings.numberOfCycles();
                 rings = cycles.find(product);
@@ -201,15 +211,6 @@ public class GraphMatcher extends Debugger {
                     try {
                         SmilesGenerator smilesGenerator;
                         System.out.println("SMILES");
-                        Aromaticity aromaticity = new Aromaticity(daylight(),
-                                Cycles.or(Cycles.all(),
-                                        Cycles.or(Cycles.relevant(),
-                                                Cycles.essential())));
-                        /*
-                         * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
-                         */
-                        aromaticity.apply(educt);
-                        aromaticity.apply(product);
                         smilesGenerator = new SmilesGenerator(SmiFlavor.Stereo
                                 | SmiFlavor.AtomAtomMap);
                         out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));

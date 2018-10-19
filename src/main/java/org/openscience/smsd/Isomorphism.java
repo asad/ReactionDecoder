@@ -344,8 +344,16 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("defaultMCSAlgorithm - no substructure ");
             }
             if (!substructureAlgorithm) {
+                boolean moleculeConnected = isMoleculeConnected(getQuery(), getTarget());
+                if (DEBUG) {
+                    int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
+                    System.out.println("Expected Match Size: " + expectedMaxGraphmatch);
+                    System.out.println("isMatchBonds() " + isMatchBonds());
+                    System.out.println("isMatchRings() " + isMatchRings());
+                    System.out.println("isMatchAtomType()" + isMatchAtomType());
 
-                if (isMoleculeConnected(getQuery(), getTarget())
+                }
+                if (moleculeConnected
                         && (isMatchBonds() || isMatchRings() || isMatchAtomType())
                         && getQuery().getAtomCount() > 1
                         && getTarget().getAtomCount() > 1) {
@@ -367,8 +375,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                         System.out.println("defaultMCSAlgorithm - Done MCSPlus ");
                     }
                 }
-
-//                int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
 //
 //                if ((getMappingCount() == 0
 //                        || (getFirstAtomMapping().getCount()

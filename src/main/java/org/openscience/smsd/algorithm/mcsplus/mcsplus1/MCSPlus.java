@@ -612,22 +612,34 @@ public class MCSPlus extends Filter {
             comp_graph_nodes_C_zero.clear();
         }
 
+        if (DEBUG) {
+            System.out.println("**************************************************");
+            System.out.println("--MCS PLUS--");
+            System.out.println("C_edges: " + c_edges.size());
+            System.out.println("D_edges: " + d_edges.size());
+            System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
+        }
+
         BKKCKCF cliqueFinder = new BKKCKCF(comp_graph_nodes, c_edges, d_edges);
         cliqueFinder.init_Algorithm();
         this.max_Cliques_Set = cliqueFinder.getMax_Cliques_Set();
 
         best_MAPPING_size = 0;
 
-//        int clique_number = 1;
+        int clique_number = 1;
         while (!max_Cliques_Set.empty()) {
-//            System.out.println ("Clique number " + clique_number + " :" );
+            if (DEBUG) {
+                System.out.println("Clique number " + clique_number + " :");
+            }
             List<Integer> clique_vector = max_Cliques_Set.peek();
             int clique_size = clique_vector.size();
             //Is the number of mappings smaller than the number of atoms of molecule A and B?
             //In this case the clique is given to the McGregor algorithm
             if ((clique_size < atom_number1) && (clique_size < atom_number2)) {
-//                System.out.print("clique_size: " + clique_vector + " atom_number1: " + atom_number1 + " atom_number2: " + atom_number2);
-//                System.out.println(" -> McGregor");
+                if (DEBUG) {
+                    System.out.print("clique_size: " + clique_vector + " atom_number1: " + atom_number1 + " atom_number2: " + atom_number2);
+                    System.out.println(" -> McGregor");
+                }
                 try {
                     McGregor_IterationStart(clique_vector);
                 } catch (Exception e) {
@@ -640,7 +652,9 @@ public class MCSPlus extends Filter {
                 extract_mapping(clique_vector);
             }
             max_Cliques_Set.pop();
-//            clique_number++;
+            if (DEBUG) {
+                clique_number++;
+            }
         }
 
         postfilter();
