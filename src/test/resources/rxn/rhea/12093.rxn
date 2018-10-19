@@ -1,10 +1,10 @@
 $RXN
 
-Rhea  rhea-util090520131126  12093
-RHEA:release=44
+Rhea  rhea-util090720181658  12093
+RHEA:release=97
   1  1
 $MOL
-15687
+CHEBI:15687
 
 
   6  5  0  0  1  0  0  0  0  0  1 V2000
@@ -21,7 +21,7 @@ $MOL
   6  3  1  0  0  0  0
 M  END
 $MOL
-15686
+CHEBI:15686
 
 
   6  5  0  0  1  0  0  0  0  0  1 V2000
