@@ -531,8 +531,7 @@ public class MCSThread implements Callable<MCSSolution> {
              */
             isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                     false, isHasPerfectRings(), false);
-        } else if (expectedMaxGraphmatch >= 30
-                && ConnectivityChecker.isConnected(getCompound1())) {
+        } else if (expectedMaxGraphmatch >= 30) {
             if (DEBUG3) {
                 System.out.println("CASE 2");
             }
@@ -541,8 +540,10 @@ public class MCSThread implements Callable<MCSSolution> {
              */
             isomorphism = new Isomorphism(ac1, ac2, Algorithm.MCSPlus,
                     false, isHasPerfectRings(), !isHasPerfectRings());
-        } else if (expectedMaxGraphmatch < 30
-                && ConnectivityChecker.isConnected(getCompound1())) {
+        } else if (ac1.getAtomCount() > 1
+                && ac2.getAtomCount() > 1
+                && ConnectivityChecker.isConnected(getCompound1())
+                && ConnectivityChecker.isConnected(getCompound2())) {
             if (DEBUG3) {
                 System.out.println("CASE 3");
             }
@@ -552,7 +553,7 @@ public class MCSThread implements Callable<MCSSolution> {
             if (DEBUG3) {
                 System.out.println("CASE 4");
             }
-            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                     false, isHasPerfectRings(), !isHasPerfectRings());
         }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);

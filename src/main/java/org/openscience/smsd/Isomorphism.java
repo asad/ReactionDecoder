@@ -372,7 +372,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 //
 //                if ((getMappingCount() == 0
 //                        || (getFirstAtomMapping().getCount()
-//                        != expectedMaxGraphmatch))) {
+//                        <= expectedMaxGraphmatch))) {
 //                    if (DEBUG) {
 //                        System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
 //                    }

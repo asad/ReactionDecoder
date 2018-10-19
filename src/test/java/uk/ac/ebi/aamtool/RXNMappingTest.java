@@ -1244,11 +1244,8 @@ public class RXNMappingTest extends MappingUtility {
 
     /*
      * @25405	5.4.99.3 Rhea_25405
-     *  
-     * MIXTURE, fp 
-     * ID=25405:Bond Cleaved and Formed (2)
-     * [C-C:2.0, H-O:2.0]
-     * BE 692.0, Fragment 0
+     * ID=25405:Bond Cleaved and Formed (1)
+     * [C-C:2.0]
      *   
      *
      * @throws Exception
@@ -1262,7 +1259,8 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        //System.out.println("BC " + formedCleavedWFingerprint);
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /*
