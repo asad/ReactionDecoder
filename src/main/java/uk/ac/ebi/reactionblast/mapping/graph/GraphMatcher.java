@@ -51,7 +51,7 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import static java.util.Collections.synchronizedCollection;
-import static java.util.concurrent.Executors.newCachedThreadPool;
+import java.util.concurrent.Executors;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -143,25 +143,29 @@ public class GraphMatcher extends Debugger {
             }
 
             /*
-             Assign the threads
+             * Assign the threads
+             *
+             * Use Single Thread to computed MCS as muntiple threads lock the calculations!
              */
-            int threadsAvailable = getRuntime().availableProcessors() - 1;
-            if (threadsAvailable == 0) {
-                threadsAvailable = 1;
-            }
-
-            if (threadsAvailable > jobMap.size()) {
-                threadsAvailable = jobMap.size();
-            }
-            if (DEBUG) {
-                out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
-            }
-
-            if (DEBUG) {
-                executor = newSingleThreadExecutor();
-            } else {
-                executor = newCachedThreadPool();
-            }
+            executor = newSingleThreadExecutor();
+            
+//            int threadsAvailable = getRuntime().availableProcessors() - 1;
+//            if (threadsAvailable == 0) {
+//                threadsAvailable = 1;
+//            }
+//
+//            if (threadsAvailable > jobMap.size()) {
+//                threadsAvailable = jobMap.size();
+//            }
+//            if (DEBUG) {
+//                out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
+//            }
+//
+//            if (DEBUG) {
+//                executor = newSingleThreadExecutor();
+//            } else {
+//                executor = Executors.newFixedThreadPool(threadsAvailable);
+//            }
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
 
             for (Combination c : jobMap.keySet()) {

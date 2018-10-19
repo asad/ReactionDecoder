@@ -22,6 +22,7 @@ import java.io.File;
 import static java.io.File.separator;
 import java.io.FileWriter;
 import java.io.Serializable;
+import static java.lang.Runtime.getRuntime;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
@@ -35,8 +36,7 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import java.util.concurrent.Executors;
 
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -110,9 +110,17 @@ public class CallableAtomMappingTool implements Serializable {
             boolean removeHydrogen) {
         ExecutorService executor = null;
         if (DEBUG) {
-            executor = newSingleThreadExecutor();
+            executor = Executors.newSingleThreadExecutor();
         } else {
-            executor = newCachedThreadPool();
+            int threadsAvailable = getRuntime().availableProcessors() - 1;
+            if (threadsAvailable == 0) {
+                threadsAvailable = 1;
+            }
+
+            if (threadsAvailable > 4) {
+                threadsAvailable = 4;
+            }
+            executor = Executors.newFixedThreadPool(threadsAvailable);
         }
         int jobCounter = 0;
         try {

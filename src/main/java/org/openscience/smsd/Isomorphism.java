@@ -31,10 +31,8 @@ import java.util.List;
 import java.util.logging.Level;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -484,32 +482,5 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      */
     public void setBondInSenSitiveMcGregor(double bondInSensitiveMcGregor) {
         this.bondInSensitiveMcGregor = bondInSensitiveMcGregor;
-    }
-
-    /*
-     * Check if fragmented container has single atom
-     */
-    private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
-
-        boolean connected1 = true;
-
-        IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-
-            if (a.getAtomCount() == 1) {
-                connected1 = false;
-            }
-        }
-
-        boolean connected2 = true;
-
-        partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-
-            if (a.getAtomCount() == 1) {
-                connected2 = false;
-            }
-        }
-        return connected1 & connected2;
     }
 }
