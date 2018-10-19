@@ -348,7 +348,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             if (!substructureAlgorithm) {
 
                 if (isMoleculeConnected(getQuery(), getTarget())
-                        && (isMatchBonds() || isMatchRings())
+                        && (isMatchBonds() || isMatchRings() || isMatchAtomType())
                         && getQuery().getAtomCount() > 1
                         && getTarget().getAtomCount() > 1) {
                     if (DEBUG) {
@@ -370,19 +370,19 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                     }
                 }
 
-                int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
-
-                if ((getMappingCount() == 0
-                        || (getFirstAtomMapping().getCount()
-                        != expectedMaxGraphmatch))) {
-                    if (DEBUG) {
-                        System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
-                    }
-                    vfLibMCSAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("defaultMCSAlgorithm - Done vfLibMCSAlgorithm ");
-                    }
-                }
+//                int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
+//
+//                if ((getMappingCount() == 0
+//                        || (getFirstAtomMapping().getCount()
+//                        != expectedMaxGraphmatch))) {
+//                    if (DEBUG) {
+//                        System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
+//                    }
+//                    vfLibMCSAlgorithm();
+//                    if (DEBUG) {
+//                        System.out.println("defaultMCSAlgorithm - Done vfLibMCSAlgorithm ");
+//                    }
+//                }
             }
         } catch (CDKException e) {
             LOGGER.error(Level.SEVERE, null, e);

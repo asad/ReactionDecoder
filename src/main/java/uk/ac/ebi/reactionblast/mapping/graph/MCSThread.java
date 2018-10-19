@@ -552,7 +552,7 @@ public class MCSThread implements Callable<MCSSolution> {
             if (DEBUG3) {
                 System.out.println("CASE 4");
             }
-            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                     false, isHasPerfectRings(), !isHasPerfectRings());
         }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
