@@ -34,26 +34,6 @@ use POM.xml and mvn commands to build your project
 6) mvn -P local clean install (with -jar-with-dependencies)
 
 ```
-`c)` Compile and bundle the code using `ant`?:
-
-`d)` `Ant Build` commands
-
-```
-CLEAN:
-  ant clean
-BUILD:
-  ant compile
-DIST:
-  ant jar
-DOC:
-  ant javadoc
-TEST:
-  ant test
-HELP:
-  ant run
-Fat Jar:
- ant package-for-store
-```
 
 Atom Atom Mapping using Java API
 =================================
