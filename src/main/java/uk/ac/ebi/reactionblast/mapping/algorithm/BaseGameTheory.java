@@ -391,14 +391,18 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        System.out.println("====Quick Mapping====");
+        if (DEBUG) {
+            System.out.println("====Quick Mapping====");
+        }
         try {
-            Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
-            mcsThread.setChemFilters(true, true, true);
-            MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, mcsThread.getFirstAtomMapping());
-            mcs.setEnergy(mcsThread.getEnergyScore(0));
-            mcs.setFragmentSize(mcsThread.getFragmentSize(0));
-            mcs.setStereoScore(mcsThread.getStereoScore(0));
+            //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
+            Isomorphism isomorphism;
+            isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+            isomorphism.setChemFilters(true, true, true);
+            MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, isomorphism.getFirstAtomMapping());
+            mcs.setEnergy(isomorphism.getEnergyScore(0));
+            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
+            mcs.setStereoScore(isomorphism.getStereoScore(0));
             return mcs;
         } catch (CDKException ex) {
             LOGGER.error(SEVERE, null, ex);
