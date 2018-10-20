@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class Result {
 
-    final List<Integer> cEdges;
-    final List<Integer> dEdges;
+    final List<Edge> cEdges;
+    final List<Edge> dEdges;
     final List<Integer> compGraphNodes;
 
     public Result() {
@@ -32,11 +32,11 @@ public class Result {
         compGraphNodes = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public synchronized List<Integer> getCEgdes() {
+    public synchronized List<Edge> getCEgdes() {
         return Collections.synchronizedList(cEdges);
     }
 
-    public synchronized List<Integer> getDEgdes() {
+    public synchronized List<Edge> getDEgdes() {
         return Collections.synchronizedList(dEdges);
     }
 

@@ -26,6 +26,7 @@ import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -38,6 +39,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import org.openscience.smsd.algorithm.mcsplus.Edge;
 import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import org.openscience.smsd.algorithm.mcsplus.Result;
 import org.openscience.smsd.tools.IterationManager;
@@ -160,13 +162,14 @@ public final class MCSPlus {
                     ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 
             List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
+            mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
             if (DEBUG) {
                 System.out.println("Merged Results = " + mergedResult.size());
             }
 
             List<Integer> comp_graph_nodes = new ArrayList<>();
-            List<Integer> cEdges = new ArrayList<>();
-            List<Integer> dEdges = new ArrayList<>();
+            List<Edge> cEdges = new ArrayList<>();
+            List<Edge> dEdges = new ArrayList<>();
 
             /*
              * Collate all the results

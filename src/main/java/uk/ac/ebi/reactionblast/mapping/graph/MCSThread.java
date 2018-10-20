@@ -146,6 +146,15 @@ public class MCSThread implements Callable<MCSSolution> {
                                 Cycles.essential())));
         aromaticity.apply(this.compound1);
         aromaticity.apply(this.compound2);
+
+        /*
+         * create SMILES
+         */
+        smiles = new SmilesGenerator(
+                //                SmiFlavor.Unique |
+                SmiFlavor.Stereo
+                | SmiFlavor.AtomAtomMap);
+
     }
 
     synchronized void printMatch(BaseMapping isomorphism) {
@@ -164,14 +173,6 @@ public class MCSThread implements Callable<MCSSolution> {
         try {
             if (!theory.equals(IMappingAlgorithm.RINGS)) {
                 if (DEBUG1) {
-
-                    /*
-                     * create SMILES
-                     */
-                    smiles = new SmilesGenerator(
-                            SmiFlavor.Unique
-                            | SmiFlavor.Stereo
-                            | SmiFlavor.AtomAtomMap);
                     String createSM1 = null;
                     String createSM2 = null;
                     try {
@@ -180,7 +181,6 @@ public class MCSThread implements Callable<MCSSolution> {
                     } catch (CDKException e) {
                         LOGGER.error(SEVERE, null, e);
                     }
-
                     System.out.println("Q: " + getCompound1().getID()
                             + " T: " + getCompound2().getID()
                             + " molQ: " + createSM1
@@ -228,6 +228,10 @@ public class MCSThread implements Callable<MCSSolution> {
                         substructure = new Substructure(ac1, ac2,
                                 false, false, isHasPerfectRings(), true);
                     }
+                    if (!substructure.isSubgraph()) {
+                        substructure = new Substructure(ac1, ac2,
+                                false, false, isHasPerfectRings(), false);
+                    }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                     if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
@@ -265,6 +269,10 @@ public class MCSThread implements Callable<MCSSolution> {
                     if (!substructure.isSubgraph()) {
                         substructure = new Substructure(ac2, ac1,
                                 false, false, isHasPerfectRings(), true);
+                    }
+                    if (!substructure.isSubgraph()) {
+                        substructure = new Substructure(ac2, ac1,
+                                false, false, isHasPerfectRings(), false);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
@@ -529,8 +537,66 @@ public class MCSThread implements Callable<MCSSolution> {
             /*
              * This handles large aliphatics to ring system (ex: R09907)
              */
-            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                    false, isHasPerfectRings(), false);
+            if (DEBUG3) {
+                System.out.println("CASE 1.1");
+            }
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                    true, true, true);
+            if (DEBUG3) {
+                System.out.println("isomorphism.getFirstAtomMapping().getCount() " + isomorphism.getFirstAtomMapping().getCount());
+
+                try {
+                    System.out.println("ac1 " + smiles.create(ac1));
+                    System.out.println("ac2 " + smiles.create(ac2));
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, null, e);
+                }
+            }
+            if (isomorphism.getFirstAtomMapping().getCount() != expectedMaxGraphmatch) {
+                if (DEBUG3) {
+                    System.out.println("CASE 1.2");
+                }
+                Isomorphism isomorphismLocal = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, true, isHasPerfectRings(), false);
+                if (DEBUG3) {
+                    System.out.println("isomorphism.getFirstAtomMapping().getCount() " + isomorphism.getFirstAtomMapping().getCount());
+                }
+                if (isomorphism.getFirstAtomMapping().getCount() < isomorphismLocal.getFirstAtomMapping().getCount()) {
+                    isomorphism = isomorphismLocal;
+                }
+            }
+
+            /*
+             * Check if bonds and expected atoms are same yet mapping atom count doesn't match
+             */
+            if (isomorphism.getFirstAtomMapping().getCount() != expectedMaxGraphmatch
+                    && ac1.getBondCount() == ac2.getBondCount()) {
+                if (DEBUG3) {
+                    System.out.println("CASE 1.3");
+                }
+                Isomorphism isomorphismLocal = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, false, isHasPerfectRings(), false);
+                if (DEBUG3) {
+                    System.out.println("isomorphism.getFirstAtomMapping().getCount() " + isomorphism.getFirstAtomMapping().getCount());
+                }
+                if (isomorphism.getFirstAtomMapping().getCount() < isomorphismLocal.getFirstAtomMapping().getCount()) {
+                    isomorphism = isomorphismLocal;
+                }
+            }
+
+            if (isomorphism.getFirstAtomMapping().getCount() != expectedMaxGraphmatch) {
+                if (DEBUG3) {
+                    System.out.println("CASE 1.4");
+                }
+                Isomorphism isomorphismLocal = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, isHasPerfectRings(), false);
+                if (DEBUG3) {
+                    System.out.println("isomorphism.getFirstAtomMapping().getCount() " + isomorphism.getFirstAtomMapping().getCount());
+                }
+                if (isomorphism.getFirstAtomMapping().getCount() < isomorphismLocal.getFirstAtomMapping().getCount()) {
+                    isomorphism = isomorphismLocal;
+                }
+            }
+            if (DEBUG3) {
+                System.out.println("CASE 1 DONE");
+            }
         } else if (expectedMaxGraphmatch >= 30) {
             if (DEBUG3) {
                 System.out.println("CASE 2");
@@ -553,8 +619,23 @@ public class MCSThread implements Callable<MCSSolution> {
             if (DEBUG3) {
                 System.out.println("CASE 4");
             }
-            isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                    false, isHasPerfectRings(), !isHasPerfectRings());
+
+            if (DEBUG3) {
+                System.out.println("CASE 4.1");
+            }
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                    true, true, true);
+            if (isomorphism.getFirstAtomMapping().getCount() != expectedMaxGraphmatch) {
+                if (DEBUG3) {
+                    System.out.println("CASE 4.2");
+                }
+                isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                        false, isHasPerfectRings(), !isHasPerfectRings());
+            }
+
+            if (DEBUG3) {
+                System.out.println("CASE 4 Done");
+            }
         }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
         if (DEBUG3) {
@@ -566,8 +647,8 @@ public class MCSThread implements Callable<MCSSolution> {
             }
         }
         /*
-        * In case of Complete subgraph, don't use Energy filter
-        *
+         * In case of Complete subgraph, don't use Energy filter
+         *
          */
         MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
                 isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());

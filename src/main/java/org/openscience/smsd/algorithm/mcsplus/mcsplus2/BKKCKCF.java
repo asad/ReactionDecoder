@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import org.openscience.smsd.algorithm.mcsplus.Edge;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -100,12 +101,27 @@ public final class BKKCKCF {
      */
     public BKKCKCF(
             List<Integer> compGraphNodes,
-            List<Integer> cEdges,
-            List<Integer> dEdges) {
+            List<Edge> cEdges,
+            List<Edge> dEdges) {
 
         this.comp_graph_nodes = Collections.unmodifiableList(new ArrayList<>(compGraphNodes));
-        this.C_edges = Collections.unmodifiableList(new ArrayList<>(cEdges));
-        this.D_edges = Collections.unmodifiableList(new ArrayList<>(dEdges));
+        this.C_edges = Collections.unmodifiableList(new ArrayList<>());
+        cEdges.stream().map((e) -> {
+            this.C_edges.add(e.getSource());
+            return e;
+        }).forEachOrdered((e) -> {
+            this.C_edges.add(e.getSink());
+        });
+        this.D_edges = Collections.unmodifiableList(new ArrayList<>());
+        dEdges.stream().map((e) -> {
+            this.D_edges.add(e.getSource());
+            return e;
+        }).forEachOrdered((e) -> {
+            this.D_edges.add(e.getSink());
+        });
+
+//        this.C_edges = Collections.unmodifiableList(new ArrayList<>(cEdges));
+//        this.D_edges = Collections.unmodifiableList(new ArrayList<>(dEdges));
         best_clique_size = 0;
         max_Cliques_Set = new HashSet<>();
 
@@ -115,6 +131,11 @@ public final class BKKCKCF {
         D = new Stack<>();
         S = new ArrayList<>();
         V = new Stack<>();
+        process();
+
+    }
+
+    private void process() {
         int V_set_size = comp_graph_nodes.size() / 3;
         for (int a = 0; a < V_set_size; a++) {
             V.add(comp_graph_nodes.get(a * 3 + 2));
@@ -189,14 +210,13 @@ public final class BKKCKCF {
             }
             P.add(0);
             C.add(central_node);
-            Enumerate_Cliques(C, P, D, S);
+            enumerate_Cliques(C, P, D, S);
             T.add(V.get(b));
             b++;
         }
-
     }
 
-    private int Enumerate_Cliques(List<Integer> C, Stack<Integer> P, Stack<Integer> D, List<Integer> S) {
+    private int enumerate_Cliques(List<Integer> C, Stack<Integer> P, Stack<Integer> D, List<Integer> S) {
 
         List<Integer> N = new ArrayList<>(); ////Initialization Vector N
         Stack<Integer> P_Prime = new Stack<>();//Defined as P' in the paper
@@ -355,7 +375,7 @@ public final class BKKCKCF {
             P_copy_N_intersec.add(0);
             C_copy.add(ui);
 
-            Enumerate_Cliques(C_copy, P_copy_N_intersec, D_copy_N_intersec, S_copy_N_intersec);
+            enumerate_Cliques(C_copy, P_copy_N_intersec, D_copy_N_intersec, S_copy_N_intersec);
             S.add(ui);
             a++;
         }

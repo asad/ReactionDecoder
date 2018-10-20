@@ -24,6 +24,7 @@
  */
 package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
 
+import org.openscience.smsd.algorithm.mcsplus.Edge;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;

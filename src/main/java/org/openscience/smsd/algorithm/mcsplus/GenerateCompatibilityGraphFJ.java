@@ -20,7 +20,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
-import org.openscience.smsd.algorithm.mcsplus.mcsplus2.Edge;
 import org.openscience.smsd.helper.LabelContainer;
 
 /**
@@ -81,7 +80,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
         if (endIndex - startIndex < THRESHOLD) {
             List<Result> arrayList = new ArrayList<>();
             arrayList.add(processing(startIndex, endIndex));
-            return arrayList;
+            return new ArrayList<>(new HashSet<>(arrayList));//remove any duplicates
         } else {
 
             if (DEBUG) {
@@ -101,7 +100,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             subtasks.forEach((subtask) -> {
                 result.addAll(subtask.join());
             });
-            return result;
+            return new ArrayList<>(new HashSet<>(result));//remove any duplicates;
         }
     }
 
@@ -250,8 +249,10 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                             && target.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT))
                             || (result.dEdges.size() < result.compGraphNodes.size()))) {
                         //50 unique condition to speed up the AAM
-                        result.dEdges.add((a / 4) + 1);
-                        result.dEdges.add((b / 4) + 1);
+                        Edge edge = new Edge((a / 4) + 1, (b / 4) + 1);
+                        if (!result.dEdges.contains(edge)) {
+                            result.dEdges.add(edge);
+                        }
                     }
                 }
             }
@@ -266,15 +267,19 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
         return 0;
     }
 
-    private void addZeroEdges(List<Integer> cEdges, List<Integer> dEdges,
+    private void addZeroEdges(List<Edge> cEdges, List<Edge> dEdges,
             IBond reactantBond, IBond productBond,
             int indexI, int indexJ) {
         if (isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-            cEdges.add((indexI / 4) + 1);
-            cEdges.add((indexJ / 4) + 1);
+            Edge edge = new Edge((indexI / 4) + 1, (indexJ / 4) + 1);
+            if (!cEdges.contains(edge)) {
+                cEdges.add(edge);
+            }
         } else {
-            dEdges.add((indexI / 4) + 1);
-            dEdges.add((indexJ / 4) + 1);
+            Edge edge = new Edge((indexI / 4) + 1, (indexJ / 4) + 1);
+            if (!dEdges.contains(edge)) {
+                dEdges.add(edge);
+            }
         }
     }
 
@@ -455,8 +460,10 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     if (reactantBond != null && productBond != null) {
                         addEdges(result.cEdges, result.dEdges, reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null) {
-                        result.dEdges.add((a / 3) + 1);
-                        result.dEdges.add((b / 3) + 1);
+                        Edge edge = new Edge((a / 3) + 1, (b / 3) + 1);
+                        if (!result.dEdges.contains(edge)) {
+                            result.dEdges.add(edge);
+                        }
                     }
                 }
             }
@@ -468,20 +475,23 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
         return 0;
     }
 
-    private void addEdges(List<Integer> cEdges, List<Integer> dEdges,
+    private void addEdges(List<Edge> cEdges, List<Edge> dEdges,
             IBond reactantBond, IBond productBond, int iIndex, int jIndex) {
 
         if (!shouldMatchBonds && !shouldMatchRings && !matchAtomType) {
             if (isRawMatch(reactantBond, productBond)) {
-                cEdges.add((iIndex / 3) + 1);
-                cEdges.add((jIndex / 3) + 1);
+                cEdges.add(new Edge((iIndex / 3) + 1, (jIndex / 3) + 1));
             }
         } else if (isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-            cEdges.add((iIndex / 3) + 1);
-            cEdges.add((jIndex / 3) + 1);
+            Edge edge = new Edge((iIndex / 3) + 1, (jIndex / 3) + 1);
+            if (!cEdges.contains(edge)) {
+                cEdges.add(edge);
+            }
         } else {
-            dEdges.add((iIndex / 3) + 1);
-            dEdges.add((jIndex / 3) + 1);
+            Edge edge = new Edge((iIndex / 3) + 1, (jIndex / 3) + 1);
+            if (!dEdges.contains(edge)) {
+                dEdges.add(edge);
+            }
         }
     }
 

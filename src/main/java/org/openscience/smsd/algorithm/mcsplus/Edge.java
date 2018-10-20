@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -37,6 +37,11 @@ import java.util.Comparator;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
+
+    @Override
+    public String toString() {
+        return "Edge{" + "i=" + i + ", j=" + j + '}';
+    }
 
     private static final long serialVersionUID = 52343464641L;
 

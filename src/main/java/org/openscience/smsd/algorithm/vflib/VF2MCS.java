@@ -33,8 +33,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -193,13 +195,18 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 LOGGER.error(Level.SEVERE, null, ex);
             }
 
+            /*
+             * CDK MCS faulter on disconnected molecules
+             */
+            //boolean moleculeConnected = isMoleculeConnected(source, targetClone);
             int jobCounter = 0;
 
-            if (DEBUG) {
-                System.out.println(" CALLING UIT ");
-            }
             if (targetClone != null) {
-                if (targetClone.getBondCount() > 0) {
+                if (source.getBondCount() > 0
+                        && targetClone.getBondCount() > 0) {
+                    if (DEBUG) {
+                        System.out.println(" CALLING UIT ");
+                    }
                     MCSSeedGenerator mcsSeedGeneratorUIT
                             = new MCSSeedGenerator(source, targetClone,
                                     shouldMatchBonds, shouldMatchRings,
@@ -455,8 +462,10 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 LOGGER.error(Level.SEVERE, null, ex);
             }
 
-            MCSSeedGenerator mcsSeedGeneratorUIT = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);
-            MCSSeedGenerator mcsSeedGeneratorKoch = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.MCSPlus);
+            MCSSeedGenerator mcsSeedGeneratorUIT
+                    = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.CDKMCS);
+            MCSSeedGenerator mcsSeedGeneratorKoch
+                    = new MCSSeedGenerator((IQueryAtomContainer) source, targetClone, Algorithm.MCSPlus);
 
             int jobCounter = 0;
             cs.submit(mcsSeedGeneratorUIT);
@@ -769,5 +778,32 @@ public final class VF2MCS extends BaseMCS implements IResults {
             return allAtomMCS.iterator().next();
         }
         return new AtomAtomMapping(getReactantMol(), getProductMol());
+    }
+
+    /*
+     * Check if fragmented container has single atom
+     */
+    boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+
+        boolean connected1 = true;
+
+        IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+
+            if (a.getAtomCount() == 1) {
+                connected1 = false;
+            }
+        }
+
+        boolean connected2 = true;
+
+        partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
+        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
+
+            if (a.getAtomCount() == 1) {
+                connected2 = false;
+            }
+        }
+        return connected1 & connected2;
     }
 }
