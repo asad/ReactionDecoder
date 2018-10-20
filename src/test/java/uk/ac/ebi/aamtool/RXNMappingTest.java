@@ -1798,18 +1798,18 @@ public class RXNMappingTest extends MappingUtility {
     /*
      * @FIXME
      * Takes Donkey Years to Run- TO FIX
-     *12573
+     * 12573
      *
      */
-//    @Test
-//    public void Rhea12573() throws Exception {
-//
-//        String reactionID = "12573";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    @Test
+    public void Rhea12573() throws Exception {
+
+        String reactionID = "12573";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+    }
 }
