@@ -234,9 +234,13 @@ final class GameTheoryRings extends BaseGameTheory {
 
                     AbstractGraphMatching GM = new GraphMatching(RID, ac1, ac2, _dirSuffix, removeHydrogen);
                     boolean mcsMatch = GM.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, A, B);
-//                    System.out.println("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
+                    if (DEBUG) {
+                        System.out.println("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
+                    }
                     if (mcsMatch) {
-//                        System.out.println(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
+                        if (DEBUG) {
+                            System.out.println(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
+                        }
                         delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                         List<MolMapping> rMap = getReactionMolMapping().
                                 getMapping(RID, this.eductList.get(substrateIndex), this.productList.get(productIndex));
@@ -250,7 +254,9 @@ final class GameTheoryRings extends BaseGameTheory {
                     }
                     IAtomContainer remainingEduct = GM.getRemainingEduct();
                     IAtomContainer remainingProduct = GM.getRemainingProduct();
-//                    System.out.println("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
+                    if (DEBUG) {
+                        System.out.println("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
+                    }
                     reactionStructureInformationContainer.putEduct(substrateIndex, remainingEduct);
                     reactionStructureInformationContainer.putProduct(productIndex, remainingProduct);
                     reactionStructureInformationContainer.setEductModified(substrateIndex, true);

@@ -231,16 +231,23 @@ public class GraphMatcher extends Debugger {
                     case MIN:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
+                        mcsThread.setEductRingCount(numberOfCyclesEduct);
+                        mcsThread.setProductRingCount(numberOfCyclesProduct);
+                        
                         break;
 
                     case MAX:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
+                        mcsThread.setEductRingCount(numberOfCyclesEduct);
+                        mcsThread.setProductRingCount(numberOfCyclesProduct);
                         break;
 
                     case MIXTURE:
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, false);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
+                        mcsThread.setEductRingCount(numberOfCyclesEduct);
+                        mcsThread.setProductRingCount(numberOfCyclesProduct);
                         break;
 
                     case RINGS:
@@ -254,6 +261,8 @@ public class GraphMatcher extends Debugger {
                          */
                         mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
+                        mcsThread.setEductRingCount(numberOfCyclesEduct);
+                        mcsThread.setProductRingCount(numberOfCyclesProduct);
                         break;
 
                     default:
@@ -288,23 +297,33 @@ public class GraphMatcher extends Debugger {
             }
 
             if (DEBUG) {
-                out.println("Gathering MCS solution from the Thread");
+                out.println("==Gathering MCS solution from the Thread==");
             }
             threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
                 int queryPosition = mcs.getQueryPosition();
                 int targetPosition = mcs.getTargetPosition();
-                if (DEBUG) {
-                    out.println("MCS " + "i " + queryPosition + " J " + targetPosition + " size " + mcs.getAtomAtomMapping().getCount());
-                }
-                Combination removeKey = null;
+//                if (DEBUG) {
+//                    System.out.println("");
+//                    out.println("MCS " + " I " + queryPosition
+//                            + " J " + targetPosition
+//                            + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount());
+//                }
+                Combination referenceKey = null;
                 for (Combination c : jobMap.keySet()) {
                     if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {
-                        removeKey = c;
+                        referenceKey = c;
                         MCSSolution replicatedMCS = replicateMappingOnContainers(mh, c, mcs);
+                        if (DEBUG) {
+                            System.out.println("======MCSSolution======");
+                            out.println("MCS " + " I " + queryPosition
+                                    + " J " + targetPosition
+                                    + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
+                                    + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
+                        }
                         mcsSolutions.add(replicatedMCS);
                     }
                 }
-                return removeKey;
+                return referenceKey;
             }).filter((removeKey) -> (removeKey != null)).forEach((removeKey) -> {
                 jobMap.remove(removeKey);
             });
@@ -356,15 +375,23 @@ public class GraphMatcher extends Debugger {
                 IAtom atomByID1 = getAtomByID(q, a);
                 IAtom b = atomAtomMapping.getMappingsByAtoms().get(a);
                 IAtom atomByID2 = getAtomByID(t, b);
-                if (DEBUG) {
-                    out.println("atomByID1 " + atomByID1.getID() + " atomByID2 " + atomByID2.getID());
-                }
+//                if (DEBUG) {
+//                    out.println("atomByID1 " + atomByID1.getID() + " atomByID2 " + atomByID2.getID());
+//                }
                 if (atomByID1 != null && atomByID2 != null) {
                     atomAtomMappingNew.put(atomByID1, atomByID2);
                 } else {
                     LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
+                    System.err.println("WARNING: " + "UnExpected NULL ATOM FOUND");
                 }
             });
+
+            if (DEBUG) {
+                System.out.println("------Mapped PAIRS------");
+                System.out.println("Query " + q.getAtomCount());
+                System.out.println("Target " + t.getAtomCount());
+                System.out.println("Mapping Size " + atomAtomMappingNew.getCount());
+            }
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
         } catch (IOException | CDKException ex) {
             LOGGER.error(SEVERE, null, ex);

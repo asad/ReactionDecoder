@@ -123,7 +123,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             Collection<MCSSolution> mcsSolutions = null;
             try {
                 mcsSolutions = matcher(mh);
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
             }
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
@@ -132,8 +132,17 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                         IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                         IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
                         if (DEBUG) {
-                            out.println("mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) "
+                            System.out.println("===================Mapped==================");
+                            System.out.println(" educt " + educt.getID() + ", product " + product.getID());
+                            System.out.println(" educt Index " + substrateIndex + ", product Index " + productIndex);
+                            System.out.println(" educt count " + educt.getAtomCount() + ", product count " + product.getAtomCount());
+
+                            System.out.println("mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) "
                                     + mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex));
+                            System.out.println("reactionStructureInformation.isEductModified(substrateIndex) "
+                                    + reactionStructureInformation.isEductModified(substrateIndex));
+                            System.out.println("reactionStructureInformation.isProductModified(productIndex) "
+                                    + reactionStructureInformation.isProductModified(productIndex));
                         }
                         if ((educt != null && product != null)
                                 && (reactionStructureInformation.getEduct(substrateIndex).getAtomCount() > 0
@@ -235,7 +244,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             int productIndex,
             Collection<MCSSolution> mcsSolutions) {
         if (DEBUG) {
-            out.println("**********Generate MCS And Calculate Similarity**************");
+            out.println("**********Generate NEW MCS And Calculate Similarity**************");
         }
         try {
             ReactionContainer reactionContainer = holder.getReactionContainer();
@@ -253,7 +262,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             IAtomContainer product = reactionContainer.getProduct(productIndex);
 
             if (DEBUG) {
-                out.println("Get matches");
+                out.println("--Get matches--");
                 out.print("Q " + educt.getID() + ": " + educt.getAtomCount());
                 out.print(", P " + product.getID() + ": " + product.getAtomCount());
                 out.println(", Matches " + mcsSolutions.size());
@@ -332,6 +341,12 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             IAtomContainer product,
             Collection<MCSSolution> mcsSolutions) throws CDKException {
 
+        if (DEBUG) {
+            System.out.println("====++mcsSolutions++=== " + mcsSolutions.size());
+        }
+        if (mcsSolutions.isEmpty()) {
+            return quickMapping(educt, product, queryPosition, targetPosition);
+        }
         for (MCSSolution solution : mcsSolutions) {
             if (solution.getQueryPosition() == queryPosition
                     && solution.getTargetPosition() == targetPosition) {
@@ -350,13 +365,20 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     atomMaps.clear();
                     if (mappingPossible) {
                         if (DEBUG) {
-                            out.println("Expected Mapping");
+                            System.out.println("Expected Mapping");
                             SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
-                            out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
-                            out.println(product.getID() + " PD: " + smilesGenerator.create(product));
+                            System.out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
+                            System.out.println(product.getID() + " PD: " + smilesGenerator.create(product));
                         }
                         return quickMapping(educt, product, queryPosition, targetPosition);
                     }
+                }
+
+                if (DEBUG) {
+                    System.out.println("--------======NEW MCS======------" + solution.getAtomAtomMapping().getCount());
+                    System.out.println(" educt " + educt.getID() + ", product " + product.getID());
+                    System.out.println(" educt Index " + queryPosition + ", product Index " + targetPosition);
+                    System.out.println(" educt count " + educt.getAtomCount() + ", product count " + product.getAtomCount());
                 }
                 return solution;
             }
@@ -369,15 +391,16 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
+        System.out.println("====Quick Mapping====");
         try {
-            Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+            Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
             mcsThread.setChemFilters(true, true, true);
             MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, mcsThread.getFirstAtomMapping());
             mcs.setEnergy(mcsThread.getEnergyScore(0));
             mcs.setFragmentSize(mcsThread.getFragmentSize(0));
             mcs.setStereoScore(mcsThread.getStereoScore(0));
             return mcs;
-        } catch (Exception ex) {
+        } catch (CDKException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
         return null;
@@ -398,7 +421,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
     private void refillMatrixWithOldData(Holder holder, int substrateIndex, int productIndex) {
         if (DEBUG) {
-            System.out.println("**********Generate MCS And Calculate Similarity**************");
+            System.out.println("**********REFILL MCS And Calculate Similarity**************");
         }
         try {
             ReactionContainer reactionContainer = holder.getReactionContainer();

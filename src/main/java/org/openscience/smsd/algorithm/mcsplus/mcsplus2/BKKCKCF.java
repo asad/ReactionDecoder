@@ -105,14 +105,14 @@ public final class BKKCKCF {
             List<Edge> dEdges) {
 
         this.comp_graph_nodes = Collections.unmodifiableList(new ArrayList<>(compGraphNodes));
-        this.C_edges = Collections.unmodifiableList(new ArrayList<>());
+        this.C_edges = new ArrayList<>();
         cEdges.stream().map((e) -> {
             this.C_edges.add(e.getSource());
             return e;
         }).forEachOrdered((e) -> {
             this.C_edges.add(e.getSink());
         });
-        this.D_edges = Collections.unmodifiableList(new ArrayList<>());
+        this.D_edges = new ArrayList<>();
         dEdges.stream().map((e) -> {
             this.D_edges.add(e.getSource());
             return e;

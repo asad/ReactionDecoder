@@ -18,9 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.interfaces;
 
-import java.io.IOException;
 import java.util.BitSet;
-import static java.util.logging.Level.SEVERE;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;

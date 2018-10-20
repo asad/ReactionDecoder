@@ -122,10 +122,10 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
             } catch (Exception ex) {
                 LOGGER.error(Level.SEVERE, null, ex);
             }
-            BestMatch initMcsAtom = holder.getBestMatchContainer();
-            if (initMcsAtom.containsKey(substrateIndex, productIndex)) {
-                this.bestAtomMappingList = initMcsAtom.getAtomMatch(substrateIndex, productIndex).getMappingsByAtoms();
-                this.fragmentCount = initMcsAtom.getTotalFragmentCount(substrateIndex, productIndex);
+            BestMatch initMCSAtom = holder.getBestMatchContainer();
+            if (initMCSAtom.containsKey(substrateIndex, productIndex)) {
+                this.bestAtomMappingList = initMCSAtom.getAtomMatch(substrateIndex, productIndex).getMappingsByAtoms();
+                this.fragmentCount = initMCSAtom.getTotalFragmentCount(substrateIndex, productIndex);
                 if (this.bestAtomMappingList != null && !this.bestAtomMappingList.isEmpty()) {
                     return true;
                 }
@@ -157,6 +157,9 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                 String eID = map.getKey().getID();
                 IAtom eAtom = getAtomByID(educt, eID);
                 String pID = map.getValue().getID();
+                if (DEBUG) {
+                    System.out.println("eID " + eID + ",pID " + pID);
+                }
                 IAtom pAtom = getAtomByID(product, pID);
 
                 if (eAtom != null && pAtom != null) {
@@ -174,6 +177,11 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
             matchedPart.removeAtom(matchedAtom);
         }
 
+        if (DEBUG) {
+            System.out.println("After removing Mol Size E: " + educt.getAtomCount()
+                    + " , After removing Mol Size P: " + product.getAtomCount());
+        }
+
         if (beforeESize == educt.getAtomCount()) {
             try {
                 if (DEBUG) {
@@ -184,7 +192,11 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!");
             } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
+                LOGGER.error(SEVERE, "Failed to remove matched parts between " + educt.getID() + ": "
+                        + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
+                        + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!", ex);
+
+                Runtime.getRuntime().exit(1);
             }
         }
         return delta;
