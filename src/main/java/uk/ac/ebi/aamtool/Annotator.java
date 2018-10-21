@@ -551,8 +551,8 @@ public class Annotator extends Helper {
              * Selected AAM solution
              */
             SmilesGenerator smileGenerator = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
+                    //SmiFlavor.Unique| 
+                    SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap
                     | SmiFlavor.Stereo
             );
@@ -703,8 +703,8 @@ public class Annotator extends Helper {
              * Selected AAM solution
              */
             SmilesGenerator smileGenerator = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
+                    //SmiFlavor.Unique| 
+                    SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap
                     | SmiFlavor.Stereo
             );
