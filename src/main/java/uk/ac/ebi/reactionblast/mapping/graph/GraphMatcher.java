@@ -91,23 +91,32 @@ public class GraphMatcher extends Debugger {
                 for (int productIndex = 0; productIndex < productCount; productIndex++) {
                     IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                     IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+                    if (DEBUG) {
+                        System.out.println("reactionStructureInformation.getEduct(substrateIndex).getAtomCount() " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount());
+                        System.out.println("reactionStructureInformation.getProduct(productIndex).getAtomCount() " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
+                    }
                     if ((educt != null && product != null)
                             && (reactionStructureInformation.getEduct(substrateIndex).getAtomCount() > 0
                             && reactionStructureInformation.getProduct(productIndex).getAtomCount() > 0)
                             || mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1) {
-                        if (reactionStructureInformation.isEductModified(substrateIndex)
-                                || reactionStructureInformation.isProductModified(productIndex)) {
+//                        if (reactionStructureInformation.isEductModified(substrateIndex)
+//                                || reactionStructureInformation.isProductModified(productIndex)) {
 
-                            Combination c = new Combination(substrateIndex, productIndex);
-                            jobReplicatorList.add(c);
-                        }
+                        Combination c = new Combination(substrateIndex, productIndex);
+                        jobReplicatorList.add(c);
+//                        }
                     }
                 }
+            }
+
+            if (DEBUG) {
+                System.out.println("jobReplicatorList " + jobReplicatorList.size());
             }
 
             if (jobReplicatorList.isEmpty()) {
                 return unmodifiableCollection(mcsSolutions);
             }
+
             Map<Combination, Set<Combination>> jobMap = new TreeMap<>();
 
             for (Combination c : jobReplicatorList) {
@@ -182,10 +191,18 @@ public class GraphMatcher extends Debugger {
                  * CycleFinder cycles = or(Cycles.all(), Cycles.all());
                  * CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
                  */
-                Aromaticity aromaticity = new Aromaticity(daylight(),
-                        Cycles.or(Cycles.all(),
-                                Cycles.or(Cycles.relevant(),
-                                        Cycles.essential())));
+                if (DEBUG) {
+                    System.out.println("Finding cycles");
+                }
+
+                CycleFinder cycles = Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential()));
+
+                Aromaticity aromaticity = new Aromaticity(daylight(), cycles);
+                if (DEBUG) {
+                    System.out.println("Done Finding cycles");
+                }
                 /*
                  * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
                  */
@@ -195,10 +212,20 @@ public class GraphMatcher extends Debugger {
                 /*
                  * Report short cycyles
                  */
-                CycleFinder cycles = Cycles.vertexShort();
+                if (DEBUG) {
+                    System.out.println("Finding short cycles");
+                }
+                cycles = Cycles.vertexShort();
                 Cycles rings = cycles.find(educt);
+                if (DEBUG) {
+                    System.out.println("Done Finding cycles educt");
+                }
+
                 int numberOfCyclesEduct = rings.numberOfCycles();
                 rings = cycles.find(product);
+                if (DEBUG) {
+                    System.out.println("Finding cycles product");
+                }
                 int numberOfCyclesProduct = rings.numberOfCycles();
                 if (numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0) {
                     ring = true;
@@ -233,7 +260,7 @@ public class GraphMatcher extends Debugger {
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductRingCount(numberOfCyclesEduct);
                         mcsThread.setProductRingCount(numberOfCyclesProduct);
-                        
+
                         break;
 
                     case MAX:

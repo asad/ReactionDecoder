@@ -45,6 +45,7 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  */
 public class CalculationProcess extends IsomeraseHandler implements Serializable {
 
+    private final static boolean DEBUG = false;
     static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER
             = createLoggingTool(CalculationProcess.class);
@@ -127,6 +128,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
             GameTheoryMatrix EDSH
                     = new GameTheoryMatrix(theory, reaction, removeHydrogen);
 
+            if (DEBUG) {
+                System.out.println("=====AGORITHM====" + theory);
+            }
             IGameTheory gameTheory = make(theory,
                     reaction,
                     removeHydrogen,
@@ -134,6 +138,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
                     products,
                     EDSH);
 
+            if (DEBUG) {
+                System.out.println("=====DONE AGORITHM====" + theory);
+            }
             this.reactionBlastMolMapping = gameTheory.getReactionMolMapping();
             EDSH.Clear();
 

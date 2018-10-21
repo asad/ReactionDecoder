@@ -46,7 +46,6 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
-import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -184,8 +183,12 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             // need to find rings and aromaticity again since added H's
             IRingSet ringSet = null;
             try {
-                AllRingsFinder arf = new AllRingsFinder();
-                ringSet = arf.findAllRings(mol);
+//                AllRingsFinder arf = new AllRingsFinder();
+//                ringSet = arf.findAllRings(mol);
+                CycleFinder cycleFinder = Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential()));
+                ringSet = cycleFinder.find(mol).toRingSet();
                 RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
                 LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());

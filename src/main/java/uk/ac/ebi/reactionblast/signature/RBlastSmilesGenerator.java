@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import static org.openscience.cdk.CDKConstants.BONDORDER_DOUBLE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import static org.openscience.cdk.CDKConstants.VISITED;

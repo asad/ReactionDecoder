@@ -24,11 +24,14 @@ package org.openscience.smsd.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import static java.util.Collections.sort;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.openscience.cdk.CDKConstants;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
@@ -39,7 +42,6 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -122,19 +124,26 @@ public class MoleculeInitializer {
             valencesTable.put("Co", 2);
 
             // do all ring perception
-            AllRingsFinder arf = new AllRingsFinder();
+//            AllRingsFinder arf = new AllRingsFinder();
             IRingSet allRings = null;
-            try {
-                allRings = arf.findAllRings(atomContainer);
-            } catch (CDKException e) {
-                LOGGER.warn(e.toString());
-            }
+//            try {
+//                allRings = arf.findAllRings(atomContainer);
+//            } catch (CDKException e) {
+//                LOGGER.warn(e.toString());
+//            }
+
+            CycleFinder cycleFinder = Cycles.or(Cycles.all(),
+                    Cycles.or(Cycles.relevant(),
+                            Cycles.essential()));
+
+            Cycles cycles = cycleFinder.find(atomContainer);
+            allRings = cycles.toRingSet();
 
             // sets SSSR information
             //IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
             //New Method
             CycleFinder cf = Cycles.essential();
-            Cycles cycles = cf.find(atomContainer); // ignore error - essential cycles do not check tractability
+            cycles = cf.find(atomContainer); // ignore error - essential cycles do not check tractability
             IRingSet sssr = cycles.toRingSet();
 
             for (IAtom atom : atomContainer.atoms()) {
@@ -214,6 +223,55 @@ public class MoleculeInitializer {
 
     }
 
+    /*
+     * Checks some simple heuristics for whether the subgraph query can
+     * realistically be atom subgraph of the supergraph. If, for example, the
+     * number of nitrogen atoms in the query is larger than that of the
+     * supergraph it cannot be part of it.
+     *
+     *
+     *
+     * @param q Query
+     * @param t Target
+     * @return true if subgraph else false
+     */
+    public static boolean testIsSubgraphHeuristics(IAtomContainer q, IAtomContainer t) {
+
+        /*
+         a={c,c,c,o,n}
+         b={c,c,c,p}
+       
+         expectedMaxGraphmatch=3;
+         */
+        List<String> atomUniqueCounter1 = new ArrayList<>();
+        List<String> atomUniqueCounter2 = new ArrayList<>();
+
+        for (IAtom a : q.atoms()) {
+            String hyb = a.getHybridization() == UNSET
+                    ? a.getSymbol() : a.getAtomTypeName();
+            atomUniqueCounter1.add(hyb);
+        }
+
+        for (IAtom b : t.atoms()) {
+            String hyb = b.getHybridization() == UNSET
+                    ? b.getSymbol() : b.getAtomTypeName();
+            atomUniqueCounter2.add(hyb);
+        }
+
+        sort(atomUniqueCounter1);
+        sort(atomUniqueCounter2);
+
+        if (atomUniqueCounter1.isEmpty()) {
+            return false;
+        }
+        List<String> common = new LinkedList<>(atomUniqueCounter1);
+        common.retainAll(atomUniqueCounter2);
+
+        atomUniqueCounter1.clear();
+        atomUniqueCounter2.clear();
+        return common.size() == atomUniqueCounter1.size() ? true : common.size() == atomUniqueCounter2.size();
+    }
+
     /**
      * Checks some simple heuristics for whether the subgraph query can
      * realistically be atom subgraph of the supergraph. If, for example, the
@@ -227,7 +285,10 @@ public class MoleculeInitializer {
      * @return true if the subgraph ac1 has atom chance to be atom subgraph of
      * ac2
      */
-    public synchronized static boolean testIsSubgraphHeuristics(IAtomContainer ac1, IAtomContainer ac2, boolean shouldMatchBonds) {
+    public synchronized static boolean testIsSubgraphHeuristics(
+            IAtomContainer ac1,
+            IAtomContainer ac2,
+            boolean shouldMatchBonds) {
 
         int ac1SingleBondCount = 0;
         int ac1DoubleBondCount = 0;

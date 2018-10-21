@@ -177,7 +177,9 @@ public class ReactionMechanismTool implements Serializable {
                         = new CallableAtomMappingTool(reaction, standardizer, onlyCoreMappingByMCS);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
 
-                LOGGER.info("!!!!Calculating Best Mapping Model!!!!");
+                if (DEBUG) {
+                    System.out.println("!!!!Calculating Best Mapping Model!!!!");
+                }
                 boolean selected;
                 for (IMappingAlgorithm algorithm : solutions.keySet()) {
 
@@ -206,15 +208,22 @@ public class ReactionMechanismTool implements Serializable {
 //                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
 //                                + "(" + algorithm + ") algorithm." + newline);
                     }
+                    if (DEBUG) {
+                        System.out.println("===isMappingSolutionAcceptable===");
+                    }
                     selected = isMappingSolutionAcceptable(solutions.get(algorithm), algorithm, reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
-                    LOGGER.info("is solution: " + algorithm + " selected: " + selected);
+                    if (DEBUG) {
+                        System.out.println("is solution: " + algorithm + " selected: " + selected);
+                    }
                 }
                 gc();
             } catch (Exception e) {
                 String ls = getProperty("line.separator");
                 throw new Exception(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
             }
-//            System.out.println(this.getMappingDescription());
+            if (DEBUG) {
+                System.out.println("=====DONE REACTION MECH TOOL=====");
+            }
         }
     }
 

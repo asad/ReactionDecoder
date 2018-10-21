@@ -229,16 +229,23 @@ public class MCSThread implements Callable<MCSSolution> {
                     substructure = new Substructure(ac1, ac2,
                             true, false, isHasPerfectRings(), true);
                     if (!substructure.isSubgraph()) {
+                        if (DEBUG1) {
+                            System.out.println("---1.2---");
+                        }
                         substructure = new Substructure(ac1, ac2,
                                 false, false, isHasPerfectRings(), true);
                     }
                     if (!substructure.isSubgraph()) {
+                        if (DEBUG1) {
+                            System.out.println("---1.3---");
+                        }
                         substructure = new Substructure(ac1, ac2,
                                 false, false, isHasPerfectRings(), false);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
-                    if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
+                    if (substructure.isSubgraph()
+                            && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                         if (DEBUG1) {
                             System.out.println("Found Substructure 1");
                         }
@@ -251,7 +258,9 @@ public class MCSThread implements Callable<MCSSolution> {
                             long stopTime = currentTimeMillis();
                             long time = stopTime - startTime;
                             printMatch(substructure);
-                            System.out.println("\" Time:\" " + time);
+                            if (DEBUG1) {
+                                System.out.println("\" Time:\" " + time);
+                            }
                         }
                         return mcs;
                     } else if (DEBUG1) {
@@ -268,19 +277,30 @@ public class MCSThread implements Callable<MCSSolution> {
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
                     Substructure substructure;
+
+                    if (DEBUG1) {
+                        System.out.println("---2.1---");
+                    }
                     substructure = new Substructure(ac2, ac1,
                             true, false, isHasPerfectRings(), true);
                     if (!substructure.isSubgraph()) {
+                        if (DEBUG1) {
+                            System.out.println("---2.2---");
+                        }
                         substructure = new Substructure(ac2, ac1,
                                 false, false, isHasPerfectRings(), true);
                     }
                     if (!substructure.isSubgraph()) {
+                        if (DEBUG1) {
+                            System.out.println("---2.3---");
+                        }
                         substructure = new Substructure(ac2, ac1,
                                 false, false, isHasPerfectRings(), false);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
-                    if (substructure.isSubgraph() && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
+                    if (substructure.isSubgraph()
+                            && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
 
                         if (DEBUG1) {
                             System.out.println("Found Substructure 2");
@@ -519,6 +539,10 @@ public class MCSThread implements Callable<MCSSolution> {
     }
 
     synchronized MCSSolution mcs() throws CDKException, CloneNotSupportedException {
+
+        if (DEBUG3) {
+            System.out.println("=============MCS============");
+        }
         /*
          * 0: default Isomorphism, 1: MCSPlus, 2: VFLibMCS, 3: CDKMCS
          */

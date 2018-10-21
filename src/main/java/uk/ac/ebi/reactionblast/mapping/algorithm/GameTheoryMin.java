@@ -119,7 +119,9 @@ final class GameTheoryMin extends BaseGameTheory {
         ReactionIsomorphismHandler RIH = new ReactionIsomorphismHandler(mh, eductList, productList);
 
         if (RIH.getIsomorphismFlag()) {
-//            System.out.println("ISOMORPHISM");
+            if (DEBUG) {
+                System.out.println("ISOMORPHISM");
+            }
             mh = RIH.getMatrixHolder();
             GenerateIsoMorphismMapping();
         } else {
@@ -151,7 +153,7 @@ final class GameTheoryMin extends BaseGameTheory {
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
         if (DEBUG) {
-//            System.out.println("**********Orignal Matrix**************");
+            System.out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
             printCliqueMatrix(mh, eductList, productList);
@@ -161,6 +163,9 @@ final class GameTheoryMin extends BaseGameTheory {
         }
         boolean conditionmet = false;
         if (!ruleMatchingFlag) {
+            if (DEBUG) {
+                out.println("CHECK Rule Based Mapping Handler Match");
+            }
             RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
                 if (DEBUG) {
@@ -170,6 +175,9 @@ final class GameTheoryMin extends BaseGameTheory {
                 conditionmet = true;
             }
             ruleMatchingFlag = true;
+            if (DEBUG) {
+                out.println("DONE CHECK Rule Based Mapping Handler");
+            }
         }
 
         if (!conditionmet) {

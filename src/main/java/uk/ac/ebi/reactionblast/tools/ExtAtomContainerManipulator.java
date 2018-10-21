@@ -32,7 +32,6 @@ import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
-import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -47,7 +46,6 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
-import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -187,11 +185,15 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             // need to find rings and aromaticity again since added H's
             IRingSet ringSet = null;
             try {
-                AllRingsFinder arf = new AllRingsFinder();
-                ringSet = arf.findAllRings(mol);
+//                AllRingsFinder arf = new AllRingsFinder();
+//                ringSet = arf.findAllRings(mol);
+                CycleFinder cycleFinder = Cycles.or(Cycles.all(),
+                        Cycles.or(Cycles.relevant(),
+                                Cycles.essential()));
+                ringSet = cycleFinder.find(mol).toRingSet();
                 RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
-                LOGGER.warn(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
             }
 
             try {
@@ -203,7 +205,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     aromatizeDayLight(mol);
                 }
             } catch (CDKException e) {
-                LOGGER.warn(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
             }
 
             if (ringSet == null) {
@@ -221,7 +223,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     //LOGGER.debug(i+"\t"+j);
                     IRing ring = (IRing) ringSet.getAtomContainer(j);
                     if (!ring.getFlag(CDKConstants.ISAROMATIC)) {
-                        continue;
+                        continue jloop;
                     }
 
                     boolean haveatom = ring.contains(mol.getAtom(i));
@@ -233,7 +235,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
+            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
         }
     }
 
@@ -306,7 +308,8 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static int getExplicitHydrogenCount(IAtomContainer atomContainer, IAtom atom) {
         int hCount = 0;
-        hCount = atomContainer.getConnectedAtomsList(atom).stream().filter((connectedAtom) -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
+        hCount = atomContainer.getConnectedAtomsList(atom).stream().map((iAtom) -> iAtom).filter((connectedAtom)
+                -> (connectedAtom.getSymbol().equals("H"))).map((_item) -> 1).reduce(hCount, Integer::sum);
         return hCount;
     }
 
@@ -381,7 +384,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                         AtomTypeManipulator.configure(atom, matched);
                     }
                 } catch (CDKException e) {
-                    LOGGER.warn(Level.WARNING,
+                    LOGGER.error(Level.WARNING,
                             "Failed to find Matching AtomType! {0}{1}", new Object[]{atom.getSymbol(), e});
                 }
             }
@@ -401,15 +404,14 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         try {
             percieveAtomTypesAndConfigureAtoms(mol);
             for (IAtom a : mol.atoms()) {
-                if (a == null) {
-                    continue;
-                }
                 if (!(a instanceof IPseudoAtom)) {
                     try {
                         hydAdder.addImplicitHydrogens(mol, a);
                     } catch (CDKException e) {
-                        a.setImplicitHydrogenCount(0);
-                        LOGGER.error("WARNING: Error in adding Hydrogen" + ":" + a.getSymbol());
+                        if (a != null) {
+                            a.setImplicitHydrogenCount(0);
+                            LOGGER.error("WARNING: Error in adding Hydrogen :", a.getSymbol());
+                        }
                         LOGGER.error("This might effect the final calculations!");
                     }
                 } else {
@@ -436,7 +438,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            LOGGER.warn(Level.WARNING,
+            LOGGER.error(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }
@@ -449,16 +451,13 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static void aromatizeCDK(IAtomContainer molecule) throws CDKException {
         ElectronDonation model = ElectronDonation.cdk();
-        //CycleFinder cycles = Cycles.cdkAromaticSet();
-        Aromaticity aromaticity = new Aromaticity(daylight(),
-                Cycles.or(Cycles.all(),
-                        Cycles.or(Cycles.relevant(),
-                                Cycles.essential())));
+        CycleFinder cycles = Cycles.cdkAromaticSet();
+        Aromaticity aromaticity = new Aromaticity(model, cycles);
         ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
         try {
             aromaticity.apply(molecule);
         } catch (CDKException e) {
-            LOGGER.warn(Level.WARNING,
+            LOGGER.error(Level.WARNING,
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }

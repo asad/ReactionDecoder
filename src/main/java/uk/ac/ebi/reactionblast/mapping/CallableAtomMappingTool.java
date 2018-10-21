@@ -46,7 +46,6 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
-import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
@@ -220,6 +219,9 @@ public class CallableAtomMappingTool implements Serializable {
              *
              */
             while (!executor.isTerminated()) {
+            }
+            if (DEBUG) {
+                System.out.println("======DONE CallableAtomMappingTool=======");
             }
             gc();
         } catch (InterruptedException | ExecutionException e) {

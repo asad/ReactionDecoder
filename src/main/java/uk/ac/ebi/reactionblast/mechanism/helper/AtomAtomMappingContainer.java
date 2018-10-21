@@ -204,7 +204,8 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
         for (IMapping m : reaction.mappings()) {
             IAtom rAtom = (IAtom) m.getChemObject(0);
             IAtom pAtom = (IAtom) m.getChemObject(1);
-            if (withoutH && rAtom != null && pAtom != null && (rAtom.getSymbol().equalsIgnoreCase("H")
+            if (withoutH && rAtom != null && pAtom != null
+                    && (rAtom.getSymbol().equalsIgnoreCase("H")
                     || pAtom.getSymbol().equalsIgnoreCase("H"))) {
             } else {
                 reactantAtomArray.add(rAtom);

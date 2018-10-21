@@ -33,12 +33,12 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.smsd.Substructure;
 
 /**
  *
@@ -411,33 +411,22 @@ public final class RuleBasedMappingHandler implements Serializable {
         this.ruleMatched = ruleMatched;
     }
 
-    private boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) {
+    private boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) throws CDKException {
+
         if (ac1.getAtomCount() <= ac2.getAtomCount()) {
-            try {
-                Substructure s = new Substructure(ac1, ac2, true, true, false, false);
-                if (DEBUG2) {
-                    out.println("ac1 " + ac1.getAtomCount());
-                    out.println("ac2 " + ac2.getAtomCount());
-                    out.println("Sub " + s.isSubgraph());
-                    out.println("score " + s.getTanimotoSimilarity());
-                }
-                return s.isSubgraph();
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
+            Substructure pattern = new Substructure(ac1, ac2, true, false, true, false); // create pattern
+
+            if (DEBUG2) {
+                out.println("Sub " + pattern.isSubgraph());
             }
-        } else {
-            try {
-                Substructure s = new Substructure(ac2, ac1, true, true, false, false);
-                if (DEBUG2) {
-                    out.println("ac2 " + ac2.getAtomCount());
-                    out.println("ac1 " + ac1.getAtomCount());
-                    out.println("Sub " + s.isSubgraph());
-                    out.println("score " + s.getTanimotoSimilarity());
-                }
-                return s.isSubgraph();
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
+            return pattern.isSubgraph();
+        }
+        if (ac1.getAtomCount() >= ac2.getAtomCount()) {
+            Substructure pattern = new Substructure(ac2, ac1, true, false, true, false); // create pattern
+            if (DEBUG2) {
+                out.println("Sub " + pattern.isSubgraph());
             }
+            return pattern.isSubgraph();
         }
         return false;
     }

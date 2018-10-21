@@ -107,14 +107,29 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         /*
          Set Atom-Atom Mapping
          */
+        if (DEBUG) {
+            System.out.println("setMappingMap");
+        }
         setMappingMap(reaction.mappings());
+        if (DEBUG) {
+            System.out.println("Done setMappingMap");
+        }
 
+        if (DEBUG) {
+            System.out.println("Mark Aromatic Bonds");
+        }
         List<IBond> rBonds = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             /*
-             Aromatise and mark rings (imp for detecting keukal changes)
+             * Aromatise and mark rings (imp for detecting keukal changes)
              */
+            if (DEBUG) {
+                System.out.println("MoleculeInitializer");
+            }
             MoleculeInitializer.initializeMolecule(ac);
+            if (DEBUG) {
+                System.out.println("MoleculeInitializer Done");
+            }
             for (IBond bond : ac.bonds()) {
                 rBonds.add(bond);
             }
@@ -124,30 +139,64 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             /*
              Aromatise and mark rings (imp for detecting keukal changes)
              */
+            if (DEBUG) {
+                System.out.println("MoleculeInitializer");
+            }
             MoleculeInitializer.initializeMolecule(ac);
+            if (DEBUG) {
+                System.out.println("Done");
+            }
             for (IBond bond : ac.bonds()) {
                 pBonds.add(bond);
             }
         }
 
+        if (DEBUG) {
+            System.out.println("Done Marking Aromatic Bonds");
+        }
+
+        if (DEBUG) {
+            System.out.println("=====Educt createBEMatrix=====");
+        }
         this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
+        if (DEBUG) {
+            System.out.println("=====Product createBEMatrix=====");
+        }
         this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
+        if (DEBUG) {
+            System.out.println("=====AAM Container=====");
+        }
         this.mapping = new AtomAtomMappingContainer(reaction, withoutHydrogen);
+        if (DEBUG) {
+            System.out.println("=====createRMatrix=====");
+        }
         this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
 
         /*
          * Stereo mapping
          */
+        if (DEBUG) {
+            System.out.println("Assign Stereo");
+        }
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
             chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
             LOGGER.debug("WARNING: 2D CDK based stereo perception failed");
         }
+        if (DEBUG) {
+            System.out.println("Done Assign Stereo");
+        }
         /*
          * Generate stereo information
          */
+        if (DEBUG) {
+            System.out.println("Assign Stereo Center");
+        }
         this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
+        if (DEBUG) {
+            System.out.println("Done Assign Stereo Center");
+        }
     }
 
     /**

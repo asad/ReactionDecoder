@@ -28,14 +28,17 @@ import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.isomorphism.AtomMatcher;
+import org.openscience.cdk.isomorphism.BondMatcher;
+import org.openscience.cdk.isomorphism.Mappings;
+import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
 import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern;
 import org.openscience.smsd.algorithm.vflib.vf2.sub.VF;
-import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -52,8 +55,9 @@ import org.openscience.smsd.interfaces.IResults;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public class VF2Sub implements IResults {
+public class VF2Substructure implements IResults {
 
+    private final boolean DEBUG = false;
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<AtomAtomMapping> allAtomMCSCopy;
     private final List<Map<Integer, Integer>> allMCS;
@@ -68,8 +72,8 @@ public class VF2Sub implements IResults {
     private int countR = 0;
     private int countP = 0;
     private boolean isSubgraph = false;
-    private final static ILoggingTool Logger
-            = LoggingToolFactory.createLoggingTool(VF2Sub.class);
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(VF2Substructure.class);
 
     /**
      * Constructor for an extended VF Algorithm for the MCS search
@@ -79,9 +83,10 @@ public class VF2Sub implements IResults {
      * @param shouldMatchBonds
      * @param shouldMatchRings
      * @param matchAtomType
+     * @param findallMatches Find all SubGraphs
      */
-    public VF2Sub(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public VF2Substructure(IAtomContainer source, IAtomContainer target,
+            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType, boolean findallMatches) {
         this.source = source;
         this.target = target;
         allAtomMCS = new ArrayList<>();
@@ -91,7 +96,11 @@ public class VF2Sub implements IResults {
         this.shouldMatchRings = shouldMatchRings;
         this.matchBonds = shouldMatchBonds;
         this.matchAtomType = matchAtomType;
-        this.isSubgraph = findSubgraph();
+        if (findallMatches) {
+            this.isSubgraph = findSubgraphs();
+        } else {
+            this.isSubgraph = findSubgraph();
+        }
     }
 
     /**
@@ -99,8 +108,9 @@ public class VF2Sub implements IResults {
      *
      * @param source
      * @param target
+     * @param findallMatches find all subgraphs
      */
-    public VF2Sub(IQueryAtomContainer source, IAtomContainer target) {
+    public VF2Substructure(IQueryAtomContainer source, IAtomContainer target, boolean findallMatches) {
         this.source = source;
         this.target = target;
         allAtomMCS = new ArrayList<>();
@@ -109,7 +119,11 @@ public class VF2Sub implements IResults {
         allMCSCopy = new ArrayList<>();
         this.shouldMatchRings = true;
         this.matchBonds = true;
-        this.isSubgraph = findSubgraph();
+        if (findallMatches) {
+            this.isSubgraph = findSubgraphs();
+        } else {
+            this.isSubgraph = findSubgraph();
+        }
     }
 
     /**
@@ -117,17 +131,102 @@ public class VF2Sub implements IResults {
      *
      */
     private boolean findSubgraph() {
-        if (!MoleculeInitializer.testIsSubgraphHeuristics(source, target, this.matchBonds)) {
+
+        if (DEBUG) {
+            System.out.println("=======findSubgraph=======");
+        }
+        boolean flagSubGraph = false;
+
+        AtomMatcher am = AtomMatcher.forElement();
+        BondMatcher bm;
+        if (this.matchBonds) {
+            bm = BondMatcher.forOrder();
+        } else {
+            bm = BondMatcher.forAny();
+        }
+
+        if (source.getAtomCount() <= target.getAtomCount()) {
+            org.openscience.cdk.isomorphism.Pattern pattern = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings limit = pattern.matchAll(target).limit(1);
+            flagSubGraph = limit.count() > 0;
+            if (DEBUG) {
+                System.out.println("t>s limit.count() " + limit.count());
+            }
+        }
+
+        if (!flagSubGraph) {
             return false;
         }
-        boolean timoutVF = searchVFMappings();
+
+        if (DEBUG) {
+            System.out.println("Calling searchVFMappings");
+        }
+        boolean timoutVF = searchVFCDKMapping();
+
         boolean flag = isExtensionFeasible();
-//        System.out.println("find subgraph " + flag);
-        if (flag && !vfLibSolutions.isEmpty() && !timoutVF && (!(source instanceof IQueryAtomContainer))) {
+        if (DEBUG) {
+            System.out.println("isExtensionFeasible subgraph " + flag);
+        }
+
+        if (!allAtomMCSCopy.isEmpty()
+                && allAtomMCSCopy.iterator().next().getCount() == source.getAtomCount()) {
+            allAtomMCS.addAll(allAtomMCSCopy);
+            allMCS.addAll(allMCSCopy);
+        }
+        return !allAtomMCS.isEmpty()
+                && allAtomMCS.iterator().next().getCount()
+                == source.getAtomCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    private boolean findSubgraphs() {
+
+        if (DEBUG) {
+            System.out.println("=======findSubgraphs=======");
+        }
+        boolean flagSubGraph = false;
+
+        AtomMatcher am = AtomMatcher.forElement();
+        BondMatcher bm;
+        if (this.matchBonds) {
+            bm = BondMatcher.forOrder();
+        } else {
+            bm = BondMatcher.forAny();
+        }
+
+        if (source.getAtomCount() <= target.getAtomCount()) {
+            org.openscience.cdk.isomorphism.Pattern pattern = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings limit = pattern.matchAll(target).limit(1);
+            flagSubGraph = limit.count() > 0;
+            if (DEBUG) {
+                System.out.println("t>s limit.count() " + limit.count());
+            }
+        }
+
+        if (!flagSubGraph) {
+            return false;
+        }
+
+        if (DEBUG) {
+            System.out.println("Calling searchVFMappings");
+        }
+        //boolean timoutVF = searchVFMappings();
+        boolean timoutVF = searchVFCDKMappings();
+
+        boolean flag = isExtensionFeasible();
+        if (DEBUG) {
+            System.out.println("isExtensionFeasible subgraph " + flag);
+        }
+
+        if (flag && !vfLibSolutions.isEmpty()
+                && !timoutVF && (!(source instanceof IQueryAtomContainer))) {
             try {
                 searchMcGregorMapping();
             } catch (CDKException | IOException ex) {
-                Logger.error(Level.SEVERE, null, ex);
+                LOGGER.error(Level.SEVERE, null, ex);
             }
         } else if (!allAtomMCSCopy.isEmpty()
                 && allAtomMCSCopy.iterator().next().getCount() == source.getAtomCount()) {
@@ -187,50 +286,14 @@ public class VF2Sub implements IResults {
         return common;
     }
 
-//    /*
-//     * Note: VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
-//     * insensitive).
-//     */
-//    private synchronized boolean searchVFMappings() {
-////        System.out.println("searchVFMappings ");
-//        IQuery queryCompiler;
-//        IMapper mapper = null;
-//
-//        if (!(source instanceof IQueryAtomContainer) && !(target instanceof IQueryAtomContainer)) {
-//            countR = getReactantMol().getAtomCount();
-//            countP = getProductMol().getAtomCount();
-//        }
-//
-//        vfLibSolutions = new ArrayList<>();
-//        if (source instanceof IQueryAtomContainer) {
-//            queryCompiler = new QueryCompiler((IQueryAtomContainer) source).compile();
-//            mapper = new VFMapper(queryCompiler);
-//            List<Map<INode, IAtom>> maps = mapper.getMaps(getProductMol());
-//            if (maps != null) {
-//                vfLibSolutions.addAll(maps);
-//            }
-//            setVFMappings(true, queryCompiler);
-//        } else if (countR <= countP) {
-//            queryCompiler = new QueryCompiler(this.source, this.matchBonds, this.shouldMatchRings, this.matchAtomType).compile();
-//            mapper = new VFMapper(queryCompiler);
-//            List<Map<INode, IAtom>> maps = mapper.getMaps(getProductMol());
-//            if (maps != null) {
-//                vfLibSolutions.addAll(maps);
-//            }
-//            setVFMappings(true, queryCompiler);
-//        }
-////        System.out.println("Sol count " + vfLibSolutions.size());
-////        System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
-////        System.out.println("MCSSize " + bestHitSize);
-////        System.out.println("After Sol count " + allMCSCopy.size());
-//        return mapper != null ? mapper.isTimeout() : true;
-//    }
     /*
      * Note: VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
      * insensitive).
      */
     private synchronized boolean searchVFMappings() {
-//        System.out.println("searchVFMappings ");
+        if (DEBUG) {
+            System.out.println("searchVFMappings ");
+        }
         VF mapper = null;
         if (!(source instanceof IQueryAtomContainer) && !(target instanceof IQueryAtomContainer)) {
             countR = getReactantMol().getAtomCount();
@@ -253,10 +316,162 @@ public class VF2Sub implements IResults {
             }
             setVFMappings(true);
         }
-//        System.out.println("Sol count " + vfLibSolutions.size());
-//        System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
-//        System.out.println("MCSSize " + bestHitSize);
-//        System.out.println("After Sol count " + allMCSCopy.size());
+        if (DEBUG) {
+            System.out.println("Sol count " + vfLibSolutions.size());
+            System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
+            System.out.println("MCSSize " + bestHitSize);
+            System.out.println("After Sol count " + allMCSCopy.size());
+        }
+        return mapper != null;
+    }
+
+    /*
+     * Note: CDK VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
+     * insensitive).
+     */
+    private synchronized boolean searchVFCDKMapping() {
+        if (DEBUG) {
+            System.out.println("searchVFCDKMappings ");
+        }
+        VF mapper = null;
+        AtomMatcher am;
+        BondMatcher bm;
+
+        if (!(source instanceof IQueryAtomContainer)
+                && !(target instanceof IQueryAtomContainer)) {
+
+            countR = getReactantMol().getAtomCount();
+            countP = getProductMol().getAtomCount();
+
+            am = AtomMatcher.forElement();
+            if (matchAtomType) {
+                am = AtomMatcher.forElement();
+            }
+
+            if (matchBonds) {
+                bm = BondMatcher.forOrder();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+
+            if (this.shouldMatchRings) {
+                bm = BondMatcher.forStrictOrder();
+            }
+        } else {
+            if (source instanceof IQueryAtomContainer) {
+                am = AtomMatcher.forQuery();
+            } else {
+                am = AtomMatcher.forElement();
+            }
+
+            if (source instanceof IQueryAtomContainer) {
+                bm = BondMatcher.forQuery();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+        }
+
+        vfLibSolutions = new ArrayList<>();
+        if (source instanceof IQueryAtomContainer) {
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target).limit(1);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
+            }
+            setVFMappings(true);
+        } else if (countR <= countP) {
+
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll(target).limit(1);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
+            }
+            setVFMappings(true);
+        }
+
+        if (DEBUG) {
+            System.out.println("Sol count " + vfLibSolutions.size());
+            System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
+            System.out.println("MCSSize " + bestHitSize);
+            System.out.println("After Sol count " + allMCSCopy.size());
+        }
+        return mapper != null;
+    }
+
+    /*
+     * Note: CDK VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
+     * insensitive).
+     */
+    private synchronized boolean searchVFCDKMappings() {
+        if (DEBUG) {
+            System.out.println("searchVFCDKMappings ");
+        }
+        VF mapper = null;
+        AtomMatcher am;
+        BondMatcher bm;
+
+        if (!(source instanceof IQueryAtomContainer)
+                && !(target instanceof IQueryAtomContainer)) {
+
+            countR = getReactantMol().getAtomCount();
+            countP = getProductMol().getAtomCount();
+
+            am = AtomMatcher.forElement();
+            if (matchAtomType) {
+                am = AtomMatcher.forElement();
+            }
+
+            if (matchBonds) {
+                bm = BondMatcher.forOrder();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+
+            if (this.shouldMatchRings) {
+                bm = BondMatcher.forStrictOrder();
+            }
+        } else {
+            if (source instanceof IQueryAtomContainer) {
+                am = AtomMatcher.forQuery();
+            } else {
+                am = AtomMatcher.forElement();
+            }
+
+            if (source instanceof IQueryAtomContainer) {
+                bm = BondMatcher.forQuery();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+        }
+
+        vfLibSolutions = new ArrayList<>();
+        if (source instanceof IQueryAtomContainer) {
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
+            }
+            setVFMappings(true);
+        } else if (countR <= countP) {
+
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll(target);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
+            }
+            setVFMappings(true);
+        }
+
+        if (DEBUG) {
+            System.out.println("Sol count " + vfLibSolutions.size());
+            System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
+            System.out.println("MCSSize " + bestHitSize);
+            System.out.println("After Sol count " + allMCSCopy.size());
+        }
         return mapper != null;
     }
 
@@ -319,7 +534,7 @@ public class VF2Sub implements IResults {
                     try {
                         throw new CDKException("Atom index pointing to -1");
                     } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
+                        LOGGER.error(Level.SEVERE, null, ex);
                     }
                 }
             });
