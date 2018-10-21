@@ -135,39 +135,11 @@ public class VF2Substructure implements IResults {
         if (DEBUG) {
             System.out.println("=======findSubgraph=======");
         }
-        boolean flagSubGraph = false;
-
-        AtomMatcher am = AtomMatcher.forElement();
-        BondMatcher bm;
-        if (this.matchBonds) {
-            bm = BondMatcher.forOrder();
-        } else {
-            bm = BondMatcher.forAny();
-        }
-
-        if (source.getAtomCount() <= target.getAtomCount()) {
-            org.openscience.cdk.isomorphism.Pattern pattern = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings limit = pattern.matchAll(target).limit(1);
-            flagSubGraph = limit.count() > 0;
-            if (DEBUG) {
-                System.out.println("t>s limit.count() " + limit.count());
-            }
-        }
-
-        if (!flagSubGraph) {
-            return false;
-        }
 
         if (DEBUG) {
-            System.out.println("Calling searchVFMappings");
+            System.out.println("Calling searchVFCDKMapping");
         }
         boolean timoutVF = searchVFCDKMapping();
-
-        boolean flag = isExtensionFeasible();
-        if (DEBUG) {
-            System.out.println("isExtensionFeasible subgraph " + flag);
-        }
-
         if (!allAtomMCSCopy.isEmpty()
                 && allAtomMCSCopy.iterator().next().getCount() == source.getAtomCount()) {
             allAtomMCS.addAll(allAtomMCSCopy);

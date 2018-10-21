@@ -240,7 +240,7 @@ public class MCSThread implements Callable<MCSSolution> {
                             System.out.println("---1.3---");
                         }
                         substructure = new Substructure(ac1, ac2,
-                                false, false, isHasPerfectRings(), false);
+                                false, false, false, true);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
@@ -295,7 +295,7 @@ public class MCSThread implements Callable<MCSSolution> {
                             System.out.println("---2.3---");
                         }
                         substructure = new Substructure(ac2, ac1,
-                                false, false, isHasPerfectRings(), false);
+                                false, false, false, true);
                     }
                     substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
