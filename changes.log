@@ -10,7 +10,7 @@ Changes (25/03/2014)
 ----------------------
 a) Code optimisation
 b) Bug fix (Rule)
-c) RXN File path tokenizer fixed.
+c) RXN File path tokeniser fixed.
 d) Similarity matrix printing updated.
 e) Matching optimisations ported.
 
@@ -32,7 +32,7 @@ d) Ring vs non-ring bug fixed.
 Changes (30/03/2014)
 -----------------------
 a) Stereo conservation is restored.
-b) InChi labeling promoted if available.
+b) InChi labelling promoted if available.
 c) Canonical container and serialised mapping.
 d) 2D relayout for missing atoms.
 e) Accept user defined customised AAM for balanced
@@ -52,7 +52,7 @@ a) RXN file property block with unsupported potential
    DIAT COORDINATE BOND TYPE handled.
 b) Fixed Thread bug in MCSPlus algorithm.
 c) Radical based changes highlighted in the images.
-d) Image size optimized 2048*600.
+d) Image size optimised 2048*600.
 e) Unique naming sensitive to Radicals.
 
 -----------------------
@@ -84,7 +84,7 @@ c) MMP output format updated.
 Changes (11/05/2014)
 -----------------------
 a) Algorithm call for subgraph mapping updated (case R03775)
-b) FP updation
+b) FP updating
 
 -----------------------
 Changes (15/05/2014)
@@ -241,6 +241,15 @@ Changes (21/10/2018)
 a) Major gain in AAM speed
 b) Improved MCS code in the SMSD
 c) Code Clean and Bug fixes 
+
+
+-----------------------
+Changes (22/10/2018)
+-----------------------
+a) Code clean up
+b) Subgraph mapping improved
+c) improved AAM Speed for complex graph  
+
 
 
 -----------------------

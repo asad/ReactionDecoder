@@ -25,6 +25,7 @@ Installation
 `POM.xml` commands
 
 ```
+
 use POM.xml and mvn commands to build your project
 1) mvn -DskipTests=true install (skip test)
 2) mvn install (include test)
@@ -33,26 +34,6 @@ use POM.xml and mvn commands to build your project
 5) mvn package
 6) mvn -P local clean install (with -jar-with-dependencies)
 
-```
-`c)` Compile and bundle the code using `ant`?:
-
-`d)` `Ant Build` commands
-
-```
-CLEAN:
-  ant clean
-BUILD:
-  ant compile
-DIST:
-  ant jar
-DOC:
-  ant javadoc
-TEST:
-  ant test
-HELP:
-  ant run
-Fat Jar:
- ant package-for-store
 ```
 
 Atom Atom Mapping using Java API

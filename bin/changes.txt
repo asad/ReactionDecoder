@@ -241,6 +241,13 @@ a) Major gain in AAM speed
 b) Improved MCS code in the SMSD
 c) Code Clean and Bug fixes 
 
+-----------------------
+Changes (22/10/2018)
+-----------------------
+a) Code clean up
+b) Subgraph mapping improved
+c) improved AAM Speed for complex graph  
+
 
 -----------------------
 TO DO
