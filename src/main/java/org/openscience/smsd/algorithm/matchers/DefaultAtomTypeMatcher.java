@@ -31,8 +31,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 /**
  * Checks if atom is matching between query and target molecules.
  *
- * 
- * 
+ *
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
@@ -112,12 +112,15 @@ public final class DefaultAtomTypeMatcher implements AtomMatcher {
                 return false;
             }
 
-            if (!matchAtomType(targetAtom)
-                    && isAliphaticAtom(getQueryAtom())
-                    && isAliphaticAtom(targetAtom)) {
+            if (!matchAtomType(targetAtom)) {
                 return false;
             }
 
+//            if (!matchAtomType(targetAtom)
+//                    && isAliphaticAtom(getQueryAtom())
+//                    && isAliphaticAtom(targetAtom)) {
+//                return false;
+//            }
         }
         return true;
     }

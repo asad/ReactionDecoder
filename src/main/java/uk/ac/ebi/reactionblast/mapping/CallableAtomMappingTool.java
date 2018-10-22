@@ -230,8 +230,9 @@ public class CallableAtomMappingTool implements Serializable {
         } finally {
             executor.shutdown();
         }
-
-        LOGGER.info("!!!!Atom-Atom Mapping Done!!!!");
+        if (DEBUG) {
+            System.out.println("!!!!Atom-Atom Mapping Done!!!!");
+        }
     }
 
     /**

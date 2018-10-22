@@ -22,8 +22,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
+package org.openscience.smsd.algorithm.mcsplus1;
 
+import org.openscience.smsd.tools.Utility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import static org.openscience.smsd.algorithm.mcsplus.mcsplus1.BinaryTree.remove_tree_structure;
+import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_structure;
 
 /**
  * Class which reports MCS solutions based on the McGregor algorithm published
@@ -52,21 +53,15 @@ import static org.openscience.smsd.algorithm.mcsplus.mcsplus1.BinaryTree.remove_
  */
 public class McGregor extends Utility {
 
-    protected final List<Integer> c_edges;
-    protected final List<Integer> d_edges;
-
     private List<String> c_tab1_copy;
     private List<String> c_tab2_copy;
 
     private BinaryTree last, first;
 
-    protected int c_edges_size;
-    protected int d_edges_size;
-
     protected int best_clique_size;
 
-    protected final List<Integer> comp_graph_nodes;
-    protected final List<Integer> comp_graph_nodes_C_zero;
+    final List<Integer> comp_graph_nodes;
+    final List<Integer> comp_graph_nodes_C_zero;
 
     protected final List<IAtom> atomstr1;
     protected final List<IAtom> atomstr2;
@@ -121,7 +116,11 @@ public class McGregor extends Utility {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public McGregor(IAtomContainer f1, IAtomContainer f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public McGregor(IAtomContainer f1,
+            IAtomContainer f2,
+            boolean shouldMatchBonds,
+            boolean shouldMatchRings,
+            boolean matchAtomType) {
         this.shouldMatchBonds = shouldMatchBonds;
         this.shouldMatchRings = shouldMatchRings;
         this.matchAtomType = matchAtomType;
@@ -147,8 +146,6 @@ public class McGregor extends Utility {
         this.ac2 = file2.getAtomContainer();
 
         this.comp_graph_nodes = new ArrayList<>();
-        this.c_edges = new ArrayList<>();//Initialize the c_edges Vector
-        this.d_edges = new ArrayList<>();//Initialize the d_edges Vector
         this.comp_graph_nodes_C_zero = new ArrayList<>();//Initialize the comp_graph_nodes_C_zero Vector
 
         this.c_tab1_copy = new ArrayList<>();

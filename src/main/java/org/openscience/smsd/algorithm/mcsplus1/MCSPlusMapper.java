@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
+package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.filters.PostFilter;
 import org.openscience.smsd.interfaces.IResults;
@@ -49,8 +49,8 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class MCSPlusMapper implements IResults {
 
-    private final static ILoggingTool LOGGER
-            = createLoggingTool(MCSPlusMapper.class);
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MCSPlusMapper.class);
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<Map<Integer, Integer>> allMCS;
     private final IAtomContainer source;

@@ -21,9 +21,10 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class ExactMapping {
 
     /**
      *
-     * Extract atom mapping from the cliques and stores it in a List
+     * Extract atom getMapping from the cliques and stores it in a List
      *
      * @param comp_graph_nodes
      * @param clique_List_org
@@ -72,7 +73,7 @@ public class ExactMapping {
         return clique_mapping;
     }
 
-    //extract atom mapping from the clique List and print it on the screen
+    //extract atom getMapping from the clique List and print it on the screen
     /**
      *
      * @param _mappings
@@ -93,15 +94,15 @@ public class ExactMapping {
         return _mappings;
     }
 
-    //extract atom mapping from the clique List and print it on the screen
+    //extract atom getMapping from the clique List and print it on the screen
     /**
      *
      * @param comp_graph_nodes
      * @param clique_List_org
      * @return
      */
-    public static Map<Integer, Integer> extractMapping(List<Integer> comp_graph_nodes, List<Integer> clique_List_org) {
-        Map<Integer, Integer> clique_mapping = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+    public static Map<Integer, Integer> getMapping(List<Integer> comp_graph_nodes, Collection<Integer> clique_List_org) {
+        Map<Integer, Integer> clique_mapping = Collections.synchronizedSortedMap(new TreeMap<>());
 
         try {
             List<Integer> clique_List = new ArrayList<>(clique_List_org);

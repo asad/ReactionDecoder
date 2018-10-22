@@ -38,7 +38,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
 import org.openscience.smsd.algorithm.mcsplus.Result;
-import org.openscience.smsd.algorithm.mcsplus.mcsplus2.BKKCKCF;
+import org.openscience.smsd.algorithm.mcsplus2.BKKCKCF;
 import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.interfaces.Algorithm;

@@ -482,7 +482,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
         if (DEBUG2) {
             System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
             System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
             System.out.println("diff " + difference.size());
         }
 
@@ -530,8 +532,10 @@ public class MCSThread implements Callable<MCSSolution> {
 
         if (DEBUG2) {
             System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
             System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            System.out.println("common " + common.size());
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
+            System.out.println("Common " + common.size());
         }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
@@ -557,8 +561,8 @@ public class MCSThread implements Callable<MCSSolution> {
             System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                false, isHasPerfectRings(), false);
+        isomorphism
+                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, isHasPerfectRings(), false);
 
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
         if (DEBUG3) {

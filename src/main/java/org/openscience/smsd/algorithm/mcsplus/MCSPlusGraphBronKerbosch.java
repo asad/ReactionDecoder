@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.ForkJoinPool;
@@ -39,9 +40,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
-import org.openscience.smsd.algorithm.mcsplus.Result;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -53,10 +51,10 @@ import org.openscience.smsd.tools.IterationManager;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public final class MCSPlus {
+public final class MCSPlusGraphBronKerbosch {
 
     private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(MCSPlus.class);
+            = LoggingToolFactory.createLoggingTool(MCSPlusGraphBronKerbosch.class);
     private final static boolean DEBUG = false;
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
@@ -98,7 +96,7 @@ public final class MCSPlus {
      * @param ac2
      * @param matchAtomType
      */
-    public MCSPlus(IAtomContainer ac1,
+    public MCSPlusGraphBronKerbosch(IAtomContainer ac1,
             IAtomContainer ac2,
             boolean shouldMatchBonds,
             boolean shouldMatchRings,
@@ -116,7 +114,7 @@ public final class MCSPlus {
      * @param ac1
      * @param ac2
      */
-    public MCSPlus(IQueryAtomContainer ac1,
+    public MCSPlusGraphBronKerbosch(IQueryAtomContainer ac1,
             IAtomContainer ac2) {
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
@@ -143,7 +141,7 @@ public final class MCSPlus {
             System.out.println("ac1 : " + ac1.getAtomCount());
             System.out.println("ac2 : " + ac2.getAtomCount());
         }
-        setIterationManager(new IterationManager((ac1.getAtomCount() + ac2.getAtomCount())));
+        setIterationManager(new IterationManager((ac1.getAtomCount() * ac2.getAtomCount())));
         try {
             /*
              *   Assign the threads
@@ -183,12 +181,12 @@ public final class MCSPlus {
             }).forEachOrdered((r) -> {
                 dEdges.addAll(r.getDEgdes());
             });
-
-//        GenerateCompatibilityGraph gcg
-//                = new GenerateCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-//        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-//        List<Integer> cEdges = gcg.getCEgdes();
-//        List<Integer> dEdges = gcg.getDEgdes();
+//            CompatibilityGraph gcg
+//                    = new CompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+//            int search_cliques = gcg.searchCliques();
+//            List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+//            List<Edge> cEdges = gcg.getCEdges();
+//            List<Edge> dEdges = gcg.getDEdges();
             if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("--MCS PLUS--");
@@ -196,19 +194,26 @@ public final class MCSPlus {
                 System.out.println("D_edges: " + dEdges.size());
                 System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
             }
-            BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
+            GraphBronKerboschPivotal init = new GraphBronKerboschPivotal(comp_graph_nodes, cEdges, dEdges);
+            init.findMaximalCliques();
+            Stack<Set<Node>> maxCliquesSet = init.getMaxCliquesSet();
             Stack<List<Integer>> maxCliqueSet = new Stack<>();
-            maxCliqueSet.addAll(init.getMaxCliqueSet());
+            for (Set<Node> nodes : maxCliquesSet) {
+                List<Integer> list = new ArrayList<>();
+                for (Node n : nodes) {
+                    list.add(n.node);
+                }
+                maxCliqueSet.add(list);
+            }
             if (DEBUG) {
                 System.out.println("Max_Cliques_Set: " + maxCliqueSet);
-                System.out.println("Best Clique Size: " + init.getBestCliqueSize());
                 System.out.println("**************************************************");
             }
             List<Map<Integer, Integer>> mappings = new ArrayList<>();
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExactMapping.extractMapping(comp_graph_nodes, maxCliqueSet.peek());
+                indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
                 }
@@ -224,8 +229,10 @@ public final class MCSPlus {
             } else {
                 extendMappings = searchMcGregorMapping(ac1, ac2, mappings);
             }
-//            int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
-//            System.out.println("extendMappings: " + size);
+            if (DEBUG) {
+                int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
+                System.out.println("extendMappings: " + size);
+            }
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }

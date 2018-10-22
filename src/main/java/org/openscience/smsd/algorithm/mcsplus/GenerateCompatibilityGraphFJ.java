@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.RecursiveTask;
+import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -37,7 +38,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             = LoggingToolFactory.createLoggingTool(GenerateCompatibilityGraphFJ.class);
     private final static boolean DEBUG = false;
     private static final int THRESHOLD = 20;
-    private static final int COMPLEX_MAX_GRAPH_NODE_COUNT = 30;
+    private static final int COMPLEX_MAX_GRAPH_NODE_COUNT = 100;
     private final int startIndex;
     private final int endIndex;
 
@@ -244,10 +245,17 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
 
                     if (reactantBond != null && productBond != null) {
                         addZeroEdges(result.cEdges, result.dEdges, reactantBond, productBond, a, b);
-                    } else if (reactantBond == null && productBond == null
-                            && ((source.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT)
-                            && target.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT))
-                            || (result.dEdges.size() < result.compGraphNodes.size()))) {
+                    } //                    else if (reactantBond == null && productBond == null
+                    //                            && ((source.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT)
+                    //                            && target.getAtomCount() < (COMPLEX_MAX_GRAPH_NODE_COUNT))
+                    //                            || (result.dEdges.size() < result.compGraphNodes.size()))) {
+                    //                        //50 unique condition to speed up the AAM
+                    //                        Edge edge = new Edge((a / 4) + 1, (b / 4) + 1);
+                    //                        if (!result.dEdges.contains(edge)) {
+                    //                            result.dEdges.add(edge);
+                    //                        }
+                    //                    }
+                    else if (reactantBond == null && productBond == null) {
                         //50 unique condition to speed up the AAM
                         Edge edge = new Edge((a / 4) + 1, (b / 4) + 1);
                         if (!result.dEdges.contains(edge)) {
@@ -496,15 +504,21 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
     }
 
     private boolean isRawMatch(IBond reactantBond, IBond productBond) {
+
         if (reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(0).getSymbol())
                 && reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-            if (reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(0).getHybridization())
+            if (reactantBond.getAtom(0).getHybridization() != UNSET && reactantBond.getAtom(1).getHybridization() != UNSET
+                    && productBond.getAtom(0).getHybridization() != UNSET && productBond.getAtom(1).getHybridization() != UNSET
+                    && reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(0).getHybridization())
                     && reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
                 return true;
             }
         } else if (reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(0).getSymbol())
                 && reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-            if (reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(0).getHybridization())
+
+            if (reactantBond.getAtom(0).getHybridization() != UNSET && reactantBond.getAtom(1).getHybridization() != UNSET
+                    && productBond.getAtom(0).getHybridization() != UNSET && productBond.getAtom(1).getHybridization() != UNSET
+                    && reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(0).getHybridization())
                     && reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
                 return true;
             }

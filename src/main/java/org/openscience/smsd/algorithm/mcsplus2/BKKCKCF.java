@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus2;
+package org.openscience.smsd.algorithm.mcsplus2;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,9 +119,6 @@ public final class BKKCKCF {
         }).forEachOrdered((e) -> {
             this.D_edges.add(e.getSink());
         });
-
-//        this.C_edges = Collections.unmodifiableList(new ArrayList<>(cEdges));
-//        this.D_edges = Collections.unmodifiableList(new ArrayList<>(dEdges));
         best_clique_size = 0;
         max_Cliques_Set = new HashSet<>();
 
@@ -239,7 +236,7 @@ public final class BKKCKCF {
                     if (clique_size > best_clique_size) {
                         max_Cliques_Set.clear();
                         best_clique_size = clique_size;
-//                        System.out.println("Best Cliques Size: " + best_clique_size + " " + clique_size);
+                        //System.out.println("Best Cliques Size: " + best_clique_size + " " + clique_size);
                     }
                     if (clique_size == best_clique_size) {
                         max_Cliques_Set.add(C);
@@ -292,7 +289,7 @@ public final class BKKCKCF {
                 S_copy.add(obj);
             });
 
-            P_copy.pop(); //Entferne Endekennung bei P_copy POP method() in CPP
+            P_copy.pop();
 
             N = find_neighbors(P_Prime.get(a));
 

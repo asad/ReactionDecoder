@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
+package org.openscience.smsd.tools;
 
 import static java.lang.System.getProperty;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class Utility {
 
     }
 
-    static List<Integer> getBubbleSort(List<Integer> unSortedVector) {
+    public static List<Integer> getBubbleSort(List<Integer> unSortedVector) {
         List<Integer> sortedVector = new ArrayList<>(unSortedVector);
         int j;
         boolean flag = true;   // set flag to true to begin first pass
@@ -129,7 +129,7 @@ public class Utility {
      * @param matchAtomType
      * @return
      */
-    protected boolean isMatchFeasible(
+    public static boolean isMatchFeasible(
             IBond bondA1,
             IBond bondA2,
             boolean shouldMatchBonds,

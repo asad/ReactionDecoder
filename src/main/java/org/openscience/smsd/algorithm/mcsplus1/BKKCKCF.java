@@ -20,16 +20,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus.mcsplus1;
+package org.openscience.smsd.algorithm.mcsplus1;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.mcsplus.Edge;
 import uk.ac.ebi.reactionblast.graphics.direct.MoleculeLabelDrawer;
 
 /**
+ * This class implements Bron-Kerbosch clique detection algorithm as it is
+ * described in [F. Cazals, C. Karande: An Algorithm for reporting maximal
+ * c-cliques; processedVertex.Comp. Sc. (2005); vol 349; pp. 484-490]
+ *
+ *
+ * BronKerboschCazalsKarandeKochCliqueFinder.java
+ *
+ *
  *
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
@@ -40,9 +49,7 @@ public class BKKCKCF {
             = LoggingToolFactory.createLoggingTool(MoleculeLabelDrawer.class);
 
     private final List<Integer> comp_graph_nodes;
-
     private final List<Integer> c_edges;
-
     private final List<Integer> d_edges;
     private final Stack<List<Integer>> max_Cliques_Set;
     private int best_clique_size;
@@ -56,15 +63,30 @@ public class BKKCKCF {
     /**
      *
      * @param comp_graph_nodes
-     * @param C_edges
-     * @param D_edges
+     * @param cEdges
+     * @param dEdges
      */
     public BKKCKCF(List<Integer> comp_graph_nodes,
-            List<Integer> C_edges,
-            List<Integer> D_edges) {
+            List<Edge> cEdges,
+            List<Edge> dEdges) {
         this.comp_graph_nodes = comp_graph_nodes;
-        this.c_edges = C_edges;
-        this.d_edges = D_edges;
+        this.c_edges = new ArrayList<>();
+        this.d_edges = new ArrayList<>();
+
+        cEdges.stream().map((e) -> {
+            this.c_edges.add(e.getSource());
+            return e;
+        }).forEachOrdered((e) -> {
+            this.c_edges.add(e.getSink());
+        });
+
+        dEdges.stream().map((e) -> {
+            this.d_edges.add(e.getSource());
+            return e;
+        }).forEachOrdered((e) -> {
+            this.d_edges.add(e.getSink());
+        });
+
         this.best_clique_size = 0;
         this.max_Cliques_Set = new Stack<>();
         this.T = new Stack<>();
@@ -151,7 +173,7 @@ public class BKKCKCF {
                 }
                 //delete neighbor from set V
                 if (neighbor_position != -1) {
-                    //  System.out.println("neighbor_position : " + neighbor_position);
+//                      System.out.println("neighbor_position : " + neighbor_position);
                     for (int e = neighbor_position; e < V_size - 1; e++) {
                         V.set(e, V.get(e + 1));
                     }

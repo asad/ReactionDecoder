@@ -36,6 +36,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.helper.BinaryTree;
 import org.openscience.smsd.tools.IterationManager;
+import org.openscience.smsd.tools.Utility;
 
 /**
  * Class which reports MCS solutions based on the McGregor algorithm published
@@ -572,7 +573,7 @@ public final class McGregor {
                     IAtom P1_B = target.getAtom(Index_J);
                     IAtom P2_B = target.getAtom(Index_JPlus1);
                     IBond productBond = target.getBond(P1_B, P2_B);
-                    if (McGregorChecks.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+                    if (Utility.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
                         modifiedARCS.set(row * neighborBondNumB + column, 1);
                     }
                 } else if (source instanceof IQueryAtomContainer) {
@@ -589,7 +590,7 @@ public final class McGregor {
                     IAtom P1_B = target.getAtom(Index_J);
                     IAtom P2_B = target.getAtom(Index_JPlus1);
                     IBond productBond = target.getBond(P1_B, P2_B);
-                    if (McGregorChecks.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+                    if (Utility.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
                         modifiedARCS.set(row * neighborBondNumB + column, 1);
                     }
                 }
@@ -842,7 +843,7 @@ public final class McGregor {
         IBond productBond = target.getBond(P1_B, P2_B);
 
 //      Bond Order Check Introduced by Asad
-        if (McGregorChecks.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+        if (Utility.isMatchFeasible(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
 
             for (int indexZ = 0; indexZ < mcGregorHelper.getMappedAtomCount(); indexZ++) {
 

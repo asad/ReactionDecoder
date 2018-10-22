@@ -396,8 +396,11 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         }
         try {
             //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
+            //isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+
             Isomorphism isomorphism;
             isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+
             isomorphism.setChemFilters(true, true, true);
             MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, isomorphism.getFirstAtomMapping());
             mcs.setEnergy(isomorphism.getEnergyScore(0));

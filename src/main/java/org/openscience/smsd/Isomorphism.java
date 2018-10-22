@@ -275,17 +275,17 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
         } else if (isMatchBonds() || getQuery().getAtomCount() > 20) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         } else {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -426,8 +426,10 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
         if (DEBUG) {
             System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
             System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            System.out.println("common " + common.size());
+            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
+            System.out.println("Common " + common.size());
         }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
