@@ -127,6 +127,13 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
      * initializing calling this method.
      *
+     * Please call MoleculeInitializer before calling substructure search
+     *
+     * if (super.isMatchRings()) { try {
+     * MoleculeInitializer.initializeMolecule(super.getQuery());
+     * MoleculeInitializer.initializeMolecule(super.getTarget()); } catch
+     * (CDKException ex) { } }
+     *
      *
      * @param query query molecule
      * @param target target molecule This is the algorithm factory and entry
@@ -175,13 +182,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             boolean matchAtomType) throws CDKException {
         super(query, target, bondTypeFlag, matchRings, matchAtomType);
         this.algorithmType = algorithmType;
-        if (super.isMatchRings()) {
-            try {
-                MoleculeInitializer.initializeMolecule(super.getQuery());
-                MoleculeInitializer.initializeMolecule(super.getTarget());
-            } catch (CDKException ex) {
-            }
-        }
         mcsBuilder(super.getQuery(), super.getTarget());
         super.setSubgraph(isSubgraph());
     }

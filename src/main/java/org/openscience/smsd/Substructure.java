@@ -33,11 +33,18 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2Substructure;
-import org.openscience.smsd.helper.MoleculeInitializer;
 
 /**
  * This is an ultra fast method to report if query is a substructure for target
  * molecule. If this case is true then it returns only all mapping.
+ *
+ *
+ * Please call MoleculeInitializer before calling substructure search
+ *
+ * if (super.isMatchRings()) { try {
+ * MoleculeInitializer.initializeMolecule(super.getQuery());
+ * MoleculeInitializer.initializeMolecule(super.getTarget()); } catch
+ * (CDKException ex) { } }
  *
  * This is much faster than {@link
  * org.openscience.smsd.algorithm.vflib.substructure} class as it only reports
@@ -76,8 +83,11 @@ public final class Substructure extends BaseMapping {
             = LoggingToolFactory.createLoggingTool(Substructure.class);
 
     /**
-     * Constructor for VF Substructure Algorithm Please call before calling
-     * substructure search if (super.isMatchRings()) { try {
+     * Constructor for VF Substructure Algorithm
+     *
+     * Please call before calling substructure search
+     *
+     * if (super.isMatchRings()) { try {
      * MoleculeInitializer.initializeMolecule(super.getQuery());
      * MoleculeInitializer.initializeMolecule(super.getTarget()); } catch
      * (CDKException ex) { } }
