@@ -120,8 +120,8 @@ public class CompatibilityGraph {
 
     public int searchCliques() {
 
-//        generate_compatibility_graph_nodes();
-//        generate_compatibility_graph();
+        generate_compatibility_graph_nodes();
+        generate_compatibility_graph();
         if (DEBUG) {
             System.out.println("c_edges_size " + getCEdges().size());
             System.out.println("bond count: " + ac1.getBondCount());

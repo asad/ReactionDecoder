@@ -51,7 +51,7 @@ public class GraphBronKerboschPivot {
      *
      * @param cliques set the cliques
      */
-    public void setCliques(Stack<Set<Node>> cliques) {
+    public void setCliques(Collection<Set<Node>> cliques) {
         this.cliques = cliques;
     }
 
@@ -60,12 +60,12 @@ public class GraphBronKerboschPivot {
      * @return Collection of cliques (each of which is represented as a Set of
      * vertices)
      */
-    public Stack<Set<Node>> getCliques() {
+    public Collection<Set<Node>> getCliques() {
         return cliques;
     }
 
-    private final static boolean DEBUG = true;
-    private Stack<Set<Node>> cliques;
+    private final static boolean DEBUG = false;
+    private Collection<Set<Node>> cliques;
 
     private final List<Integer> comp_graph_nodes;
     private final List<Edge> c_edges;
@@ -79,7 +79,7 @@ public class GraphBronKerboschPivot {
         this.comp_graph_nodes = comp_graph_nodes;
         this.c_edges = cEdges;
         this.d_edges = dEdges;
-        this.cliques = new Stack<>();
+        this.cliques = new HashSet<>();
         this.iterations = 0;
 
     }
@@ -110,9 +110,10 @@ public class GraphBronKerboschPivot {
         int printDepth = 1;
 
         BronKerboschWithPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
-//        BronKerboschWithoutPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
+        //        BronKerboschWithoutPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
+//        BronKerbosch(potential_clique_R, candidates_P, already_found_X);
         if (DEBUG) {
-            System.out.println("BK Cliques Found: \n " + getCliques());
+            System.out.println("BK Cliques Found: \n " + this.cliques);
         }
     }
 
@@ -179,7 +180,7 @@ public class GraphBronKerboschPivot {
         }
 
         if ((P.isEmpty()) && (X.isEmpty())) {
-            Set<Node> pushed = cliques.push(new HashSet<>(R));
+            cliques.add(new HashSet<>(R));
             if (DEBUG) {
                 printClique(R);
             }
@@ -190,7 +191,10 @@ public class GraphBronKerboschPivot {
             return;
         }
 
-        List<Node> P1 = new ArrayList<>(P);
+        Set<Node> P1 = new TreeSet<>(P);
+        if (DEBUG) {
+            System.out.println("P_PRIME " + P1);
+        }
 
         iterations++;
         if (this.iterations % 1000 == 0) {
@@ -211,7 +215,7 @@ public class GraphBronKerboschPivot {
          */
         P = new TreeSet<>(removeNeigbour(P, u));
         if (DEBUG) {
-            System.out.println("P_Prime: " + P + printDepth + " Pivot is " + (u));
+            System.out.println("P_Prime: " + P1 + " Depth: " + printDepth + " Pivot is " + (u));
         }
         for (Node v : P) {
             //Push the node into selection set
@@ -292,7 +296,7 @@ public class GraphBronKerboschPivot {
         }
 
         if ((P.isEmpty()) && (X.isEmpty())) {
-            Set<Node> pushed = cliques.push(new HashSet<>(R));
+            cliques.add(new HashSet<>(R));
             if (DEBUG) {
                 printClique(R);
             }
@@ -335,6 +339,79 @@ public class GraphBronKerboschPivot {
             i += 1;
         }
         return n;
+    }
+
+    private void BronKerbosch(
+            TreeSet<Node> R,
+            TreeSet<Node> P,
+            TreeSet<Node> X) {
+        TreeSet<Node> candidates_array = new TreeSet<Node>(P);
+        if (!end(P, X)) {
+            // for each candidate_node in P do
+            for (Node candidate : candidates_array) {
+                TreeSet<Node> new_candidates = new TreeSet<>();
+                TreeSet<Node> new_already_found = new TreeSet<>();
+
+                // move candidate node to R
+                R.add(candidate);
+                P.remove(candidate);
+
+                // create new_candidates by removing nodes in P not
+                // connected to candidate node
+                for (Node new_candidate : P) {
+                    if (isNeighbor(candidate, new_candidate)) {
+                        new_candidates.add(new_candidate);
+                    } // of if
+                } // of for
+
+                // create new_already_found by removing nodes in X
+                // not connected to candidate node
+                for (Node new_found : X) {
+                    if (isNeighbor(candidate, new_found)) {
+                        new_already_found.add(new_found);
+                    } // of if
+                } // of for
+
+                // if new_candidates and new_already_found are empty
+                if (new_candidates.isEmpty() && new_already_found.isEmpty()) {
+                    // R is maximal_clique
+                    cliques.add(new HashSet<>(R));
+                } // of if
+                else {
+                    // recursive call
+                    BronKerbosch(R,
+                            new_candidates,
+                            new_already_found);
+                } // of else
+
+                // move candidate_node from R to X;
+                X.add(candidate);
+                R.remove(candidate);
+            } // of for
+        } // of if
+    }
+
+    /**
+     *
+     * @param candidates
+     * @param already_found
+     * @return
+     */
+    private boolean end(TreeSet<Node> candidates, TreeSet<Node> already_found) {
+        // if a node in already_found is connected to all nodes in candidates
+        boolean end = false;
+        int edgecounter;
+        for (Node found : already_found) {
+            edgecounter = 0;
+            edgecounter = candidates.stream().filter((candidate)
+                    -> (isNeighbor(found, candidate))).map((_item) -> 1).
+                    reduce(edgecounter, Integer::sum); // of if
+            // of for
+            if (edgecounter == candidates.size()) {
+                end = true;
+            }
+        } // of for
+        return end;
     }
 
     /*
@@ -453,5 +530,13 @@ public class GraphBronKerboschPivot {
             System.out.print(" " + v + ",");
         });
         System.out.print(" ]\n");
+    }
+
+    private boolean isNeighbor(Node found, Node candidate) {
+        Collection<Node> neighbors = findNeighbors(candidate);
+        if (DEBUG) {
+            System.out.println("neighbors.contains(found) " + neighbors.contains(found));
+        }
+        return neighbors.contains(found);
     }
 }

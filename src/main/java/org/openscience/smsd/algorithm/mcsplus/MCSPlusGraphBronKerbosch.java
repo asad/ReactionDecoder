@@ -146,13 +146,13 @@ public final class MCSPlusGraphBronKerbosch {
             List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
             List<Edge> cEdges = gcg.getCEdges();
             List<Edge> dEdges = gcg.getDEdges();
-            //if (DEBUG) {
+            if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("--MCS PLUS--");
                 System.out.println("C_edges: " + cEdges);
                 System.out.println("D_edges: " + dEdges);
                 System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
-            //}
+            }
             GraphBronKerboschPivot init = new GraphBronKerboschPivot(comp_graph_nodes, cEdges, dEdges);
             init.findMaximalCliques();
             Stack<Set<Node>> maxCliquesSet = init.getMaxCliquesSet();
@@ -175,14 +175,18 @@ public final class MCSPlusGraphBronKerbosch {
                 indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
-                    System.out.println("mappings " + mappings);
+                    if (DEBUG) {
+                        System.out.println("mappings " + mappings);
+                    }
                 }
                 maxCliqueSet.pop();
             }
 
             //clear all the compatibility graph content
             gcg.clear();
-            System.out.println("mappings: " + mappings.size());
+            if (DEBUG) {
+                System.out.println("mappings: " + mappings.size());
+            }
             if (ac1 instanceof IQueryAtomContainer) {
                 extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
             } else {
@@ -227,9 +231,9 @@ public final class MCSPlusGraphBronKerbosch {
             } else {
                 //find mapped atoms of both molecules and store these in mappedAtoms
                 List<Integer> exact_mapped_atoms = new ArrayList<>();
-                System.out.println("\nExact Mapped Atoms");
+//                System.out.println("\nExact Mapped Atoms");
                 extendMapping.entrySet().stream().map((map) -> {
-                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+//                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
                     exact_mapped_atoms.add(map.getKey());
                     return map;
                 }).forEach((map) -> {
@@ -237,17 +241,17 @@ public final class MCSPlusGraphBronKerbosch {
                 });
                 cliques.add(exact_mapped_atoms);
             }
-            System.out.println("\nStart McGregor search");
+            //System.out.println("\nStart McGregor search");
             //Start McGregor search
 
-            System.out.println("\nSol count after MG " + cliques.size());
+            //System.out.println("\nSol count after MG " + cliques.size());
             if (checkTimeout()) {
                 break;
             }
         }
         List<List<Integer>> finalMappings = setMcGregorMappings(ROPFlag, cliques);
-        System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
-        System.out.println("After set Sol count MG " + finalMappings.size());
+//        System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
+//        System.out.println("After set Sol count MG " + finalMappings.size());
         return finalMappings;
     }
 
