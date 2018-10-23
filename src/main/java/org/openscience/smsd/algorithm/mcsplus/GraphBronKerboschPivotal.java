@@ -172,13 +172,15 @@ public class GraphBronKerboschPivotal {
             int printDepth) {
 
         if (DEBUG) {
-            System.out.println("BronKerboschWithPivot called: C=" + toText(R, "{", "}")
-                    + ", P=" + toText(P, "{", "}") + ", S=" + toText(X, "{", "}"));
+            System.out.println("BronKerboschWithPivot called: R=" + toText(R, "{", "}")
+                    + ", P=" + toText(P, "{", "}") + ", X=" + toText(X, "{", "}"));
         }
 
         if ((P.isEmpty()) && (X.isEmpty())) {
             Set<Node> pushed = cliques.push(new HashSet<>(R));
-            //printClique(R);
+            if (DEBUG) {
+                printClique(R);
+            }
             return;
         }
         if (iterations > 5000) {
@@ -188,8 +190,6 @@ public class GraphBronKerboschPivotal {
 
         // System.out.println(); 
         List<Node> P1 = new ArrayList<>(P);
-        // Find Pivot 
-        Node u = getMaxDegreeVertex(union(P, X));
 
         iterations++;
         if (this.iterations % 1000 == 0) {
@@ -200,16 +200,23 @@ public class GraphBronKerboschPivotal {
                 printClique(R);
             }
         }
-        if (DEBUG) {
-            System.out.println("" + printDepth + " Pivot is " + (u));
-        }
-        //P = P / Nbrs(u) 
-        P = removeNeigbour(P, u);
 
+        /*
+         * Find Pivot 
+         */
+        Node u = getMaxDegreeVertex(union(P, X));
+        /*
+         * P = P / Nbrs(u) 
+         */
+        P = removeNeigbour(P, u);
+//        if (DEBUG) {
+//            System.out.println("" + printDepth + " Pivot is " + (u));
+//        }
         for (Node v : P) {
             R.push(v);
-            BronKerboschWithPivot(R, intersect(P1, getNeigbours(v)),
-                    intersect(X, getNeigbours(v)), printDepth + 1);
+            List<Node> neighbors = new ArrayList<>(findNeighbors(v));
+            BronKerboschWithPivot(R, intersect(P1, neighbors),
+                    intersect(X, neighbors), printDepth + 1);
             R.pop();//remove v
             P1.remove(v);
             X.add(v);
@@ -223,8 +230,9 @@ public class GraphBronKerboschPivotal {
         int i = 0, temp = 0;
         Node n = null;
         while (i < t.size()) {
-            if (getDegreeVertex(t.get(i)) > temp) {
-                temp = getDegreeVertex(t.get(i));
+            int degreeVertex = getDegreeVertex(t.get(i));
+            if (degreeVertex > temp) {
+                temp = degreeVertex;
                 n = t.get(i);
             }
             i += 1;
@@ -267,7 +275,7 @@ public class GraphBronKerboschPivotal {
         }
 
         if (DEBUG) {
-            System.out.println("neighbors c-edges " + neighbors);
+            System.out.println(central_node.node + "=> neighbors c-edges " + neighbors);
         }
 
         /*
@@ -275,23 +283,17 @@ public class GraphBronKerboschPivotal {
          */
         for (Edge e : d_edges) {
             if (e.getSource() == central_node.node) {
-                neighbors.remove(new Node(e.getSink()));
+                neighbors.add(new Node(e.getSink()));
             }
             if (e.getSink() == central_node.node) {
-                neighbors.remove(new Node(e.getSource()));
+                neighbors.add(new Node(e.getSource()));
             }
         }
 
         if (DEBUG) {
-            System.out.println("neighbors d-edges " + neighbors);
+            System.out.println(central_node.node + "=> neighbors d-edges " + neighbors);
         }
         return neighbors;
-    }
-
-    private List<Node> getNeigbours(Node v) {
-        List<Node> t = new ArrayList<>();
-        t.addAll(findNeighbors(v));
-        return t;
     }
 
     // Intersection of two sets 
@@ -311,7 +313,7 @@ public class GraphBronKerboschPivotal {
     // Removes the neigbours 
     private List<Node> removeNeigbour(List<Node> source, Node v) {
         List<Node> remaining = new ArrayList<>(source);
-        remaining.removeAll(getNeigbours(v));
+        remaining.removeAll(findNeighbors(v));
         return remaining;
     }
 
@@ -327,7 +329,7 @@ public class GraphBronKerboschPivotal {
         StringBuilder sb = new StringBuilder();
         sb.append(start);
         solution.forEach((i) -> {
-            sb.append(i).append(" ");
+            sb.append(i).append(",");
         });
         sb.append(end);
         return sb.toString();
@@ -349,7 +351,7 @@ public class GraphBronKerboschPivotal {
     private void printClique(List<Node> R) {
         System.out.print("Clique Set R=[");
         R.forEach((v) -> {
-            System.out.print(" " + v);
+            System.out.print(" " + v + ",");
         });
         System.out.print(" ]\n");
     }

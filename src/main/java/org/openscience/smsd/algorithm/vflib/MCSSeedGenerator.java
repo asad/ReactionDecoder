@@ -19,15 +19,12 @@
 package org.openscience.smsd.algorithm.vflib;
 
 import java.io.IOException;
-import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -36,10 +33,9 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.mcsplus.CompatibilityGraph;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.Result;
 import org.openscience.smsd.algorithm.mcsplus2.BKKCKCF;
-import org.openscience.smsd.algorithm.mcsplus.GenerateCompatibilityGraphFJ;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.interfaces.Algorithm;
 
@@ -149,46 +145,45 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             System.out.println("Starting GenerateCompatibilityGraph");
         }
 
-        /*
-         *   Assign the threads
-         */
-        int threadsAvailable = getRuntime().availableProcessors() - 1;
-        if (threadsAvailable == 0) {
-            threadsAvailable = 1;
-        }
-
-        ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
-        GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
-                ac1.getAtomCount(), ac1, ac2, bondMatch, ringMatch, matchAtomType);
-
-        List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
-        mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
-        if (DEBUG) {
-            System.out.println("mergedResult = " + mergedResult.size());
-        }
-
-        List<Integer> comp_graph_nodes = new ArrayList<>();
-        List<Edge> cEdges = new ArrayList<>();
-        List<Edge> dEdges = new ArrayList<>();
-
-        /*
-         * Collate all the results
-         */
-        mergedResult.stream().map((r) -> {
-            comp_graph_nodes.addAll(r.getCompGraphNodes());
-            return r;
-        }).map((r) -> {
-            cEdges.addAll(r.getCEgdes());
-            return r;
-        }).forEachOrdered((r) -> {
-            dEdges.addAll(r.getDEgdes());
-        });
-
-//        GenerateCompatibilityGraph gcg
-//                = new GenerateCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
-//        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-//        List<Integer> cEdges = gcg.getCEgdes();
-//        List<Integer> dEdges = gcg.getDEgdes();
+//        /*
+//         *   Assign the threads
+//         */
+//        int threadsAvailable = getRuntime().availableProcessors() - 1;
+//        if (threadsAvailable == 0) {
+//            threadsAvailable = 1;
+//        }
+//
+//        ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
+//        GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
+//                ac1.getAtomCount(), ac1, ac2, bondMatch, ringMatch, matchAtomType);
+//
+//        List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
+//        mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
+//        if (DEBUG) {
+//            System.out.println("mergedResult = " + mergedResult.size());
+//        }
+//
+//        List<Integer> comp_graph_nodes = new ArrayList<>();
+//        List<Edge> cEdges = new ArrayList<>();
+//        List<Edge> dEdges = new ArrayList<>();
+//
+//        /*
+//         * Collate all the results
+//         */
+//        mergedResult.stream().map((r) -> {
+//            comp_graph_nodes.addAll(r.getCompGraphNodes());
+//            return r;
+//        }).map((r) -> {
+//            cEdges.addAll(r.getCEgdes());
+//            return r;
+//        }).forEachOrdered((r) -> {
+//            dEdges.addAll(r.getDEgdes());
+//        });
+        CompatibilityGraph gcg
+                = new CompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+        List<Edge> cEdges = gcg.getCEdges();
+        List<Edge> dEdges = gcg.getDEdges();
         if (DEBUG) {
             System.out.println("Ending GenerateCompatibilityGraphFJ");
         }
@@ -240,8 +235,8 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             }
             maxCliqueSet.pop();
         }
-        //gcg.clear();
-        mergedResult.clear();
+        gcg.clear();
+//        mergedResult.clear();
         return Collections.unmodifiableList(allCliqueAtomMCS);
     }
 

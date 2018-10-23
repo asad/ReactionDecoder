@@ -12,16 +12,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.RecursiveTask;
-import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
-import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
 import org.openscience.smsd.helper.LabelContainer;
+import org.openscience.smsd.tools.Utility;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -278,7 +276,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
     private void addZeroEdges(List<Edge> cEdges, List<Edge> dEdges,
             IBond reactantBond, IBond productBond,
             int indexI, int indexJ) {
-        if (isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+        if (Utility.isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
             Edge edge = new Edge((indexI / 4) + 1, (indexJ / 4) + 1);
             if (!cEdges.contains(edge)) {
                 cEdges.add(edge);
@@ -288,37 +286,6 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             if (!dEdges.contains(edge)) {
                 dEdges.add(edge);
             }
-        }
-    }
-
-    /**
-     *
-     * @param bondA1
-     * @param bondA2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @return
-     */
-    private boolean isMatchFeasible(
-            IBond bondA1,
-            IBond bondA2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-
-        if (bondA1 instanceof IQueryBond) {
-            if (((IQueryBond) bondA1).matches(bondA2)) {
-                IQueryAtom atom1 = (IQueryAtom) (bondA1.getAtom(0));
-                IQueryAtom atom2 = (IQueryAtom) (bondA1.getAtom(1));
-                return atom1.matches(bondA2.getAtom(0)) && atom2.matches(bondA2.getAtom(1))
-                        || atom1.matches(bondA2.getAtom(1)) && atom2.matches(bondA2.getAtom(0));
-            }
-            return false;
-        } else {
-            /*
-             This one also matches atom type, not just symbols
-             */
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
@@ -465,13 +432,35 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     reactantBond = source.getBond(source.getAtom(result.compGraphNodes.get(a)), source.getAtom(result.compGraphNodes.get(b)));
                     productBond = target.getBond(target.getAtom(result.compGraphNodes.get(a + 1)), target.getAtom(result.compGraphNodes.get(b + 1)));
 
-                    if (reactantBond != null && productBond != null) {
-                        addEdges(result.cEdges, result.dEdges, reactantBond, productBond, a, b);
-                    } else if (reactantBond == null && productBond == null) {
-                        Edge edge = new Edge((a / 3) + 1, (b / 3) + 1);
-                        if (!result.dEdges.contains(edge)) {
-                            result.dEdges.add(edge);
-                        }
+                    boolean connectedFlag = false;
+                    boolean disConnectedFlag = false;
+                    boolean matchBondFlag = false;
+
+                    if (reactantBond != null
+                            && productBond != null) {
+                        connectedFlag = true;
+                    }
+
+                    if (reactantBond == null
+                            && productBond == null) {
+                        disConnectedFlag = true;
+                    }
+
+                    if (connectedFlag
+                            && Utility.isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        matchBondFlag = true;
+                    }
+
+                    //in case that both molecule pairs are connected a c-edge is generated
+                    if (connectedFlag && matchBondFlag) {
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        result.cEdges.add(edge);
+                    }
+
+                    //in case that both molecule pairs are not connected a d-edge is generated
+                    if (disConnectedFlag) {
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        result.dEdges.add(edge);
                     }
                 }
             }
@@ -481,48 +470,5 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             int dEdgesSize = result.dEdges.size();
         }
         return 0;
-    }
-
-    private void addEdges(List<Edge> cEdges, List<Edge> dEdges,
-            IBond reactantBond, IBond productBond, int iIndex, int jIndex) {
-
-        if (!shouldMatchBonds && !shouldMatchRings && !matchAtomType) {
-            if (isRawMatch(reactantBond, productBond)) {
-                cEdges.add(new Edge((iIndex / 3) + 1, (jIndex / 3) + 1));
-            }
-        } else if (isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-            Edge edge = new Edge((iIndex / 3) + 1, (jIndex / 3) + 1);
-            if (!cEdges.contains(edge)) {
-                cEdges.add(edge);
-            }
-        } else {
-            Edge edge = new Edge((iIndex / 3) + 1, (jIndex / 3) + 1);
-            if (!dEdges.contains(edge)) {
-                dEdges.add(edge);
-            }
-        }
-    }
-
-    private boolean isRawMatch(IBond reactantBond, IBond productBond) {
-
-        if (reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(0).getSymbol())
-                && reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-            if (reactantBond.getAtom(0).getHybridization() != UNSET && reactantBond.getAtom(1).getHybridization() != UNSET
-                    && productBond.getAtom(0).getHybridization() != UNSET && productBond.getAtom(1).getHybridization() != UNSET
-                    && reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(0).getHybridization())
-                    && reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
-                return true;
-            }
-        } else if (reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(0).getSymbol())
-                && reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-
-            if (reactantBond.getAtom(0).getHybridization() != UNSET && reactantBond.getAtom(1).getHybridization() != UNSET
-                    && productBond.getAtom(0).getHybridization() != UNSET && productBond.getAtom(1).getHybridization() != UNSET
-                    && reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(0).getHybridization())
-                    && reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

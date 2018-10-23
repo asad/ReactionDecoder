@@ -391,8 +391,8 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
         SmilesGenerator smiles = new SmilesGenerator(
-                SmiFlavor.Unique
-                | SmiFlavor.UseAromaticSymbols
+                //                SmiFlavor.Unique|
+                SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.AtomAtomMap
                 | SmiFlavor.Stereo);
         IAtomContainer commonFragment = getCommonFragment();

@@ -23,16 +23,13 @@
 package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.IOException;
-import static java.lang.Runtime.getRuntime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -143,50 +140,12 @@ public final class MCSPlusGraphBronKerbosch {
         }
         setIterationManager(new IterationManager((ac1.getAtomCount() * ac2.getAtomCount())));
         try {
-            /*
-             *   Assign the threads
-             */
-            int threadsAvailable = getRuntime().availableProcessors() - 1;
-            if (threadsAvailable == 0) {
-                threadsAvailable = 1;
-            }
-
-            if (DEBUG) {
-                System.out.println("Calling Fork and Join " + threadsAvailable);
-            }
-
-            ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
-            GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
-                    ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-
-            List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
-            mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
-            if (DEBUG) {
-                System.out.println("Merged Results = " + mergedResult.size());
-            }
-
-            List<Integer> comp_graph_nodes = new ArrayList<>();
-            List<Edge> cEdges = new ArrayList<>();
-            List<Edge> dEdges = new ArrayList<>();
-
-            /*
-             * Collate all the results
-             */
-            mergedResult.stream().map((r) -> {
-                comp_graph_nodes.addAll(r.getCompGraphNodes());
-                return r;
-            }).map((r) -> {
-                cEdges.addAll(r.getCEgdes());
-                return r;
-            }).forEachOrdered((r) -> {
-                dEdges.addAll(r.getDEgdes());
-            });
-//            CompatibilityGraph gcg
-//                    = new CompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-//            int search_cliques = gcg.searchCliques();
-//            List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-//            List<Edge> cEdges = gcg.getCEdges();
-//            List<Edge> dEdges = gcg.getDEdges();
+            CompatibilityGraph gcg
+                    = new CompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            int search_cliques = gcg.searchCliques();
+            List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
+            List<Edge> cEdges = gcg.getCEdges();
+            List<Edge> dEdges = gcg.getDEdges();
             if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("--MCS PLUS--");
@@ -216,14 +175,14 @@ public final class MCSPlusGraphBronKerbosch {
                 indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
+//                    System.out.println("mappings " + mappings);
                 }
                 maxCliqueSet.pop();
             }
 
             //clear all the compatibility graph content
-//            gcg.clear();
-            mergedResult.clear();
-//            System.out.println("mappings: " + mappings.size());
+            gcg.clear();
+            System.out.println("mappings: " + mappings.size());
             if (ac1 instanceof IQueryAtomContainer) {
                 extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
             } else {
