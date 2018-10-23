@@ -34,7 +34,8 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import static org.openscience.smsd.algorithm.mcsplus1.BinaryTree.remove_tree_structure;
+import org.openscience.smsd.helper.BinaryTree;
+import static org.openscience.smsd.helper.BinaryTree.remove_tree_structure;
 
 /**
  * Class which reports MCS solutions based on the McGregor algorithm published
@@ -740,10 +741,7 @@ public class McGregor extends Utility {
 
         //Initialization of the tree structure which is needed
         // for the identification of redundant matrices
-        first = last = new BinaryTree();
-        last.setValue(-1);
-        last.equal = null;
-        last.not_equal = null;
+        first = last = new BinaryTree(-1);
 
         bestarcsleft = 0;
         startsearch();
@@ -1085,9 +1083,6 @@ public class McGregor extends Utility {
                     if (arcsleft > bestarcsleft) {
                         BinaryTree.remove_tree_structure(first);
                         first = last = new BinaryTree();
-                        last.setValue(-1);
-                        last.equal = null;
-                        last.not_equal = null;
 
                         while (!BESTARCS.empty()) {
                             BESTARCS.pop();
@@ -1126,9 +1121,6 @@ public class McGregor extends Utility {
                         remove_tree_structure(first);
                         /* TO DO Asad*/
                         first = last = new BinaryTree();
-                        last.setValue(-1);
-                        last.equal = null;
-                        last.not_equal = null;
 
                         while (!BESTARCS.empty()) {
                             BESTARCS.pop();
@@ -1227,30 +1219,31 @@ public class McGregor extends Utility {
     private boolean verify_nodes(List<Integer> matrix, BinaryTree cur_struc, int x, int field_length) {
 
         if ((matrix.get(x).equals(cur_struc.getValue()) && (x < field_length))) {
-            if (cur_struc.equal != null) {
+            if (cur_struc.getEqual() != null) {
                 new_matrix = false;
-                verify_nodes(matrix, cur_struc.equal, x + 1, field_length);
+                verify_nodes(matrix, cur_struc.getEqual(), x + 1, field_length);
             }
         }
         if (matrix.get(x) != cur_struc.getValue()) {
-            if (cur_struc.not_equal != null) {
-                verify_nodes(matrix, cur_struc.not_equal, x, field_length);
+            if (cur_struc.getEqual() != null) {
+                verify_nodes(matrix, cur_struc.getNotEqual(), x, field_length);
             }
-            if (cur_struc.not_equal == null) {
-                cur_struc.not_equal = new BinaryTree();
-                cur_struc.not_equal.setValue(matrix.get(x));
-                cur_struc.not_equal.not_equal = null;
+            if (cur_struc.getNotEqual() == null) {
+                BinaryTree binaryTree = new BinaryTree(matrix.get(x));
+                cur_struc.setNotEqual(binaryTree);
+                cur_struc.getNotEqual().setNotEqual(null);
                 int y = 0;
-                BinaryTree last_one = cur_struc.not_equal;
+                BinaryTree last_one = cur_struc.getNotEqual();
 
                 while ((y + x + 1) < field_length) {
-                    last_one.equal = new BinaryTree();
-                    last_one = last_one.equal;
+                    BinaryTree binaryTree1 = new BinaryTree();
+                    last_one.setEqual(binaryTree1);;
+                    last_one = last_one.getEqual();
                     last_one.setValue(matrix.get(y + x + 1));
-                    last_one.not_equal = null;
+                    last_one.setNotEqual(null);
                     y++;
                 }
-                last_one.equal = null;
+                last_one.setEqual(null);
                 new_matrix = true;
             }
         }

@@ -33,19 +33,34 @@ package org.openscience.smsd.helper;
 public class BinaryTree {
 
     /**
+     * @param value the value to set
+     */
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    /**
      * Creates a new instance of BinaryTree.
      *
      * @param value node value
      */
     public BinaryTree(int value) {
         this.value = value;
+        this.equal = null;
+        this.notEqual = null;
+    }
+
+    public BinaryTree() {
+        this.value = -1;
+        this.equal = null;
+        this.notEqual = null;
     }
     /**
-     * not equal is initialized as null
+     * declaration
      */
-    private BinaryTree equal = null;
-    private BinaryTree notEqual = null;
-    private int value = -1;
+    private BinaryTree equal;
+    private BinaryTree notEqual;
+    private int value;
 
     /**
      * Return value of the node
@@ -68,10 +83,10 @@ public class BinaryTree {
     /**
      * Set equal node
      *
-     * @param equal the equal to set
+     * @param tree the equal to set
      */
-    public synchronized void setEqual(BinaryTree equal) {
-        this.equal = equal;
+    public synchronized void setEqual(BinaryTree tree) {
+        this.equal = tree;
     }
 
     /**
@@ -86,9 +101,32 @@ public class BinaryTree {
     /**
      * Set not equal node
      *
-     * @param notEqual the notEqual to set
+     * @param tree the tree to set
      */
-    public synchronized void setNotEqual(BinaryTree notEqual) {
-        this.notEqual = notEqual;
+    public synchronized void setNotEqual(BinaryTree tree) {
+        this.notEqual = tree;
     }
+
+    /* 
+     * Remove the nodes recursively 
+     *
+     *
+     * @param cur_struc
+     * @return
+     */
+    public static int remove_tree_structure(BinaryTree cur_struc) {
+
+        BinaryTree equal_struc = cur_struc.equal;
+        BinaryTree not_equal_struc = cur_struc.notEqual;
+//      delete(cur_struc);//TODO by ASAD in java here is automatic pointer deleting
+        if (equal_struc != null) {
+            remove_tree_structure(equal_struc);
+        }
+        if (not_equal_struc != null) {
+            remove_tree_structure(not_equal_struc);
+        }
+
+        return 0;
+    }
+
 }

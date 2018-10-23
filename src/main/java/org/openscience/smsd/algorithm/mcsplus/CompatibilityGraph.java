@@ -120,8 +120,8 @@ public class CompatibilityGraph {
 
     public int searchCliques() {
 
-        generate_compatibility_graph_nodes();
-        generate_compatibility_graph();
+//        generate_compatibility_graph_nodes();
+//        generate_compatibility_graph();
         if (DEBUG) {
             System.out.println("c_edges_size " + getCEdges().size());
             System.out.println("bond count: " + ac1.getBondCount());
@@ -323,6 +323,8 @@ public class CompatibilityGraph {
 
     private int generate_compatibility_graph_nodes() {
 
+//        System.out.println("atomstr1 " + atomstr1);
+//        System.out.println("atomstr2 " + atomstr2);
         List<Integer> basic_atom_vec_A = reduce_atomset(atom_num_H_1, bond_number1, atomstr1, i_tab1, c_tab1);
         List<Integer> basic_atom_vec_B = reduce_atomset(atom_num_H_2, bond_number2, atomstr2, i_tab2, c_tab2);
 
@@ -332,14 +334,24 @@ public class CompatibilityGraph {
         int molA_nodes = 0;
         int count_nodes = 1;
 
+        if (DEBUG) {
+            System.out.println("basic_atom_vec_A " + basic_atom_vec_A);
+            System.out.println("basic_atom_vec_B " + basic_atom_vec_B);
+
+            System.out.println("label_list_molA " + label_list_molA);
+            System.out.println("label_list_molB " + label_list_molB);
+        }
         for (List<Integer> labelA : label_list_molA) {
             int molB_nodes = 0;
             for (List<Integer> labelB : label_list_molB) {
                 if (labelA.equals(labelB)) {
-//                    System.out.println("labelA " + labelA + ", labelB " + labelB + "\n");
                     getCompGraphNodes().add(basic_atom_vec_A.get(molA_nodes));
                     getCompGraphNodes().add(basic_atom_vec_B.get(molB_nodes));
                     getCompGraphNodes().add(count_nodes++);
+                    if (DEBUG) {
+                        System.out.println("labelA " + labelA + ", labelB " + labelB + ", count_nodes " + count_nodes + "\n");
+                    }
+
                 }
                 molB_nodes++;
             }
@@ -491,12 +503,25 @@ public class CompatibilityGraph {
 //comp_graph_nodes_C_zero is used to build up of the edges of the compatibility graph
     private int generate_compatibility_graph_nodes_if_C_edge_number_is_zero() {
 
+        for (int a = 0; a < atom_num_H_1; a++) {
+            String atom1_type = atomstr1.get(a).getSymbol();
+            System.out.println("atom1_type " + atom1_type + "(" + (a + 1) + ")");
+        }
+
+        for (int b = 0; b < atom_num_H_2; b++) {
+            String atom2_type = atomstr2.get(b).getSymbol();
+            System.out.println("atom2_type " + atom2_type + "(" + (b + 1) + ")");
+        }
+
         int count_nodes = 1;
 
         for (int a = 0; a < atom_num_H_1; a++) {
             String atom1_type = atomstr1.get(a).getSymbol();
-            int value = atomstr1.get(a).getAtomicNumber() == null ? atomstr1.get(a).hashCode() + 1000 : atomstr1.get(a).getAtomicNumber() + 1000;
+            int value = atomstr1.get(a).getAtomicNumber() == null
+                    ? atomstr1.get(a).hashCode() + 1000 : atomstr1.get(a).getAtomicNumber() + 1000;
+
             SYMBOL_VALUE.put(atom1_type, value);
+
             for (int b = 0; b < atom_num_H_2; b++) {
                 String atom2_type = atomstr2.get(b).getSymbol();
 
@@ -508,11 +533,17 @@ public class CompatibilityGraph {
 
                     getCompGraphNodes().add(a + 1);
                     getCompGraphNodes().add(b + 1);
-                    getCompGraphNodes().add(count_nodes++);
+                    getCompGraphNodes().add(count_nodes);
+
+                    System.out.println("a + 1 " + (a + 1));
+                    System.out.println("b + 1 " + (b + 1));
+                    System.out.println("atoms " + (atom1_type) + "=" + atom2_type);
+                    System.out.println("count_nodes " + (count_nodes));
+
+                    count_nodes++;
                 }
             }
         }
-
         return 0;
     }
 

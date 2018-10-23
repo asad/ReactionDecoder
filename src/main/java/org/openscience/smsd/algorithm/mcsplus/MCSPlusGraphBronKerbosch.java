@@ -146,14 +146,14 @@ public final class MCSPlusGraphBronKerbosch {
             List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
             List<Edge> cEdges = gcg.getCEdges();
             List<Edge> dEdges = gcg.getDEdges();
-            if (DEBUG) {
+            //if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("--MCS PLUS--");
-                System.out.println("C_edges: " + cEdges.size());
-                System.out.println("D_edges: " + dEdges.size());
+                System.out.println("C_edges: " + cEdges);
+                System.out.println("D_edges: " + dEdges);
                 System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
-            }
-            GraphBronKerboschPivotal init = new GraphBronKerboschPivotal(comp_graph_nodes, cEdges, dEdges);
+            //}
+            GraphBronKerboschPivot init = new GraphBronKerboschPivot(comp_graph_nodes, cEdges, dEdges);
             init.findMaximalCliques();
             Stack<Set<Node>> maxCliquesSet = init.getMaxCliquesSet();
             Stack<List<Integer>> maxCliqueSet = new Stack<>();
@@ -175,7 +175,7 @@ public final class MCSPlusGraphBronKerbosch {
                 indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
-//                    System.out.println("mappings " + mappings);
+                    System.out.println("mappings " + mappings);
                 }
                 maxCliqueSet.pop();
             }
@@ -209,10 +209,13 @@ public final class MCSPlusGraphBronKerbosch {
         for (Map<Integer, Integer> firstPassMappings : allMCSCopy) {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
-            if (ac1.getAtomCount() > ac2.getAtomCount()) {
+            if (ac1.getAtomCount() >= ac2.getAtomCount()
+                    && extendMapping.size() < ac2.getAtomCount()) {
                 mgit = new McGregor(ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
                 mgit.startMcGregorIteration(ac1, mgit.getMCSSize(), extendMapping);
-            } else {
+                cliques = mgit.getMappings();
+            } else if (ac1.getAtomCount() < ac2.getAtomCount()
+                    && extendMapping.size() < ac1.getAtomCount()) {
                 extendMapping.clear();
                 ROPFlag = false;
                 firstPassMappings.entrySet().stream().forEach((map) -> {
@@ -220,17 +223,31 @@ public final class MCSPlusGraphBronKerbosch {
                 });
                 mgit = new McGregor(ac2, ac1, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
                 mgit.startMcGregorIteration(ac2, mgit.getMCSSize(), extendMapping);
+                cliques = mgit.getMappings();
+            } else {
+                //find mapped atoms of both molecules and store these in mappedAtoms
+                List<Integer> exact_mapped_atoms = new ArrayList<>();
+                System.out.println("\nExact Mapped Atoms");
+                extendMapping.entrySet().stream().map((map) -> {
+                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    exact_mapped_atoms.add(map.getKey());
+                    return map;
+                }).forEach((map) -> {
+                    exact_mapped_atoms.add(map.getValue());
+                });
+                cliques.add(exact_mapped_atoms);
             }
-//            System.out.println("\nStart McGregor search");
+            System.out.println("\nStart McGregor search");
             //Start McGregor search
-            cliques = mgit.getMappings();
-//            System.out.println("\nSol count after MG " + cliques.size());
+
+            System.out.println("\nSol count after MG " + cliques.size());
             if (checkTimeout()) {
                 break;
             }
         }
         List<List<Integer>> finalMappings = setMcGregorMappings(ROPFlag, cliques);
-//        System.out.println("After set Sol count MG " + finalMappings.size());
+        System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
+        System.out.println("After set Sol count MG " + finalMappings.size());
         return finalMappings;
     }
 
