@@ -21,21 +21,29 @@ package org.openscience.smsd.algorithm.vflib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.mcsplus.CompatibilityGraph;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus2.BKKCKCF;
+import org.openscience.smsd.algorithm.mcsplus.EdgeProductCompatibilityGraph;
+import org.openscience.smsd.algorithm.mcsplus.ExtractMapping;
+import org.openscience.smsd.algorithm.mcsplus.Graph;
+import org.openscience.smsd.algorithm.mcsplus.GraphBronKerbosch;
+import org.openscience.smsd.algorithm.mcsplus.GraphKoch;
+import org.openscience.smsd.algorithm.mcsplus.IClique;
+import org.openscience.smsd.algorithm.mcsplus.Vertex;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.interfaces.Algorithm;
 
@@ -133,7 +141,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         if (source instanceof IQueryAtomContainer) {
             ac1 = (IQueryAtomContainer) source;
             ac2 = target;
-        } else if (source.getAtomCount() < target.getAtomCount()) {
+        } else if (source.getAtomCount() <= target.getAtomCount()) {
             ac1 = source;
             ac2 = target;
         } else {
@@ -179,37 +187,68 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 //        }).forEachOrdered((r) -> {
 //            dEdges.addAll(r.getDEgdes());
 //        });
-        CompatibilityGraph gcg
-                = new CompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
-        List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-        List<Edge> cEdges = gcg.getCEdges();
-        List<Edge> dEdges = gcg.getDEdges();
+        EdgeProductCompatibilityGraph gcg
+                = new EdgeProductCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+        int search_cliques = gcg.searchCliques();
+        Graph comp_graph_nodes = gcg.getCompatibilityGraph();
+        Set<Edge> cEdges = gcg.getCEdges();
+        Set<Edge> dEdges = gcg.getDEdges();
         if (DEBUG) {
-            System.out.println("Ending GenerateCompatibilityGraphFJ");
-        }
-        if (DEBUG) {
-            System.out.println("comp_graph_nodes " + comp_graph_nodes.size());
-            System.out.println("cEdges " + cEdges.size());
-            System.out.println("dEdges " + dEdges.size());
-            System.out.println("Starting BKKCKCF");
+            System.out.println("**************************************************");
 
+            System.out.println("--Compatibility Graph--");
+            System.out.println("C_edges: " + cEdges.size());
+            System.out.println("D_edges: " + dEdges.size());
+            System.out.println("Vertices: " + comp_graph_nodes.V());
+            System.out.println("Edges: " + comp_graph_nodes.E());
+            System.out.println("**************************************************");
         }
-        BKKCKCF init = new BKKCKCF(comp_graph_nodes, cEdges, dEdges);
+
+        IClique init = null;
+        if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
+            System.out.println("Calling Bron Kerbosch");
+            init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
+        } else {
+            System.out.println("Calling Koch");
+            init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
+        }
+        init.findMaximalCliques();
+
+        Stack<Set<Vertex>> cliquesBondMap = init.getMaxCliquesSet();
+        Stack<Map<Integer, Integer>> maxCliqueSet = new Stack<>();
+
+        for (Set<Vertex> bondMaps : cliquesBondMap) {
+            Map<Integer, Integer> bondMap = new HashMap<>();
+            for (Vertex n : bondMaps) {
+                bondMap.putAll(n.getBondMapping());
+            }
+            maxCliqueSet.add(bondMap);
+        }
         if (DEBUG) {
-            System.out.println("Ending BKKCKCF");
+            System.out.println("Max_Cliques_Set: " + maxCliqueSet.size());
+            System.out.println("**************************************************");
         }
-        Stack<List<Integer>> maxCliqueSet = new Stack<>();
-        maxCliqueSet.addAll(init.getMaxCliqueSet());
-        Collections.sort(maxCliqueSet, (List<Integer> a1, List<Integer> a2) -> a2.size() - a1.size() // assumes you want biggest to smallest
-        );
+        List<Map<Integer, Integer>> mappings = new ArrayList<>();
+
         while (!maxCliqueSet.empty()) {
-            List<Integer> peek = maxCliqueSet.peek();
+            Map<Integer, Integer> indexindexMapping;
+            indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
+                    ringMatch, matchAtomType);
+            if (indexindexMapping != null) {
+                mappings.add(indexindexMapping);
+//                    if (DEBUG) {
+//                        System.out.println("mappings " + mappings);
+//                    }
+            }
+            maxCliqueSet.pop();
+        }
+
+        for (Map<Integer, Integer> peek : mappings) {
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
 
-            for (Integer value : peek) {
-                int[] index = getIndex(value, comp_graph_nodes);
-                Integer qIndex = index[0];
-                Integer tIndex = index[1];
+            for (Map.Entry<Integer, Integer> map : peek.entrySet()) {
+                Integer qIndex = map.getKey();
+                Integer tIndex = map.getValue();
                 if (qIndex != -1 && tIndex != -1) {
                     IAtom qAtom;
                     IAtom tAtom;
@@ -233,7 +272,6 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             if (!atomatomMapping.isEmpty()) {
                 allCliqueAtomMCS.add(atomatomMapping);
             }
-            maxCliqueSet.pop();
         }
         gcg.clear();
 //        mergedResult.clear();

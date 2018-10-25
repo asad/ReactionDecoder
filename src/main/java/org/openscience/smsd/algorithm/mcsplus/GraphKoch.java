@@ -23,6 +23,8 @@ public class GraphKoch implements IClique {
     private final Set<Edge> dEdges;
     private final Graph graph;
 
+    private Integer iterations;
+
     /**
      *
      * @return Collection of cliques (each of which is represented as a Set of
@@ -69,6 +71,7 @@ public class GraphKoch implements IClique {
         this.dEdges = dEdges;
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
+        this.iterations = 0;
     }
 
     /**
@@ -145,6 +148,13 @@ public class GraphKoch implements IClique {
             Set<Vertex> C, Set<Vertex> P, Set<Vertex> D, Set<Vertex> T,
             int currentmaxresult) {
         Set<Vertex> result = new LinkedHashSet<>(C);
+
+        if (iterations > 10000) {
+            System.out.println("Reached max limit, 10000 itertions. ");
+            return result;
+        }
+        iterations++;
+
         if (P.isEmpty() || P.size() + C.size() + D.size() <= currentmaxresult) { //if p=EMPTY and s=EMPTY
             cliques.add(result);
             return result;                               //REPORT.CLIQUE
@@ -194,7 +204,14 @@ public class GraphKoch implements IClique {
      */
     private Set<Vertex> Enumerate_C_Cliques_Complex(Graph comp_graph_nodes,
             Set<Vertex> C, Set<Vertex> P, Set<Vertex> D, Set<Vertex> T, int currentmaxresult) {
+
         Set<Vertex> result = new LinkedHashSet<>(C);
+        if (iterations > 10000) {
+            System.out.println("Reached max limit, 10000 itertions. ");
+            return result;
+        }
+        iterations++;
+
         if (P.isEmpty() || P.size() + C.size() + D.size() <= currentmaxresult) {//if P=EMPTY
             cliques.add(result);
             return result;                               //REPORT.CLIQUE

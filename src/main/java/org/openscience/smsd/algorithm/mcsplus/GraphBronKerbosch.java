@@ -91,6 +91,7 @@ public class GraphBronKerbosch implements IClique {
      * graph.
      *
      */
+    @Override
     public void findMaximalCliques() {
 
         TreeSet<Vertex> potential_clique_R = new TreeSet<>();//R, 
@@ -181,12 +182,12 @@ public class GraphBronKerbosch implements IClique {
             }
             return;
         }
-        if (iterations > 5000) {
-            System.out.println("Reached max limit, 5000 itertions. ");
+        if (iterations > 10000) {
+            System.out.println("Reached max limit, 10000 itertions. ");
             return;
         }
-
         iterations++;
+
         if (this.iterations % 1000 == 0) {
             if (DEBUG) {
                 System.out.print("    Found clique #" + this.iterations + " of size " + R.size() + ".\n");

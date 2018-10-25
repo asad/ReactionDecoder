@@ -200,9 +200,9 @@ public final class MCSPlus {
 
             //clear all the compatibility graph content
             gcg.clear();
-            //if (DEBUG) {
+            if (DEBUG) {
                 System.out.println("mappings: " + mappings);
-            //}
+            }
             if (ac1 instanceof IQueryAtomContainer) {
                 extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
             } else {
@@ -231,13 +231,17 @@ public final class MCSPlus {
             McGregor mgit;
             if (ac1.getAtomCount() >= ac2.getAtomCount()
                     && extendMapping.size() < ac2.getAtomCount()) {
-                System.out.println("McGregor 1");
+                if (DEBUG) {
+                    System.out.println("McGregor 1");
+                }
                 mgit = new McGregor(ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
                 mgit.startMcGregorIteration(ac1, mgit.getMCSSize(), extendMapping);
                 cliques = mgit.getMappings();
             } else if (ac1.getAtomCount() < ac2.getAtomCount()
                     && extendMapping.size() < ac1.getAtomCount()) {
-                System.out.println("McGregor 2");
+                if (DEBUG) {
+                    System.out.println("McGregor 2");
+                }
                 extendMapping.clear();
                 ROPFlag = false;
                 firstPassMappings.entrySet().stream().forEach((map) -> {
@@ -268,7 +272,7 @@ public final class MCSPlus {
                 break;
             }
         }
-        List<List<Integer>> finalMappings = setMcGregorMappings(ROPFlag, cliques);
+        List<List<Integer>> finalMappings = setMappings(ROPFlag, cliques);
         if (DEBUG) {
             System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
             System.out.println("After set Sol count MG " + finalMappings.size());
@@ -297,12 +301,12 @@ public final class MCSPlus {
                 break;
             }
         }
-        List<List<Integer>> finalMappings = setMcGregorMappings(ROPFlag, cliques);
+        List<List<Integer>> finalMappings = setMappings(ROPFlag, cliques);
 //        System.out.println("After set Sol count MG " + finalMappings.size());
         return finalMappings;
     }
 
-    private List<List<Integer>> setMcGregorMappings(
+    private List<List<Integer>> setMappings(
             boolean RONP,
             List<List<Integer>> mappings) {
         int counter = 0;
