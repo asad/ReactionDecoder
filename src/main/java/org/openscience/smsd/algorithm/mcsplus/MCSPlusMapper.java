@@ -108,30 +108,30 @@ public final class MCSPlusMapper implements IResults {
      */
     private synchronized boolean searchMCS() {
         List<List<Integer>> mappings;
-        MCSPlusGraphBronKerbosch mcsplus;
+        MCSPlus mcsplus;
 
         if (source instanceof IQueryAtomContainer) {
-            mcsplus = new MCSPlusGraphBronKerbosch((IQueryAtomContainer) source, target);
+            mcsplus = new MCSPlus((IQueryAtomContainer) source, target);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
 
-        } else if (!(source instanceof IQueryAtomContainer) && source.getAtomCount() < target.getAtomCount()) {
-            mcsplus = new MCSPlusGraphBronKerbosch(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        } else if (!(source instanceof IQueryAtomContainer) && source.getAtomCount() <= target.getAtomCount()) {
+            mcsplus = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
 
         } else {
             flagExchange = true;
-            mcsplus = new MCSPlusGraphBronKerbosch(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            mcsplus = new MCSPlus(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
         }
         if (flagExchange) {
             mappings = reverseMappings(mappings);
         }
-//        System.out.println("PreFilter.filter " + mappings);
+        //System.out.println("PreFilter.filter " + mappings);
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
-//        System.out.println("PostFilter.filter " + solutions);
+        //System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
         setAllAtomMapping();
         return mappings.isEmpty();

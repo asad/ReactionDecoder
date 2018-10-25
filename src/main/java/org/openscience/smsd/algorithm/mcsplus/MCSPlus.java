@@ -25,6 +25,7 @@ package org.openscience.smsd.algorithm.mcsplus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -48,10 +50,10 @@ import org.openscience.smsd.tools.IterationManager;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public final class MCSPlusGraphBronKerbosch {
+public final class MCSPlus {
 
     private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(MCSPlusGraphBronKerbosch.class);
+            = LoggingToolFactory.createLoggingTool(MCSPlus.class);
     private final static boolean DEBUG = false;
     private final boolean shouldMatchRings;
     private final boolean shouldMatchBonds;
@@ -93,7 +95,7 @@ public final class MCSPlusGraphBronKerbosch {
      * @param ac2
      * @param matchAtomType
      */
-    public MCSPlusGraphBronKerbosch(IAtomContainer ac1,
+    public MCSPlus(IAtomContainer ac1,
             IAtomContainer ac2,
             boolean shouldMatchBonds,
             boolean shouldMatchRings,
@@ -111,7 +113,7 @@ public final class MCSPlusGraphBronKerbosch {
      * @param ac1
      * @param ac2
      */
-    public MCSPlusGraphBronKerbosch(IQueryAtomContainer ac1,
+    public MCSPlus(IQueryAtomContainer ac1,
             IAtomContainer ac2) {
         this.shouldMatchRings = true;
         this.shouldMatchBonds = true;
@@ -140,61 +142,75 @@ public final class MCSPlusGraphBronKerbosch {
         }
         setIterationManager(new IterationManager((ac1.getAtomCount() * ac2.getAtomCount())));
         try {
-            CompatibilityGraph gcg
-                    = new CompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            EdgeProductCompatibilityGraph gcg
+                    = new EdgeProductCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
             int search_cliques = gcg.searchCliques();
-            List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
-            List<Edge> cEdges = gcg.getCEdges();
-            List<Edge> dEdges = gcg.getDEdges();
+            Graph comp_graph_nodes = gcg.getCompatibilityGraph();
+            Set<Edge> cEdges = gcg.getCEdges();
+            Set<Edge> dEdges = gcg.getDEdges();
             if (DEBUG) {
                 System.out.println("**************************************************");
-                System.out.println("--MCS PLUS--");
-                System.out.println("C_edges: " + cEdges);
-                System.out.println("D_edges: " + dEdges);
-                System.out.println("comp_graph_nodes: " + comp_graph_nodes.size());
+
+                System.out.println("--Compatibility Graph--");
+                System.out.println("C_edges: " + cEdges.size());
+                System.out.println("D_edges: " + dEdges.size());
+                System.out.println("Vertices: " + comp_graph_nodes.V());
+                System.out.println("Edges: " + comp_graph_nodes.E());
+                System.out.println("**************************************************");
             }
-            GraphBronKerboschPivot init = new GraphBronKerboschPivot(comp_graph_nodes, cEdges, dEdges);
+
+            IClique init = null;
+            if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
+                System.out.println("Calling Bron Kerbosch");
+                init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
+            } else {
+                System.out.println("Calling Koch");
+                init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
+            }
             init.findMaximalCliques();
-            Stack<Set<Node>> maxCliquesSet = init.getMaxCliquesSet();
-            Stack<List<Integer>> maxCliqueSet = new Stack<>();
-            for (Set<Node> nodes : maxCliquesSet) {
-                List<Integer> list = new ArrayList<>();
-                for (Node n : nodes) {
-                    list.add(n.node);
+
+            Stack<Set<Vertex>> cliquesBondMap = init.getMaxCliquesSet();
+            Stack<Map<Integer, Integer>> maxCliqueSet = new Stack<>();
+
+            for (Set<Vertex> bondMaps : cliquesBondMap) {
+                Map<Integer, Integer> bondMap = new HashMap<>();
+                for (Vertex n : bondMaps) {
+                    bondMap.putAll(n.getBondMapping());
                 }
-                maxCliqueSet.add(list);
+                maxCliqueSet.add(bondMap);
             }
             if (DEBUG) {
-                System.out.println("Max_Cliques_Set: " + maxCliqueSet);
+                System.out.println("Max_Cliques_Set: " + maxCliqueSet.size());
                 System.out.println("**************************************************");
             }
             List<Map<Integer, Integer>> mappings = new ArrayList<>();
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
+                indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
+                        shouldMatchRings, matchAtomType);
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
-                    if (DEBUG) {
-                        System.out.println("mappings " + mappings);
-                    }
+//                    if (DEBUG) {
+//                        System.out.println("mappings " + mappings);
+//                    }
                 }
                 maxCliqueSet.pop();
             }
 
             //clear all the compatibility graph content
             gcg.clear();
-            if (DEBUG) {
-                System.out.println("mappings: " + mappings.size());
-            }
+            //if (DEBUG) {
+                System.out.println("mappings: " + mappings);
+            //}
             if (ac1 instanceof IQueryAtomContainer) {
                 extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
             } else {
                 extendMappings = searchMcGregorMapping(ac1, ac2, mappings);
             }
             if (DEBUG) {
-                int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
-                System.out.println("extendMappings: " + size);
+                //int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
+                System.out.println("extendMappings: " + extendMappings);
             }
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
@@ -215,11 +231,13 @@ public final class MCSPlusGraphBronKerbosch {
             McGregor mgit;
             if (ac1.getAtomCount() >= ac2.getAtomCount()
                     && extendMapping.size() < ac2.getAtomCount()) {
+                System.out.println("McGregor 1");
                 mgit = new McGregor(ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
                 mgit.startMcGregorIteration(ac1, mgit.getMCSSize(), extendMapping);
                 cliques = mgit.getMappings();
             } else if (ac1.getAtomCount() < ac2.getAtomCount()
                     && extendMapping.size() < ac1.getAtomCount()) {
+                System.out.println("McGregor 2");
                 extendMapping.clear();
                 ROPFlag = false;
                 firstPassMappings.entrySet().stream().forEach((map) -> {
@@ -229,11 +247,12 @@ public final class MCSPlusGraphBronKerbosch {
                 mgit.startMcGregorIteration(ac2, mgit.getMCSSize(), extendMapping);
                 cliques = mgit.getMappings();
             } else {
+                ROPFlag = true;
                 //find mapped atoms of both molecules and store these in mappedAtoms
                 List<Integer> exact_mapped_atoms = new ArrayList<>();
-//                System.out.println("\nExact Mapped Atoms");
+                System.out.println("\nExact Mapped Atoms");
                 extendMapping.entrySet().stream().map((map) -> {
-//                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
                     exact_mapped_atoms.add(map.getKey());
                     return map;
                 }).forEach((map) -> {
@@ -244,14 +263,16 @@ public final class MCSPlusGraphBronKerbosch {
             //System.out.println("\nStart McGregor search");
             //Start McGregor search
 
-            //System.out.println("\nSol count after MG " + cliques.size());
+            //System.out.println("\nSol count after MG " + cliquesBondMap.size());
             if (checkTimeout()) {
                 break;
             }
         }
         List<List<Integer>> finalMappings = setMcGregorMappings(ROPFlag, cliques);
-//        System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
-//        System.out.println("After set Sol count MG " + finalMappings.size());
+        if (DEBUG) {
+            System.out.println("After MG --First Mapping-- " + finalMappings.get(0).size());
+            System.out.println("After set Sol count MG " + finalMappings.size());
+        }
         return finalMappings;
     }
 
@@ -271,7 +292,7 @@ public final class MCSPlusGraphBronKerbosch {
 //            System.out.println("\nStart McGregor search");
             //Start McGregor search
             cliques = mgit.getMappings();
-//            System.out.println("\nSol count after MG " + cliques.size());
+//            System.out.println("\nSol count after MG " + cliquesBondMap.size());
             if (checkTimeout()) {
                 break;
             }

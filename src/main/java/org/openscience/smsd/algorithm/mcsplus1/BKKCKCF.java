@@ -74,17 +74,17 @@ public class BKKCKCF {
         this.d_edges = new ArrayList<>();
 
         cEdges.stream().map((e) -> {
-            this.c_edges.add(e.getSource());
+            this.c_edges.add(e.getSource().getID());
             return e;
         }).forEachOrdered((e) -> {
-            this.c_edges.add(e.getSink());
+            this.c_edges.add(e.getSink().getID());
         });
 
         dEdges.stream().map((e) -> {
-            this.d_edges.add(e.getSource());
+            this.d_edges.add(e.getSource().getID());
             return e;
         }).forEachOrdered((e) -> {
-            this.d_edges.add(e.getSink());
+            this.d_edges.add(e.getSink().getID());
         });
 
         this.best_clique_size = 0;

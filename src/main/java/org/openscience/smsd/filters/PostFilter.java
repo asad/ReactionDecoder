@@ -54,16 +54,13 @@ public class PostFilter {
      */
     public synchronized static List<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
         List<Map<Integer, Integer>> final_MAPPINGS = new ArrayList<>();
-        if (mappings != null && !mappings.isEmpty()) {
-            mappings.stream().map((List<Integer> mapping) -> {
-                Map<Integer, Integer> newMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-                for (int index = 0; index < mapping.size() - 1; index += 2) {
-                    newMap.put(mapping.get(index), mapping.get(index + 1));
-                }
-                return newMap;
-            }).filter((newMap) -> (!hasMap(newMap, final_MAPPINGS))).forEach((newMap) -> {
-                final_MAPPINGS.add(newMap);
-            });
+
+        for (List<Integer> map : mappings) {
+            Map<Integer, Integer> mapping = new TreeMap<>();
+            for (int i = 0; i < map.size(); i = i + 2) {
+                mapping.put(map.get(i), map.get(i + 1));
+            }
+            final_MAPPINGS.add(mapping);
         }
         return final_MAPPINGS;
     }

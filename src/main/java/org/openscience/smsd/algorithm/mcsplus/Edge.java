@@ -26,6 +26,9 @@ package org.openscience.smsd.algorithm.mcsplus;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -38,6 +41,20 @@ import java.util.Comparator;
  */
 public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
+    /**
+     * @return the edgeType
+     */
+    public EdgeType getEdgeType() {
+        return edgeType == null ? EdgeType.UNSET : edgeType;
+    }
+
+    /**
+     * @param edgeType the edgeType to set
+     */
+    public void setEdgeType(EdgeType edgeType) {
+        this.edgeType = edgeType;
+    }
+
     @Override
     public String toString() {
         return "Edge{" + "i=" + i + ", j=" + j + '}';
@@ -47,14 +64,18 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + this.i;
-        hash = 23 * hash + this.j;
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.i);
+        hash = 83 * hash + Objects.hashCode(this.j);
+        hash = 83 * hash + Objects.hashCode(this.edgeType);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -62,26 +83,31 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
             return false;
         }
         final Edge other = (Edge) obj;
-        if (this.i != other.i && this.j == other.j) {
+        if (!Objects.equals(this.i, other.i)) {
             return false;
         }
-        if (this.i == other.i && this.j != other.j) {
+        if (!Objects.equals(this.j, other.j)) {
             return false;
         }
-        return this.i == other.i || this.j == other.j;
+        if (this.edgeType != other.edgeType) {
+            return false;
+        }
+        return true;
     }
 
-    private final int i;
-    private final int j;
+    private final Vertex i;
+    private final Vertex j;
+    private EdgeType edgeType;
 
     /**
      *
      * @param i
      * @param j
      */
-    public Edge(int i, int j) {
+    public Edge(Vertex i, Vertex j) {
         this.i = i;
         this.j = j;
+        this.edgeType = EdgeType.UNSET;
     }
 
     @Override
@@ -103,14 +129,24 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
     /**
      * @return the i
      */
-    public int getSource() {
+    public Vertex getSource() {
         return i;
     }
 
     /**
      * @return the j
      */
-    public int getSink() {
+    public Vertex getSink() {
         return j;
+    }
+
+    /**
+     * Get Mapping Index/ID between two nodes
+     * @return
+     */
+    public Map<Integer, Integer> getMapping() {
+        TreeMap<Integer, Integer> mapping = new TreeMap<>();
+        mapping.put(getSource().getID(), getSink().getID());
+        return mapping;
     }
 }

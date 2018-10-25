@@ -40,7 +40,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
+import org.openscience.smsd.algorithm.mcsplus.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
 
 /**
@@ -57,8 +58,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
     private static final long serialVersionUID = 96986606860861L;
     private List<Integer> compGraphNodes = null;
     private List<Integer> compGraphNodesCZero = null;
-    private final List<Integer> cEdges;
-    private final List<Integer> dEdges;
+    private final List<Edge> cEdges;
+    private final List<Edge> dEdges;
     private int cEdgesSize = 0;
     private int dEdgesSize = 0;
     private final IAtomContainer source;
@@ -110,8 +111,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
             compatibilityGraphNodes();
 //        System.out.println("compatibilityGraph ");
             compatibilityGraph();
-//        System.out.println("c-edges " + getCEgdes().size());
-//        System.out.println("d-edges " + getDEgdes().size());
+//        System.out.println("c-edges " + getCEdges().size());
+//        System.out.println("d-edges " + getDEdges().size());
 
             if (getCEdgesSize() == 0) {
                 clearCompGraphNodes();
@@ -223,7 +224,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
 //                        System.LOGGER.debug("labelB.getValue() " + labelB.getValue());
                     int atomNumberI = source.indexOf(labelA.getKey());
                     int atomNumberJ = target.indexOf(labelB.getKey());
-                    Edge e = new Edge(atomNumberI, atomNumberJ);
+                    Edge e = new Edge(new Vertex(atomNumberI), new Vertex(atomNumberJ));
                     if (!edges.contains(e)) {
                         edges.add(e);
                         compGraphNodes.add(atomNumberI);
@@ -267,8 +268,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
                     if (reactantBond != null && productBond != null) {
                         addEdges(reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null) {
-                        dEdges.add((a / 3) + 1);
-                        dEdges.add((b / 3) + 1);
+                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
+                        dEdges.add(edge);
                     }
                 }
             }
@@ -282,15 +283,15 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
         if (!isMatchBond() && !isMatchRings() && !matchAtomType) {
             if (isRawMatch(reactantBond, productBond)) {
-                cEdges.add((iIndex / 3) + 1);
-                cEdges.add((jIndex / 3) + 1);
+                Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
+                cEdges.add(edge);
             }
         } else if (isMatchFeasible(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
-            cEdges.add((iIndex / 3) + 1);
-            cEdges.add((jIndex / 3) + 1);
+            Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
+            cEdges.add(edge);
         } else {
-            dEdges.add((iIndex / 3) + 1);
-            dEdges.add((jIndex / 3) + 1);
+            Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
+            dEdges.add(edge);
         }
     }
 
@@ -395,13 +396,13 @@ public final class GenerateCompatibilityGraph implements Serializable {
                         addZeroEdges(reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null
                             && dEdges.size() < compGraphNodes.size()) {
-                        dEdges.add((a / 4) + 1);
-                        dEdges.add((b / 4) + 1);
+                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        dEdges.add(edge);
                     } else if (reactantBond == null && productBond == null
                             && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
                         //50 unique condition to speed up the AAM
-                        dEdges.add((a / 4) + 1);
-                        dEdges.add((b / 4) + 1);
+                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        dEdges.add(edge);
                     }
 
                 }
@@ -418,11 +419,11 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
     private void addZeroEdges(IBond reactantBond, IBond productBond, int indexI, int indexJ) {
         if (isMatchFeasible(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
-            cEdges.add((indexI / 4) + 1);
-            cEdges.add((indexJ / 4) + 1);
+            Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
+            cEdges.add(edge);
         } else {
-            dEdges.add((indexI / 4) + 1);
-            dEdges.add((indexJ / 4) + 1);
+            Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
+            dEdges.add(edge);
         }
     }
 
@@ -453,15 +454,15 @@ public final class GenerateCompatibilityGraph implements Serializable {
             /*
              This one also matches atom type, not just symbols
              */
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return DefaulAtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 
-    public synchronized List<Integer> getCEgdes() {
+    public synchronized List<Edge> getCEdges() {
         return Collections.synchronizedList(cEdges);
     }
 
-    public synchronized List<Integer> getDEgdes() {
+    public synchronized List<Edge> getDEdges() {
         return Collections.synchronizedList(dEdges);
     }
 

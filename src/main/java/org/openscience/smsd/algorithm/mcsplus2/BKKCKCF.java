@@ -107,17 +107,17 @@ public final class BKKCKCF {
         this.comp_graph_nodes = Collections.unmodifiableList(new ArrayList<>(compGraphNodes));
         this.C_edges = new ArrayList<>();
         cEdges.stream().map((e) -> {
-            this.C_edges.add(e.getSource());
+            this.C_edges.add(e.getSource().getID());
             return e;
         }).forEachOrdered((e) -> {
-            this.C_edges.add(e.getSink());
+            this.C_edges.add(e.getSink().getID());
         });
         this.D_edges = new ArrayList<>();
         dEdges.stream().map((e) -> {
-            this.D_edges.add(e.getSource());
+            this.D_edges.add(e.getSource().getID());
             return e;
         }).forEachOrdered((e) -> {
-            this.D_edges.add(e.getSink());
+            this.D_edges.add(e.getSink().getID());
         });
         best_clique_size = 0;
         max_Cliques_Set = new HashSet<>();

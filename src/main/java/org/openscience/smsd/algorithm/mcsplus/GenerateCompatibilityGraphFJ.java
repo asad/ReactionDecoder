@@ -255,7 +255,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     //                    }
                     else if (reactantBond == null && productBond == null) {
                         //50 unique condition to speed up the AAM
-                        Edge edge = new Edge((a / 4) + 1, (b / 4) + 1);
+                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
                         if (!result.dEdges.contains(edge)) {
                             result.dEdges.add(edge);
                         }
@@ -277,12 +277,12 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             IBond reactantBond, IBond productBond,
             int indexI, int indexJ) {
         if (Utility.isMatchFeasible(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-            Edge edge = new Edge((indexI / 4) + 1, (indexJ / 4) + 1);
+            Edge edge = new Edge(new Vertex((indexI / 4) + 1), new Vertex((indexJ / 4) + 1));
             if (!cEdges.contains(edge)) {
                 cEdges.add(edge);
             }
         } else {
-            Edge edge = new Edge((indexI / 4) + 1, (indexJ / 4) + 1);
+            Edge edge = new Edge(new Vertex((indexI / 4) + 1), new Vertex((indexJ / 4) + 1));
             if (!dEdges.contains(edge)) {
                 dEdges.add(edge);
             }
@@ -389,7 +389,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     }
                     int atomNumberI = source.indexOf(labelA.getKey());
                     int atomNumberJ = target.indexOf(labelB.getKey());
-                    Edge e = new Edge(atomNumberI, atomNumberJ);
+                    Edge e = new Edge(new Vertex(atomNumberI), new Vertex(atomNumberJ));
                     if (!edges.contains(e)) {
                         edges.add(e);
                         result.compGraphNodes.add(atomNumberI);
@@ -453,13 +453,13 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
 
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
-                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
                         result.cEdges.add(edge);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
                         result.dEdges.add(edge);
                     }
                 }

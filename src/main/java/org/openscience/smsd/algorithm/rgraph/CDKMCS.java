@@ -17,7 +17,7 @@ import org.openscience.cdk.tools.manipulator.BondManipulator;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.DefaultAtomMatcher;
 import org.openscience.smsd.algorithm.matchers.DefaultAtomTypeMatcher;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -817,7 +817,7 @@ final public class CDKMCS {
             }
             return false;
         } else {
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            return DefaulAtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 

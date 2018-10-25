@@ -469,13 +469,13 @@ public class CompatibilityGraph {
 
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
-                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
                         getCEdges().add(edge);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
                         getDEdges().add(edge);
                     }
 
@@ -503,14 +503,16 @@ public class CompatibilityGraph {
 //comp_graph_nodes_C_zero is used to build up of the edges of the compatibility graph
     private int generate_compatibility_graph_nodes_if_C_edge_number_is_zero() {
 
-        for (int a = 0; a < atom_num_H_1; a++) {
-            String atom1_type = atomstr1.get(a).getSymbol();
-            System.out.println("atom1_type " + atom1_type + "(" + (a + 1) + ")");
-        }
+        if (DEBUG) {
+            for (int a = 0; a < atom_num_H_1; a++) {
+                String atom1_type = atomstr1.get(a).getSymbol();
+                System.out.println("atom1_type " + atom1_type + "(" + (a + 1) + ")");
+            }
 
-        for (int b = 0; b < atom_num_H_2; b++) {
-            String atom2_type = atomstr2.get(b).getSymbol();
-            System.out.println("atom2_type " + atom2_type + "(" + (b + 1) + ")");
+            for (int b = 0; b < atom_num_H_2; b++) {
+                String atom2_type = atomstr2.get(b).getSymbol();
+                System.out.println("atom2_type " + atom2_type + "(" + (b + 1) + ")");
+            }
         }
 
         int count_nodes = 1;
@@ -535,10 +537,12 @@ public class CompatibilityGraph {
                     getCompGraphNodes().add(b + 1);
                     getCompGraphNodes().add(count_nodes);
 
-                    System.out.println("a + 1 " + (a + 1));
-                    System.out.println("b + 1 " + (b + 1));
-                    System.out.println("atoms " + (atom1_type) + "=" + atom2_type);
-                    System.out.println("count_nodes " + (count_nodes));
+                    if (DEBUG) {
+                        System.out.println("a + 1 " + (a + 1));
+                        System.out.println("b + 1 " + (b + 1));
+                        System.out.println("atoms " + (atom1_type) + "=" + atom2_type);
+                        System.out.println("count_nodes " + (count_nodes));
+                    }
 
                     count_nodes++;
                 }
@@ -645,13 +649,13 @@ public class CompatibilityGraph {
 //                    }
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
-                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
                         getCEdges().add(edge);
                     }
 //
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
+                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
                         getDEdges().add(edge);
                     }
 

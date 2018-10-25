@@ -26,9 +26,7 @@ import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
-import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.smsd.algorithm.matchers.DefaultMatcher;
+import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
 
 /**
  *
@@ -136,24 +134,8 @@ public class Utility {
             boolean shouldMatchRings,
             boolean matchAtomType) {
 
-        if (!shouldMatchBonds && !shouldMatchRings && !matchAtomType) {
-            return true;
-        }
-
-        if (bondA1 instanceof IQueryBond) {
-            if (((IQueryBond) bondA1).matches(bondA2)) {
-                IQueryAtom atom1 = (IQueryAtom) (bondA1.getAtom(0));
-                IQueryAtom atom2 = (IQueryAtom) (bondA1.getAtom(1));
-                return atom1.matches(bondA2.getAtom(0)) && atom2.matches(bondA2.getAtom(1))
-                        || atom1.matches(bondA2.getAtom(1)) && atom2.matches(bondA2.getAtom(0));
-            }
-            return false;
-        } else {
-            /*
-             This one also matches atom type, not just symbols
-             */
-            return DefaultMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-        }
+        return DefaulAtomBondMatcher
+                .matches(bondA1, bondA2, matchAtomType, shouldMatchRings, matchAtomType);
     }
 
 }

@@ -6,6 +6,7 @@ package org.openscience.smsd.algorithm.mcsplus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -21,17 +22,18 @@ import java.util.TreeSet;
  *
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public class GraphBronKerboschPivot {
+public class GraphBronKerbosch implements IClique {
 
     /**
      * Finds the largest maximal cliques of the graph.
      *
      * @return the largest cliques
      */
-    public Stack<Set<Node>> getMaxCliquesSet() {
-        Stack<Set<Node>> maxCliquesSet = new Stack<>();
+    @Override
+    public Stack<Set<Vertex>> getMaxCliquesSet() {
+        Stack<Set<Vertex>> maxCliquesSet = new Stack<>();
         int best_clique_size = 0;
-        for (Set<Node> clique : cliques) {
+        for (Set<Vertex> clique : cliques) {
             if (clique.size() >= best_clique_size) {
                 if (clique.size() > best_clique_size) {
                     while (!maxCliquesSet.empty()) {
@@ -49,34 +51,28 @@ public class GraphBronKerboschPivot {
 
     /**
      *
-     * @param cliques set the cliques
-     */
-    public void setCliques(Collection<Set<Node>> cliques) {
-        this.cliques = cliques;
-    }
-
-    /**
-     *
      * @return Collection of cliques (each of which is represented as a Set of
      * vertices)
      */
-    public Collection<Set<Node>> getCliques() {
+    @Override
+    public Collection<Set<Vertex>> getCliques() {
         return cliques;
     }
 
     private final static boolean DEBUG = false;
-    private Collection<Set<Node>> cliques;
+    private final Collection<Set<Vertex>> cliques;
 
-    private final List<Integer> comp_graph_nodes;
-    private final List<Edge> c_edges;
-    private final List<Edge> d_edges;
+    private final Graph graph;
+    private final Set<Edge> c_edges;
+    private final Set<Edge> d_edges;
 
     private Integer iterations;
 
-    public GraphBronKerboschPivot(List<Integer> comp_graph_nodes,
-            List<Edge> cEdges,
-            List<Edge> dEdges) {
-        this.comp_graph_nodes = comp_graph_nodes;
+    public GraphBronKerbosch(
+            Graph comp_graph_nodes,
+            Set<Edge> cEdges,
+            Set<Edge> dEdges) {
+        this.graph = comp_graph_nodes;
         this.c_edges = cEdges;
         this.d_edges = dEdges;
         this.cliques = new HashSet<>();
@@ -97,20 +93,19 @@ public class GraphBronKerboschPivot {
      */
     public void findMaximalCliques() {
 
-        TreeSet<Node> potential_clique_R = new TreeSet<>();//R, 
-        TreeSet<Node> candidates_P = new TreeSet<>();//P
-        TreeSet<Node> already_found_X = new TreeSet<>();//X
+        TreeSet<Vertex> potential_clique_R = new TreeSet<>();//R, 
+        TreeSet<Vertex> candidates_P = new TreeSet<>();//P
+        TreeSet<Vertex> already_found_X = new TreeSet<>();//X
 
         // add all candidate vertices
-        int candidates_size = comp_graph_nodes.size() / 3;
-        for (int a = 0; a < candidates_size; a++) {
-            candidates_P.add(new Node(comp_graph_nodes.get(a * 3 + 2)));
+        for (Vertex n : graph.nodes()) {
+            candidates_P.add(n);
         }
 
         int printDepth = 1;
 
         BronKerboschWithPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
-        //        BronKerboschWithoutPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
+//        BronKerboschWithoutPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
 //        BronKerbosch(potential_clique_R, candidates_P, already_found_X);
         if (DEBUG) {
             System.out.println("BK Cliques Found: \n " + this.cliques);
@@ -169,9 +164,9 @@ public class GraphBronKerboschPivot {
      * @param printDepth
      */
     private void BronKerboschWithPivot(
-            TreeSet<Node> R,
-            TreeSet<Node> P,
-            TreeSet<Node> X,
+            TreeSet<Vertex> R,
+            TreeSet<Vertex> P,
+            TreeSet<Vertex> X,
             int printDepth) {
 
         if (DEBUG) {
@@ -191,11 +186,6 @@ public class GraphBronKerboschPivot {
             return;
         }
 
-        Set<Node> P1 = new TreeSet<>(P);
-        if (DEBUG) {
-            System.out.println("P_PRIME " + P1);
-        }
-
         iterations++;
         if (this.iterations % 1000 == 0) {
             if (DEBUG) {
@@ -206,29 +196,35 @@ public class GraphBronKerboschPivot {
             }
         }
 
+        Set<Vertex> P1 = new TreeSet<>(P);
+        if (DEBUG) {
+            System.out.println("P_PRIME " + P1);
+        }
+
         /*
          * Find Pivot 
          */
-        Node u = getMaxDegreeVertex(new ArrayList<>(union(P, X)));
+        Vertex u = getMaxDegreeVertex(new ArrayList<>(union(P1, X)));
         /*
          * P = P / Nbrs(u) 
          */
-        P = new TreeSet<>(removeNeigbour(P, u));
+        P1 = new TreeSet<>(removeNeigbour(P1, u));
+
         if (DEBUG) {
             System.out.println("P_Prime: " + P1 + " Depth: " + printDepth + " Pivot is " + (u));
         }
-        for (Node v : P) {
-            //Push the node into selection set
+        for (Vertex v : P1) {
+            //Push the id into selection set
             R.add(v);
             //Find neighbours
-            List<Node> neighbors = new ArrayList<>(findNeighbors(v));
+            List<Vertex> neighbors = new ArrayList<>(findNeighbors(v));
             if (DEBUG) {
                 System.out.println("Neighbours of v " + v + " are " + neighbors);
             }
-            BronKerboschWithPivot(R, new TreeSet<>(intersect(P1, neighbors)),
+            BronKerboschWithPivot(R, new TreeSet<>(intersect(P, neighbors)),
                     new TreeSet<>(intersect(X, neighbors)), printDepth + 1);
             R.remove(v);
-            P1.remove(v);
+            P.remove(v);
             X.add(v);
         }
     }
@@ -285,9 +281,9 @@ public class GraphBronKerboschPivot {
      * @param printDepth
      */
     private void BronKerboschWithoutPivot(
-            TreeSet<Node> R,
-            TreeSet<Node> P,
-            TreeSet<Node> X,
+            TreeSet<Vertex> R,
+            TreeSet<Vertex> P,
+            TreeSet<Vertex> X,
             int printDepth) {
 
         if (DEBUG) {
@@ -306,14 +302,14 @@ public class GraphBronKerboschPivot {
         /*
          * Find Pivot 
          */
-        Node v = null;
+        Vertex v = null;
         if (!P.isEmpty()) {
             v = P.first();
         }
         while (!P.isEmpty() && v != P.last()) {
             R.add(v);
             //Find neighbours
-            List<Node> neighbors = new ArrayList<>(findNeighbors(v));
+            List<Vertex> neighbors = new ArrayList<>(findNeighbors(v));
             BronKerboschWithoutPivot(R, new TreeSet<>(intersect(P, neighbors)),
                     new TreeSet<>(intersect(X, neighbors)), printDepth + 1);
             P.remove(v);
@@ -327,9 +323,9 @@ public class GraphBronKerboschPivot {
     /*
      * Returns max degree of a vertex
      */
-    private Node getMaxDegreeVertex(List<Node> t) {
+    private Vertex getMaxDegreeVertex(List<Vertex> t) {
         int i = 0, temp = 0;
-        Node n = null;
+        Vertex n = null;
         while (i < t.size()) {
             int degreeVertex = getDegreeVertex(t.get(i));
             if (degreeVertex > temp) {
@@ -342,31 +338,31 @@ public class GraphBronKerboschPivot {
     }
 
     private void BronKerbosch(
-            TreeSet<Node> R,
-            TreeSet<Node> P,
-            TreeSet<Node> X) {
-        TreeSet<Node> candidates_array = new TreeSet<Node>(P);
+            TreeSet<Vertex> R,
+            TreeSet<Vertex> P,
+            TreeSet<Vertex> X) {
+        TreeSet<Vertex> candidates_array = new TreeSet<>(P);
         if (!end(P, X)) {
             // for each candidate_node in P do
-            for (Node candidate : candidates_array) {
-                TreeSet<Node> new_candidates = new TreeSet<>();
-                TreeSet<Node> new_already_found = new TreeSet<>();
+            for (Vertex candidate : candidates_array) {
+                TreeSet<Vertex> new_candidates = new TreeSet<>();
+                TreeSet<Vertex> new_already_found = new TreeSet<>();
 
-                // move candidate node to R
+                // move candidate id to R
                 R.add(candidate);
                 P.remove(candidate);
 
                 // create new_candidates by removing nodes in P not
-                // connected to candidate node
-                for (Node new_candidate : P) {
+                // connected to candidate id
+                for (Vertex new_candidate : P) {
                     if (isNeighbor(candidate, new_candidate)) {
                         new_candidates.add(new_candidate);
                     } // of if
                 } // of for
 
                 // create new_already_found by removing nodes in X
-                // not connected to candidate node
-                for (Node new_found : X) {
+                // not connected to candidate id
+                for (Vertex new_found : X) {
                     if (isNeighbor(candidate, new_found)) {
                         new_already_found.add(new_found);
                     } // of if
@@ -397,11 +393,11 @@ public class GraphBronKerboschPivot {
      * @param already_found
      * @return
      */
-    private boolean end(TreeSet<Node> candidates, TreeSet<Node> already_found) {
-        // if a node in already_found is connected to all nodes in candidates
+    private boolean end(TreeSet<Vertex> candidates, TreeSet<Vertex> already_found) {
+        // if a id in already_found is connected to all nodes in candidates
         boolean end = false;
         int edgecounter;
-        for (Node found : already_found) {
+        for (Vertex found : already_found) {
             edgecounter = 0;
             edgecounter = candidates.stream().filter((candidate)
                     -> (isNeighbor(found, candidate))).map((_item) -> 1).
@@ -417,8 +413,8 @@ public class GraphBronKerboschPivot {
     /*
      * Returns degree of a vertex
      */
-    private int getDegreeVertex(Node node) {
-        return findNeighbors(node).size();
+    private int getDegreeVertex(Vertex node) {
+        return this.graph.getNeighbours(node).size();
     }
 
     /**
@@ -432,63 +428,51 @@ public class GraphBronKerboschPivot {
      * @param sink the index of the first Graph is in the c-edge list
      * @return true if a contact exists else false
      */
-    private Collection<Node> findNeighbors(Node central_node) {
-
-        Set<Node> neighbors = new TreeSet<>();
-        /*
-         * Add all the valid nodes via c-edges
-         */
-        c_edges.stream().map((e) -> {
-            if (e.getSource() == central_node.node) {
-                neighbors.add(new Node(e.getSink()));
-            }
-            return e;
-        }).filter((e) -> (e.getSink() == central_node.node)).forEachOrdered((e) -> {
-            neighbors.add(new Node(e.getSource()));
-        });
-
-//        if (DEBUG) {
-//            System.out.println(central_node.node + "=> neighbors c-edges " + neighbors);
-//        }
-
-        /*
-         * remove all the nodes via d-edges
-         */
-        d_edges.stream().map((e) -> {
-            if (e.getSource() == central_node.node) {
-                neighbors.remove(new Node(e.getSink()));
-            }
-            return e;
-        }).filter((e) -> (e.getSink() == central_node.node)).forEachOrdered((e) -> {
-            neighbors.remove(new Node(e.getSource()));
-        });
-
-//        if (DEBUG) {
-//            System.out.println(central_node.node + "=> neighbors d-edges " + neighbors);
-//        }
+    private Set<Vertex> findNeighbors(Vertex central_node) {
+        Set<Vertex> neighbors = new LinkedHashSet<>();
+        Set<Vertex> allNeighbours = this.graph.getNeighbours(central_node);
         if (DEBUG) {
-            System.out.println("Node:" + central_node.node + " => Neighbors: " + neighbors);
+            System.out.println("Vertex:" + central_node.getID() + " => all Neighbours: " + allNeighbours);
+        }
+        for (Edge e : this.graph.edges()) {
+//            System.out.println(" e " + e + ", EDGE Type " + e.getEdgeType());
+            if (e.getEdgeType() != EdgeType.UNSET) {
+                if (e.getSource().equals(central_node) && allNeighbours.contains(e.getSink())) {
+                    if (allNeighbours.contains(e.getSink())) {
+                        neighbors.add(e.getSink());
+                    }
+                }
+                if (e.getSink().equals(central_node) && allNeighbours.contains(e.getSource())) {
+                    if (allNeighbours.contains(e.getSource())) {
+                        neighbors.add(e.getSource());
+                    }
+                }
+            }
+        }
+
+        if (DEBUG) {
+            System.out.println("Vertex:" + central_node.getID() + " => Neighbors: " + neighbors);
         }
         return neighbors;
     }
-
     // Intersection of two sets 
-    private Collection<Node> intersect(Collection<Node> source, Collection<Node> sink) {
-        Set<Node> intersection = new HashSet<>(source);
+
+    private Collection<Vertex> intersect(Collection<Vertex> source, Collection<Vertex> sink) {
+        Set<Vertex> intersection = new HashSet<>(source);
         intersection.retainAll(sink);
         return intersection;
     }
 
     // Union of two sets 
-    private Collection<Node> union(Collection<Node> source, Collection<Node> sink) {
-        Set<Node> union = new HashSet<>(source);
+    private Collection<Vertex> union(Collection<Vertex> source, Collection<Vertex> sink) {
+        Set<Vertex> union = new HashSet<>(source);
         union.addAll(sink);
         return union;
     }
 
     // Removes the neigbours 
-    private Collection<Node> removeNeigbour(Collection<Node> source, Node v) {
-        Set<Node> remaining = new HashSet<>(source);
+    private Collection<Vertex> removeNeigbour(Collection<Vertex> source, Vertex v) {
+        Set<Vertex> remaining = new HashSet<>(source);
         remaining.removeAll(findNeighbors(v));
         return remaining;
     }
@@ -501,7 +485,7 @@ public class GraphBronKerboschPivot {
      * @param end
      * @return the string
      */
-    private static String toText(Collection<Node> solution, String start, String end) {
+    private static String toText(Collection<Vertex> solution, String start, String end) {
         StringBuilder sb = new StringBuilder();
         sb.append(start);
         solution.forEach((i) -> {
@@ -524,7 +508,7 @@ public class GraphBronKerboschPivot {
         return sb.toString();
     }
 
-    private void printClique(Collection<Node> R) {
+    private void printClique(Collection<Vertex> R) {
         System.out.print("Clique Set R=[");
         R.forEach((v) -> {
             System.out.print(" " + v + ",");
@@ -532,8 +516,8 @@ public class GraphBronKerboschPivot {
         System.out.print(" ]\n");
     }
 
-    private boolean isNeighbor(Node found, Node candidate) {
-        Collection<Node> neighbors = findNeighbors(candidate);
+    private boolean isNeighbor(Vertex found, Vertex candidate) {
+        Collection<Vertex> neighbors = findNeighbors(candidate);
         if (DEBUG) {
             System.out.println("neighbors.contains(found) " + neighbors.contains(found));
         }

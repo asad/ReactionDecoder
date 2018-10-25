@@ -22,7 +22,7 @@
  */
 package org.openscience.smsd.algorithm.mcsplus2;
 
-import org.openscience.smsd.algorithm.mcsplus.ExactMapping;
+import org.openscience.smsd.algorithm.mcsplus.ExtractMapping;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +37,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import org.openscience.smsd.algorithm.mcsplus.CompatibilityGraph;
+import org.openscience.smsd.algorithm.mcsplus2.GenerateCompatibilityGraph;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -175,14 +175,14 @@ public final class MCSPlus {
 //                comp_graph_nodes.addAll(r.getCompGraphNodes());
 //                return r;
 //            }).map((r) -> {
-//                cEdges.addAll(r.getCEgdes());
+//                cEdges.addAll(r.getCEdges());
 //                return r;
 //            }).forEachOrdered((r) -> {
-//                dEdges.addAll(r.getDEgdes());
+//                dEdges.addAll(r.getDEdges());
 //            });
 
-            CompatibilityGraph gcg
-                    = new CompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            GenerateCompatibilityGraph gcg
+                    = new GenerateCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
             List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
             List<Edge> cEdges = gcg.getCEdges();
             List<Edge> dEdges = gcg.getDEdges();
@@ -205,7 +205,7 @@ public final class MCSPlus {
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExactMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
+                indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
                 }
