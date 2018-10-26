@@ -1,11 +1,12 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.algorithm.mcsplus2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.openscience.smsd.algorithm.mcsplus.Edge;
 
 /**
  * This class stores the results of the compatibility graph between query and

@@ -65,18 +65,22 @@ public class GraphBronKerbosch implements IClique {
     private final Graph graph;
     private final Set<Edge> c_edges;
     private final Set<Edge> d_edges;
+    private final Set<Edge> unsetEdges;
 
     private Integer iterations;
 
     public GraphBronKerbosch(
             Graph comp_graph_nodes,
             Set<Edge> cEdges,
-            Set<Edge> dEdges) {
+            Set<Edge> dEdges,
+            Set<Edge> unsetEdges) {
         this.graph = comp_graph_nodes;
         this.c_edges = cEdges;
         this.d_edges = dEdges;
+
         this.cliques = new HashSet<>();
         this.iterations = 0;
+        this.unsetEdges = unsetEdges;
 
     }
 
@@ -182,16 +186,16 @@ public class GraphBronKerbosch implements IClique {
             }
             return;
         }
-        if (iterations > 10000) {
-            System.out.println("Reached max limit, 10000 itertions. ");
+        if (iterations > 5000) {
+            System.out.println("Reached max limit, 5000 itertions. ");
             return;
         }
         iterations++;
 
         if (this.iterations % 1000 == 0) {
-            if (DEBUG) {
-                System.out.print("    Found clique #" + this.iterations + " of size " + R.size() + ".\n");
-            }
+            //if (DEBUG) {
+            System.out.print("    Found clique #" + this.iterations + " of size " + R.size() + ".\n");
+            //}
             if (DEBUG) {
                 printClique(R);
             }
@@ -435,22 +439,8 @@ public class GraphBronKerbosch implements IClique {
         if (DEBUG) {
             System.out.println("Vertex:" + central_node.getID() + " => all Neighbours: " + allNeighbours);
         }
-        for (Edge e : this.graph.edges()) {
-//            System.out.println(" e " + e + ", EDGE Type " + e.getEdgeType());
-            if (e.getEdgeType() != EdgeType.UNSET) {
-                if (e.getSource().equals(central_node) && allNeighbours.contains(e.getSink())) {
-                    if (allNeighbours.contains(e.getSink())) {
-                        neighbors.add(e.getSink());
-                    }
-                }
-                if (e.getSink().equals(central_node) && allNeighbours.contains(e.getSource())) {
-                    if (allNeighbours.contains(e.getSource())) {
-                        neighbors.add(e.getSource());
-                    }
-                }
-            }
-        }
-
+        allNeighbours.removeAll(unsetEdges);
+        neighbors.addAll(allNeighbours);
         if (DEBUG) {
             System.out.println("Vertex:" + central_node.getID() + " => Neighbors: " + neighbors);
         }

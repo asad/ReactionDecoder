@@ -151,7 +151,7 @@ public class ExtractMapping {
      * @param comp_graph_nodes
      * @param s
      * @param t
-     * @param bondCliques
+     * @param cliques
      * @param shouldMatchRings
      * @param matchAtomTypes
      * @return
@@ -160,26 +160,52 @@ public class ExtractMapping {
             Graph comp_graph_nodes,
             IAtomContainer s,
             IAtomContainer t,
-            Map<Integer, Integer> bondCliques,
+            Map<Integer, Integer> cliques,
             boolean shouldMatchRings, boolean matchAtomTypes) {
-        if (DEBUG) {
-            System.out.println("Bond clique_mapping " + bondCliques.size());
+        TreeMap<Integer, Integer> bondCliques = new TreeMap<>();
+
+        /*
+         * Retrive Bond index for mapped vertices in the compatibility graph
+         */
+        for (Vertex v : comp_graph_nodes.nodes()) {
+            for (Map.Entry<Integer, Integer> m : cliques.entrySet()) {
+                if (v.getID() == m.getKey()) {
+                    bondCliques.put(v.getQueryBond(), v.getTargetBond());
+                }
+                if (v.getID() == m.getValue()) {
+                    bondCliques.put(v.getQueryBond(), v.getTargetBond());
+                }
+            }
         }
 
-        if (DEBUG) {
-            try {
-                System.out.println("Bonds projected Smiles s "
-                        + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectbond(comp_graph_nodes, s, bondCliques.keySet())));
-            } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
+        //if (DEBUG) {
+        System.out.println("Bond clique_mapping " + bondCliques);
+        //}
+
+        //if (DEBUG) {
+        try {
+            for (Integer bond : bondCliques.keySet()) {
+                IBond b = s.getBond(bond);
+                System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + s.indexOf(b.getBegin()) + "), atom1 "
+                        + b.getEnd().getSymbol() + "(" + s.indexOf(b.getEnd()) + ")");
             }
-            try {
-                System.out.println("Bonds projected Smiles t "
-                        + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectbond(comp_graph_nodes, t, bondCliques.values())));
-            } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            System.out.println("Bonds projected Smiles s "
+                    + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, s, bondCliques.keySet())));
+        } catch (CloneNotSupportedException | CDKException ex) {
+            Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
+        try {
+            for (Integer bond : bondCliques.values()) {
+                IBond b = t.getBond(bond);
+                System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + t.indexOf(b.getBegin()) + "), atom1 "
+                        + b.getEnd().getSymbol() + "(" + t.indexOf(b.getEnd()) + ")");
+            }
+            System.out.println("Bonds projected Smiles t "
+                    + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, t, bondCliques.values())));
+        } catch (CloneNotSupportedException | CDKException ex) {
+            Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // }
 
         Map<Integer, Integer> clique_mapping = makeAtomsMapOfBondsMap(bondCliques, s, t, shouldMatchRings, matchAtomTypes);
         if (DEBUG) {
@@ -290,7 +316,7 @@ public class ExtractMapping {
      * @return
      * @throws CloneNotSupportedException
      */
-    public static IAtomContainer getSubgraph(IAtomContainer ac1, Set<Integer> mapping) throws CloneNotSupportedException {
+    public static IAtomContainer getSubgraphProjectAtoms(IAtomContainer ac1, Set<Integer> mapping) throws CloneNotSupportedException {
         IAtomContainer ac = ac1.clone();
         Set<IAtom> remove = new HashSet<>();
         for (IAtom a : ac1.atoms()) {
@@ -315,7 +341,7 @@ public class ExtractMapping {
      * @return
      * @throws CloneNotSupportedException
      */
-    public static IAtomContainer getSubgraphProjectbond(
+    public static IAtomContainer getSubgraphProjectBonds(
             Graph comp_graph_nodes,
             IAtomContainer ac, Collection<Integer> mapping) throws CloneNotSupportedException {
         IAtomContainer result = ac.clone();
@@ -329,6 +355,7 @@ public class ExtractMapping {
                 }
             }
         }
+        System.out.println("Common Index " + commonAtoms);
         Set<IAtom> removeAtoms = new HashSet<>();
         for (IAtom a : result.atoms()) {
             if (!commonAtoms.contains(result.indexOf(a))) {
@@ -400,9 +427,9 @@ public class ExtractMapping {
                 IAtom b2 = bond2.getEnd();
 
                 org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher1
-                        = DefaulAtomBondMatcher.AtomMatcher(a1, shouldMatchRings, matchAtomTypes);
+                        = DefaulAtomBondMatcher.atomMatcher(a1, shouldMatchRings, matchAtomTypes);
                 org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher2
-                        = DefaulAtomBondMatcher.AtomMatcher(a2, shouldMatchRings, matchAtomTypes);
+                        = DefaulAtomBondMatcher.atomMatcher(a2, shouldMatchRings, matchAtomTypes);
 
                 if (atomMatcher1.matches(b1) && atomMatcher2.matches(b2)) {
                     result.put(g1.indexOf(bond1.getAtom(0)), g2.indexOf(bond2.getAtom(0)));

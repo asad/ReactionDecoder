@@ -64,10 +64,9 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.i);
-        hash = 83 * hash + Objects.hashCode(this.j);
-        hash = 83 * hash + Objects.hashCode(this.edgeType);
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.i);
+        hash = 89 * hash + Objects.hashCode(this.j);
         return hash;
     }
 
@@ -89,11 +88,9 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
         if (!Objects.equals(this.j, other.j)) {
             return false;
         }
-        if (this.edgeType != other.edgeType) {
-            return false;
-        }
         return true;
     }
+
 
     private final Vertex i;
     private final Vertex j;

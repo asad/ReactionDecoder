@@ -135,6 +135,7 @@ public final class MCSPlus {
     private List<List<Integer>> calculateMCS() {
 
         List<List<Integer>> extendMappings = null;
+        List<List<Integer>> finalMapping = new ArrayList<>();
 
         if (DEBUG) {
             System.out.println("ac1 : " + ac1.getAtomCount());
@@ -148,12 +149,14 @@ public final class MCSPlus {
             Graph comp_graph_nodes = gcg.getCompatibilityGraph();
             Set<Edge> cEdges = gcg.getCEdges();
             Set<Edge> dEdges = gcg.getDEdges();
+            Set<Edge> unsetEdges = gcg.getUnsetEdges();
             if (DEBUG) {
                 System.out.println("**************************************************");
 
                 System.out.println("--Compatibility Graph--");
                 System.out.println("C_edges: " + cEdges.size());
                 System.out.println("D_edges: " + dEdges.size());
+                System.out.println("unset_edges: " + unsetEdges.size());
                 System.out.println("Vertices: " + comp_graph_nodes.V());
                 System.out.println("Edges: " + comp_graph_nodes.E());
                 System.out.println("**************************************************");
@@ -162,10 +165,10 @@ public final class MCSPlus {
             IClique init = null;
             if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
                 System.out.println("Calling Bron Kerbosch");
-                init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
+                init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
             } else {
                 System.out.println("Calling Koch");
-                init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
+                init = new GraphKoch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
             }
             init.findMaximalCliques();
 
@@ -200,22 +203,44 @@ public final class MCSPlus {
 
             //clear all the compatibility graph content
             gcg.clear();
-            if (DEBUG) {
-                System.out.println("mappings: " + mappings);
+
+            for (Map<Integer, Integer> extendMapping : mappings) {
+                //find mapped atoms of both molecules and store these in mappedAtoms
+                List<Integer> exact_mapped_atoms = new ArrayList<>();
+                if (DEBUG) {
+                    System.out.println("\nClique Mapped Atoms");
+                }
+                extendMapping.entrySet().stream().map((map) -> {
+                    if (DEBUG) {
+                        System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    }
+                    exact_mapped_atoms.add(map.getKey());
+                    return map;
+                }).forEach((map) -> {
+                    exact_mapped_atoms.add(map.getValue());
+                });
+                finalMapping.add(exact_mapped_atoms);
             }
-            if (ac1 instanceof IQueryAtomContainer) {
-                extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
-            } else {
-                extendMappings = searchMcGregorMapping(ac1, ac2, mappings);
-            }
-            if (DEBUG) {
-                //int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
-                System.out.println("extendMappings: " + extendMappings);
-            }
+
+//            if (DEBUG) {
+//                System.out.println("mappings: " + mappings);
+//            }
+//            if (ac1 instanceof IQueryAtomContainer) {
+//                extendMappings = searchMcGregorMapping((IQueryAtomContainer) ac1, ac2, mappings);
+//            } else {
+//                extendMappings = searchMcGregorMapping(ac1, ac2, mappings);
+//            }
+//            if (DEBUG) {
+//                //int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
+//                System.out.println("extendMappings: " + extendMappings);
+//            }
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
-        return extendMappings;
+        if (extendMappings != null && !extendMappings.isEmpty()) {
+            finalMapping.addAll(extendMappings);
+        }
+        return finalMapping;
     }
 
     private List<List<Integer>> searchMcGregorMapping(

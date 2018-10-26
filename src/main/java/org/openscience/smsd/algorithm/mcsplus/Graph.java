@@ -218,4 +218,32 @@ public final class Graph {
     public Vertex getEdgeTarget(Edge edge) {
         return edge.getSink();
     }
+
+    /**
+     *
+     * @param v
+     * @return
+     */
+    public boolean removeVertex(Vertex v) {
+        Set<Edge> removeEdges = new HashSet<>();
+        for (Edge e : edges) {
+            if (e.getSource() == v || e.getSink() == v) {
+                removeEdges.add(e);
+            }
+        }
+        for (Edge e : removeEdges) {
+            edges.remove(e);
+        }
+        this.adj.remove(v);
+
+        for (Vertex key : adj.keySet()) {
+            if (!adj.get(key).isEmpty()
+                    && adj.get(key).contains(v)) {
+                adj.get(key).remove(v);
+            }
+        }
+
+        return this.vertices.remove(v);
+
+    }
 }

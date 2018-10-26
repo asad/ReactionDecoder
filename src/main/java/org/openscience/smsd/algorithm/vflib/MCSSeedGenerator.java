@@ -193,24 +193,27 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         Graph comp_graph_nodes = gcg.getCompatibilityGraph();
         Set<Edge> cEdges = gcg.getCEdges();
         Set<Edge> dEdges = gcg.getDEdges();
+        Set<Edge> unsetEdges = gcg.getUnsetEdges();
         if (DEBUG) {
             System.out.println("**************************************************");
 
             System.out.println("--Compatibility Graph--");
             System.out.println("C_edges: " + cEdges.size());
             System.out.println("D_edges: " + dEdges.size());
+            System.out.println("unset_edges: " + unsetEdges.size());
             System.out.println("Vertices: " + comp_graph_nodes.V());
             System.out.println("Edges: " + comp_graph_nodes.E());
             System.out.println("**************************************************");
         }
 
         IClique init = null;
-        if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
+        if ((!ConnectivityChecker.isConnected(ac1)
+                || !ConnectivityChecker.isConnected(ac2))) {
             System.out.println("Calling Bron Kerbosch");
-            init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
+            init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
         } else {
             System.out.println("Calling Koch");
-            init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
+            init = new GraphKoch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
         }
         init.findMaximalCliques();
 

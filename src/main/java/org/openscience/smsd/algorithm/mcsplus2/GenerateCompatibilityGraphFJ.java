@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.algorithm.mcsplus2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.mcsplus.Edge;
+import org.openscience.smsd.algorithm.mcsplus.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
 import org.openscience.smsd.tools.Utility;
 
