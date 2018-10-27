@@ -37,7 +37,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import org.openscience.smsd.algorithm.mcsplus2.GenerateCompatibilityGraph;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
 import org.openscience.smsd.tools.IterationManager;
 
