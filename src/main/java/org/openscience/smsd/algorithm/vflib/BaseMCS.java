@@ -26,6 +26,7 @@ package org.openscience.smsd.algorithm.vflib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -170,36 +171,17 @@ public class BaseMCS {
          * Sort biggest clique to smallest
          */
         Collections.sort(vfLibSolutions, new Map2ValueComparator(SortOrder.DESCENDING));
+
         vfLibSolutions.stream().forEach((solution) -> {
+            Map<Integer, Integer> indexindexMapping = new HashMap<>();
             AtomAtomMapping atomatomMapping = new AtomAtomMapping(source, target);
-            Map<Integer, Integer> indexindexMapping = new TreeMap<>();
             solution.entrySet().stream().forEach((mapping) -> {
-                IAtom qAtom;
-                IAtom tAtom;
-                Integer qIndex;
-                Integer tIndex;
-
                 if (RONP) {
-                    qAtom = mapping.getKey();
-                    tAtom = mapping.getValue();
-                    qIndex = source.indexOf(qAtom);
-                    tIndex = target.indexOf(tAtom);
+                    indexindexMapping.put(source.indexOf(mapping.getKey()), target.indexOf(mapping.getValue()));
+                    atomatomMapping.put(mapping.getKey(), mapping.getValue());
                 } else {
-                    tAtom = mapping.getKey();
-                    qAtom = mapping.getValue();
-                    qIndex = source.indexOf(qAtom);
-                    tIndex = target.indexOf(tAtom);
-                }
-
-                if (qIndex != -1 && tIndex != -1) {
-                    atomatomMapping.put(qAtom, tAtom);
-                    indexindexMapping.put(qIndex, tIndex);
-                } else {
-                    try {
-                        throw new CDKException("Atom index pointing to -1");
-                    } catch (CDKException ex) {
-                        Logger.error(Level.SEVERE, null, ex);
-                    }
+                    indexindexMapping.put(source.indexOf(mapping.getValue()), target.indexOf(mapping.getKey()));
+                    atomatomMapping.put(mapping.getValue(), mapping.getKey());
                 }
             });
             if (!indexindexMapping.isEmpty()
