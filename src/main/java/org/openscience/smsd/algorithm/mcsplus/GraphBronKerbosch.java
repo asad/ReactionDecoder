@@ -20,7 +20,7 @@ import java.util.TreeSet;
  *
  *
  *
- * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ * @author Syed Asad Rahman <asad.rahman @ bioinceptionlabs.com>
  */
 public class GraphBronKerbosch implements IClique {
 
