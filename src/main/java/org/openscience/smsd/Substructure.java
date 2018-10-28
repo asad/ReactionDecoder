@@ -131,46 +131,6 @@ public final class Substructure extends BaseMapping {
         return mapGlobal.stream().anyMatch((test) -> (test.equals(map)));
     }
 
-//    /**
-//     * Returns true if query is a subgraph of target molecule
-//     *
-//     * @return
-//     * @throws CDKException
-//     */
-//    private synchronized boolean findSubgraph() throws CDKException {
-//        boolean isSubgraph;
-//
-//        if ((getTarget() == null) || (getQuery() == null)) {
-//            throw new CDKException("Query or Target molecule is not initialized (NULL)");
-//        }
-//
-//        if (getQuery().getAtomCount() > getTarget().getAtomCount()) {
-//            return false;
-//        }
-//
-//        if (getQuery().getAtomCount() == 1 || getTarget().getAtomCount() == 1) {
-//            isSubgraph = singleMapping();
-//        } else {
-//
-//            VF2 mapper;
-//            List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();
-//            if (getQuery() instanceof IQueryAtomContainer) {
-//                mapper = new VF2((IQueryAtomContainer) getQuery(), getTarget());
-//            } else {
-//                mapper = new VF2(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-//            }
-//            isSubgraph = mapper.isSubgraph();
-//            List<AtomAtomMapping> atomMappings = mapper.getAllAtomMapping();
-////            System.out.println("Mapping Size " + atomMappings.getCount());
-//            if (isSubgraph) {
-//                mappingsVF2.addAll(atomMappings);
-//            } else {
-//                return false;
-//            }
-//            setVFMappings(mappingsVF2);
-//        }
-//        return isSubgraph;
-//    }
     /**
      * Returns true if query is a subgraph of target molecule
      *

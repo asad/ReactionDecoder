@@ -30,7 +30,15 @@ import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.isomorphism.AtomMatcher;
+import org.openscience.cdk.isomorphism.BondMatcher;
+import org.openscience.cdk.isomorphism.Mappings;
+import org.openscience.cdk.isomorphism.VentoFoggia;
+import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -70,6 +78,7 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsSulphate;
     private IAtomContainer smartsL_Glutamate;
     private IAtomContainer smartsL_Glutamine;
+    private IAtomContainer smartsL_Glutamine_clipped;
     private IAtomContainer smartsTwoOxoglutarate;
     private IAtomContainer smartsD_Glutamate;
     private IAtomContainer smartsAcetate;
@@ -258,6 +267,17 @@ public final class RuleBasedMappingHandler implements Serializable {
                             out.println("Rule 2 L-Glutamate with L-Glutamine found");
                         }
                     } /*
+                        Rule 2 L_Glutamate and L_Glutamine_clipped
+                     */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
+                            && isMatch(getSmartsGlutamate(), ac1) && isMatch(getSmartsGlutamineClipped(), ac2))
+                            || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
+                            && isMatch(getSmartsGlutamineClipped(), ac1) && isMatch(getSmartsGlutamate(), ac2))) {
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                        if (DEBUG1) {
+                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                        }
+                    }/*
                         Rule 3 D_Glutamate and TwoOxoglutarate
                      */ else if ((ac2.getAtomCount() == 10 && ac1.getAtomCount() == 10
                             && isMatch(getSmartsTwoOxoglutarate(), ac2) && isMatch(getSmartsD_Glutamate(), ac1))
@@ -411,7 +431,81 @@ public final class RuleBasedMappingHandler implements Serializable {
         this.ruleMatched = ruleMatched;
     }
 
-    private boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) throws CDKException {
+    /**
+     * ac1 is subgraph of ac2
+     *
+     * @param source
+     * @param target
+     * @param matchBonds
+     * @param shouldMatchRings
+     * @param matchAtomType
+     * @return
+     */
+    public static Iterable<Map<IAtom, IAtom>> findSubgraph(
+            IAtomContainer source, IAtomContainer target,
+            boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+        if (source == null) {
+            return null;
+        }
+
+        AtomMatcher am;
+        BondMatcher bm;
+
+        if (!(source instanceof IQueryAtomContainer)
+                && !(target instanceof IQueryAtomContainer)) {
+
+            am = AtomMatcher.forElement();
+            if (matchAtomType) {
+                am = AtomMatcher.forElement();
+            }
+
+            if (matchBonds) {
+                bm = BondMatcher.forOrder();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+
+            if (shouldMatchRings) {
+                bm = BondMatcher.forStrictOrder();
+            }
+        } else {
+            if (source instanceof IQueryAtomContainer) {
+                am = AtomMatcher.forQuery();
+            } else {
+                am = AtomMatcher.forElement();
+            }
+
+            if (source instanceof IQueryAtomContainer) {
+                bm = BondMatcher.forQuery();
+            } else {
+                bm = BondMatcher.forAny();
+            }
+        }
+
+        if (source instanceof IQueryAtomContainer) {
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target).limit(1);
+            return matchAll.toAtomMap();
+
+        } else if (source.getAtomCount() <= target.getAtomCount()) {
+
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll(target).limit(1);
+            return matchAll.toAtomMap();
+
+        }
+        return null;
+    }
+
+    /**
+     * If either is a subgraph
+     *
+     * @param ac1
+     * @param ac2
+     * @return
+     * @throws CDKException
+     */
+    public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) throws CDKException {
 
         if (ac1.getAtomCount() <= ac2.getAtomCount()) {
             Substructure pattern = new Substructure(ac1, ac2, true, false, true, false); // create pattern
@@ -449,6 +543,7 @@ public final class RuleBasedMappingHandler implements Serializable {
          */
         final String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
         final String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
+        final String lGlutamine_clipped = "[C].[O].O=C(O)C(N)C[CH2].[NH2]";
         /*
          * 2-Oxoglutarate to D-Glutamate
          */
@@ -506,6 +601,8 @@ public final class RuleBasedMappingHandler implements Serializable {
          */
         smartsL_Glutamate = smilesParser.parseSmiles(lGlutamate);
         smartsL_Glutamine = smilesParser.parseSmiles(lGlutamine);
+        smartsL_Glutamine_clipped = smilesParser.parseSmiles(lGlutamine_clipped);
+
 
         /*
          * Rule 3
@@ -582,6 +679,13 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     private IAtomContainer getSmartsGlutamine() {
         return smartsL_Glutamine;
+    }
+
+    /**
+     * @return the smartsL_Glutamine
+     */
+    private IAtomContainer getSmartsGlutamineClipped() {
+        return smartsL_Glutamine_clipped;
     }
 
     /**
@@ -695,5 +799,4 @@ public final class RuleBasedMappingHandler implements Serializable {
     public IAtomContainer getSmartsCRule() {
         return smartsCRule;
     }
-
 }

@@ -611,7 +611,9 @@ public class MCSPlus extends Filter {
 
         if (global_c_edges.isEmpty()) {
 
-            System.out.println("Switching to complex mode ");
+            if (DEBUG) {
+                System.out.println("Switching to complex mode ");
+            }
             comp_graph_nodes.clear();
             global_c_edges.clear();
             global_d_edges.clear();

@@ -14,7 +14,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.mcsplus.Edge;
 import org.openscience.smsd.algorithm.mcsplus.Vertex;
-import org.openscience.smsd.algorithm.mcsplus1.MoleculeHandler;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -131,7 +130,9 @@ public class CompatibilityGraph {
         }
         if (getCEdges().isEmpty()) {
 
-            System.out.println("Switching to complex mode ");
+            if (DEBUG) {
+                System.out.println("Switching to complex mode ");
+            }
             getCompGraphNodes().clear();
             getCEdges().clear();
             getDEdges().clear();

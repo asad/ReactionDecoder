@@ -360,7 +360,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
             }
         }
         list.clear();
-        System.out.println("count_nodes " + count_nodes);
+        //System.out.println("count_nodes " + count_nodes);
         return count_nodes;
     }
 

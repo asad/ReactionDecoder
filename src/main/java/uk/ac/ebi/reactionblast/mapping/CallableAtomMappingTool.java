@@ -46,6 +46,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
+import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
@@ -185,26 +186,26 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
-//
-//            /*
-//             * RINGS Minimization
-//             */
-//            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-//            LOGGER.info("d) Rings Model: ");
-//            if (DEBUG) {
-//                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-//                out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
-//            }
-//            IReaction cleanedReaction4 = null;
-//            try {
-//                cleanedReaction4 = standardizer.standardize(reaction);
-//            } catch (Exception e) {
-//                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-//                LOGGER.error(e);
-//            }
-//            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
-//            cs.submit(ringThread);
-//            jobCounter++;
+
+            /*
+             * RINGS Minimization
+             */
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
+            LOGGER.info("d) Rings Model: ");
+            if (DEBUG) {
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
+            }
+            IReaction cleanedReaction4 = null;
+            try {
+                cleanedReaction4 = standardizer.standardize(reaction);
+            } catch (Exception e) {
+                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+                LOGGER.error(e);
+            }
+            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
+            cs.submit(ringThread);
+            jobCounter++;
 
             /*
              * Collect the results

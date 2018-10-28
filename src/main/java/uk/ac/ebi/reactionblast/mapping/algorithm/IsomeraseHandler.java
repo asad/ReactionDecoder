@@ -30,6 +30,7 @@ import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
 import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
+import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import static org.openscience.cdk.graph.Cycles.all;
@@ -43,10 +44,12 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
 
 /**
  *
@@ -122,6 +125,18 @@ class IsomeraseHandler {
                     IAtomContainer product = products.atomContainers().iterator().next();
                     boolean chipPhophateInSingleReactantProductNotInRing
                             = chipPhophateInSingleReactantProductNotInRing(educt, product);
+                } catch (CDKException ex) {
+                    LOGGER.error(SEVERE, null, ex);
+                }
+            }
+        }
+        /*
+         * clip group
+         */
+        for (IAtomContainer ac1 : reaction.getReactants().atomContainers()) {
+            for (IAtomContainer ac2 : reaction.getProducts().atomContainers()) {
+                try {
+                    deleteBonds(ac1, ac2);
                 } catch (CDKException ex) {
                     LOGGER.error(SEVERE, null, ex);
                 }
@@ -327,6 +342,42 @@ class IsomeraseHandler {
             }
         });
         return !bond_to_be_removed.isEmpty();
+    }
+
+    private boolean deleteBonds(IAtomContainer s, IAtomContainer t) throws InvalidSmilesException, CDKException {
+        boolean flag = false;
+        SmilesParser smilesParser = new SmilesParser(getInstance());
+
+        String pattern = "CC(N)=O";
+        String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
+        String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
+        IAtomContainer lGlutamineAC = smilesParser.parseSmiles(lGlutamine);
+        IAtomContainer lGlutamateAC = smilesParser.parseSmiles(lGlutamate);
+        IAtomContainer patternAC = smilesParser.parseSmiles(pattern);
+
+        if ((RuleBasedMappingHandler.isMatch(s, lGlutamateAC) && RuleBasedMappingHandler.isMatch(t, lGlutamineAC))
+                || (RuleBasedMappingHandler.isMatch(s, lGlutamineAC) && RuleBasedMappingHandler.isMatch(t, lGlutamateAC))) {
+            IAtomContainer ac = s;
+            Iterable<Map<IAtom, IAtom>> subgraph = RuleBasedMappingHandler.findSubgraph(patternAC, ac, true, false, true);
+            if (subgraph != null && !subgraph.iterator().hasNext()) {
+                ac = t;
+                subgraph = RuleBasedMappingHandler.findSubgraph(patternAC, ac, true, false, true);
+            }
+
+            if (subgraph != null && subgraph.iterator().hasNext()) {
+                Map<IAtom, IAtom> map = subgraph.iterator().next();
+                for (IAtom a : map.values()) {
+                    for (IAtom b : map.values()) {
+                        if (a != b) {
+                            IBond bond = ac.getBond(a, b);
+                            ac.removeBond(bond);
+                            flag = true;
+                        }
+                    }
+                }
+            }
+        }
+        return flag;
     }
 
 }
