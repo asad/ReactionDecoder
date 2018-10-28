@@ -71,7 +71,7 @@ public class GraphBronKerbosch implements IClique {
             Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
-        this.manager = new IterationManager(this.graph.V());
+        this.manager = new IterationManager(500);
     }
 
     /**
@@ -175,8 +175,8 @@ public class GraphBronKerbosch implements IClique {
             }
             return;
         }
-        if (manager.isMaxIteration()) {
-            System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
+        if (DEBUG && manager.isMaxIteration()) {
+            System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
             return;
         }
         manager.increment();

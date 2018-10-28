@@ -4,7 +4,6 @@
 package org.openscience.smsd.graph.algorithm;
 
 import org.openscience.smsd.graph.IClique;
-import org.openscience.smsd.graph.EdgeProductGraph;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.graph.Graph;
@@ -69,7 +68,7 @@ public class GraphKoch implements IClique {
     public GraphKoch(Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
-        this.manager = new IterationManager(this.graph.V());
+        this.manager = new IterationManager(500);
     }
 
     /**
@@ -98,8 +97,8 @@ public class GraphKoch implements IClique {
         int currentmaxresult = 0;
         for (Vertex u : graph.nodes()) {				//for all u ELEMENTOF Vertex
 
-            if (manager.isMaxIteration()) {
-                System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
+            if (DEBUG && manager.isMaxIteration()) {
+                System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
                 return;
             }
 
@@ -159,8 +158,8 @@ public class GraphKoch implements IClique {
             int currentmaxresult) {
         Set<Vertex> result = new LinkedHashSet<>(C);
 
-        if (manager.isMaxIteration()) {
-            System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
+        if (DEBUG && manager.isMaxIteration()) {
+            System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
             return result;
         }
         manager.increment();
@@ -224,7 +223,7 @@ public class GraphKoch implements IClique {
             Set<Vertex> C, Set<Vertex> P, Set<Vertex> D, Set<Vertex> T, int currentmaxresult) {
 
         Set<Vertex> result = new LinkedHashSet<>(C);
-        if (manager.isMaxIteration()) {
+        if (DEBUG && manager.isMaxIteration()) {
             System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
             return result;
         }
