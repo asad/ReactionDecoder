@@ -161,10 +161,14 @@ public final class MCSPlus {
 
             IClique init = null;
             if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
-                System.out.println("Calling Bron Kerbosch");
+                if (DEBUG) {
+                    System.out.println("Calling Bron Kerbosch");
+                }
                 init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
             } else {
-                System.out.println("Calling Koch");
+                if (DEBUG) {
+                    System.out.println("Calling Koch");
+                }
                 init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
             }
             init.findMaximalCliques();
@@ -264,10 +268,6 @@ public final class MCSPlus {
                 });
                 cliques.add(exact_mapped_atoms);
             }
-            //System.out.println("\nStart McGregor search");
-            //Start McGregor search
-
-            //System.out.println("\nSol count after MG " + cliquesBondMap.size());
             if (checkTimeout()) {
                 break;
             }

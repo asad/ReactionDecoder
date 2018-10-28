@@ -129,9 +129,9 @@ public final class MCSPlusMapper implements IResults {
         if (flagExchange) {
             mappings = reverseMappings(mappings);
         }
-        //System.out.println("PreFilter.filter " + mappings);
+        System.out.println("PreFilter.filter " + mappings);
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
-        //System.out.println("PostFilter.filter " + solutions);
+        System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
         setAllAtomMapping();
         return mappings.isEmpty();
@@ -143,10 +143,8 @@ public final class MCSPlusMapper implements IResults {
             for (Map<Integer, Integer> solution : solutions) {
 //                System.out.println("Number of MCSPlus solution: " + solution.size());
                 Map<Integer, Integer> validSolution = Collections.synchronizedSortedMap(new TreeMap<>());
-
-                solution.entrySet().stream().forEach((map) -> {
-                    validSolution.put(map.getKey(), map.getValue());
-                });
+//                System.out.println("validSolution " + solutions);
+                validSolution.putAll(solution);
 
                 if (validSolution.size() > bestSolSize
                         && (validSolution.size() <= source.getAtomCount()
@@ -176,10 +174,10 @@ public final class MCSPlusMapper implements IResults {
         try {
             allMCS.stream().map((solution) -> {
                 AtomAtomMapping atomMapping = new AtomAtomMapping(source, target);
-                //                System.out.println("solution " + solution);
+//                System.out.println("solution " + solution);
                 solution.entrySet().stream().forEach((m) -> {
-                    int indexI = m.getKey() - 1;
-                    int indexJ = m.getValue() - 1;
+                    int indexI = m.getKey();
+                    int indexJ = m.getValue();
 //                    System.out.println("indexI " + indexI + ", " + "indexJ " + indexJ);
                     IAtom sourceAtom = this.source.getAtom(indexI);
                     IAtom targetAtom = this.target.getAtom(indexJ);
