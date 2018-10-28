@@ -51,6 +51,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCD
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
+
 /**
  *
  *
