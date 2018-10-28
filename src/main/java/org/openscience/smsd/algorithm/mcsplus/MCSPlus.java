@@ -274,9 +274,13 @@ public final class MCSPlus {
                 ROPFlag = true;
                 //find mapped atoms of both molecules and store these in mappedAtoms
                 List<Integer> exact_mapped_atoms = new ArrayList<>();
-                System.out.println("\nExact Mapped Atoms");
+                if (DEBUG) {
+                    System.out.println("\nExact Mapped Atoms");
+                }
                 extendMapping.entrySet().stream().map((map) -> {
-                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    if (DEBUG) {
+                        System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    }
                     exact_mapped_atoms.add(map.getKey());
                     return map;
                 }).forEach((map) -> {

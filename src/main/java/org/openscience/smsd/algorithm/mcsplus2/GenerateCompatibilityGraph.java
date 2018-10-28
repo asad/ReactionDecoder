@@ -360,7 +360,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
             }
         }
         list.clear();
-        System.out.println("count_nodes " + count_nodes);
+        //System.out.println("count_nodes " + count_nodes);
         return count_nodes;
     }
 
@@ -412,8 +412,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
         //Size of C and D edges of the compatibility graph
         cEdgesSize = cEdges.size();
         dEdgesSize = dEdges.size();
-        System.out.println("cEdgesSize " + cEdgesSize);
-        System.out.println("dEdgesSize " + dEdgesSize);
+//        System.out.println("cEdgesSize " + cEdgesSize);
+//        System.out.println("dEdgesSize " + dEdgesSize);
         return 0;
     }
 

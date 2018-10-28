@@ -57,7 +57,7 @@ public class IterationManager implements Serializable {
         this.coverage = 10;
         this.max = maxIteration;
         this.limit = this.max * this.coverage;
-        System.out.println("Iteration Limit:" + this.limit);
+        //System.out.println("Iteration Limit:" + this.limit);
     }
 
     /**
