@@ -559,7 +559,9 @@ public final class McGregor {
                 String G1B = cBondNeighborsB.get(column * 4 + 0);
                 String G2B = cBondNeighborsB.get(column * 4 + 1);
 
-                if (!(source instanceof IQueryAtomContainer) && matchGAtoms(G1A, G2A, G1B, G2B)) {
+                if (source != null
+                        && !(source instanceof IQueryAtomContainer)
+                        && matchGAtoms(G1A, G2A, G1B, G2B)) {
                     int Index_I = iBondNeighborAtomsA.get(row * 3 + 0);
                     int Index_IPlus1 = iBondNeighborAtomsA.get(row * 3 + 1);
 
@@ -829,17 +831,17 @@ public final class McGregor {
 
     private synchronized void extendMapping(IAtomContainer source, int xIndex, int yIndex, McgregorHelper mcGregorHelper, List<Integer> additional_mapping, List<Integer> currentMapping) {
 
-        int Atom1_moleculeA = mcGregorHelper.getiBondNeighborAtomsA().get(xIndex * 3 + 0);
-        int Atom2_moleculeA = mcGregorHelper.getiBondNeighborAtomsA().get(xIndex * 3 + 1);
-        int Atom1_moleculeB = mcGregorHelper.getiBondNeighborAtomsB().get(yIndex * 3 + 0);
-        int Atom2_moleculeB = mcGregorHelper.getiBondNeighborAtomsB().get(yIndex * 3 + 1);
+        int atom1_moleculeA = mcGregorHelper.getiBondNeighborAtomsA().get(xIndex * 3 + 0);
+        int atom2_moleculeA = mcGregorHelper.getiBondNeighborAtomsA().get(xIndex * 3 + 1);
+        int atom1_moleculeB = mcGregorHelper.getiBondNeighborAtomsB().get(yIndex * 3 + 0);
+        int atom2_moleculeB = mcGregorHelper.getiBondNeighborAtomsB().get(yIndex * 3 + 1);
 
-        IAtom R1_A = source.getAtom(Atom1_moleculeA);
-        IAtom R2_A = source.getAtom(Atom2_moleculeA);
+        IAtom R1_A = source.getAtom(atom1_moleculeA);
+        IAtom R2_A = source.getAtom(atom2_moleculeA);
         IBond reactantBond = source.getBond(R1_A, R2_A);
 
-        IAtom P1_B = target.getAtom(Atom1_moleculeB);
-        IAtom P2_B = target.getAtom(Atom2_moleculeB);
+        IAtom P1_B = target.getAtom(atom1_moleculeB);
+        IAtom P2_B = target.getAtom(atom2_moleculeB);
         IBond productBond = target.getBond(P1_B, P2_B);
 
 //      Bond Order Check Introduced by Asad
@@ -850,18 +852,18 @@ public final class McGregor {
                 int Mapped_Atom_1 = currentMapping.get(indexZ * 2 + 0);
                 int Mapped_Atom_2 = currentMapping.get(indexZ * 2 + 1);
 
-                if ((Mapped_Atom_1 == Atom1_moleculeA) && (Mapped_Atom_2 == Atom1_moleculeB)) {
-                    additional_mapping.add(Atom2_moleculeA);
-                    additional_mapping.add(Atom2_moleculeB);
-                } else if ((Mapped_Atom_1 == Atom1_moleculeA) && (Mapped_Atom_2 == Atom2_moleculeB)) {
-                    additional_mapping.add(Atom2_moleculeA);
-                    additional_mapping.add(Atom1_moleculeB);
-                } else if ((Mapped_Atom_1 == Atom2_moleculeA) && (Mapped_Atom_2 == Atom1_moleculeB)) {
-                    additional_mapping.add(Atom1_moleculeA);
-                    additional_mapping.add(Atom2_moleculeB);
-                } else if ((Mapped_Atom_1 == Atom2_moleculeA) && (Mapped_Atom_2 == Atom2_moleculeB)) {
-                    additional_mapping.add(Atom1_moleculeA);
-                    additional_mapping.add(Atom1_moleculeB);
+                if ((Mapped_Atom_1 == atom1_moleculeA) && (Mapped_Atom_2 == atom1_moleculeB)) {
+                    additional_mapping.add(atom2_moleculeA);
+                    additional_mapping.add(atom2_moleculeB);
+                } else if ((Mapped_Atom_1 == atom1_moleculeA) && (Mapped_Atom_2 == atom2_moleculeB)) {
+                    additional_mapping.add(atom2_moleculeA);
+                    additional_mapping.add(atom1_moleculeB);
+                } else if ((Mapped_Atom_1 == atom2_moleculeA) && (Mapped_Atom_2 == atom1_moleculeB)) {
+                    additional_mapping.add(atom1_moleculeA);
+                    additional_mapping.add(atom2_moleculeB);
+                } else if ((Mapped_Atom_1 == atom2_moleculeA) && (Mapped_Atom_2 == atom2_moleculeB)) {
+                    additional_mapping.add(atom1_moleculeA);
+                    additional_mapping.add(atom1_moleculeB);
                 }
             }//for loop
         }

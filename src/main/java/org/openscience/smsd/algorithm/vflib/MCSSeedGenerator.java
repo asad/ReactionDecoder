@@ -206,10 +206,14 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 
         IClique init = null;
         if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
-            System.out.println("Calling Bron Kerbosch");
+            if (DEBUG) {
+                System.out.println("Calling Bron Kerbosch");
+            }
             init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
         } else {
-            System.out.println("Calling Koch");
+            if (DEBUG) {
+                System.out.println("Calling Koch");
+            }
             init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
         }
         init.findMaximalCliques();

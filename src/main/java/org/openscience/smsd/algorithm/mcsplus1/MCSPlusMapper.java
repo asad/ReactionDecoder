@@ -186,8 +186,9 @@ public final class MCSPlusMapper implements IResults {
         try {
             allMCS.stream().map((solution) -> {
                 AtomAtomMapping atomMapping = new AtomAtomMapping(source, target);
-                //                System.out.println("solution " + solution);
+//                System.out.println("solution " + solution);
                 solution.entrySet().stream().forEach((m) -> {
+//                    reduce the indec by one as cpp code index starts from 1
                     int indexI = m.getKey() - 1;
                     int indexJ = m.getValue() - 1;
 //                    System.out.println("indexI " + indexI + ", " + "indexJ " + indexJ);
@@ -200,6 +201,7 @@ public final class MCSPlusMapper implements IResults {
                 allAtomMCS.add(atomMapping);
             });
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(SEVERE, null, e);
         }
         if (DEBUG) {
