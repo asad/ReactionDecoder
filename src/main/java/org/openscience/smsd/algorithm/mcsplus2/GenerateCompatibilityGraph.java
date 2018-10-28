@@ -24,7 +24,6 @@
  */
 package org.openscience.smsd.algorithm.mcsplus2;
 
-import org.openscience.smsd.algorithm.mcsplus.Edge;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,7 +40,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
-import org.openscience.smsd.algorithm.mcsplus.Vertex;
+import org.openscience.smsd.graph.Edge;
+import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
 
 /**

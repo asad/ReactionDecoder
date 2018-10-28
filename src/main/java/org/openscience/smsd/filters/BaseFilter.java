@@ -28,6 +28,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
@@ -36,7 +37,7 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
  *
  */
 public class BaseFilter {
-
+    
     private final IAtomContainer mol1;
     private final IAtomContainer mol2;
     private final static ILoggingTool LOGGER
@@ -50,17 +51,19 @@ public class BaseFilter {
     public BaseFilter(IAtomContainer sourceMol, IAtomContainer targetMol) {
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(sourceMol);
+            MoleculeInitializer.initializeMolecule(sourceMol);
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(targetMol);
+            MoleculeInitializer.initializeMolecule(targetMol);
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
         this.mol1 = sourceMol;
         this.mol2 = targetMol;
-
+        
     }
 
     /**
@@ -71,7 +74,7 @@ public class BaseFilter {
     public BaseFilter(IQueryAtomContainer sourceMol, IAtomContainer targetMol) {
         this.mol1 = sourceMol;
         this.mol2 = targetMol;
-
+        
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol2);
         } catch (CDKException ex) {

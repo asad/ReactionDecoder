@@ -36,15 +36,15 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.EdgeProductCompatibilityGraph;
 import org.openscience.smsd.algorithm.mcsplus.ExtractMapping;
-import org.openscience.smsd.algorithm.mcsplus.Graph;
-import org.openscience.smsd.algorithm.mcsplus.GraphBronKerbosch;
-import org.openscience.smsd.algorithm.mcsplus.GraphKoch;
-import org.openscience.smsd.algorithm.mcsplus.IClique;
-import org.openscience.smsd.algorithm.mcsplus.Vertex;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
+import org.openscience.smsd.graph.EdgeProductGraph;
+import org.openscience.smsd.graph.EdgeType;
+import org.openscience.smsd.graph.Graph;
+import org.openscience.smsd.graph.IClique;
+import org.openscience.smsd.graph.Vertex;
+import org.openscience.smsd.graph.algorithm.GraphBronKerbosch;
+import org.openscience.smsd.graph.algorithm.GraphKoch;
 import org.openscience.smsd.interfaces.Algorithm;
 
 /**
@@ -67,11 +67,11 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
     private final IAtomContainer source;
     private final IAtomContainer target;
     private final List<AtomAtomMapping> allCliqueAtomMCS;
-    private final boolean ringMatch;
+    private final boolean shouldMatchRings;
     private final Algorithm algorithm;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSSeedGenerator.class);
-    private final boolean bondMatch;
+    private final boolean shouldMatchBonds;
     private final boolean matchAtomType;
 
     /**
@@ -87,20 +87,20 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         this.source = source;
         this.target = target;
         this.allCliqueAtomMCS = new ArrayList<>();
-        this.ringMatch = ringMatch;
+        this.shouldMatchRings = ringMatch;
         this.algorithm = algorithm;
         this.matchAtomType = matchAtomType;
-        this.bondMatch = bondMatch;
+        this.shouldMatchBonds = bondMatch;
     }
 
     public MCSSeedGenerator(IQueryAtomContainer source, IAtomContainer target, Algorithm algorithm) {
         this.source = source;
         this.target = target;
         this.allCliqueAtomMCS = new ArrayList<>();
-        this.ringMatch = true;
+        this.shouldMatchRings = true;
         this.algorithm = algorithm;
         this.matchAtomType = true;
-        this.bondMatch = true;
+        this.shouldMatchBonds = true;
     }
 
     @Override
@@ -112,7 +112,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         switch (algorithm) {
             case CDKMCS:
                 if (DEBUG) {
-                    System.out.println("Calling CDKMCS for seeding " + bondMatch + " " + ringMatch);
+                    System.out.println("Calling CDKMCS for seeding " + shouldMatchBonds + " " + shouldMatchRings);
                 }
                 List<AtomAtomMapping> addUIT = addUIT();
                 if (DEBUG) {
@@ -121,7 +121,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                 return addUIT;
             case MCSPlus:
                 if (DEBUG) {
-                    System.out.println("Calling MCSPLUS for seeding " + bondMatch + " " + ringMatch);
+                    System.out.println("Calling MCSPLUS for seeding " + shouldMatchBonds + " " + shouldMatchRings);
                 }
                 List<AtomAtomMapping> addKochCliques = addKochCliques();
                 if (DEBUG) {
@@ -163,7 +163,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 //
 //        ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
 //        GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
-//                ac1.getAtomCount(), ac1, ac2, bondMatch, ringMatch, matchAtomType);
+//                ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 //
 //        List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
 //        mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
@@ -187,46 +187,32 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 //        }).forEachOrdered((r) -> {
 //            dEdges.addAll(r.getDEgdes());
 //        });
-        EdgeProductCompatibilityGraph gcg
-                = new EdgeProductCompatibilityGraph(ac1, ac2, bondMatch, ringMatch, matchAtomType);
+        EdgeProductGraph gcg
+                = new EdgeProductGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         int search_cliques = gcg.searchCliques();
         Graph comp_graph_nodes = gcg.getCompatibilityGraph();
-        Set<Edge> cEdges = gcg.getCEdges();
-        Set<Edge> dEdges = gcg.getDEdges();
-        Set<Edge> unsetEdges = gcg.getUnsetEdges();
         if (DEBUG) {
             System.out.println("**************************************************");
-
             System.out.println("--Compatibility Graph--");
-            System.out.println("C_edges: " + cEdges.size());
-            System.out.println("D_edges: " + dEdges.size());
-            System.out.println("unset_edges: " + unsetEdges.size());
+            System.out.println("C_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.C_EDGE).size());
+            System.out.println("D_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.D_EDGE).size());
+            System.out.println("unset_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.UNSET).size());
             System.out.println("Vertices: " + comp_graph_nodes.V());
             System.out.println("Edges: " + comp_graph_nodes.E());
             System.out.println("**************************************************");
         }
 
         IClique init = null;
-        if ((!ConnectivityChecker.isConnected(ac1)
-                || !ConnectivityChecker.isConnected(ac2))) {
+        if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
             System.out.println("Calling Bron Kerbosch");
-            init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
+            init = new GraphBronKerbosch(comp_graph_nodes);
         } else {
             System.out.println("Calling Koch");
-            init = new GraphKoch(comp_graph_nodes, cEdges, dEdges, unsetEdges);
+            init = new GraphKoch(comp_graph_nodes);
         }
         init.findMaximalCliques();
 
-        Stack<Set<Vertex>> cliquesBondMap = init.getMaxCliquesSet();
-        Stack<Map<Integer, Integer>> maxCliqueSet = new Stack<>();
-
-        for (Set<Vertex> bondMaps : cliquesBondMap) {
-            Map<Integer, Integer> bondMap = new HashMap<>();
-            for (Vertex n : bondMaps) {
-                bondMap.putAll(n.getBondMapping());
-            }
-            maxCliqueSet.add(bondMap);
-        }
+        Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();
         if (DEBUG) {
             System.out.println("Max_Cliques_Set: " + maxCliqueSet.size());
             System.out.println("**************************************************");
@@ -236,7 +222,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         while (!maxCliqueSet.empty()) {
             Map<Integer, Integer> indexindexMapping;
             indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
-                    ringMatch, matchAtomType);
+                    shouldMatchRings, matchAtomType);
             if (indexindexMapping != null) {
                 mappings.add(indexindexMapping);
 //                    if (DEBUG) {
@@ -295,10 +281,10 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             solutions = rmap.calculateOverlapsAndReduce(target, (IQueryAtomContainer) source);
         } else if (source.getAtomCount() > target.getAtomCount()) {
             rOnPFlag = true;
-            solutions = rmap.calculateOverlapsAndReduce(source, target, bondMatch, ringMatch, matchAtomType);
+            solutions = rmap.calculateOverlapsAndReduce(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
         } else {
             rOnPFlag = false;
-            solutions = rmap.calculateOverlapsAndReduce(target, source, bondMatch, ringMatch, matchAtomType);
+            solutions = rmap.calculateOverlapsAndReduce(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
         return setUITMappings(rOnPFlag, solutions);
     }

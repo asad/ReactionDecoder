@@ -39,6 +39,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.vflib.VF2MCS;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
 
@@ -121,10 +122,13 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private double bondInSensitiveMcGregor = -1;//mins
 
     /**
-     * Initialize query and target molecules.Note: Here its assumed that
-     * hydrogens are implicit and user has called these two methods
-     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
-     * initializing calling this method.
+     * Initialize query and target molecules
+     * (MoleculeInitializer.initializeMolecule).
+     *
+     *
+     * Note: Here its assumed that hydrogens are implicit and user has called
+     * these two methods percieveAtomTypesAndConfigureAtoms and
+     * CDKAromicityDetector before initializing calling this method.
      *
      * Please call MoleculeInitializer before calling substructure search
      *
@@ -149,7 +153,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             Algorithm algorithmType) throws CDKException {
         super(query, target);
         this.algorithmType = algorithmType;
-        mcsBuilder(query, target);
+        mcsBuilder(super.getQuery(), super.getTarget());
         super.setSubgraph(isSubgraph());
     }
 

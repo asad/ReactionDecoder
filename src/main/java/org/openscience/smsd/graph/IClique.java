@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph;
 
 import java.util.Collection;
 import java.util.Set;

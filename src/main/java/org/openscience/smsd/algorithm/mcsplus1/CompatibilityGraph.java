@@ -12,9 +12,8 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.Vertex;
-import org.openscience.smsd.algorithm.mcsplus1.MoleculeHandler;
+import org.openscience.smsd.graph.Edge;
+import org.openscience.smsd.graph.Vertex;
 
 /**
  * This class generates compatibility graph between query and target molecule.

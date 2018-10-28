@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Stack;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
+import org.openscience.smsd.graph.Edge;
 import uk.ac.ebi.reactionblast.graphics.direct.MoleculeLabelDrawer;
 
 /**

@@ -6,7 +6,7 @@ package org.openscience.smsd.algorithm.mcsplus2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
+import org.openscience.smsd.graph.Edge;
 
 /**
  * This class stores the results of the compatibility graph between query and

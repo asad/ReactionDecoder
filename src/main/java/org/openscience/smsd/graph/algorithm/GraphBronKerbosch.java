@@ -1,16 +1,19 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph.algorithm;
 
+import org.openscience.smsd.graph.IClique;
+import org.openscience.smsd.graph.Vertex;
+import org.openscience.smsd.graph.Graph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import org.openscience.smsd.tools.IterationManager;
 
 /**
  * This class implements Bron Kerbosch with pivot between query and target
@@ -61,27 +64,14 @@ public class GraphBronKerbosch implements IClique {
 
     private final static boolean DEBUG = false;
     private final Collection<Set<Vertex>> cliques;
-
+    IterationManager manager;
     private final Graph graph;
-    private final Set<Edge> c_edges;
-    private final Set<Edge> d_edges;
-    private final Set<Edge> unsetEdges;
-
-    private Integer iterations;
 
     public GraphBronKerbosch(
-            Graph comp_graph_nodes,
-            Set<Edge> cEdges,
-            Set<Edge> dEdges,
-            Set<Edge> unsetEdges) {
+            Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
-        this.c_edges = cEdges;
-        this.d_edges = dEdges;
-
         this.cliques = new HashSet<>();
-        this.iterations = 0;
-        this.unsetEdges = unsetEdges;
-
+        this.manager = new IterationManager(this.graph.V());
     }
 
     /**
@@ -101,11 +91,10 @@ public class GraphBronKerbosch implements IClique {
         TreeSet<Vertex> potential_clique_R = new TreeSet<>();//R, 
         TreeSet<Vertex> candidates_P = new TreeSet<>();//P
         TreeSet<Vertex> already_found_X = new TreeSet<>();//X
-
         // add all candidate vertices
-        for (Vertex n : graph.nodes()) {
+        graph.nodes().forEach((n) -> {
             candidates_P.add(n);
-        }
+        });
 
         int printDepth = 1;
 
@@ -186,19 +175,15 @@ public class GraphBronKerbosch implements IClique {
             }
             return;
         }
-        if (iterations > 5000) {
-            System.out.println("Reached max limit, 5000 itertions. ");
+        if (manager.isMaxIteration()) {
+            System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
             return;
         }
-        iterations++;
+        manager.increment();
 
-        if (this.iterations % 1000 == 0) {
-            //if (DEBUG) {
-            System.out.print("    Found clique #" + this.iterations + " of size " + R.size() + ".\n");
-            //}
-            if (DEBUG) {
-                printClique(R);
-            }
+        if (DEBUG && manager.getCounter() % 1000 == 0) {
+            System.out.print("    Found clique #" + manager.getCounter() + " of size " + R.size() + ".\n");
+            printClique(R);
         }
 
         Set<Vertex> P1 = new TreeSet<>(P);
@@ -349,30 +334,24 @@ public class GraphBronKerbosch implements IClique {
         TreeSet<Vertex> candidates_array = new TreeSet<>(P);
         if (!end(P, X)) {
             // for each candidate_node in P do
-            for (Vertex candidate : candidates_array) {
+            candidates_array.stream().map((candidate) -> {
                 TreeSet<Vertex> new_candidates = new TreeSet<>();
                 TreeSet<Vertex> new_already_found = new TreeSet<>();
-
                 // move candidate id to R
                 R.add(candidate);
                 P.remove(candidate);
-
                 // create new_candidates by removing nodes in P not
                 // connected to candidate id
-                for (Vertex new_candidate : P) {
-                    if (isNeighbor(candidate, new_candidate)) {
-                        new_candidates.add(new_candidate);
-                    } // of if
-                } // of for
-
+                P.stream().filter((new_candidate) -> (isNeighbor(candidate, new_candidate))).forEachOrdered((new_candidate) -> {
+                    new_candidates.add(new_candidate);
+                }); // of if
+                // of for
                 // create new_already_found by removing nodes in X
                 // not connected to candidate id
-                for (Vertex new_found : X) {
-                    if (isNeighbor(candidate, new_found)) {
-                        new_already_found.add(new_found);
-                    } // of if
-                } // of for
-
+                X.stream().filter((new_found) -> (isNeighbor(candidate, new_found))).forEachOrdered((new_found) -> {
+                    new_already_found.add(new_found);
+                }); // of if
+                // of for
                 // if new_candidates and new_already_found are empty
                 if (new_candidates.isEmpty() && new_already_found.isEmpty()) {
                     // R is maximal_clique
@@ -384,11 +363,12 @@ public class GraphBronKerbosch implements IClique {
                             new_candidates,
                             new_already_found);
                 } // of else
-
                 // move candidate_node from R to X;
                 X.add(candidate);
+                return candidate;
+            }).forEachOrdered((candidate) -> {
                 R.remove(candidate);
-            } // of for
+            }); // of for
         } // of if
     }
 
@@ -426,25 +406,17 @@ public class GraphBronKerbosch implements IClique {
      * Returns whether an edge between vertices source and sink exists. whether
      * an edge exists between vertices x and y.
      *
-     * @param x the index of the first Graph is in the edge list
-     * @param y the index of the second Graph is in the edge list
+     * @param u a Vertex of g
+     * @return {v ELEMENTOF V | {u,v} ELEMENTOF E}
      *
-     * @param source the index of the first Graph is in the c-edge list
-     * @param sink the index of the first Graph is in the c-edge list
      * @return true if a contact exists else false
      */
     private Set<Vertex> findNeighbors(Vertex central_node) {
-        Set<Vertex> neighbors = new LinkedHashSet<>();
         Set<Vertex> allNeighbours = this.graph.getNeighbours(central_node);
         if (DEBUG) {
             System.out.println("Vertex:" + central_node.getID() + " => all Neighbours: " + allNeighbours);
         }
-        allNeighbours.removeAll(unsetEdges);
-        neighbors.addAll(allNeighbours);
-        if (DEBUG) {
-            System.out.println("Vertex:" + central_node.getID() + " => Neighbors: " + neighbors);
-        }
-        return neighbors;
+        return allNeighbours;
     }
     // Intersection of two sets 
 

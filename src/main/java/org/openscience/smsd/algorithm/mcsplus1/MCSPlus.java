@@ -29,8 +29,8 @@ import java.util.List;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.Vertex;
+import org.openscience.smsd.graph.Edge;
+import org.openscience.smsd.graph.Vertex;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is

@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
 import org.openscience.smsd.tools.Utility;
+import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -25,28 +25,7 @@ import org.openscience.smsd.tools.Utility;
  *
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public final class EdgeProductCompatibilityGraph implements Serializable {
-
-    /**
-     * @return the c_edges
-     */
-    public Set<Edge> getUnsetEdges() {
-        return unSetEdges;
-    }
-
-    /**
-     * @return the c_edges
-     */
-    public Set<Edge> getCEdges() {
-        return cEdges;
-    }
-
-    /**
-     * @return the d_edges
-     */
-    public Set<Edge> getDEdges() {
-        return dEdges;
-    }
+public final class EdgeProductGraph implements Serializable {
 
     /**
      * @return the Compatibility Graph
@@ -56,9 +35,6 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
     }
 
     private static final long serialVersionUID = 96986606860861L;
-    private final Set<Edge> cEdges;
-    private final Set<Edge> dEdges;
-    private final Set<Edge> unSetEdges;
     private final Graph g;
     private final IAtomContainer source;
     private final IAtomContainer target;
@@ -77,7 +53,7 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
      * @param matchAtomType
      * @throws java.io.IOException
      */
-    public EdgeProductCompatibilityGraph(
+    public EdgeProductGraph(
             IAtomContainer source,
             IAtomContainer target,
             boolean shouldMatchBonds,
@@ -88,53 +64,57 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
         this.matchAtomType = matchAtomType;
         this.source = source;
         this.target = target;
-        this.cEdges = Collections.synchronizedSet(new HashSet<>());
-        this.dEdges = Collections.synchronizedSet(new HashSet<>());
-        this.unSetEdges = Collections.synchronizedSet(new HashSet<>());
-        this.g = new Graph();
+        this.g = new Graph(false);
 
     }
 
     public int searchCliques() {
         compatibilityGraphNodes();
         int edges = compatibilityGraph();
-        //if (DEBUG) {
-        System.out.println("**************************************************");
-        System.out.println("--Compatibility Graph--");
-        System.out.println("C_edges: " + getCEdges().size());
-        System.out.println("D_edges: " + getDEdges().size());
-        System.out.println("unset_edges: " + getUnsetEdges().size());
-        System.out.println("Vertices: " + getCompatibilityGraph().V());
-        System.out.println("Edges: " + getCompatibilityGraph().E());
-        System.out.println("Edges: " + edges);
-        // }
-        return getCompatibilityGraph().V();
+        if (DEBUG) {
+            System.out.println("**************************************************");
+            System.out.println("--Compatibility Graph--");
+            System.out.println("C_edges: " + g.getEdgesOfType(EdgeType.C_EDGE).size());
+            System.out.println("D_edges: " + g.getEdgesOfType(EdgeType.D_EDGE).size());
+            System.out.println("unset_edges: " + g.getEdgesOfType(EdgeType.UNSET).size());
+            System.out.println("Vertices: " + g.V());
+            System.out.println("Edges: " + g.E());
+        }
+        return g.V();
     }
 
     private void compatibilityGraphNodes() {
-        int compatibilityNodeCounter = 0;
+        int compatibilityNodeCounter = 1;
         Iterable<IBond> qbonds = source.bonds();
         Iterable<IBond> tbonds = target.bonds();
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
-                if (Utility.isMatchFeasible(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-
+                //Only add the edge product vertex if the edge labels and end vertex labels are the same
+                if (a.getOrder().equals(b.getOrder())) {
                     if ((a.getBegin().getSymbol().equals(b.getBegin().getSymbol())
                             && a.getEnd().getSymbol().equals(b.getEnd().getSymbol()))
                             || (a.getBegin().getSymbol().equals(b.getEnd().getSymbol())
                             && a.getEnd().getSymbol().equals(b.getBegin().getSymbol()))) {
 
-                        Vertex node = new Vertex(compatibilityNodeCounter);
-                        if (DEBUG) {
-                            System.out.println("Q: " + source.indexOf(a) + "=" + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
-                            System.out.println("T: " + target.indexOf(b) + "=" + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
+                        if (Utility.isMatchFeasible(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+
+                            Vertex node = new Vertex(compatibilityNodeCounter);
+                            if (DEBUG) {
+                                System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
+                                System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
+                            }
+                            node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
+                            g.addNode(node);
+                            compatibilityNodeCounter++;
+
                         }
-                        node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
-                        g.addNode(node);
-                        compatibilityNodeCounter++;
                     }
                 }
             }
+        }
+
+        if (DEBUG) {
+            System.out.println("Vertices " + g.nodes().size());
         }
     }
 
@@ -146,52 +126,35 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
      */
     private int compatibilityGraph() {
 
-        for (Vertex n1 : g.nodes()) {
-            for (Vertex n2 : g.nodes()) {
-                //avoid self loop
-                if (n1 == n2) {
-                    continue;
-                }
+        Stack<Vertex> nodesToCompare = new Stack<>();
+        nodesToCompare.addAll(g.nodes());
+        while (!nodesToCompare.empty()) {
+            Vertex n1 = nodesToCompare.pop();
+            for (Vertex n2 : nodesToCompare) {
                 EdgeType edgetype = edgePairsCompatible(n1, n2);
                 if (edgetype != null) {
+
+                    if (DEBUG) {
+                        System.out.println("n1: " + n1.getID() + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
+                    }
+
                     Edge edge = new Edge(n1, n2);
                     edge.setEdgeType(edgetype);
                     if (edgetype == EdgeType.C_EDGE) {
-                        cEdges.add(edge);
+                        //Assume it to be a undirected graph
+                        g.addEdge(edge);
                     }
                     if (edgetype == EdgeType.D_EDGE) {
-                        dEdges.add(edge);
+                        //Assume it to bea a undirected graph
+                        g.addEdge(edge);
                     }
-                    if (edgetype == EdgeType.UNSET) {
-                        unSetEdges.add(edge);
-                    }
-                    //Assume it to bea a directed graph
-                    g.addEdge(edge, false);
                 }
             }
         }
 
-        /*
-         * Check lone vertex
-         */
-        Set<Vertex> loneVertex = new HashSet<>();
-        for (Vertex v : g.nodes()) {
-            if (g.getNeighbours(v).isEmpty()) {
-                loneVertex.add(v);
-            }
+        if (DEBUG) {
+            System.out.println("Edges " + g.edges().size());
         }
-
-        System.out.println("Lone vetex " + loneVertex.size());
-
-        /*
-         * Remove lone vertex
-         */
-        if (loneVertex.size() < g.V()) {
-            for (Vertex v : loneVertex) {
-                g.removeVertex(v);
-            }
-        }
-
         return g.E();
     }
 
@@ -221,7 +184,10 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
 
         Set<IAtom> possibleVerticesG1 = commonVertices(source, e1, f1);
         Set<IAtom> possibleVerticesG2 = commonVertices(target, e2, f2);
-
+        if (DEBUG) {
+            System.out.println("possibleVerticesG1 " + possibleVerticesG1.size());
+            System.out.println("possibleVerticesG2 " + possibleVerticesG2.size());
+        }
         if (possibleVerticesG1.isEmpty() && possibleVerticesG2.isEmpty()) {
             //e1,f1 and e2,f2 are not adjacent in G1 and in G2, respectively
             //Create a D_Edge
@@ -244,7 +210,7 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
         }
 
         //The edge pairs are not compatible
-        return EdgeType.UNSET;
+        return null;
     }
 
     /**
@@ -258,13 +224,91 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
      */
     public Set<IAtom> commonVertices(IAtomContainer ac, IBond e1, IBond e2) {
         Set<IAtom> commonVertices = new LinkedHashSet<>();
-        for (IAtom a : e1.atoms()) {
-            List<IBond> connectedBondsList = ac.getConnectedBondsList(a);
-            if (connectedBondsList.contains(e2)) {
-                commonVertices.add(a);
-            }
+        if (e1.getBegin().equals(e2.getBegin())) {
+            commonVertices.add(e1.getBegin());
         }
+        if (e1.getBegin().equals(e2.getEnd())) {
+            commonVertices.add(e1.getBegin());
+        }
+
+        if (e1.getEnd().equals(e2.getBegin())) {
+            commonVertices.add(e1.getEnd());
+        }
+        if (e1.getEnd().equals(e2.getEnd())) {
+            commonVertices.add(e1.getEnd());
+        }
+
         return commonVertices;
+    }
+
+    /**
+     * Creates the subgraph of g1 containing all the edges from the edge product
+     * in the vertices of this EdgeProductGraph
+     *
+     * @param edgeProductVertices if (and only if) these vertices induce a
+     * complete subgraph in this EdgeProductGraph, then the result will be the a
+     * common subgraph of g1 and g2.
+     * @return a subgraph of g1
+     * @throws java.lang.CloneNotSupportedException
+     */
+    public IAtomContainer toQuerySubgraph(Set<Vertex> edgeProductVertices) throws CloneNotSupportedException {
+
+        IAtomContainer ac = ExtAtomContainerManipulator.cloneWithIDs(source);
+
+        //Add the left Edge (including vertices) from all the EdgeProducts in vertices
+        Set<IAtom> atomsMapped = new HashSet<>();
+        edgeProductVertices.stream().map((ep) -> ep.getQueryBond()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+            atomsMapped.add(bond.getBegin());
+            return bond;
+        }).forEachOrdered((bond) -> {
+            atomsMapped.add(bond.getEnd());
+        });
+        Set<IAtom> atomsToBeRemoved = new HashSet<>();
+        for (IAtom a : ac.atoms()) {
+            atomsToBeRemoved.add(a);
+        }
+
+        atomsToBeRemoved.removeAll(atomsMapped);
+        atomsToBeRemoved.forEach((a) -> {
+            ac.removeAtom(a);
+        });
+
+        return ac;
+    }
+
+    /**
+     * Creates the subgraph of g2 containing all the edges from the edge product
+     * in the vertices of this EdgeProductGraph
+     *
+     * @param edgeProductVertices if (and only if) these vertices induce a
+     * complete subgraph in this EdgeProductGraph, then the result will be the a
+     * common subgraph of g2 and g1.
+     * @return a subgraph of g2
+     * @throws java.lang.CloneNotSupportedException
+     */
+    public IAtomContainer toTargetSubgraph(Set<Vertex> edgeProductVertices) throws CloneNotSupportedException {
+
+        IAtomContainer ac = ExtAtomContainerManipulator.cloneWithIDs(target);
+
+        //Add the left Edge (including vertices) from all the EdgeProducts in vertices
+        Set<IAtom> atomsMapped = new HashSet<>();
+        edgeProductVertices.stream().map((ep) -> ep.getTargetBond()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+            atomsMapped.add(bond.getBegin());
+            return bond;
+        }).forEachOrdered((bond) -> {
+            atomsMapped.add(bond.getEnd());
+        });
+        Set<IAtom> atomsToBeRemoved = new HashSet<>();
+        for (IAtom a : ac.atoms()) {
+            atomsToBeRemoved.add(a);
+        }
+
+        atomsToBeRemoved.removeAll(atomsMapped);
+        atomsToBeRemoved.forEach((a) -> {
+            ac.removeAtom(a);
+        });
+
+        return ac;
     }
 
     /**
@@ -272,7 +316,5 @@ public final class EdgeProductCompatibilityGraph implements Serializable {
      */
     public void clear() {
         g.clear();
-        cEdges.clear();
-        dEdges.clear();
     }
 }

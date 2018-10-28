@@ -18,8 +18,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
-import org.openscience.smsd.algorithm.mcsplus.Vertex;
+import org.openscience.smsd.graph.Edge;
+import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
 import org.openscience.smsd.tools.Utility;
 
