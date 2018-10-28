@@ -1,10 +1,12 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -17,19 +19,24 @@ public final class Graph {
 
     private static final String NEWLINE = System.getProperty("line.separator");
 
-    private final TreeMap<Vertex, Set<Vertex>> adj;
+    private final Map<Vertex, Set<Vertex>> adj;
+    private final Map<EdgeType, Set<Edge>> adj_type_Map;
     private final Set<Edge> edges;
     private final Set<Vertex> vertices;
+    private final boolean directed;
 
     /**
-     * Initializes an empty graph with {@code V} vertices and 0 edges. param V
+     * Initializes an empty graph with {@code V} vertices and 0 edges.param V
      * the number of vertices
      *
+     * @param directed
      */
-    public Graph() {
+    public Graph(boolean directed) {
         this.edges = new HashSet<>();
         this.vertices = new HashSet<>();
         this.adj = new TreeMap<>();
+        this.adj_type_Map = new HashMap<>();
+        this.directed = directed;
     }
 
     /**
@@ -83,16 +90,17 @@ public final class Graph {
      * assigned in the edge is already present
      *
      * @param e edge to be added
-     * @param directed
      */
-    public void addEdge(Edge e, boolean directed) {
+    public void addEdge(Edge e) {
         validateVertex(e.getSource());
         validateVertex(e.getSink());
         adj.get(e.getSource()).add(e.getSink());
         edges.add(e);
+        if (!adj_type_Map.containsKey(e.getEdgeType())) {
+            adj_type_Map.put(e.getEdgeType(), new HashSet<>());
+        }
+        adj_type_Map.get(e.getEdgeType()).add(e);
         if (!directed) {
-            Edge edgeRev = new Edge(e.getSink(), e.getSource());
-            edges.add(edgeRev);
             adj.get(e.getSink()).add(e.getSource());
         }
     }
@@ -104,7 +112,7 @@ public final class Graph {
      */
     public void addNode(Vertex node) {
         if (!adj.containsKey(node)) {
-            adj.put(node, new TreeSet<>());
+            adj.put(node, new HashSet<>());
             vertices.add(node);
         } else {
             throw new IllegalArgumentException("Node " + node + " found in the graph");
@@ -185,11 +193,14 @@ public final class Graph {
      */
     public Iterable<Edge> edgesOf(Vertex currentVertex) {
         Set<Edge> edgesOfVertex = new LinkedHashSet<>();
-        for (Edge e : edges) {
-            if (e.getSource().equals(currentVertex) || e.getSink().equals(currentVertex)) {
+        edges.stream().map((e) -> {
+            if (e.getSource().equals(currentVertex)) {
                 edgesOfVertex.add(e);
             }
-        }
+            return e;
+        }).filter((e) -> (!directed && e.getSink().equals(currentVertex))).forEachOrdered((e) -> {
+            edgesOfVertex.add(e);
+        });
         return edgesOfVertex;
     }
 
@@ -217,5 +228,43 @@ public final class Graph {
      */
     public Vertex getEdgeTarget(Edge edge) {
         return edge.getSink();
+    }
+
+    /**
+     *
+     * @param v
+     * @return
+     */
+    public boolean removeVertex(Vertex v) {
+        Set<Edge> removeEdges = new HashSet<>();
+        edges.stream().filter((e) -> (e.getSource() == v || e.getSink() == v)).forEachOrdered((e) -> {
+            removeEdges.add(e);
+        });
+        removeEdges.forEach((e) -> {
+            edges.remove(e);
+        });
+        this.adj.remove(v);
+
+        adj.keySet().stream().filter((key) -> (!adj.get(key).isEmpty()
+                && adj.get(key).contains(v))).forEachOrdered((key) -> {
+            adj.get(key).remove(v);
+        });
+
+        return this.vertices.remove(v);
+
+    }
+
+    /**
+     * Return Edges of Type EdgeType (C-Edges/D-Edges etc.)
+     *
+     * @param e
+     * @return Set of edges of type C-Edges/D-Edges etc
+     */
+    public Set<Edge> getEdgesOfType(EdgeType e) {
+        Set<Edge> edgesOfTypes = new HashSet<>();
+        if (adj_type_Map.containsKey(e)) {
+            edgesOfTypes.addAll(adj_type_Map.get(e));
+        }
+        return edgesOfTypes;
     }
 }

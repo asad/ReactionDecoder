@@ -121,10 +121,13 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private double bondInSensitiveMcGregor = -1;//mins
 
     /**
-     * Initialize query and target molecules.Note: Here its assumed that
-     * hydrogens are implicit and user has called these two methods
-     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
-     * initializing calling this method.
+     * Initialize query and target molecules
+     * (MoleculeInitializer.initializeMolecule).
+     *
+     *
+     * Note: Here its assumed that hydrogens are implicit and user has called
+     * these two methods percieveAtomTypesAndConfigureAtoms and
+     * CDKAromicityDetector before initializing calling this method.
      *
      * Please call MoleculeInitializer before calling substructure search
      *
@@ -149,7 +152,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             Algorithm algorithmType) throws CDKException {
         super(query, target);
         this.algorithmType = algorithmType;
-        mcsBuilder(query, target);
+        mcsBuilder(super.getQuery(), super.getTarget());
         super.setSubgraph(isSubgraph());
     }
 
@@ -271,21 +274,22 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
     private synchronized boolean mcsPlusAlgorithm() throws CDKException {
         IResults mcs;
+        int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
         if (getQuery() instanceof IQueryAtomContainer) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (isMatchBonds() || getQuery().getAtomCount() > 20) {
+        } else if (isMatchBonds() || (expectedMaxGraphmatch > 5)) {
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else {
-            if (DEBUG) {
-                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
-            }
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -343,9 +347,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("defaultMCSAlgorithm - no substructure ");
             }
             if (!substructureAlgorithm) {
+                int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
                 boolean moleculeConnected = isMoleculeConnected(getQuery(), getTarget());
                 if (DEBUG) {
-                    int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
                     System.out.println("Expected Match Size: " + expectedMaxGraphmatch);
                     System.out.println("isMatchBonds() " + isMatchBonds());
                     System.out.println("isMatchRings() " + isMatchRings());
@@ -374,8 +378,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                         System.out.println("defaultMCSAlgorithm - Done MCSPlus ");
                     }
                 }
-//
-//                if ((getMappingCount() == 0
+
+//                if ((expectedMaxGraphmatch > 2
+//                        && getMappingCount() == 0
 //                        || (getFirstAtomMapping().getCount()
 //                        <= expectedMaxGraphmatch))) {
 //                    if (DEBUG) {
@@ -424,13 +429,13 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         List<String> common = new LinkedList<>(atomUniqueCounter1);
         common.retainAll(atomUniqueCounter2);
 
-        if (DEBUG) {
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
-            System.out.println("Common " + common.size());
-        }
+//        if (DEBUG) {
+//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
+//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
+//            System.out.println("Common " + common.size());
+//        }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
         return common.size();

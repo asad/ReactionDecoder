@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import org.openscience.cdk.CDKConstants;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
@@ -44,7 +45,12 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.cdk.tools.manipulator.RingSetManipulator;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCDK;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+
 
 /**
  *
@@ -78,6 +84,7 @@ public class MoleculeInitializer {
      * finding code.
      */
     public synchronized static void initializeMolecule(IAtomContainer atomContainer) throws CDKException {
+
         String SMALLEST_RING_SIZE = "SMALLEST_RING_SIZE";
         if (!(atomContainer instanceof IQueryAtomContainer)) {
             Map<String, Integer> valencesTable = new HashMap<>();
@@ -124,20 +131,28 @@ public class MoleculeInitializer {
             valencesTable.put("Co", 2);
 
             // do all ring perception
-//            AllRingsFinder arf = new AllRingsFinder();
             IRingSet allRings = null;
-//            try {
-//                allRings = arf.findAllRings(atomContainer);
-//            } catch (CDKException e) {
-//                LOGGER.warn(e.toString());
-//            }
-
             CycleFinder cycleFinder = Cycles.or(Cycles.all(),
                     Cycles.or(Cycles.relevant(),
                             Cycles.essential()));
 
             Cycles cycles = cycleFinder.find(atomContainer);
             allRings = cycles.toRingSet();
+            try {
+                try {
+                    // figure out which atoms are in aromatic rings:
+                    percieveAtomTypesAndConfigureAtoms(atomContainer);
+                    aromatizeCDK(atomContainer);
+                } catch (CDKException e) {
+                    aromatizeDayLight(atomContainer);
+                }
+            } catch (CDKException e) {
+                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", atomContainer.getID());
+            }
+            /*
+             * Mark aromatic rings
+             */
+            RingSetManipulator.markAromaticRings(allRings);
 
             // sets SSSR information
             //IRingSet sssr = new SSSRFinder(atomContainer).findEssentialRings();
@@ -304,6 +319,9 @@ public class MoleculeInitializer {
         if (shouldMatchBonds) {
             for (int i = 0; i < ac1.getBondCount(); i++) {
                 bond = ac1.getBond(i);
+                if (bond == null) {
+                    continue;
+                }
                 if (bond instanceof IQueryBond) {
                     continue;
                 }
@@ -348,6 +366,9 @@ public class MoleculeInitializer {
         Map<String, Integer> map = new HashMap<>();
         for (int i = 0; i < ac1.getAtomCount(); i++) {
             atom = ac1.getAtom(i);
+            if (atom == null) {
+                continue;
+            }
             if (atom instanceof IQueryAtom) {
                 continue;
             }

@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
+import org.openscience.smsd.graph.Edge;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is

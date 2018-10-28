@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -46,11 +46,11 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
     @Override
     public String toString() {
         if (label.isEmpty()) {
-            return "" + getID() + "";
+            return "Vertex{" + "Q=" + query + ", T=" + target + '}';
         } else if (query == null) {
-            return "Node{" + "node=" + getID() + ", id=" + label + '}';
+            return "Node{" + "id=" + id + ", label=" + label + '}';
         }
-        return "Vertex{" + "query=" + query + ", target=" + target + ", id=" + id + ", label=" + label + '}';
+        return "Vertex{" + "Q=" + query + ", T=" + target + ", id=" + id + ", label=" + label + '}';
     }
 
     /**

@@ -60,8 +60,8 @@ public class DefaulAtomBondMatcher {
 
         AtomMatcher atomMatcher1;
         AtomMatcher atomMatcher2;
-        atomMatcher1 = AtomMatcher(bondA1.getAtom(0), shouldMatchRings, matchAtomTypes);
-        atomMatcher2 = AtomMatcher(bondA1.getAtom(1), shouldMatchRings, matchAtomTypes);
+        atomMatcher1 = atomMatcher(bondA1.getAtom(0), shouldMatchRings, matchAtomTypes);
+        atomMatcher2 = atomMatcher(bondA1.getAtom(1), shouldMatchRings, matchAtomTypes);
         return ((isAtomMatch(atomMatcher1, bondA2.getAtom(0)) && isAtomMatch(atomMatcher2, bondA2.getAtom(1)))
                 || (atomMatcher1.matches(bondA2.getAtom(1)) && atomMatcher2.matches(bondA2.getAtom(0))));
 
@@ -74,7 +74,7 @@ public class DefaulAtomBondMatcher {
      * @param matchAtomTypes
      * @return
      */
-    public static AtomMatcher AtomMatcher(IAtom a, boolean shouldMatchRings, boolean matchAtomTypes) {
+    public static AtomMatcher atomMatcher(IAtom a, boolean shouldMatchRings, boolean matchAtomTypes) {
         AtomMatcher atomMatcher;
 
         if (matchAtomTypes) {
@@ -121,7 +121,9 @@ public class DefaulAtomBondMatcher {
             return false;
         }
 
-        return isAtomMatch(bondA1, bondA2, shouldMatchRings, matchAtomTypes)
-                ? isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2) : false;
+        if (!isAtomMatch(bondA1, bondA2, shouldMatchRings, matchAtomTypes)) {
+            return false;
+        }
+        return isBondMatch(new DefaultBondMatcher(bondA1, matchBond, shouldMatchRings, matchAtomTypes), bondA2);
     }
 }

@@ -173,8 +173,10 @@ public final class AtomAtomMapping implements Serializable {
             String createReactionSMILES = "NA";
             try {
                 SmilesGenerator withAtomClasses = new SmilesGenerator(
-                        SmiFlavor.Unique
-                        | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+                        //                        SmiFlavor.Unique |
+                        //                        SmiFlavor.UseAromaticSymbols |
+                        SmiFlavor.Stereo
+                        | SmiFlavor.AtomAtomMap);
                 createReactionSMILES = withAtomClasses.create(reaction);
             } catch (CDKException ex) {
                 LOGGER.error(ex);
@@ -392,8 +394,8 @@ public final class AtomAtomMapping implements Serializable {
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
         SmilesGenerator smiles = new SmilesGenerator(
                 //                SmiFlavor.Unique|
-                SmiFlavor.UseAromaticSymbols
-                | SmiFlavor.AtomAtomMap
+                //SmiFlavor.UseAromaticSymbols|
+                SmiFlavor.AtomAtomMap
                 | SmiFlavor.Stereo);
         IAtomContainer commonFragment = getCommonFragment();
         Aromaticity aromaticity = new Aromaticity(daylight(),

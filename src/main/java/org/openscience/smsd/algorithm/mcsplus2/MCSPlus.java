@@ -37,8 +37,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import org.openscience.smsd.algorithm.mcsplus2.GenerateCompatibilityGraph;
-import org.openscience.smsd.algorithm.mcsplus.Edge;
+import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -142,44 +141,6 @@ public final class MCSPlus {
         }
         setIterationManager(new IterationManager((ac1.getAtomCount() + ac2.getAtomCount())));
         try {
-//            /*
-//             *   Assign the threads
-//             */
-//            int threadsAvailable = getRuntime().availableProcessors() - 1;
-//            if (threadsAvailable == 0) {
-//                threadsAvailable = 1;
-//            }
-//
-//            if (DEBUG) {
-//                System.out.println("Calling Fork and Join " + threadsAvailable);
-//            }
-//
-//            ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
-//            GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
-//                    ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-//
-//            List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
-//            mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
-//            if (DEBUG) {
-//                System.out.println("Merged Results = " + mergedResult.size());
-//            }
-//
-//            List<Integer> comp_graph_nodes = new ArrayList<>();
-//            List<Edge> cEdges = new ArrayList<>();
-//            List<Edge> dEdges = new ArrayList<>();
-//
-//            /*
-//             * Collate all the results
-//             */
-//            mergedResult.stream().map((r) -> {
-//                comp_graph_nodes.addAll(r.getCompGraphNodes());
-//                return r;
-//            }).map((r) -> {
-//                cEdges.addAll(r.getCEdges());
-//                return r;
-//            }).forEachOrdered((r) -> {
-//                dEdges.addAll(r.getDEdges());
-//            });
 
             GenerateCompatibilityGraph gcg
                     = new GenerateCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
@@ -223,7 +184,7 @@ public final class MCSPlus {
             }
             if (DEBUG) {
                 int size = !extendMappings.isEmpty() ? (extendMappings.size() / 2) : 0;
-                System.out.println("extendMappings: " + size);
+                System.out.println("Extended Mappings: " + size);
             }
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);

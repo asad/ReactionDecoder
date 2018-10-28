@@ -28,8 +28,8 @@ import java.io.Serializable;
  * Class that handles execution time of the MCS search.
  *
  *
- * 
- * 
+ *
+ *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class IterationManager implements Serializable {
@@ -54,9 +54,10 @@ public class IterationManager implements Serializable {
      */
     public IterationManager(int maxIteration) {
         this.counter = 0;
-        this.coverage = 250;
+        this.coverage = 10;
         this.max = maxIteration;
         this.limit = this.max * this.coverage;
+        //System.out.println("Iteration Limit:" + this.limit);
     }
 
     /**
@@ -86,8 +87,13 @@ public class IterationManager implements Serializable {
         counter--;
     }
 
+    /**
+     * Has reached max iteration limit
+     *
+     * @return true is max limit reached else false
+     */
     public synchronized boolean isMaxIteration() {
-        return getCounter() > limit;
+        return counter > limit;
     }
 
     /**

@@ -39,6 +39,14 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
+import org.openscience.smsd.graph.Edge;
+import org.openscience.smsd.graph.EdgeProductGraph;
+import org.openscience.smsd.graph.EdgeType;
+import org.openscience.smsd.graph.Graph;
+import org.openscience.smsd.graph.IClique;
+import org.openscience.smsd.graph.Vertex;
+import org.openscience.smsd.graph.algorithm.GraphBronKerbosch;
+import org.openscience.smsd.graph.algorithm.GraphKoch;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -135,6 +143,7 @@ public final class MCSPlus {
     private List<List<Integer>> calculateMCS() {
 
         List<List<Integer>> extendMappings = null;
+        List<List<Integer>> finalMapping = new ArrayList<>();
 
         if (DEBUG) {
             System.out.println("ac1 : " + ac1.getAtomCount());
@@ -142,18 +151,16 @@ public final class MCSPlus {
         }
         setIterationManager(new IterationManager((ac1.getAtomCount() * ac2.getAtomCount())));
         try {
-            EdgeProductCompatibilityGraph gcg
-                    = new EdgeProductCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            EdgeProductGraph gcg
+                    = new EdgeProductGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
             int search_cliques = gcg.searchCliques();
             Graph comp_graph_nodes = gcg.getCompatibilityGraph();
-            Set<Edge> cEdges = gcg.getCEdges();
-            Set<Edge> dEdges = gcg.getDEdges();
             if (DEBUG) {
                 System.out.println("**************************************************");
-
                 System.out.println("--Compatibility Graph--");
-                System.out.println("C_edges: " + cEdges.size());
-                System.out.println("D_edges: " + dEdges.size());
+                System.out.println("C_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.C_EDGE).size());
+                System.out.println("D_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.D_EDGE).size());
+                System.out.println("unset_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.UNSET).size());
                 System.out.println("Vertices: " + comp_graph_nodes.V());
                 System.out.println("Edges: " + comp_graph_nodes.E());
                 System.out.println("**************************************************");
@@ -164,25 +171,16 @@ public final class MCSPlus {
                 if (DEBUG) {
                     System.out.println("Calling Bron Kerbosch");
                 }
-                init = new GraphBronKerbosch(comp_graph_nodes, cEdges, dEdges);
+                init = new GraphBronKerbosch(comp_graph_nodes);
             } else {
                 if (DEBUG) {
                     System.out.println("Calling Koch");
                 }
-                init = new GraphKoch(comp_graph_nodes, cEdges, dEdges);
+                init = new GraphKoch(comp_graph_nodes);
             }
             init.findMaximalCliques();
 
-            Stack<Set<Vertex>> cliquesBondMap = init.getMaxCliquesSet();
-            Stack<Map<Integer, Integer>> maxCliqueSet = new Stack<>();
-
-            for (Set<Vertex> bondMaps : cliquesBondMap) {
-                Map<Integer, Integer> bondMap = new HashMap<>();
-                for (Vertex n : bondMaps) {
-                    bondMap.putAll(n.getBondMapping());
-                }
-                maxCliqueSet.add(bondMap);
-            }
+            Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();
             if (DEBUG) {
                 System.out.println("Max_Cliques_Set: " + maxCliqueSet.size());
                 System.out.println("**************************************************");
@@ -195,15 +193,34 @@ public final class MCSPlus {
                         shouldMatchRings, matchAtomType);
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
-//                    if (DEBUG) {
-//                        System.out.println("mappings " + mappings);
-//                    }
+                    if (DEBUG) {
+                        System.out.println("mappings " + mappings);
+                    }
                 }
                 maxCliqueSet.pop();
             }
 
             //clear all the compatibility graph content
             gcg.clear();
+
+            for (Map<Integer, Integer> extendMapping : mappings) {
+                //find mapped atoms of both molecules and store these in mappedAtoms
+                List<Integer> exact_mapped_atoms = new ArrayList<>();
+                if (DEBUG) {
+                    System.out.println("\nClique Mapped Atoms");
+                }
+                extendMapping.entrySet().stream().map((map) -> {
+                    if (DEBUG) {
+                        System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    }
+                    exact_mapped_atoms.add(map.getKey());
+                    return map;
+                }).forEach((map) -> {
+                    exact_mapped_atoms.add(map.getValue());
+                });
+                finalMapping.add(exact_mapped_atoms);
+            }
+
             if (DEBUG) {
                 System.out.println("mappings: " + mappings);
             }
@@ -219,7 +236,10 @@ public final class MCSPlus {
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
-        return extendMappings;
+        if (extendMappings != null && !extendMappings.isEmpty()) {
+            finalMapping.addAll(extendMappings);
+        }
+        return finalMapping;
     }
 
     private List<List<Integer>> searchMcGregorMapping(
@@ -258,9 +278,13 @@ public final class MCSPlus {
                 ROPFlag = true;
                 //find mapped atoms of both molecules and store these in mappedAtoms
                 List<Integer> exact_mapped_atoms = new ArrayList<>();
-                System.out.println("\nExact Mapped Atoms");
+                if (DEBUG) {
+                    System.out.println("\nExact Mapped Atoms");
+                }
                 extendMapping.entrySet().stream().map((map) -> {
-                    System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    if (DEBUG) {
+                        System.out.println("i:" + map.getKey() + " j:" + map.getValue());
+                    }
                     exact_mapped_atoms.add(map.getKey());
                     return map;
                 }).forEach((map) -> {

@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.mcsplus;
+package org.openscience.smsd.graph;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -65,9 +65,8 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.i);
-        hash = 83 * hash + Objects.hashCode(this.j);
-        hash = 83 * hash + Objects.hashCode(this.edgeType);
+        hash = 19 * hash + Objects.hashCode(this.i);
+        hash = 19 * hash + Objects.hashCode(this.j);
         return hash;
     }
 
@@ -83,17 +82,22 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
             return false;
         }
         final Edge other = (Edge) obj;
+
+//        return this.i.getID() == other.i.getID() && this.j.getID() == other.j.getID()
+//                || this.i.getID() == other.j.getID() && this.j.getID() == other.i.getID();
         if (!Objects.equals(this.i, other.i)) {
             return false;
         }
-        if (!Objects.equals(this.j, other.j)) {
-            return false;
-        }
-        if (this.edgeType != other.edgeType) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.j, other.j);
     }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public int hashCode() {
+//        return i.getID() ^ j.getID();
+//    }
 
     private final Vertex i;
     private final Vertex j;
@@ -142,11 +146,20 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     /**
      * Get Mapping Index/ID between two nodes
+     *
      * @return
      */
     public Map<Integer, Integer> getMapping() {
         TreeMap<Integer, Integer> mapping = new TreeMap<>();
         mapping.put(getSource().getID(), getSink().getID());
         return mapping;
+    }
+
+    public boolean isC_Edge() {
+        return this.edgeType == EdgeType.C_EDGE;
+    }
+
+    public boolean isD_Edge() {
+        return this.edgeType == EdgeType.D_EDGE;
     }
 }
