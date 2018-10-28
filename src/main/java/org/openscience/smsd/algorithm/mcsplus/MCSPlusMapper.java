@@ -129,9 +129,9 @@ public final class MCSPlusMapper implements IResults {
         if (flagExchange) {
             mappings = reverseMappings(mappings);
         }
-        System.out.println("PreFilter.filter " + mappings);
+//        System.out.println("PreFilter.filter " + mappings);
         List<Map<Integer, Integer>> solutions = PostFilter.filter(mappings);
-        System.out.println("PostFilter.filter " + solutions);
+//        System.out.println("PostFilter.filter " + solutions);
         setAllMapping(solutions);
         setAllAtomMapping();
         return mappings.isEmpty();
