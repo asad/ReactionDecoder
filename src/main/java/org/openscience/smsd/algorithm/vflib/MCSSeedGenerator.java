@@ -149,9 +149,9 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         if (DEBUG) {
             System.out.println("Starting GenerateCompatibilityGraph");
         }
-
+        boolean atomTypeLocal = true;
         EdgeProductGraph gcg
-                = new EdgeProductGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                = new EdgeProductGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, atomTypeLocal);
         int search_cliques = gcg.searchCliques();
         Graph comp_graph_nodes = gcg.getCompatibilityGraph();
         if (DEBUG) {
@@ -177,8 +177,8 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 
         while (!maxCliqueSet.empty()) {
             Map<Integer, Integer> indexindexMapping;
-            indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
-                    shouldMatchRings, matchAtomType);
+            indexindexMapping = ExtractMapping.getMapping(
+                    comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(), shouldMatchRings, atomTypeLocal);
             if (indexindexMapping != null) {
                 mappings.add(indexindexMapping);
 //                    if (DEBUG) {
@@ -230,17 +230,17 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
     private List<AtomAtomMapping> addUIT() throws CDKException {
         CDKRMapHandler rmap = new CDKRMapHandler();
         List<Map<Integer, Integer>> solutions;
-
+        boolean atomTypeLocal = true;
         boolean rOnPFlag;
         if (source instanceof IQueryAtomContainer) {
             rOnPFlag = false;
             solutions = rmap.calculateOverlapsAndReduce(target, (IQueryAtomContainer) source);
         } else if (source.getAtomCount() > target.getAtomCount()) {
             rOnPFlag = true;
-            solutions = rmap.calculateOverlapsAndReduce(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            solutions = rmap.calculateOverlapsAndReduce(source, target, shouldMatchBonds, shouldMatchRings, atomTypeLocal);
         } else {
             rOnPFlag = false;
-            solutions = rmap.calculateOverlapsAndReduce(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            solutions = rmap.calculateOverlapsAndReduce(target, source, shouldMatchBonds, shouldMatchRings, atomTypeLocal);
         }
         return setUITMappings(rOnPFlag, solutions);
     }
