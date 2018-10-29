@@ -20,6 +20,8 @@ public final class Graph {
     private static final String NEWLINE = System.getProperty("line.separator");
 
     private final Map<Vertex, Set<Vertex>> adj;
+    private final Map<Vertex, Set<Vertex>> c_adj;
+    private final Map<Vertex, Set<Vertex>> d_adj;
     private final Map<EdgeType, Set<Edge>> adj_type_Map;
     private final Set<Edge> edges;
     private final Set<Vertex> vertices;
@@ -35,6 +37,8 @@ public final class Graph {
         this.edges = new HashSet<>();
         this.vertices = new HashSet<>();
         this.adj = new TreeMap<>();
+        this.c_adj = new TreeMap<>();
+        this.d_adj = new TreeMap<>();
         this.adj_type_Map = new HashMap<>();
         this.directed = directed;
     }
@@ -100,8 +104,35 @@ public final class Graph {
             adj_type_Map.put(e.getEdgeType(), new HashSet<>());
         }
         adj_type_Map.get(e.getEdgeType()).add(e);
+
+        if (e.getEdgeType() == EdgeType.C_EDGE) {
+            if (!c_adj.containsKey(e.getSource())) {
+                c_adj.put(e.getSource(), new HashSet<>());
+            }
+            c_adj.get(e.getSource()).add(e.getSink());
+        }
+
+        if (e.getEdgeType() == EdgeType.D_EDGE) {
+            if (!d_adj.containsKey(e.getSource())) {
+                d_adj.put(e.getSource(), new HashSet<>());
+            }
+            d_adj.get(e.getSource()).add(e.getSink());
+        }
         if (!directed) {
             adj.get(e.getSink()).add(e.getSource());
+            if (e.getEdgeType() == EdgeType.C_EDGE) {
+                if (!c_adj.containsKey(e.getSink())) {
+                    c_adj.put(e.getSink(), new HashSet<>());
+                }
+                c_adj.get(e.getSink()).add(e.getSource());
+            }
+
+            if (e.getEdgeType() == EdgeType.D_EDGE) {
+                if (!d_adj.containsKey(e.getSink())) {
+                    d_adj.put(e.getSink(), new HashSet<>());
+                }
+                d_adj.get(e.getSink()).add(e.getSource());
+            }
         }
     }
 
@@ -202,6 +233,32 @@ public final class Graph {
             edgesOfVertex.add(e);
         });
         return edgesOfVertex;
+    }
+
+    /**
+     * Returns true if there is c edge else false
+     *
+     * @param u
+     * @param v
+     * @return true if there is c edge else false
+     */
+    public boolean isCEdge(Vertex u, Vertex v) {
+        validateVertex(u);
+        validateVertex(v);
+        return c_adj.containsKey(u) && c_adj.get(u).contains(v);
+    }
+
+    /**
+     * Returns true if there is d edge else false
+     *
+     * @param u
+     * @param v
+     * @return true if there is d edge else false
+     */
+    public boolean isDEdge(Vertex u, Vertex v) {
+        validateVertex(u);
+        validateVertex(v);
+        return d_adj.containsKey(u) && d_adj.get(u).contains(v);
     }
 
     /**
