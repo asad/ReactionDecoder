@@ -280,7 +280,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (expectedMaxGraphmatch < 5) {
+        } else if (expectedMaxGraphmatch < 10) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
