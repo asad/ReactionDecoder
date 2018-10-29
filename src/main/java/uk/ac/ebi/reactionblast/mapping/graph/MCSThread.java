@@ -219,7 +219,7 @@ public class MCSThread implements Callable<MCSSolution> {
                  * IMP: Do not perform substructure matching for disconnected molecules
              */
             boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
-
+            // boolean moleculeConnected = true;
             /*
                  Check if MCS matching required or not very IMP step
              */
