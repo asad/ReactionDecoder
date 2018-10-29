@@ -285,7 +285,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else if (expectedMaxGraphmatch > 50) {
+        } else if (expectedMaxGraphmatch > 30) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
@@ -371,16 +371,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                     if (DEBUG) {
                         System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
                         System.out.println("defaultMCSAlgorithm - Done CDKMCS ");
-                    }
-                } else if (moleculeConnected && getQuery().getBondCount() > 1
-                        && getTarget().getBondCount() > 1) {
-                    if (DEBUG) {
-                        System.out.println("defaultMCSAlgorithm - Calling MCSPlus ");
-                    }
-                    mcsPlusAlgorithm();
-                    if (DEBUG) {
-                        System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
-                        System.out.println("defaultMCSAlgorithm - Done MCSPlus ");
                     }
                 } else {
                     if (DEBUG) {

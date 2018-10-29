@@ -522,14 +522,14 @@ public class MCSThread implements Callable<MCSSolution> {
         switch (theory) {
             case RINGS:
                 isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                        = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                                 false,
                                 numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
                                 false);
                 break;
             default:
                 isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                        = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                                 false,
                                 isHasPerfectRings(),
                                 false);
