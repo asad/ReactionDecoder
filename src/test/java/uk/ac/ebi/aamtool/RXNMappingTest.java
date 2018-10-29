@@ -594,7 +594,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
