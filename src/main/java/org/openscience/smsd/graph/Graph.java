@@ -3,7 +3,6 @@
  */
 package org.openscience.smsd.graph;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -78,9 +77,9 @@ public final class Graph {
      */
     public Set<Edge> edges() {
         Set<Edge> edgesSet = new HashSet<>();
-        for (Collection<Edge> edges : adj_type_Map.values()) {
+        adj_type_Map.values().forEach((edges) -> {
             edgesSet.addAll(edges);
-        }
+        });
         return edgesSet;
     }
 

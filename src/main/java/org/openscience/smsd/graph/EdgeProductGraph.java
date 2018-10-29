@@ -90,25 +90,17 @@ public final class EdgeProductGraph implements Serializable {
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
                 //Only add the edge product vertex if the edge labels and end vertex labels are the same
-                if (a.getOrder().equals(b.getOrder())) {
-                    if ((a.getBegin().getSymbol().equals(b.getBegin().getSymbol())
-                            && a.getEnd().getSymbol().equals(b.getEnd().getSymbol()))
-                            || (a.getBegin().getSymbol().equals(b.getEnd().getSymbol())
-                            && a.getEnd().getSymbol().equals(b.getBegin().getSymbol()))) {
+                if (Utility.isMatchFeasible(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
 
-                        if (Utility.isMatchFeasible(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
-
-                            Vertex node = new Vertex(compatibilityNodeCounter);
-                            if (DEBUG) {
-                                System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
-                                System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
-                            }
-                            node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
-                            g.addNode(node);
-                            compatibilityNodeCounter++;
-
-                        }
+                    Vertex node = new Vertex(compatibilityNodeCounter);
+                    if (DEBUG) {
+                        System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
+                        System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
                     }
+                    node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
+                    g.addNode(node);
+                    compatibilityNodeCounter++;
+
                 }
             }
         }
@@ -130,26 +122,22 @@ public final class EdgeProductGraph implements Serializable {
         nodesToCompare.addAll(g.nodes());
         while (!nodesToCompare.empty()) {
             Vertex n1 = nodesToCompare.pop();
-            for (Vertex n2 : nodesToCompare) {
+            nodesToCompare.forEach((n2) -> {
                 EdgeType edgetype = edgePairsCompatible(n1, n2);
                 if (edgetype != null) {
-
                     if (DEBUG) {
-                        System.out.println("n1: " + n1.getID() + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
+                        System.out.println("n1: " + n1.getID()
+                                + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
                     }
-
                     Edge edge = new Edge(n1, n2);
                     edge.setEdgeType(edgetype);
-                    if (edgetype == EdgeType.C_EDGE) {
+                    if (edgetype == EdgeType.C_EDGE
+                            || edgetype == EdgeType.D_EDGE) {
                         //Assume it to be a undirected graph
                         g.addEdge(edge);
                     }
-                    if (edgetype == EdgeType.D_EDGE) {
-                        //Assume it to bea a undirected graph
-                        g.addEdge(edge);
-                    }
                 }
-            }
+            });
         }
 
         if (DEBUG) {
