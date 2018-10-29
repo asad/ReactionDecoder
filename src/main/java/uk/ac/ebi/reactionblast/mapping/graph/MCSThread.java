@@ -175,7 +175,6 @@ public class MCSThread implements Callable<MCSSolution> {
     @Override
     public synchronized MCSSolution call() throws Exception {
         try {
-            //if (!theory.equals(IMappingAlgorithm.RINGS)) {
             if (DEBUG1) {
                 String createSM1 = null;
                 String createSM2 = null;
@@ -227,7 +226,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 IAtomContainer ac2 = duplicate(getCompound2());
                 Substructure substructure;
                 substructure = new Substructure(ac1, ac2,
-                        true, false, isHasPerfectRings(), true);
+                        true, false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---1.2---");
@@ -282,7 +281,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     System.out.println("---2.1---");
                 }
                 substructure = new Substructure(ac2, ac1,
-                        true, false, isHasPerfectRings(), true);
+                        true, false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---2.2---");
@@ -366,48 +365,6 @@ public class MCSThread implements Callable<MCSSolution> {
                 System.out.println("\"MCS Time:\" " + time);
             }
             return mcs;
-            //} 
-//            else {
-//                if (DEBUG1) {
-//
-//                    /*
-//                     * create SMILES
-//                     */
-//                    smiles = new SmilesGenerator(SmiFlavor.Unique
-//                            | SmiFlavor.Stereo
-//                            | SmiFlavor.AtomAtomMap);
-//                    String createSM1 = null;
-//                    String createSM2 = null;
-//                    try {
-//                        createSM1 = smiles.create(this.compound1);
-//                        createSM2 = smiles.create(this.compound2);
-//                    } catch (CDKException e) {
-//                        LOGGER.error(SEVERE, null, e);
-//                    }
-//                    System.out.println("No Substructure found - switching to MCS");
-//                    System.out.println("Q: " + getCompound1().getID()
-//                            + " T: " + getCompound2().getID()
-//                            + " molQ: " + createSM1
-//                            + " molT: " + createSM2
-//                            + " atomsE: " + compound1.getAtomCount()
-//                            + " atomsP: " + compound2.getAtomCount()
-//                            + " [bonds: " + bondMatcher
-//                            + " rings: " + ringMatcher
-//                            + " isHasPerfectRings: " + isHasPerfectRings()
-//                            + "]");
-//                }
-//                if (DEBUG1) {
-//                    this.startTime = currentTimeMillis();
-//                }
-//                MCSSolution mcs = mcs();
-//                if (DEBUG1) {
-//                    long stopTime = currentTimeMillis();
-//                    long time = stopTime - startTime;
-//                    System.out.println("\"MCS Time:\" " + time);
-//                }
-//                return mcs;
-//            }
-
         } catch (CDKException | CloneNotSupportedException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
@@ -572,7 +529,10 @@ public class MCSThread implements Callable<MCSSolution> {
                 break;
             default:
                 isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, false, isHasPerfectRings(), false);
+                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                false,
+                                isHasPerfectRings(),
+                                false);
                 break;
         }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);

@@ -357,7 +357,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
                 }
                 if (moleculeConnected
-                        && (isMatchBonds() || isMatchRings() || isMatchAtomType())
+                        && (isMatchBonds() || (isMatchRings() && isMatchAtomType()))
                         && getQuery().getAtomCount() > 1
                         && getTarget().getAtomCount() > 1) {
                     if (DEBUG) {
@@ -370,9 +370,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                     }
                 } else {
                     if (DEBUG) {
-                        System.out.println("defaultMCSAlgorithm - Calling MCSPlus ");
+                        System.out.println("defaultMCSAlgorithm - Calling VFMCS ");
                     }
-                    mcsPlusAlgorithm();
+                    vfLibMCSAlgorithm();
                     if (DEBUG) {
                         System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
                         System.out.println("defaultMCSAlgorithm - Done MCSPlus ");

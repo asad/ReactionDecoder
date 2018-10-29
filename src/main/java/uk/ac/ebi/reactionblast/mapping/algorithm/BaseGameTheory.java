@@ -398,6 +398,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
             //isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
 
+            System.out.println("====Amigo Mapping====");
             Isomorphism isomorphism;
             isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
 

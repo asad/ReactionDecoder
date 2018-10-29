@@ -234,7 +234,8 @@ public class MCSTest {
         try {
             org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper sub
                     = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, false, true);
-            System.out.println("sub " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+            //System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+            assertEquals("C1OC(CO)C(O)C1O", sub.getFirstAtomMapping().getCommonFragmentAsSMILES());
         } catch (Exception e) {
             e.printStackTrace();
         }
