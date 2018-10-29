@@ -16,6 +16,7 @@ import org.openscience.cdk.isomorphism.Mappings;
 import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.Substructure;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 
@@ -239,27 +240,28 @@ public class MCSTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//    }
-//
-//    @Test
-//    public void test_MCSPlusBig_count() throws Exception {
-//        ////////System.out.println("3");
-//        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
-//
-//        IAtomContainer query = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
-//        IAtomContainer target = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O[C@H]4O[C@H](CO)[C@@H](O)[C@H](O)[C@H]4O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
-//
-//        MoleculeInitializer.initializeMolecule(query);
-//        MoleculeInitializer.initializeMolecule(target);
-//
-//        try {
-//            System.out.println("CALLING MCS");
-//            org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper sub
-//                    = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(query, target, false, false, true);
-//            //System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
     }
+
+    @Test
+    public void test_MCSPlusBig_count() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+
+        IAtomContainer query = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
+        IAtomContainer target = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O[C@H]4O[C@H](CO)[C@@H](O)[C@H](O)[C@H]4O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
+
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        try {
+//            System.out.println("CALLING Substructure");
+            Substructure sub
+                    = new Substructure(query, target, false, false, true, true);
+            System.out.println("Subgraph " + sub.isSubgraph());
+            //System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
