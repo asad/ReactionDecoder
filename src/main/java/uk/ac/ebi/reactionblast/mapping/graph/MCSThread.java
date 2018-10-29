@@ -233,7 +233,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 System.out.println("VF Matcher 2->1 " + possibleVFmatch21);
             }
 
-            if (!theory.equals(IMappingAlgorithm.RINGS) && moleculeConnected && possibleVFmatch12
+            if (moleculeConnected && possibleVFmatch12
                     && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
                     && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
                 if (DEBUG1) {
@@ -284,8 +284,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 } else if (DEBUG1) {
                     System.out.println("not a Substructure 1");
                 }
-            } else if (!theory.equals(IMappingAlgorithm.RINGS)
-                    && moleculeConnected && possibleVFmatch21
+            } else if (moleculeConnected && possibleVFmatch21
                     && getCompound1().getAtomCount() > getCompound2().getAtomCount()
                     && getCompound1().getBondCount() > getCompound2().getBondCount()) {
 
