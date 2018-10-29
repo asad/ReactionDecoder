@@ -94,20 +94,23 @@ public class CallableAtomMappingTool implements Serializable {
      * @param reaction
      * @param standardizer
      * @param removeHydrogen
+     * @param checkComplex will check complex mapping like ring systems
      * @throws Exception
      */
     public CallableAtomMappingTool(
             IReaction reaction,
             IStandardizer standardizer,
-            boolean removeHydrogen) throws Exception {
+            boolean removeHydrogen,
+            boolean checkComplex) throws Exception {
         solution = synchronizedMap(new EnumMap<>(IMappingAlgorithm.class));
-        generateAtomAtomMapping(reaction, standardizer, removeHydrogen);
+        generateAtomAtomMapping(reaction, standardizer, removeHydrogen, checkComplex);
     }
 
     private synchronized void generateAtomAtomMapping(
             IReaction reaction,
             IStandardizer standardizer,
-            boolean removeHydrogen) {
+            boolean removeHydrogen,
+            boolean checkComplex) {
         ExecutorService executor = null;
         if (DEBUG) {
             executor = Executors.newSingleThreadExecutor();
@@ -187,25 +190,26 @@ public class CallableAtomMappingTool implements Serializable {
             cs.submit(maxMixtureThread);
             jobCounter++;
 
-            /*
+            if (checkComplex) {/*
              * RINGS Minimization
-             */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("d) Rings Model: ");
-            if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
+                 */
+                LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
+                LOGGER.info("d) Rings Model: ");
+                if (DEBUG) {
+                    out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                    out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
+                }
+                IReaction cleanedReaction4 = null;
+                try {
+                    cleanedReaction4 = standardizer.standardize(reaction);
+                } catch (Exception e) {
+                    LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+                    LOGGER.error(e);
+                }
+                MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
+                cs.submit(ringThread);
+                jobCounter++;
             }
-            IReaction cleanedReaction4 = null;
-            try {
-                cleanedReaction4 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
-            }
-            MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
-            cs.submit(ringThread);
-            jobCounter++;
 
             /*
              * Collect the results

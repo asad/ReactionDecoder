@@ -14,7 +14,6 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 import uk.ac.ebi.reactionblast.tools.TestUtility;
 
-
 /**
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
@@ -74,8 +73,9 @@ public class SMILES2AAMTest extends TestUtility {
         boolean forceMapping = true;//Overrides any mapping present int the reaction
         boolean generate2D = true;//2D perception of the stereo centers
         boolean generate3D = false;//2D perception of the stereo centers
+        boolean complexMapping = true;//Rings
         StandardizeReaction standardizeReaction = new StandardizeReaction(); //Standardize the reaction
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, standardizeReaction);
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, complexMapping, standardizeReaction);
         return rmt;
     }
 }

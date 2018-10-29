@@ -114,10 +114,11 @@ public class Annotator extends Helper {
      *
      * @param cdkReaction
      * @param reMap remap the reaction
+     * @param complexMappingFlag complex mapping ..ring system etc.
      * @return
      * @throws Exception
      */
-    protected ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap) throws Exception {
+    protected ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
         ReactionMechanismTool rmt;
         /*
          Check if the reaction is already mapped
@@ -127,7 +128,7 @@ public class Annotator extends Helper {
         } else {
             cdkReaction.setFlag(MAPPED, false);
         }
-        rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, new StandardizeReaction());
+        rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, complexMappingFlag, new StandardizeReaction());
 //        IPatternFingerprinter formedCleavedWFingerprint = rmt
 //                .getSelectedSolution()
 //                .getBondChangeCalculator()

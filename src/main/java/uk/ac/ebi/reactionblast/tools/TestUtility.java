@@ -408,7 +408,7 @@ public class TestUtility {
         /*
         * RMT for the reaction mapping
          */
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, new StandardizeReaction());
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, true, new StandardizeReaction());
 
         /*
         Reaction with hydrogens mapped but unchanged hydrogens suppressed

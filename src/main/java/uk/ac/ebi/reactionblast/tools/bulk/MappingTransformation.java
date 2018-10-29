@@ -55,9 +55,11 @@ public class MappingTransformation implements ITransformation<IReaction> {
             boolean forcedMapping = false;
             boolean generate2D = false;
             boolean generate3D = false;
+            boolean complexMapping = false;
             ReactionMechanismTool rmt
                     = new ReactionMechanismTool(
                             reaction, forcedMapping, generate2D, generate3D,
+                            complexMapping,
                             new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {

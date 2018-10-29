@@ -87,25 +87,27 @@ public class ReactionMechanismTool implements Serializable {
      * @param forcedMapping force re-mapping of the reactions
      * @param generate2D deduce stereo on 2D
      * @param generate3D deduce stereo on 3D
+     * @param checkComplex check complex mapping like rings systems rearrangement
      * @throws Exception
      */
-    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping, boolean generate2D, boolean generate3D) throws Exception {
-        this(reaction, forcedMapping, generate2D, generate3D, new StandardizeReaction());
+    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping, boolean generate2D, boolean generate3D, boolean checkComplex) throws Exception {
+        this(reaction, forcedMapping, generate2D, generate3D, checkComplex, new StandardizeReaction());
     }
 
     /**
      *
-     * @param reaction
-     * @param forcedMapping
+     * @param reaction CDK reaction object
+     * @param forcedMapping overwrite any existing mapping
      * @param generate2D deduce stereo on 2D
      * @param generate3D deduce stereo on 3D
-     * @param standardizer
+     * @param checkComplex check complex mapping like rings systems
+     * @param standardizer standardize reaction
      * @throws CDKException
      * @throws AssertionError
      * @throws Exception
      */
     public ReactionMechanismTool(IReaction reaction, boolean forcedMapping,
-            boolean generate2D, boolean generate3D, IStandardizer standardizer) throws CDKException, AssertionError, Exception {
+            boolean generate2D, boolean generate3D, boolean checkComplex, IStandardizer standardizer) throws CDKException, AssertionError, Exception {
         this.allSolutions = synchronizedList(new ArrayList<>());
         this.selectedMapping = null;
 
@@ -174,7 +176,7 @@ public class ReactionMechanismTool implements Serializable {
 
                 boolean onlyCoreMappingByMCS = true;
                 CallableAtomMappingTool amt
-                        = new CallableAtomMappingTool(reaction, standardizer, onlyCoreMappingByMCS);
+                        = new CallableAtomMappingTool(reaction, standardizer, onlyCoreMappingByMCS, checkComplex);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
 
                 if (DEBUG) {

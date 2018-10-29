@@ -85,12 +85,17 @@ public class ReactionDecoder extends Annotator {
              */
             getHeader();
 
+            boolean complexMappingFlag = false;
+            if (aamLine.hasOption('c') || compareLine.hasOption('c') || annotateLine.hasOption('c')) {
+                complexMappingFlag = true;
+            }
+
             if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")
                     && aamLine.hasOption('Q') && aamLine.hasOption('q') && aamLine.hasOption('f')) {
 
                 out.println("-- AAM --");
                 ReactionDecoder rxn = new ReactionDecoder();
-                rxn.AAMTask(aamLine, createAAMOptions);
+                rxn.AAMTask(aamLine, createAAMOptions, complexMappingFlag);
 
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("COMPARE")
                     && compareLine.hasOption('Q') && compareLine.hasOption('q')
@@ -99,7 +104,7 @@ public class ReactionDecoder extends Annotator {
 
                 out.println("-- COMPARE --");
                 ReactionDecoder rxn = new ReactionDecoder();
-                rxn.CompareTask(compareLine, createCompareOptions);
+                rxn.CompareTask(compareLine, createCompareOptions, complexMappingFlag);
 
             } else if (annotateLine.hasOption('j') && annotateLine.getOptionValue("j").equalsIgnoreCase("ANNOTATE")
                     && annotateLine.hasOption('Q') && annotateLine.hasOption('q')
@@ -107,7 +112,7 @@ public class ReactionDecoder extends Annotator {
 
                 out.println("-- ANNOTATE --");
                 ReactionDecoder rxn = new ReactionDecoder();
-                rxn.AnnotateTask(annotateLine, createAnnotateOptions);
+                rxn.AnnotateTask(annotateLine, createAnnotateOptions, complexMappingFlag);
 
             } else if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")) {
                 out.println("-- AAM USAGE --");
@@ -186,7 +191,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void AAMTask(CommandLine aamLine, Options createAAMOptions)
+    private void AAMTask(CommandLine aamLine, Options createAAMOptions, boolean complexMappingFlag)
             throws Exception {
 
         // TODO code application logic here
@@ -246,7 +251,7 @@ public class ReactionDecoder extends Annotator {
             jobFileName = "ECBLAST_" + reaction.getID() + "_AAM";
         }
 
-        ReactionMechanismTool annotateReaction = getReactionMechanismTool(reaction, REMAP);
+        ReactionMechanismTool annotateReaction = getReactionMechanismTool(reaction, REMAP, complexMappingFlag);
         boolean writeFiles = writeFiles(jobFileName, annotateReaction);
 
         if (writeFiles && aamLine.getOptionValue("f").equalsIgnoreCase("XML")) {
@@ -293,7 +298,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void CompareTask(CommandLine compareLine, Options createCompareOptions)
+    private void CompareTask(CommandLine compareLine, Options createCompareOptions, boolean complexMappingFlag)
             throws ParserConfigurationException, Exception {
 
         String optionValueQ = compareLine.getOptionValue("q");
@@ -402,8 +407,8 @@ public class ReactionDecoder extends Annotator {
         ReactionMechanismTool annotateReactionQ;
         ReactionMechanismTool annotateReactionT;
 
-        annotateReactionQ = getReactionMechanismTool(queryReaction, REMAP);
-        annotateReactionT = getReactionMechanismTool(targetReaction, REMAP);
+        annotateReactionQ = getReactionMechanismTool(queryReaction, REMAP, complexMappingFlag);
+        annotateReactionT = getReactionMechanismTool(targetReaction, REMAP, complexMappingFlag);
         boolean writeFiles1 = writeFiles(jobFileNameQuery, annotateReactionQ);
         boolean writeFiles2 = writeFiles(jobFileNameTarget, annotateReactionT);
 
@@ -451,7 +456,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void AnnotateTask(CommandLine annotateLine, Options createAnnotateOptions)
+    private void AnnotateTask(CommandLine annotateLine, Options createAnnotateOptions, boolean complexMappingFlag)
             throws TransformerException,
             CloneNotSupportedException,
             FileNotFoundException,
@@ -517,7 +522,7 @@ public class ReactionDecoder extends Annotator {
             jobFileName = "ECBLAST_" + reaction.getID() + "_ANNONATE";
         }
 
-        ReactionMechanismTool annotateReaction = getReactionMechanismTool(reaction, REMAP);
+        ReactionMechanismTool annotateReaction = getReactionMechanismTool(reaction, REMAP, complexMappingFlag);
         boolean writeFiles = writeFiles(jobFileName, annotateReaction);
         try {
             if (writeFiles && annotateLine.getOptionValue("f").equalsIgnoreCase("XML")) {
