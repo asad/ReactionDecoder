@@ -406,7 +406,7 @@ public class VF2Substructure implements IResults {
         if (source instanceof IQueryAtomContainer) {
             org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
             Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target);
-            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(100).toAtomMap();
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
                 vfLibSolutions.add(map);
             }
@@ -415,7 +415,7 @@ public class VF2Substructure implements IResults {
 
             org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
             Mappings matchAll = patternVF.matchAll(target);
-            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(100).toAtomMap();
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
                 vfLibSolutions.add(map);
             }
