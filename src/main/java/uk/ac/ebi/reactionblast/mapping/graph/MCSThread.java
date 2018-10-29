@@ -59,8 +59,8 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  */
 public class MCSThread implements Callable<MCSSolution> {
 
-    private static final boolean DEBUG1 = true;
-    private static final boolean DEBUG2 = true;
+    private static final boolean DEBUG1 = false;
+    private static final boolean DEBUG2 = false;
     private static final boolean DEBUG3 = false;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSThread.class);
