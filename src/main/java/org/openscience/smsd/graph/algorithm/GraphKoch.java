@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
-import org.openscience.smsd.graph.EdgeType;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -113,7 +112,7 @@ public class GraphKoch implements IClique {
                         System.out.println("u " + u + ", v " + v);
                     }
                     if (T.contains(v)) {		// then if v ELEMENTOF T
-                        //s.add(v);			// S <- S UNION {v}
+                        S.add(v);			// S <- S UNION {v}
                     } else {
                         P.add(v);			// else P <- P UNION {v}
                     }
@@ -127,8 +126,18 @@ public class GraphKoch implements IClique {
             if (DEBUG) {
                 System.out.println("C " + C + ", P " + P + ", D " + D + ", T " + T);
             }
-            Set<Vertex> subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....
-//            Set<Vertex> subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
+            Set<Vertex> subresult;
+            if (this.graph.V() < 100) {
+                if (DEBUG) {
+                    System.out.println("Small world");
+                }
+                subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....
+            } else {
+                if (DEBUG) {
+                    System.out.println("Big world");
+                }
+                subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
+            }
             if (subresult != null && subresult.size() >= result.size()) {
                 result = subresult;
                 currentmaxresult = result.size();
@@ -166,7 +175,6 @@ public class GraphKoch implements IClique {
         manager.increment();
 
         if (DEBUG && manager.getCounter() % 1000 == 0) {
-//        if (manager.getCounter() % 10 == 0) {
             System.out.print("    Found clique #" + manager.getCounter()
                     + "/" + manager.getIterationLimit()
                     + " of size " + result.size() + ".\n");
@@ -230,6 +238,12 @@ public class GraphKoch implements IClique {
         }
         manager.increment();
 
+        if (DEBUG && manager.getCounter() % 1000 == 0) {
+            System.out.print("    Found clique #" + manager.getCounter()
+                    + "/" + manager.getIterationLimit()
+                    + " of size " + result.size() + ".\n");
+        }
+
         if (P.isEmpty() || P.size() + C.size() + D.size() <= currentmaxresult) {//if P=EMPTY
             return result;                               //REPORT.CLIQUE
         } else {
@@ -242,7 +256,7 @@ public class GraphKoch implements IClique {
                 if (!comp_graph_nodes.hasEdge(ut, ui)
                         || // if ui is not adjacent to ut
                         hasCPath(ui, target, new LinkedHashSet<>())) { //or ui is connected via a C-path to a
-                    //vertex form D that is not adjacent to ut
+                    //vertex from D that is not adjacent to ut
 
                     P_Copy.remove(ui);             			 //P <-P\{ui}
                     Set<Vertex> P_Prime = new LinkedHashSet<>(P_Copy);    //P' <- P
@@ -320,7 +334,7 @@ public class GraphKoch implements IClique {
         result = neighbours.stream().map((neighbour)
                 -> hasCPath(neighbour, target, exclude)).reduce(result, (accumulator, _item)
                 -> accumulator | _item); //if there is a C-Path from a C-Neighbour of source to a vertex in target,
-        //then there is a C_Path form source to the same vertex in target
+        //then there is a C_Path from source to the same vertex in target
         return result;
     }
 
@@ -331,18 +345,7 @@ public class GraphKoch implements IClique {
      * @return {v ELEMENTOF Vertex | {u,v} ELEMENTOF E}
      */
     private Set<Vertex> neighbourCVertices(Vertex u) {
-
-        Set<Vertex> neighbors = new LinkedHashSet<>();
-        Set<Vertex> allNeighbours = this.graph.getNeighbours(u);
-        if (DEBUG) {
-            System.out.println("Vertex:" + u.getID() + " => all Neighbours: " + allNeighbours);
-        }
-        allNeighbours.retainAll(this.graph.getEdgesOfType(EdgeType.C_EDGE));
-        neighbors.addAll(allNeighbours);
-        if (DEBUG) {
-            System.out.println("Vertex:" + u.getID() + " => Neighbors: " + neighbors);
-        }
-        return neighbors;
-
+        Set<Vertex> allNeighbours = this.graph.getCEdgeNeighbours(u);
+        return allNeighbours;
     }
 }

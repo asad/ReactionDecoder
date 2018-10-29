@@ -3,6 +3,7 @@
  */
 package org.openscience.smsd.graph;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -23,7 +24,6 @@ public final class Graph {
     private final Map<Vertex, Set<Vertex>> c_adj;
     private final Map<Vertex, Set<Vertex>> d_adj;
     private final Map<EdgeType, Set<Edge>> adj_type_Map;
-    private final Set<Edge> edges;
     private final Set<Vertex> vertices;
     private final boolean directed;
 
@@ -34,7 +34,6 @@ public final class Graph {
      * @param directed
      */
     public Graph(boolean directed) {
-        this.edges = new HashSet<>();
         this.vertices = new HashSet<>();
         this.adj = new TreeMap<>();
         this.c_adj = new TreeMap<>();
@@ -58,7 +57,7 @@ public final class Graph {
      * @return the number of edges in this graph
      */
     public int E() {
-        return edges.size();
+        return edges().size();
     }
 
     /**
@@ -78,9 +77,11 @@ public final class Graph {
      * @return edges in this graph
      */
     public Set<Edge> edges() {
-        Set<Edge> nodes = new HashSet<>();
-        nodes.addAll(edges);
-        return nodes;
+        Set<Edge> edgesSet = new HashSet<>();
+        for (Collection<Edge> edges : adj_type_Map.values()) {
+            edgesSet.addAll(edges);
+        }
+        return edgesSet;
     }
 
     private void validateVertex(Vertex v) {
@@ -98,42 +99,46 @@ public final class Graph {
     public void addEdge(Edge e) {
         validateVertex(e.getSource());
         validateVertex(e.getSink());
-        adj.get(e.getSource()).add(e.getSink());
-        edges.add(e);
+
+        /*
+         * Add edges to the map
+         */
+        addEdge(adj, e);
+
+        /*
+         * Add C edges to the map
+         */
+        if (e.getEdgeType() == EdgeType.C_EDGE) {
+            addEdge(c_adj, e);
+        }
+        /*
+         * Add D edges to the map
+         */
+        if (e.getEdgeType() == EdgeType.D_EDGE) {
+            addEdge(d_adj, e);
+        }
+        /*
+         * Add Edge type to the map
+         */
         if (!adj_type_Map.containsKey(e.getEdgeType())) {
             adj_type_Map.put(e.getEdgeType(), new HashSet<>());
         }
         adj_type_Map.get(e.getEdgeType()).add(e);
 
-        if (e.getEdgeType() == EdgeType.C_EDGE) {
-            if (!c_adj.containsKey(e.getSource())) {
-                c_adj.put(e.getSource(), new HashSet<>());
-            }
-            c_adj.get(e.getSource()).add(e.getSink());
-        }
+    }
 
-        if (e.getEdgeType() == EdgeType.D_EDGE) {
-            if (!d_adj.containsKey(e.getSource())) {
-                d_adj.put(e.getSource(), new HashSet<>());
-            }
-            d_adj.get(e.getSource()).add(e.getSink());
-        }
+    private void addEdge(Map map, Edge e) {
+        addEdge(map, e.getSource(), e.getSink());
         if (!directed) {
-            adj.get(e.getSink()).add(e.getSource());
-            if (e.getEdgeType() == EdgeType.C_EDGE) {
-                if (!c_adj.containsKey(e.getSink())) {
-                    c_adj.put(e.getSink(), new HashSet<>());
-                }
-                c_adj.get(e.getSink()).add(e.getSource());
-            }
-
-            if (e.getEdgeType() == EdgeType.D_EDGE) {
-                if (!d_adj.containsKey(e.getSink())) {
-                    d_adj.put(e.getSink(), new HashSet<>());
-                }
-                d_adj.get(e.getSink()).add(e.getSource());
-            }
+            addEdge(map, e.getSink(), e.getSource());
         }
+    }
+
+    private void addEdge(Map<Vertex, Set<Vertex>> map, Vertex u, Vertex v) {
+        if (!map.containsKey(u)) {
+            map.put(u, new HashSet<>());
+        }
+        map.get(u).add(v);
     }
 
     /**
@@ -181,7 +186,7 @@ public final class Graph {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append(vertices.size()).append(" vertices, ").append(edges.size()).append(" edges ").append(NEWLINE);
+        s.append(vertices.size()).append(" vertices, ").append(edges().size()).append(" edges ").append(NEWLINE);
         adj.entrySet().stream().map((m) -> {
             s.append(m.getKey()).append(": ");
             return m;
@@ -200,9 +205,11 @@ public final class Graph {
      * Clean graph
      */
     public void clear() {
-        this.edges.clear();
         this.vertices.clear();
         this.adj.clear();
+        this.c_adj.clear();
+        this.d_adj.clear();
+        this.adj_type_Map.clear();
     }
 
     /**
@@ -213,7 +220,7 @@ public final class Graph {
      */
     public boolean hasEdge(Vertex u, Vertex v) {
         return adj.containsKey(u) && adj.get(u).contains(v) ? true
-                : adj.containsKey(v) && adj.get(v).contains(u);
+                : !directed && adj.containsKey(v) && adj.get(v).contains(u);
     }
 
     /**
@@ -224,7 +231,7 @@ public final class Graph {
      */
     public Iterable<Edge> edgesOf(Vertex currentVertex) {
         Set<Edge> edgesOfVertex = new LinkedHashSet<>();
-        edges.stream().map((e) -> {
+        edges().stream().map((e) -> {
             if (e.getSource().equals(currentVertex)) {
                 edgesOfVertex.add(e);
             }
@@ -245,7 +252,8 @@ public final class Graph {
     public boolean isCEdge(Vertex u, Vertex v) {
         validateVertex(u);
         validateVertex(v);
-        return c_adj.containsKey(u) && c_adj.get(u).contains(v);
+        return c_adj.containsKey(u) && c_adj.get(u).contains(v) ? true
+                : !directed && c_adj.containsKey(v) && c_adj.get(v).contains(u);
     }
 
     /**
@@ -258,7 +266,8 @@ public final class Graph {
     public boolean isDEdge(Vertex u, Vertex v) {
         validateVertex(u);
         validateVertex(v);
-        return d_adj.containsKey(u) && d_adj.get(u).contains(v);
+        return d_adj.containsKey(u) && d_adj.get(u).contains(v) ? true
+                : !directed && d_adj.containsKey(v) && d_adj.get(v).contains(u);
     }
 
     /**
@@ -293,19 +302,29 @@ public final class Graph {
      * @return
      */
     public boolean removeVertex(Vertex v) {
-        Set<Edge> removeEdges = new HashSet<>();
-        edges.stream().filter((e) -> (e.getSource() == v || e.getSink() == v)).forEachOrdered((e) -> {
-            removeEdges.add(e);
-        });
-        removeEdges.forEach((e) -> {
-            edges.remove(e);
-        });
-        this.adj.remove(v);
-
         adj.keySet().stream().filter((key) -> (!adj.get(key).isEmpty()
                 && adj.get(key).contains(v))).forEachOrdered((key) -> {
             adj.get(key).remove(v);
         });
+        c_adj.keySet().stream().filter((key) -> (!c_adj.get(key).isEmpty()
+                && c_adj.get(key).contains(v))).forEachOrdered((key) -> {
+            c_adj.get(key).remove(v);
+        });
+
+        d_adj.keySet().stream().filter((key) -> (!d_adj.get(key).isEmpty()
+                && d_adj.get(key).contains(v))).forEachOrdered((key) -> {
+            d_adj.get(key).remove(v);
+        });
+
+        adj_type_Map.entrySet().forEach((c) -> {
+            c.getValue().stream().filter((e) -> (e.getSource() == v || e.getSink() == v)).forEachOrdered((e) -> {
+                adj_type_Map.get(c.getKey()).remove(e);
+            });
+        });
+
+        adj.remove(v);
+        c_adj.remove(v);
+        d_adj.remove(v);
 
         return this.vertices.remove(v);
 
@@ -323,5 +342,10 @@ public final class Graph {
             edgesOfTypes.addAll(adj_type_Map.get(e));
         }
         return edgesOfTypes;
+    }
+
+    public Set<Vertex> getCEdgeNeighbours(Vertex u) {
+        validateVertex(u);
+        return c_adj.containsKey(u) ? new HashSet<>(c_adj.get(u)) : new HashSet<>();
     }
 }

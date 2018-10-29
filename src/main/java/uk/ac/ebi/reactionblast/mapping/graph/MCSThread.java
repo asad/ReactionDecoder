@@ -570,13 +570,9 @@ public class MCSThread implements Callable<MCSSolution> {
                                 numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
                                 false);
                 break;
-//            case MIN:
-//                isomorphism
-//                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, false, true);
-//                break;
             default:
                 isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, isHasPerfectRings(), false);
+                        = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, false, isHasPerfectRings(), false);
                 break;
         }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);

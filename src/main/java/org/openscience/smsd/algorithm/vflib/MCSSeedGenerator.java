@@ -28,7 +28,6 @@ import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -42,7 +41,6 @@ import org.openscience.smsd.graph.EdgeType;
 import org.openscience.smsd.graph.Graph;
 import org.openscience.smsd.graph.IClique;
 import org.openscience.smsd.graph.Vertex;
-import org.openscience.smsd.graph.algorithm.GraphBronKerbosch;
 import org.openscience.smsd.graph.algorithm.GraphKoch;
 import org.openscience.smsd.interfaces.Algorithm;
 
@@ -152,40 +150,6 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             System.out.println("Starting GenerateCompatibilityGraph");
         }
 
-//        /*
-//         *   Assign the threads
-//         */
-//        int threadsAvailable = getRuntime().availableProcessors() - 1;
-//        if (threadsAvailable == 0) {
-//            threadsAvailable = 1;
-//        }
-//
-//        ForkJoinPool forkJoinPool = new ForkJoinPool(threadsAvailable);
-//        GenerateCompatibilityGraphFJ myRecursiveTask = new GenerateCompatibilityGraphFJ(0,
-//                ac1.getAtomCount(), ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
-//
-//        List<Result> mergedResult = forkJoinPool.invoke(myRecursiveTask);
-//        mergedResult = new ArrayList<>(new HashSet<>(mergedResult));//remove any duplicates;
-//        if (DEBUG) {
-//            System.out.println("mergedResult = " + mergedResult.size());
-//        }
-//
-//        List<Integer> comp_graph_nodes = new ArrayList<>();
-//        List<Edge> cEdges = new ArrayList<>();
-//        List<Edge> dEdges = new ArrayList<>();
-//
-//        /*
-//         * Collate all the results
-//         */
-//        mergedResult.stream().map((r) -> {
-//            comp_graph_nodes.addAll(r.getCompGraphNodes());
-//            return r;
-//        }).map((r) -> {
-//            cEdges.addAll(r.getCEgdes());
-//            return r;
-//        }).forEachOrdered((r) -> {
-//            dEdges.addAll(r.getDEgdes());
-//        });
         EdgeProductGraph gcg
                 = new EdgeProductGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         int search_cliques = gcg.searchCliques();
@@ -195,24 +159,13 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             System.out.println("--Compatibility Graph--");
             System.out.println("C_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.C_EDGE).size());
             System.out.println("D_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.D_EDGE).size());
-            System.out.println("unset_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.UNSET).size());
             System.out.println("Vertices: " + comp_graph_nodes.V());
             System.out.println("Edges: " + comp_graph_nodes.E());
             System.out.println("**************************************************");
         }
 
         IClique init = null;
-        if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
-            if (DEBUG) {
-                System.out.println("Calling Bron Kerbosch");
-            }
-            init = new GraphBronKerbosch(comp_graph_nodes);
-        } else {
-            if (DEBUG) {
-                System.out.println("Calling Koch");
-            }
-            init = new GraphKoch(comp_graph_nodes);
-        }
+        init = new GraphKoch(comp_graph_nodes);
         init.findMaximalCliques();
 
         Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();

@@ -280,7 +280,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (expectedMaxGraphmatch < 10) {
+        } else if (expectedMaxGraphmatch < 5) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
@@ -378,19 +378,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                         System.out.println("defaultMCSAlgorithm - Done MCSPlus ");
                     }
                 }
-
-//                if ((expectedMaxGraphmatch > 2
-//                        && getMappingCount() == 0
-//                        || (getFirstAtomMapping().getCount()
-//                        <= expectedMaxGraphmatch))) {
-//                    if (DEBUG) {
-//                        System.out.println("defaultMCSAlgorithm - calling vfLibMCSAlgorithm ");
-//                    }
-//                    vfLibMCSAlgorithm();
-//                    if (DEBUG) {
-//                        System.out.println("defaultMCSAlgorithm - Done vfLibMCSAlgorithm ");
-//                    }
-//                }
             }
         } catch (CDKException e) {
             LOGGER.error(Level.SEVERE, null, e);

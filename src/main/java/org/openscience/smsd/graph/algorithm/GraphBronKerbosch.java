@@ -61,12 +61,12 @@ public class GraphBronKerbosch implements IClique {
     public Collection<Set<Vertex>> getCliques() {
         return cliques;
     }
-
+    
     private final static boolean DEBUG = false;
     private final Collection<Set<Vertex>> cliques;
     IterationManager manager;
     private final Graph graph;
-
+    
     public GraphBronKerbosch(
             Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
@@ -87,7 +87,7 @@ public class GraphBronKerbosch implements IClique {
      */
     @Override
     public void findMaximalCliques() {
-
+        
         TreeSet<Vertex> potential_clique_R = new TreeSet<>();//R, 
         TreeSet<Vertex> candidates_P = new TreeSet<>();//P
         TreeSet<Vertex> already_found_X = new TreeSet<>();//X
@@ -95,9 +95,9 @@ public class GraphBronKerbosch implements IClique {
         graph.nodes().forEach((n) -> {
             candidates_P.add(n);
         });
-
+        
         int printDepth = 1;
-
+        
         BronKerboschWithPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
 //        BronKerboschWithoutPivot(potential_clique_R, candidates_P, already_found_X, printDepth);
 //        BronKerbosch(potential_clique_R, candidates_P, already_found_X);
@@ -162,12 +162,12 @@ public class GraphBronKerbosch implements IClique {
             TreeSet<Vertex> P,
             TreeSet<Vertex> X,
             int printDepth) {
-
+        
         if (DEBUG) {
             System.out.println("BronKerboschWithPivot called: R=" + toText(R, "{", "}")
                     + ", P=" + toText(P, "{", "}") + ", X=" + toText(X, "{", "}"));
         }
-
+        
         if ((P.isEmpty()) && (X.isEmpty())) {
             cliques.add(new HashSet<>(R));
             if (DEBUG) {
@@ -180,12 +180,12 @@ public class GraphBronKerbosch implements IClique {
             return;
         }
         manager.increment();
-
+        
         if (DEBUG && manager.getCounter() % 1000 == 0) {
             System.out.print("    Found clique #" + manager.getCounter() + " of size " + R.size() + ".\n");
             printClique(R);
         }
-
+        
         Set<Vertex> P1 = new TreeSet<>(P);
         if (DEBUG) {
             System.out.println("P_PRIME " + P1);
@@ -199,7 +199,7 @@ public class GraphBronKerbosch implements IClique {
          * P = P / Nbrs(u) 
          */
         P1 = new TreeSet<>(removeNeigbour(P1, u));
-
+        
         if (DEBUG) {
             System.out.println("P_Prime: " + P1 + " Depth: " + printDepth + " Pivot is " + (u));
         }
@@ -275,12 +275,12 @@ public class GraphBronKerbosch implements IClique {
             TreeSet<Vertex> P,
             TreeSet<Vertex> X,
             int printDepth) {
-
+        
         if (DEBUG) {
             System.out.println("BronKerboschWithPivot called: R=" + toText(R, "{", "}")
                     + ", P=" + toText(P, "{", "}") + ", X=" + toText(X, "{", "}"));
         }
-
+        
         if ((P.isEmpty()) && (X.isEmpty())) {
             cliques.add(new HashSet<>(R));
             if (DEBUG) {
@@ -326,7 +326,7 @@ public class GraphBronKerbosch implements IClique {
         }
         return n;
     }
-
+    
     private void BronKerbosch(
             TreeSet<Vertex> R,
             TreeSet<Vertex> P,
@@ -399,7 +399,7 @@ public class GraphBronKerbosch implements IClique {
      * Returns degree of a vertex
      */
     private int getDegreeVertex(Vertex node) {
-        return this.graph.getNeighbours(node).size();
+        return this.graph.getDegree(node);
     }
 
     /**
@@ -470,7 +470,7 @@ public class GraphBronKerbosch implements IClique {
         }
         return sb.toString();
     }
-
+    
     private void printClique(Collection<Vertex> R) {
         System.out.print("Clique Set R=[");
         R.forEach((v) -> {
@@ -478,12 +478,8 @@ public class GraphBronKerbosch implements IClique {
         });
         System.out.print(" ]\n");
     }
-
+    
     private boolean isNeighbor(Vertex found, Vertex candidate) {
-        Collection<Vertex> neighbors = findNeighbors(candidate);
-        if (DEBUG) {
-            System.out.println("neighbors.contains(found) " + neighbors.contains(found));
-        }
-        return neighbors.contains(found);
+        return graph.hasEdge(found, candidate);
     }
 }
