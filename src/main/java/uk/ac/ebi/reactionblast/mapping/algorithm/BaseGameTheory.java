@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 
 import org.openscience.cdk.PseudoAtom;
@@ -47,7 +48,9 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import static uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher.matcher;
@@ -393,6 +396,18 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
          */
         if (DEBUG) {
             System.out.println("====Quick Mapping====");
+        }
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
+            MoleculeInitializer.initializeMolecule(educt);
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, null, ex);
+        }
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(product);
+            MoleculeInitializer.initializeMolecule(product);
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, null, ex);
         }
         try {
             //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);

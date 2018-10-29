@@ -49,21 +49,8 @@ public class BaseFilter {
      * @param targetMol
      */
     public BaseFilter(IAtomContainer sourceMol, IAtomContainer targetMol) {
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(sourceMol);
-            MoleculeInitializer.initializeMolecule(sourceMol);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
-        }
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(targetMol);
-            MoleculeInitializer.initializeMolecule(targetMol);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
-        }
         this.mol1 = sourceMol;
         this.mol2 = targetMol;
-        
     }
 
     /**

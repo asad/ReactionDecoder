@@ -51,7 +51,6 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCD
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
-
 /**
  *
  *
@@ -84,6 +83,20 @@ public class MoleculeInitializer {
      * finding code.
      */
     public synchronized static void initializeMolecule(IAtomContainer atomContainer) throws CDKException {
+        if (atomContainer == null) {
+            return;
+        }
+        try {
+            try {
+                // figure out which atoms are in aromatic rings:
+                percieveAtomTypesAndConfigureAtoms(atomContainer);
+                aromatizeCDK(atomContainer);
+            } catch (CDKException e) {
+                aromatizeDayLight(atomContainer);
+            }
+        } catch (CDKException e) {
+            LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", atomContainer.getID());
+        }
 
         String SMALLEST_RING_SIZE = "SMALLEST_RING_SIZE";
         if (!(atomContainer instanceof IQueryAtomContainer)) {
@@ -138,17 +151,6 @@ public class MoleculeInitializer {
 
             Cycles cycles = cycleFinder.find(atomContainer);
             allRings = cycles.toRingSet();
-            try {
-                try {
-                    // figure out which atoms are in aromatic rings:
-                    percieveAtomTypesAndConfigureAtoms(atomContainer);
-                    aromatizeCDK(atomContainer);
-                } catch (CDKException e) {
-                    aromatizeDayLight(atomContainer);
-                }
-            } catch (CDKException e) {
-                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", atomContainer.getID());
-            }
             /*
              * Mark aromatic rings
              */
@@ -162,6 +164,9 @@ public class MoleculeInitializer {
             IRingSet sssr = cycles.toRingSet();
 
             for (IAtom atom : atomContainer.atoms()) {
+                if (atom == null) {
+                    continue;
+                }
 
                 // add a property to each ring atom that will be an array of
                 // Integers, indicating what size ring the given atom belongs to
@@ -207,7 +212,8 @@ public class MoleculeInitializer {
                 atom.setProperty(CDKConstants.TOTAL_H_COUNT, hCount);
 
                 if (valencesTable.get(atom.getSymbol()) != null) {
-                    int formalCharge = Objects.equals(atom.getFormalCharge(), CDKConstants.UNSET) ? 0 : atom.getFormalCharge();
+                    int formalCharge = Objects.equals(atom.getFormalCharge(), CDKConstants.UNSET)
+                            ? 0 : atom.getFormalCharge();
                     atom.setValency(valencesTable.get(atom.getSymbol()) - formalCharge);
                 }
             }

@@ -73,7 +73,7 @@ public class ChemicalFilters extends BaseFilter {
             IQueryAtomContainer sourceMol,
             IAtomContainer targetMol) {
         super(sourceMol, targetMol);
-        this.allAtomMCS = Collections.synchronizedList(new ArrayList<AtomAtomMapping>());
+        this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         this.stereoFilter = new StereoFilter(this);
         this.fragmentFilter = new FragmentFilter(this);
         this.energyFilter = new EnergyFilter(this);
