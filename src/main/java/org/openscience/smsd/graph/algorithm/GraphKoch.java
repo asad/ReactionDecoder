@@ -4,7 +4,6 @@
 package org.openscience.smsd.graph.algorithm;
 
 import org.openscience.smsd.graph.IClique;
-import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.graph.Graph;
 import java.util.Collection;
@@ -68,7 +67,7 @@ public class GraphKoch implements IClique {
     public GraphKoch(Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
-        this.manager = new IterationManager(500);
+        this.manager = new IterationManager(this.graph.V() + this.graph.V());
     }
 
     /**
@@ -90,6 +89,7 @@ public class GraphKoch implements IClique {
      */
     @Override
     public void findMaximalCliques() {
+//        System.out.println("Starting koch");
         Set<Vertex> result = new LinkedHashSet<>();
         //set of vertices which have already been used for the initialization of Enumerate_C_Cliques()
         Set<Vertex> T = new LinkedHashSet<>();		// T <- Empty
@@ -97,8 +97,8 @@ public class GraphKoch implements IClique {
         int currentmaxresult = 0;
         for (Vertex u : graph.nodes()) {				//for all u ELEMENTOF Vertex
 
-            if (DEBUG && manager.isMaxIteration()) {
-                System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
+            if (manager.isMaxIteration()) {
+                //System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
                 return;
             }
 
@@ -106,6 +106,7 @@ public class GraphKoch implements IClique {
             D = new LinkedHashSet<>();			// D <- Empty
             S = new LinkedHashSet<>();			// S <- Empty
             N = findNeighbors(u);	// N <- {v ELEMENTOF Vertex | {u,v} ELEMENTOF E}
+            //System.out.println("findNeighbors = u => " + N.size());
             for (Vertex v : N) {					// for each v ELEMENTOF N
                 if (isCEdge(u, v)) {		// if u and v are adjacent via a c-edge
                     if (DEBUG) {
@@ -158,8 +159,8 @@ public class GraphKoch implements IClique {
             int currentmaxresult) {
         Set<Vertex> result = new LinkedHashSet<>(C);
 
-        if (DEBUG && manager.isMaxIteration()) {
-            System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
+        if (manager.isMaxIteration()) {
+            //System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
             return result;
         }
         manager.increment();
@@ -223,8 +224,8 @@ public class GraphKoch implements IClique {
             Set<Vertex> C, Set<Vertex> P, Set<Vertex> D, Set<Vertex> T, int currentmaxresult) {
 
         Set<Vertex> result = new LinkedHashSet<>(C);
-        if (DEBUG && manager.isMaxIteration()) {
-            System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
+        if (manager.isMaxIteration()) {
+            //System.out.println("Reached max limit," + manager.getIterationLimit() + " itertions. ");
             return result;
         }
         manager.increment();
@@ -280,31 +281,11 @@ public class GraphKoch implements IClique {
     }
 
     private boolean isCEdge(Vertex u, Vertex v) {
-        for (Edge e : graph.getEdgesOfType(EdgeType.C_EDGE)) {
-            if (e.getSource() == u && e.getSink() == v
-                    && e.isC_Edge()) {
-                return true;
-            }
-            if (e.getSink() == u && e.getSource() == v
-                    && e.isC_Edge()) {
-                return true;
-            }
-        }
-        return false;
+        return graph.isCEdge(u, v);
     }
 
     private boolean isDEdge(Vertex u, Vertex v) {
-        for (Edge e : graph.getEdgesOfType(EdgeType.D_EDGE)) {
-            if (e.getSource() == u && e.getSink() == v
-                    && e.isD_Edge()) {
-                return true;
-            }
-            if (e.getSink() == u && e.getSource() == v
-                    && e.isD_Edge()) {
-                return true;
-            }
-        }
-        return false;
+        return graph.isDEdge(u, v);
     }
 
     /**

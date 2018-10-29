@@ -152,7 +152,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             Algorithm algorithmType) throws CDKException {
         super(query, target);
         this.algorithmType = algorithmType;
-        mcsBuilder(super.getQuery(), super.getTarget());
+        mcsBuilder((IQueryAtomContainer) super.getQuery(), super.getTarget());
         super.setSubgraph(isSubgraph());
     }
 
@@ -280,16 +280,16 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (isMatchBonds() || (expectedMaxGraphmatch > 5)) {
-            if (DEBUG) {
-                System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
-            }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else {
+        } else if (expectedMaxGraphmatch < 10) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else {
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -353,7 +353,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                     System.out.println("Expected Match Size: " + expectedMaxGraphmatch);
                     System.out.println("isMatchBonds() " + isMatchBonds());
                     System.out.println("isMatchRings() " + isMatchRings());
-                    System.out.println("isMatchAtomType()" + isMatchAtomType());
+                    System.out.println("isMatchAtomType() " + isMatchAtomType());
 
                 }
                 if (moleculeConnected

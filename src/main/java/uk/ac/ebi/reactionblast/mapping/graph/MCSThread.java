@@ -175,237 +175,238 @@ public class MCSThread implements Callable<MCSSolution> {
     @Override
     public synchronized MCSSolution call() throws Exception {
         try {
-            if (!theory.equals(IMappingAlgorithm.RINGS)) {
-                if (DEBUG1) {
-                    String createSM1 = null;
-                    String createSM2 = null;
-                    try {
-                        createSM1 = smiles.create(this.compound1);
-                        createSM2 = smiles.create(this.compound2);
-                    } catch (CDKException e) {
-                        LOGGER.error(SEVERE, null, e);
-                    }
-                    System.out.println("Q: " + getCompound1().getID()
-                            + " T: " + getCompound2().getID()
-                            + " molQ: " + createSM1
-                            + " molT: " + createSM2
-                            + " atomsQ: " + compound1.getAtomCount()
-                            + " atomsT: " + compound2.getAtomCount()
-                            + " [bonds: " + bondMatcher
-                            + " rings: " + ringMatcher
-                            + " isHasPerfectRings: " + isHasPerfectRings()
-                            + "]");
+            //if (!theory.equals(IMappingAlgorithm.RINGS)) {
+            if (DEBUG1) {
+                String createSM1 = null;
+                String createSM2 = null;
+                try {
+                    createSM1 = smiles.create(this.compound1);
+                    createSM2 = smiles.create(this.compound2);
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, null, e);
                 }
+                System.out.println("Q: " + getCompound1().getID()
+                        + " T: " + getCompound2().getID()
+                        + " molQ: " + createSM1
+                        + " molT: " + createSM2
+                        + " atomsQ: " + compound1.getAtomCount()
+                        + " atomsT: " + compound2.getAtomCount()
+                        + " [bonds: " + bondMatcher
+                        + " rings: " + ringMatcher
+                        + " isHasPerfectRings: " + isHasPerfectRings()
+                        + "]");
+            }
 
-                /*
+            /*
                  * IMP: Do not perform substructure matching for disconnected molecules
-                 */
-                boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
+             */
+            boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
 
-                /*
+            /*
                  Check if MCS matching required or not very IMP step
-                 */
-                boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
-                if (DEBUG1) {
-                    System.out.println("VF Matcher 1->2 " + possibleVFmatch12);
-                }
+             */
+            boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
+            if (DEBUG1) {
+                System.out.println("VF Matcher 1->2 " + possibleVFmatch12);
+            }
 
-                boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
-                if (DEBUG1) {
-                    System.out.println("VF Matcher 2->1 " + possibleVFmatch21);
-                }
+            boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
+            if (DEBUG1) {
+                System.out.println("VF Matcher 2->1 " + possibleVFmatch21);
+            }
 
-                if (moleculeConnected && possibleVFmatch12
-                        && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
-                        && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
+            if (moleculeConnected && possibleVFmatch12
+                    && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
+                    && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
+                if (DEBUG1) {
+                    System.out.println("Substructure 1");
+                    this.startTime = currentTimeMillis();
+
+                }
+                IAtomContainer ac1 = duplicate(getCompound1());
+                IAtomContainer ac2 = duplicate(getCompound2());
+                Substructure substructure;
+                substructure = new Substructure(ac1, ac2,
+                        true, false, isHasPerfectRings(), true);
+                if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
-                        System.out.println("Substructure 1");
-                        this.startTime = currentTimeMillis();
-
+                        System.out.println("---1.2---");
                     }
-                    IAtomContainer ac1 = duplicate(getCompound1());
-                    IAtomContainer ac2 = duplicate(getCompound2());
-                    Substructure substructure;
                     substructure = new Substructure(ac1, ac2,
-                            true, false, isHasPerfectRings(), true);
-                    if (!substructure.isSubgraph()) {
-                        if (DEBUG1) {
-                            System.out.println("---1.2---");
-                        }
-                        substructure = new Substructure(ac1, ac2,
-                                false, false, isHasPerfectRings(), true);
+                            false, false, isHasPerfectRings(), true);
+                }
+                if (!substructure.isSubgraph()) {
+                    if (DEBUG1) {
+                        System.out.println("---1.3---");
                     }
-                    if (!substructure.isSubgraph()) {
-                        if (DEBUG1) {
-                            System.out.println("---1.3---");
-                        }
-                        substructure = new Substructure(ac1, ac2,
-                                false, false, false, true);
-                    }
-                    substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+                    substructure = new Substructure(ac1, ac2,
+                            false, false, false, true);
+                }
+                substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
-                    if (substructure.isSubgraph()
-                            && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
-                        if (DEBUG1) {
-                            System.out.println("Found Substructure 1");
-                        }
-                        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
-                                substructure.getQuery(), substructure.getTarget(), substructure.getFirstAtomMapping());
-                        mcs.setEnergy(substructure.getEnergyScore(0));
-                        mcs.setFragmentSize(substructure.getFragmentSize(0));
-                        mcs.setStereoScore(substructure.getStereoScore(0));
-                        if (DEBUG1) {
-                            long stopTime = currentTimeMillis();
-                            long time = stopTime - startTime;
-                            printMatch(substructure);
-                            if (DEBUG1) {
-                                System.out.println("\" Time:\" " + time);
-                            }
-                        }
-                        return mcs;
-                    } else if (DEBUG1) {
-                        System.out.println("not a Substructure 1");
-                    }
-                } else if (moleculeConnected && possibleVFmatch21) {
-
+                if (substructure.isSubgraph()
+                        && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                     if (DEBUG1) {
-                        System.out.println("Substructure 2");
-                        this.startTime = currentTimeMillis();
-
+                        System.out.println("Found Substructure 1");
                     }
-
-                    IAtomContainer ac1 = duplicate(getCompound1());
-                    IAtomContainer ac2 = duplicate(getCompound2());
-                    Substructure substructure;
-
+                    MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
+                            substructure.getQuery(), substructure.getTarget(), substructure.getFirstAtomMapping());
+                    mcs.setEnergy(substructure.getEnergyScore(0));
+                    mcs.setFragmentSize(substructure.getFragmentSize(0));
+                    mcs.setStereoScore(substructure.getStereoScore(0));
                     if (DEBUG1) {
-                        System.out.println("---2.1---");
-                    }
-                    substructure = new Substructure(ac2, ac1,
-                            true, false, isHasPerfectRings(), true);
-                    if (!substructure.isSubgraph()) {
+                        long stopTime = currentTimeMillis();
+                        long time = stopTime - startTime;
+                        printMatch(substructure);
                         if (DEBUG1) {
-                            System.out.println("---2.2---");
-                        }
-                        substructure = new Substructure(ac2, ac1,
-                                false, false, isHasPerfectRings(), true);
-                    }
-                    if (!substructure.isSubgraph()) {
-                        if (DEBUG1) {
-                            System.out.println("---2.3---");
-                        }
-                        substructure = new Substructure(ac2, ac1,
-                                false, false, false, true);
-                    }
-                    substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-
-                    if (substructure.isSubgraph()
-                            && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
-
-                        if (DEBUG1) {
-                            System.out.println("Found Substructure 2");
-                        }
-                        AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
-                        Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
-                        mappings.keySet().stream().forEach((atom1) -> {
-                            IAtom atom2 = mappings.get(atom1);
-                            aam.put(atom2, atom1);
-                        });
-                        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
-                                substructure.getTarget(), substructure.getQuery(), aam);
-                        mcs.setEnergy(substructure.getEnergyScore(0));
-                        mcs.setFragmentSize(substructure.getFragmentSize(0));
-                        mcs.setStereoScore(substructure.getStereoScore(0));
-
-                        if (DEBUG1) {
-                            long stopTime = currentTimeMillis();
-                            long time = stopTime - startTime;
-                            printMatch(substructure);
                             System.out.println("\" Time:\" " + time);
                         }
-                        return mcs;
-                    } else if (DEBUG1) {
-                        System.out.println("not a Substructure 2");
                     }
+                    return mcs;
+                } else if (DEBUG1) {
+                    System.out.println("not a Substructure 1");
                 }
-                if (DEBUG1) {
+            } else if (moleculeConnected && possibleVFmatch21) {
 
-                    /*
-                     * create SMILES
-                     */
-                    smiles = new SmilesGenerator(SmiFlavor.Unique
-                            | SmiFlavor.Stereo
-                            | SmiFlavor.AtomAtomMap);
-                    String createSM1 = null;
-                    String createSM2 = null;
-                    try {
-                        createSM1 = smiles.create(this.compound1);
-                        createSM2 = smiles.create(this.compound2);
-                    } catch (CDKException e) {
-                        LOGGER.error(SEVERE, null, e);
-                    }
-                    System.out.println("No Substructure found - switching to MCS");
-                    System.out.println("Q: " + getCompound1().getID()
-                            + " T: " + getCompound2().getID()
-                            + " molQ: " + createSM1
-                            + " molT: " + createSM2
-                            + " atomsE: " + compound1.getAtomCount()
-                            + " atomsP: " + compound2.getAtomCount()
-                            + " [bonds: " + bondMatcher
-                            + " rings: " + ringMatcher
-                            + " isHasPerfectRings: " + isHasPerfectRings()
-                            + "]");
-                }
                 if (DEBUG1) {
+                    System.out.println("Substructure 2");
                     this.startTime = currentTimeMillis();
-                }
-                MCSSolution mcs = mcs();
-                if (DEBUG1) {
-                    long stopTime = currentTimeMillis();
-                    long time = stopTime - startTime;
-                    System.out.println("\"MCS Time:\" " + time);
-                }
-                return mcs;
-            } else {
-                if (DEBUG1) {
 
-                    /*
-                     * create SMILES
-                     */
-                    smiles = new SmilesGenerator(SmiFlavor.Unique
-                            | SmiFlavor.Stereo
-                            | SmiFlavor.AtomAtomMap);
-                    String createSM1 = null;
-                    String createSM2 = null;
-                    try {
-                        createSM1 = smiles.create(this.compound1);
-                        createSM2 = smiles.create(this.compound2);
-                    } catch (CDKException e) {
-                        LOGGER.error(SEVERE, null, e);
+                }
+
+                IAtomContainer ac1 = duplicate(getCompound1());
+                IAtomContainer ac2 = duplicate(getCompound2());
+                Substructure substructure;
+
+                if (DEBUG1) {
+                    System.out.println("---2.1---");
+                }
+                substructure = new Substructure(ac2, ac1,
+                        true, false, isHasPerfectRings(), true);
+                if (!substructure.isSubgraph()) {
+                    if (DEBUG1) {
+                        System.out.println("---2.2---");
                     }
-                    System.out.println("No Substructure found - switching to MCS");
-                    System.out.println("Q: " + getCompound1().getID()
-                            + " T: " + getCompound2().getID()
-                            + " molQ: " + createSM1
-                            + " molT: " + createSM2
-                            + " atomsE: " + compound1.getAtomCount()
-                            + " atomsP: " + compound2.getAtomCount()
-                            + " [bonds: " + bondMatcher
-                            + " rings: " + ringMatcher
-                            + " isHasPerfectRings: " + isHasPerfectRings()
-                            + "]");
+                    substructure = new Substructure(ac2, ac1,
+                            false, false, isHasPerfectRings(), true);
                 }
-                if (DEBUG1) {
-                    this.startTime = currentTimeMillis();
+                if (!substructure.isSubgraph()) {
+                    if (DEBUG1) {
+                        System.out.println("---2.3---");
+                    }
+                    substructure = new Substructure(ac2, ac1,
+                            false, false, false, true);
                 }
-                MCSSolution mcs = mcs();
-                if (DEBUG1) {
-                    long stopTime = currentTimeMillis();
-                    long time = stopTime - startTime;
-                    System.out.println("\"MCS Time:\" " + time);
+                substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+
+                if (substructure.isSubgraph()
+                        && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
+
+                    if (DEBUG1) {
+                        System.out.println("Found Substructure 2");
+                    }
+                    AtomAtomMapping aam = new AtomAtomMapping(substructure.getTarget(), substructure.getQuery());
+                    Map<IAtom, IAtom> mappings = substructure.getFirstAtomMapping().getMappingsByAtoms();
+                    mappings.keySet().stream().forEach((atom1) -> {
+                        IAtom atom2 = mappings.get(atom1);
+                        aam.put(atom2, atom1);
+                    });
+                    MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
+                            substructure.getTarget(), substructure.getQuery(), aam);
+                    mcs.setEnergy(substructure.getEnergyScore(0));
+                    mcs.setFragmentSize(substructure.getFragmentSize(0));
+                    mcs.setStereoScore(substructure.getStereoScore(0));
+
+                    if (DEBUG1) {
+                        long stopTime = currentTimeMillis();
+                        long time = stopTime - startTime;
+                        printMatch(substructure);
+                        System.out.println("\" Time:\" " + time);
+                    }
+                    return mcs;
+                } else if (DEBUG1) {
+                    System.out.println("not a Substructure 2");
                 }
-                return mcs;
             }
+            if (DEBUG1) {
+
+                /*
+                     * create SMILES
+                 */
+                smiles = new SmilesGenerator(SmiFlavor.Unique
+                        | SmiFlavor.Stereo
+                        | SmiFlavor.AtomAtomMap);
+                String createSM1 = null;
+                String createSM2 = null;
+                try {
+                    createSM1 = smiles.create(this.compound1);
+                    createSM2 = smiles.create(this.compound2);
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, null, e);
+                }
+                System.out.println("No Substructure found - switching to MCS");
+                System.out.println("Q: " + getCompound1().getID()
+                        + " T: " + getCompound2().getID()
+                        + " molQ: " + createSM1
+                        + " molT: " + createSM2
+                        + " atomsE: " + compound1.getAtomCount()
+                        + " atomsP: " + compound2.getAtomCount()
+                        + " [bonds: " + bondMatcher
+                        + " rings: " + ringMatcher
+                        + " isHasPerfectRings: " + isHasPerfectRings()
+                        + "]");
+            }
+            if (DEBUG1) {
+                this.startTime = currentTimeMillis();
+            }
+            MCSSolution mcs = mcs();
+            if (DEBUG1) {
+                long stopTime = currentTimeMillis();
+                long time = stopTime - startTime;
+                System.out.println("\"MCS Time:\" " + time);
+            }
+            return mcs;
+            //} 
+//            else {
+//                if (DEBUG1) {
+//
+//                    /*
+//                     * create SMILES
+//                     */
+//                    smiles = new SmilesGenerator(SmiFlavor.Unique
+//                            | SmiFlavor.Stereo
+//                            | SmiFlavor.AtomAtomMap);
+//                    String createSM1 = null;
+//                    String createSM2 = null;
+//                    try {
+//                        createSM1 = smiles.create(this.compound1);
+//                        createSM2 = smiles.create(this.compound2);
+//                    } catch (CDKException e) {
+//                        LOGGER.error(SEVERE, null, e);
+//                    }
+//                    System.out.println("No Substructure found - switching to MCS");
+//                    System.out.println("Q: " + getCompound1().getID()
+//                            + " T: " + getCompound2().getID()
+//                            + " molQ: " + createSM1
+//                            + " molT: " + createSM2
+//                            + " atomsE: " + compound1.getAtomCount()
+//                            + " atomsP: " + compound2.getAtomCount()
+//                            + " [bonds: " + bondMatcher
+//                            + " rings: " + ringMatcher
+//                            + " isHasPerfectRings: " + isHasPerfectRings()
+//                            + "]");
+//                }
+//                if (DEBUG1) {
+//                    this.startTime = currentTimeMillis();
+//                }
+//                MCSSolution mcs = mcs();
+//                if (DEBUG1) {
+//                    long stopTime = currentTimeMillis();
+//                    long time = stopTime - startTime;
+//                    System.out.println("\"MCS Time:\" " + time);
+//                }
+//                return mcs;
+//            }
 
         } catch (CDKException | CloneNotSupportedException ex) {
             LOGGER.error(SEVERE, null, ex);
@@ -561,9 +562,23 @@ public class MCSThread implements Callable<MCSSolution> {
             System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-        isomorphism
-                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, isHasPerfectRings(), false);
-
+        switch (theory) {
+            case RINGS:
+                isomorphism
+                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                false,
+                                numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
+                                false);
+                break;
+//            case MIN:
+//                isomorphism
+//                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, false, true);
+//                break;
+            default:
+                isomorphism
+                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT, false, isHasPerfectRings(), false);
+                break;
+        }
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
         if (DEBUG3) {
             try {
