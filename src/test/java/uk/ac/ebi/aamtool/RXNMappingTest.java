@@ -576,8 +576,9 @@ public class RXNMappingTest extends MappingUtility {
 
     /*
      * MIN, fp 
-     * ID=R01432:Bond Cleaved and Formed (2)
+     * ID=R01432:Bond Cleaved and Formed (3)
      * [C%O:2.0, C-H:2.0]
+     * [C%O:2.0, C-H:2.0, H-O:2.0]
      * 
      *  BE 706.0, Fragment 0
      * 
@@ -593,7 +594,8 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1812,6 +1814,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getFormedCleavedWFingerprint();
         assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
     }
+
     /*
      * @FIXME Complex reaction
      * Can we speed it up?
@@ -1829,6 +1832,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getFormedCleavedWFingerprint();
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
+
     /*
      * @FIXME
      * Takes Donkey Years to Run- TO FIX
