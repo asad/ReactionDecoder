@@ -540,118 +540,195 @@ public class MCSThread implements Callable<MCSSolution> {
         }
 
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
-
-        String keyRing = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                compound1.getAtomCount(), compound2.getAtomCount(),
-                compound1.getBondCount(), compound2.getBondCount(),
-                false,
-                ringFlag,
-                false,
-                numberOfCyclesEduct,
-                numberOfCyclesProduct
-        );
-
-        String keyDefault = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                compound1.getAtomCount(), compound2.getAtomCount(),
-                compound1.getBondCount(), compound2.getBondCount(),
-                false,
-                ringFlag,
-                isHasPerfectRings(),
-                numberOfCyclesEduct,
-                numberOfCyclesProduct
-        );
-
+        String key;
         MCSSolution mcs;
-        if ((theory.equals(IMappingAlgorithm.RINGS) && mappingcache.containsKey(keyRing))) {
-            if (DEBUG3) {
-                System.out.println("===={Aladdin} Mapping {Gini}====");
-            }
-            MCSSolution solution = mappingcache.get(keyRing);
-            mcs = copyOldSolutionToNew(
-                    getQueryPosition(), getTargetPosition(),
-                    getCompound1(), getCompound2(),
-                    solution);
 
-        } else if (!theory.equals(IMappingAlgorithm.RINGS) && (mappingcache.containsKey(keyDefault))) {
-            if (DEBUG3) {
-                System.out.println("===={Aladdin} Mapping {Gini}====");
-            }
-            MCSSolution solution = mappingcache.get(keyDefault);
-            mcs = copyOldSolutionToNew(
-                    getQueryPosition(), getTargetPosition(),
-                    getCompound1(), getCompound2(),
-                    solution);
-        } else {
-            switch (theory) {
-                case RINGS:
-                    if (moleculeConnected
-                            && expectedMaxGraphmatch > 3
-                            && ac1.getBondCount() > 2
-                            && ac2.getBondCount() > 2) {
+        switch (theory) {
+            case RINGS:
+                if (moleculeConnected
+                        && expectedMaxGraphmatch > 3
+                        && ac1.getBondCount() > 2
+                        && ac2.getBondCount() > 2) {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            ringFlag,
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
+                    } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
                                 ringFlag,
                                 false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                    }
+                } else {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            ringFlag,
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
                     } else {
                         isomorphism
                                 = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                         false,
                                         ringFlag,
                                         false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
                     }
-                    break;
-                default:
-                    if (moleculeConnected
-                            && expectedMaxGraphmatch > 3
-                            && ac1.getBondCount() > 2
-                            && ac2.getBondCount() > 2) {
+                }
+                break;
+
+            case MIN:
+                if (moleculeConnected
+                        && expectedMaxGraphmatch > 3
+                        && ac1.getBondCount() > 2
+                        && ac2.getBondCount() > 2) {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            false,
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
+                    } else {
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                false,
+                                false,
+                                false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                    }
+                } else {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            false,
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
+                    } else {
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                false,
+                                false,
+                                false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                    }
+                }
+                break;
+            default:
+                if (moleculeConnected
+                        && expectedMaxGraphmatch > 3
+                        && ac1.getBondCount() > 2
+                        && ac2.getBondCount() > 2) {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            ringFlag,
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
+                    } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
                                 ringFlag,
                                 false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                    }
+                } else {
+                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                            compound1.getAtomCount(), compound2.getAtomCount(),
+                            compound1.getBondCount(), compound2.getBondCount(),
+                            false,
+                            isHasPerfectRings(),
+                            false,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct
+                    );
+                    if (mappingcache.containsKey(key)) {
+                        if (DEBUG3) {
+                            System.out.println("===={Aladdin} Mapping {Gini}====");
+                        }
+                        MCSSolution solution = mappingcache.get(key);
+                        mcs = copyOldSolutionToNew(
+                                getQueryPosition(), getTargetPosition(),
+                                getCompound1(), getCompound2(),
+                                solution);
+
                     } else {
                         isomorphism
                                 = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                         false,
                                         isHasPerfectRings(),
                                         false);
+                        mcs = addMCSSolution(key, mappingcache, isomorphism);
                     }
-                    break;
-            }
-            isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-            if (DEBUG3) {
-                try {
-                    System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
-                            + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-                } catch (CloneNotSupportedException | CDKException e) {
-                    LOGGER.error(SEVERE, "Error in computing MCS ", e);
                 }
-            }
-            /*
-             * In case of Complete subgraph, don't use Energy filter
-             *
-             */
-            mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
-                    isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
-            mcs.setEnergy(isomorphism.getEnergyScore(0));
-            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
-            mcs.setStereoScore(isomorphism.getStereoScore(0));
-            if (DEBUG1) {
-                long stopTime = currentTimeMillis();
-                long time = stopTime - startTime;
-                printMatch(isomorphism);
-                System.out.println("\" Time:\" " + time);
-
-            }
-
-            if (theory.equals(IMappingAlgorithm.RINGS) && !mappingcache.containsKey(keyRing)) {
-                mappingcache.put(keyRing, mcs);
-            }
-            if (!theory.equals(IMappingAlgorithm.RINGS) && !mappingcache.containsKey(keyRing)) {
-                mappingcache.put(keyRing, mcs);
-            }
-
+                break;
         }
+
         return mcs;
 
     }
@@ -814,5 +891,39 @@ public class MCSThread implements Callable<MCSSolution> {
         mcsSolution.setStereoScore(oldSolution.getStereoScore());
 
         return mcsSolution;
+    }
+
+    private MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
+
+        isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+        if (DEBUG3) {
+            try {
+                System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
+                        + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
+            } catch (CloneNotSupportedException | CDKException e) {
+                LOGGER.error(SEVERE, "Error in computing MCS ", e);
+            }
+        }
+        /*
+         * In case of Complete subgraph, don't use Energy filter
+         *
+         */
+        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
+                isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
+        mcs.setEnergy(isomorphism.getEnergyScore(0));
+        mcs.setFragmentSize(isomorphism.getFragmentSize(0));
+        mcs.setStereoScore(isomorphism.getStereoScore(0));
+        if (DEBUG1) {
+            long stopTime = currentTimeMillis();
+            long time = stopTime - startTime;
+            printMatch(isomorphism);
+            System.out.println("\" Time:\" " + time);
+
+        }
+
+        if (!mappingcache.containsKey(key)) {
+            mappingcache.put(key, mcs);
+        }
+        return mcs;
     }
 }
