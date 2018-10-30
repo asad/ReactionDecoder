@@ -76,7 +76,6 @@ public final class EdgeProductGraph implements Serializable {
             System.out.println("--Compatibility Graph--");
             System.out.println("C_edges: " + g.getEdgesOfType(EdgeType.C_EDGE).size());
             System.out.println("D_edges: " + g.getEdgesOfType(EdgeType.D_EDGE).size());
-            System.out.println("unset_edges: " + g.getEdgesOfType(EdgeType.UNSET).size());
             System.out.println("Vertices: " + g.V());
             System.out.println("Edges: " + g.E());
         }
