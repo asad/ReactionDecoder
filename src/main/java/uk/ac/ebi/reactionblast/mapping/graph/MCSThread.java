@@ -18,7 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
-import java.io.IOException;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
@@ -31,7 +30,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
-import java.util.logging.Logger;
 
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -42,7 +40,6 @@ import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
-import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -558,8 +555,8 @@ public class MCSThread implements Callable<MCSSolution> {
                 compound1.getAtomCount(), compound2.getAtomCount(),
                 compound1.getBondCount(), compound2.getBondCount(),
                 false,
+                ringFlag,
                 isHasPerfectRings(),
-                false,
                 numberOfCyclesEduct,
                 numberOfCyclesProduct
         );
@@ -591,13 +588,13 @@ public class MCSThread implements Callable<MCSSolution> {
                             && expectedMaxGraphmatch > 3
                             && ac1.getBondCount() > 2
                             && ac2.getBondCount() > 2) {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.CDKMCS,
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
                                 ringFlag,
                                 false);
                     } else {
                         isomorphism
-                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                         false,
                                         ringFlag,
                                         false);
@@ -608,9 +605,9 @@ public class MCSThread implements Callable<MCSSolution> {
                             && expectedMaxGraphmatch > 3
                             && ac1.getBondCount() > 2
                             && ac2.getBondCount() > 2) {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.CDKMCS,
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
-                                isHasPerfectRings(),
+                                ringFlag,
                                 false);
                     } else {
                         isomorphism
@@ -761,8 +758,8 @@ public class MCSThread implements Callable<MCSSolution> {
             boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
         try {
-            String sm1 = CanonSmiAdapter.create(compound1);
-            String sm2 = CanonSmiAdapter.create(compound2);
+            String sm1 = smiles.create(compound1);
+            String sm2 = smiles.create(compound2);
             StringBuilder sb = new StringBuilder();
             sb.append(id1).append(id2)
                     .append(atomCount1)
@@ -783,8 +780,6 @@ public class MCSThread implements Callable<MCSSolution> {
             return sb.toString();
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MCSThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         StringBuilder sb = new StringBuilder();

@@ -112,7 +112,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
@@ -285,16 +285,16 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else if (expectedMaxGraphmatch > 30) {
-            if (DEBUG) {
-                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
-            }
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else {
+        } else if (expectedMaxGraphmatch > 3 && (isMatchRings() || isMatchAtomType())) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+        } else {
+            if (DEBUG) {
+                System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
+            }
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
