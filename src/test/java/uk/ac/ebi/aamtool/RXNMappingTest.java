@@ -1665,137 +1665,137 @@ public class RXNMappingTest extends MappingUtility {
         assertEquals(2, orderChangesWFingerprint.getFeatureCount());
     }
 
-    /**
-     * Image generation failed
-     *
-     * @throws Exception
-     */
-    @Test
-    public void R08765() throws Exception {
+//    /**
+//     * Image generation failed
+//     *
+//     * @throws Exception
+//     */
+//    @Test
+//    public void R08765() throws Exception {
+//
+//        String reactionID = "R08765";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//
+//        /*
+//         * Expected Solution
+//         * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
+//         * BE 682.0, Fragment 0
+//         */
+//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+//    }
 
-        String reactionID = "R08765";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
-         * BE 682.0, Fragment 0
-         */
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     * RHEA Reaction ID: 10125, Selected Algorithm: MAX Cleaved/Formed
-     * ID=10125:Bond Cleaved and Formed (4) [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
-     * BE 1556.0, Fragment 0
-     *
-     * @throws Exception
-     */
-    @Test
-    public void Rhea10125() throws Exception {
-
-        String reactionID = "10125";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * RHEA Reaction ID: 10125, 
-         * Selected Algorithm: MAX Cleaved/Formed
-         * ID=10125:Bond Cleaved and Formed (4) 
-         * [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
-         * BE 1556.0, Fragment 0
-         */
-        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     * RHEA
-     *
-     * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
-     * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
-     *
-     * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
-     *
-     * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
-     *
-     * @throws Exception
-     */
-    @Test
-    public void Rhea10129() throws Exception {
-
-        String reactionID = "10129";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-
-        /*
-         * Expected Solution
-         * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
-         * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
-         *
-         * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
-         *
-         * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
-         */
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    /**
-     * RHEA
-     *
-     * Cleaved FingerPrint (Reactant) N(31)-C(34)
-     *
-     * Formed FingerPrint (Product) S(8)-C(34)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void Rhea10074() throws Exception {
-
-        String reactionID = "10074";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    //10437
-    @Test
-    public void Rhea10437() throws Exception {
-
-        String reactionID = "10437";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-    }
-
-    //10570
-    @Test
-    public void Rhea10570() throws Exception {
-
-        String reactionID = "10570";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-    }
+//    /**
+//     * RHEA Reaction ID: 10125, Selected Algorithm: MAX Cleaved/Formed
+//     * ID=10125:Bond Cleaved and Formed (4) [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
+//     * BE 1556.0, Fragment 0
+//     *
+//     * @throws Exception
+//     */
+//    @Test
+//    public void Rhea10125() throws Exception {
+//
+//        String reactionID = "10125";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//
+//        /*
+//         * Expected Solution
+//         * RHEA Reaction ID: 10125, 
+//         * Selected Algorithm: MAX Cleaved/Formed
+//         * ID=10125:Bond Cleaved and Formed (4) 
+//         * [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
+//         * BE 1556.0, Fragment 0
+//         */
+//        assertEquals(4, formedCleavedWFingerprint.getFeatureCount());
+//    }
+//
+//    /**
+//     * RHEA
+//     *
+//     * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
+//     * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
+//     *
+//     * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
+//     *
+//     * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
+//     *
+//     * @throws Exception
+//     */
+//    @Test
+//    public void Rhea10129() throws Exception {
+//
+//        String reactionID = "10129";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//
+//        /*
+//         * Expected Solution
+//         * Reaction ID: 10129, Selected Algorithm: MIN Cleaved/Formed ID=10129:Bond
+//         * Cleaved and Formed (2) [C%O:1.0, C-H:1.0]
+//         *
+//         * Order Changed ID=10129:Bond Order Change (1) [C-C*C=C:1.0]
+//         *
+//         * Stereo Changed ID=10129:Bond Stereo Change (1) [C(R/S):1.0]
+//         */
+//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+//    }
+//
+//    /**
+//     * RHEA
+//     *
+//     * Cleaved FingerPrint (Reactant) N(31)-C(34)
+//     *
+//     * Formed FingerPrint (Product) S(8)-C(34)
+//     *
+//     * @throws Exception
+//     */
+//    @Test
+//    public void Rhea10074() throws Exception {
+//
+//        String reactionID = "10074";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+//    }
+//
+//    //10437
+//    @Test
+//    public void Rhea10437() throws Exception {
+//
+//        String reactionID = "10437";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+//    }
+//
+//    //10570
+//    @Test
+//    public void Rhea10570() throws Exception {
+//
+//        String reactionID = "10570";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+//    }
 //
 //    /*
 //     * @FIXME
