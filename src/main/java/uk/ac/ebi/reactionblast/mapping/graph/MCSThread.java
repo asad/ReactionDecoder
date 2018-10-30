@@ -563,7 +563,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
         MCSSolution mcs;
         if ((theory.equals(IMappingAlgorithm.RINGS) && mappingcache.containsKey(keyRing))) {
-            System.out.println("Aladdin and Gini");
+            if (DEBUG3) {
+                System.out.println("===={Aladdin} Mapping {Gini}====");
+            }
             MCSSolution solution = mappingcache.get(keyRing);
             mcs = copyOldSolutionToNew(
                     getQueryPosition(), getTargetPosition(),
@@ -571,7 +573,9 @@ public class MCSThread implements Callable<MCSSolution> {
                     solution);
 
         } else if (!theory.equals(IMappingAlgorithm.RINGS) && (mappingcache.containsKey(keyDefault))) {
-            System.out.println("Aladdin and Gini");
+            if (DEBUG3) {
+                System.out.println("===={Aladdin} Mapping {Gini}====");
+            }
             MCSSolution solution = mappingcache.get(keyDefault);
             mcs = copyOldSolutionToNew(
                     getQueryPosition(), getTargetPosition(),
@@ -748,6 +752,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
     }
 
+    /*
+     * copy old mapping from the cache to new
+     */
     private MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
             IAtomContainer compound1, IAtomContainer compound2, MCSSolution oldSolution) {
         AtomAtomMapping atomAtomMapping = oldSolution.getAtomAtomMapping();
