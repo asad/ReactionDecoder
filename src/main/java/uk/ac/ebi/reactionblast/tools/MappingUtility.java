@@ -163,16 +163,22 @@ public class MappingUtility extends TestUtility {
      * @throws Exception
      */
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
-        System.out.println("Mapping Reaction " + reactionID);
-        IReaction cdkReaction = readReaction(reactionID, directory, false);
-        ExtReactionManipulatorTool.addExplicitH(cdkReaction);
-//        SmilesGenerator withAtomClasses = unique().aromatic().withAtomClasses();
-//        out.println("Input reactions " + withAtomClasses.createReactionSMILES(cdkReaction));
-        ReactionMechanismTool annotation = getAnnotation(cdkReaction);
-        MappingSolution s = annotation.getSelectedSolution();
-//        out.println("Mapped reactions " + withAtomClasses.createReactionSMILES(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
-        return annotation;
+        IReaction cdkReaction = null;
+        try {
+            System.out.println("Mapping Reaction " + reactionID);
+            cdkReaction = readReaction(reactionID, directory, false);
 
+            ExtReactionManipulatorTool.addExplicitH(cdkReaction);
+//            SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+//            out.println("Input reactions " + sm.create(cdkReaction));
+            ReactionMechanismTool annotation = getAnnotation(cdkReaction);
+            MappingSolution s = annotation.getSelectedSolution();
+//            out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            return annotation;
+        } catch (Exception e) {
+            LOGGER.error(SEVERE, " Sorry- looks like something failed ", e);
+        }
+        return null;
     }
 
     /**
@@ -201,10 +207,14 @@ public class MappingUtility extends TestUtility {
             /*
              * Code for Image generation
              */
-            LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-            TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+            try {
+                LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+                TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+            } catch (Exception e) {
+                LOGGER.error(SEVERE, " Failed to generate image: ", e);
+            }
         } catch (Exception e) {
-            LOGGER.error(SEVERE, null, e);
+            LOGGER.error(SEVERE, " Reaction Mechanism failed ", e);
         }
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {

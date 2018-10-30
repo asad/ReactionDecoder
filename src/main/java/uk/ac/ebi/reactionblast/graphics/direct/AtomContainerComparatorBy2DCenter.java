@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.util.Comparator;
 
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
+import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**

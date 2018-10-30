@@ -38,7 +38,6 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainerSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.TITLE;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -64,6 +63,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import static java.lang.String.valueOf;
 import static javax.imageio.ImageIO.write;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
@@ -197,7 +197,7 @@ public class TestUtility {
      */
     protected void addImplicitHydrogens(IAtomContainer atomContainer) {
         try {
-            getInstance(getInstance()).addImplicitHydrogens(atomContainer);
+            getInstance(SilentChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
             LOGGER.error(SEVERE, null, e);

@@ -71,7 +71,7 @@ import org.openscience.smsd.interfaces.IResults;
  * An example for <b>MCS search</b>:</p> <font color="#003366">  <pre>
  *
  *
- * SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+ * SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
  * // Benzene
  * IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
  * // Napthalene

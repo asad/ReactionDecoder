@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
 
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtom;
@@ -43,6 +42,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.interfaces.IReactionSet;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
@@ -82,7 +82,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @throws java.lang.Exception
      */
     public CDKReactionBuilder() throws Exception {
-        reactionSet = getInstance().newInstance(IReactionSet.class);
+        reactionSet = SilentChemObjectBuilder.getInstance().newInstance(IReactionSet.class);
         stoichiometryMap = synchronizedMap(new HashMap<>());
         fingerprintMap = synchronizedMap(new HashMap<>());
         moleculeMap = synchronizedMap(new HashMap<>());
@@ -126,7 +126,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         }
 
         List<IAtomContainer> _metabolites = new ArrayList<>();
-        IReaction standardizedReaction = getInstance().newInstance(IReaction.class);
+        IReaction standardizedReaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
 
         String reactionID = reaction.getID();
         int reactionCounter = 1;

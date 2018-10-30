@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.smsd.AtomAtomMapping;
 import static org.openscience.smsd.filters.Sotter.sortMapByValueInAscendingOrder;
 import org.openscience.smsd.tools.BondEnergies;
@@ -103,8 +103,8 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
 //        System.out.println("\nSort By Energies");
         double totalBondEnergy = -9999.0;
 
-        IAtomContainer educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
-        IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
+        IAtomContainer educt = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
+        IAtomContainer product = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
         for (int i = 0; i < educt.getAtomCount(); i++) {
             educt.getAtom(i).setProperty("Energy", false);

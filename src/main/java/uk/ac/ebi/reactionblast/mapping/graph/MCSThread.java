@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
+import java.io.IOException;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
@@ -40,6 +41,7 @@ import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -173,8 +175,8 @@ public class MCSThread implements Callable<MCSSolution> {
          * create SMILES
          */
         smiles = new SmilesGenerator(
-                SmiFlavor.Unique
-                | SmiFlavor.Stereo
+                //SmiFlavor.Unique|
+                SmiFlavor.Stereo
                 | SmiFlavor.AtomAtomMap);
 
     }
@@ -835,8 +837,8 @@ public class MCSThread implements Callable<MCSSolution> {
             boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
         try {
-            String sm1 = smiles.create(compound1);
-            String sm2 = smiles.create(compound2);
+            String sm1 = CanonSmiAdapter.create(compound1);
+            String sm2 = CanonSmiAdapter.create(compound2);
             StringBuilder sb = new StringBuilder();
             sb.append(id1).append(id2)
                     .append(atomCount1)
@@ -855,7 +857,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 System.out.println(" sm2 " + sm2);
             }
             return sb.toString();
-        } catch (CDKException ex) {
+        } catch (CDKException | IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
 

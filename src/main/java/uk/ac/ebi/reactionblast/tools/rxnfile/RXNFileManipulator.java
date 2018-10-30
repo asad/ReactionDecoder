@@ -25,7 +25,6 @@ import static java.util.logging.Level.SEVERE;
 import java.util.regex.Pattern;
 import static java.util.regex.Pattern.compile;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -34,6 +33,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BACKWARD;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import static org.openscience.cdk.interfaces.IReaction.Direction.FORWARD;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -87,7 +87,7 @@ public class RXNFileManipulator extends BasicDebugger {
      */
     public IReaction process(File rxnFile) throws Exception {
 
-        IReaction cleanedReaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+        IReaction cleanedReaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
         Map<String, Double> _Stoichiometry = new HashMap<>();
         Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();
@@ -186,7 +186,7 @@ public class RXNFileManipulator extends BasicDebugger {
      */
     public IReaction processMACiE(File rxnFile) throws Exception {
 
-        IReaction IR = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+        IReaction IR = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
         Map<String, Double> _Stoichiometry = new HashMap<>();
         Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();
@@ -282,7 +282,7 @@ public class RXNFileManipulator extends BasicDebugger {
      */
     public IReaction processIntEnz(File rxnFile) throws Exception {
 
-        IReaction IR = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+        IReaction IR = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
         Map<String, Double> _Stoichiometry = new HashMap<>();
         Set<IAtomContainer> _Metabolites = new HashSet<>();
         String FileName = rxnFile.getName();

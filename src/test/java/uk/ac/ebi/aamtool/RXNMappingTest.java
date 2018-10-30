@@ -22,7 +22,6 @@ import uk.ac.ebi.reactionblast.tools.MappingUtility;
 import java.io.FileNotFoundException;
 import java.util.logging.Logger;
 import org.junit.Test;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
@@ -33,6 +32,7 @@ import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import static uk.ac.ebi.reactionblast.tools.TestUtility.BUG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
@@ -60,7 +60,7 @@ public class RXNMappingTest extends MappingUtility {
     public void Test1() throws Exception {
 
         String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
-        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         parseReactionSmiles.setID("TestReaction");
         ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
@@ -85,7 +85,7 @@ public class RXNMappingTest extends MappingUtility {
     public void EC2_6_1_32() throws Exception {
 
         String reactionSM = "CC(C)C(N)C(=O)O.CCC(C)C(=O)C(=O)[O-]>>CCC(C)C(N)C(=O)O.CC(C)C(=O)C(=O)[O-]";
-        SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         parseReactionSmiles.setID("EC2_6_1_32");
         ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
@@ -1575,7 +1575,7 @@ public class RXNMappingTest extends MappingUtility {
      * @throws Exception
      */
     @Test
-    public void NonRingRC() throws Exception {
+    public void R02718() throws Exception {
 
         String reactionID = "R02718";
         ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
@@ -1687,7 +1687,6 @@ public class RXNMappingTest extends MappingUtility {
 //         */
 //        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
 //    }
-
 //    /**
 //     * RHEA Reaction ID: 10125, Selected Algorithm: MAX Cleaved/Formed
 //     * ID=10125:Bond Cleaved and Formed (4) [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]

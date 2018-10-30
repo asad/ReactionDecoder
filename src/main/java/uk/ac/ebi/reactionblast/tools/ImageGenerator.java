@@ -36,7 +36,6 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.String.valueOf;
-import static java.lang.System.err;
 import static java.lang.System.setProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ import java.util.Set;
 
 import static javax.imageio.ImageIO.write;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -57,6 +55,7 @@ import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.FORWARD;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
@@ -647,7 +646,7 @@ public class ImageGenerator {
 
         // layout, and set the highlight subgraphs
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
-        IChemObjectBuilder builder = getInstance();
+        IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         queryTargetPairs.stream().map((pair) -> {
@@ -706,7 +705,7 @@ public class ImageGenerator {
 
         // layout, and set the highlight subgraphs
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
-        IChemObjectBuilder builder = getInstance();
+        IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
         IAtomContainerSet leftHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         IAtomContainerSet rightHandMoleculeSet = builder.newInstance(IAtomContainerSet.class);
         queryTargetPairs.stream().map((pair) -> {

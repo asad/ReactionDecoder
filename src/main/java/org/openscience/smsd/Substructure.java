@@ -57,7 +57,7 @@ import org.openscience.smsd.algorithm.vflib.VF2Substructure;
  * <p>
  * An example for <b>Substructure search</b>:</p> <font color="#003366">
  * <pre>
- * SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+ * SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
  * IAtomContainer query = sp.parseSmiles("CC");
  * IAtomContainer target = sp.parseSmiles("C1CCC12CCCC2");
  * Substructure smsd = new Substructure(query, target, true, false, true, true);

@@ -30,7 +30,7 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.ChemModel;
 
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecules;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemModel;

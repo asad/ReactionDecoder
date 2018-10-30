@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.lang.System.out;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtom;
@@ -25,6 +24,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.STRICT;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.tools.EBIMolSplitter.splitMolecules;
@@ -68,7 +68,7 @@ public class RXNFileImporter {
         try {
 
             InputStream RXNFile = new BufferedInputStream(new FileInputStream(File));
-            reaction = getInstance().newInstance(IReaction.class);
+            reaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
 
             try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, STRICT)) {
                 reaction = reader.read(reaction);
@@ -109,7 +109,7 @@ public class RXNFileImporter {
 
     private IAtomContainerSet getMolecules(IAtomContainerSet BigMol) {
 
-        IAtomContainerSet SplitMoleculeList = getInstance().newInstance(IAtomContainerSet.class);
+        IAtomContainerSet SplitMoleculeList = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
 
         for (int j = 0; j < BigMol.getAtomContainerCount(); j++) {
             IAtomContainer molecules = BigMol.getAtomContainer(j);

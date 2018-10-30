@@ -23,7 +23,7 @@ package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.translate2D;
+import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
@@ -85,12 +85,12 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
         int counter = 0;
         for (IAtomContainer molecule : molSet.atomContainers()) {
             String molLabel = molSet.getID() + "_" + molecule.getID() + ":" + counter; 
-//            System.out.println("shifting " + molLabel + " from " + BoundsPrinter.toString(GeometryTools.getRectangle2D(molecule)));
+//            System.out.println("shifting " + molLabel + " from " + BoundsPrinter.toString(GeometryUtil.getRectangle2D(molecule)));
             Rectangle2D bounds = molSetBoundsTree.get(molLabel);
             bounds.setFrame(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
             translate2D(molecule, dx, dy);
-//            System.out.println("shifting " + molecule.getID() + " to " + BoundsPrinter.toString(GeometryTools.getRectangle2D(molecule)));
+//            System.out.println("shifting " + molecule.getID() + " to " + BoundsPrinter.toString(GeometryUtil.getRectangle2D(molecule)));
             counter++;
         }
     }

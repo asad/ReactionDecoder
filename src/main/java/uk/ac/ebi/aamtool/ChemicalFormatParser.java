@@ -31,8 +31,6 @@ import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -41,6 +39,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
 import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
 import org.openscience.cdk.io.Mol2Reader;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
@@ -120,7 +119,7 @@ class ChemicalFormatParser {
                 | SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.Stereo);
         String createSmilesFromReaction = sg.create(r);
-        final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(createSmilesFromReaction);
         parseReactionSmiles.setID(r.getID());
         for (int i = 0; i < r.getReactantCount(); i++) {
@@ -133,7 +132,7 @@ class ChemicalFormatParser {
     }
 
     protected List<IReaction> parseReactionSMILES(String reactionSmiles) {
-        SmilesParser sp = new SmilesParser(getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         String[] smiles = reactionSmiles.split("\\s+");
         List<IReaction> reactions = new ArrayList<>();
         int smilesIndex = 1;
@@ -160,11 +159,11 @@ class ChemicalFormatParser {
     }
 
     protected IReaction parseSMILES(String smiles) {
-        SmilesParser sp = new SmilesParser(getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         try {
             IAtomContainer mol = sp.parseSmiles(smiles);
             try {
-                IReaction parseReactionSmiles = getInstance().newInstance(IReaction.class);
+                IReaction parseReactionSmiles = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
                 parseReactionSmiles.addReactant(mol, 1.0);
                 LOGGER.error(INFO, "Annotating Reaction " + "smiles");
                 parseReactionSmiles.setID("smiles");

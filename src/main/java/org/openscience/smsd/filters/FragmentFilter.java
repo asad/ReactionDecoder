@@ -27,12 +27,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.smsd.AtomAtomMapping;
 
 /**
@@ -95,8 +95,8 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
 
     private synchronized int getMappedMoleculeFragmentSize(AtomAtomMapping mcsAtomSolution) {
 
-        IAtomContainer Educt = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
-        IAtomContainer product = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
+        IAtomContainer Educt = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
+        IAtomContainer product = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
 
         if (mcsAtomSolution != null) {
             mcsAtomSolution.getMappingsByAtoms().entrySet().stream().forEach((map) -> {
@@ -111,7 +111,7 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
 
     private synchronized int getFragmentCount(IAtomContainer molecule) {
         boolean fragmentFlag = true;
-        IAtomContainerSet fragmentMolSet = DefaultChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
+        IAtomContainerSet fragmentMolSet = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
         int countFrag = 0;
         if (molecule.getAtomCount()
                 > 0) {

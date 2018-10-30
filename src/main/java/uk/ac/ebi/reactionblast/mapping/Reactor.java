@@ -64,7 +64,7 @@ import static java.lang.System.getProperty;
 import static java.util.Arrays.sort;
 import static java.util.Collections.synchronizedList;
 
-import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -98,6 +98,7 @@ public class Reactor extends AbstractReactor implements Serializable {
     private boolean balanceFlag;
     private IReaction reactionWithUniqueSTOICHIOMETRY;
     static final String NEW_LINE = getProperty("line.separator");
+    private final SmilesGenerator smiles;
 
     //~--- constructors -------------------------------------------------------
     /**
@@ -112,6 +113,22 @@ public class Reactor extends AbstractReactor implements Serializable {
             boolean partialMapping,
             IMappingAlgorithm algorithm)
             throws Exception {
+
+        //SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
+        if (partialMapping) {
+            //else CDKToBeam throws an error "Aromatic bond connects non-aromatic atomic atoms"
+            smiles = new SmilesGenerator(
+                    //SmiFlavor.Unique|
+                    SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Stereo);
+        } else {
+            smiles = new SmilesGenerator(
+                    //SmiFlavor.Unique| 
+                    SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Stereo);
+        }
+
 //        System.LOGGER.debug("In Reaction");
 //        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
 //        System.LOGGER.debug("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
@@ -160,19 +177,6 @@ public class Reactor extends AbstractReactor implements Serializable {
 
     @Override
     public String toString() {
-        //SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
-        SmilesGenerator smiles;
-        if (partialMapping) {
-            //else CDKToBeam throws an error "Aromatic bond connects non-aromatic atomic atoms"
-            smiles = new SmilesGenerator(SmiFlavor.Unique
-                    | SmiFlavor.AtomAtomMap
-                    | SmiFlavor.Stereo);
-        } else {
-            smiles = new SmilesGenerator(SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap
-                    | SmiFlavor.Stereo);
-        }
 
         String createReactionSMILES = "";
         try {
@@ -188,7 +192,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             for (int i = 0; i < referenceReaction.getReactantCount(); i++) {
                 IAtomContainer refMol = referenceReaction.getReactants().getAtomContainer(i);
-                IAtomContainer mol = cloneWithIDs(refMol);//refMol.clone();
+                IAtomContainer mol = cloneWithIDs(refMol);
                 mol = canonicalLabelling(mol);
 
                 mol.setID(referenceReaction.getReactants().getAtomContainer(i).getID());
@@ -212,8 +216,8 @@ public class Reactor extends AbstractReactor implements Serializable {
             }
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
-        } catch (CloneNotSupportedException | CDKException e) {
-            LOGGER.error(SEVERE, null, e);
+        } catch (Exception e) {
+            LOGGER.error(SEVERE, "Error in Reactor class", e);
         }
     }
 
@@ -382,7 +386,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             reactionWithUniqueSTOICHIOMETRY = getMapping(mappedReaction);
             setReactionBlastMolMapping(calP.getReactionBlastMolMapping());
         } catch (Exception ex) {
-            LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, "Error in Reactor class", ex);
         }
     }
 
@@ -964,12 +968,12 @@ public class Reactor extends AbstractReactor implements Serializable {
          */
         for (IAtomContainer mol : rMolSet.atomContainers()) {
             List<Integer> atom_index = new ArrayList<>();
-            try {
-                int[] p = new int[mol.getAtomCount()];
-                String smiles = unique().create(mol, p);
-            } catch (CDKException e) {
-                LOGGER.error(SEVERE, null, e);
-            }
+//            try {
+//                int[] p = new int[mol.getAtomCount()];
+//                String smilesLocal = this.smiles.create(mol, p);
+//            } catch (CDKException e) {
+//                LOGGER.error(SEVERE, null, e);
+//            }
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
 
@@ -995,13 +999,12 @@ public class Reactor extends AbstractReactor implements Serializable {
 
         for (IAtomContainer mol : pMolSet.atomContainers()) {
 
-            try {
-                int[] p = new int[mol.getAtomCount()];
-                String smiles = unique().create(mol, p);
-            } catch (CDKException e) {
-                LOGGER.error(SEVERE, null, e);
-            }
-
+//            try {
+//                int[] p = new int[mol.getAtomCount()];
+//                String smiles = this.smiles.create(mol, p);
+//            } catch (CDKException e) {
+//                LOGGER.error(SEVERE, null, e);
+//            }
 //            int[] canonicalPermutation = cng.getCanonicalPermutation(mol);
 //            permuteWithoutClone(canonicalPermutation, mol);
             List<Integer> atom_index = new ArrayList<>();

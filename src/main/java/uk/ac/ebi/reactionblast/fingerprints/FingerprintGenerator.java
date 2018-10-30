@@ -22,7 +22,7 @@ import java.util.BitSet;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.CircularFingerprinter;
 import static org.openscience.cdk.fingerprint.CircularFingerprinter.CLASS_ECFP4;
-import static org.openscience.cdk.geometry.GeometryTools.has2DCoordinates;
+import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;

@@ -36,12 +36,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -163,7 +163,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                 IAtom pAtom = getAtomByID(product, pID);
 
                 if (eAtom != null && pAtom != null) {
-                    IMapping im = getInstance().newInstance(IMapping.class, eAtom, pAtom);
+                    IMapping im = SilentChemObjectBuilder.getInstance().newInstance(IMapping.class, eAtom, pAtom);
                     reaction.addMapping(im);
                 }
                 educt.removeAtom(eAtom);

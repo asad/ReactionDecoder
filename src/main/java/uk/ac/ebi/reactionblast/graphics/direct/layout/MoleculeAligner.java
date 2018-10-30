@@ -27,7 +27,7 @@ import static java.lang.Math.sin;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
+import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.ConvexHull;

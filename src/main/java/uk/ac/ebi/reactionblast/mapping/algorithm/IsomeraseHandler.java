@@ -27,7 +27,6 @@ import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import static org.openscience.cdk.CDKConstants.RING_CONNECTIONS;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.Intractable;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -42,10 +41,11 @@ import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
@@ -193,13 +193,13 @@ class IsomeraseHandler {
 
         if (ringContainerCountR.isEmpty() && ringContainerCountP.isEmpty()) {
             String phosphateSMILES = "OP(O)(O)=O";
-            SMARTSQueryTool smartsPhosphate;
+            SmartsPattern smartsPhosphate;
 
             if (DEBUG) {
                 out.println("String phosphateSMILES = \"OP(O)(O)=O\";");
             }
 
-            smartsPhosphate = new SMARTSQueryTool(phosphateSMILES, getInstance());
+            smartsPhosphate = SmartsPattern.create(phosphateSMILES, SilentChemObjectBuilder.getInstance());
             boolean matchesE = smartsPhosphate.matches(educt);
             boolean matchesP = smartsPhosphate.matches(product);
 
@@ -346,7 +346,7 @@ class IsomeraseHandler {
 
     private boolean deleteBonds(IAtomContainer s, IAtomContainer t) throws InvalidSmilesException, CDKException {
         boolean flag = false;
-        SmilesParser smilesParser = new SmilesParser(getInstance());
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
         String pattern = "CC(N)=O";
         String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";

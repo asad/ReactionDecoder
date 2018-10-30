@@ -28,17 +28,15 @@ import java.util.Map;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.AtomContainer;
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.AtomMatcher;
 import org.openscience.cdk.isomorphism.BondMatcher;
 import org.openscience.cdk.isomorphism.Mappings;
 import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
@@ -588,7 +586,7 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String N = "CC(C)[C@H](N)C(O)=O";
         final String C = "CC(C)C(=O)C(O)=O";
 
-        SmilesParser smilesParser = new SmilesParser(getInstance());
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         /*
          * Rule 1
          */

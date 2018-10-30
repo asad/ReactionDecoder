@@ -35,8 +35,8 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.exception.Intractable;
-import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
+import org.openscience.cdk.geometry.GeometryTools;
+import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -437,7 +437,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
 
     private void drawRingCircle(IAtomContainer ring, Graphics2D g) {
         Point2d center = get2DCenter(ring);
-        Rectangle2D bounds = getRectangle2D(ring);
+        Rectangle2D bounds = GeometryTools.getRectangle2D(ring);
         double diameter = min(bounds.getWidth(), bounds.getHeight());
         diameter *= params.ringProportion;
         double radius = diameter / 2;

@@ -21,10 +21,10 @@ package uk.ac.ebi.reactionblast.mechanism.helper;
 import java.io.Serializable;
 import static java.util.logging.Level.SEVERE;
 
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import static org.openscience.cdk.smiles.smarts.parser.SMARTSParser.parse;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -50,7 +50,7 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
     private IAtomContainer mol;
 
     CountSubstructures(IAtomContainer atomContainer) throws CloneNotSupportedException {
-        sp = new SmilesParser(getInstance());
+        sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         try {
             this.mol = null;
             mol = removeHydrogensExceptSingleAndPreserveAtomID(atomContainer);

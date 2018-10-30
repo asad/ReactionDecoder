@@ -45,7 +45,7 @@ import org.openscience.smsd.tools.IterationManager;
  * argument <tBond>may</tBond> be atom IQueryAtomContainer, which allows one to
  * do MQL like queries. The first IAtomContainer must never be an
  * IQueryAtomContainer. An example:<pre>
- *  SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+ *  SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
  *  IAtomContainer atomContainer = sp.parseSmiles("CC(=O)OC(=O)C"); // acetic acid anhydride
  *  IAtomContainer SMILESquery = sp.parseSmiles("CC"); // acetic acid anhydride
  *  IQueryAtomContainer query = IQueryAtomContainerCreator.createBasicQueryContainer(SMILESquery);

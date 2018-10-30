@@ -26,6 +26,7 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 
 import com.google.common.collect.ImmutableSet;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.config.Elements;
 import org.openscience.cdk.config.IsotopeFactory;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
@@ -46,8 +47,9 @@ import org.openscience.cdk.io.formats.IResourceFormat;
 import org.openscience.cdk.io.formats.MDLV2000Format;
 import org.openscience.cdk.io.setting.BooleanIOSetting;
 import org.openscience.cdk.io.setting.IOSetting;
-import org.openscience.cdk.isomorphism.matchers.CTFileQueryBond;
+import org.openscience.cdk.isomorphism.matchers.Expr;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.isomorphism.matchers.QueryBond;
 import org.openscience.cdk.sgroup.Sgroup;
 import org.openscience.cdk.sgroup.SgroupBracket;
 import org.openscience.cdk.sgroup.SgroupKey;
@@ -57,7 +59,6 @@ import org.openscience.cdk.stereo.TetrahedralChirality;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
-import org.openscience.cdk.tools.periodictable.PeriodicTable;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
@@ -67,7 +68,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,7 +122,6 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
  */
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
-    static final String NEW_LINE = getProperty("line.separator");
     BufferedReader input = null;
     private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
 
@@ -141,16 +140,14 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     /**
      * @deprecated Incorrect spelling
      */
-    private static final Set<String> PSUEDO_LABELS = ImmutableSet.<String>builder()
-            .add("*").add("A").add("Q")
+    private static final Set<String> PSUEDO_LABELS = ImmutableSet.<String>builder().add("*").add("A").add("Q")
             .add("L").add("LP").add("R") // XXX: not in spec
             .add("R#").build();
 
     /**
      * Valid pseudo labels.
      */
-    private static final Set<String> PSEUDO_LABELS = ImmutableSet.<String>builder()
-            .add("*").add("A").add("Q")
+    private static final Set<String> PSEUDO_LABELS = ImmutableSet.<String>builder().add("*").add("A").add("Q")
             .add("L").add("LP").add("R") // XXX: not in spec
             .add("R#").build();
 
@@ -340,6 +337,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
         int linecount = 0;
         String title = null;
+        String program = null;
         String remark = null;
         String line = "";
 
@@ -359,6 +357,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             }
             line = input.readLine();
             linecount++;
+            program = line;
             line = input.readLine();
             linecount++;
             if (line.length() > 0) {
@@ -432,8 +431,11 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     }
                 }
             } else if (!hasZ) {
-
-                if (!forceReadAs3DCoords.isSet()) {
+                //'  CDK     09251712073D'
+                // 0123456789012345678901
+                if (is3Dfile(program)) {
+                    hasZ = true;
+                } else if (!forceReadAs3DCoords.isSet()) {
                     for (IAtom atomToUpdate : atoms) {
                         Point3d p3d = atomToUpdate.getPoint3d();
                         if (p3d != null) {
@@ -460,8 +462,12 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 outputContainer = new QueryAtomContainer(molecule.getBuilder());
             }
 
-            outputContainer.setProperty(CDKConstants.TITLE, title);
-            outputContainer.setProperty(CDKConstants.REMARK, remark);
+            if (title != null) {
+                outputContainer.setTitle(title);
+            }
+            if (remark != null) {
+                outputContainer.setProperty(CDKConstants.REMARK, remark);
+            }
 
             // if the container is empty we can simply set the atoms/bonds
             // otherwise we add them to the end
@@ -478,44 +484,46 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             }
 
             // create 0D stereochemistry
-            Parities:
-            for (Map.Entry<IAtom, Integer> e : parities.entrySet()) {
-                int parity = e.getValue();
-                if (parity != 1 && parity != 2) {
-                    continue; // 3=unspec
-                }
-                int idx = 0;
-                IAtom focus = e.getKey();
-                IAtom[] carriers = new IAtom[4];
-                int hidx = -1;
-                for (IAtom nbr : molecule.getConnectedAtomsList(focus)) {
-                    if (idx == 4) {
-                        continue Parities; // too many neighbors
+            if (addStereoElements.isSet()) {
+                Parities:
+                for (Map.Entry<IAtom, Integer> e : parities.entrySet()) {
+                    int parity = e.getValue();
+                    if (parity != 1 && parity != 2) {
+                        continue; // 3=unspec
                     }
-                    if (nbr.getAtomicNumber() == 1) {
-                        if (hidx >= 0) {
-                            continue Parities;
+                    int idx = 0;
+                    IAtom focus = e.getKey();
+                    IAtom[] carriers = new IAtom[4];
+                    int hidx = -1;
+                    for (IAtom nbr : outputContainer.getConnectedAtomsList(focus)) {
+                        if (idx == 4) {
+                            continue Parities; // too many neighbors
                         }
-                        hidx = idx;
+                        if (nbr.getAtomicNumber() == 1) {
+                            if (hidx >= 0) {
+                                continue Parities;
+                            }
+                            hidx = idx;
+                        }
+                        carriers[idx++] = nbr;
                     }
-                    carriers[idx++] = nbr;
-                }
-                // to few neighbors, or already have a hydrogen defined
-                if (idx < 3 || idx < 4 && hidx >= 0) {
-                    continue;
-                }
-                if (idx == 3) {
-                    carriers[idx++] = focus;
-                }
+                    // to few neighbors, or already have a hydrogen defined
+                    if (idx < 3 || idx < 4 && hidx >= 0) {
+                        continue;
+                    }
+                    if (idx == 3) {
+                        carriers[idx++] = focus;
+                    }
 
-                if (idx == 4) {
-                    Stereo winding = parity == 1 ? Stereo.CLOCKWISE : Stereo.ANTI_CLOCKWISE;
-                    // H is always at back, even if explicit! At least this seems to be the case.
-                    // we adjust the winding as needed
-                    if (hidx == 0 || hidx == 2) {
-                        winding = winding.invert();
+                    if (idx == 4) {
+                        Stereo winding = parity == 1 ? Stereo.CLOCKWISE : Stereo.ANTI_CLOCKWISE;
+                        // H is always at back, even if explicit! At least this seems to be the case.
+                        // we adjust the winding as needed
+                        if (hidx == 0 || hidx == 2) {
+                            winding = winding.invert();
+                        }
+                        outputContainer.addStereoElement(new TetrahedralChirality(focus, carriers, winding));
                     }
-                    molecule.addStereoElement(new TetrahedralChirality(focus, carriers, winding));
                 }
             }
 
@@ -524,10 +532,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
             // read potential SD file data between M  END and $$$$
             readNonStructuralData(input, outputContainer);
-
-            if (interpretHydrogenIsotopes.isSet()) {
-                fixHydrogenIsotopes(molecule, Isotopes.getInstance());
-            }
 
             // note: apply the valence model last so that all fixes (i.e. hydrogen
             // isotopes) are in place we need to use a offset as this atoms
@@ -571,12 +575,15 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
          * Set TITLE as ID for molecules EC-BLAST
          */
         String property = outputContainer == null ? ""
-                : (String) outputContainer.getProperty(CDKConstants.TITLE);
+                : (String) outputContainer.getTitle();
         if (outputContainer != null && property != null) {
             outputContainer.setID(property);
         }
-
         return outputContainer;
+    }
+
+    private boolean is3Dfile(String program) {
+        return program.length() >= 22 && program.substring(20, 22).equals("3D");
     }
 
     /**
@@ -651,11 +658,11 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         interpretHydrogenIsotopes = addSetting(new BooleanIOSetting("InterpretHydrogenIsotopes",
                 IOSetting.Importance.LOW, "Should D and T be interpreted as hydrogen isotopes?", "true"));
         addStereoElements = addSetting(new BooleanIOSetting("AddStereoElements", IOSetting.Importance.LOW,
-                "Assign stereo configurations to stereocenters utilising 2D/3D coordinates.", "true"));
+                "Detect and create IStereoElements for the input.", "true"));
     }
 
     public void customizeJob() {
-        getSettings().stream().forEach((setting) -> {
+        getSettings().forEach((setting) -> {
             fireIOSettingQuestion(setting);
         });
     }
@@ -757,8 +764,12 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
 
         // if there was a mass difference, set the mass number
         if (massDiff != 0 && atom.getAtomicNumber() > 0) {
-            atom.setMassNumber(Isotopes.getInstance().getMajorIsotope(atom.getAtomicNumber()).getMassNumber()
-                    + massDiff);
+            IIsotope majorIsotope = Isotopes.getInstance().getMajorIsotope(atom.getAtomicNumber());
+            if (majorIsotope == null) {
+                atom.setMassNumber(-1); // checked after M ISO is processed
+            } else {
+                atom.setMassNumber(majorIsotope.getMassNumber() + massDiff);
+            }
         }
 
         if (valence > 0 && valence < 16) {
@@ -824,7 +835,8 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 throw new CDKException("invalid line length: " + length + " " + line);
         }
 
-        IBond bond = builder.newInstance(IBond.class, atoms[u], atoms[v]);
+        IBond bond = builder.newBond();
+        bond.setAtoms(new IAtom[]{atoms[u], atoms[v]});
 
         switch (type) {
             case 1: // single
@@ -846,10 +858,16 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 atoms[v].setFlag(CDKConstants.ISAROMATIC, true);
                 break;
             case 5: // single or double
+                bond = new QueryBond(bond.getBegin(), bond.getEnd(), Expr.Type.SINGLE_OR_DOUBLE);
+                break;
             case 6: // single or aromatic
+                bond = new QueryBond(bond.getBegin(), bond.getEnd(), Expr.Type.SINGLE_OR_AROMATIC);
+                break;
             case 7: // double or aromatic
+                bond = new QueryBond(bond.getBegin(), bond.getEnd(), Expr.Type.DOUBLE_OR_AROMATIC);
+                break;
             case 8: // any
-                bond = CTFileQueryBond.ofType(bond, type);
+                bond = new QueryBond(bond.getBegin(), bond.getEnd(), Expr.Type.TRUE);
                 break;
             default:
                 throw new CDKException("unrecognised bond type: " + type + ", " + line);
@@ -964,7 +982,11 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     for (int i = 0, st = 10; i < count && st + 7 <= length; i++, st += 8) {
                         index = readMolfileInt(line, st) - 1;
                         int mass = readMolfileInt(line, st + 4);
-                        container.getAtom(offset + index).setMassNumber(mass);
+                        if (mass < 0) {
+                            handleError("Absolute mass number should be >= 0, " + line);
+                        } else {
+                            container.getAtom(offset + index).setMassNumber(mass);
+                        }
                     }
                     break;
 
@@ -1224,7 +1246,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                     count = readMolfileInt(line, 10);
                     Set<IAtom> parentAtomList = sgroup.getValue(SgroupKey.CtabParentAtomList);
                     if (parentAtomList == null) {
-                        sgroup.putValue(SgroupKey.CtabParentAtomList, parentAtomList = new HashSet<>());
+                        sgroup.putValue(SgroupKey.CtabParentAtomList, parentAtomList = new HashSet<IAtom>());
                     }
                     for (int i = 0, st = 14; i < count && st + 3 <= length; i++, st += 4) {
                         index = readMolfileInt(line, st) - 1;
@@ -1255,6 +1277,14 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             }
         }
 
+        // check of ill specified atomic mass
+        for (IAtom atom : container.atoms()) {
+            if (atom.getMassNumber() != null && atom.getMassNumber() < 0) {
+                handleError("Unstable use of mass delta on " + atom.getSymbol() + " please use M  ISO");
+                atom.setMassNumber(null);
+            }
+        }
+
         if (!sgroups.isEmpty()) {
             // load Sgroups into molecule, first we downcast
             List<Sgroup> sgroupOrgList = new ArrayList<>(sgroups.values());
@@ -1268,9 +1298,9 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 Sgroup newSgroup = sgroupCpyList.get(i);
                 Set<Sgroup> oldParents = new HashSet<>(newSgroup.getParents());
                 newSgroup.removeParents(oldParents);
-                oldParents.stream().forEach((parent) -> {
+                for (Sgroup parent : oldParents) {
                     newSgroup.addParent(sgroupCpyList.get(sgroupOrgList.indexOf(parent)));
-                });
+                }
             }
             container.setProperty(CDKConstants.CTAB_SGROUPS, sgroupCpyList);
         }
@@ -1354,8 +1384,28 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @throws CDKException the symbol is not allowed
      */
     private IAtom createAtom(String symbol, IChemObjectBuilder builder, int lineNum) throws CDKException {
-        if (isPeriodicElement(symbol)) {
-            return builder.newInstance(IAtom.class, symbol);
+        final Elements elem = Elements.ofString(symbol);
+        if (elem != Elements.Unknown) {
+            IAtom atom = builder.newAtom();
+            atom.setSymbol(elem.symbol());
+            atom.setAtomicNumber(elem.number());
+            return atom;
+        }
+        if (symbol.equals("D") && interpretHydrogenIsotopes.isSet()) {
+            if (mode == Mode.STRICT) {
+                throw new CDKException("invalid symbol: " + symbol);
+            }
+            IAtom atom = builder.newInstance(IAtom.class, "H");
+            atom.setMassNumber(2);
+            return atom;
+        }
+        if (symbol.equals("T") && interpretHydrogenIsotopes.isSet()) {
+            if (mode == Mode.STRICT) {
+                throw new CDKException("invalid symbol: " + symbol);
+            }
+            IAtom atom = builder.newInstance(IAtom.class, "H");
+            atom.setMassNumber(3);
+            return atom;
         }
 
         if (!isPseudoElement(symbol)) {
@@ -1377,18 +1427,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         atom.setAtomicNumber(0); // avoid NPE downstream
 
         return atom;
-    }
-
-    /**
-     * Is the symbol a periodic element.
-     *
-     * @param symbol a symbol from the input
-     * @return the symbol is a pseudo atom
-     */
-    private static boolean isPeriodicElement(final String symbol) {
-        // XXX: PeriodicTable is slow - switch without file IO would be optimal
-        Integer elem = PeriodicTable.getAtomicNumber(symbol);
-        return elem != null && elem > 0;
     }
 
     /**
@@ -1414,26 +1452,54 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
      * @return the specified value
      * @throws CDKException the coordinates specification was not valid
      */
-    static double readMDLCoordinate(final String line, int offset) throws CDKException {
+    double readMDLCoordinate(final String line, int offset) throws CDKException {
         // to be valid the decimal should be at the fifth index (4 sig fig)
         if (line.charAt(offset + 5) != '.') {
-            throw new CDKException("invalid coordinate specification");
+            handleError("Bad coordinate format specified, expected 4 decimal places: " + line.substring(offset));
+            int start = offset;
+            while (line.charAt(start) == ' ' && start < offset + 9) {
+                start++;
+            }
+
+            int dot = -1;
+            int end = start;
+            for (char c = line.charAt(end); c != ' ' && end < offset + 9; c = line.charAt(end), end++) {
+                if (c == '.') {
+                    dot = end;
+                }
+            }
+
+            if (start == end) {
+
+                return 0.0;
+            } else if (dot != -1) {
+
+                int sign = sign(line.charAt(start));
+                if (sign < 0) {
+                    start++;
+                }
+
+                int integral = readUInt(line, start, dot - start - 1);
+                int fraction = readUInt(line, dot, end - dot);
+
+                return sign * (integral * 10000L + fraction) / 10000d;
+            } else {
+
+                return Double.parseDouble(line.substring(start, end));
+            }
+        } else {
+            int start = offset;
+            while (line.charAt(start) == ' ') {
+                start++;
+            }
+            int sign = sign(line.charAt(start));
+            if (sign < 0) {
+                start++;
+            }
+            int integral = readUInt(line, start, (offset + 5) - start);
+            int fraction = readUInt(line, offset + 6, 4);
+            return sign * (integral * 10000L + fraction) / 10000d;
         }
-
-        int start = offset;
-        while (line.charAt(start) == ' ') {
-            start++;
-        }
-
-        int sign = sign(line.charAt(start));
-        if (sign < 0) {
-            start++;
-        }
-
-        int integral = readUInt(line, start, (offset + 5) - start);
-        int fraction = readUInt(line, offset + 6, 4);
-
-        return sign * (integral * 10000l + fraction) / 10000d;
     }
 
     /**
@@ -1609,7 +1675,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
         final IAtom atom = container.getAtom(index);
         final IPseudoAtom pseudoAtom = atom instanceof IPseudoAtom ? (IPseudoAtom) atom : container.getBuilder()
                 .newInstance(IPseudoAtom.class);
-        if (atom == pseudoAtom) {
+        if (atom.equals(pseudoAtom)) {
             pseudoAtom.setLabel(label);
         } else {
             pseudoAtom.setSymbol(label);
@@ -1745,32 +1811,21 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             String chargeCodeString = line.substring(36, 39).trim();
             LOGGER.debug("Atom charge code: ", chargeCodeString);
             int chargeCode = Integer.parseInt(chargeCodeString);
-            switch (chargeCode) {
+            if (chargeCode == 0) {
                 // uncharged species
-                case 0:
-                    break;
-                case 1:
-                    atom.setFormalCharge(+3);
-                    break;
-                case 2:
-                    atom.setFormalCharge(+2);
-                    break;
-                case 3:
-                    atom.setFormalCharge(+1);
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    atom.setFormalCharge(-1);
-                    break;
-                case 6:
-                    atom.setFormalCharge(-2);
-                    break;
-                case 7:
-                    atom.setFormalCharge(-3);
-                    break;
-                default:
-                    break;
+            } else if (chargeCode == 1) {
+                atom.setFormalCharge(+3);
+            } else if (chargeCode == 2) {
+                atom.setFormalCharge(+2);
+            } else if (chargeCode == 3) {
+                atom.setFormalCharge(+1);
+            } else if (chargeCode == 4) {
+            } else if (chargeCode == 5) {
+                atom.setFormalCharge(-1);
+            } else if (chargeCode == 6) {
+                atom.setFormalCharge(-2);
+            } else if (chargeCode == 7) {
+                atom.setFormalCharge(-3);
             }
         } else {
             handleError("Atom charge is missing", linecount, 36, 39);
@@ -1889,26 +1944,27 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             a2.setFlag(CDKConstants.ISAROMATIC, true);
             explicitValence[atom1 - 1] = explicitValence[atom2 - 1] = Integer.MIN_VALUE;
         } else {
-            newBond = new CTFileQueryBond(builder);
+            newBond = new QueryBond(builder);
             IAtom[] bondAtoms = {a1, a2};
             newBond.setAtoms(bondAtoms);
-            newBond.setOrder(IBond.Order.UNSET);
-            CTFileQueryBond.Type queryBondType = null;
             switch (order) {
                 case 5:
-                    queryBondType = CTFileQueryBond.Type.SINGLE_OR_DOUBLE;
+                    ((QueryBond) newBond).getExpression()
+                            .setPrimitive(Expr.Type.SINGLE_OR_DOUBLE);
                     break;
                 case 6:
-                    queryBondType = CTFileQueryBond.Type.SINGLE_OR_AROMATIC;
+                    ((QueryBond) newBond).getExpression()
+                            .setPrimitive(Expr.Type.SINGLE_OR_AROMATIC);
                     break;
                 case 7:
-                    queryBondType = CTFileQueryBond.Type.DOUBLE_OR_AROMATIC;
+                    ((QueryBond) newBond).getExpression()
+                            .setPrimitive(Expr.Type.DOUBLE_OR_AROMATIC);
                     break;
                 case 8:
-                    queryBondType = CTFileQueryBond.Type.ANY;
+                    ((QueryBond) newBond).getExpression()
+                            .setPrimitive(Expr.Type.TRUE);
                     break;
             }
-            ((CTFileQueryBond) newBond).setType(queryBondType);
             newBond.setStereo(stereo);
             explicitValence[atom1 - 1] = explicitValence[atom2 - 1] = Integer.MIN_VALUE;
         }
@@ -2135,7 +2191,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 }
 
                 if (!wrap && data.length() > 0) {
-                    data.append(NEW_LINE);
+                    data.append('\n');
                 }
                 data.append(line);
 

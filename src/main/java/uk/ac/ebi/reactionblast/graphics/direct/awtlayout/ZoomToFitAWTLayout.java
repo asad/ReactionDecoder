@@ -30,9 +30,9 @@ import static java.lang.Math.min;
 
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-import static org.openscience.cdk.geometry.GeometryTools.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryTools.scaleMolecule;
-import static org.openscience.cdk.geometry.GeometryTools.translate2D;
+import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
+import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
+import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;

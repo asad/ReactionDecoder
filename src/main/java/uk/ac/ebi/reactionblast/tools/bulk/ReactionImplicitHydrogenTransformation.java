@@ -18,10 +18,9 @@
  */
 package uk.ac.ebi.reactionblast.tools.bulk;
 
-import static org.openscience.cdk.DefaultChemObjectBuilder.getInstance;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
@@ -52,15 +51,15 @@ public class ReactionImplicitHydrogenTransformation implements
      */
     @Override
     public IReaction transform(IReaction reaction) {
-        CDKHydrogenAdder adder = getInstance(getInstance());
-        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
+        CDKHydrogenAdder adder = getInstance(SilentChemObjectBuilder.getInstance());
+        getAllAtomContainers(reaction).forEach((atomContainer) -> {
             try {
                 percieveAtomTypesAndConfigureAtoms(atomContainer);
                 adder.addImplicitHydrogens(atomContainer);
             } catch (CDKException e) {
                 e.printStackTrace();
             }
-        }
+        });
         return reaction;
     }
 }

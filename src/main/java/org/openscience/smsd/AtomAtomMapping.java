@@ -34,7 +34,6 @@ import java.util.logging.Level;
 
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
@@ -44,6 +43,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
@@ -146,7 +146,7 @@ public final class AtomAtomMapping implements Serializable {
     public synchronized String toString() {
         StringBuilder s = new StringBuilder();
         try {
-            IReaction reaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+            IReaction reaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
             reaction.addReactant(getQuery().clone(), 1.0);
             reaction.addProduct(getTarget().clone(), 1.0);
 
@@ -358,7 +358,8 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CloneNotSupportedException
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
-        IAtomContainer ac = getQuery().clone();
+        IAtomContainer ac = SilentChemObjectBuilder.getInstance().newAtomContainer();
+        ac.add(getQuery().clone());
         List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
@@ -374,6 +375,13 @@ public final class AtomAtomMapping implements Serializable {
         for (IBond bond : getQuery().bonds()) {
             IAtom atom1ForBondInTarget = mapping.get(bond.getAtom(0));
             IAtom atom2ForBondInTarget = mapping.get(bond.getAtom(1));
+            if (atom1ForBondInTarget == null) {
+                continue;
+            }
+            if (atom2ForBondInTarget == null) {
+                continue;
+            }
+
             IBond bondInTarget = getTarget().getBond(atom1ForBondInTarget, atom2ForBondInTarget);
             if (bondInTarget == null) {
                 IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(0)));

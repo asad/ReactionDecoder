@@ -42,10 +42,12 @@ import org.openscience.cdk.interfaces.IAtomType;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -96,6 +98,11 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static IAtomContainer copyAndSuppressedHydrogens(IAtomContainer org) {
 
+
+        /*
+         * Remove the CTAB_SGROUPS flag as CDK 2.2 complains
+         */
+        org.setProperty(CDKConstants.CTAB_SGROUPS, null);
         /*
          * @ASAD: IMP STEP to avoid unset Hydrogen arror:
          * Set implicit Hydrogen count
@@ -276,7 +283,9 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      */
     public static IAtomContainer newInstanceWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         //setNullHCountToZero(container);
-        IAtomContainer ac = container.getBuilder().newInstance(IAtomContainer.class, container);
+        IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
+
+        IAtomContainer ac = builder.newInstance(IAtomContainer.class, container);
         /*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
             ac.getAtom(i).setID(container.getAtom(i).getID());
@@ -467,10 +476,12 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param mol
      */
     public static void fixDativeBonds(IAtomContainer mol) {
-        if (!(mol instanceof IQueryAtomContainer)) {
-            for (IBond bond : mol.bonds()) {
-                if (bond.getOrder() == IBond.Order.UNSET) {
-                    bond.setOrder(IBond.Order.SINGLE);
+        if (mol != null) {
+            if (!(mol instanceof IQueryAtomContainer)) {
+                for (IBond bond : mol.bonds()) {
+                    if (bond.getOrder() == IBond.Order.UNSET) {
+                        bond.setOrder(IBond.Order.SINGLE);
+                    }
                 }
             }
         }

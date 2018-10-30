@@ -3,10 +3,10 @@
  */
 package uk.ac.bioinception;
 
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
@@ -24,7 +24,7 @@ public class AAMExample {
 
     public static void main(String[] args) throws CloneNotSupportedException, CDKException, AssertionError, Exception {
         final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-        final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
         String reactionSM
                 = //"CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";

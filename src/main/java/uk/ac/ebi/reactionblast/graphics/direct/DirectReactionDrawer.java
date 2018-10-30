@@ -46,7 +46,8 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-import static org.openscience.cdk.geometry.GeometryTools.translate2D;
+//import static org.openscience.cdk.geometry.GeometryUtil.getRectangle2D;
+import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
@@ -613,7 +614,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             String subLabel = label + "_" + atomContainer.getID() + ":" + counter;
 //            System.out.println(fullLabel);
 
-//            System.out.println("Atoms From" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
+//            System.out.println("Atoms From" + BoundsPrinter.toString(GeometryUtil.getRectangle2D(atomContainer)));
             translate2D(atomContainer, dx, dy);
             Rectangle2D uBounds = unshiftedMolSetTree.get(fullLabel);
             Rectangle2D sBounds = new Rectangle2D.Double(uBounds.getMinX() + dx,
@@ -622,7 +623,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
                     uBounds.getHeight());
 //            System.out.println("From " + BoundsPrinter.toString(uBounds));
 //            System.out.println("To   " + BoundsPrinter.toString(sBounds));
-//            System.out.println("Atoms To" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
+//            System.out.println("Atoms To" + BoundsPrinter.toString(GeometryUtil.getRectangle2D(atomContainer)));
             boundsTree.add(subLabel, sBounds);
             counter++;
         }

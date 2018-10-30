@@ -8,11 +8,11 @@ package uk.ac.ebi.generic;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
@@ -32,7 +32,7 @@ public class SMSDTest {
     public static void main(String[] args) throws CloneNotSupportedException, CDKException {
         try {
             // TODO code application logic here
-            SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+            SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
             IAtomContainer ac1 = smilesParser.parseSmiles("*C1OC(CO)C(OP=O)C1O");
             IAtomContainer ac2 = smilesParser.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 

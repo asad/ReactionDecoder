@@ -22,7 +22,7 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.translate2D;
+import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;

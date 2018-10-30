@@ -8,12 +8,12 @@ package org.openscience.smsd.mcs;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.AtomMatcher;
 import org.openscience.cdk.isomorphism.BondMatcher;
 import org.openscience.cdk.isomorphism.Mappings;
 import org.openscience.cdk.isomorphism.VentoFoggia;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.Substructure;
@@ -34,7 +34,7 @@ public class MCSTest {
     @Test
     public void testSet_IMolecule_IMolecule() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer query = sp.parseSmiles("Nc1ccccc1");
         IAtomContainer target = sp.parseSmiles("Nc1ccccc1");
 
@@ -57,7 +57,7 @@ public class MCSTest {
     @Test
     public void testSet_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
         IAtomContainer target = sp.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 
@@ -75,7 +75,7 @@ public class MCSTest {
     @Test
     public void test_VFMCS_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
         IAtomContainer target = sp.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 
@@ -98,7 +98,7 @@ public class MCSTest {
     @Test
     public void test_Pattern_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
         IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
         IAtomContainer target = sp.parseSmiles("OC1=CC=CC=C1");
@@ -143,7 +143,7 @@ public class MCSTest {
     @Test
     public void test_Substructure_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
         IAtomContainer target = sp.parseSmiles("OC1=CC=CC=C1");
 
@@ -158,7 +158,7 @@ public class MCSTest {
     @Test
     public void test_Identical_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());;
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());;
 
         IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
         IAtomContainer target = sp.parseSmiles("C1=CC=CC=C1");
@@ -174,7 +174,7 @@ public class MCSTest {
     @Test
     public void test_MCSPlusBK_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
 //        IAtomContainer query = sp.parseSmiles("cccc");
 //        IAtomContainer target = sp.parseSmiles("ccnc");
@@ -200,7 +200,7 @@ public class MCSTest {
 //    @Test
 //    public void test_MCSLarge_count() throws Exception {
 //        ////////System.out.println("3");
-//        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+//        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
 //
 //        IAtomContainer query = sp.parseSmiles("[H]O[C@H]1C[C@H]([*])O[C@@H]1COP(O)(=O)O[C@H]1C[C@H]2O[C@@H]1COP(O)(=O)O[C@H]1C[C@@H](O[C@@H]1COP(O)(=O)O[C@H]1C[C@H]([*])O[C@@H]1COP(O)(O)=O)N1C(=O)NC(=O)[C@@]3(C)[C@]1([H])[C@@]1([H])N2C(=O)NC(=O)[C@@]31C");
 //        IAtomContainer target = sp.parseSmiles("[H]O[C@H]1C[C@H]([*])O[C@@H]1COP(O)(=O)O[C@H]1C[C@H]2O[C@@H]1COP(O)(=O)O[C@H]1C[C@@H](O[C@@H]1COP(O)(=O)O[C@H]1C[C@H]([*])O[C@@H]1COP(O)(O)=O)N1C(=O)NC(=O)[C@@]3(C)[C@]1([H])[C@@]1([H])N2C(=O)NC(=O)[C@@]31C");
@@ -231,7 +231,7 @@ public class MCSTest {
     @Test
     public void test_MCSPlusBig_count() throws Exception {
         ////////System.out.println("3");
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
         IAtomContainer query = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
         IAtomContainer target = sp.parseSmiles("[H][C@@]1(O[C@@](C[C@@H](O)[C@H]1O)(O[C@@H]1C[C@@](OC[C@H]2O[C@@H](OC[C@H]3O[C@H](OP([O-])([O-])=O)[C@H](NC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@H](O)CCCCCCCCCCC)[C@@H]3O)[C@H](NC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)[C@@H](OC(=O)C[C@@H](CCCCCCCCCCC)OC(=O)CCCCCCCCCCCCC)[C@@H]2OP([O-])([O-])=O)(O[C@]([H])([C@H](O)CO)[C@@H]1O[C@H]1O[C@H]([C@@H](O)CO)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]2O[C@H]([C@@H](O)CO[C@H]3O[C@H]([C@@H](O)CO)[C@@H](O)[C@H](O)[C@@H]3O)[C@@H](OP([O-])([O-])=O)[C@H](O[C@H]3O[C@H](CO[C@H]4O[C@H](CO)[C@H](O)[C@H](O)[C@H]4O)[C@@H](O)[C@H](O[C@H]4O[C@H](CO)[C@@H](O)[C@H](O)[C@H]4O)[C@H]3O)[C@@H]2O)[C@@H]1O)C([O-])=O)C([O-])=O)[C@H](O)CO");
