@@ -24,7 +24,6 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
-import uk.ac.ebi.reactionblast.tools.rxnfile.MDLFileReader;
 
 /**
  *
@@ -55,7 +54,8 @@ public class BondChangeCalculationTransformation implements ITransformation<IRea
             boolean generate2D = false;
             boolean generate3D = false;
             BondChangeCalculator bcc
-                    = new BondChangeCalculator(reaction, generate2D, generate3D);
+                    = new BondChangeCalculator(reaction);
+            bcc.computeBondChanges(generate2D, generate3D);
             return bcc.getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
             LOGGER.error(e);

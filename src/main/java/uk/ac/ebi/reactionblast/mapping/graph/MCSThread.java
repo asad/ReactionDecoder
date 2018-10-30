@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
+import java.io.IOException;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.nanoTime;
@@ -30,6 +31,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -40,6 +42,7 @@ import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -173,8 +176,8 @@ public class MCSThread implements Callable<MCSSolution> {
          * create SMILES
          */
         smiles = new SmilesGenerator(
-                //                SmiFlavor.Unique |
-                SmiFlavor.Stereo
+                SmiFlavor.Unique
+                | SmiFlavor.Stereo
                 | SmiFlavor.AtomAtomMap);
 
     }
@@ -545,7 +548,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 compound1.getAtomCount(), compound2.getAtomCount(),
                 compound1.getBondCount(), compound2.getBondCount(),
                 false,
-                numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
+                ringFlag,
                 false,
                 numberOfCyclesEduct,
                 numberOfCyclesProduct
@@ -584,18 +587,38 @@ public class MCSThread implements Callable<MCSSolution> {
         } else {
             switch (theory) {
                 case RINGS:
-                    isomorphism
-                            = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                    false,
-                                    numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
-                                    false);
+                    if (moleculeConnected
+                            && expectedMaxGraphmatch > 3
+                            && ac1.getBondCount() > 2
+                            && ac2.getBondCount() > 2) {
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.CDKMCS,
+                                false,
+                                ringFlag,
+                                false);
+                    } else {
+                        isomorphism
+                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                                        false,
+                                        ringFlag,
+                                        false);
+                    }
                     break;
                 default:
-                    isomorphism
-                            = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                    false,
-                                    isHasPerfectRings(),
-                                    false);
+                    if (moleculeConnected
+                            && expectedMaxGraphmatch > 3
+                            && ac1.getBondCount() > 2
+                            && ac2.getBondCount() > 2) {
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.CDKMCS,
+                                false,
+                                isHasPerfectRings(),
+                                false);
+                    } else {
+                        isomorphism
+                                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                        false,
+                                        isHasPerfectRings(),
+                                        false);
+                    }
                     break;
             }
             isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
@@ -737,6 +760,33 @@ public class MCSThread implements Callable<MCSSolution> {
             int bondCount1, int bondCount2,
             boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
+        try {
+            String sm1 = CanonSmiAdapter.create(compound1);
+            String sm2 = CanonSmiAdapter.create(compound2);
+            StringBuilder sb = new StringBuilder();
+            sb.append(id1).append(id2)
+                    .append(atomCount1)
+                    .append(atomCount2)
+                    .append(bondCount1)
+                    .append(bondCount2)
+                    .append(bondMatcher)
+                    .append(ringMatcher)
+                    .append(hasPerfectRings)
+                    .append(numberOfCyclesEduct)
+                    .append(numberOfCyclesProduct);
+            sb.append(sm1);
+            sb.append(sm2);
+            if (DEBUG3) {
+                System.out.println(" sm1 " + sm1);
+                System.out.println(" sm2 " + sm2);
+            }
+            return sb.toString();
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MCSThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append(id1).append(id2)
                 .append(atomCount1)
@@ -749,7 +799,6 @@ public class MCSThread implements Callable<MCSSolution> {
                 .append(numberOfCyclesEduct)
                 .append(numberOfCyclesProduct);
         return sb.toString();
-
     }
 
     /*

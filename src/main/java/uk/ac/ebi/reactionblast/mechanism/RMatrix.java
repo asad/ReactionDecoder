@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mechanism;
 import java.io.Serializable;
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * @param mapping Atom-Atom mappings between reactant and products atoms
      * @throws CDKException
      */
-    public RMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws CDKException {
+    public RMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws Exception {
         super(reactantBE.getRowDimension(), reactantBE.getRowDimension());
         /*
          * Asad Commented this part to check mapping with Hydrogen and partial mapping
@@ -81,13 +80,13 @@ public final class RMatrix extends EBIMatrix implements Serializable {
          */
         int expectedOverlap = countAtomOverlap(reactantBE.getAtoms(), productBE.getAtoms());
         if (DEBUG) {
-            out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
+            System.out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
         }
         if (expectedOverlap != mapping.getSize()) {
             LOGGER.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
             LOGGER.debug("Core Product Atoms: " + (productBE.getRowDimension() - 1));
             LOGGER.debug("Mapping Atoms: " + mapping.getSize());
-            throw new CDKException("Unable to construct a reaction matrix; "
+            throw new Exception("Unable to construct a reaction matrix; "
                     + ((productBE.getRowDimension() - (mapping.getSize() + 1)))
                     + " atom(s) remain unmapped!.");
         }
@@ -411,9 +410,11 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         int total = 0;
         total = atomOverlap.values().stream().map((i) -> i).reduce(total, Integer::sum);
         if (DEBUG) {
-            out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            out.println("atomUniqueCounter2 " + rightHandAtomCount);
-            out.println("overlap " + total);
+            System.out.println("LEFT " + atomUniqueCounter1);
+            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
+            System.out.println("RIGHT " + atomUniqueCounter2);
+            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
+            System.out.println("overlap " + total);
         }
 
         return total;

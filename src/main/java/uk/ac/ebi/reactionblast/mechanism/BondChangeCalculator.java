@@ -97,7 +97,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     private static final long serialVersionUID = 98698690880809981L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(BondChangeCalculator.class);
-    private final BondChangeAnnotator bondChangeAnnotator;
+    private BondChangeAnnotator bondChangeAnnotator;
     private final IPatternFingerprinter formedCleavedWFingerprint;
     private final IPatternFingerprinter orderChangesWFingerprint;
     private final IPatternFingerprinter stereoChangesWFingerprint;
@@ -121,30 +121,18 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      *
      * @param reaction
-     * @param generate2D
-     * @param generate3D
      * @throws Exception
      */
-    public BondChangeCalculator(IReaction reaction, boolean generate2D, boolean generate3D) throws Exception {
+    public BondChangeCalculator(IReaction reaction) throws Exception {
+
         if (DEBUG) {
             System.out.println("Bond Change Calculator START");
         }
-        int rEnergy = 0;
-        int pEnergy = 0;
 
         this.energySum = 0;
         this.energyDelta = 0;
         this.totalSmallestFragmentSize = 0;
         this.mappedReaction = reaction;
-        if (DEBUG) {
-            System.out.println("Bond Change Annotator START");
-        }
-        this.bondChangeAnnotator = new BondChangeAnnotator(this.mappedReaction, true, generate2D, generate3D);
-        if (DEBUG) {
-            System.out.println("Bond Change Annotator END");
-        }
-
-        BondEnergies be = getInstance();
 
         this.formedCleavedWFingerprint = new PatternFingerprinter();
         this.formedCleavedWFingerprint.setFingerprintID(reaction.getID() + ":" + "Bond Cleaved and Formed");
@@ -167,420 +155,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         this.bondOrderPMap = synchronizedMap(new HashMap<>());
         this.AtomStereoRMap = synchronizedMap(new HashMap<>());
         this.AtomStereoPMap = synchronizedMap(new HashMap<>());
-
         this.reactionCenterFragmentList = synchronizedList(new ArrayList<>());
-
-        if (DEBUG) {
-            System.out.println("Loop for stereo conformation changes count: " + bondChangeAnnotator.getConformationChangeList().size());
-        }
-        /*
-         * Loop for stereo changes
-         */
-        for (AtomStereoChangeInformation atomConformation : bondChangeAnnotator.getConformationChangeList()) {
-
-            /*
-             * Stereo changes are marked only once in the Fingerprint
-             */
-            if (atomConformation.getReactantAtom() != null && atomConformation.getProductAtom() != null) {
-                String keyE = atomConformation.getReactantAtom().getSymbol().concat("(E/Z)");
-                IFeature eductFeature = new Feature(keyE, 1.0);
-                stereoChangesWFingerprint.add(eductFeature);
-            }
-
-            /*
-             * Stereo changes are marked on reactant and product for reaction center identification
-             */
-            if (atomConformation.getReactantAtom() != null) {
-                atomConformation.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
-                AtomStereoRMap.put(atomConformation.getReactantAtom(), getMoleculeID(atomConformation.getReactantAtom(), reaction.getReactants()));
-
-                /*
-                 * Update Reaction center FP
-                 */
-                IAtom atomR1 = atomConformation.getReactantAtom();
-                IAtomContainer moleculeR = getAtomContainer(atomConformation.getReactantAtom(), reaction.getReactants());
-
-                if (moleculeR.getAtomCount() > 1) {
-                    if (!atomR1.getSymbol().equals("H")) {
-                        if (DEBUG) {
-                            System.out.println("Educt CircularFingerprints START");
-                        }
-                        reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
-                        setCircularFingerprints(reaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
-                        if (DEBUG) {
-                            System.out.println("Educt CircularFingerprints END");
-                        }
-                    }
-                }
-            }
-            if (atomConformation.getProductAtom() != null) {
-                atomConformation.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
-                AtomStereoPMap.put(atomConformation.getProductAtom(), getMoleculeID(atomConformation.getProductAtom(), reaction.getProducts()));
-
-                /*
-                 * Update Reaction center FP
-                 */
-                IAtom atomP1 = atomConformation.getProductAtom();
-                IAtomContainer moleculeP = getAtomContainer(atomConformation.getProductAtom(), reaction.getProducts());
-
-                if (moleculeP.getAtomCount() > 1) {
-                    if (!atomP1.getSymbol().equals("H")) {
-                        if (DEBUG) {
-                            System.out.println("Product CircularFingerprints START");
-                        }
-                        reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
-                        setCircularFingerprints(reaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
-                        if (DEBUG) {
-                            System.out.println("Product CircularFingerprints END");
-                        }
-                    }
-                }
-            }
-        }
-
-        if (DEBUG) {
-            System.out.println("Loop for stereo changes count: " + bondChangeAnnotator.getStereoChangeList().size());
-        }
-
-        /*
-         * Loop for stereo changes
-         */
-        for (AtomStereoChangeInformation atomStereo : bondChangeAnnotator.getStereoChangeList()) {
-
-            /*
-             * Stereo changes are marked only once in the Fingerprint
-             */
-            if (atomStereo.getReactantAtom() != null && atomStereo.getProductAtom() != null) {
-                String key = atomStereo.getReactantAtom().getSymbol().concat("(R/S)");
-                IFeature eductFeature = new Feature(key, 1.0);
-                stereoChangesWFingerprint.add(eductFeature);
-            }
-
-            /*
-             * Stereo changes are marked on reactant and product for reaction center identification
-             */
-            if (atomStereo.getReactantAtom() != null) {
-                atomStereo.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
-                AtomStereoRMap.put(atomStereo.getReactantAtom(), getMoleculeID(atomStereo.getReactantAtom(), reaction.getReactants()));
-
-                /*
-                 * Update Reaction center FP
-                 */
-                IAtom atomR1 = atomStereo.getReactantAtom();
-                IAtomContainer moleculeR = getAtomContainer(atomStereo.getReactantAtom(), reaction.getReactants());
-
-                if (moleculeR.getAtomCount() > 1) {
-
-                    if (!atomR1.getSymbol().equals("H")) {
-                        reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
-                        setCircularFingerprints(reaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
-                    }
-                }
-            }
-            if (atomStereo.getProductAtom() != null) {
-                atomStereo.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
-                AtomStereoPMap.put(atomStereo.getProductAtom(), getMoleculeID(atomStereo.getProductAtom(), reaction.getProducts()));
-
-                /*
-                 * Update Reaction center FP
-                 */
-                IAtom atomP1 = atomStereo.getProductAtom();
-                IAtomContainer moleculeP = getAtomContainer(atomStereo.getProductAtom(), reaction.getProducts());
-
-                if (moleculeP.getAtomCount() > 1) {
-
-                    if (!atomP1.getSymbol().equals("H")) {
-                        reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
-                        setCircularFingerprints(reaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
-                    }
-                }
-            }
-        }
-
-        /*
-         * Loop over atom order and generate unique list to atoms
-         */
-        Set<IAtom> reactantAtoms = new HashSet<>();
-        Set<IAtom> productAtoms = new HashSet<>();
-
-        if (DEBUG) {
-            System.out.println("Bond Change List: " + bondChangeAnnotator.getBondChangeList().size());
-        }
-
-        for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
-            IBond bondR = bcinfo.getReactantBond();
-            IBond bondP = bcinfo.getProductBond();
-
-            // Mark Bond Order Changes
-            if (bondR != null && bondP != null
-                    && bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                            equals(BOND_ORDER)
-                    && bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                            equals(BOND_ORDER)) {
-
-                bondOrderRMap.put(bondR, getMoleculeID(bondR, reaction.getReactants()));
-                bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-                bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-
-                bondOrderPMap.put(bondP, getMoleculeID(bondP, reaction.getProducts()));
-                bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-                bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-
-                reactantAtoms.add(bondR.getAtom(0));
-                reactantAtoms.add(bondR.getAtom(1));
-
-                productAtoms.add(bondP.getAtom(0));
-                productAtoms.add(bondP.getAtom(1));
-                orderChangesWFingerprint.add(new Feature(getCanonisedBondChangePattern(bondR, bondP), 1.0));
-            }
-        }
-
-        if (DEBUG) {
-            System.out.println("Bond Order changes");
-        }
-
-        /*
-         * Store changes in the bond order
-         */
-        IAtomContainerSet reactants = reaction.getReactants();
-        IAtomContainerSet products = reaction.getProducts();
-
-        for (IAtom atom : reactantAtoms) {
-            IAtomContainer relevantAtomContainer = getRelevantAtomContainer(reactants, atom);
-            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, REACTANT));
-            setCircularFingerprints(reaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
-        }
-
-        for (IAtom atom : productAtoms) {
-            IAtomContainer relevantAtomContainer = getRelevantAtomContainer(products, atom);
-            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, PRODUCT));
-            setCircularFingerprints(reaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
-        }
-
-        if (DEBUG) {
-            System.out.println("Bond formed, cleaved changes");
-        }
-
-
-        /*
-         * Loop for formed, cleaved changes
-         */
-        for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
-            IBond bondR = bcinfo.getReactantBond();
-            IBond bondP = bcinfo.getProductBond();
-
-            if (DEBUG) {
-                System.out.println("Bond formed, cleaved changes 1 ");
-            }
-
-            //Mark Formed Bonds in the Product
-            if (bondP != null && (bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                    equals(BOND_FORMED)
-                    || bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                            equals(PSEUDO_BOND))) {
-
-                if (DEBUG) {
-                    System.out.println("Bond formed, cleaved changes 1 - 1");
-                }
-
-                if (!bondP.getAtom(0).getSymbol().equals("PsH")
-                        && !bondP.getAtom(1).getSymbol().equals("PsH")) {
-                    this.energySum += be.getEnergies(bondP);
-                    pEnergy += be.getEnergies(bondP);
-                    bondFormedMap.put(bondP, getMoleculeID(bondP, reaction.getProducts()));
-                    bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-                    bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-
-                    if (DEBUG) {
-                        System.out.println("Bond formed, cleaved changes 1 - 1 - 1");
-                    }
-
-                    /*
-                     * Update Reaction center FP
-                     */
-                    IAtomContainer moleculeP = getAtomContainer(bondP, reaction.getProducts());
-
-                    if (DEBUG) {
-                        System.out.println("Bond formed, cleaved changes FP");
-                    }
-
-                    if (moleculeP != null && moleculeP.getAtomCount() > 1) {
-
-                        if (DEBUG) {
-                            System.out.println("Bond formed, cleaved changes FP IN");
-                        }
-                        /*
-                         * Mark reaction centers
-                         */
-                        IAtom atomP1 = bondP.getAtom(0);
-                        IAtom atomP2 = bondP.getAtom(1);
-                        if (DEBUG) {
-                            System.out.println("Bond formed, cleaved changes 1 - 1 - 1 FP");
-                        }
-                        if (!atomP1.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
-                            setCircularFingerprints(reaction.getID(), moleculeP, atomP1, reactionCenterFormedCleavedFingerprint);
-                        }
-                        if (!atomP2.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP2, PRODUCT));
-                            setCircularFingerprints(reaction.getID(), moleculeP, atomP2, reactionCenterFormedCleavedFingerprint);
-                        }
-
-                        if (DEBUG) {
-                            System.out.println("Bond formed, cleaved changes 1 - 1 - 1 FP Done");
-                        }
-
-                        IAtomContainer product = getAtomContainer(bondP, reaction.getProducts());
-                        IAtomContainer cloneProduct = product.getBuilder().newInstance(IAtomContainer.class, product);
-                        int chippedBondIndex = product.indexOf(bondP);
-                        totalSmallestFragmentSize += chipTheBondCountSmallestFragmentSize(cloneProduct, chippedBondIndex);
-                        formedCleavedWFingerprint.add(new Feature(getCanonicalisedBondChangePattern(bondP), 1.0));
-                    }
-                }
-            }
-
-            if (DEBUG) {
-                System.out.println("Bond formed, cleaved changes 2");
-            }
-
-            //Mark Cleaved Bonds in Reactants
-            if (bondR != null && (bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                    equals(BOND_CLEAVED)
-                    || bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                            equals(PSEUDO_BOND))) {
-
-                if (DEBUG) {
-                    System.out.println("Bond formed, cleaved changes 1 - 2 - 1");
-                }
-
-                if (!bondR.getAtom(0).getSymbol().equals("PsH")
-                        && !bondR.getAtom(1).getSymbol().equals("PsH")) {
-                    this.energySum += be.getEnergies(bondR);
-                    pEnergy += be.getEnergies(bondR);
-                    bondCleavedMap.put(bondR, getMoleculeID(bondR, reaction.getReactants()));
-                    bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
-                    bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
-
-                    /*
-                     * update reaction center product FP
-                     */
-                    IAtomContainer moleculeE = getAtomContainer(bondR, reaction.getReactants());
-
-                    if (moleculeE != null && moleculeE.getAtomCount() > 1) {
-
-                        /*
-                         * Mark reaction centers
-                         */
-                        IAtom atomE1 = bondR.getAtom(0);
-                        IAtom atomE2 = bondR.getAtom(1);
-                        if (!atomE1.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE1, REACTANT));
-                            setCircularFingerprints(reaction.getID(), moleculeE, atomE1, reactionCenterFormedCleavedFingerprint);
-                        }
-                        if (!atomE2.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE2, REACTANT));
-                            setCircularFingerprints(reaction.getID(), moleculeE, atomE2, reactionCenterFormedCleavedFingerprint);
-                        }
-
-                        IAtomContainer reactant = getAtomContainer(bondR, reaction.getReactants());
-                        IAtomContainer cloneReactant = reactant.getBuilder().newInstance(IAtomContainer.class, reactant);
-                        int chippedBondIndex = reactant.indexOf(bondR);
-                        totalSmallestFragmentSize += chipTheBondCountSmallestFragmentSize(cloneReactant, chippedBondIndex);
-                        formedCleavedWFingerprint.add(new Feature(getCanonicalisedBondChangePattern(bondR), 1.0));
-                    }
-                }
-            }
-        }
-
-        if (DEBUG) {
-            System.out.println("RC Fingerprint");
-        }
-
-        /*
-         * IMP for RC Fingerprint: compute all the unique reaction centers atoms
-         */
-        Map<IAtom, IAtom> reactionCenterMap = new HashMap<>();
-        bondChangeAnnotator.getReactionCenterSet().stream().filter((atom) -> (!atom.getSymbol().equals("H"))).forEachOrdered((atom) -> {
-            reactionCenterMap.put(atom, bondChangeAnnotator.getMappingMap().get(atom));
-        });
-
-        if (DEBUG) {
-            System.out.println("RC Fingerprint charges like Mg2+ too Mg3+");
-        }
-
-        /*
-         * Store changes in the charges like Mg2+ too Mg3+
-         */
-        for (IAtom atom : bondChangeAnnotator.getReactionCenterSet()) {
-            if (!atom.getSymbol().equals("H")) {
-                IAtomContainer relevantAtomContainer = getRelevantAtomContainer(reaction, atom);
-
-                IAtomContainer relevantAtomContainer1 = getRelevantAtomContainer(reactants, atom);
-                IAtomContainer relevantAtomContainer2 = getRelevantAtomContainer(products, atom);
-                if (relevantAtomContainer != null && relevantAtomContainer.getAtomCount() == 1) {
-                    EnumSubstrateProduct esp = null;
-
-                    if (relevantAtomContainer1 != null) {
-                        esp = REACTANT;
-                    } else if (relevantAtomContainer2 != null) {
-                        esp = PRODUCT;
-                    }
-                    if (!atom.getSymbol().equals("H")) {
-                        reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, esp));
-                        setCircularFingerprints(reaction.getID(), relevantAtomContainer, atom, reactionCenterFormedCleavedFingerprint);
-                    }
-                }
-            }
-
-        }
-
-        if (DEBUG) {
-            System.out.println("RC Fingerprint ");
-        }
-
-        /*
-         * Assign Reaction Center Fingerprints
-         */
-        for (Map.Entry<IAtom, IAtom> mapRC : reactionCenterMap.entrySet()) {
-
-            IAtom sourceAtom = mapRC.getKey();
-            IAtom sinkAtom = mapRC.getValue();
-
-            IAtomContainer relevantAtomContainer1 = getRelevantAtomContainer(reaction.getReactants(), sourceAtom);
-            IAtomContainer relevantAtomContainer2 = getRelevantAtomContainer(reaction.getProducts(), sinkAtom);
-
-            if (relevantAtomContainer1 != null) {
-                for (int i = 0; i < 3; i++) {
-                    String circularSMILES = getCircularSMILES(relevantAtomContainer1, sourceAtom, i, true);
-                    reactionCenterWFingerprint.add(new Feature(circularSMILES, 1.0));
-                }
-            }
-
-            if (relevantAtomContainer2 != null) {
-                for (int i = 0; i < 3; i++) {
-                    String circularSMILES = getCircularSMILES(relevantAtomContainer2, sinkAtom, i, true);
-                    reactionCenterWFingerprint.add(new Feature(circularSMILES, 1.0));
-                }
-            }
-
-            if (relevantAtomContainer1 != null && relevantAtomContainer2 != null) {
-                for (int i = 1; i < 4; i++) {
-                    String circularSMILESSource = getCircularSMILES(relevantAtomContainer1, sourceAtom, i, true);
-                    String circularSMILESSink = getCircularSMILES(relevantAtomContainer2, sinkAtom, i, true);
-                    StringBuilder level = new StringBuilder();
-                    level.append(circularSMILESSource).append(">>").append(circularSMILESSink);
-                    reactionCenterWFingerprint.add(new Feature(level.toString(), 1.0));
-                }
-                MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
-                this.reactionMoleculeMoleculePairList.add(molMolPair);
-            }
-        }
-
-        setEnergyDelta(rEnergy - pEnergy);
-
-        if (DEBUG) {
-            System.out.println("Bond Change Calculator END");
-        }
     }
 
     /**
@@ -1229,27 +804,27 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     /**
      *
-     * @param MappedReaction
+     * @param reaction
      */
-    private synchronized void cleanMapping(IReaction MappedReaction) {
+    private synchronized void cleanMapping(IReaction reaction) {
 
-        int count = MappedReaction.getMappingCount();
+        int count = reaction.getMappingCount();
         for (int i = count; i > 0; i--) {
-            MappedReaction.removeMapping(i);
+            reaction.removeMapping(i);
         }
 
-        for (int eMol = 0; eMol < MappedReaction.getReactantCount(); eMol++) {
-            IAtomContainer eMolecule = MappedReaction.getReactants().getAtomContainer(eMol);
+        for (int eMol = 0; eMol < reaction.getReactantCount(); eMol++) {
+            IAtomContainer eMolecule = reaction.getReactants().getAtomContainer(eMol);
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
-                IAtom atomEMap = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
+                IAtom atomEMap = reaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                 atomEMap.setFlag(MAPPED, false);
             }
         }
 
-        for (int pMol = 0; pMol < MappedReaction.getProductCount(); pMol++) {
-            IAtomContainer pMolecule = MappedReaction.getProducts().getAtomContainer(pMol);
+        for (int pMol = 0; pMol < reaction.getProductCount(); pMol++) {
+            IAtomContainer pMolecule = reaction.getProducts().getAtomContainer(pMol);
             for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
-                IAtom atomPMap = MappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
+                IAtom atomPMap = reaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                 atomPMap.setFlag(MAPPED, false);
             }
         }
@@ -1455,5 +1030,455 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      */
     public int getTotalSmallestFragmentSize() {
         return totalSmallestFragmentSize;
+    }
+
+    /**
+     *
+     * @param generate2D
+     * @param generate3D
+     * @throws CDKException
+     * @throws Exception
+     */
+    public void computeBondChanges(boolean generate2D, boolean generate3D) throws CDKException, Exception {
+        try {
+
+            BondEnergies be = getInstance();
+            int rEnergy = 0;
+            int pEnergy = 0;
+
+            try {
+                if (DEBUG) {
+                    System.out.println("Bond Change Annotator START");
+                }
+                this.bondChangeAnnotator = new BondChangeAnnotator(mappedReaction, true, generate2D, generate3D);
+                if (DEBUG) {
+                    System.out.println("MARK Bond Change START");
+                }
+                this.bondChangeAnnotator.markBondChanges();
+                if (DEBUG) {
+                    System.out.println("MARK Bond Change END");
+                }
+                if (DEBUG) {
+                    System.out.println("Bond Change Annotator END");
+                }
+            } catch (Exception e) {
+                throw new Exception("Failed to compute bond changes", e);
+            }
+
+            if (DEBUG) {
+                System.out.println("Loop for stereo conformation changes count: " + bondChangeAnnotator.getConformationChangeList().size());
+            }
+            /*
+         * Loop for stereo changes
+             */
+            for (AtomStereoChangeInformation atomConformation : bondChangeAnnotator.getConformationChangeList()) {
+
+                /*
+             * Stereo changes are marked only once in the Fingerprint
+                 */
+                if (atomConformation.getReactantAtom() != null && atomConformation.getProductAtom() != null) {
+                    String keyE = atomConformation.getReactantAtom().getSymbol().concat("(E/Z)");
+                    IFeature eductFeature = new Feature(keyE, 1.0);
+                    stereoChangesWFingerprint.add(eductFeature);
+                }
+
+                /*
+             * Stereo changes are marked on reactant and product for mappedReaction center identification
+                 */
+                if (atomConformation.getReactantAtom() != null) {
+                    atomConformation.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    AtomStereoRMap.put(atomConformation.getReactantAtom(), getMoleculeID(atomConformation.getReactantAtom(), mappedReaction.getReactants()));
+
+                    /*
+                 * Update Reaction center FP
+                     */
+                    IAtom atomR1 = atomConformation.getReactantAtom();
+                    IAtomContainer moleculeR = getAtomContainer(atomConformation.getReactantAtom(), mappedReaction.getReactants());
+
+                    if (moleculeR.getAtomCount() > 1) {
+                        if (!atomR1.getSymbol().equals("H")) {
+                            if (DEBUG) {
+                                System.out.println("Educt CircularFingerprints START");
+                            }
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
+                            setCircularFingerprints(mappedReaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
+                            if (DEBUG) {
+                                System.out.println("Educt CircularFingerprints END");
+                            }
+                        }
+                    }
+                }
+                if (atomConformation.getProductAtom() != null) {
+                    atomConformation.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    AtomStereoPMap.put(atomConformation.getProductAtom(), getMoleculeID(atomConformation.getProductAtom(), mappedReaction.getProducts()));
+
+                    /*
+                 * Update Reaction center FP
+                     */
+                    IAtom atomP1 = atomConformation.getProductAtom();
+                    IAtomContainer moleculeP = getAtomContainer(atomConformation.getProductAtom(), mappedReaction.getProducts());
+
+                    if (moleculeP.getAtomCount() > 1) {
+                        if (!atomP1.getSymbol().equals("H")) {
+                            if (DEBUG) {
+                                System.out.println("Product CircularFingerprints START");
+                            }
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                            setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
+                            if (DEBUG) {
+                                System.out.println("Product CircularFingerprints END");
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (DEBUG) {
+                System.out.println("Loop for stereo changes count: " + bondChangeAnnotator.getStereoChangeList().size());
+            }
+
+            /*
+         * Loop for stereo changes
+             */
+            for (AtomStereoChangeInformation atomStereo : bondChangeAnnotator.getStereoChangeList()) {
+
+                /*
+             * Stereo changes are marked only once in the Fingerprint
+                 */
+                if (atomStereo.getReactantAtom() != null && atomStereo.getProductAtom() != null) {
+                    String key = atomStereo.getReactantAtom().getSymbol().concat("(R/S)");
+                    IFeature eductFeature = new Feature(key, 1.0);
+                    stereoChangesWFingerprint.add(eductFeature);
+                }
+
+                /*
+             * Stereo changes are marked on reactant and product for mappedReaction center identification
+                 */
+                if (atomStereo.getReactantAtom() != null) {
+                    atomStereo.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    AtomStereoRMap.put(atomStereo.getReactantAtom(), getMoleculeID(atomStereo.getReactantAtom(), mappedReaction.getReactants()));
+
+                    /*
+                 * Update Reaction center FP
+                     */
+                    IAtom atomR1 = atomStereo.getReactantAtom();
+                    IAtomContainer moleculeR = getAtomContainer(atomStereo.getReactantAtom(), mappedReaction.getReactants());
+
+                    if (moleculeR.getAtomCount() > 1) {
+
+                        if (!atomR1.getSymbol().equals("H")) {
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
+                            setCircularFingerprints(mappedReaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
+                        }
+                    }
+                }
+                if (atomStereo.getProductAtom() != null) {
+                    atomStereo.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    AtomStereoPMap.put(atomStereo.getProductAtom(), getMoleculeID(atomStereo.getProductAtom(), mappedReaction.getProducts()));
+
+                    /*
+                 * Update Reaction center FP
+                     */
+                    IAtom atomP1 = atomStereo.getProductAtom();
+                    IAtomContainer moleculeP = getAtomContainer(atomStereo.getProductAtom(), mappedReaction.getProducts());
+
+                    if (moleculeP.getAtomCount() > 1) {
+
+                        if (!atomP1.getSymbol().equals("H")) {
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                            setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
+                        }
+                    }
+                }
+            }
+
+            /*
+         * Loop over atom order and generate unique list to atoms
+             */
+            Set<IAtom> reactantAtoms = new HashSet<>();
+            Set<IAtom> productAtoms = new HashSet<>();
+
+            if (DEBUG) {
+                System.out.println("Bond Change List: " + bondChangeAnnotator.getBondChangeList().size());
+            }
+
+            for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
+                IBond bondR = bcinfo.getReactantBond();
+                IBond bondP = bcinfo.getProductBond();
+
+                // Mark Bond Order Changes
+                if (bondR != null && bondP != null
+                        && bondP.getProperties().get(BOND_CHANGE_INFORMATION).
+                                equals(BOND_ORDER)
+                        && bondR.getProperties().get(BOND_CHANGE_INFORMATION).
+                                equals(BOND_ORDER)) {
+
+                    bondOrderRMap.put(bondR, getMoleculeID(bondR, mappedReaction.getReactants()));
+                    bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+                    bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+
+                    bondOrderPMap.put(bondP, getMoleculeID(bondP, mappedReaction.getProducts()));
+                    bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+                    bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+
+                    reactantAtoms.add(bondR.getAtom(0));
+                    reactantAtoms.add(bondR.getAtom(1));
+
+                    productAtoms.add(bondP.getAtom(0));
+                    productAtoms.add(bondP.getAtom(1));
+                    orderChangesWFingerprint.add(new Feature(getCanonisedBondChangePattern(bondR, bondP), 1.0));
+                }
+            }
+
+            if (DEBUG) {
+                System.out.println("Bond Order changes");
+            }
+
+            /*
+         * Store changes in the bond order
+             */
+            IAtomContainerSet reactants = mappedReaction.getReactants();
+            IAtomContainerSet products = mappedReaction.getProducts();
+
+            for (IAtom atom : reactantAtoms) {
+                IAtomContainer relevantAtomContainer = getRelevantAtomContainer(reactants, atom);
+                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, REACTANT));
+                setCircularFingerprints(mappedReaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
+            }
+
+            for (IAtom atom : productAtoms) {
+                IAtomContainer relevantAtomContainer = getRelevantAtomContainer(products, atom);
+                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, PRODUCT));
+                setCircularFingerprints(mappedReaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
+            }
+
+            if (DEBUG) {
+                System.out.println("Bond formed, cleaved changes");
+            }
+
+
+            /*
+         * Loop for formed, cleaved changes
+             */
+            for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
+                IBond bondR = bcinfo.getReactantBond();
+                IBond bondP = bcinfo.getProductBond();
+
+                if (DEBUG) {
+                    System.out.println("Bond formed, cleaved changes 1 ");
+                }
+
+                //Mark Formed Bonds in the Product
+                if (bondP != null && (bondP.getProperties().get(BOND_CHANGE_INFORMATION).
+                        equals(BOND_FORMED)
+                        || bondP.getProperties().get(BOND_CHANGE_INFORMATION).
+                                equals(PSEUDO_BOND))) {
+
+                    if (DEBUG) {
+                        System.out.println("Bond formed, cleaved changes 1 - 1");
+                    }
+
+                    if (!bondP.getAtom(0).getSymbol().equals("PsH")
+                            && !bondP.getAtom(1).getSymbol().equals("PsH")) {
+                        this.energySum += be.getEnergies(bondP);
+                        pEnergy += be.getEnergies(bondP);
+                        bondFormedMap.put(bondP, getMoleculeID(bondP, mappedReaction.getProducts()));
+                        bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
+                        bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
+
+                        if (DEBUG) {
+                            System.out.println("Bond formed, cleaved changes 1 - 1 - 1");
+                        }
+
+                        /*
+                     * Update Reaction center FP
+                         */
+                        IAtomContainer moleculeP = getAtomContainer(bondP, mappedReaction.getProducts());
+
+                        if (DEBUG) {
+                            System.out.println("Bond formed, cleaved changes FP");
+                        }
+
+                        if (moleculeP != null && moleculeP.getAtomCount() > 1) {
+
+                            if (DEBUG) {
+                                System.out.println("Bond formed, cleaved changes FP IN");
+                            }
+                            /*
+                         * Mark mappedReaction centers
+                             */
+                            IAtom atomP1 = bondP.getAtom(0);
+                            IAtom atomP2 = bondP.getAtom(1);
+                            if (DEBUG) {
+                                System.out.println("Bond formed, cleaved changes 1 - 1 - 1 FP");
+                            }
+                            if (!atomP1.getSymbol().equals("H")) {
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                                setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterFormedCleavedFingerprint);
+                            }
+                            if (!atomP2.getSymbol().equals("H")) {
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP2, PRODUCT));
+                                setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP2, reactionCenterFormedCleavedFingerprint);
+                            }
+
+                            if (DEBUG) {
+                                System.out.println("Bond formed, cleaved changes 1 - 1 - 1 FP Done");
+                            }
+
+                            IAtomContainer product = getAtomContainer(bondP, mappedReaction.getProducts());
+                            IAtomContainer cloneProduct = product.getBuilder().newInstance(IAtomContainer.class, product);
+                            int chippedBondIndex = product.indexOf(bondP);
+                            totalSmallestFragmentSize += chipTheBondCountSmallestFragmentSize(cloneProduct, chippedBondIndex);
+                            formedCleavedWFingerprint.add(new Feature(getCanonicalisedBondChangePattern(bondP), 1.0));
+                        }
+                    }
+                }
+
+                if (DEBUG) {
+                    System.out.println("Bond formed, cleaved changes 2");
+                }
+
+                //Mark Cleaved Bonds in Reactants
+                if (bondR != null && (bondR.getProperties().get(BOND_CHANGE_INFORMATION).
+                        equals(BOND_CLEAVED)
+                        || bondR.getProperties().get(BOND_CHANGE_INFORMATION).
+                                equals(PSEUDO_BOND))) {
+
+                    if (DEBUG) {
+                        System.out.println("Bond formed, cleaved changes 1 - 2 - 1");
+                    }
+
+                    if (!bondR.getAtom(0).getSymbol().equals("PsH")
+                            && !bondR.getAtom(1).getSymbol().equals("PsH")) {
+                        this.energySum += be.getEnergies(bondR);
+                        pEnergy += be.getEnergies(bondR);
+                        bondCleavedMap.put(bondR, getMoleculeID(bondR, mappedReaction.getReactants()));
+                        bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
+                        bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
+
+                        /*
+                     * update mappedReaction center product FP
+                         */
+                        IAtomContainer moleculeE = getAtomContainer(bondR, mappedReaction.getReactants());
+
+                        if (moleculeE != null && moleculeE.getAtomCount() > 1) {
+
+                            /*
+                         * Mark mappedReaction centers
+                             */
+                            IAtom atomE1 = bondR.getAtom(0);
+                            IAtom atomE2 = bondR.getAtom(1);
+                            if (!atomE1.getSymbol().equals("H")) {
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE1, REACTANT));
+                                setCircularFingerprints(mappedReaction.getID(), moleculeE, atomE1, reactionCenterFormedCleavedFingerprint);
+                            }
+                            if (!atomE2.getSymbol().equals("H")) {
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE2, REACTANT));
+                                setCircularFingerprints(mappedReaction.getID(), moleculeE, atomE2, reactionCenterFormedCleavedFingerprint);
+                            }
+
+                            IAtomContainer reactant = getAtomContainer(bondR, mappedReaction.getReactants());
+                            IAtomContainer cloneReactant = reactant.getBuilder().newInstance(IAtomContainer.class, reactant);
+                            int chippedBondIndex = reactant.indexOf(bondR);
+                            totalSmallestFragmentSize += chipTheBondCountSmallestFragmentSize(cloneReactant, chippedBondIndex);
+                            formedCleavedWFingerprint.add(new Feature(getCanonicalisedBondChangePattern(bondR), 1.0));
+                        }
+                    }
+                }
+            }
+
+            if (DEBUG) {
+                System.out.println("RC Fingerprint");
+            }
+
+            /*
+         * IMP for RC Fingerprint: compute all the unique mappedReaction centers atoms
+             */
+            Map<IAtom, IAtom> reactionCenterMap = new HashMap<>();
+            bondChangeAnnotator.getReactionCenterSet().stream().filter((atom) -> (!atom.getSymbol().equals("H"))).forEachOrdered((atom) -> {
+                reactionCenterMap.put(atom, bondChangeAnnotator.getMappingMap().get(atom));
+            });
+
+            if (DEBUG) {
+                System.out.println("RC Fingerprint charges like Mg2+ too Mg3+");
+            }
+
+            /*
+         * Store changes in the charges like Mg2+ too Mg3+
+             */
+            for (IAtom atom : bondChangeAnnotator.getReactionCenterSet()) {
+                if (!atom.getSymbol().equals("H")) {
+                    IAtomContainer relevantAtomContainer = getRelevantAtomContainer(mappedReaction, atom);
+
+                    IAtomContainer relevantAtomContainer1 = getRelevantAtomContainer(reactants, atom);
+                    IAtomContainer relevantAtomContainer2 = getRelevantAtomContainer(products, atom);
+                    if (relevantAtomContainer != null && relevantAtomContainer.getAtomCount() == 1) {
+                        EnumSubstrateProduct esp = null;
+
+                        if (relevantAtomContainer1 != null) {
+                            esp = REACTANT;
+                        } else if (relevantAtomContainer2 != null) {
+                            esp = PRODUCT;
+                        }
+                        if (!atom.getSymbol().equals("H")) {
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, esp));
+                            setCircularFingerprints(mappedReaction.getID(), relevantAtomContainer, atom, reactionCenterFormedCleavedFingerprint);
+                        }
+                    }
+                }
+
+            }
+
+            if (DEBUG) {
+                System.out.println("RC Fingerprint ");
+            }
+
+            /*
+         * Assign Reaction Center Fingerprints
+             */
+            for (Map.Entry<IAtom, IAtom> mapRC : reactionCenterMap.entrySet()) {
+
+                IAtom sourceAtom = mapRC.getKey();
+                IAtom sinkAtom = mapRC.getValue();
+
+                IAtomContainer relevantAtomContainer1 = getRelevantAtomContainer(mappedReaction.getReactants(), sourceAtom);
+                IAtomContainer relevantAtomContainer2 = getRelevantAtomContainer(mappedReaction.getProducts(), sinkAtom);
+
+                if (relevantAtomContainer1 != null) {
+                    for (int i = 0; i < 3; i++) {
+                        String circularSMILES = getCircularSMILES(relevantAtomContainer1, sourceAtom, i, true);
+                        reactionCenterWFingerprint.add(new Feature(circularSMILES, 1.0));
+                    }
+                }
+
+                if (relevantAtomContainer2 != null) {
+                    for (int i = 0; i < 3; i++) {
+                        String circularSMILES = getCircularSMILES(relevantAtomContainer2, sinkAtom, i, true);
+                        reactionCenterWFingerprint.add(new Feature(circularSMILES, 1.0));
+                    }
+                }
+
+                if (relevantAtomContainer1 != null && relevantAtomContainer2 != null) {
+                    for (int i = 1; i < 4; i++) {
+                        String circularSMILESSource = getCircularSMILES(relevantAtomContainer1, sourceAtom, i, true);
+                        String circularSMILESSink = getCircularSMILES(relevantAtomContainer2, sinkAtom, i, true);
+                        StringBuilder level = new StringBuilder();
+                        level.append(circularSMILESSource).append(">>").append(circularSMILESSink);
+                        reactionCenterWFingerprint.add(new Feature(level.toString(), 1.0));
+                    }
+                    MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
+                    this.reactionMoleculeMoleculePairList.add(molMolPair);
+                }
+            }
+
+            setEnergyDelta(rEnergy - pEnergy);
+
+            if (DEBUG) {
+                System.out.println("Bond Change Calculator END");
+            }
+        } catch (Exception e) {
+            throw new Exception("Failed to assign bond changes", e);
+        }
+
     }
 }

@@ -84,13 +84,6 @@ public final class BondChangeAnnotator extends DUModel {
             boolean generate2D,
             boolean generate3D) throws Exception {
         super(reaction, withoutHydrogen, generate2D, generate3D);
-        if (DEBUG) {
-            System.out.println("MARK Bond Change START");
-        }
-        markBondChanges();
-        if (DEBUG) {
-            System.out.println("MARK Bond Change END");
-        }
     }
 
     /**
@@ -257,7 +250,7 @@ public final class BondChangeAnnotator extends DUModel {
         BEMatrix productBEMatrix = productBE;
 
         if (DEBUG) {
-            System.out.println("markBondChanges method start");
+            System.out.println("markBondChanges method START");
 //        System.out.println(reactantBE.toString());
 //        System.out.println(productBE.toString());
 //        System.out.println(reactionMatrix.toString

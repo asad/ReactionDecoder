@@ -104,6 +104,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         this.generate2DCoordinates = generate2D;
         this.queryRingSet = new RingSet();
         this.targetRingSet = new RingSet();
+
         /*
          Set Atom-Atom Mapping
          */
@@ -155,23 +156,27 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             System.out.println("Done Marking Aromatic Bonds");
         }
 
-        if (DEBUG) {
-            System.out.println("=====Educt createBEMatrix=====");
-        }
-        this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
-        if (DEBUG) {
-            System.out.println("=====Product createBEMatrix=====");
-        }
-        this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
-        if (DEBUG) {
-            System.out.println("=====AAM Container=====");
-        }
-        this.mapping = new AtomAtomMappingContainer(reaction, withoutHydrogen);
-        if (DEBUG) {
-            System.out.println("=====createRMatrix=====");
-        }
-        this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
+        try {
 
+            if (DEBUG) {
+                System.out.println("=====Educt createBEMatrix=====");
+            }
+            this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
+            if (DEBUG) {
+                System.out.println("=====Product createBEMatrix=====");
+            }
+            this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
+            if (DEBUG) {
+                System.out.println("=====AAM Container=====");
+            }
+            this.mapping = new AtomAtomMappingContainer(reaction, withoutHydrogen);
+            if (DEBUG) {
+                System.out.println("=====createRMatrix=====");
+            }
+            this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
+        } catch (Exception e) {
+            throw new Exception("WARNING: Unable to compute reaction matrix", e);
+        }
         /*
          * Stereo mapping
          */
@@ -182,7 +187,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         try {
             chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
-            LOGGER.debug("WARNING: 2D CDK based stereo perception failed");
+            throw new Exception("WARNING: 2D CDK based stereo perception failed", ex);
         }
         if (DEBUG) {
             System.out.println("Done Assign Stereo");
@@ -193,9 +198,14 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         if (DEBUG) {
             System.out.println("Assign Stereo Center");
         }
-        this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
+        try {
+            this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
+        } catch (Exception e) {
+            throw new Exception("WARNING: 2D CDK based stereo centers perception failed", e);
+        }
         if (DEBUG) {
             System.out.println("Done Assign Stereo Center");
+
         }
     }
 
@@ -212,7 +222,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         }
     }
 
-    private synchronized BEMatrix createBEMatrix(IAtomContainerSet molset, List<IBond> bonds, boolean withoutH, Map<IAtom, IAtom> mappings) throws CDKException {
+    private BEMatrix createBEMatrix(IAtomContainerSet molset, List<IBond> bonds, boolean withoutH, Map<IAtom, IAtom> mappings) throws Exception {
         BEMatrix res = new BEMatrix(withoutH, molset, bonds, mappings);
         res.setMatrixAtoms();
         return res;
@@ -226,7 +236,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
      * @return
      * @throws CDKException
      */
-    private synchronized RMatrix createRMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws CDKException {
+    private RMatrix createRMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws Exception {
         return new RMatrix(reactantBE, productBE, mapping);
     }
 

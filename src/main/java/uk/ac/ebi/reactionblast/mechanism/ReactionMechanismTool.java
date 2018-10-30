@@ -87,7 +87,8 @@ public class ReactionMechanismTool implements Serializable {
      * @param forcedMapping force re-mapping of the reactions
      * @param generate2D deduce stereo on 2D
      * @param generate3D deduce stereo on 3D
-     * @param checkComplex check complex mapping like rings systems rearrangement
+     * @param checkComplex check complex mapping like rings systems
+     * rearrangement
      * @throws Exception
      */
     public ReactionMechanismTool(IReaction reaction, boolean forcedMapping, boolean generate2D, boolean generate3D, boolean checkComplex) throws Exception {
@@ -220,8 +221,7 @@ public class ReactionMechanismTool implements Serializable {
                 }
                 gc();
             } catch (Exception e) {
-                String ls = getProperty("line.separator");
-                throw new Exception(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
+                throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e);
             }
             if (DEBUG) {
                 System.out.println("=====DONE REACTION MECH TOOL=====");
@@ -315,7 +315,8 @@ public class ReactionMechanismTool implements Serializable {
             BondChangeCalculator bcc;
             int fragmentDeltaChanges;
             if (reactor == null && ma.equals(USER_DEFINED)) {
-                bcc = new BondChangeCalculator(reaction, generate2D, generate3D);
+                bcc = new BondChangeCalculator(reaction);
+                bcc.computeBondChanges(generate2D, generate3D);
                 fragmentDeltaChanges = 0;
                 int bondChange = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 bondChange += getTotalBondChange(bcc.getOrderChangesWFingerprint());
@@ -348,8 +349,8 @@ public class ReactionMechanismTool implements Serializable {
                     throw new CDKException("Reactor is NULL");
                 }
 
-                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
-
+                bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping());
+                bcc.computeBondChanges(generate2D, generate3D);
                 fragmentDeltaChanges = reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
