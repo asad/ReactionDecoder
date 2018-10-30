@@ -301,7 +301,27 @@ public final class AtomAtomMapping implements Serializable {
                 uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
+        Set<IBond> removeUncommonBonds = new HashSet<>();
+        for (IBond bondQ : ac.bonds()) {
+            if (mapping.containsKey(bondQ.getBegin()) && mapping.containsKey(bondQ.getEnd())) {
+                IAtom atom1 = mapping.get(bondQ.getBegin());
+                IAtom atom2 = mapping.get(bondQ.getEnd());
+                IBond bondT = getTarget().getBond(atom1, atom2);
+                if (bondT == null) {
+                    removeUncommonBonds.add(bondQ);
+                }
+            }
+        }
+        /*
+         * Remove umcommon bonds
+         */
+        removeUncommonBonds.forEach((b) -> {
+            ac.removeBond(b);
+        });
 
+        /*
+         * Remove umcommon atoms
+         */
         uniqueAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
