@@ -127,8 +127,8 @@ public class CallableAtomMappingTool implements Serializable {
                 threadsAvailable = 1;
             }
 
-            if (threadsAvailable > 1) {
-                threadsAvailable = 1;
+            if (threadsAvailable > 4) {
+                threadsAvailable = 4;
             }
             executor = Executors.newFixedThreadPool(threadsAvailable);
         }

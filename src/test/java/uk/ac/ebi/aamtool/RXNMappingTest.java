@@ -1796,7 +1796,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getFormedCleavedWFingerprint();
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
-
+//
 //    /*
 //     * @FIXME
 //     * Takes Donkey Years to Run- TO FIX
