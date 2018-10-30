@@ -267,7 +267,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     ac.getAtom(i).setMassNumber(massNumber);
                 } catch (IOException e) {
                     ac.getAtom(i).setMassNumber(11);
-                    LOGGER.error(Level.WARNING, "Failed to set mas numver ", ac.getAtom(i).getSymbol(), e);
+                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
                 }
             }
         }

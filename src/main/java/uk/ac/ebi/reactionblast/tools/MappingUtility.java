@@ -40,6 +40,8 @@ import static java.lang.System.getProperty;
 import static java.util.logging.Level.SEVERE;
 
 import static javax.imageio.ImageIO.write;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
@@ -51,6 +53,7 @@ import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLa
  */
 public class MappingUtility extends TestUtility {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER
             = createLoggingTool(MappingUtility.class);
 
@@ -169,14 +172,14 @@ public class MappingUtility extends TestUtility {
             cdkReaction = readReaction(reactionID, directory, false);
 
             ExtReactionManipulatorTool.addExplicitH(cdkReaction);
-//            SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+            SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
 //            out.println("Input reactions " + sm.create(cdkReaction));
             ReactionMechanismTool annotation = getAnnotation(cdkReaction);
             MappingSolution s = annotation.getSelectedSolution();
-//            out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
-            LOGGER.error(SEVERE, " Sorry- looks like something failed ", e);
+            LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e);
         }
         return null;
     }

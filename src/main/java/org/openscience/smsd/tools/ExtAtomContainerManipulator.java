@@ -23,6 +23,7 @@ package org.openscience.smsd.tools;
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
@@ -33,6 +34,7 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
+import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.CycleFinder;
@@ -258,6 +260,15 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             ac.getAtom(i).setID(container.getAtom(i).getID());
             if (ac.getAtom(i).getProperties() == null) {
                 ac.getAtom(i).setProperties(new HashMap<>());
+            }
+            if (ac.getAtom(i).getMassNumber() == null) {
+                try {
+                    int massNumber = Isotopes.getInstance().getMajorIsotope(ac.getAtom(i).getAtomicNumber()).getMassNumber();
+                    ac.getAtom(i).setMassNumber(massNumber);
+                } catch (IOException e) {
+                    ac.getAtom(i).setMassNumber(11);
+                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
+                }
             }
         }
 
