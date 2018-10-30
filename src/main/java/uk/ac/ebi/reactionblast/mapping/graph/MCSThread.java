@@ -51,6 +51,7 @@ import org.openscience.smsd.Substructure;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import uk.ac.ebi.reactionblast.mapping.cache.ThreadSafeCache;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 
 /**
@@ -538,48 +539,97 @@ public class MCSThread implements Callable<MCSSolution> {
             System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-        switch (theory) {
-            case RINGS:
-                isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                false,
-                                numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
-                                false);
-                break;
-            default:
-                isomorphism
-                        = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                false,
-                                isHasPerfectRings(),
-                                false);
-                break;
-        }
-        isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
-        if (DEBUG3) {
-            try {
-                System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
-                        + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-            } catch (CloneNotSupportedException | CDKException e) {
-                LOGGER.error(SEVERE, "Error in computing MCS ", e);
+        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
+
+        String keyRing = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                compound1.getAtomCount(), compound2.getAtomCount(),
+                compound1.getBondCount(), compound2.getBondCount(),
+                false,
+                numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
+                false,
+                numberOfCyclesEduct,
+                numberOfCyclesProduct
+        );
+
+        String keyDefault = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                compound1.getAtomCount(), compound2.getAtomCount(),
+                compound1.getBondCount(), compound2.getBondCount(),
+                false,
+                isHasPerfectRings(),
+                false,
+                numberOfCyclesEduct,
+                numberOfCyclesProduct
+        );
+
+        MCSSolution mcs;
+        if ((theory.equals(IMappingAlgorithm.RINGS) && mappingcache.containsKey(keyRing))) {
+            System.out.println("Aladdin and Gini");
+            MCSSolution solution = mappingcache.get(keyRing);
+            mcs = copyOldSolutionToNew(
+                    getQueryPosition(), getTargetPosition(),
+                    getCompound1(), getCompound2(),
+                    solution);
+
+        } else if (!theory.equals(IMappingAlgorithm.RINGS) && (mappingcache.containsKey(keyDefault))) {
+            System.out.println("Aladdin and Gini");
+            MCSSolution solution = mappingcache.get(keyDefault);
+            mcs = copyOldSolutionToNew(
+                    getQueryPosition(), getTargetPosition(),
+                    getCompound1(), getCompound2(),
+                    solution);
+        } else {
+            switch (theory) {
+                case RINGS:
+                    isomorphism
+                            = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                    false,
+                                    numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0,
+                                    false);
+                    break;
+                default:
+                    isomorphism
+                            = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                    false,
+                                    isHasPerfectRings(),
+                                    false);
+                    break;
             }
-        }
-        /*
-         * In case of Complete subgraph, don't use Energy filter
-         *
-         */
-        MCSSolution mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
-                isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
-        mcs.setEnergy(isomorphism.getEnergyScore(0));
-        mcs.setFragmentSize(isomorphism.getFragmentSize(0));
-        mcs.setStereoScore(isomorphism.getStereoScore(0));
-        if (DEBUG1) {
-            long stopTime = currentTimeMillis();
-            long time = stopTime - startTime;
-            printMatch(isomorphism);
-            System.out.println("\" Time:\" " + time);
+            isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+            if (DEBUG3) {
+                try {
+                    System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
+                            + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
+                } catch (CloneNotSupportedException | CDKException e) {
+                    LOGGER.error(SEVERE, "Error in computing MCS ", e);
+                }
+            }
+            /*
+             * In case of Complete subgraph, don't use Energy filter
+             *
+             */
+            mcs = new MCSSolution(getQueryPosition(), getTargetPosition(),
+                    isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
+            mcs.setEnergy(isomorphism.getEnergyScore(0));
+            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
+            mcs.setStereoScore(isomorphism.getStereoScore(0));
+            if (DEBUG1) {
+                long stopTime = currentTimeMillis();
+                long time = stopTime - startTime;
+                printMatch(isomorphism);
+                System.out.println("\" Time:\" " + time);
+
+            }
+
+            if (theory.equals(IMappingAlgorithm.RINGS) && !mappingcache.containsKey(keyRing)) {
+                mappingcache.put(keyRing, mcs);
+            }
+            if (!theory.equals(IMappingAlgorithm.RINGS) && !mappingcache.containsKey(keyRing)) {
+                mappingcache.put(keyRing, mcs);
+            }
 
         }
         return mcs;
+
     }
 
     private IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
@@ -676,5 +726,42 @@ public class MCSThread implements Callable<MCSSolution> {
 
     void setProductRingCount(int numberOfCyclesProduct) {
         this.numberOfCyclesProduct = numberOfCyclesProduct;
+    }
+
+    private String generateUniqueKey(String id1, String id2,
+            int atomCount1, int atomCount2,
+            int bondCount1, int bondCount2,
+            boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
+            int numberOfCyclesEduct, int numberOfCyclesProduct) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id1).append(id2)
+                .append(atomCount1)
+                .append(atomCount2)
+                .append(bondCount1)
+                .append(bondCount2)
+                .append(bondMatcher)
+                .append(ringMatcher)
+                .append(hasPerfectRings)
+                .append(numberOfCyclesEduct)
+                .append(numberOfCyclesProduct);
+        return sb.toString();
+
+    }
+
+    private MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
+            IAtomContainer compound1, IAtomContainer compound2, MCSSolution oldSolution) {
+        AtomAtomMapping atomAtomMapping = oldSolution.getAtomAtomMapping();
+        Map<Integer, Integer> mappingsByIndex = atomAtomMapping.getMappingsByIndex();
+
+        AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(compound1, compound2);
+        mappingsByIndex.entrySet().forEach((m) -> {
+            atomAtomMappingNew.put(compound1.getAtom(m.getKey()), compound2.getAtom(m.getValue()));
+        });
+        MCSSolution mcsSolution = new MCSSolution(queryPosition, targetPosition, compound1, compound2, atomAtomMappingNew);
+        mcsSolution.setEnergy(oldSolution.getEnergy());
+        mcsSolution.setFragmentSize(oldSolution.getFragmentSize());
+        mcsSolution.setStereoScore(oldSolution.getStereoScore());
+
+        return mcsSolution;
     }
 }

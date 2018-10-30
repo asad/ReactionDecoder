@@ -42,6 +42,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import uk.ac.ebi.reactionblast.interfaces.IStandardizer;
+import uk.ac.ebi.reactionblast.mapping.cache.ThreadSafeCache;
+import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
@@ -111,6 +113,11 @@ public class CallableAtomMappingTool implements Serializable {
             IStandardizer standardizer,
             boolean removeHydrogen,
             boolean checkComplex) {
+        /*
+         * Mapping cache initialized
+         */
+        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
+
         ExecutorService executor = null;
         if (DEBUG) {
             executor = Executors.newSingleThreadExecutor();
@@ -238,6 +245,11 @@ public class CallableAtomMappingTool implements Serializable {
         if (DEBUG) {
             System.out.println("!!!!Atom-Atom Mapping Done!!!!");
         }
+        /*
+         * Mapping cache cleared
+         */
+        mappingcache.cleanup();
+
     }
 
     /**
