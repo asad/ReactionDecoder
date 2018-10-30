@@ -206,7 +206,8 @@ public class ReactionMechanismTool implements Serializable {
                     int atomCountP = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getProducts());
 
                     if (atomCountR != atomCountP) {
-                        LOGGER.warn("ERROR in Mapping " + reactor.toString());
+                        //LOGGER.warn("ERROR in Mapping - Unmapped atoms present in the reaction: "
+                        //        + NEW_LINE + reactor.toString());
                         LOGGER.warn("Unmapped atoms present in this reaction" + "(" + algorithm + ") algorithm.");
 //                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
 //                                + "(" + algorithm + ") algorithm." + newline);
