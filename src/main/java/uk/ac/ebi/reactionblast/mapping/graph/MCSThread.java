@@ -236,9 +236,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 System.out.println("VF Matcher 2->1 " + possibleVFmatch21);
             }
 
-            if (moleculeConnected && possibleVFmatch12
-                    && getCompound1().getAtomCount() <= getCompound2().getAtomCount()
-                    && getCompound1().getBondCount() <= getCompound2().getBondCount()) {
+            if (moleculeConnected && possibleVFmatch12) {
                 if (DEBUG1) {
                     System.out.println("Substructure 1");
                     this.startTime = currentTimeMillis();
@@ -246,22 +244,26 @@ public class MCSThread implements Callable<MCSSolution> {
                 }
                 IAtomContainer ac1 = duplicate(getCompound1());
                 IAtomContainer ac2 = duplicate(getCompound2());
+
+                if (DEBUG1) {
+                    System.out.println("---1.1---");
+                }
                 Substructure substructure;
                 substructure = new Substructure(ac1, ac2,
-                        false, isHasPerfectRings(), true, true);
+                        false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, isHasPerfectRings(), true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---1.2---");
                     }
                     substructure = new Substructure(ac1, ac2,
-                            false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, true, true);
+                            false, isHasPerfectRings(), !isHasPerfectRings(), true);
                 }
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                     if (DEBUG1) {
                         System.out.println("---1.3---");
                     }
                     substructure = new Substructure(ac1, ac2,
-                            false, false, true, true);
+                            false, false, false, true);
                 }
                 substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
@@ -287,9 +289,9 @@ public class MCSThread implements Callable<MCSSolution> {
                 } else if (DEBUG1) {
                     System.out.println("not a Substructure 1");
                 }
-            } else if (moleculeConnected && possibleVFmatch21
-                    && getCompound1().getAtomCount() > getCompound2().getAtomCount()
-                    && getCompound1().getBondCount() > getCompound2().getBondCount()) {
+            }
+
+            if (moleculeConnected && !possibleVFmatch12 && possibleVFmatch21) {
 
                 if (DEBUG1) {
                     System.out.println("Substructure 2");
@@ -304,18 +306,18 @@ public class MCSThread implements Callable<MCSSolution> {
                 if (DEBUG1) {
                     System.out.println("---2.1---");
                 }
-                substructure = new Substructure(ac2, ac1, false, isHasPerfectRings(), true, true);
+                substructure = new Substructure(ac2, ac1, false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, isHasPerfectRings(), true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---2.2---");
                     }
-                    substructure = new Substructure(ac2, ac1, false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, true, true);
+                    substructure = new Substructure(ac2, ac1, false, isHasPerfectRings(), !isHasPerfectRings(), true);
                 }
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                     if (DEBUG1) {
                         System.out.println("---2.3---");
                     }
-                    substructure = new Substructure(ac2, ac1, false, false, true, true);
+                    substructure = new Substructure(ac2, ac1, false, false, false, true);
                 }
                 substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
@@ -348,6 +350,10 @@ public class MCSThread implements Callable<MCSSolution> {
                     System.out.println("not a Substructure 2");
                 }
             }
+
+            /*
+            * If substructure matches have failed then call MCS
+             */
             if (DEBUG1) {
 
                 /*

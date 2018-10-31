@@ -18,6 +18,9 @@
 package uk.ac.ebi.centres.priority;
 
 import static java.lang.System.out;
+import org.openscience.cdk.config.Isotopes;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Ligand;
@@ -67,6 +70,27 @@ public class AtomicNumberRule<A>
         if (accessor == null || o2.getAtom() == null) {
             out.println(accessor + " 2 NULL");
         }
-        return accessor.getAtomicNumber(o1.getAtom()) - accessor.getAtomicNumber(o2.getAtom());
+        IAtom a = (IAtom) o1.getAtom();
+        IAtom b = (IAtom) o2.getAtom();
+
+        return getAtomicNumber(a) - getAtomicNumber(b);
+
+//        return accessor.getAtomicNumber(o1.getAtom()) - accessor.getAtomicNumber(o2.getAtom());
+    }
+
+    public int getAtomicNumber(IAtom o) {
+
+        if (o != null && !(o instanceof IPseudoAtom) && o.getAtomicNumber() == null) {
+            try {
+                int massNumber = Isotopes.getInstance().getMajorIsotope(o.getAtomicNumber()).getAtomicNumber();
+                return massNumber;
+            } catch (Exception e) {
+                //e.printStackTrace();
+                return 6;
+            }
+        } else if (o instanceof IPseudoAtom) {
+            return 6;//less than carbon for 'R'
+        }
+        return 0;
     }
 }

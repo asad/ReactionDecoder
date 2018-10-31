@@ -260,20 +260,24 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             if (ac.getAtom(i).getProperties() == null) {
                 ac.getAtom(i).setProperties(new HashMap<>());
             }
-            if (!(ac.getAtom(i) instanceof IPseudoAtom)
-                    && ac.getAtom(i).getMassNumber() == null) {
-                try {
-                    int massNumber = Isotopes.getInstance().getMajorIsotope(ac.getAtom(i).getAtomicNumber()).getMassNumber();
-                    ac.getAtom(i).setMassNumber(massNumber);
-                } catch (Exception e) {
-                    //e.printStackTrace();
-                    ac.getAtom(i).setMassNumber(11);
-                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
-                }
-            } else {
-                //PseudoAtoms
-                ac.getAtom(i).setMassNumber(11);
-            }
+//            if (!(ac.getAtom(i) instanceof IPseudoAtom)
+//                    && ac.getAtom(i).getMassNumber() == null) {
+//                try {
+////                    Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
+////                    System.out.println("atomicNumber " + atomicNumber);
+//                    int massNumber = Isotopes.getInstance().getMajorIsotope(ac.getAtom(i).getAtomicNumber()).getMassNumber();
+//                    ac.getAtom(i).setMassNumber(massNumber);
+//                } catch (Exception e) {
+//                    //e.printStackTrace();
+//                    ac.getAtom(i).setMassNumber(11);
+//                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
+//                }
+//            } else if ((ac.getAtom(i) instanceof IPseudoAtom)) {
+//                //PseudoAtoms
+////                Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
+////                System.out.println("atomicNumber " + atomicNumber);
+//                ac.getAtom(i).setMassNumber(11);
+//            }
         }
 
         for (int i = 0; i < ac.getBondCount(); i++) {

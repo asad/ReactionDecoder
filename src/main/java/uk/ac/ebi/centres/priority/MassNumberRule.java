@@ -17,6 +17,10 @@
  */
 package uk.ac.ebi.centres.priority;
 
+import static java.lang.System.out;
+import org.openscience.cdk.config.Isotopes;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import uk.ac.ebi.centres.Ligand;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
@@ -56,6 +60,38 @@ public class MassNumberRule<A>
      */
     @Override
     public int compare(Ligand<A> o1, Ligand<A> o2) {
-        return accessor.getMassNumber(o1.getAtom()) - accessor.getMassNumber(o2.getAtom());
+        if (accessor == null || o1.getAtom() == null) {
+            out.println(accessor + " 1 NULL");
+        }
+        if (accessor == null || o2.getAtom() == null) {
+            out.println(accessor + " 2 NULL");
+        }
+        IAtom a = (IAtom) o1.getAtom();
+        IAtom b = (IAtom) o2.getAtom();
+
+        return getMassNumber(a) - getMassNumber(b);
+
+//        return accessor.getMassNumber(o1.getAtom()) - accessor.getMassNumber(o2.getAtom());
+    }
+
+    public int getMassNumber(IAtom o) {
+
+        if (o != null && !(o instanceof IPseudoAtom) && o.getMassNumber() == null) {
+            try {
+//                    Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
+//                    System.out.println("atomicNumber " + atomicNumber);
+                int massNumber = Isotopes.getInstance().getMajorIsotope(o.getAtomicNumber()).getMassNumber();
+                return massNumber;
+            } catch (Exception e) {
+                //e.printStackTrace();
+                return 11;
+            }
+        } else if (o instanceof IPseudoAtom) {
+            //PseudoAtoms
+//                Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
+//                System.out.println("atomicNumber " + atomicNumber);
+            return 11;//less than carbon for 'R'
+        }
+        return 0;
     }
 }
