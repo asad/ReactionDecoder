@@ -42,7 +42,6 @@ import org.openscience.cdk.io.formats.IResourceFormat;
 import org.openscience.cdk.io.formats.MDLFormat;
 import org.openscience.cdk.io.setting.BooleanIOSetting;
 import org.openscience.cdk.io.setting.IOSetting;
-import org.openscience.cdk.isomorphism.matchers.Expr;
 import org.openscience.cdk.isomorphism.matchers.QueryBond;
 import org.openscience.cdk.sgroup.Sgroup;
 import org.openscience.cdk.sgroup.SgroupBracket;
@@ -77,6 +76,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import org.openscience.cdk.io.DefaultChemObjectWriter;
+import org.openscience.cdk.isomorphism.matchers.Expr;
+import static org.openscience.cdk.isomorphism.matchers.Expr.Type.ALIPHATIC_ORDER;
+import static org.openscience.cdk.isomorphism.matchers.Expr.Type.IS_AROMATIC;
+import static org.openscience.cdk.isomorphism.matchers.Expr.Type.OR;
+import static org.openscience.cdk.isomorphism.matchers.Expr.Type.ORDER;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 
 /**

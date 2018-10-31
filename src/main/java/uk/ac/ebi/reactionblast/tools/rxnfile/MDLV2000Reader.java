@@ -47,7 +47,6 @@ import org.openscience.cdk.io.formats.IResourceFormat;
 import org.openscience.cdk.io.formats.MDLV2000Format;
 import org.openscience.cdk.io.setting.BooleanIOSetting;
 import org.openscience.cdk.io.setting.IOSetting;
-import org.openscience.cdk.isomorphism.matchers.Expr;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.QueryBond;
 import org.openscience.cdk.sgroup.Sgroup;
@@ -81,6 +80,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.openscience.cdk.io.DefaultChemObjectReader;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
+import org.openscience.cdk.isomorphism.matchers.Expr;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
 
 /**
