@@ -51,10 +51,6 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.CalculationProcess;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.helper.AbstractReactor;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
@@ -69,6 +65,10 @@ import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *

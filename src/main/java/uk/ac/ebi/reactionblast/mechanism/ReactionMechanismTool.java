@@ -64,7 +64,7 @@ import static java.util.Collections.synchronizedList;
 
 import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
  *
@@ -162,8 +162,7 @@ public class ReactionMechanismTool implements Serializable {
                 boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED, reaction, generate2D, generate3D);
                 LOGGER.info("is solution: " + USER_DEFINED + " selected: " + selected);
             } catch (Exception e) {
-                String ls = getProperty("line.separator");
-                throw new CDKException(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
+                throw new CDKException(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage());
             }
         } else {
             try {
@@ -399,8 +398,7 @@ public class ReactionMechanismTool implements Serializable {
                 this.allSolutions.add(mappingSolution);
             }
         } catch (Exception e) {
-            String ls = getProperty("line.separator");
-            throw new Exception(ls + "ERROR: Unable to calculate bond changes: " + e.getMessage());
+            throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage());
         }
         return chosen;
     }

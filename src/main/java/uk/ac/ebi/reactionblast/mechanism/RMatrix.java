@@ -47,6 +47,7 @@ import uk.ac.ebi.reactionblast.tools.EBIMatrix;
  */
 public final class RMatrix extends EBIMatrix implements Serializable {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final long serialVersionUID = 7057060562283378684L;
     private static final ILoggingTool LOGGER = createLoggingTool(RMatrix.class);
 
@@ -323,7 +324,6 @@ public final class RMatrix extends EBIMatrix implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
         result.append("\t");
         for (int i = 0; i < this.getRowDimension() - 1; i++) {
             result.append("\t").append(i);

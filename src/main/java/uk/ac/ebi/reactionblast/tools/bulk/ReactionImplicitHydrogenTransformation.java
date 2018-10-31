@@ -26,7 +26,7 @@ import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 import uk.ac.ebi.reactionblast.interfaces.ITransformation;
 import static uk.ac.ebi.reactionblast.interfaces.ITransformation.TargetType.REACTION;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 /**
  *

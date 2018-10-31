@@ -32,6 +32,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
  */
 public class MappingSolution implements Serializable {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final long serialVersionUID = 1678787866L;
 
     private final IMappingAlgorithm algorithmID;
@@ -86,24 +87,23 @@ public class MappingSolution implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        String property = getProperty("line.separator");
-        sb.append(property);
+        sb.append(NEW_LINE);
         sb.append("-----------------------------------");
-        sb.append(property);
+        sb.append(NEW_LINE);
         sb.append("Chosen Algorithm is= ").append(this.getAlgorithmID().description());
         sb.append(", ");
-        sb.append(property).append("Scores=" + "(Chaos Delta:");
+        sb.append(NEW_LINE).append("Scores=" + "(Chaos Delta:");
         sb.append(this.getTotalFragmentChanges()).append(", Sigma:");
         sb.append(this.getTotalBondChanges()).append(", Energy:");
         sb.append(this.getBondEnergySum()).append(")");
-        sb.append(property);
+        sb.append(NEW_LINE);
         sb.append("-----------------------------------");
-        sb.append(property);
+        sb.append(NEW_LINE);
         sb.append("MappingSolution{" + "algorithmID=").append(algorithmID).append(", bondEnergyChange=").append(bondEnergySum).append(", totalBondChanges=").append(totalBondChanges).append(", totalFragmentChanges=").append(totalFragmentChanges).append(", totalStereoChanges=").append(totalStereoChanges).append(", smallestFragmentCount=").append(smallestFragmentCount) //                .append(", reaction=").append(reaction)
                 //                .append(", reactor=").append(reactor)
                 .append(", totalChanges=").append(totalChanges).append(", chosen=").append(chosen) //                .append(", bondChangeCalculator=").append(bondChangeCalculator)
                 .append(", generate3D=").append(generate3D).append(", generate2D=").append(generate2D).append('}');
-        sb.append(property);
+        sb.append(NEW_LINE);
         return sb.toString();
     }
 

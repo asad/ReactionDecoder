@@ -60,9 +60,9 @@ import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
 import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *

@@ -56,7 +56,7 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IGraphTheoryMatrix;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.AtomContainerSetComparator;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 //~--- classes ----------------------------------------------------------------
 /**

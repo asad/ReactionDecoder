@@ -117,6 +117,7 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
  */
 public class MDLV2000Writer extends DefaultChemObjectWriter {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     public static final String OptForceWriteAs2DCoordinates = "ForceWriteAs2DCoordinates";
     public static final String OptWriteMajorIsotopes = "WriteMajorIsotopes";
     public static final String OptWriteAromaticBondTypes = "WriteAromaticBondTypes";
@@ -568,7 +569,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
             for (int i = 2; i <= last; i++) {
                 line.append(formatMDLInt(atomprops[i], 3));
             }
-            line.append('\n');
+            line.append(NEW_LINE);
             writer.write(line.toString());
         }
 
@@ -689,7 +690,7 @@ public class MDLV2000Writer extends DefaultChemObjectWriter {
                 if (writeDefaultProps.isSet()) {
                     line.append("  0  0  0 ");
                 }
-                line.append('\n');
+                line.append(NEW_LINE);
                 writer.write(line.toString());
             }
         }

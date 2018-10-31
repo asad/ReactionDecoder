@@ -36,7 +36,7 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.NONE;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
 
 /**

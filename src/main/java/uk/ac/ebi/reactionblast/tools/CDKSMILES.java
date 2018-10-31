@@ -30,8 +30,9 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import static org.openscience.cdk.smiles.CanonSmiAdapter.create;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *

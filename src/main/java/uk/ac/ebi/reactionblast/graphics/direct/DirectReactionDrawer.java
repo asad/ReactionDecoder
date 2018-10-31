@@ -46,7 +46,6 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-//import static org.openscience.cdk.geometry.GeometryUtil.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;

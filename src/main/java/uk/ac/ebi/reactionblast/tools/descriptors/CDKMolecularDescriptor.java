@@ -49,9 +49,9 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getHeavyAtoms;
 import org.openscience.smsd.helper.MoleculeInitializer;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.checkAndCleanMolecule;
 import uk.ac.ebi.reactionblast.interfaces.IMolDescriptors;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.checkAndCleanMolecule;
 
 /**
  *

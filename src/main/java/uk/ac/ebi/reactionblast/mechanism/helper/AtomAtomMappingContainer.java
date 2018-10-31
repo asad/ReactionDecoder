@@ -41,6 +41,7 @@ import uk.ac.ebi.reactionblast.mapping.Reactor;
  */
 public class AtomAtomMappingContainer extends Object implements Serializable {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final long serialVersionUID = 17879096958755L;
 
     private List<IAtom> reactantAtomArray = new ArrayList<>();
@@ -222,7 +223,6 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
         result.append(reactantAtomArray.size()).append(NEW_LINE);
         for (int i = 0; i < reactantAtomArray.size(); i++) {
             result.append(i).append("\t");

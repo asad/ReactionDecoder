@@ -70,8 +70,8 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.ringsearch.AllRingsFinder;
 import static org.openscience.cdk.ringsearch.RingPartitioner.partitionRings;
 import static org.openscience.cdk.tools.manipulator.RingSetManipulator.getAllAtomContainers;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeDayLight;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 
 /**

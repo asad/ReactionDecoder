@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class BondChange implements Serializable {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final long serialVersionUID = 9890766688070991L;
 
     /**
@@ -151,7 +152,6 @@ public class BondChange implements Serializable {
     @Override
     public synchronized String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
         result.append("\t");
         result.append(NEW_LINE);
         if (reactantBond != null) {

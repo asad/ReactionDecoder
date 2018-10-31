@@ -55,11 +55,11 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 import uk.ac.ebi.reactionblast.tools.AtomContainerSetComparator;
 import uk.ac.ebi.reactionblast.tools.BasicDebugger;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.aromatizeMolecule;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.fixDativeBonds;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.fixDativeBonds;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

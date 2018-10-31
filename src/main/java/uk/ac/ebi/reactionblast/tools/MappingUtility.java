@@ -179,6 +179,7 @@ public class MappingUtility extends TestUtility {
             out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e);
         }
         return null;
@@ -244,7 +245,6 @@ public class MappingUtility extends TestUtility {
      * @throws Exception
      */
     public BondChangeCalculator testRCReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
-        String NEW_LINE = getProperty("line.separator");
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();

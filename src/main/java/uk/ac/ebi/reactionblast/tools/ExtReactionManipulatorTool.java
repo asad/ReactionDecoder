@@ -30,6 +30,7 @@ import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
  *
@@ -124,6 +125,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
         }
 
         r.setDirection(reaction.getDirection());
+        System.out.println("Reaction ID " + reaction.getID());
         r.setID(reaction.getID() == null ? "" : reaction.getID());
 
         return r;

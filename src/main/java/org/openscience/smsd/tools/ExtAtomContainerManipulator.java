@@ -23,7 +23,6 @@ package org.openscience.smsd.tools;
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
@@ -54,6 +53,8 @@ import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.convertImplicitToExplicitHydrogens;
+import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.suppressHydrogens;
 import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
 import org.openscience.cdk.tools.manipulator.RingSetManipulator;
 
@@ -99,8 +100,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @see #suppressHydrogens
      */
     public static IAtomContainer copyAndSuppressedHydrogens(IAtomContainer org) {
-
-
         /*
          * Remove the CTAB_SGROUPS flag as CDK 2.2 complains
          */
@@ -200,7 +199,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 ringSet = cycleFinder.find(mol).toRingSet();
                 RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
-                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID(), e);
             }
 
             try {
@@ -212,7 +211,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     aromatizeDayLight(mol);
                 }
             } catch (CDKException e) {
-                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID());
+                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID(), e);
             }
 
             if (ringSet == null) {
@@ -242,7 +241,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 }
             }
         } catch (Exception e) {
-            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID());
+            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID(), e);
         }
     }
 
@@ -261,14 +260,19 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             if (ac.getAtom(i).getProperties() == null) {
                 ac.getAtom(i).setProperties(new HashMap<>());
             }
-            if (ac.getAtom(i).getMassNumber() == null) {
+            if (!(ac.getAtom(i) instanceof IPseudoAtom)
+                    && ac.getAtom(i).getMassNumber() == null) {
                 try {
                     int massNumber = Isotopes.getInstance().getMajorIsotope(ac.getAtom(i).getAtomicNumber()).getMassNumber();
                     ac.getAtom(i).setMassNumber(massNumber);
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    //e.printStackTrace();
                     ac.getAtom(i).setMassNumber(11);
                     LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
                 }
+            } else {
+                //PseudoAtoms
+                ac.getAtom(i).setMassNumber(11);
             }
         }
 
@@ -295,7 +299,6 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     public static IAtomContainer newInstanceWithIDs(IAtomContainer container) throws CloneNotSupportedException {
         //setNullHCountToZero(container);
         IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
-
         IAtomContainer ac = builder.newInstance(IAtomContainer.class, container);
         /*Set IDs as CDK clone doesn't*/
         for (int i = 0; i < ac.getAtomCount(); i++) {
@@ -487,12 +490,10 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param mol
      */
     public static void fixDativeBonds(IAtomContainer mol) {
-        if (mol != null) {
-            if (!(mol instanceof IQueryAtomContainer)) {
-                for (IBond bond : mol.bonds()) {
-                    if (bond.getOrder() == IBond.Order.UNSET) {
-                        bond.setOrder(IBond.Order.SINGLE);
-                    }
+        if (!(mol instanceof IQueryAtomContainer)) {
+            for (IBond bond : mol.bonds()) {
+                if (bond.getOrder() == IBond.Order.UNSET) {
+                    bond.setOrder(IBond.Order.SINGLE);
                 }
             }
         }
@@ -507,7 +508,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      *
      * @param mol molecule to zero out hydrogen counts
      */
-    static void setNullHCountToZero(IAtomContainer mol) {
+    public static void setNullHCountToZero(IAtomContainer mol) {
         for (IAtom a : mol.atoms()) {
             if (a.getImplicitHydrogenCount() == null) {
                 a.setImplicitHydrogenCount(0);

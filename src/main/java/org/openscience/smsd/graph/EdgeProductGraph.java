@@ -13,8 +13,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import org.openscience.smsd.tools.Utility;
-import uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator;
 
 /**
  * This class generates compatibility graph between query and target molecule.

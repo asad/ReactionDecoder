@@ -122,6 +122,7 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULTIPLICITY;
  */
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     BufferedReader input = null;
     private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
 
@@ -232,11 +233,11 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     }
 
     /**
-     * Takes an object which subclasses IChemObject, e.g. Molecule, and will
-     * read this (from file, database, internet etc). If the specific
-     * implementation does not support a specific IChemObject it will throw an
-     * Exception.
+     * Takes an object which subclasses IChemObject, e.g.Molecule, and will read
+     * this (from file, database, internet etc). If the specific implementation
+     * does not support a specific IChemObject it will throw an Exception.
      *
+     * @param <T>
      * @param object The object that subclasses IChemObject
      * @return The IChemObject read
      * @throws CDKException
@@ -2191,7 +2192,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
                 }
 
                 if (!wrap && data.length() > 0) {
-                    data.append('\n');
+                    data.append(NEW_LINE);
                 }
                 data.append(line);
 

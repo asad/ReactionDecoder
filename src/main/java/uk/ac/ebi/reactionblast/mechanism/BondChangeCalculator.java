@@ -93,6 +93,7 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
  */
 public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
+    private static final String NEW_LINE = System.getProperty("line.separator");
     private final boolean DEBUG = false;
     private static final long serialVersionUID = 98698690880809981L;
     private final static ILoggingTool LOGGER
@@ -306,8 +307,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     public synchronized String toString() {
 
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
-
         result.append(NEW_LINE).append(getLicenseHeader());
         result.append(NEW_LINE).append(NEW_LINE).append("//DATA START//");
         result.append(NEW_LINE).append(NEW_LINE);
@@ -901,7 +900,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     private String getLicenseHeader() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
 
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("ecBLAST (Enzymatic Reaction BLAST)");
@@ -931,7 +929,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
     private String getLicenseFooter() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = getProperty("line.separator");
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("NOTE: You can't distribute this tool or it's");
         result.append(NEW_LINE).append("components, including the output without prior");

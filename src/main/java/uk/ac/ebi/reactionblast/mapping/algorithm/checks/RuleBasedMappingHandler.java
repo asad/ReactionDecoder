@@ -40,7 +40,7 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogens;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;

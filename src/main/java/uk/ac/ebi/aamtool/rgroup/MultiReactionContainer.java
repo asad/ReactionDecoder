@@ -37,8 +37,8 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularFragment;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

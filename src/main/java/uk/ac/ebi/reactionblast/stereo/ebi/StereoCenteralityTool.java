@@ -31,7 +31,7 @@ import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.descriptor.Trigonal;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
-import static uk.ac.ebi.reactionblast.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  * Tool for comparing chiralities.
