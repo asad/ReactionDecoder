@@ -20,6 +20,7 @@ import org.openscience.smsd.tools.IterationManager;
 public class GraphKoch implements IClique {
 
     private final static boolean DEBUG = false;
+    private final static boolean DEBUG2 = false;
     private final Collection<Set<Vertex>> cliques;
     private final Graph graph;
     IterationManager manager;
@@ -127,17 +128,18 @@ public class GraphKoch implements IClique {
                 System.out.println("C " + C + ", P " + P + ", D " + D + ", T " + T);
             }
             Set<Vertex> subresult;
-            if (this.graph.V() < 100) {
-                if (DEBUG) {
-                    System.out.println("Small world");
-                }
-                subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....
-            } else {
-                if (DEBUG) {
-                    System.out.println("Big world");
-                }
-                subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
-            }
+            subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....(small footprint)
+//            if (this.graph.V() < 3000) {
+//                if (DEBUG) {
+//                    System.out.println("Small world");
+//                }
+//                subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....
+//            } else {
+//                if (DEBUG) {
+//                    System.out.println("Big world");
+//                }
+//                subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
+//            }
             if (subresult != null && subresult.size() >= result.size()) {
                 result = subresult;
                 currentmaxresult = result.size();
@@ -174,7 +176,7 @@ public class GraphKoch implements IClique {
         }
         manager.increment();
 
-        if (DEBUG && manager.getCounter() % 1000 == 0) {
+        if (DEBUG2 && manager.getCounter() % 1000 == 0) {
             System.out.print("    Found clique #" + manager.getCounter()
                     + "/" + manager.getIterationLimit()
                     + " of size " + result.size() + ".\n");
@@ -238,7 +240,7 @@ public class GraphKoch implements IClique {
         }
         manager.increment();
 
-        if (DEBUG && manager.getCounter() % 1000 == 0) {
+        if (DEBUG2 && manager.getCounter() % 1000 == 0) {
             System.out.print("    Found clique #" + manager.getCounter()
                     + "/" + manager.getIterationLimit()
                     + " of size " + result.size() + ".\n");
