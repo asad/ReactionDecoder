@@ -160,14 +160,14 @@ public class Annotator extends Helper {
                 File generateImage = generateImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
                 out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                LOGGER.error(SEVERE, "Unable to generate AAM image", e);
+                LOGGER.error(SEVERE, "Unable to generate AAM image", e.getMessage());
             }
         } else if (!GENERATE_IMAGE && GENERATE_AAMIMAGE) {
             try {
                 File generateImage = generateAAMImage(new File(".").getCanonicalPath(), s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), reactionID);
                 out.println("Annotated RXN Image " + generateImage.getAbsolutePath());
             } catch (Exception e) {
-                LOGGER.error(SEVERE, "Unable to generate AAM image", e);
+                LOGGER.error(SEVERE, "Unable to generate AAM image", e.getMessage());
             }
         }
         return true;

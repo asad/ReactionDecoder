@@ -176,11 +176,10 @@ public class MappingUtility extends TestUtility {
 //            out.println("Input reactions " + sm.create(cdkReaction));
             ReactionMechanismTool annotation = getAnnotation(cdkReaction);
             MappingSolution s = annotation.getSelectedSolution();
-            out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            //out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e);
+            LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e.getMessage());
         }
         return null;
     }
@@ -215,10 +214,10 @@ public class MappingUtility extends TestUtility {
                 LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
                 TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
             } catch (Exception e) {
-                LOGGER.error(SEVERE, " Failed to generate image: ", e);
+                LOGGER.error(SEVERE, " Failed to generate image: ", e.getMessage());
             }
         } catch (Exception e) {
-            LOGGER.error(SEVERE, " Reaction Mechanism failed ", e);
+            LOGGER.error(SEVERE, " Reaction Mechanism failed ", e.getMessage());
         }
 //        int i = 1;
 //        for (MappingSolution m : rmt.getAllSolutions()) {

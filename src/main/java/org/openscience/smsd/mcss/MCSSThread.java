@@ -224,7 +224,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
 
             }
         } catch (CDKException e) {
-            LOGGER.error("ERROR IN MCS Thread: ", e);
+            LOGGER.error("ERROR IN MCS Thread: ", e.getMessage());
         }
         long endTime = getInstance().getTimeInMillis();
         LOGGER.debug("Done: task " + taskNumber + " took " + (endTime - startTime) + "ms");
@@ -274,7 +274,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 LOGGER.debug(" and mcss has " + querySeed.getAtomCount() + " atoms, and " + querySeed.getBondCount() + " bonds");
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR IN MCS Thread: ", e);
+            LOGGER.error("ERROR IN MCS Thread: ", e.getMessage());
         }
         return mcss;
     }

@@ -127,7 +127,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             try {
                 mcsSolutions = matcher(mh);
             } catch (InterruptedException e) {
-                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
             }
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
                 for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
@@ -172,7 +172,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
         }
 
         try {
@@ -237,7 +237,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
              */
             resetFLAGS(mh);
         } catch (Exception e) {
-            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
         }
     }
 

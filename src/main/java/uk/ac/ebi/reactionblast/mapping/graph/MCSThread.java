@@ -909,7 +909,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
                         + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
             } catch (CloneNotSupportedException | CDKException e) {
-                LOGGER.error(SEVERE, "Error in computing MCS ", e);
+                LOGGER.error(SEVERE, "Error in computing MCS ", e.getMessage());
             }
         }
         /*

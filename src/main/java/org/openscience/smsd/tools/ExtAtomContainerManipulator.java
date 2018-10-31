@@ -199,7 +199,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 ringSet = cycleFinder.find(mol).toRingSet();
                 RingSetManipulator.markAromaticRings(ringSet);
             } catch (CDKException e) {
-                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID(), e);
+                LOGGER.error(Level.WARNING, "Error in find and assigning rings in the molecule. ", mol.getID(), e.getMessage());
             }
 
             try {
@@ -211,7 +211,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     aromatizeDayLight(mol);
                 }
             } catch (CDKException e) {
-                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID(), e);
+                LOGGER.error(Level.WARNING, "Error in aromaticity dectection. ", mol.getID(), e.getMessage());
             }
 
             if (ringSet == null) {
@@ -241,7 +241,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                 }
             }
         } catch (Exception e) {
-            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID(), e);
+            LOGGER.error(Level.WARNING, "Aromaticity detection failed for molecule. ", mol.getID(), e.getMessage());
         }
     }
 
@@ -270,7 +270,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
 //                } catch (Exception e) {
 //                    //e.printStackTrace();
 //                    ac.getAtom(i).setMassNumber(11);
-//                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e);
+//                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e.getMessage());
 //                }
 //            } else if ((ac.getAtom(i) instanceof IPseudoAtom)) {
 //                //PseudoAtoms
@@ -410,7 +410,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     }
                 } catch (CDKException e) {
                     LOGGER.error(Level.WARNING,
-                            "Failed to find Matching AtomType! {0}{1}", new Object[]{atom.getSymbol(), e});
+                            "Failed to find Matching AtomType! {0}{1}", new Object[]{atom.getSymbol(), e.getMessage()});
                 }
             }
         }

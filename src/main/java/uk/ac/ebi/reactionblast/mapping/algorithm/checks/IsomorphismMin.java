@@ -294,7 +294,7 @@ public class IsomorphismMin extends Selector implements IResult {
                 out.println();
             }
         } catch (IOException | CDKException e) {
-            LOGGER.error("Parser Error", e);
+            LOGGER.error("Parser Error", e.getMessage());
         }
         out.println();
 

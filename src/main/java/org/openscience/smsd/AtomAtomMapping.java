@@ -133,7 +133,7 @@ public final class AtomAtomMapping implements Serializable {
             mapping.put(atom1, atom2);
             mappingIndex.put(getQuery().indexOf(atom1), getTarget().indexOf(atom2));
         } catch (Exception e) {
-            LOGGER.error("Error: Add Mapping to the Map", e);
+            LOGGER.error("Error: Add Mapping to the Map", e.getMessage());
         }
     }
 

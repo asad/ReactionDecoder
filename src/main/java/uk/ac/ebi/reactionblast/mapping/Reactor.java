@@ -217,7 +217,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
         } catch (Exception e) {
-            LOGGER.error(SEVERE, "Error in Reactor class", e);
+            LOGGER.error(SEVERE, "Error in Reactor class", e.getMessage());
         }
     }
 
