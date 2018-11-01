@@ -13,8 +13,9 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -181,10 +182,11 @@ public final class EdgeProductGraph implements Serializable {
             return EdgeType.D_EDGE;
         }
 
+        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, matchAtomType);
         if (!possibleVerticesG1.isEmpty() && !possibleVerticesG2.isEmpty()) {
             for (IAtom v1 : possibleVerticesG1) {
                 for (IAtom v2 : possibleVerticesG2) {
-                    if (AtomBondMatcher.matches(v1, v2, shouldMatchRings, matchAtomType)) {
+                    if (AtomBondMatcher.matches(v1, v2, atomMatcher)) {
 //                    if (v1.getSymbol().equals(v2.getSymbol())) {
                         // e1,f1 in G1 are connected via a vertex of
                         // the same label as the vertex shared by e2,f2 in G2.

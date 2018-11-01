@@ -15,6 +15,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.tools.IterationManager;
 
 /**
@@ -461,11 +463,13 @@ final public class CDKMCS {
             boolean shouldMatchBonds, boolean shouldMatchRings,
             boolean matchAtomType) throws CDKException {
         // handle single query atom case separately
+
+        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, matchAtomType);
         if (g2.getAtomCount() == 1) {
             List<List<CDKRMap>> matches = new ArrayList<>();
             IAtom queryAtom = g2.getAtom(0);
             for (IAtom atom : g1.atoms()) {
-                if (AtomBondMatcher.matches(queryAtom, atom, shouldMatchRings, matchAtomType)) {
+                if (AtomBondMatcher.matches(queryAtom, atom, atomMatcher)) {
                     List<CDKRMap> lmap = new ArrayList<>();
                     lmap.add(new CDKRMap(g1.indexOf(atom), 0));
                     matches.add(lmap);

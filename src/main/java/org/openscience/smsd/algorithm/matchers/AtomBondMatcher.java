@@ -25,8 +25,6 @@ package org.openscience.smsd.algorithm.matchers;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
-import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 
 /**
  * Checks if atom is matching between query and target molecules.
@@ -53,63 +51,43 @@ public class AtomBondMatcher {
             boolean shouldMatchBonds,
             boolean shouldMatchRings,
             boolean matchAtomType) {
-        boolean atomMatch = AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getBegin(),
-                shouldMatchRings, matchAtomType)
-                        ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getEnd(),
-                                shouldMatchRings, matchAtomType)
-                        : AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getEnd(),
-                                shouldMatchRings, matchAtomType)
-                                ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getBegin(),
-                                        shouldMatchRings, matchAtomType) : false;
-
-        boolean bondMatch = AtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings);
-        return atomMatch && bondMatch;
+        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, matchAtomType);
+        boolean atomMatch1 = matches(bondA1.getBegin(), bondA2.getBegin(), atomMatcher)
+                && matches(bondA1.getEnd(), bondA2.getEnd(), atomMatcher);
+        boolean atomMatch2 = matches(bondA1.getBegin(), bondA2.getEnd(), atomMatcher)
+                && matches(bondA1.getEnd(), bondA2.getBegin(), atomMatcher);
+        BondMatcher bondMatcher = bondMatcher(shouldMatchBonds, shouldMatchRings);
+        boolean bondMatch = matches(bondA1, bondA2, bondMatcher);
+        return (atomMatch1 || atomMatch2) && bondMatch;
     }
 
     /**
      *
      * @param bondA1
      * @param bondA2
-     * @param matchBond
-     * @param shouldMatchRings
+     * @param bm Bond Matcher
      * @return
      */
     public static boolean matches(
             IBond bondA1,
             IBond bondA2,
-            boolean matchBond,
-            boolean shouldMatchRings) {
-
-        if (bondA1 instanceof IQueryBond) {
-            BondMatcher bm = queryBondMatcher();
-            return bm.matches(bondA1, bondA2);
-        } else {
-            BondMatcher bm = bondMatcher(matchBond, shouldMatchRings);
-            return bm.matches(bondA1, bondA2);
-        }
+            BondMatcher bm) {
+        return bm.matches(bondA1, bondA2);
     }
 
     /**
      *
      * @param a1
      * @param a2
-     * @param shouldMatchRings
-     * @param matchAtomTypes
+     * @param am Atom Matcher
      * @return
      */
     public static boolean matches(
             IAtom a1,
             IAtom a2,
-            boolean shouldMatchRings,
-            boolean matchAtomTypes) {
+            AtomMatcher am) {
+        return am.matches(a1, a1);
 
-        if (a1 instanceof IQueryAtom) {
-            AtomMatcher am = queryAtomMatcher();
-            return am.matches(a1, a2);
-        } else {
-            AtomMatcher am = atomMatcher(shouldMatchRings, matchAtomTypes);
-            return am.matches(a1, a1);
-        }
     }
 
     /**

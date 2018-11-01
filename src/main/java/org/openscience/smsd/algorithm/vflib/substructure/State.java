@@ -53,6 +53,10 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
+import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.bondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  * This class finds mapping states between query and target molecules.
@@ -64,7 +68,7 @@ import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 // The State class represents a single state in the isomorphism detection
 // algorithm. Every state uses and modifies the same SharedState object.
 final class State {
-    
+
     private final boolean shouldMatchBonds;
     private final boolean shouldMatchRings;
     private final IAtomContainer source;
@@ -75,31 +79,31 @@ final class State {
     public boolean isGoal() {
         return size == source.getAtomCount();
     }
-    
+
     public boolean isDead() {
         return (!isMatchPossible || source.getAtomCount() > target.getAtomCount());
     }
-    
+
     public boolean hasNextCandidate(Pair<Integer, Integer> candidate) {
         return candidate.getSourceAtom() != -1;
     }
-    
+
     int getSize() {
         return size;
     }
-    
+
     IAtomContainer getSource() {
         return source;
     }
-    
+
     IAtomContainer getTarget() {
         return target;
     }
-    
+
     IAtom sourceAtom(int index) {
         return source.getAtom(index);
     }
-    
+
     IAtom targetAtom(int index) {
         return target.getAtom(index);
     }
@@ -111,7 +115,7 @@ final class State {
     private final boolean ownSharedState;
     private boolean[][] matches;
     private boolean isMatchPossible = false;
-    
+
     State(IAtomContainer source, IAtomContainer target,
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
         this.size = 0;
@@ -122,7 +126,7 @@ final class State {
         this.ownSharedState = true;
         this.matches = new boolean[this.source.getAtomCount()][this.target.getAtomCount()];
         this.isMatchPossible = isFeasible();
-        
+
         this.lastAddition = new Pair<>(-1, -1);
         this.sharedState = new SharedState(source.getAtomCount(),
                 target.getAtomCount());
@@ -130,7 +134,7 @@ final class State {
         this.shouldMatchRings = shouldMatchRings;
         this.shouldMatchAtomType = matchAtomType;
     }
-    
+
     State(IQueryAtomContainer source, IAtomContainer target) {
         this.size = 0;
         this.sourceTerminalSize = 0;
@@ -140,7 +144,7 @@ final class State {
         this.ownSharedState = true;
         this.matches = new boolean[this.source.getAtomCount()][this.target.getAtomCount()];
         this.isMatchPossible = isFeasible();
-        
+
         this.lastAddition = new Pair<>(-1, -1);
         this.sharedState = new SharedState(source.getAtomCount(),
                 target.getAtomCount());
@@ -148,7 +152,7 @@ final class State {
         this.shouldMatchRings = true;
         this.shouldMatchAtomType = true;
     }
-    
+
     State(State state) {
         this.size = state.size;
         this.sourceTerminalSize = state.sourceTerminalSize;
@@ -163,7 +167,7 @@ final class State {
         this.shouldMatchRings = state.shouldMatchRings;
         this.shouldMatchAtomType = state.shouldMatchAtomType;
     }
-    
+
     private boolean isFeasible() {
         for (int i = 0; i < source.getAtomCount(); i++) {
             boolean flag = false;
@@ -183,7 +187,7 @@ final class State {
         return true;
 //        System.out.println("Compatibility graph " + candidates.size());
     }
-    
+
     public void dispose() {
         if (this.ownSharedState) {
             if (this.sharedState != null) {
@@ -196,7 +200,7 @@ final class State {
     // object.
     AtomAtomMapping getMapping() {
         AtomAtomMapping mapping = new AtomAtomMapping(source, target);
-        
+
         for (int i = 0; i < size; i++) {
             mapping.put(source.getAtom(i),
                     target.getAtom(sharedState.sourceMapping[i]));
@@ -211,20 +215,20 @@ final class State {
             Pair<Integer, Integer> lastCandidate) {
         int lastSourceAtom = lastCandidate.getSourceAtom();
         int lastTargetAtom = lastCandidate.getTargetAtom();
-        
+
         int sourceSize = source.getAtomCount();
         int targetSize = target.getAtomCount();
-        
+
         if (lastSourceAtom == -1) {
             lastSourceAtom = 0;
         }
-        
+
         if (lastTargetAtom == -1) {
             lastTargetAtom = 0;
         } else {
             lastTargetAtom++;
         }
-        
+
         if (sourceTerminalSize > size && targetTerminalSize > size) {
             while (lastSourceAtom < sourceSize
                     && (sharedState.sourceMapping[lastSourceAtom] != -1
@@ -239,7 +243,7 @@ final class State {
                 lastTargetAtom = 0;
             }
         }
-        
+
         if (sourceTerminalSize > size && targetTerminalSize > size) {
             while (lastTargetAtom < targetSize
                     && (sharedState.targetMapping[lastTargetAtom] != -1
@@ -252,11 +256,11 @@ final class State {
                 lastTargetAtom++;
             }
         }
-        
+
         if (lastSourceAtom < sourceSize && lastTargetAtom < targetSize) {
             return new Pair<>(lastSourceAtom, lastTargetAtom);
         }
-        
+
         return new Pair<>(-1, -1);
     }
 
@@ -265,23 +269,23 @@ final class State {
     void nextState(Pair<Integer, Integer> candidate) {
         size++;
         lastAddition = candidate;
-        
+
         int sourceAtom = candidate.getSourceAtom();
         int targetAtom = candidate.getTargetAtom();
-        
+
         if (sharedState.sourceTerminalSet[sourceAtom] < 1) {
             sharedState.sourceTerminalSet[sourceAtom] = size;
 //                sourceTerminalSize++;
         }
-        
+
         if (sharedState.targetTerminalSet[targetAtom] < 1) {
             sharedState.targetTerminalSet[targetAtom] = size;
 //                targetTerminalSize++;
         }
-        
+
         sharedState.sourceMapping[sourceAtom] = targetAtom;
         sharedState.targetMapping[targetAtom] = sourceAtom;
-        
+
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(sourceAtom));
         sourceNeighbours.stream().map((neighbor) -> source.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
@@ -290,7 +294,7 @@ final class State {
         }).forEach((_item) -> {
             sourceTerminalSize++;
         });
-        
+
         List<IAtom> targetNeighbours = target.getConnectedAtomsList(target.getAtom(targetAtom));
         targetNeighbours.stream().map((neighbor) -> target.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] < 1)).map((neighbourIndex) -> {
             sharedState.targetTerminalSet[neighbourIndex] = size;
@@ -308,35 +312,35 @@ final class State {
             return;
         }
         int addedSourceAtom = lastAddition.getSourceAtom();
-        
+
         if (sharedState.sourceTerminalSet[addedSourceAtom] == size) {
             sharedState.sourceTerminalSet[addedSourceAtom] = 0;
         }
-        
+
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(addedSourceAtom));
         sourceNeighbours.stream().map((neighbor) -> source.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.sourceTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
             sharedState.sourceTerminalSet[neighbourIndex] = 0;
         });
-        
+
         int addedTargetAtom = lastAddition.getTargetAtom();
-        
+
         if (sharedState.targetTerminalSet[addedTargetAtom] == size) {
             sharedState.targetTerminalSet[addedTargetAtom] = 0;
         }
-        
+
         List<IAtom> targetNeighbours
                 = target.getConnectedAtomsList(target.getAtom(addedTargetAtom));
         targetNeighbours.stream().map((neighbor) -> target.indexOf(neighbor)).filter((neighbourIndex) -> (sharedState.targetTerminalSet[neighbourIndex] == size)).forEach((neighbourIndex) -> {
             sharedState.targetTerminalSet[neighbourIndex] = 0;
         });
-        
+
         sharedState.sourceMapping[addedSourceAtom] = -1;
         sharedState.targetMapping[addedTargetAtom] = -1;
         size--;
         lastAddition = new Pair<>(-1, -1);
     }
-    
+
     boolean isMatchFeasible(Pair<Integer, Integer> candidate) {
         int sourceAtom = candidate.getSourceAtom();
         int targetAtom = candidate.getTargetAtom();
@@ -350,42 +354,42 @@ final class State {
         if (!this.matches[sourceAtom][targetAtom]) {
             return false;
         }
-        
+
         int sourceTerminalNeighborCount = 0;
         int targetTerminalNeighborCount = 0;
         int sourceNewNeighborCount = 0;
         int targetNewNeighborCount = 0;
-        
+
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(sourceAtom));
-        
+
         for (IAtom neighbour : sourceNeighbours) {
             int neighbourIndex = source.indexOf(neighbour);
-            
+
             IAtom sourceAtomAtom = source.getAtom(sourceAtom);
             IBond sourceBond = source.getBond(sourceAtomAtom, neighbour);
-            
+
             if (sharedState.sourceMapping[neighbourIndex] != -1) {
                 int targetNeighbor = sharedState.sourceMapping[neighbourIndex];
                 IAtom targetNeighbourAtom = target.getAtom(targetNeighbor);
                 IAtom targetAtomAtom = target.getAtom(targetAtom);
-                
+
                 if (target.getBond(targetAtomAtom, targetNeighbourAtom) == null) {
                     return false;
                 }
-                
+
                 IBond targetBond = target.getBond(targetAtomAtom, targetNeighbourAtom);
                 if (!matchBonds(sourceBond, targetBond)) {
                     return false;
                 }
-                
+
             } else if (sharedState.sourceTerminalSet[neighbourIndex] > 0) {
                 sourceTerminalNeighborCount++;
             } else {
                 sourceNewNeighborCount++;
             }
         }
-        
+
         List<IAtom> targetNeighbours
                 = target.getConnectedAtomsList(target.getAtom(targetAtom));
         for (IAtom neighbour : targetNeighbours) {
@@ -407,26 +411,26 @@ final class State {
         return (sourceTerminalNeighborCount <= targetTerminalNeighborCount)
                 && (sourceNewNeighborCount <= targetNewNeighborCount);
     }
-    
+
     boolean matchFirst(State state, List<AtomAtomMapping> mappings) {
 //            System.out.println("Matched " + state.size + " out of " + state.source.getAtomCount());
         if (state.isGoal()) {
             mappings.add(state.getMapping());
             return true;
         }
-        
+
         Pair<Integer, Integer> lastCandidate = new Pair<>(-1, -1);
-        
+
         boolean found = false;
         while (!found) {
             Pair<Integer, Integer> candidate = state.nextCandidate(lastCandidate);
-            
+
             if (!state.hasNextCandidate(candidate)) {
                 return false;
             }
-            
+
             lastCandidate = candidate;
-            
+
             if (state.isMatchFeasible(candidate)) {
                 State nextState = new State(state);
                 nextState.nextState(candidate);
@@ -437,7 +441,7 @@ final class State {
                 nextState.backTrack();
             }
         }
-        
+
         return found;
     }
 
@@ -452,10 +456,10 @@ final class State {
             }
             return;
         }
-        
+
         Pair<Integer, Integer> lastCandidate = new Pair<>(-1, -1);
         Pair<Integer, Integer> candidate = state.nextCandidate(lastCandidate);
-        
+
         while (state.hasNextCandidate(candidate)) {
             lastCandidate = candidate;
             if (state.isMatchFeasible(lastCandidate)) {
@@ -466,7 +470,7 @@ final class State {
             }
         }
     }
-    
+
     private boolean matcher(int queryAtom, int targetAtom) {
         List<IAtom> sourceNeighbours
                 = source.getConnectedAtomsList(source.getAtom(queryAtom));
@@ -477,15 +481,17 @@ final class State {
         }
         return sourceNeighbours.size() <= targetNeighbours.size();
     }
-    
+
     boolean matchBonds(IBond queryBond, IBond targetBond) {
-        return AtomBondMatcher.matches(queryBond, queryBond, shouldMatchBonds, shouldMatchRings);
+        BondMatcher bondMatcher = bondMatcher(shouldMatchBonds, shouldMatchRings);
+        return AtomBondMatcher.matches(queryBond, queryBond, bondMatcher);
     }
-    
+
     boolean matchAtoms(IAtom sourceAtom, IAtom targetAtom) {
-        return AtomBondMatcher.matches(sourceAtom, targetAtom, shouldMatchRings, shouldMatchAtomType);
+        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, shouldMatchAtomType);
+        return AtomBondMatcher.matches(sourceAtom, targetAtom, atomMatcher);
     }
-    
+
     private boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mappings) {
         return mappings.stream().anyMatch((test) -> (test.equals(map)));
     }
