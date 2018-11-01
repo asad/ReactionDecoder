@@ -37,7 +37,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.helper.BinaryTree;
 import org.openscience.smsd.tools.IterationManager;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * Class which reports MCS solutions based on the McGregor algorithm published

@@ -17,7 +17,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
  * @author John May
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
+public abstract class AtomMatcher {
 
     /**
      * Are the semantics of {@code atom1} compatible with {@code atom2}.
@@ -26,7 +26,6 @@ public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMa
      * @param atom2 an atom from the target container
      * @return the atom1 can be paired with atom2
      */
-    @Override
     public abstract boolean matches(IAtom atom1, IAtom atom2);
 
     /**
@@ -163,7 +162,7 @@ public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMa
         private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
 
             if (atom1.isInRing() & atom2.isInRing()) {
-                System.out.println("isRingSizeMatch");
+                //System.out.println("isRingSizeMatch");
                 List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
                 List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
                 if (ringsizesQ == null || ringsizesT == null) {
@@ -198,6 +197,8 @@ public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMa
          */
         @Override
         public boolean matches(IAtom atom1, IAtom atom2) {
+//            System.out.print(atom1.getSymbol() + " : " + atomicNumber(atom1) + ", ");
+//            System.out.println(atom2.getSymbol() + " : " + atomicNumber(atom2));
             return atomicNumber(atom1) == atomicNumber(atom2)
                     && matchAtomType(atom1, atom2);
         }

@@ -25,6 +25,8 @@ package org.openscience.smsd.algorithm.matchers;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * Checks if atom is matching between query and target molecules.
@@ -35,6 +37,10 @@ import org.openscience.cdk.interfaces.IBond;
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
 public class AtomBondMatcher {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(AtomBondMatcher.class);
+    private final static boolean DEBUG = false;
 
     /**
      *
@@ -51,6 +57,9 @@ public class AtomBondMatcher {
             boolean shouldMatchBonds,
             boolean shouldMatchRings,
             boolean matchAtomType) {
+        if (DEBUG) {
+            System.out.println("\n\n matchAtomAndBond ");
+        }
         AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, matchAtomType);
         boolean atomMatch1 = matches(bondA1.getBegin(), bondA2.getBegin(), atomMatcher)
                 && matches(bondA1.getEnd(), bondA2.getEnd(), atomMatcher);
@@ -58,6 +67,17 @@ public class AtomBondMatcher {
                 && matches(bondA1.getEnd(), bondA2.getBegin(), atomMatcher);
         BondMatcher bondMatcher = bondMatcher(shouldMatchBonds, shouldMatchRings);
         boolean bondMatch = matches(bondA1, bondA2, bondMatcher);
+
+        if (DEBUG) {
+            System.out.println(" bondA1 a0:" + bondA1.getBegin().getSymbol()
+                    + " a1:" + bondA1.getEnd().getSymbol());
+            System.out.println(" bondB1 b0:" + bondA2.getBegin().getSymbol()
+                    + " b1:" + bondA2.getEnd().getSymbol());
+
+            System.out.println(" atomMatch1 " + atomMatch1
+                    + "| atomMatch2 " + atomMatch2
+                    + ", bondMatch " + bondMatch);
+        }
         return (atomMatch1 || atomMatch2) && bondMatch;
     }
 
@@ -86,7 +106,7 @@ public class AtomBondMatcher {
             IAtom a1,
             IAtom a2,
             AtomMatcher am) {
-        return am.matches(a1, a1);
+        return am.matches(a1, a2);
 
     }
 
@@ -103,12 +123,16 @@ public class AtomBondMatcher {
         AtomMatcher am = AtomMatcher.forElement();
 
         if (shouldMatchRings) {
-//                System.out.println("shouldMatchRings " + shouldMatchRings);
+            if (DEBUG) {
+                System.out.println("shouldMatchRings " + shouldMatchRings);
+            }
             am = AtomMatcher.forRingMatcher();
         }
 
         if (matchAtomTypes) {
-//                System.out.println("matchAtomTypes " + matchAtomTypes);
+            if (DEBUG) {
+                System.out.println("matchAtomTypes " + matchAtomTypes);
+            }
             am = AtomMatcher.forAtomTypeMatcher();
         }
         return am;
@@ -127,12 +151,16 @@ public class AtomBondMatcher {
         BondMatcher bm = BondMatcher.forAny();
 
         if (matchBond) {
-//                System.out.println("matchBond " + matchBond);
+            if (DEBUG) {
+                System.out.println("matchBond " + matchBond);
+            }
             bm = BondMatcher.forOrder();
         }
 
         if (shouldMatchRings) {
-//                System.out.println("shouldMatchRings " + shouldMatchRings);
+            if (DEBUG) {
+                System.out.println("shouldMatchRings " + shouldMatchRings);
+            }
             bm = BondMatcher.forStrictOrder();
         }
         return bm;

@@ -116,7 +116,9 @@ public final class VentoFoggia {
      * @param bondMatcher how bonds should be matched
      * @param substructure substructure search
      */
-    private VentoFoggia(IAtomContainer query, AtomMatcher atomMatcher, BondMatcher bondMatcher, boolean substructure) {
+    private VentoFoggia(IAtomContainer query, AtomMatcher atomMatcher, 
+            BondMatcher bondMatcher, 
+            boolean substructure) {
         this.query = query;
         this.atomMatcher = atomMatcher;
         this.bondMatcher = bondMatcher;
@@ -194,7 +196,8 @@ public final class VentoFoggia {
      * @param bondMatcher how bonds are matched
      * @return a pattern for finding the {@code query}
      */
-    public static VentoFoggia findSubstructure(IAtomContainer query, AtomMatcher atomMatcher, BondMatcher bondMatcher) {
+    public static VentoFoggia findSubstructure(IAtomContainer query, 
+            AtomMatcher atomMatcher, BondMatcher bondMatcher) {
         return new VentoFoggia(query, atomMatcher, bondMatcher, true);
     }
 
@@ -207,7 +210,10 @@ public final class VentoFoggia {
      * @param bondMatcher how bonds are matched
      * @return a pattern for finding the {@code query}
      */
-    public static VentoFoggia findIdentical(IAtomContainer query, AtomMatcher atomMatcher, BondMatcher bondMatcher) {
+    public static VentoFoggia findIdentical(
+            IAtomContainer query, 
+            AtomMatcher atomMatcher, 
+            BondMatcher bondMatcher) {
         return new VentoFoggia(query, atomMatcher, bondMatcher, false);
     }
 

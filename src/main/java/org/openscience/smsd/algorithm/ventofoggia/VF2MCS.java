@@ -642,8 +642,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        AtomMatcher am = AtomMatcher.forAny();
-        BondMatcher bm = BondMatcher.forAny();
+        AtomMatcher am = null;
+        BondMatcher bm = null;
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {

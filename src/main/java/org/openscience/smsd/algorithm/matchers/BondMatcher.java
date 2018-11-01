@@ -11,10 +11,11 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 
 /**
  * CDK class adapted SMSD
+ *
  * @author John May
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-public abstract class BondMatcher extends org.openscience.cdk.isomorphism.BondMatcher {
+public abstract class BondMatcher {
 
     /**
      * Determines if {@code bond1} is compatible with {@code bond2}.
@@ -23,7 +24,6 @@ public abstract class BondMatcher extends org.openscience.cdk.isomorphism.BondMa
      * @param bond2 a bond from the target structure
      * @return the bonds are compatible
      */
-    @Override
     public abstract boolean matches(IBond bond1, IBond bond2);
 
     /**
