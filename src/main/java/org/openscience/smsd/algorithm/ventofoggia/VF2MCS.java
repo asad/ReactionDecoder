@@ -38,10 +38,6 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.isomorphism.AtomMatcher;
-import org.openscience.cdk.isomorphism.BondMatcher;
-import org.openscience.cdk.isomorphism.Mappings;
-import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
@@ -49,16 +45,19 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
+import org.openscience.smsd.graph.algorithm.VentoFoggia;
+import org.openscience.smsd.helper.Mappings;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.ventofoggia12.VF2MCS} and reports MCS between
- * run source and target graphs. Then these solutions are extended using
+ * {@link org.openscience.smsd.algorithm.ventofoggia12.VF2MCS} and reports MCS
+ * between run source and target graphs. Then these solutions are extended using
  * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.
  *
@@ -643,45 +642,25 @@ public final class VF2MCS extends BaseMCS implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        AtomMatcher am;
-        BondMatcher bm;
+        AtomMatcher am = AtomMatcher.forAny();
+        BondMatcher bm = BondMatcher.forAny();
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
 
             countR = getReactantMol().getAtomCount();
             countP = getProductMol().getAtomCount();
+            am = AtomBondMatcher.atomMatcher(isMatchRings(), isMatchAtomType());
+            bm = AtomBondMatcher.bondMatcher(isBondMatchFlag(), isMatchRings());
 
-            am = AtomMatcher.forElement();
-            bm = BondMatcher.forAny();
-            if (isMatchAtomType()) {
-                am = AtomMatcher.forElement();
-            }
-
-            if (isBondMatchFlag()) {
-                bm = BondMatcher.forOrder();
-            }
-
-            if (isMatchRings()) {
-                bm = BondMatcher.forStrictOrder();
-            }
-        } else {
-            if (source instanceof IQueryAtomContainer) {
-                am = AtomMatcher.forQuery();
-            } else {
-                am = AtomMatcher.forElement();
-            }
-
-            if (source instanceof IQueryAtomContainer) {
-                bm = BondMatcher.forQuery();
-            } else {
-                bm = BondMatcher.forAny();
-            }
         }
-
         if (source instanceof IQueryAtomContainer) {
-            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target);
+            am = AtomBondMatcher.queryAtomMatcher();
+            bm = AtomBondMatcher.queryBondMatcher();
+        }
+        if (source instanceof IQueryAtomContainer) {
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
                 vfLibSolutions.add(map);
@@ -689,8 +668,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
             setVFMappings(true);
         } else if (countR <= countP) {
 
-            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = patternVF.matchAll(target);
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = findSubstructure.matchAll(target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
                 vfLibSolutions.add(map);
@@ -698,8 +677,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
             setVFMappings(true);
         } else if (countR > countP) {
 
-            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(target, am, bm); // create pattern
-            Mappings matchAll = patternVF.matchAll(source);
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(target, am, bm); // create pattern
+            Mappings matchAll = findSubstructure.matchAll(source);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
                 vfLibSolutions.add(map);

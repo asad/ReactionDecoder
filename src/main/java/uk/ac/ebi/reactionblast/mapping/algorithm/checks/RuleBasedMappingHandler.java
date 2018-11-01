@@ -31,10 +31,6 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.isomorphism.AtomMatcher;
-import org.openscience.cdk.isomorphism.BondMatcher;
-import org.openscience.cdk.isomorphism.Mappings;
-import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
@@ -45,6 +41,11 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
+import org.openscience.smsd.graph.algorithm.VentoFoggia;
+import org.openscience.smsd.helper.Mappings;
 
 /**
  *
@@ -446,49 +447,28 @@ public final class RuleBasedMappingHandler implements Serializable {
             return null;
         }
 
-        AtomMatcher am;
-        BondMatcher bm;
+        AtomMatcher am = AtomMatcher.forAny();
+        BondMatcher bm = BondMatcher.forAny();
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
+            am = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
+            bm = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
 
-            am = AtomMatcher.forElement();
-            if (matchAtomType) {
-                am = AtomMatcher.forElement();
-            }
-
-            if (matchBonds) {
-                bm = BondMatcher.forOrder();
-            } else {
-                bm = BondMatcher.forAny();
-            }
-
-            if (shouldMatchRings) {
-                bm = BondMatcher.forStrictOrder();
-            }
-        } else {
-            if (source instanceof IQueryAtomContainer) {
-                am = AtomMatcher.forQuery();
-            } else {
-                am = AtomMatcher.forElement();
-            }
-
-            if (source instanceof IQueryAtomContainer) {
-                bm = BondMatcher.forQuery();
-            } else {
-                bm = BondMatcher.forAny();
-            }
+        }
+        if (source instanceof IQueryAtomContainer) {
+            am = AtomBondMatcher.queryAtomMatcher();
+            bm = AtomBondMatcher.queryBondMatcher();
         }
 
         if (source instanceof IQueryAtomContainer) {
-            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target).limit(1);
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target).limit(1);
             return matchAll.toAtomMap();
 
         } else if (source.getAtomCount() <= target.getAtomCount()) {
-
-            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = patternVF.matchAll(target).limit(1);
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = findSubstructure.matchAll(target).limit(1);
             return matchAll.toAtomMap();
 
         }

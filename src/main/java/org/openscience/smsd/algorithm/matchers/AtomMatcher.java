@@ -13,10 +13,11 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 
 /**
  * CDK class adapted SMSD
+ *
  * @author John May
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
+public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
 
     /**
      * Are the semantics of {@code atom1} compatible with {@code atom2}.
@@ -160,13 +161,19 @@ abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
         }
 
         private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
-            List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
-            List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
-            if (ringsizesQ == null || ringsizesT == null) {
-                return false;
+
+            if (atom1.isInRing() & atom2.isInRing()) {
+                System.out.println("isRingSizeMatch");
+                List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
+                List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
+                if (ringsizesQ == null || ringsizesT == null) {
+                    return false;
+                } else {
+                    return ringsizesT.containsAll(ringsizesQ)
+                            || ringsizesQ.containsAll(ringsizesT);
+                }
             } else {
-                return ringsizesT.containsAll(ringsizesQ)
-                        || ringsizesQ.containsAll(ringsizesT);
+                return false;
             }
         }
     }

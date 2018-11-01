@@ -456,7 +456,7 @@ final public class CDKMCS {
      * search solutions
      * @throws CDKException
      */
-    public static List<List<CDKRMap>> search(IAtomContainer g1, IAtomContainer g2, BitSet c1,
+    static List<List<CDKRMap>> search(IAtomContainer g1, IAtomContainer g2, BitSet c1,
             BitSet c2, boolean findAllStructure, boolean findAllMap,
             boolean shouldMatchBonds, boolean shouldMatchRings,
             boolean matchAtomType) throws CDKException {

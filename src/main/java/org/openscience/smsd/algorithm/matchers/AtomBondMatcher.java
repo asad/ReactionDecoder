@@ -81,21 +81,10 @@ public class AtomBondMatcher {
             boolean shouldMatchRings) {
 
         if (bondA1 instanceof IQueryBond) {
-            BondMatcher bm = BondMatcher.forQuery();
+            BondMatcher bm = queryBondMatcher();
             return bm.matches(bondA1, bondA2);
         } else {
-            BondMatcher bm = BondMatcher.forAny();
-
-            if (matchBond) {
-//                System.out.println("matchBond " + matchBond);
-                bm = BondMatcher.forOrder();
-            }
-
-            if (shouldMatchRings) {
-//                System.out.println("shouldMatchRings " + shouldMatchRings);
-                bm = BondMatcher.forStrictOrder();
-            }
-
+            BondMatcher bm = bondMatcher(matchBond, shouldMatchRings);
             return bm.matches(bondA1, bondA2);
         }
     }
@@ -115,22 +104,77 @@ public class AtomBondMatcher {
             boolean matchAtomTypes) {
 
         if (a1 instanceof IQueryAtom) {
-            AtomMatcher am = AtomMatcher.forQuery();
+            AtomMatcher am = queryAtomMatcher();
             return am.matches(a1, a2);
         } else {
-            AtomMatcher am = AtomMatcher.forElement();
-
-            if (shouldMatchRings) {
-//                System.out.println("shouldMatchRings " + shouldMatchRings);
-                am = AtomMatcher.forRingMatcher();
-            }
-
-            if (matchAtomTypes) {
-//                System.out.println("matchAtomTypes " + matchAtomTypes);
-                am = AtomMatcher.forAtomTypeMatcher();
-            }
-
+            AtomMatcher am = atomMatcher(shouldMatchRings, matchAtomTypes);
             return am.matches(a1, a1);
         }
+    }
+
+    /**
+     * Get Atom Matcher
+     *
+     * @param shouldMatchRings
+     * @param matchAtomTypes
+     * @return
+     */
+    public static AtomMatcher atomMatcher(
+            boolean shouldMatchRings,
+            boolean matchAtomTypes) {
+        AtomMatcher am = AtomMatcher.forElement();
+
+        if (shouldMatchRings) {
+//                System.out.println("shouldMatchRings " + shouldMatchRings);
+            am = AtomMatcher.forRingMatcher();
+        }
+
+        if (matchAtomTypes) {
+//                System.out.println("matchAtomTypes " + matchAtomTypes);
+            am = AtomMatcher.forAtomTypeMatcher();
+        }
+        return am;
+    }
+
+    /**
+     * Get Bond Matcher
+     *
+     * @param matchBond
+     * @param shouldMatchRings
+     * @return
+     */
+    public static BondMatcher bondMatcher(
+            boolean matchBond,
+            boolean shouldMatchRings) {
+        BondMatcher bm = BondMatcher.forAny();
+
+        if (matchBond) {
+//                System.out.println("matchBond " + matchBond);
+            bm = BondMatcher.forOrder();
+        }
+
+        if (shouldMatchRings) {
+//                System.out.println("shouldMatchRings " + shouldMatchRings);
+            bm = BondMatcher.forStrictOrder();
+        }
+        return bm;
+    }
+
+    /**
+     * Query Atom Matcher
+     *
+     * @return
+     */
+    public static AtomMatcher queryAtomMatcher() {
+        return AtomMatcher.forQuery();
+    }
+
+    /**
+     * Query Bond Matcher
+     *
+     * @return
+     */
+    public static BondMatcher queryBondMatcher() {
+        return BondMatcher.forQuery();
     }
 }

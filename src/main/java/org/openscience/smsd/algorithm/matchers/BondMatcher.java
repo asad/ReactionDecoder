@@ -14,7 +14,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
  * @author John May
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-abstract class BondMatcher extends org.openscience.cdk.isomorphism.BondMatcher {
+public abstract class BondMatcher extends org.openscience.cdk.isomorphism.BondMatcher {
 
     /**
      * Determines if {@code bond1} is compatible with {@code bond2}.
