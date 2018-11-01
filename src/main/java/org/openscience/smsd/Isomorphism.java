@@ -38,7 +38,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
-import org.openscience.smsd.algorithm.vflib.VF2MCS;
+import org.openscience.smsd.algorithm.ventofoggia.VF2MCS;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
 

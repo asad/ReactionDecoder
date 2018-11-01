@@ -32,7 +32,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
-import org.openscience.smsd.algorithm.vflib.VF2Substructure;
+import org.openscience.smsd.algorithm.ventofoggia.VF2Substructure;
 
 /**
  * This is an ultra fast method to report if query is a substructure for target

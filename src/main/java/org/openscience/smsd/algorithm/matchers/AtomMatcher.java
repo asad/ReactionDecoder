@@ -12,10 +12,11 @@ import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 
 /**
+ * CDK class adapted SMSD
  * @author John May
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-public abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
+abstract class AtomMatcher extends org.openscience.cdk.isomorphism.AtomMatcher {
 
     /**
      * Are the semantics of {@code atom1} compatible with {@code atom2}.

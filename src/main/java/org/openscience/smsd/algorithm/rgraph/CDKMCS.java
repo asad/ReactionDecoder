@@ -16,7 +16,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.tools.IterationManager;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * This class implements atom multipurpose structure comparison tool. It allows
@@ -72,7 +71,7 @@ import org.openscience.smsd.tools.Utility;
  *
  */
 final public class CDKMCS {
-    
+
     protected static boolean timeout = false;
     protected final static int ID1 = 0;
     protected final static int ID2 = 1;
@@ -105,7 +104,7 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         if (g2.getAtomCount() != g1.getAtomCount()) {
             return false;
         }
@@ -145,15 +144,15 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         List<CDKRMap> result = null;
-        
+
         List<List<CDKRMap>> rMapsList = search(g1, g2, getBitSet(g1), getBitSet(g2), false, false, shouldMatchBonds, shouldMatchRings, matchAtomType);
-        
+
         if (!rMapsList.isEmpty()) {
             result = rMapsList.get(0);
         }
-        
+
         return result;
     }
 
@@ -176,7 +175,7 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         List<CDKRMap> list = checkSingleAtomCases(g1, g2);
         if (list == null) {
             return makeAtomsMapOfBondsMap(getIsomorphMap(g1, g2, shouldMatchBonds, shouldMatchRings, matchAtomType), g1, g2);
@@ -251,11 +250,11 @@ final public class CDKMCS {
         List<CDKRMap> result = null;
         List<List<CDKRMap>> rMapsList = search(g1, g2, new BitSet(), getBitSet(g2), false, false,
                 shouldMatchBonds, shouldMatchRings, matchAtomType);
-        
+
         if (!rMapsList.isEmpty()) {
             result = rMapsList.get(0);
         }
-        
+
         return result;
     }
 
@@ -333,7 +332,7 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         if (g2.getAtomCount() > g1.getAtomCount()) {
             return false;
         }
@@ -400,7 +399,7 @@ final public class CDKMCS {
     public static BitSet getBitSet(IAtomContainer ac) {
         BitSet bs;
         int n = ac.getBondCount();
-        
+
         if (n != 0) {
             bs = new BitSet(n);
             for (int i = 0; i < n; i++) {
@@ -409,7 +408,7 @@ final public class CDKMCS {
         } else {
             bs = new BitSet();
         }
-        
+
         return bs;
     }
 
@@ -490,7 +489,7 @@ final public class CDKMCS {
         solutionList.stream().forEach((set) -> {
             rMapsList.add(rGraph.bitSetToRMap(set));
         });
-        
+
         return rMapsList;
     }
 
@@ -506,7 +505,7 @@ final public class CDKMCS {
      */
     private static IAtomContainer project(List<CDKRMap> rMapList, IAtomContainer g, int id) {
         IAtomContainer ac = g.getBuilder().newInstance(IAtomContainer.class);
-        
+
         Map<IAtom, IAtom> table = new HashMap<>();
         IAtom a1;
         IAtom a2;
@@ -518,10 +517,10 @@ final public class CDKMCS {
             } else {
                 bond = g.getBond(rMap.getId2());
             }
-            
+
             a = bond.getAtom(0);
             a1 = table.get(a);
-            
+
             if (a1 == null) {
                 try {
                     a1 = (IAtom) a.clone();
@@ -531,10 +530,10 @@ final public class CDKMCS {
                 ac.addAtom(a1);
                 table.put(a, a1);
             }
-            
+
             a = bond.getAtom(1);
             a2 = table.get(a);
-            
+
             if (a2 == null) {
                 try {
                     a2 = (IAtom) a.clone();
@@ -563,7 +562,7 @@ final public class CDKMCS {
      */
     private static List<IAtomContainer> projectList(List<List<CDKRMap>> rMapsList, IAtomContainer g, int id) {
         List<IAtomContainer> graphList = new ArrayList<>();
-        
+
         rMapsList.stream().map((rMapList) -> project(rMapList, g, id)).forEach((ac) -> {
             graphList.add(ac);
         });
@@ -581,10 +580,10 @@ final public class CDKMCS {
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         List<IAtomContainer> reducedGraphList = new ArrayList<>();
         reducedGraphList.addAll(graphList);
-        
+
         for (int i = 0; i < graphList.size(); i++) {
             IAtomContainer gi = graphList.get(i);
-            
+
             for (int j = i + 1; j < graphList.size(); j++) {
                 IAtomContainer gj = graphList.get(j);
 
@@ -617,7 +616,7 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         if (g2.getAtomCount() == 1) {
             List<CDKRMap> arrayList = new ArrayList<>();
             IAtom atom = g2.getAtom(0);
@@ -768,13 +767,16 @@ final public class CDKMCS {
         // resets the target graph.
         gr.clear();
 
+        if (ac1 == null) {
+            return;
+        }
         // compares each bondA of G1 to each bondA of G2
         for (int i = 0; i < ac1.getBondCount(); i++) {
             for (int j = 0; j < ac2.getBondCount(); j++) {
 //                // if both bonds are compatible then create an association node
 //                // in the resolution graph
 
-                if (Utility.matchAtomAndBond(ac1.getBond(i), ac2.getBond(j), shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                if (AtomBondMatcher.matchAtomAndBond(ac1.getBond(i), ac2.getBond(j), shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                     gr.addNode(new CDKRNode(i, j));
                 }
             }
@@ -797,15 +799,15 @@ final public class CDKMCS {
             CDKRNode x = gr.getGraph().get(i);
             x.getForbidden().set(i);
         }
-        
+
         IBond a1;
         IBond a2;
         IBond b1;
         IBond b2;
-        
+
         gr.setFirstGraphSize(ac1.getBondCount());
         gr.setSecondGraphSize(ac2.getBondCount());
-        
+
         for (int i = 0; i < gr.getGraph().size(); i++) {
             CDKRNode x = gr.getGraph().get(i);
 
@@ -814,12 +816,12 @@ final public class CDKMCS {
             // else they are incompatible.
             for (int j = i + 1; j < gr.getGraph().size(); j++) {
                 CDKRNode y = gr.getGraph().get(j);
-                
+
                 a1 = ac1.getBond(gr.getGraph().get(i).getRMap().getId1());
                 a2 = ac2.getBond(gr.getGraph().get(i).getRMap().getId2());
                 b1 = ac1.getBond(gr.getGraph().get(j).getRMap().getId1());
                 b2 = ac2.getBond(gr.getGraph().get(j).getRMap().getId2());
-                
+
                 if (a2 instanceof IQueryBond) {
                     if (a1.equals(b1) || a2.equals(b2)
                             || !queryAdjacencyAndOrder(a1, b1, a2, b2)) {
@@ -864,13 +866,13 @@ final public class CDKMCS {
      */
     private static String getCommonSymbol(IBond a, IBond b) {
         String symbol = "";
-        
+
         if (a.contains(b.getAtom(0))) {
             symbol = b.getAtom(0).getSymbol();
         } else if (a.contains(b.getAtom(1))) {
             symbol = b.getAtom(1).getSymbol();
         }
-        
+
         return symbol;
     }
 
@@ -884,29 +886,29 @@ final public class CDKMCS {
      * atom
      */
     private static boolean queryAdjacency(IBond a1, IBond b1, IBond a2, IBond b2) {
-        
+
         IAtom atom1 = null;
         IAtom atom2 = null;
-        
+
         if (a1.contains(b1.getAtom(0))) {
             atom1 = b1.getAtom(0);
         } else if (a1.contains(b1.getAtom(1))) {
             atom1 = b1.getAtom(1);
         }
-        
+
         if (a2.contains(b2.getAtom(0))) {
             atom2 = b2.getAtom(0);
         } else if (a2.contains(b2.getAtom(1))) {
             atom2 = b2.getAtom(1);
         }
-        
+
         if (atom1 != null && atom2 != null) {
             // well, this looks fishy: the atom2 is not always a IQueryAtom !
             return ((IQueryAtom) atom2).matches(atom1);
         } else {
             return atom1 == null && atom2 == null;
         }
-        
+
     }
 
     /**
@@ -922,22 +924,22 @@ final public class CDKMCS {
      * atom
      */
     private static boolean queryAdjacencyAndOrder(IBond bond1, IBond bond2, IBond queryBond1, IBond queryBond2) {
-        
+
         IAtom centralAtom = null;
         IAtom centralQueryAtom = null;
-        
+
         if (bond1.contains(bond2.getAtom(0))) {
             centralAtom = bond2.getAtom(0);
         } else if (bond1.contains(bond2.getAtom(1))) {
             centralAtom = bond2.getAtom(1);
         }
-        
+
         if (queryBond1.contains(queryBond2.getAtom(0))) {
             centralQueryAtom = queryBond2.getAtom(0);
         } else if (queryBond1.contains(queryBond2.getAtom(1))) {
             centralQueryAtom = queryBond2.getAtom(1);
         }
-        
+
         if (centralAtom != null && centralQueryAtom != null
                 && ((IQueryAtom) centralQueryAtom).matches(centralAtom)) {
             IQueryAtom queryAtom1 = (IQueryAtom) queryBond1.getOther(centralQueryAtom);
@@ -949,7 +951,7 @@ final public class CDKMCS {
         } else {
             return centralAtom == null && centralQueryAtom == null;
         }
-        
+
     }
 
     /**
@@ -972,7 +974,7 @@ final public class CDKMCS {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
         }
-        
+
         int ac1SingleBondCount = 0;
         int ac1DoubleBondCount = 0;
         int ac1TripleBondCount = 0;
@@ -989,7 +991,7 @@ final public class CDKMCS {
         int ac1BrCount = 0;
         int ac1ICount = 0;
         int ac1CCount = 0;
-        
+
         int ac2SCount = 0;
         int ac2OCount = 0;
         int ac2NCount = 0;
@@ -998,7 +1000,7 @@ final public class CDKMCS {
         int ac2BrCount = 0;
         int ac2ICount = 0;
         int ac2CCount = 0;
-        
+
         IBond bond;
         IAtom atom;
         for (int i = 0; i < ac1.getBondCount(); i++) {
@@ -1028,7 +1030,7 @@ final public class CDKMCS {
                 ac2TripleBondCount++;
             }
         }
-        
+
         if (ac2SingleBondCount > ac1SingleBondCount) {
             return false;
         }
@@ -1041,7 +1043,7 @@ final public class CDKMCS {
         if (ac2TripleBondCount > ac1TripleBondCount) {
             return false;
         }
-        
+
         for (int i = 0; i < ac1.getAtomCount(); i++) {
             atom = ac1.getAtom(i);
             switch (atom.getSymbol()) {
@@ -1107,7 +1109,7 @@ final public class CDKMCS {
                     break;
             }
         }
-        
+
         if (ac1SCount < ac2SCount) {
             return false;
         }
@@ -1130,7 +1132,7 @@ final public class CDKMCS {
             return false;
         }
         return ac1CCount >= ac2CCount;
-        
+
     }
 
     /**

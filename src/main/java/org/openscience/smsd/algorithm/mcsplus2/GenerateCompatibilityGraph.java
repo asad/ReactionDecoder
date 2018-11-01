@@ -38,10 +38,10 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -285,7 +285,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
                 Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
                 cEdges.add(edge);
             }
-        } else if (Utility.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        } else if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
             Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
             cEdges.add(edge);
         } else {
@@ -417,7 +417,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
     }
 
     private void addZeroEdges(IBond reactantBond, IBond productBond, int indexI, int indexJ) {
-        if (Utility.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
             Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
             cEdges.add(edge);
         } else {

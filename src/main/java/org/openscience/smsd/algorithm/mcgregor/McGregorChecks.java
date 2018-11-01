@@ -30,8 +30,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.helper.BinaryTree;
-import org.openscience.smsd.tools.Utility;
 
 /**
  * Class to perform check/methods for McGregor class.
@@ -97,7 +97,7 @@ public class McGregorChecks {
                         IAtom P2_B = target.getAtom(Index_JPlus1);
                         IBond productBond = target.getBond(P1_B, P2_B);
 
-                        if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             return true;
                         }
                     } catch (Exception e) {
@@ -120,7 +120,7 @@ public class McGregorChecks {
                         IAtom P2_B = target.getAtom(Index_JPlus1);
                         IBond productBond = target.getBond(P1_B, P2_B);
 
-                        if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             return true;
                         }
                     } catch (Exception e) {
@@ -444,7 +444,7 @@ public class McGregorChecks {
                     IAtom P1_B = target.getAtom(Index_J);
                     IAtom P2_B = target.getAtom(Index_JPlus1);
                     IBond productBond = target.getBond(P1_B, P2_B);
-                    if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                    if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         modifiedARCS.set(row * neighborBondNumB + column, 1);
                     }
                 }
@@ -571,7 +571,7 @@ public class McGregorChecks {
                         IAtom p2_B = target.getAtom(Index_JPlus1);
                         IBond productBond = target.getBond(p1_B, p2_B);
 
-                        if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             return true;
                         }
                     } catch (Exception e) {
@@ -594,7 +594,7 @@ public class McGregorChecks {
                         IAtom p2_B = target.getAtom(Index_JPlus1);
                         IBond productBond = target.getBond(p1_B, p2_B);
 
-                        if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             return true;
                         }
                     } catch (Exception e) {

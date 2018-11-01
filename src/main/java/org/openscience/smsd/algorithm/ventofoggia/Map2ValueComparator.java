@@ -21,10 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.vflib;
+package org.openscience.smsd.algorithm.ventofoggia;
 
 import java.util.Comparator;
 import java.util.Map;
+import org.openscience.cdk.interfaces.IAtom;
 
 /*
  * 
@@ -32,11 +33,11 @@ import java.util.Map;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
+public class Map2ValueComparator implements Comparator<Map<IAtom, IAtom>> {
 
     private final SortOrder sortOrder;
 
-    public Map1ValueComparator(SortOrder sortOrder) {
+    public Map2ValueComparator(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -47,7 +48,7 @@ public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
      * @return
      */
     @Override
-    public int compare(Map<Integer, Integer> object1, Map<Integer, Integer> object2) {
+    public int compare(Map<IAtom, IAtom> object1, Map<IAtom, IAtom> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
         int compare = Integer.signum(new Integer(size1).compareTo(size2));

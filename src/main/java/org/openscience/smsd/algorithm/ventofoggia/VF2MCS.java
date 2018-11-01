@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.openscience.smsd.algorithm.vflib;
+package org.openscience.smsd.algorithm.ventofoggia;
 
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
@@ -48,6 +48,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
 import org.openscience.smsd.tools.Utility;
@@ -56,7 +57,7 @@ import org.openscience.smsd.tools.Utility;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports MCS between
+ * {@link org.openscience.smsd.algorithm.ventofoggia12.VF2MCS} and reports MCS between
  * run source and target graphs. Then these solutions are extended using
  * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.
@@ -156,7 +157,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 for (IBond b1 : targetClone.bonds()) {
                     boolean flag = false;
                     for (IBond b2 : source.bonds()) {
-                        if (Utility.matchAtomAndBond(b1, b2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(b1, b2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             flag = true;
                             break;
                         }

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package org.openscience.smsd.algorithm.vflib;
+package org.openscience.smsd.algorithm.ventofoggia;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ import org.openscience.smsd.interfaces.Algorithm;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.vflib.VF2MCS} and reports MCS between
+ * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS between
  * run source and target graphs. Then these solutions are extended using
  * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.

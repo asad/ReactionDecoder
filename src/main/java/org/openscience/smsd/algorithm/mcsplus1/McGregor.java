@@ -34,6 +34,7 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.helper.BinaryTree;
 import static org.openscience.smsd.helper.BinaryTree.remove_tree_structure;
 
@@ -666,7 +667,8 @@ public class McGregor extends Utility {
                 /*
                  * Check if bond matching also possible
                  */
-                boolean flag = matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                boolean flag = 
+                        AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 
                 if ((G1A.equals(G1B)) && (G2A.equals(G2B)) && flag) {
                     no_Map = false;

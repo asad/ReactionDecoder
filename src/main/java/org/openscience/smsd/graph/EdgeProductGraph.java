@@ -89,7 +89,7 @@ public final class EdgeProductGraph implements Serializable {
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
                 //Only add the edge product vertex if the edge labels and end vertex labels are the same
-                if (Utility.matchAtomAndBond(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                if (AtomBondMatcher.matchAtomAndBond(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
 
                     Vertex node = new Vertex(compatibilityNodeCounter);
                     if (DEBUG) {

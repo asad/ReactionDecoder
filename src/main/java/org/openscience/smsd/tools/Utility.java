@@ -117,33 +117,4 @@ public class Utility {
 //        System.out.println("Bubble Sort: " + sortedVector);
         return sortedVector;
     }
-
-    /**
-     *
-     * @param bondA1
-     * @param bondA2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
-     * @return
-     */
-    public static boolean matchAtomAndBond(
-            IBond bondA1,
-            IBond bondA2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-        boolean atomMatch = AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getBegin(),
-                shouldMatchRings, matchAtomType)
-                        ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getEnd(),
-                                shouldMatchRings, matchAtomType)
-                        : AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getEnd(),
-                                shouldMatchRings, matchAtomType)
-                                ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getBegin(),
-                                        shouldMatchRings, matchAtomType) : false;
-
-        boolean bondMatch = AtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings);
-        return atomMatch && bondMatch;
-    }
-
 }

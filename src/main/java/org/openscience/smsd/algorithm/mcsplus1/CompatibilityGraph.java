@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 
@@ -464,7 +465,7 @@ public class CompatibilityGraph {
                     }
 
                     if (connectedFlag
-                            && Utility.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 
@@ -641,7 +642,7 @@ public class CompatibilityGraph {
                     }
 
                     if (connectedFlag
-                            && Utility.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 

@@ -18,6 +18,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
@@ -278,7 +279,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
     private void addZeroEdges(List<Edge> cEdges, List<Edge> dEdges,
             IBond reactantBond, IBond productBond,
             int indexI, int indexJ) {
-        if (Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
             Edge edge = new Edge(new Vertex((indexI / 4) + 1), new Vertex((indexJ / 4) + 1));
             if (!cEdges.contains(edge)) {
                 cEdges.add(edge);
@@ -449,7 +450,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     }
 
                     if (connectedFlag
-                            && Utility.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 
