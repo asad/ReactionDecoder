@@ -366,7 +366,7 @@ public class MCSPlus extends Filter {
                     }
 
                     if (connectedFlag
-                            && isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 
@@ -520,7 +520,7 @@ public class MCSPlus extends Filter {
                     }
 
                     if (connectedFlag
-                            && isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 

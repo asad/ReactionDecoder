@@ -49,7 +49,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
-import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.graph.Graph;
 import org.openscience.smsd.graph.Vertex;
 
@@ -423,16 +423,13 @@ public class ExtractMapping {
                 IAtom b1 = bond2.getBegin();
                 IAtom b2 = bond2.getEnd();
 
-                org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher1
-                        = DefaulAtomBondMatcher.atomMatcher(a1, shouldMatchRings, matchAtomTypes);
-                org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher2
-                        = DefaulAtomBondMatcher.atomMatcher(a2, shouldMatchRings, matchAtomTypes);
-
-                if (atomMatcher1.matches(b1) && atomMatcher2.matches(b2)) {
+                if (AtomBondMatcher.matches(a1, b1, shouldMatchRings, matchAtomTypes)
+                        && AtomBondMatcher.matches(a2, b2, shouldMatchRings, matchAtomTypes)) {
                     result.put(g1.indexOf(bond1.getAtom(0)), g2.indexOf(bond2.getAtom(0)));
                     result.put(g1.indexOf(bond1.getAtom(1)), g2.indexOf(bond2.getAtom(1)));
                 }
-                if (atomMatcher1.matches(b2) && atomMatcher2.matches(b1)) {
+                if (AtomBondMatcher.matches(a1, b2, shouldMatchRings, matchAtomTypes)
+                        && AtomBondMatcher.matches(a2, b1, shouldMatchRings, matchAtomTypes)) {
                     result.put(g1.indexOf(bond1.getAtom(0)), g2.indexOf(bond2.getAtom(1)));
                     result.put(g1.indexOf(bond1.getAtom(1)), g2.indexOf(bond2.getAtom(0)));
                 }

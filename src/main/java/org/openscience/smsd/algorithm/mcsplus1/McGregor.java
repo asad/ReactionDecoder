@@ -666,7 +666,7 @@ public class McGregor extends Utility {
                 /*
                  * Check if bond matching also possible
                  */
-                boolean flag = isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                boolean flag = matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
 
                 if ((G1A.equals(G1B)) && (G2A.equals(G2B)) && flag) {
                     no_Map = false;

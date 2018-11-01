@@ -37,8 +37,6 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
-import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern;
-import org.openscience.smsd.algorithm.vflib.vf2.sub.VF;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -243,45 +241,6 @@ public class VF2Substructure implements IResults {
     }
 
     /*
-     * Note: VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
-     * insensitive).
-     */
-    private synchronized boolean searchVFMappings() {
-        if (DEBUG) {
-            System.out.println("searchVFMappings ");
-        }
-        VF mapper = null;
-        if (!(source instanceof IQueryAtomContainer) && !(target instanceof IQueryAtomContainer)) {
-            countR = getReactantMol().getAtomCount();
-            countP = getProductMol().getAtomCount();
-        }
-
-        vfLibSolutions = new ArrayList<>();
-        if (source instanceof IQueryAtomContainer) {
-            Pattern findSubstructure = VF.findSubstructure((IQueryAtomContainer) source);
-            List<Map<IAtom, IAtom>> maps = findSubstructure.matchAll(getProductMol());
-            if (maps != null) {
-                vfLibSolutions.addAll(maps);
-            }
-            setVFMappings(true);
-        } else if (countR <= countP) {
-            Pattern findSubstructure = VF.findSubstructure(this.source, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
-            List<Map<IAtom, IAtom>> maps = findSubstructure.matchAll(getProductMol());
-            if (maps != null) {
-                vfLibSolutions.addAll(maps);
-            }
-            setVFMappings(true);
-        }
-        if (DEBUG) {
-            System.out.println("Sol count " + vfLibSolutions.size());
-            System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
-            System.out.println("MCSSize " + bestHitSize);
-            System.out.println("After Sol count " + allMCSCopy.size());
-        }
-        return mapper != null;
-    }
-
-    /*
      * Note: CDK VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
      * insensitive).
      */
@@ -289,7 +248,6 @@ public class VF2Substructure implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        VF mapper = null;
         AtomMatcher am;
         BondMatcher bm;
 
@@ -300,17 +258,16 @@ public class VF2Substructure implements IResults {
             countP = getProductMol().getAtomCount();
 
             am = AtomMatcher.forElement();
+            bm = BondMatcher.forAny();
             if (matchAtomType) {
                 am = AtomMatcher.forElement();
             }
 
             if (matchBonds) {
                 bm = BondMatcher.forOrder();
-            } else {
-                bm = BondMatcher.forAny();
             }
 
-            if (this.shouldMatchRings) {
+            if (shouldMatchRings) {
                 bm = BondMatcher.forStrictOrder();
             }
         } else {
@@ -364,7 +321,6 @@ public class VF2Substructure implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        VF mapper = null;
         AtomMatcher am;
         BondMatcher bm;
 
@@ -375,17 +331,16 @@ public class VF2Substructure implements IResults {
             countP = getProductMol().getAtomCount();
 
             am = AtomMatcher.forElement();
+            bm = BondMatcher.forAny();
             if (matchAtomType) {
                 am = AtomMatcher.forElement();
             }
 
             if (matchBonds) {
                 bm = BondMatcher.forOrder();
-            } else {
-                bm = BondMatcher.forAny();
             }
 
-            if (this.shouldMatchRings) {
+            if (shouldMatchRings) {
                 bm = BondMatcher.forStrictOrder();
             }
         } else {
@@ -428,7 +383,7 @@ public class VF2Substructure implements IResults {
             System.out.println("MCSSize " + bestHitSize);
             System.out.println("After Sol count " + allMCSCopy.size());
         }
-        return mapper != null;
+        return !vfLibSolutions.isEmpty();
     }
 
     private synchronized void searchMcGregorMapping() throws CDKException, IOException {

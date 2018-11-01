@@ -38,19 +38,19 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.isomorphism.AtomMatcher;
+import org.openscience.cdk.isomorphism.BondMatcher;
+import org.openscience.cdk.isomorphism.Mappings;
+import org.openscience.cdk.isomorphism.VentoFoggia;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.vflib.vf2.DefaultAtomMatcher;
-import org.openscience.smsd.algorithm.vflib.vf2.DefaultBondMatcher;
-import org.openscience.smsd.algorithm.vflib.vf2.sub.Pattern;
-import org.openscience.smsd.algorithm.vflib.vf2.sub.VF;
-import org.openscience.smsd.algorithm.vflib.vf2.mcs.VFSeed;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.interfaces.IResults;
+import org.openscience.smsd.tools.Utility;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
@@ -89,7 +89,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             boolean shouldMatchRings,
             boolean matchAtomType) {
         super(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
-        boolean timeoutVF = searchVFMappings();
+        boolean timeoutVF = searchVFCDKMappings();
 
         if (DEBUG) {
             System.out.println("time for VF search " + timeoutVF);
@@ -101,7 +101,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
          *
          *
          */
-        int maxVFMappingSize = allLocalMCS.iterator().hasNext() ? allLocalMCS.iterator().next().size() : 0;
+        int maxVFMappingSize = allLocalMCS.iterator().hasNext()
+                ? allLocalMCS.iterator().next().size() : 0;
         if (DEBUG) {
             System.out.println("maxVFMappingSize " + maxVFMappingSize);
         }
@@ -141,6 +142,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             }
 
             ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
+//            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -149,33 +151,13 @@ public final class VF2MCS extends BaseMCS implements IResults {
              */
             IAtomContainer targetClone = null;
             try {
-                DefaultBondMatcher defaultBondMatcher = new DefaultBondMatcher(shouldMatchBonds, shouldMatchRings, matchAtomType);
-                DefaultAtomMatcher defaultAtomMatcher = new DefaultAtomMatcher(shouldMatchRings, matchAtomType);
-
                 targetClone = target.clone();
                 Set<IBond> bondRemovedT = new HashSet<>();
                 for (IBond b1 : targetClone.bonds()) {
-                    IAtom a1 = b1.getAtom(0);
-                    IAtom a2 = b1.getAtom(1);
                     boolean flag = false;
                     for (IBond b2 : source.bonds()) {
-                        IAtom a3 = b2.getAtom(0);
-                        IAtom a4 = b2.getAtom(1);
-                        boolean matchesBond = defaultBondMatcher.matches(b1, b2);
-                        boolean matchesAtom0 = defaultAtomMatcher.matches(a1, a3);
-                        boolean matchesAtom1 = defaultAtomMatcher.matches(a2, a4);
-                        boolean matchesAtom3 = defaultAtomMatcher.matches(a1, a4);
-                        boolean matchesAtom4 = defaultAtomMatcher.matches(a2, a3);
-                        if (matchesBond && matchesAtom0 && matchesAtom1) {
+                        if (Utility.matchAtomAndBond(b1, b2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                             flag = true;
-                        } else if (matchesBond && matchesAtom3 && matchesAtom4) {
-                            flag = true;
-                        } else if (matchesAtom0 && matchesAtom1) {
-                            flag = true;
-                        } else if (matchesAtom3 && matchesAtom4) {
-                            flag = true;
-                        }
-                        if (flag) {
                             break;
                         }
                     }
@@ -397,7 +379,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
      */
     public VF2MCS(IQueryAtomContainer source, IAtomContainer target) {
         super((IQueryAtomContainer) source, target, true, true, true);
-        boolean timeoutVF = searchVFMappings();
+        boolean timeoutVF = searchVFCDKMappings();
 
 //        System.out.println("time for VF search " + timeoutVF);
 
@@ -653,98 +635,82 @@ public final class VF2MCS extends BaseMCS implements IResults {
 //        return mapper.isTimeout();
 //    }
     /*
-     * Note: VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
+     * Note: CDK VF will search for core hits. Mcgregor will extend the cliques depending of the bond type (sensitive and
      * insensitive).
      */
-    private synchronized boolean searchVFMappings() {
+    private synchronized boolean searchVFCDKMappings() {
         if (DEBUG) {
-            System.out.println("searchVFMappings ");
+            System.out.println("searchVFCDKMappings ");
         }
-        VF mapper = null;
-        if (!(source instanceof IQueryAtomContainer) && !(target instanceof IQueryAtomContainer)) {
+        AtomMatcher am;
+        BondMatcher bm;
+
+        if (!(source instanceof IQueryAtomContainer)
+                && !(target instanceof IQueryAtomContainer)) {
+
             countR = getReactantMol().getAtomCount();
             countP = getProductMol().getAtomCount();
+
+            am = AtomMatcher.forElement();
+            bm = BondMatcher.forAny();
+            if (isMatchAtomType()) {
+                am = AtomMatcher.forElement();
+            }
+
+            if (isBondMatchFlag()) {
+                bm = BondMatcher.forOrder();
+            }
+
+            if (isMatchRings()) {
+                bm = BondMatcher.forStrictOrder();
+            }
+        } else {
+            if (source instanceof IQueryAtomContainer) {
+                am = AtomMatcher.forQuery();
+            } else {
+                am = AtomMatcher.forElement();
+            }
+
+            if (source instanceof IQueryAtomContainer) {
+                bm = BondMatcher.forQuery();
+            } else {
+                bm = BondMatcher.forAny();
+            }
         }
 
         if (source instanceof IQueryAtomContainer) {
-            Pattern findSeeds = VF.findSubstructure((IQueryAtomContainer) source);
-            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
-            if (maps.isEmpty()) {
-                findSeeds = VFSeed.findSeeds((IQueryAtomContainer) source);
-                maps = findSeeds.matchAll(getProductMol());
-            }
-            if (maps != null && !maps.isEmpty()) {
-                vfLibSolutions.addAll(maps);
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll((IQueryAtomContainer) target);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
             }
             setVFMappings(true);
-        } else if (countR < countP) {
-            if (DEBUG) {
-                System.out.println("searchVFMappings findSubstructure");
-            }
+        } else if (countR <= countP) {
 
-            //long start = System.currentTimeMillis();
-            Pattern findSeeds = VF.findSubstructure(this.source, true, isMatchRings(), isMatchAtomType());
-            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
-            //long end = System.currentTimeMillis();
-            //System.out.println("Time elapsed: " + TimeUnit.NANOSECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " ns.");
-
-            if (maps.isEmpty()) {
-                if (DEBUG) {
-                    System.out.println("searchVFMappings ");
-                }
-                findSeeds = VFSeed.findSeeds(this.source, true, isMatchRings(), isMatchAtomType());
-                maps = findSeeds.matchAll(getProductMol());
-            }
-            if (maps != null && !maps.isEmpty()) {
-                vfLibSolutions.addAll(maps);
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll(target);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
             }
             setVFMappings(true);
-        } else if (countR == countP) {
-            if (DEBUG) {
-                System.out.println("searchVFMappings findSubstructure");
-            }
+        } else if (countR > countP) {
 
-            //long start = System.currentTimeMillis();
-            Pattern findSeeds = VF.findIdentical(this.source, true, isMatchRings(), isMatchAtomType());
-            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getProductMol());
-            //long end = System.currentTimeMillis();
-            //System.out.println("Time elapsed: " + TimeUnit.NANOSECONDS.convert((end - start), TimeUnit.NANOSECONDS) + " ns.");
-
-            if (maps.isEmpty()) {
-                if (DEBUG) {
-                    System.out.println("searchVFMappings ");
-                }
-                findSeeds = VFSeed.findSeeds(this.source, true, isMatchRings(), isMatchAtomType());
-                maps = findSeeds.matchAll(getProductMol());
-            }
-            if (maps != null && !maps.isEmpty()) {
-                vfLibSolutions.addAll(maps);
-            }
-            setVFMappings(true);
-        } else {
-            if (DEBUG) {
-                System.out.println("searchVFMappings findSubstructure");
-            }
-            Pattern findSeeds = VF.findSubstructure(this.target, true, isMatchRings(), isMatchAtomType());
-            List<Map<IAtom, IAtom>> maps = findSeeds.matchAll(getReactantMol());
-            if (maps.isEmpty()) {
-                if (DEBUG) {
-                    System.out.println("searchVFMappings ");
-                }
-                findSeeds = VFSeed.findSeeds(this.target, true, isMatchRings(), isMatchAtomType());
-                maps = findSeeds.matchAll(getReactantMol());
-            }
-            if (maps != null && !maps.isEmpty()) {
-                vfLibSolutions.addAll(maps);
+            org.openscience.cdk.isomorphism.Pattern patternVF = VentoFoggia.findSubstructure(target, am, bm); // create pattern
+            Mappings matchAll = patternVF.matchAll(source);
+            Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
+            for (Map<IAtom, IAtom> map : toAtomMap) {
+                vfLibSolutions.add(map);
             }
             setVFMappings(false);
         }
+
         if (DEBUG) {
-            System.out.println("\nSol count " + ((float) vfLibSolutions.size()));
-            System.out.println("Sol size " + ((vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0)));
-            System.out.println("searchVFMappings done ");
+            System.out.println("Sol count " + vfLibSolutions.size());
+            System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
         }
-        return mapper != null;
+        return !vfLibSolutions.isEmpty();
     }
 
     /**
@@ -783,7 +749,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
     /*
      * Check if fragmented container has single atom
      */
-    boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+    synchronized boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
 
         boolean connected1 = true;
 

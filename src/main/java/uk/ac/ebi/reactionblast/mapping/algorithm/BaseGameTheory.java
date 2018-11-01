@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.String.valueOf;
 import static java.lang.System.out;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Calendar;
 import static java.util.Calendar.DATE;
@@ -33,12 +34,17 @@ import static java.util.Calendar.YEAR;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.fingerprint.CircularFingerprinter;
+import org.openscience.cdk.fingerprint.IBitFingerprint;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -52,6 +58,7 @@ import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
+import uk.ac.ebi.reactionblast.mapping.cache.ThreadSafeCache;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import static uk.ac.ebi.reactionblast.mapping.graph.GraphMatcher.matcher;
 import uk.ac.ebi.reactionblast.mapping.graph.MCSSolution;
@@ -390,13 +397,16 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         return null;
     }
 
-    private MCSSolution quickMapping(IAtomContainer educt, IAtomContainer product, int queryPosition, int targetPosition) {
+    private MCSSolution quickMapping(IAtomContainer educt, IAtomContainer product,
+            int queryPosition, int targetPosition) {
+        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
+
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        if (DEBUG) {
+        //if (DEBUG) {
             System.out.println("====Quick Mapping====");
-        }
+        //}
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
@@ -409,22 +419,63 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
+
         try {
-            //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
-            //isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
-
+            CycleFinder cycles = Cycles.vertexShort();
+            Cycles rings = cycles.find(educt);
             if (DEBUG) {
-                System.out.println("===={Amigo} <=> {Senorita}====");
+                System.out.println("Done Finding cycles educt");
             }
-            Isomorphism isomorphism;
-            isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
 
-            isomorphism.setChemFilters(true, true, true);
-            MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, isomorphism.getFirstAtomMapping());
-            mcs.setEnergy(isomorphism.getEnergyScore(0));
-            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
-            mcs.setStereoScore(isomorphism.getStereoScore(0));
-            return mcs;
+            int numberOfCyclesEduct = rings.numberOfCycles();
+            rings = cycles.find(product);
+            if (DEBUG) {
+                System.out.println("Finding cycles product");
+            }
+            int numberOfCyclesProduct = rings.numberOfCycles();
+
+            String key = generateUniqueKey(
+                    educt, product,
+                    educt.getID(), product.getID(),
+                    educt.getAtomCount(), product.getAtomCount(),
+                    educt.getBondCount(), product.getBondCount(),
+                    false,
+                    false,
+                    false,
+                    numberOfCyclesEduct,
+                    numberOfCyclesProduct
+            );
+            if (mappingcache.containsKey(key)) {
+
+                MCSSolution solution = mappingcache.get(key);
+                MCSSolution mcs = copyOldSolutionToNew(
+                        queryPosition, targetPosition,
+                        educt, product,
+                        solution);
+                return mcs;
+
+            } else {
+                Isomorphism isomorphism;
+                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+
+                MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
+                return mcs;
+            }
+
+//            //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
+//            //isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+//            if (DEBUG) {
+//                System.out.println("===={Amigo} <=> {Senorita}====");
+//            }
+//            Isomorphism isomorphism;
+//            isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+//
+//            isomorphism.setChemFilters(true, true, true);
+//            MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, isomorphism.getFirstAtomMapping());
+//            mcs.setEnergy(isomorphism.getEnergyScore(0));
+//            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
+//            mcs.setStereoScore(isomorphism.getStereoScore(0));
+//            return mcs;
         } catch (CDKException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
@@ -511,5 +562,84 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         } catch (IOException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
+    }
+
+    synchronized String generateUniqueKey(
+            IAtomContainer educt, IAtomContainer product,
+            String id1, String id2,
+            int atomCount1, int atomCount2,
+            int bondCount1, int bondCount2,
+            boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
+            int numberOfCyclesEduct, int numberOfCyclesProduct) {
+        //System.out.println("====generate Unique Key====");
+        StringBuilder key = new StringBuilder();
+        key.append(id1).append(id2)
+                .append(atomCount1)
+                .append(atomCount2)
+                .append(bondCount1)
+                .append(bondCount2)
+                .append(bondMatcher)
+                .append(ringMatcher)
+                .append(hasPerfectRings)
+                .append(numberOfCyclesEduct)
+                .append(numberOfCyclesProduct);
+        try {
+            int[] sm1 = getCircularFP(educt);
+            int[] sm2 = getCircularFP(product);
+            key.append(Arrays.toString(sm1));
+            key.append(Arrays.toString(sm2));
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
+        }
+        //System.out.println("KEY " + key);
+        return key.toString();
+    }
+
+    private synchronized int[] getCircularFP(IAtomContainer mol) throws CDKException {
+        CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
+        circularFingerprinter.setPerceiveStereo(true);
+        IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
+        return bitFingerprint.getSetbits();
+    }
+
+    /*
+     * copy old mapping from the cache to new
+     */
+    synchronized MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
+            IAtomContainer compound1, IAtomContainer compound2, MCSSolution oldSolution) {
+        AtomAtomMapping atomAtomMapping = oldSolution.getAtomAtomMapping();
+        Map<Integer, Integer> mappingsByIndex = atomAtomMapping.getMappingsByIndex();
+
+        AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(compound1, compound2);
+        mappingsByIndex.entrySet().forEach((m) -> {
+            atomAtomMappingNew.put(compound1.getAtom(m.getKey()), compound2.getAtom(m.getValue()));
+        });
+        MCSSolution mcsSolution = new MCSSolution(queryPosition, targetPosition, compound1, compound2, atomAtomMappingNew);
+        mcsSolution.setEnergy(oldSolution.getEnergy());
+        mcsSolution.setFragmentSize(oldSolution.getFragmentSize());
+        mcsSolution.setStereoScore(oldSolution.getStereoScore());
+
+        return mcsSolution;
+    }
+
+    synchronized MCSSolution addMCSSolution(int queryPosition, int targetPosition,
+            String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
+
+        isomorphism.setChemFilters(true, true, true);
+
+        /*
+         * In case of Complete subgraph, don't use Energy filter
+         *
+         */
+        MCSSolution mcs = new MCSSolution(queryPosition, targetPosition,
+                isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
+        mcs.setEnergy(isomorphism.getEnergyScore(0));
+        mcs.setFragmentSize(isomorphism.getFragmentSize(0));
+        mcs.setStereoScore(isomorphism.getStereoScore(0));
+
+        if (!mappingcache.containsKey(key)) {
+            mappingcache.put(key, mcs);
+        }
+        return mcs;
     }
 }

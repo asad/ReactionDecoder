@@ -18,11 +18,12 @@
  */
 package uk.ac.ebi.reactionblast.mapping.graph;
 
-import java.io.IOException;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.getProperty;
 import static java.lang.System.nanoTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static java.util.Collections.sort;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,12 +37,13 @@ import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.fingerprint.CircularFingerprinter;
+import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
-import org.openscience.cdk.smiles.CanonSmiAdapter;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -72,7 +74,9 @@ public class MCSThread implements Callable<MCSSolution> {
     private boolean fragmentFlag;
     private boolean energyFlag;
 
-    private SmilesGenerator smiles;
+    private final SmilesGenerator smiles;
+
+    static final String NEW_LINE = getProperty("line.separator");
 
     /**
      *
@@ -141,13 +145,13 @@ public class MCSThread implements Callable<MCSSolution> {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
         } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. r.mol: ", ex.getMessage());
         }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(product);
             MoleculeInitializer.initializeMolecule(product);
         } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. p.mol: ", ex.getMessage());
         }
 
         this.stereoFlag = true;
@@ -202,20 +206,23 @@ public class MCSThread implements Callable<MCSSolution> {
                     createSM1 = smiles.create(this.compound1);
                     createSM2 = smiles.create(this.compound2);
                 } catch (CDKException e) {
-                    LOGGER.error(SEVERE, null, e);
+                    LOGGER.error(SEVERE, "Unable to generate SMILES: ", e.getMessage());
                 }
+                System.out.println("==============================================");
                 System.out.println("Q: " + getCompound1().getID()
+                        + " molQ: " + createSM1
+                        + NEW_LINE
                         + " T: " + getCompound2().getID()
-                        + " atomsQ: " + compound1.getAtomCount()
-                        + " atomsT: " + compound2.getAtomCount()
+                        + " molT: " + createSM2
+                        + NEW_LINE
+                        + " atomsE: " + compound1.getAtomCount()
+                        + " atomsP: " + compound2.getAtomCount()
                         + " [bonds: " + bondMatcher
                         + " rings: " + ringMatcher
                         + " isHasPerfectRings: " + isHasPerfectRings()
-                        + " numberOfCyclesEduct: " + numberOfCyclesEduct
-                        + " numberOfCyclesProduct: " + numberOfCyclesProduct
-                        + " molQ: " + createSM1
-                        + " molT: " + createSM2
                         + "]");
+                System.out.println("==============================================");
+
             }
 
             /*
@@ -357,30 +364,33 @@ public class MCSThread implements Callable<MCSSolution> {
             if (DEBUG1) {
 
                 /*
-                     * create SMILES
+                 * create SMILES
                  */
-                smiles = new SmilesGenerator(SmiFlavor.Unique
-                        | SmiFlavor.Stereo
-                        | SmiFlavor.AtomAtomMap);
                 String createSM1 = null;
                 String createSM2 = null;
                 try {
                     createSM1 = smiles.create(this.compound1);
                     createSM2 = smiles.create(this.compound2);
                 } catch (CDKException e) {
-                    LOGGER.error(SEVERE, null, e);
+                    LOGGER.error(SEVERE, "Error in generating SMILES: ", e.getMessage());
                 }
+                System.out.println("==============================================");
+
                 System.out.println("No Substructure found - switching to MCS");
                 System.out.println("Q: " + getCompound1().getID()
-                        + " T: " + getCompound2().getID()
                         + " molQ: " + createSM1
+                        + NEW_LINE
+                        + " T: " + getCompound2().getID()
                         + " molT: " + createSM2
+                        + NEW_LINE
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount()
                         + " [bonds: " + bondMatcher
                         + " rings: " + ringMatcher
                         + " isHasPerfectRings: " + isHasPerfectRings()
                         + "]");
+                System.out.println("==============================================");
+
             }
             if (DEBUG1) {
                 this.startTime = currentTimeMillis();
@@ -394,12 +404,12 @@ public class MCSThread implements Callable<MCSSolution> {
             return mcs;
 
         } catch (CDKException | CloneNotSupportedException ex) {
-            LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, "Error in generating MCS Solution: ", ex.getMessage());
         }
         return null;
     }
 
-    private IAtomContainer getNewContainerWithIDs(IAtomContainer mol)
+    private synchronized IAtomContainer getNewContainerWithIDs(IAtomContainer mol)
             throws CDKException, CloneNotSupportedException {
         /*
          Generating SMILES speed ups the mapping process by n-FOLDS
@@ -436,7 +446,7 @@ public class MCSThread implements Callable<MCSSolution> {
         this.energyFlag = energyFlag;
     }
 
-    private boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
+    private synchronized boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
 
         Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
         Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
@@ -484,7 +494,7 @@ public class MCSThread implements Callable<MCSSolution> {
         return difference.isEmpty();
     }
 
-    private int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
+    private synchronized int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
 
         /*
          a={c,c,c,o,n}
@@ -547,7 +557,7 @@ public class MCSThread implements Callable<MCSSolution> {
             System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
+//        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
         String key;
         MCSSolution mcs;
 
@@ -566,11 +576,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -581,10 +591,11 @@ public class MCSThread implements Callable<MCSSolution> {
                                 false,
                                 ringFlag,
                                 false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                    key = generateUniqueKey(
+                            getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
@@ -593,11 +604,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -609,7 +620,7 @@ public class MCSThread implements Callable<MCSSolution> {
                                         false,
                                         ringFlag,
                                         false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
                 break;
@@ -628,11 +639,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -643,7 +654,7 @@ public class MCSThread implements Callable<MCSSolution> {
                                 false,
                                 false,
                                 false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
@@ -655,11 +666,11 @@ public class MCSThread implements Callable<MCSSolution> {
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -670,7 +681,7 @@ public class MCSThread implements Callable<MCSSolution> {
                                 false,
                                 false,
                                 false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
                 break;
@@ -679,20 +690,21 @@ public class MCSThread implements Callable<MCSSolution> {
                         && expectedMaxGraphmatch > 3
                         && ac1.getBondCount() > 2
                         && ac2.getBondCount() > 2) {
+                    System.out.println("MCS Connected Default");
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            ringFlag,
+                            false,
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -701,25 +713,26 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
-                                ringFlag,
+                                false,
                                 false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
+                    System.out.println("MCS DisConnected Default");
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            isHasPerfectRings(),
+                            false,
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
                     );
-                    if (mappingcache.containsKey(key)) {
+                    if (ThreadSafeCache.getInstance().containsKey(key)) {
                         if (DEBUG3) {
                             System.out.println("===={Aladdin} Mapping {Gini}====");
                         }
-                        MCSSolution solution = mappingcache.get(key);
+                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                         mcs = copyOldSolutionToNew(
                                 getQueryPosition(), getTargetPosition(),
                                 getCompound1(), getCompound2(),
@@ -729,19 +742,19 @@ public class MCSThread implements Callable<MCSSolution> {
                         isomorphism
                                 = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                         false,
-                                        isHasPerfectRings(),
+                                        false,
                                         false);
-                        mcs = addMCSSolution(key, mappingcache, isomorphism);
+                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
                 break;
         }
-
+//        System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
         return mcs;
 
     }
 
-    private IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
+    private synchronized IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
         IAtomContainer a = ac.clone();
         a.setID(ac.getID());
         for (int i = 0; i < a.getAtomCount(); i++) {
@@ -778,21 +791,21 @@ public class MCSThread implements Callable<MCSSolution> {
         return targetPosition;
     }
 
-    void setHasPerfectRings(boolean ring) {
+    synchronized void setHasPerfectRings(boolean ring) {
         this.hasRings = ring;
     }
 
     /**
      * @return the hasRings
      */
-    boolean isHasPerfectRings() {
+    synchronized boolean isHasPerfectRings() {
         return hasRings;
     }
 
     /*
      * Check if fragmented container has single atom
      */
-    private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
+    private synchronized boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
         if (DEBUG1) {
             System.out.println("isMoleculeConnected");
         }
@@ -829,46 +842,23 @@ public class MCSThread implements Callable<MCSSolution> {
         return connected1 & connected2;
     }
 
-    void setEductRingCount(int numberOfCyclesEduct) {
+    synchronized void setEductRingCount(int numberOfCyclesEduct) {
         this.numberOfCyclesEduct = numberOfCyclesEduct;
     }
 
-    void setProductRingCount(int numberOfCyclesProduct) {
+    synchronized void setProductRingCount(int numberOfCyclesProduct) {
         this.numberOfCyclesProduct = numberOfCyclesProduct;
     }
 
-    private String generateUniqueKey(String id1, String id2,
+    synchronized String generateUniqueKey(
+            String id1, String id2,
             int atomCount1, int atomCount2,
             int bondCount1, int bondCount2,
             boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
-        try {
-            String sm1 = CanonSmiAdapter.create(compound1);
-            String sm2 = CanonSmiAdapter.create(compound2);
-            StringBuilder sb = new StringBuilder();
-            sb.append(id1).append(id2)
-                    .append(atomCount1)
-                    .append(atomCount2)
-                    .append(bondCount1)
-                    .append(bondCount2)
-                    .append(bondMatcher)
-                    .append(ringMatcher)
-                    .append(hasPerfectRings)
-                    .append(numberOfCyclesEduct)
-                    .append(numberOfCyclesProduct);
-            sb.append(sm1);
-            sb.append(sm2);
-            if (DEBUG3) {
-                System.out.println(" sm1 " + sm1);
-                System.out.println(" sm2 " + sm2);
-            }
-            return sb.toString();
-        } catch (CDKException | IOException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(id1).append(id2)
+        //System.out.println("====generate Unique Key====");
+        StringBuilder key = new StringBuilder();
+        key.append(id1).append(id2)
                 .append(atomCount1)
                 .append(atomCount2)
                 .append(bondCount1)
@@ -878,13 +868,34 @@ public class MCSThread implements Callable<MCSSolution> {
                 .append(hasPerfectRings)
                 .append(numberOfCyclesEduct)
                 .append(numberOfCyclesProduct);
-        return sb.toString();
+
+        try {
+            int[] sm1 = getCircularFP(compound1);
+            int[] sm2 = getCircularFP(compound2);
+            key.append(Arrays.toString(sm1));
+            key.append(Arrays.toString(sm2));
+            if (DEBUG3) {
+                System.out.println(" sm1 " + Arrays.toString(sm1));
+                System.out.println(" sm2 " + Arrays.toString(sm2));
+            }
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
+        }
+        //System.out.println("KEY " + key);
+        return key.toString();
+    }
+
+    private synchronized int[] getCircularFP(IAtomContainer mol) throws CDKException {
+        CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
+        circularFingerprinter.setPerceiveStereo(true);
+        IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
+        return bitFingerprint.getSetbits();
     }
 
     /*
      * copy old mapping from the cache to new
      */
-    private MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
+    synchronized MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
             IAtomContainer compound1, IAtomContainer compound2, MCSSolution oldSolution) {
         AtomAtomMapping atomAtomMapping = oldSolution.getAtomAtomMapping();
         Map<Integer, Integer> mappingsByIndex = atomAtomMapping.getMappingsByIndex();
@@ -901,7 +912,7 @@ public class MCSThread implements Callable<MCSSolution> {
         return mcsSolution;
     }
 
-    private MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
+    synchronized MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
 
         isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
         if (DEBUG3) {

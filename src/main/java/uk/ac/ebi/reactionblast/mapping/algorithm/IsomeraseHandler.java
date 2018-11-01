@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
+import java.io.IOException;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +43,10 @@ import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
+import org.openscience.cdk.smiles.smarts.SmartsPattern;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
@@ -125,7 +126,7 @@ class IsomeraseHandler {
                     IAtomContainer product = products.atomContainers().iterator().next();
                     boolean chipPhophateInSingleReactantProductNotInRing
                             = chipPhophateInSingleReactantProductNotInRing(educt, product);
-                } catch (CDKException ex) {
+                } catch (CDKException | IOException ex) {
                     LOGGER.error(SEVERE, null, ex);
                 }
             }
@@ -189,7 +190,7 @@ class IsomeraseHandler {
     /*
      * Example reaction is R01518
      */
-    private boolean chipPhophateInSingleReactantProductNotInRing(IAtomContainer educt, IAtomContainer product) throws CDKException {
+    private boolean chipPhophateInSingleReactantProductNotInRing(IAtomContainer educt, IAtomContainer product) throws CDKException, IOException {
 
         if (ringContainerCountR.isEmpty() && ringContainerCountP.isEmpty()) {
             String phosphateSMILES = "OP(O)(O)=O";

@@ -38,11 +38,10 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
-import org.openscience.cdk.isomorphism.matchers.IQueryBond;
-import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
+import org.openscience.smsd.tools.Utility;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -286,7 +285,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
                 Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
                 cEdges.add(edge);
             }
-        } else if (isMatchFeasible(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        } else if (Utility.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
             Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
             cEdges.add(edge);
         } else {
@@ -418,43 +417,12 @@ public final class GenerateCompatibilityGraph implements Serializable {
     }
 
     private void addZeroEdges(IBond reactantBond, IBond productBond, int indexI, int indexJ) {
-        if (isMatchFeasible(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        if (Utility.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
             Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
             cEdges.add(edge);
         } else {
             Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
             dEdges.add(edge);
-        }
-    }
-
-    /**
-     *
-     * @param bondA1
-     * @param bondA2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @return
-     */
-    private boolean isMatchFeasible(
-            IBond bondA1,
-            IBond bondA2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-
-        if (bondA1 instanceof IQueryBond) {
-            if (((IQueryBond) bondA1).matches(bondA2)) {
-                IQueryAtom atom1 = (IQueryAtom) (bondA1.getAtom(0));
-                IQueryAtom atom2 = (IQueryAtom) (bondA1.getAtom(1));
-                return atom1.matches(bondA2.getAtom(0)) && atom2.matches(bondA2.getAtom(1))
-                        || atom1.matches(bondA2.getAtom(1)) && atom2.matches(bondA2.getAtom(0));
-            }
-            return false;
-        } else {
-            /*
-             This one also matches atom type, not just symbols
-             */
-            return DefaulAtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings, matchAtomType);
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.Stack;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import org.openscience.smsd.tools.Utility;
 
@@ -89,7 +89,7 @@ public final class EdgeProductGraph implements Serializable {
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
                 //Only add the edge product vertex if the edge labels and end vertex labels are the same
-                if (Utility.isMatchFeasible(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                if (Utility.matchAtomAndBond(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
 
                     Vertex node = new Vertex(compatibilityNodeCounter);
                     if (DEBUG) {
@@ -184,8 +184,7 @@ public final class EdgeProductGraph implements Serializable {
         if (!possibleVerticesG1.isEmpty() && !possibleVerticesG2.isEmpty()) {
             for (IAtom v1 : possibleVerticesG1) {
                 for (IAtom v2 : possibleVerticesG2) {
-                    if (DefaulAtomBondMatcher.isAtomMatch(
-                            DefaulAtomBondMatcher.atomMatcher(v1, shouldMatchRings, matchAtomType), v2)) {
+                    if (AtomBondMatcher.matches(v1, v2, shouldMatchRings, matchAtomType)) {
 //                    if (v1.getSymbol().equals(v2.getSymbol())) {
                         // e1,f1 in G1 are connected via a vertex of
                         // the same label as the vertex shared by e2,f2 in G2.

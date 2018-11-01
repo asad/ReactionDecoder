@@ -118,7 +118,7 @@ public class CallableAtomMappingTool implements Serializable {
          */
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
 
-        ExecutorService executor = null;
+        ExecutorService executor = Executors.newSingleThreadExecutor();;
         if (DEBUG) {
             executor = Executors.newSingleThreadExecutor();
         } else {

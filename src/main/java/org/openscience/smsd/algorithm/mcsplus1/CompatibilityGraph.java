@@ -464,7 +464,7 @@ public class CompatibilityGraph {
                     }
 
                     if (connectedFlag
-                            && Utility.isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && Utility.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 
@@ -641,7 +641,7 @@ public class CompatibilityGraph {
                     }
 
                     if (connectedFlag
-                            && Utility.isMatchFeasible(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && Utility.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
                         matchBondFlag = true;
                     }
 

@@ -26,7 +26,7 @@ import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.smsd.algorithm.matchers.DefaulAtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 
 /**
  *
@@ -127,15 +127,23 @@ public class Utility {
      * @param matchAtomType
      * @return
      */
-    public static boolean isMatchFeasible(
+    public static boolean matchAtomAndBond(
             IBond bondA1,
             IBond bondA2,
             boolean shouldMatchBonds,
             boolean shouldMatchRings,
             boolean matchAtomType) {
+        boolean atomMatch = AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getBegin(),
+                shouldMatchRings, matchAtomType)
+                        ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getEnd(),
+                                shouldMatchRings, matchAtomType)
+                        : AtomBondMatcher.matches(bondA1.getBegin(), bondA2.getEnd(),
+                                shouldMatchRings, matchAtomType)
+                                ? AtomBondMatcher.matches(bondA1.getEnd(), bondA2.getBegin(),
+                                        shouldMatchRings, matchAtomType) : false;
 
-        return DefaulAtomBondMatcher
-                .matches(bondA1, bondA2, matchAtomType, shouldMatchRings, matchAtomType);
+        boolean bondMatch = AtomBondMatcher.matches(bondA1, bondA2, shouldMatchBonds, shouldMatchRings);
+        return atomMatch && bondMatch;
     }
 
 }
