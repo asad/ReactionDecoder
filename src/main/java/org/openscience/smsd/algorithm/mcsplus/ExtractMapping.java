@@ -353,7 +353,7 @@ public class ExtractMapping {
                 }
             }
         }
-        System.out.println("Common Index " + commonAtoms);
+//        System.out.println("Common Index " + commonAtoms);
         Set<IAtom> removeAtoms = new HashSet<>();
         for (IAtom a : result.atoms()) {
             if (!commonAtoms.contains(result.indexOf(a))) {
