@@ -44,7 +44,7 @@ public class IterationManager implements Serializable {
      * Constructor for storing execution time
      */
     public IterationManager() {
-        this(Integer.MAX_VALUE);
+        this(-1);
     }
 
     /**
@@ -54,7 +54,7 @@ public class IterationManager implements Serializable {
      */
     public IterationManager(int maxIteration) {
         this.counter = 0;
-        this.coverage = 10;
+        this.coverage = 1;
         this.max = maxIteration;
         this.limit = this.max * this.coverage;
         //System.out.println("Iteration Limit:" + this.limit);
@@ -93,7 +93,7 @@ public class IterationManager implements Serializable {
      * @return true is max limit reached else false
      */
     public synchronized boolean isMaxIteration() {
-        return counter > limit;
+        return limit == -1 ? false : counter > limit;
     }
 
     /**
