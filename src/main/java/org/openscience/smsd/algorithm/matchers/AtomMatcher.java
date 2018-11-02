@@ -171,9 +171,11 @@ public abstract class AtomMatcher {
                     return ringsizesT.containsAll(ringsizesQ)
                             || ringsizesQ.containsAll(ringsizesT);
                 }
-            } else {
-                return false;
             }
+            if (!atom1.isInRing() & !atom2.isInRing()) {
+                return true;
+            }
+            return false;
         }
     }
 

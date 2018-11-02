@@ -83,6 +83,42 @@ public class AtomBondMatcher {
 
     /**
      *
+     * @param b1
+     * @param b2
+     * @param atomMatcher
+     * @param bondMatcher
+     * @return
+     */
+    public static boolean matchAtomAndBond(
+            IBond b1,
+            IBond b2,
+            AtomMatcher atomMatcher,
+            BondMatcher bondMatcher) {
+        if (DEBUG) {
+            System.out.println("\n\n matchAtomAndBond ");
+        }
+        
+        boolean atomMatch1 = matches(b1.getBegin(), b2.getBegin(), atomMatcher)
+                && matches(b1.getEnd(), b2.getEnd(), atomMatcher);
+        boolean atomMatch2 = matches(b1.getBegin(), b2.getEnd(), atomMatcher)
+                && matches(b1.getEnd(), b2.getBegin(), atomMatcher);
+        boolean bondMatch = matches(b1, b2, bondMatcher);
+
+        if (DEBUG) {
+            System.out.println(" bondA1 a0:" + b1.getBegin().getSymbol()
+                    + " a1:" + b1.getEnd().getSymbol());
+            System.out.println(" bondB1 b0:" + b2.getBegin().getSymbol()
+                    + " b1:" + b2.getEnd().getSymbol());
+
+            System.out.println(" atomMatch1 " + atomMatch1
+                    + "| atomMatch2 " + atomMatch2
+                    + ", bondMatch " + bondMatch);
+        }
+        return (atomMatch1 || atomMatch2) && bondMatch;
+    }
+
+    /**
+     *
      * @param bondA1
      * @param bondA2
      * @param bm Bond Matcher
