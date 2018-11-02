@@ -20,7 +20,7 @@ import org.openscience.smsd.tools.IterationManager;
 public class GraphKoch implements IClique {
 
     private final static boolean DEBUG = false;
-    private final static boolean DEBUG2 = true;
+    private final static boolean DEBUG2 = false;
     private final Collection<Set<Vertex>> cliques;
     private final Graph graph;
     IterationManager manager;
@@ -68,8 +68,8 @@ public class GraphKoch implements IClique {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
         int interation = 2 * this.graph.V();
-        if (interation > 1000) {
-            interation = 1000;
+        if (interation < 30000) {
+            interation = 30000;
         }
         this.manager = new IterationManager(interation);
     }
