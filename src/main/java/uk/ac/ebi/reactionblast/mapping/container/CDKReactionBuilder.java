@@ -152,7 +152,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             out.println("standardize reaction module phase 1");
         }
         for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
-            String id = mol.getID() == null || mol.getID().isEmpty() ? null : mol.getID();
+            String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
             tempStoic = 1.0;
             if (reaction.getReactantCoefficient(mol) > 0) {
                 tempStoic = reaction.getReactantCoefficient(mol);
@@ -187,10 +187,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             aromatizeMolecule(molWithH);
 
             if (DEBUG) {
-                out.println("standardize reaction module phase 1.2");
+                out.println(id + " standardize reaction module phase 1.2");
             }
 
-            if (id == null) {
+            if (id == null || id.isEmpty()) {
                 molWithH = setProperty(molWithH);
             } else {
                 molWithH.setID(id);
@@ -204,7 +204,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-//                System.LOGGER.debug("St Map put: " + mol.getID() + ", St: " + tempStoic);
+                System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);
@@ -230,7 +230,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             out.println();
         }
         for (IAtomContainer mol : reaction.getProducts().atomContainers()) {
-            String id = mol.getID() == null || mol.getID().isEmpty() ? null : mol.getID();
+            String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
             tempStoic = 1.0;
             if (reaction.getProductCoefficient(mol) > 0) {
                 tempStoic = reaction.getProductCoefficient(mol);
@@ -280,7 +280,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-//                System.LOGGER.debug("St Map put: " + mol.getID() + ", St: " + tempStoic);
+                System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);
@@ -328,11 +328,12 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
     private IAtomContainer setProperty(IAtomContainer molecule) throws Exception {
         /*
-         If ID is NULL or empty please assign it to null
+         * If ID is NULL or empty please assign it to null
          */
-        String molID = molecule.getID() == null || molecule.getID().isEmpty() ? null : molecule.getID();
+        String molID = molecule.getID() == null
+                || molecule.getID().isEmpty() ? null : molecule.getID();
         if (DEBUG) {
-            LOGGER.debug("BEFORE");
+            System.out.println("BEFORE");
             printAtoms(molecule);
         }
         try {
@@ -382,18 +383,18 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 } else {
                     LOGGER.debug("error: Mol file should contain atleast one atom! " + SmilesGenerator.generic().create(molecule));
                 }
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
             } catch (Exception ex) {
-                LOGGER.error(SEVERE, null, ex);
+                LOGGER.error(SEVERE, " Error in setting mol id: ", ex.getMessage());
             }
-//            System.LOGGER.debug("After");
-//            printAtoms(molecule);
+            if (DEBUG) {
+                System.out.println("After");
+                printAtoms(molecule);
+            }
             if (molecule.getID() == null) {
                 try {
                     throw new CDKException("Mol ID is NULL");
                 } catch (CDKException ex) {
-                    LOGGER.error(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, "Mol is can't be set ", ex.getMessage());
                 }
             }
 
@@ -401,8 +402,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             LOGGER.error(SEVERE, null, ex);
         }
         if (DEBUG) {
-            out.println("After Cleanup Mol ID is " + molID);
-//        printAtoms(molecule);
+            System.out.println("After Cleanup Mol ID is " + molID);
+            printAtoms(molecule);
         }
         return molecule;
     }
