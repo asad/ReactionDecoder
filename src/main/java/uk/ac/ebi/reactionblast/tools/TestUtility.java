@@ -37,7 +37,6 @@ import static java.util.logging.Level.SEVERE;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainerSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
-import static org.openscience.cdk.CDKConstants.TITLE;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -83,6 +82,7 @@ public class TestUtility {
     public static final String MACIE_RXN = "rxn/macie/";
     private final static ILoggingTool LOGGER
             = createLoggingTool(TestUtility.class);
+    private static boolean DEBUG = false;
 
     /**
      *
@@ -310,20 +310,28 @@ public class TestUtility {
         try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(getFileWithUtil(filepath))) {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
+            if (DEBUG) {
+                System.out.println("Read Reaction ");
+                for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+                    System.out.println("r " + ac.getTitle());
+                }
+                for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
+                    System.out.println("p " + ac.getTitle());
+                }
+            }
         } catch (Exception ex) {
-            LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, "Unable to parse the RXN file", ex.getMessage());
         }
 
         if (removeHydrogens && reaction != null) {
             // XXX WARNING : this may not work correctly!
             IReaction hydrogenFreeReaction = new Reaction();
             IAtomContainerSet hydrogenFreeReactants = new AtomContainerSet();
-
             for (IAtomContainer atomContainer : reaction.getReactants().atomContainers()) {
                 setNullHCountToZero(atomContainer);
                 percieveAtomTypesAndConfigureAtoms(atomContainer);
                 IAtomContainer acMinusH = convertExplicitToImplicitHydrogens(atomContainer);
-                acMinusH.setID((String) atomContainer.getProperty(TITLE));
+                acMinusH.setID(atomContainer.getTitle());
                 hydrogenFreeReactants.addAtomContainer(acMinusH);
             }
             hydrogenFreeReaction.setReactants(hydrogenFreeReactants);
@@ -332,7 +340,7 @@ public class TestUtility {
                 setNullHCountToZero(atomContainer);
                 percieveAtomTypesAndConfigureAtoms(atomContainer);
                 IAtomContainer acMinusH = convertExplicitToImplicitHydrogens(atomContainer);
-                acMinusH.setID((String) atomContainer.getProperty(TITLE));
+                acMinusH.setID(atomContainer.getTitle());
                 hydrogenFreeProducts.addAtomContainer(acMinusH);
             }
 

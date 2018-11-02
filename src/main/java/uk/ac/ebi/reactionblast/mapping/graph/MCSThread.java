@@ -690,7 +690,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         && expectedMaxGraphmatch > 3
                         && ac1.getBondCount() > 2
                         && ac2.getBondCount() > 2) {
-                    System.out.println("MCS Connected Default");
+//                    System.out.println("MCS Connected Default");
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
@@ -718,7 +718,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
-                    System.out.println("MCS DisConnected Default");
+                    //System.out.println("MCS DisConnected Default");
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
@@ -940,9 +940,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
         }
 
-        if (!mappingcache.containsKey(key)) {
-            mappingcache.put(key, mcs);
-        }
+//        if (!mappingcache.containsKey(key)) {
+//            mappingcache.put(key, mcs);
+//        }
         return mcs;
     }
 }

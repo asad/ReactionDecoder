@@ -94,9 +94,7 @@ public final class EdgeProductGraph implements Serializable {
             for (IBond b : tbonds) {
                 //Asad-Imp for larde graphs
                 if (a.getOrder().equals(b.getOrder())
-                        || (a.isAromatic() && b.isAromatic())
-                        || (a.isAromatic() && !b.isAromatic())
-                        || (!a.isAromatic() && b.isAromatic())) {
+                        || (a.isAromatic() && b.isAromatic())) {
                     //Only add the edge product vertex if the edge labels and end vertex labels are the same
                     if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher)) {
                         Vertex node = new Vertex(compatibilityNodeCounter);

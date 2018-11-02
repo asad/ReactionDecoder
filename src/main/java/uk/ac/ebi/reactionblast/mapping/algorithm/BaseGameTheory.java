@@ -404,9 +404,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        //if (DEBUG) {
+        if (DEBUG) {
             System.out.println("====Quick Mapping====");
-        //}
+        }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
@@ -461,21 +461,6 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
                 return mcs;
             }
-
-//            //Isomorphism mcsThread = new Isomorphism(educt, product, Algorithm.VFLibMCS, false, false, false);
-//            //isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
-//            if (DEBUG) {
-//                System.out.println("===={Amigo} <=> {Senorita}====");
-//            }
-//            Isomorphism isomorphism;
-//            isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
-//
-//            isomorphism.setChemFilters(true, true, true);
-//            MCSSolution mcs = new MCSSolution(queryPosition, targetPosition, educt, product, isomorphism.getFirstAtomMapping());
-//            mcs.setEnergy(isomorphism.getEnergyScore(0));
-//            mcs.setFragmentSize(isomorphism.getFragmentSize(0));
-//            mcs.setStereoScore(isomorphism.getStereoScore(0));
-//            return mcs;
         } catch (CDKException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
@@ -637,9 +622,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         mcs.setFragmentSize(isomorphism.getFragmentSize(0));
         mcs.setStereoScore(isomorphism.getStereoScore(0));
 
-        if (!mappingcache.containsKey(key)) {
-            mappingcache.put(key, mcs);
-        }
+//        if (!mappingcache.containsKey(key)) {
+//            mappingcache.put(key, mcs);
+//        }
         return mcs;
     }
 }

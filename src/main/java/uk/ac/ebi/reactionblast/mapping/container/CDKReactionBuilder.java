@@ -204,7 +204,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-                System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
+                //System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);
@@ -280,7 +280,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-                System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
+                //System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);

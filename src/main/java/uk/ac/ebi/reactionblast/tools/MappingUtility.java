@@ -35,7 +35,6 @@ import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 import static java.lang.System.getProperty;
 import static java.util.logging.Level.SEVERE;
 
@@ -46,6 +45,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
+import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.

@@ -125,7 +125,6 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
         }
 
         r.setDirection(reaction.getDirection());
-        System.out.println("Reaction ID " + reaction.getID());
         r.setID(reaction.getID() == null ? "" : reaction.getID());
 
         return r;
