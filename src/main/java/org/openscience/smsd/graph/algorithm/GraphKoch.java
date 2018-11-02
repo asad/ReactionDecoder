@@ -20,7 +20,7 @@ import org.openscience.smsd.tools.IterationManager;
 public class GraphKoch implements IClique {
 
     private final static boolean DEBUG = false;
-    private final static boolean DEBUG2 = false;
+    private final static boolean DEBUG2 = true;
     private final Collection<Set<Vertex>> cliques;
     private final Graph graph;
     IterationManager manager;
@@ -67,7 +67,11 @@ public class GraphKoch implements IClique {
     public GraphKoch(Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
-        this.manager = new IterationManager(this.graph.V() + this.graph.V());
+        int interation = 2 * this.graph.V();
+        if (interation > 1000) {
+            interation = 1000;
+        }
+        this.manager = new IterationManager(interation);
     }
 
     /**
@@ -129,7 +133,7 @@ public class GraphKoch implements IClique {
             }
             Set<Vertex> subresult;
             subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....(small footprint)
-//            if (this.graph.V() < 3000) {
+//            if (this.graph.V() < 2000) {
 //                if (DEBUG) {
 //                    System.out.println("Small world");
 //                }
@@ -323,9 +327,12 @@ public class GraphKoch implements IClique {
 
     private boolean hasCPath(Vertex source, Set<Vertex> target, Set<Vertex> exclude) {
         //first check if there is a C_Edge from source to any element of target
-        if (target.stream().anyMatch((v) -> (isCEdge(source, v)))) {
-            return true;
+        for (Vertex v : target) {
+            if (isCEdge(source, v)) {
+                return true;
+            }
         }
+
         boolean result = false;
         //add source to the exclude list (no edge from source to any element from target exists)
         exclude.add(source);
