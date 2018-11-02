@@ -353,7 +353,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             if (line.startsWith("$$$$")) {
                 return molecule;
             }
-            if (line.length() > 0) {
+            if (line.trim().length() > 0) {
                 title = line;
             }
             line = input.readLine();
