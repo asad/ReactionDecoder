@@ -15,6 +15,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
@@ -84,23 +85,30 @@ public final class EdgeProductGraph implements Serializable {
     }
 
     private void compatibilityGraphNodes() {
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(shouldMatchBonds, shouldMatchRings);
         int compatibilityNodeCounter = 1;
         Iterable<IBond> qbonds = source.bonds();
         Iterable<IBond> tbonds = target.bonds();
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
-                //Only add the edge product vertex if the edge labels and end vertex labels are the same
-                if (AtomBondMatcher.matchAtomAndBond(a, b, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                //Asad-Imp for larde graphs
+                if (a.getOrder().equals(b.getOrder())
+                        || (a.isAromatic() && b.isAromatic())
+                        || (a.isAromatic() && !b.isAromatic())
+                        || (!a.isAromatic() && b.isAromatic())) {
+                    //Only add the edge product vertex if the edge labels and end vertex labels are the same
+                    if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher)) {
+                        Vertex node = new Vertex(compatibilityNodeCounter);
+                        if (DEBUG) {
+                            System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
+                            System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
+                        }
+                        node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
+                        g.addNode(node);
+                        compatibilityNodeCounter++;
 
-                    Vertex node = new Vertex(compatibilityNodeCounter);
-                    if (DEBUG) {
-                        System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
-                        System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
                     }
-                    node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
-                    g.addNode(node);
-                    compatibilityNodeCounter++;
-
                 }
             }
         }
@@ -131,9 +139,12 @@ public final class EdgeProductGraph implements Serializable {
                     }
                     Edge edge = new Edge(n1, n2);
                     edge.setEdgeType(edgetype);
-                    if (edgetype == EdgeType.C_EDGE
-                            || edgetype == EdgeType.D_EDGE) {
+                    if (edgetype == EdgeType.C_EDGE) {
                         //Assume it to be a undirected graph
+                        g.addEdge(edge);
+                    }
+                    if (edgetype == EdgeType.D_EDGE) {
+                        //Assume it to bea a undirected graph
                         g.addEdge(edge);
                     }
                 }
@@ -190,7 +201,7 @@ public final class EdgeProductGraph implements Serializable {
 //                    if (v1.getSymbol().equals(v2.getSymbol())) {
                         // e1,f1 in G1 are connected via a vertex of
                         // the same label as the vertex shared by e2,f2 in G2.
-                        //A C_edge shuold be created
+                        //A C_edge should be created
                         return EdgeType.C_EDGE;
                     }
                 }
