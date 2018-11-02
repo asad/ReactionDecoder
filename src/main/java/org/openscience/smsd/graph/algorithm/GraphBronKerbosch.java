@@ -71,7 +71,11 @@ public class GraphBronKerbosch implements IClique {
             Graph comp_graph_nodes) {
         this.graph = comp_graph_nodes;
         this.cliques = new HashSet<>();
-        this.manager = new IterationManager(1000);
+        int interation = 2 * this.graph.V();
+        if (interation > 1000) {
+            interation = 1000;
+        }
+        this.manager = new IterationManager(interation);
     }
 
     /**
