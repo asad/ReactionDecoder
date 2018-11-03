@@ -20,6 +20,9 @@ package uk.ac.ebi.aamtool;
 
 import uk.ac.ebi.reactionblast.tools.MappingUtility;
 import java.io.FileNotFoundException;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import org.junit.Test;
 import org.openscience.cdk.interfaces.IReaction;
@@ -33,6 +36,7 @@ import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
 import static uk.ac.ebi.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import static uk.ac.ebi.reactionblast.tools.TestUtility.BUG_RXN_DIR;
 import static uk.ac.ebi.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
@@ -266,7 +270,9 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+        Set<IFeature> f = ignoreHydrogenChanges(formedCleavedWFingerprint.getFeatures());
+        assertEquals(3, f.size());
     }
 
     /**
@@ -576,9 +582,8 @@ public class RXNMappingTest extends MappingUtility {
 
     /*
      * MIN, fp 
-     * ID=R01432:Bond Cleaved and Formed (3)
+     * ID=R01432:Bond Cleaved and Formed (2)
      * [C%O:2.0, C-H:2.0]
-     * [C%O:2.0, C-H:2.0, H-O:2.0]
      * 
      *  BE 706.0, Fragment 0
      * 
@@ -594,8 +599,8 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
-        assertEquals(3, formedCleavedWFingerprint.getFeatureCount());
+        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -1849,4 +1854,11 @@ public class RXNMappingTest extends MappingUtility {
 //                .getFormedCleavedWFingerprint();
 //        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
 //    }
+    private Set<IFeature> ignoreHydrogenChanges(Collection<IFeature> features) {
+        Set<IFeature> selected = new TreeSet<>();
+        features.stream().filter((f) -> (!f.getPattern().contains("H"))).forEachOrdered((f) -> {
+            selected.add(f);
+        });
+        return selected;
+    }
 }

@@ -79,6 +79,8 @@ public class MCSTest {
         IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
         IAtomContainer target = sp.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 
+//        IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
+//        IAtomContainer target = sp.parseSmiles("OC1=CC=CC=C1");
 //        IAtomContainer query = sp.parseSmiles("CC1=C(CCC([O-])=O)C2=[N+]3C1=Cc1c(C)c(C=C)c4C=C5C(C)=C(C=C)C6=[N+]5[Fe-]3(n14)n1c(=C6)c(C)c(CCC([O-])=O)c1=C2");
 //        IAtomContainer target = sp.parseSmiles("C1=2N3C(C=C4[N+]5=C(C=C6N7C8=CC9=[N+](C(=C1)C(=C9CCC([O-])=O)C)[Fe-2]573OC(CCC=%10C=%11C=C%12C(=C(C%13=CC%14=[N+]%15C(=CC=%16N%17C(=C(C%16C=C)C)C=C([N+]%11[Fe-2]%15%17(N%13%12)OC(CCC8=C6C)=O)C%10C)C(=C%14C=C)C)C)CCC([O-])=O)=O)C(=C4C)C=C)=C(C2C)C=C");
 //
@@ -89,9 +91,10 @@ public class MCSTest {
                 = new Isomorphism(query, target, Algorithm.VFLibMCS, true, true, true);
 //                = new Isomorphism(query, target, Algorithm.VFLibMCS, false, false, false);
 
-        System.out.println("mcs.getFirstAtomMapping() " + mcs.getFirstAtomMapping());
+//        System.out.println("mcs.getFirstAtomMapping() " + mcs.getFirstAtomMapping());
 //        List<AtomAtomMapping> allAtomMapping = mcs.getAllAtomMapping();
         // assertEquals(2, allAtomMapping.size());
+//        System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
         assertEquals(9, mcs.getFirstAtomMapping().getCount());
     }
 
@@ -180,18 +183,38 @@ public class MCSTest {
 //        IAtomContainer target = sp.parseSmiles("ccnc");
 //        IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
 //        IAtomContainer target = sp.parseSmiles("C1=CC=CC=C1");
-        IAtomContainer query = sp.parseSmiles("C1OC(CO)C(OP=O)C1O");
-        IAtomContainer target = sp.parseSmiles("[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
+        IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
+        IAtomContainer target = sp.parseSmiles("*[P](=O)(O)OCC1O[CH]C(OC(=O)C(N)CC2=CC=C(O)C=C2)C1O");
 //        IAtomContainer query = sp.parseSmiles("CC1=C(CCC([O-])=O)C2=[N+]3C1=Cc1c(C)c(C=C)c4C=C5C(C)=C(C=C)C6=[N+]5[Fe-]3(n14)n1c(=C6)c(C)c(CCC([O-])=O)c1=C2");
 //        IAtomContainer target = sp.parseSmiles("C1=2N3C(C=C4[N+]5=C(C=C6N7C8=CC9=[N+](C(=C1)C(=C9CCC([O-])=O)C)[Fe-2]573OC(CCC=%10C=%11C=C%12C(=C(C%13=CC%14=[N+]%15C(=CC=%16N%17C(=C(C%16C=C)C)C=C([N+]%11[Fe-2]%15%17(N%13%12)OC(CCC8=C6C)=O)C%10C)C(=C%14C=C)C)C)CCC([O-])=O)=O)C(=C4C)C=C)=C(C2C)C=C");
         MoleculeInitializer.initializeMolecule(query);
         MoleculeInitializer.initializeMolecule(target);
 
         try {
-            org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper sub
-                    = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(query, target, false, false, false);
-            //System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+            org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper sub
+                    = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, true, false);
+//            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
             assertEquals("C1OC(CO)C(O)C1O", sub.getFirstAtomMapping().getCommonFragmentAsSMILES());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test_BIG_count() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+
+        IAtomContainer query = sp.parseSmiles("C\\C1=C2\\N\\C(=C/C3=N/C(=C\\C4=C(CC(O)=O)C(CCC(O)=O)=C(CC5=C(CCC(O)=O)C(CC(O)=O)=C1N5)N4)/[C@@H](CCC(O)=O)[C@]3(C)CC(O)=O)[C@@H](CCC(O)=O)[C@]2(C)CC(O)=O");
+        IAtomContainer target = sp.parseSmiles("C[C@]1(CC(O)=O)[C@H](CCC(O)=O)\\C2=C\\C3=C(CC(O)=O)C(CCC(O)=O)=C(CC4=C(CCC(O)=O)C(CC(O)=O)=C(N4)[C@](C)(O)[C@@]45N\\C(=C/C1=N2)[C@@H](CCC(O)=O)[C@]4(C)CC(=O)O5)N3");
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        try {
+            org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper sub
+                    = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, false, false);
+//            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+            assertEquals(62, sub.getFirstAtomMapping().getCount());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -209,20 +232,20 @@ public class MCSTest {
 //        MoleculeInitializer.initializeMolecule(target);
 //
 //        try {
-//            org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper sub
+//            org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
 //                    = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, false, false);
-////            System.out.println("MCS " + (sub.getFirstAtomMapping().getCount()));
-////            System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
-//            assertEquals(68, sub.getFirstAtomMapping().getCount());
+////            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCount()));
+////            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+//            assertEquals(68, mcs.getFirstAtomMapping().getCount());
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
 //
 //        try {
-//            org.openscience.smsd.algorithm.vflib.VF2MCS sub = new org.openscience.smsd.algorithm.vflib.VF2MCS(query, target, false, false, false);
-////            System.out.println("MCS " + (sub.getFirstAtomMapping().getCount()));
-////            System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
-//            assertEquals(68, sub.getFirstAtomMapping().getCount());
+//            org.openscience.smsd.algorithm.vflib.VF2MCS mcs = new org.openscience.smsd.algorithm.vflib.VF2MCS(query, target, false, false, false);
+////            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCount()));
+////            System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+//            assertEquals(68, mcs.getFirstAtomMapping().getCount());
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
@@ -245,7 +268,72 @@ public class MCSTest {
             Substructure sub
                     = new Substructure(query, target, false, true, true, true);
             System.out.println("Subgraph " + sub.isSubgraph());
-            //System.out.println("MCS " + (sub.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+            //System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void MCSCheck() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IAtomContainer query = sp.parseSmiles("O=C(O)CCC(N)C(=O)O");
+        IAtomContainer target = sp.parseSmiles("O=C(O)C(N)CCC(=O)N");
+
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        try {
+            Isomorphism mcs
+                    = new Isomorphism(query, target, Algorithm.DEFAULT, false, false, false);
+            System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+            assertEquals(9, mcs.getFirstAtomMapping().getCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void SubStructureCheck() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IAtomContainer query = sp.parseSmiles("O=C(O)CCC(N)C(=O)O");
+        IAtomContainer target = sp.parseSmiles("O=C(O)C(N)CCC(=O)N");
+
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        try {
+            Substructure mcs
+                    = new Substructure(query, target, false, false, false, true);
+            System.out.println("sub " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+            assertEquals(0, mcs.getFirstAtomMapping().getCount());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void MCSRingCheck() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IAtomContainer query = sp.parseSmiles("OC[C@H]1O[C@H](O[C@H]2[C@H](O)[C@@H](O)C(O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@@H]1O");
+        IAtomContainer target = sp.parseSmiles("OC[C@H]1O[C@H](O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@H](O)[C@@H](O)[C@@H]1O");
+
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        try {
+//            Isomorphism mcs
+//                    = new Isomorphism(query, target, Algorithm.MCSPlus, false, false, false);
+            
+            
+             org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
+                    = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, false, false);
+            
+            System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+            assertEquals(19, mcs.getFirstAtomMapping().getCount());
         } catch (Exception e) {
             e.printStackTrace();
         }
