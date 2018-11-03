@@ -112,7 +112,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;

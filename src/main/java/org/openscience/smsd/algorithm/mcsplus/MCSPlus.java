@@ -164,18 +164,9 @@ public final class MCSPlus {
             }
 
             IClique init = null;
-            boolean disconnected = ConnectivityChecker.isConnected(ac1) && ConnectivityChecker.isConnected(ac2);
-            if (disconnected) {
-                if (DEBUG) {
-                    System.out.println("Calling Bron Kerbosch");
-                }
-                init = new GraphBronKerbosch(comp_graph_nodes);
-            } else {
-                if (DEBUG) {
-                    System.out.println("Calling Koch");
-                }
-                init = new GraphKoch(comp_graph_nodes, disconnected);
-            }
+            boolean connected = ConnectivityChecker.isConnected(ac1)
+                    && ConnectivityChecker.isConnected(ac2);
+            init = new GraphKoch(comp_graph_nodes, connected);
             init.findMaximalCliques();
 
             Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();

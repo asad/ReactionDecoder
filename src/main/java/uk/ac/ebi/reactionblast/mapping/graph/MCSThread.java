@@ -874,10 +874,10 @@ public class MCSThread implements Callable<MCSSolution> {
             int[] sm2 = getCircularFP(compound2);
             key.append(Arrays.toString(sm1));
             key.append(Arrays.toString(sm2));
-            //if (DEBUG3) {
-            System.out.println(" sm1 " + smiles.create(compound1));
-            System.out.println(" sm2 " + smiles.create(compound2));
-            //}
+            if (DEBUG3) {
+                System.out.println(" sm1 " + smiles.create(compound1));
+                System.out.println(" sm2 " + smiles.create(compound2));
+            }
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
         }

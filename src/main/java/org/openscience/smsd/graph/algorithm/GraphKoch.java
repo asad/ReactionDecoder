@@ -27,7 +27,7 @@ public class GraphKoch implements IClique {
     private final Collection<Set<Vertex>> cliques;
     private final Graph graph;
     IterationManager manager;
-    private final boolean disconnected;
+    private final boolean connected;
 
     /**
      *
@@ -67,9 +67,9 @@ public class GraphKoch implements IClique {
     /**
      *
      * @param compatibilityGraph
-     * @param disconnected
+     * @param connected
      */
-    public GraphKoch(Graph compatibilityGraph, boolean disconnected) {
+    public GraphKoch(Graph compatibilityGraph, boolean connected) {
         this.graph = compatibilityGraph;
         this.cliques = new HashSet<>();
         int interation = 2 * this.graph.V();
@@ -77,7 +77,11 @@ public class GraphKoch implements IClique {
             interation = 30000;
         }
         this.manager = new IterationManager(interation);
-        this.disconnected = disconnected;
+        this.connected = connected;
+
+        if (DEBUG) {
+            System.out.println("GraphKoch");
+        }
     }
 
     /**
@@ -99,11 +103,13 @@ public class GraphKoch implements IClique {
      */
     @Override
     public void findMaximalCliques() {
-//        System.out.println("Starting koch");
+        if (DEBUG) {
+            System.out.println("Starting koch " + connected);
+        }
         Set<Vertex> result = new LinkedHashSet<>();
         int currentmaxresult = 0;
 
-        if (disconnected) {
+        if (!connected) {
             Set<Vertex> P = new LinkedHashSet<>(graph.nodes());
             Set<Vertex> C = new LinkedHashSet<>();
             Set<Vertex> enumerateCliques = enumerateCliques(C, P, currentmaxresult);
@@ -401,10 +407,8 @@ public class GraphKoch implements IClique {
 
     private boolean hasCPath(Vertex source, Set<Vertex> target, Set<Vertex> exclude) {
         //first check if there is a C_Edge from source to any element of target
-        for (Vertex v : target) {
-            if (isCEdge(source, v)) {
-                return true;
-            }
+        if (target.stream().anyMatch((v) -> (isCEdge(source, v)))) {
+            return true;
         }
 
         boolean result = false;
