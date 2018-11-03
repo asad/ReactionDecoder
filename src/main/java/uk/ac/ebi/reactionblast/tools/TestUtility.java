@@ -313,10 +313,10 @@ public class TestUtility {
             if (DEBUG) {
                 System.out.println("Read Reaction ");
                 for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-                    System.out.println("r " + ac.getTitle());
+                    System.out.println("r " + ac.getTitle() + ":" + reaction.getReactantCoefficient(ac));
                 }
                 for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-                    System.out.println("p " + ac.getTitle());
+                    System.out.println("p " + ac.getTitle() + ":" + reaction.getProductCoefficient(ac));
                 }
             }
         } catch (Exception ex) {

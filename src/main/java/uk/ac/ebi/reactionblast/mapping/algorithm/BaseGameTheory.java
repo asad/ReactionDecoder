@@ -404,9 +404,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        if (DEBUG) {
+//        if (DEBUG) {
             System.out.println("====Quick Mapping====");
-        }
+//        }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
@@ -556,7 +556,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             int bondCount1, int bondCount2,
             boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
-        //System.out.println("====generate Unique Key====");
+//        System.out.println("====generate Unique Key====");
         StringBuilder key = new StringBuilder();
         key.append(id1).append(id2)
                 .append(atomCount1)
@@ -622,9 +622,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         mcs.setFragmentSize(isomorphism.getFragmentSize(0));
         mcs.setStereoScore(isomorphism.getStereoScore(0));
 
-//        if (!mappingcache.containsKey(key)) {
-//            mappingcache.put(key, mcs);
-//        }
+        if (!mappingcache.containsKey(key)) {
+            mappingcache.put(key, mcs);
+        }
         return mcs;
     }
 }

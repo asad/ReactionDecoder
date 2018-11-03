@@ -43,10 +43,10 @@ import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.cdk.smiles.smarts.SmartsPattern;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
@@ -298,8 +298,8 @@ class IsomeraseHandler {
     }
 
     /*
-    This Method will find and chip the bonds between the rings
-    Example R01557
+     * This Method will find and chip the bonds between the rings
+     * Example R01557
      */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
         if (DEBUG) {
@@ -307,7 +307,7 @@ class IsomeraseHandler {
         }
         List<IBond> bond_to_be_removed = new ArrayList<>();
         for (IAtom atom : container.atoms()) {
-            if (atom.getSymbol().equals("O")) {
+            if (atom.getSymbol().equals("O") && !atom.isAromatic()) {
                 int number_of_rings = ((Integer) atom.getProperty(RING_CONNECTIONS));
                 if (DEBUG) {
                     out.println("number_of_rings " + number_of_rings);
@@ -339,7 +339,7 @@ class IsomeraseHandler {
                         + " B1 " + bond.getAtom(1).getSymbol());
                 out.println("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
             } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
+                LOGGER.error(SEVERE, "Clipping Bonds: ", ex.getMessage());
             }
         });
         return !bond_to_be_removed.isEmpty();

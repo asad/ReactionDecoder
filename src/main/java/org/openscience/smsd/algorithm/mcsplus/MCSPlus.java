@@ -164,7 +164,8 @@ public final class MCSPlus {
             }
 
             IClique init = null;
-            if (!ConnectivityChecker.isConnected(ac1) || !ConnectivityChecker.isConnected(ac2)) {
+            boolean disconnected = ConnectivityChecker.isConnected(ac1) && ConnectivityChecker.isConnected(ac2);
+            if (disconnected) {
                 if (DEBUG) {
                     System.out.println("Calling Bron Kerbosch");
                 }
@@ -173,7 +174,7 @@ public final class MCSPlus {
                 if (DEBUG) {
                     System.out.println("Calling Koch");
                 }
-                init = new GraphKoch(comp_graph_nodes);
+                init = new GraphKoch(comp_graph_nodes, disconnected);
             }
             init.findMaximalCliques();
 

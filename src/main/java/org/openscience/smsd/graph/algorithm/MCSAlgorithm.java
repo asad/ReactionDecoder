@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.Stack;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
 
@@ -43,8 +44,9 @@ public class MCSAlgorithm {
 
         EdgeProductGraph compatibilityGraph = new EdgeProductGraph(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
         compatibilityGraph.searchCliques();
+        boolean disconnected = ConnectivityChecker.isConnected(source) && ConnectivityChecker.isConnected(target);
 
-        GraphKoch graphKoch = new GraphKoch(compatibilityGraph.getCompatibilityGraph());
+        GraphKoch graphKoch = new GraphKoch(compatibilityGraph.getCompatibilityGraph(), disconnected);
         graphKoch.findMaximalCliques();
         if (DEBUG) {
             System.out.println("graphKoch.getMaxCliquesSet() " + graphKoch.getMaxCliquesSet());

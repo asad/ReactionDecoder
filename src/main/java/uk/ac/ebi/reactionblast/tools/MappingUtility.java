@@ -176,7 +176,7 @@ public class MappingUtility extends TestUtility {
 //            out.println("Input reactions " + sm.create(cdkReaction));
             ReactionMechanismTool annotation = getAnnotation(cdkReaction);
             MappingSolution s = annotation.getSelectedSolution();
-            //out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
+            System.out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
             LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e.getMessage());

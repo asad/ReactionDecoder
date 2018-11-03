@@ -571,7 +571,7 @@ public class MCSThread implements Callable<MCSSolution> {
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            ringFlag,
+                            hasRings,
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
@@ -589,7 +589,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
-                                ringFlag,
+                                hasRings,
                                 false);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
@@ -599,7 +599,7 @@ public class MCSThread implements Callable<MCSSolution> {
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            ringFlag,
+                            isHasPerfectRings(),
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
@@ -616,9 +616,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism
-                                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                                         false,
-                                        ringFlag,
+                                        isHasPerfectRings(),
                                         false);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
@@ -677,7 +677,7 @@ public class MCSThread implements Callable<MCSSolution> {
                                 solution);
 
                     } else {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                                 false,
                                 false,
                                 false);
@@ -695,7 +695,7 @@ public class MCSThread implements Callable<MCSSolution> {
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            false,
+                            isHasPerfectRings(),
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
@@ -713,17 +713,17 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
                                 false,
-                                false,
+                                isHasPerfectRings(),
                                 false);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
-                    //System.out.println("MCS DisConnected Default");
+//                    System.out.println("MCS DisConnected Default");
                     key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                             compound1.getAtomCount(), compound2.getAtomCount(),
                             compound1.getBondCount(), compound2.getBondCount(),
                             false,
-                            false,
+                            isHasPerfectRings(),
                             false,
                             numberOfCyclesEduct,
                             numberOfCyclesProduct
@@ -740,9 +740,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism
-                                = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
+                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                                         false,
-                                        false,
+                                        isHasPerfectRings(),
                                         false);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
@@ -874,10 +874,10 @@ public class MCSThread implements Callable<MCSSolution> {
             int[] sm2 = getCircularFP(compound2);
             key.append(Arrays.toString(sm1));
             key.append(Arrays.toString(sm2));
-            if (DEBUG3) {
-                System.out.println(" sm1 " + Arrays.toString(sm1));
-                System.out.println(" sm2 " + Arrays.toString(sm2));
-            }
+            //if (DEBUG3) {
+            System.out.println(" sm1 " + smiles.create(compound1));
+            System.out.println(" sm2 " + smiles.create(compound2));
+            //}
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
         }
@@ -940,9 +940,20 @@ public class MCSThread implements Callable<MCSSolution> {
 
         }
 
-//        if (!mappingcache.containsKey(key)) {
-//            mappingcache.put(key, mcs);
-//        }
+        if (!mappingcache.containsKey(key)) {
+            if (DEBUG3) {
+                System.out.println("Key " + key);
+                try {
+                    System.out.println("mcs size " + mcs.getAtomAtomMapping().getCount());
+                    System.out.println("mcs map " + mcs.getAtomAtomMapping().getMappingsByIndex());
+                    System.out.println("mcs " + mcs.getAtomAtomMapping().getCommonFragmentAsSMILES());
+                    System.out.println("\n\n\n ");
+                } catch (CloneNotSupportedException | CDKException ex) {
+                    LOGGER.error(SEVERE, "Unable to create SMILES ", ex.getMessage());
+                }
+            }
+            mappingcache.put(key, mcs);
+        }
         return mcs;
     }
 }

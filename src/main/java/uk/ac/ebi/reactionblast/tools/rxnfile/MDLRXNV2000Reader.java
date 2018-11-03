@@ -67,7 +67,8 @@ import org.openscience.cdk.io.IChemObjectReader.Mode;
  * @cdk.bug 1849923
  */
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
-    private static final String NEW_LINE=System.getProperty("line.separator");
+
+    private static final String NEW_LINE = System.getProperty("line.separator");
     BufferedReader input = null;
     private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLRXNV2000Reader.class);
 
@@ -153,7 +154,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     /**
      * Takes an object which subclasses IChemObject, e.g.Molecule, and will read
      * this (from file, database, internet etc).If the specific implementation
- does not support a specific IChemObject it will throw an Exception.
+     * does not support a specific IChemObject it will throw an Exception.
      *
      * @param <T>
      * @param object The object that subclasses IChemObject
@@ -228,6 +229,8 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             reactantCount = Integer.valueOf(tokenizer.nextToken());
             LOGGER.info("Expecting " + reactantCount + " reactants in file");
             productCount = Integer.valueOf(tokenizer.nextToken());
+            LOGGER.info("Expecting " + productCount + " products in file");
+
             if (tokenizer.hasMoreTokens()) {
                 agentCount = Integer.valueOf(tokenizer.nextToken());
                 // ChemAxon extension, technically BIOVIA now support this but
@@ -236,7 +239,6 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                     throw new CDKException("RXN files uses agent count extension");
                 }
             }
-            LOGGER.info("Expecting " + productCount + " products in file");
         } catch (IOException | NumberFormatException exception) {
             LOGGER.debug(exception);
             throw new CDKException("Error while counts line of RXN file", exception);
@@ -300,8 +302,7 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             LOGGER.debug(exception);
             throw new CDKException("Error while reading products", exception);
         }
-
-        // now read the products
+        // now read the agents
         try {
             for (int i = 1; i <= agentCount; i++) {
                 StringBuilder molFile = new StringBuilder();
@@ -313,14 +314,14 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                     molFile.append(NEW_LINE);
                 } while (!molFileLine.equals("M  END"));
 
-                IAtomContainer product;
+                IAtomContainer agent;
                 try ( // read MDL molfile content
                         MDLV2000Reader reader = new MDLV2000Reader(new StringReader(molFile.toString()))) {
-                    product = (IAtomContainer) reader.read(builder.newInstance(IAtomContainer.class));
+                    agent = (IAtomContainer) reader.read(builder.newInstance(IAtomContainer.class));
                 }
 
-                // add reactant
-                reaction.addAgent(product);
+                // add agent
+                reaction.addAgent(agent);
             }
         } catch (CDKException exception) {
             // rethrow exception from MDLReader

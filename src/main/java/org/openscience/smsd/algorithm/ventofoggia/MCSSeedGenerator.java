@@ -28,6 +28,7 @@ import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
@@ -48,8 +49,8 @@ import org.openscience.smsd.interfaces.Algorithm;
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS between
- * run source and target graphs. Then these solutions are extended using
+ * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS
+ * between run source and target graphs. Then these solutions are extended using
  * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.
  *
@@ -165,7 +166,10 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         }
 
         IClique init = null;
-        init = new GraphKoch(comp_graph_nodes);
+        boolean disconnected = ConnectivityChecker.isConnected(ac1)
+                && ConnectivityChecker.isConnected(ac2);
+
+        init = new GraphKoch(comp_graph_nodes, disconnected);
         init.findMaximalCliques();
 
         Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();

@@ -112,7 +112,7 @@ import org.openscience.smsd.interfaces.IResults;
  */
 public final class Isomorphism extends BaseMapping implements Serializable {
 
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
@@ -280,12 +280,12 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
-        } else if (expectedMaxGraphmatch < 3 || (!isMatchBonds())) {
+        } else if (expectedMaxGraphmatch < 3) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
             mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
-        } else if (expectedMaxGraphmatch > 3 && (isMatchRings() || isMatchBonds())) {
+        } else if (expectedMaxGraphmatch > 3) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
             }
@@ -374,12 +374,12 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                     }
                 } else {
                     if (DEBUG) {
-                        System.out.println("defaultMCSAlgorithm - Calling VFMCS ");
+                        System.out.println("defaultMCSAlgorithm - Calling MCSPlus ");
                     }
-                    vfLibMCSAlgorithm();
+                    mcsPlusAlgorithm();
                     if (DEBUG) {
                         System.out.println("getFirstAtomMapping().getCount() " + getFirstAtomMapping().getCount());
-                        System.out.println("defaultMCSAlgorithm - Done VFMCS ");
+                        System.out.println("defaultMCSAlgorithm - - Calling MCSPlus ");
                     }
                 }
             }
