@@ -92,21 +92,18 @@ public final class EdgeProductGraph implements Serializable {
         Iterable<IBond> tbonds = target.bonds();
         for (IBond a : qbonds) {
             for (IBond b : tbonds) {
-                //Asad-Imp for larde graphs
-                if (a.getOrder().equals(b.getOrder())
-                        || (a.isAromatic() && b.isAromatic())) {
-                    //Only add the edge product vertex if the edge labels and end vertex labels are the same
-                    if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher)) {
-                        Vertex node = new Vertex(compatibilityNodeCounter);
-                        if (DEBUG) {
-                            System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
-                            System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
-                        }
-                        node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
-                        g.addNode(node);
-                        compatibilityNodeCounter++;
-
+                //Asad-Imp for large graphs
+                //Only add the edge product vertex if the edge labels and vertex labels are the same
+                if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher, false)) {
+                    Vertex node = new Vertex(compatibilityNodeCounter);
+                    if (DEBUG) {
+                        System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
+                        System.out.println(", T: " + target.indexOf(b) + ", " + b.getBegin().getSymbol() + "- 2 -" + b.getEnd().getSymbol());
                     }
+                    node.setCompatibilityBondPair(source.indexOf(a), target.indexOf(b));
+                    g.addNode(node);
+                    compatibilityNodeCounter++;
+
                 }
             }
         }

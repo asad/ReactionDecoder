@@ -5,7 +5,6 @@
  */
 package org.openscience.smsd.algorithm.matchers;
 
-import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 
@@ -72,12 +71,9 @@ public abstract class BondMatcher {
      */
     private static final class OrderMatcher extends BondMatcher {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean matches(IBond bond1, IBond bond2) {
-            return bond1.getFlag(ISAROMATIC) && bond2.getFlag(ISAROMATIC)
+            return bond1.isAromatic() && bond2.isAromatic()
                     || bond1.getOrder() == bond2.getOrder();
         }
     }
@@ -94,9 +90,9 @@ public abstract class BondMatcher {
          */
         @Override
         public boolean matches(IBond bond1, IBond bond2) {
-            return bond1.getFlag(ISAROMATIC) == bond2.getFlag(ISAROMATIC)
+            return bond1.isAromatic() == bond2.isAromatic()
                     && (bond1.getOrder() == bond2.getOrder()
-                    || bond1.getFlag(ISAROMATIC) && bond2.getFlag(ISAROMATIC));
+                    || bond1.isAromatic() && bond2.isAromatic());
         }
     }
 
