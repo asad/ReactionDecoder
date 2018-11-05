@@ -1941,6 +1941,7 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
             // mark both atoms and the bond as aromatic and raise the SINGLE_OR_DOUBLE-flag
             newBond.setFlag(CDKConstants.SINGLE_OR_DOUBLE, true);
             newBond.setFlag(CDKConstants.ISAROMATIC, true);
+            newBond.setIsAromatic(true);
             a1.setFlag(CDKConstants.ISAROMATIC, true);
             a2.setFlag(CDKConstants.ISAROMATIC, true);
             explicitValence[atom1 - 1] = explicitValence[atom2 - 1] = Integer.MIN_VALUE;
