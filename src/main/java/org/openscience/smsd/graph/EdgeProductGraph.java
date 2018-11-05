@@ -13,7 +13,6 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
-import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -30,6 +29,25 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 public final class EdgeProductGraph implements Serializable {
 
     /**
+     * Generates a compatibility graph between two molecules
+     *
+     * @param source
+     * @param target
+     * @return
+     * @throws IOException
+     */
+    public static EdgeProductGraph
+            create(IAtomContainer source,
+                    IAtomContainer target,
+                    AtomMatcher am,
+                    BondMatcher bm)
+            throws IOException {
+        return new EdgeProductGraph(source, target, am, bm);
+    }
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
+
+    /**
      * @return the Compatibility Graph
      */
     public Graph getCompatibilityGraph() {
@@ -40,9 +58,6 @@ public final class EdgeProductGraph implements Serializable {
     private final Graph g;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchBonds;
-    private final boolean shouldMatchRings;
-    private final boolean matchAtomType;
     private final boolean DEBUG = false;
 
     /**
@@ -55,15 +70,13 @@ public final class EdgeProductGraph implements Serializable {
      * @param matchAtomType
      * @throws java.io.IOException
      */
-    public EdgeProductGraph(
+    private EdgeProductGraph(
             IAtomContainer source,
             IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws IOException {
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+            AtomMatcher am,
+            BondMatcher bm) throws IOException {
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
         this.source = source;
         this.target = target;
         this.g = new Graph(false);
@@ -72,7 +85,7 @@ public final class EdgeProductGraph implements Serializable {
 
     public int searchCliques() {
         compatibilityGraphNodes();
-        int edges = compatibilityGraph();
+        int edges = compatibilityGraphDirected();
         if (DEBUG) {
             System.out.println("**************************************************");
             System.out.println("--Compatibility Graph--");
@@ -85,8 +98,6 @@ public final class EdgeProductGraph implements Serializable {
     }
 
     private void compatibilityGraphNodes() {
-        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
-        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(shouldMatchBonds, shouldMatchRings);
         int compatibilityNodeCounter = 1;
         Iterable<IBond> qbonds = source.bonds();
         Iterable<IBond> tbonds = target.bonds();
@@ -94,7 +105,8 @@ public final class EdgeProductGraph implements Serializable {
             for (IBond b : tbonds) {
                 //Asad-Imp for large graphs
                 //Only add the edge product vertex if the edge labels and vertex labels are the same
-                if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher, false)) {
+                //IMP: directed manner i.e. if {a-b = a-b} then true else false 
+                if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher, true)) {
                     Vertex node = new Vertex(compatibilityNodeCounter);
                     if (DEBUG) {
                         System.out.print("Q: " + source.indexOf(a) + ", " + a.getBegin().getSymbol() + "- 1 -" + a.getEnd().getSymbol());
@@ -113,36 +125,40 @@ public final class EdgeProductGraph implements Serializable {
         }
     }
 
+    private void addEdge(Vertex n1, Vertex n2) {
+        EdgeType edgetype = edgePairsCompatible(n1, n2);
+        if (edgetype != null) {
+            if (DEBUG) {
+                System.out.println("n1: " + n1.getID()
+                        + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
+            }
+            Edge edge = new Edge(n1, n2);
+            edge.setEdgeType(edgetype);
+            if (edgetype == EdgeType.C_EDGE) {
+                //Assume it to be a undirected graph
+                g.addEdge(edge);
+            }
+            if (edgetype == EdgeType.D_EDGE) {
+                //Assume it to bea a undirected graph
+                g.addEdge(edge);
+            }
+        }
+    }
+
     /**
      * Generate Compatibility Graph Nodes Bond Insensitive
      *
      * @return
      * @throws IOException
      */
-    private int compatibilityGraph() {
+    private int compatibilityGraphDirected() {
 
         Stack<Vertex> nodesToCompare = new Stack<>();
         nodesToCompare.addAll(g.nodes());
         while (!nodesToCompare.empty()) {
             Vertex n1 = nodesToCompare.pop();
             nodesToCompare.forEach((n2) -> {
-                EdgeType edgetype = edgePairsCompatible(n1, n2);
-                if (edgetype != null) {
-                    if (DEBUG) {
-                        System.out.println("n1: " + n1.getID()
-                                + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
-                    }
-                    Edge edge = new Edge(n1, n2);
-                    edge.setEdgeType(edgetype);
-                    if (edgetype == EdgeType.C_EDGE) {
-                        //Assume it to be a undirected graph
-                        g.addEdge(edge);
-                    }
-                    if (edgetype == EdgeType.D_EDGE) {
-                        //Assume it to bea a undirected graph
-                        g.addEdge(edge);
-                    }
-                }
+                addEdge(n1, n2);
             });
         }
 
@@ -187,8 +203,6 @@ public final class EdgeProductGraph implements Serializable {
             //Create a D_Edge
             return EdgeType.D_EDGE;
         }
-
-        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, matchAtomType);
         if (!possibleVerticesG1.isEmpty() && !possibleVerticesG2.isEmpty()) {
             for (IAtom v1 : possibleVerticesG1) {
                 for (IAtom v2 : possibleVerticesG2) {

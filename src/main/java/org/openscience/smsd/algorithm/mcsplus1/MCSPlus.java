@@ -30,6 +30,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 
@@ -62,9 +64,10 @@ public class MCSPlus extends Filter {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public MCSPlus(IAtomContainer f1, IAtomContainer f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public MCSPlus(IAtomContainer f1, IAtomContainer f2,
+            AtomMatcher am, BondMatcher bm) {
 
-        super(f1, f2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        super(f1, f2, am, bm);
         this.global_c_edges = new ArrayList<>();//Initialize the c_edges Vector
         this.global_d_edges = new ArrayList<>();//Initialize the d_edges Vector
 
@@ -107,10 +110,8 @@ public class MCSPlus extends Filter {
             }
 
             IAtom atom1 = atoms.get(a);
-            String atom1_type = atom1.getSymbol();
-            if (matchAtomType && atom1.getAtomTypeName() != null) {
-                atom1_type = atoms.get(a).getAtomTypeName();
-            }
+            String atom1_type = atom1.getSymbol();// + atom1.getAtomicNumber();
+
             if (SYMBOL_VALUE.containsKey(atom1_type)) {
                 label.set(0, SYMBOL_VALUE.get(atom1_type));
             } else {
@@ -121,14 +122,10 @@ public class MCSPlus extends Filter {
             int count_neighbors = 1;
             for (int b = 0; b < bond_num; b++) {
                 if (basic_atom_vector.get(a).equals(i_tab.get(b * 3 + 0))) {
-                    String atom2_type = c_tab.get(b * 2 + 1);
                     /*Get neighbour Atom*/
                     IAtom atom2 = atoms.get(i_tab.get(b * 3 + 1) - 1);
                     //System.out.println("atom2_type " + atom2_type + ", atom2 " + atom2.getSymbol());
-
-                    if (matchAtomType && atom2.getAtomTypeName() != null) {
-                        atom2_type = atom2.getAtomTypeName();
-                    }
+                    String atom2_type = c_tab.get(b * 2 + 1);// + atom2.getAtomicNumber();
 
                     if (SYMBOL_VALUE.containsKey(atom2_type)) {
                         label.set(count_neighbors, SYMBOL_VALUE.get(atom2_type));
@@ -141,13 +138,10 @@ public class MCSPlus extends Filter {
                 }
 
                 if (basic_atom_vector.get(a).equals(i_tab.get(b * 3 + 1))) {
-                    String atom2_type = c_tab.get(b * 2 + 0);
                     /*Get neighbour Atom*/
                     IAtom atom2 = atoms.get(i_tab.get(b * 3 + 0) - 1);
 
-                    if (matchAtomType && atom2.getAtomTypeName() != null) {
-                        atom2_type = atom2.getAtomTypeName();
-                    }
+                    String atom2_type = c_tab.get(b * 2 + 0);// + atom2.getAtomicNumber();
 
                     if (SYMBOL_VALUE.containsKey(atom2_type)) {
                         label.set(count_neighbors, SYMBOL_VALUE.get(atom2_type));
@@ -367,7 +361,7 @@ public class MCSPlus extends Filter {
                     }
 
                     if (connectedFlag
-                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, atomMatcher, bondMatcher, true)) {
                         matchBondFlag = true;
                     }
 
@@ -521,7 +515,7 @@ public class MCSPlus extends Filter {
                     }
 
                     if (connectedFlag
-                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.matchAtomAndBond(bond1, bond2, atomMatcher, bondMatcher, true)) {
                         matchBondFlag = true;
                     }
 

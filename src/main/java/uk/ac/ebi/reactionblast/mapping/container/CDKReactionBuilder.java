@@ -50,6 +50,9 @@ import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
@@ -633,7 +636,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         if (mol1.getAtomCount() != mol2.getAtomCount()) {
             return false;
         }
-        Substructure mcs = new Substructure(mol1, mol2, true, true, true, false);
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+        Substructure mcs = new Substructure(mol1, mol2, atomMatcher, bondMatcher, false);
         mcs.setChemFilters(true, true, true);
         return mcs.isSubgraph() && !mcs.isStereoMisMatch();
     }

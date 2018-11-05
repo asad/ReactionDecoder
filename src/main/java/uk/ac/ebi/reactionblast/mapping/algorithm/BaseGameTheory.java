@@ -54,6 +54,9 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -405,7 +408,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
 //        if (DEBUG) {
-            System.out.println("====Quick Mapping====");
+        System.out.println("====Quick Mapping====");
 //        }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
@@ -456,7 +459,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
             } else {
                 Isomorphism isomorphism;
-                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, false, false, false);
+                AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
+                BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
 
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
                 return mcs;

@@ -37,6 +37,7 @@ import static org.openscience.cdk.CDKConstants.MAPPED;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -325,7 +326,6 @@ public final class AtomAtomMapping implements Serializable {
         uniqueAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
-
         return ac;
     }
 
@@ -358,8 +358,7 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CloneNotSupportedException
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
-        IAtomContainer ac = SilentChemObjectBuilder.getInstance().newAtomContainer();
-        ac.add(getQuery().clone());
+        IAtomContainer ac = getQuery().clone();
         List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
@@ -408,7 +407,6 @@ public final class AtomAtomMapping implements Serializable {
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
-
         return ac;
     }
 

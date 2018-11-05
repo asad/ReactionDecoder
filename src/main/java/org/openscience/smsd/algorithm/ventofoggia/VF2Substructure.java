@@ -64,15 +64,14 @@ public class VF2Substructure implements IResults {
     private List<Map<IAtom, IAtom>> vfLibSolutions;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchRings;
-    private final boolean matchBonds;
-    private boolean matchAtomType;
     private int bestHitSize = -1;
     private int countR = 0;
     private int countP = 0;
     private boolean isSubgraph = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(VF2Substructure.class);
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
 
     /**
      * Constructor for an extended VF Algorithm for the MCS search
@@ -85,16 +84,18 @@ public class VF2Substructure implements IResults {
      * @param findallMatches Find all SubGraphs
      */
     public VF2Substructure(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType, boolean findallMatches) {
+            AtomMatcher am,
+            BondMatcher bm,
+            boolean findallMatches) {
         this.source = source;
         this.target = target;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
+
         allAtomMCS = new ArrayList<>();
         allAtomMCSCopy = new ArrayList<>();
         allMCS = new ArrayList<>();
         allMCSCopy = new ArrayList<>();
-        this.shouldMatchRings = shouldMatchRings;
-        this.matchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
         if (findallMatches) {
             this.isSubgraph = findSubgraphs();
         } else {
@@ -109,15 +110,17 @@ public class VF2Substructure implements IResults {
      * @param target
      * @param findallMatches find all subgraphs
      */
-    public VF2Substructure(IQueryAtomContainer source, IAtomContainer target, boolean findallMatches) {
+    public VF2Substructure(IQueryAtomContainer source, IAtomContainer target, boolean findallMatches, AtomMatcher am,
+            BondMatcher bm) {
         this.source = source;
         this.target = target;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
+
         allAtomMCS = new ArrayList<>();
         allAtomMCSCopy = new ArrayList<>();
         allMCS = new ArrayList<>();
         allMCSCopy = new ArrayList<>();
-        this.shouldMatchRings = true;
-        this.matchBonds = true;
         if (findallMatches) {
             this.isSubgraph = findSubgraphs();
         } else {
@@ -249,26 +252,17 @@ public class VF2Substructure implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        AtomMatcher am = null;
-        BondMatcher bm = null;
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
 
             countR = getReactantMol().getAtomCount();
             countP = getProductMol().getAtomCount();
-            am = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
-            bm = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
-
-        }
-        if (source instanceof IQueryAtomContainer) {
-            am = AtomBondMatcher.queryAtomMatcher();
-            bm = AtomBondMatcher.queryBondMatcher();
         }
 
         vfLibSolutions = new ArrayList<>();
         if (source instanceof IQueryAtomContainer) {
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target).limit(1);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -277,7 +271,7 @@ public class VF2Substructure implements IResults {
             setVFMappings(true);
         } else if (countR <= countP) {
 
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll(target).limit(1);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -303,26 +297,18 @@ public class VF2Substructure implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        AtomMatcher am = null;
-        BondMatcher bm = null;
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
 
             countR = getReactantMol().getAtomCount();
             countP = getProductMol().getAtomCount();
-            am = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
-            bm = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
 
-        }
-        if (source instanceof IQueryAtomContainer) {
-            am = AtomBondMatcher.queryAtomMatcher();
-            bm = AtomBondMatcher.queryBondMatcher();
         }
 
         vfLibSolutions = new ArrayList<>();
         if (source instanceof IQueryAtomContainer) {
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -331,7 +317,7 @@ public class VF2Substructure implements IResults {
             setVFMappings(true);
         } else if (countR <= countP) {
 
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll(target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -356,12 +342,12 @@ public class VF2Substructure implements IResults {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (source instanceof IQueryAtomContainer) {
-                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
+                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, atomMatcher, bondMatcher);
                 //Start McGregor search
                 mgit.startMcGregorIteration((IQueryAtomContainer) source, mgit.getMCSSize(), extendMapping);
             } else {
                 extendMapping.clear();
-                mgit = new McGregor(target, source, mappings, this.matchBonds, this.shouldMatchRings, this.matchAtomType);
+                mgit = new McGregor(target, source, mappings, atomMatcher, bondMatcher);
                 ROPFlag = false;
                 firstPassMappings.entrySet().stream().forEach((map) -> {
                     extendMapping.put(map.getValue(), map.getKey());

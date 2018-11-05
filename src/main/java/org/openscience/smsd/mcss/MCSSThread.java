@@ -40,6 +40,9 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import static org.openscience.smsd.mcss.JobType.MULTIPLE;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
@@ -57,9 +60,8 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
     private final List<IAtomContainer> mcssList;
     private final JobType jobType;
     private final int taskNumber;
-    private final boolean matchBonds;
-    private final boolean matchRings;
-    private final boolean matchAtomType;
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
 
     /**
      *
@@ -68,7 +70,10 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      * @param taskNumber
      */
     public MCSSThread(List<IAtomContainer> mcssList, JobType jobType, int taskNumber) {
-        this(mcssList, jobType, taskNumber, true, true, true);
+        this(mcssList, jobType, taskNumber,
+                AtomBondMatcher.atomMatcher(true, true),
+                AtomBondMatcher.bondMatcher(true, true)
+        );
     }
 
     /**
@@ -80,14 +85,13 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      * @param matchRings
      * @param matchAtomType
      */
-    public MCSSThread(List<IAtomContainer> mcssList, JobType jobType, int taskNumber, boolean matchBonds, boolean matchRings,
-            boolean matchAtomType) {
+    public MCSSThread(List<IAtomContainer> mcssList, JobType jobType, int taskNumber,
+            AtomMatcher am, BondMatcher bm) {
         this.mcssList = mcssList;
         this.jobType = jobType;
         this.taskNumber = taskNumber;
-        this.matchBonds = matchBonds;
-        this.matchRings = matchRings;
-        this.matchAtomType = matchAtomType;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
 
     }
 
@@ -126,8 +130,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 IAtomContainer target = mcssList.get(index);
                 Collection<Fragment> fragmentsFromMCS;
                 BaseMapping comparison;
-
-                comparison = new Isomorphism(querySeed, target, DEFAULT, matchBonds, matchRings, matchAtomType);
+                comparison = new Isomorphism(querySeed, target, DEFAULT, atomMatcher, bondMatcher);
                 comparison.setChemFilters(true, true, true);
                 fragmentsFromMCS = getMCSS(comparison);
 
@@ -181,7 +184,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 LOGGER.debug("Potential MULTIPLE " + getMCSSSmiles(fragmentMCS));
                 Collection<Fragment> fragmentsFromMCS;
                 for (IAtomContainer target : mcssList) {
-                    Isomorphism comparison = new Isomorphism(fragmentMCS, target, DEFAULT, matchBonds, matchRings, matchAtomType);
+                    Isomorphism comparison = new Isomorphism(fragmentMCS, target, DEFAULT, atomMatcher, bondMatcher);
                     comparison.setChemFilters(true, true, true);
                     fragmentsFromMCS = getMCSS(comparison);
 
@@ -249,7 +252,7 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
                 Collection<Fragment> fragmentsFomMCS;
                 BaseMapping comparison;
 
-                comparison = new Isomorphism(querySeed, target, DEFAULT, matchBonds, matchRings, matchAtomType);
+                comparison = new Isomorphism(querySeed, target, DEFAULT, atomMatcher, bondMatcher);
                 comparison.setChemFilters(true, true, true);
                 fragmentsFomMCS = getMCSS(comparison);
 

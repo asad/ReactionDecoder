@@ -35,6 +35,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.BinaryTree;
 import static org.openscience.smsd.helper.BinaryTree.remove_tree_structure;
 
@@ -105,10 +107,9 @@ public class McGregor extends Utility {
     private final List<String> SignROW;
     protected final IAtomContainer ac1;
     protected final IAtomContainer ac2;
-    protected final boolean shouldMatchBonds;
-    protected final boolean shouldMatchRings;
-    protected final boolean matchAtomType;
     protected final Map<String, Integer> SYMBOL_VALUE;
+    final AtomMatcher atomMatcher;
+    final BondMatcher bondMatcher;
 
     /**
      *
@@ -120,17 +121,15 @@ public class McGregor extends Utility {
      */
     public McGregor(IAtomContainer f1,
             IAtomContainer f2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.shouldMatchRings = shouldMatchRings;
-        this.matchAtomType = matchAtomType;
+            AtomMatcher am, BondMatcher bm) {
+
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
 
         this.SYMBOL_VALUE = new TreeMap<>();
 
-        MoleculeHandler file1 = new MoleculeHandler(f1, shouldMatchBonds);
-        MoleculeHandler file2 = new MoleculeHandler(f2, shouldMatchBonds);
+        MoleculeHandler file1 = new MoleculeHandler(f1, false);
+        MoleculeHandler file2 = new MoleculeHandler(f2, false);
 
         this.atom_number1 = file1.indexOf();
         this.atom_number2 = file2.indexOf();
@@ -667,8 +666,8 @@ public class McGregor extends Utility {
                 /*
                  * Check if bond matching also possible
                  */
-                boolean flag = 
-                        AtomBondMatcher.matchAtomAndBond(bond1, bond2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                boolean flag
+                        = AtomBondMatcher.matchAtomAndBond(bond1, bond2, atomMatcher, bondMatcher, true);
 
                 if ((G1A.equals(G1B)) && (G2A.equals(G2B)) && flag) {
                     no_Map = false;

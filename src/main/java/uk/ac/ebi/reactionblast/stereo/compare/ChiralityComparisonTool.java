@@ -24,6 +24,9 @@ import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import static org.openscience.smsd.interfaces.Algorithm.DEFAULT;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 import uk.ac.ebi.reactionblast.stereo.tools.Chirality2DTool;
@@ -60,7 +63,10 @@ public class ChiralityComparisonTool {
             chiralityMapB = new Chirality2DTool().getTetrahedralChiralities(atomContainerB);
         }
 
-        Isomorphism isomorphism = new Isomorphism(atomContainerA, atomContainerB, DEFAULT, true, false, false);
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, false);
+
+        Isomorphism isomorphism = new Isomorphism(atomContainerA, atomContainerB, DEFAULT, atomMatcher, bondMatcher);
         Map<IAtom, IAtom> atomMap = isomorphism.getFirstAtomMapping().getMappingsByAtoms();
         atomMap.keySet().stream().forEach((atomA) -> {
             IAtom atomB = atomMap.get(atomA);

@@ -46,7 +46,7 @@ public final class MoleculeHandler {
 
     protected List<Integer> int_tab = new LinkedList<>();
     protected List<String> char_tab = new LinkedList<>();
-    private final boolean matchBonds;
+    private boolean bm;
 
     /**
      * Creates a new instance of MolFileReader
@@ -54,11 +54,10 @@ public final class MoleculeHandler {
      * @param atomContainer
      * @param matchBonds
      */
-    public MoleculeHandler(IAtomContainer atomContainer, boolean matchBonds) {
+    public MoleculeHandler(IAtomContainer atomContainer, boolean bm) {
         this.atomContainer = atomContainer;
         this.bondNumber = atomContainer.getBondCount();
         this.atomNumber = atomContainer.getAtomCount();
-        this.matchBonds = matchBonds;
 
         setAtomString();
         setIntConnectionTable();
@@ -129,7 +128,7 @@ public final class MoleculeHandler {
             // System.out.println(ac.indexOf(bond.getAtom(0))+" "+ac.indexOf(bond.getAtom(1))+" "+(int)bond.getOrder());
             intTable.add((ac.indexOf(bond.getAtom(0)) + 1));//Plus one because Java Indexing is one less
             intTable.add((ac.indexOf(bond.getAtom(1)) + 1));//Plus one because Java indexing is one less
-            if (matchBonds) {
+            if (this.bm) {
                 intTable.add((int) bond.getOrder().numeric());
             } else {
                 intTable.add(1);

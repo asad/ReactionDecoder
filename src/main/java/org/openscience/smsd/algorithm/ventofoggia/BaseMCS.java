@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -38,14 +37,17 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
 
 /**
  * This class should be used to find MCS between source graph and target graph.
  *
  * First the algorithm runs VF lib
- * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS between
- * run source and target graphs. Then these solutions are extended using
+ * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS
+ * between run source and target graphs. Then these solutions are extended using
  * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.
  *
@@ -60,36 +62,34 @@ public class BaseMCS {
     protected int countP;
     protected final IAtomContainer source;
     protected final IAtomContainer target;
-    private final boolean shouldMatchRings;
-    private final boolean matchBonds;
-    private final boolean matchAtomType;
     protected final List<Map<IAtom, IAtom>> vfLibSolutions;
     final List<Map<Integer, Integer>> allLocalMCS;
     final List<AtomAtomMapping> allLocalAtomAtomMapping;
-    private final static ILoggingTool Logger
+    private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BaseMCS.class);
     private final boolean DEBUG = false;
+    final AtomMatcher atomMatcher;
+    final BondMatcher bondMatcher;
 
-    BaseMCS(IAtomContainer source, IAtomContainer target, boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    BaseMCS(IAtomContainer source, IAtomContainer target,
+            AtomMatcher am, BondMatcher bm) {
         this.allLocalAtomAtomMapping = new ArrayList<>();
         this.allLocalMCS = new ArrayList<>();
-        this.shouldMatchRings = shouldMatchRings;
-        this.matchBonds = matchBonds;
-        this.matchAtomType = matchAtomType;
         this.vfLibSolutions = new ArrayList<>();
         this.source = source;
         this.target = target;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
     }
 
-    BaseMCS(IQueryAtomContainer source, IAtomContainer target) {
+    BaseMCS(IQueryAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         this.allLocalAtomAtomMapping = new ArrayList<>();
         this.allLocalMCS = new ArrayList<>();
-        this.shouldMatchRings = true;
-        this.matchBonds = true;
-        this.matchAtomType = true;
         this.vfLibSolutions = new ArrayList<>();
         this.source = source;
         this.target = target;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
     }
 
     /**
@@ -135,17 +135,17 @@ public class BaseMCS {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (source instanceof IQueryAtomContainer) {
-                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor((IQueryAtomContainer) source, target, mappings, atomMatcher, bondMatcher);
                 //Start McGregor search
                 mgit.startMcGregorIteration((IQueryAtomContainer) source, mgit.getMCSSize(), extendMapping);
             } else if (countR > countP) {
-                mgit = new McGregor(source, target, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor(source, target, mappings, atomMatcher, bondMatcher);
 
                 //Start McGregor search
                 mgit.startMcGregorIteration(source, mgit.getMCSSize(), extendMapping);
             } else {
                 extendMapping.clear();
-                mgit = new McGregor(target, source, mappings, isBondMatchFlag(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor(target, source, mappings, atomMatcher, bondMatcher);
                 ROPFlag = false;
                 firstPassMappings.entrySet().stream().forEach((map) -> {
                     extendMapping.put(map.getValue(), map.getKey());
@@ -256,20 +256,6 @@ public class BaseMCS {
     }
 
     /**
-     * @return the shouldMatchRings
-     */
-    protected boolean isMatchRings() {
-        return shouldMatchRings;
-    }
-
-    /**
-     * @return the shouldMatchBonds
-     */
-    protected synchronized boolean isBondMatchFlag() {
-        return matchBonds;
-    }
-
-    /**
      * @return the allLocalMCS
      */
     private synchronized List<Map<Integer, Integer>> getLocalMCSSolution() {
@@ -319,12 +305,5 @@ public class BaseMCS {
             }
         }
         return common;
-    }
-
-    /**
-     * @return the matchAtomType
-     */
-    public boolean isMatchAtomType() {
-        return matchAtomType;
     }
 }

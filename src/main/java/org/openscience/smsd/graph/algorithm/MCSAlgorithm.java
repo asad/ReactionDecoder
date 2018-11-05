@@ -12,6 +12,8 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  * This class implements calls MCS graph algorithms
@@ -38,11 +40,10 @@ public class MCSAlgorithm {
      * @throws org.openscience.cdk.exception.CDKException
      */
     public static IAtomContainer koch(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws IOException, CloneNotSupportedException, CDKException {
+            AtomMatcher am,
+            BondMatcher bm) throws IOException, CloneNotSupportedException, CDKException {
 
-        EdgeProductGraph compatibilityGraph = new EdgeProductGraph(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        EdgeProductGraph compatibilityGraph = EdgeProductGraph.create(source, target, am, bm);
         compatibilityGraph.searchCliques();
         boolean disconnected = ConnectivityChecker.isConnected(source) && ConnectivityChecker.isConnected(target);
 

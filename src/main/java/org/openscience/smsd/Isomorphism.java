@@ -29,6 +29,7 @@ import static java.util.Collections.sort;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.commons.io.input.BOMInputStream;
 import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -36,6 +37,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.rgraph.CDKMCSHandler;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.ventofoggia.VF2MCS;
@@ -121,7 +124,8 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private double bondInSensitiveMcGregor = -1;//mins
 
     /**
-     * Initialize query and target molecules
+     *
+     * IMP: Initialize query and target molecules
      * (MoleculeInitializer.initializeMolecule).
      *
      *
@@ -136,27 +140,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * MoleculeInitializer.initializeMolecule(super.getTarget()); } catch
      * (CDKException ex) { } }
      *
-     *
-     * @param query query molecule
-     * @param target target molecule This is the algorithm factory and entry
-     * port for all the MCS algorithm in the Isomorphism supported algorithm
-     * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
-     * Default,
-     * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
-     * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
-     * @throws org.openscience.cdk.exception.CDKException
-     */
-    public Isomorphism(
-            IQueryAtomContainer query,
-            IAtomContainer target,
-            Algorithm algorithmType) throws CDKException {
-        super(query, target);
-        this.algorithmType = algorithmType;
-        mcsBuilder((IQueryAtomContainer) super.getQuery(), super.getTarget());
-        super.setSubgraph(isSubgraph());
-    }
-
-    /**
      * Initialize query and target molecules.Note: Here its assumed that
      * hydrogens are implicit and user has called these two methods
      * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
@@ -179,31 +162,59 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             IAtomContainer query,
             IAtomContainer target,
             Algorithm algorithmType,
-            boolean bondTypeFlag,
-            boolean matchRings,
-            boolean matchAtomType) throws CDKException {
-        super(query, target, bondTypeFlag, matchRings, matchAtomType);
+            AtomMatcher am, BondMatcher bm) throws CDKException {
+        super(query, target, am, bm);
+        this.algorithmType = algorithmType;
+        mcsBuilder(super.getQuery(), super.getTarget());
+        super.setSubgraph(isSubgraph());
+    }
+
+    /**
+     *
+     * IMP: Initialize query and target molecules
+     * (MoleculeInitializer.initializeMolecule).
+     *
+     *
+     * Note: Here its assumed that hydrogens are implicit and user has called
+     * these two methods percieveAtomTypesAndConfigureAtoms and
+     * CDKAromicityDetector before initializing calling this method.
+     *
+     * Please call MoleculeInitializer before calling substructure search
+     *
+     * if (super.isMatchRings()) { try {
+     * MoleculeInitializer.initializeMolecule(super.getQuery());
+     * MoleculeInitializer.initializeMolecule(super.getTarget()); } catch
+     * (CDKException ex) { } }
+     *
+     * Initialize query and target molecules.Note: Here its assumed that
+     * hydrogens are implicit and user has called these two methods
+     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
+     * initializing calling this method.
+     *
+     *
+     * @param query query mol
+     * @param target target mol This is the algorithm factory and entry port for
+     * all the MCS algorithm in the Isomorphism supported algorithm
+     * {@link org.openscience.smsd.interfaces.Algorithm} types: <OL> <lI>0:
+     * Default,
+     * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
+     * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
+     * @param bondTypeFlag Match bond types (i.e. double to double etc)
+     * @param matchRings Match ring atoms and ring size
+     * @param matchAtomType
+     * @throws org.openscience.cdk.exception.CDKException
+     */
+    public Isomorphism(
+            IQueryAtomContainer query,
+            IAtomContainer target,
+            Algorithm algorithmType) throws CDKException {
+        super(query, target, AtomMatcher.forQuery(), BondMatcher.forQuery());
         this.algorithmType = algorithmType;
         mcsBuilder(super.getQuery(), super.getTarget());
         super.setSubgraph(isSubgraph());
     }
 
     private synchronized void mcsBuilder(IAtomContainer mol1, IAtomContainer mol2) throws CDKException {
-        int rBondCount = mol1.getBondCount();
-        int pBondCount = mol2.getBondCount();
-
-        int rAtomCount = mol1.getAtomCount();
-        int pAtomCount = mol2.getAtomCount();
-
-        if ((rBondCount == 0 && rAtomCount > 0) || (pBondCount == 0 && pAtomCount > 0)) {
-            singleMapping();
-        } else {
-            chooseAlgorithm();
-        }
-    }
-
-    private synchronized void mcsBuilder(IQueryAtomContainer mol1, IAtomContainer mol2) throws CDKException {
-
         int rBondCount = mol1.getBondCount();
         int pBondCount = mol2.getBondCount();
 
@@ -263,9 +274,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private synchronized boolean cdkMCSAlgorithm() {
         CDKMCSHandler mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new CDKMCSHandler(getQuery(), getTarget());
+            mcs = new CDKMCSHandler(getQuery(), getTarget(), atomMatcher, bondMatcher);
         } else {
-            mcs = new CDKMCSHandler(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new CDKMCSHandler(getQuery(), getTarget(), atomMatcher, bondMatcher);
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -279,22 +290,22 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper((IQueryAtomContainer) getQuery(), getTarget(), atomMatcher, bondMatcher);
         } else if (expectedMaxGraphmatch < 3) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus1.MCSPlusMapper(getQuery(), getTarget(), atomMatcher, bondMatcher);
         } else if (expectedMaxGraphmatch > 3) {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(getQuery(), getTarget(), atomMatcher, bondMatcher);
         } else {
             if (DEBUG) {
                 System.out.println("org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper");
             }
-            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new org.openscience.smsd.algorithm.mcsplus2.MCSPlusMapper(getQuery(), getTarget(), atomMatcher, bondMatcher);
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -307,9 +318,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         }
         Substructure mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new Substructure((IQueryAtomContainer) getQuery(), getTarget(), true);
+            mcs = new Substructure((IQueryAtomContainer) getQuery(), getTarget(), atomMatcher, bondMatcher, true);
         } else {
-            mcs = new Substructure(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType(), true);
+            mcs = new Substructure(getQuery(), getTarget(), atomMatcher, bondMatcher, true);
         }
         clearMaps();
         if (mcs.isSubgraph()) {
@@ -321,9 +332,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     private synchronized void vfLibMCSAlgorithm() {
         VF2MCS mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
-            mcs = new VF2MCS((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new VF2MCS((IQueryAtomContainer) getQuery(), getTarget(), atomMatcher, bondMatcher);
         } else {
-            mcs = new VF2MCS(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mcs = new VF2MCS(getQuery(), getTarget(), atomMatcher, bondMatcher);
         }
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
@@ -331,7 +342,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
 
     private synchronized void singleMapping() {
         SingleMappingHandler mcs;
-        mcs = new SingleMappingHandler(getQuery(), getTarget(), isMatchRings());
+        mcs = new SingleMappingHandler(getQuery(), getTarget(), atomMatcher);
         clearMaps();
         getMCSList().addAll(mcs.getAllAtomMapping());
     }
@@ -355,13 +366,9 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 boolean moleculeConnected = isMoleculeConnected(getQuery(), getTarget());
                 if (DEBUG) {
                     System.out.println("Expected Match Size: " + expectedMaxGraphmatch);
-                    System.out.println("isMatchBonds() " + isMatchBonds());
-                    System.out.println("isMatchRings() " + isMatchRings());
-                    System.out.println("isMatchAtomType() " + isMatchAtomType());
 
                 }
                 if (moleculeConnected
-                        && (isMatchBonds() || (isMatchRings() && isMatchAtomType()))
                         && getQuery().getBondCount() > 1
                         && getTarget().getBondCount() > 1) {
                     if (DEBUG) {

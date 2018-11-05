@@ -37,8 +37,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Order;
-import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.tools.BondEnergies;
 
 /**
@@ -72,23 +72,22 @@ public class SingleMapping {
      * @throws CDKException
      */
     protected synchronized List<Map<IAtom, IAtom>> getOverLaps(
-            IAtomContainer source,
-            IAtomContainer target) throws CDKException {
+            IAtomContainer source, IAtomContainer target, AtomMatcher am) throws CDKException {
         List<Map<IAtom, IAtom>> mappings = new ArrayList<>();
         this.source = source;
         this.target = target;
 
         if (source.getAtomCount() == 1
                 || (source.getAtomCount() > 0 && source.getBondCount() == 0)) {
-            setSourceSingleAtomMap(mappings);
+            setSourceTargetSingleAtomMap(mappings, am);
         }
         if (target.getAtomCount() == 1
                 || (target.getAtomCount() > 0 && target.getBondCount() == 0)) {
-            setTargetSingleAtomMap(mappings);
+            setTargetSourceSingleAtomMap(mappings, am);
         }
         return postFilter(mappings);
     }
-
+    
     /**
      * Returns single mapping solutions.
      *
@@ -98,51 +97,29 @@ public class SingleMapping {
      * @throws CDKException
      */
     protected synchronized List<Map<IAtom, IAtom>> getOverLaps(
-            IQueryAtomContainer source, IAtomContainer target) throws CDKException {
+            IQueryAtomContainer source, IAtomContainer target, AtomMatcher am) throws CDKException {
         List<Map<IAtom, IAtom>> mappings = new ArrayList<>();
         this.source = source;
         this.target = target;
 
         if (source.getAtomCount() == 1
                 || (source.getAtomCount() > 0 && source.getBondCount() == 0)) {
-            setSourceSingleAtomMap(mappings);
+            setSourceTargetSingleAtomMap(mappings, am);
         }
         if (target.getAtomCount() == 1
                 || (target.getAtomCount() > 0 && target.getBondCount() == 0)) {
-            setTargetSingleAtomMap(mappings);
+            setTargetSourceSingleAtomMap(mappings, am);
         }
         return postFilter(mappings);
     }
 
-    private synchronized void setSourceSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
+    private synchronized void setSourceTargetSingleAtomMap(List<Map<IAtom, IAtom>> mappings, AtomMatcher am) throws CDKException {
         int counter = 0;
         BondEnergies be = BondEnergies.getInstance();
         for (IAtom sourceAtom : source.atoms()) {
             for (IAtom targetAtom : target.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
-                if (sourceAtom instanceof IQueryAtom) {
-                    if (((IQueryAtom) sourceAtom).matches(targetAtom)) {
-                        mapAtoms.put(sourceAtom, targetAtom);
-                        List<IBond> Bonds = target.getConnectedBondsList(targetAtom);
-
-                        double totalOrder = 0;
-                        for (IBond bond : Bonds) {
-                            Order bondOrder = bond.getOrder();
-                            if (bondOrder == null) {
-                                continue;
-                            }
-                            totalOrder += bondOrder.numeric() + be.getEnergies(bond);
-                        }
-
-                        if (!Objects.equals(targetAtom.getFormalCharge(), sourceAtom.getFormalCharge())) {
-                            totalOrder += 0.5;
-                        }
-
-                        connectedBondOrder.put(counter, totalOrder);
-                        mappings.add(counter++, mapAtoms);
-                    }
-                } else if (sourceAtom.getSymbol().equalsIgnoreCase(targetAtom.getSymbol())) {
-
+                if (am.matches(sourceAtom, targetAtom)) {
                     mapAtoms.put(sourceAtom, targetAtom);
                     List<IBond> Bonds = target.getConnectedBondsList(targetAtom);
 
@@ -160,44 +137,21 @@ public class SingleMapping {
                     }
 
                     connectedBondOrder.put(counter, totalOrder);
-                    mappings.add(counter, mapAtoms);
-                    counter++;
+                    mappings.add(counter++, mapAtoms);
                 }
             }
         }
     }
 
-    private synchronized void setTargetSingleAtomMap(List<Map<IAtom, IAtom>> mappings) throws CDKException {
+    private synchronized void setTargetSourceSingleAtomMap(List<Map<IAtom, IAtom>> mappings, AtomMatcher am) throws CDKException {
         int counter = 0;
         BondEnergies be = BondEnergies.getInstance();
         for (IAtom targetAtom : target.atoms()) {
-            for (IAtom sourceAtoms : source.atoms()) {
+            for (IAtom sourceAtom : source.atoms()) {
                 Map<IAtom, IAtom> mapAtoms = new HashMap<>();
-                if (targetAtom instanceof IQueryAtom) {
-                    if (((IQueryAtom) targetAtom).matches(sourceAtoms)) {
-                        if (targetAtom.getSymbol().equalsIgnoreCase(sourceAtoms.getSymbol())) {
-                            mapAtoms.put(sourceAtoms, targetAtom);
-                            List<IBond> Bonds = source.getConnectedBondsList(sourceAtoms);
-
-                            double totalOrder = 0;
-                            for (IBond bond : Bonds) {
-                                Order bondOrder = bond.getOrder();
-                                if (bondOrder == null) {
-                                    continue;
-                                }
-                                totalOrder += bondOrder.numeric() + be.getEnergies(bond);
-                            }
-                            if (!Objects.equals(sourceAtoms.getFormalCharge(), targetAtom.getFormalCharge())) {
-                                totalOrder += 0.5;
-                            }
-                            connectedBondOrder.put(counter, totalOrder);
-                            mappings.add(counter, mapAtoms);
-                            counter++;
-                        }
-                    }
-                } else if (targetAtom.getSymbol().equalsIgnoreCase(sourceAtoms.getSymbol())) {
-                    mapAtoms.put(sourceAtoms, targetAtom);
-                    List<IBond> Bonds = source.getConnectedBondsList(sourceAtoms);
+                if (am.matches(targetAtom, sourceAtom)) {
+                    mapAtoms.put(sourceAtom, targetAtom);
+                    List<IBond> Bonds = source.getConnectedBondsList(sourceAtom);
 
                     double totalOrder = 0;
                     for (IBond bond : Bonds) {
@@ -207,7 +161,7 @@ public class SingleMapping {
                         }
                         totalOrder += bondOrder.numeric() + be.getEnergies(bond);
                     }
-                    if (!Objects.equals(sourceAtoms.getFormalCharge(), targetAtom.getFormalCharge())) {
+                    if (!Objects.equals(sourceAtom.getFormalCharge(), targetAtom.getFormalCharge())) {
                         totalOrder += 0.5;
                     }
                     connectedBondOrder.put(counter, totalOrder);

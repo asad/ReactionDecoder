@@ -36,6 +36,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.tools.IterationManager;
@@ -54,16 +56,15 @@ public final class MCSPlus {
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSPlus.class);
     private final static boolean DEBUG = false;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
     private final IAtomContainer ac1;
     private final IAtomContainer ac2;
-    private final List<List<Integer>> overlaps;
+    private final List<List<Integer>> finalMapping;
 
     private boolean timeout = false;
 
     private IterationManager iterationManager = null;
-    private final boolean matchAtomType;
+    private final AtomMatcher am;
+    private final BondMatcher bm;
 
     /**
      * @return the timeout
@@ -96,15 +97,13 @@ public final class MCSPlus {
      */
     public MCSPlus(IAtomContainer ac1,
             IAtomContainer ac2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+            AtomMatcher am, BondMatcher bm) {
         this.ac1 = ac1;
         this.ac2 = ac2;
-        this.overlaps = calculateMCS();
+        this.am = am;
+        this.bm = bm;
+        this.finalMapping = new ArrayList<>();
+
     }
 
     /**
@@ -114,12 +113,11 @@ public final class MCSPlus {
      */
     public MCSPlus(IQueryAtomContainer ac1,
             IAtomContainer ac2) {
-        this.shouldMatchRings = true;
-        this.shouldMatchBonds = true;
-        this.matchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
         this.ac1 = ac1;
         this.ac2 = ac2;
-        this.overlaps = calculateMCS();
+        this.finalMapping = new ArrayList<>();
     }
 
     /**
@@ -131,7 +129,7 @@ public final class MCSPlus {
      * @return
      * @throws CDKException
      */
-    private List<List<Integer>> calculateMCS() {
+    public int search_cliques() {
 
         List<List<Integer>> extendMappings = null;
 
@@ -143,7 +141,7 @@ public final class MCSPlus {
         try {
 
             GenerateCompatibilityGraph gcg
-                    = new GenerateCompatibilityGraph(ac1, ac2, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                    = new GenerateCompatibilityGraph(ac1, ac2, am, bm);
             List<Integer> comp_graph_nodes = gcg.getCompGraphNodes();
             List<Edge> cEdges = gcg.getCEdges();
             List<Edge> dEdges = gcg.getDEdges();
@@ -189,7 +187,8 @@ public final class MCSPlus {
         } catch (IOException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
-        return extendMappings;
+        finalMapping.addAll(extendMappings);
+        return finalMapping.size();
     }
 
     private List<List<Integer>> searchMcGregorMapping(
@@ -204,7 +203,7 @@ public final class MCSPlus {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
             if (ac1.getAtomCount() > ac2.getAtomCount()) {
-                mgit = new McGregor(ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor(ac1, ac2, cliques, am, bm);
                 mgit.startMcGregorIteration(ac1, mgit.getMCSSize(), extendMapping);
             } else {
                 extendMapping.clear();
@@ -212,7 +211,7 @@ public final class MCSPlus {
                 firstPassMappings.entrySet().stream().forEach((map) -> {
                     extendMapping.put(map.getValue(), map.getKey());
                 });
-                mgit = new McGregor(ac2, ac1, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
+                mgit = new McGregor(ac2, ac1, cliques, am, bm);
                 mgit.startMcGregorIteration(ac2, mgit.getMCSSize(), extendMapping);
             }
 //            System.out.println("\nStart McGregor search");
@@ -239,7 +238,7 @@ public final class MCSPlus {
         for (Map<Integer, Integer> firstPassMappings : allMCSCopy) {
             Map<Integer, Integer> extendMapping = new TreeMap<>(firstPassMappings);
             McGregor mgit;
-            mgit = new McGregor((IQueryAtomContainer) ac1, ac2, cliques, isMatchBonds(), isMatchRings(), isMatchAtomType());
+            mgit = new McGregor((IQueryAtomContainer) ac1, ac2, cliques, am, bm);
             mgit.startMcGregorIteration((IQueryAtomContainer) ac1, mgit.getMCSSize(), extendMapping);
 //            System.out.println("\nStart McGregor search");
             //Start McGregor search
@@ -303,31 +302,7 @@ public final class MCSPlus {
         return false;
     }
 
-    /**
-     * @return the shouldMatchRings
-     */
-    public synchronized boolean isMatchRings() {
-        return shouldMatchRings;
-    }
-
-    /**
-     * @return the shouldMatchBonds
-     */
-    public synchronized boolean isMatchBonds() {
-        return shouldMatchBonds;
-    }
-
-    /**
-     * @return the overlaps
-     */
-    public synchronized List<List<Integer>> getOverlaps() {
-        return Collections.unmodifiableList(overlaps);
-    }
-
-    /**
-     * @return the matchAtomType
-     */
-    public synchronized boolean isMatchAtomType() {
-        return matchAtomType;
+    public List<List<Integer>> getFinalMappings() {
+        return Collections.unmodifiableList(finalMapping);
     }
 }

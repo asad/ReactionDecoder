@@ -38,6 +38,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.tools.AtomContainerComparator;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
 
@@ -52,9 +55,8 @@ public class MCSS {
     static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER = createLoggingTool(MCSS.class);
     private final Collection<IAtomContainer> calculateMCSS;
-    private final boolean matchBonds;
-    private final boolean matchRings;
-    private final boolean matchAtomType;
+    final AtomMatcher am;
+    final BondMatcher bm;
 
     /**
      *
@@ -63,7 +65,8 @@ public class MCSS {
      * @param numberOfThreads
      */
     public MCSS(List<IAtomContainer> jobList, JobType jobType, int numberOfThreads) {
-        this(jobList, jobType, numberOfThreads, true, true, true);
+        this(jobList, jobType, numberOfThreads, AtomBondMatcher.atomMatcher(true, true),
+                AtomBondMatcher.bondMatcher(true, true));
     }
 
     /**
@@ -79,9 +82,10 @@ public class MCSS {
             List<IAtomContainer> jobList,
             JobType jobType,
             int numberOfThreads,
-            boolean matchBonds,
-            boolean matchRings,
-            boolean matchAtomType) {
+            AtomMatcher am,
+            BondMatcher bm) {
+        this.am = am;
+        this.bm = bm;
         int threadsAvailable = getRuntime().availableProcessors() - 1;
 
         LOGGER.debug("Demand threads: " + numberOfThreads);
@@ -104,9 +108,6 @@ public class MCSS {
          */
         Comparator<IAtomContainer> comparator = new AtomContainerComparator();
         sort(selectedJobs, comparator);
-        this.matchBonds = matchBonds;
-        this.matchRings = matchRings;
-        this.matchAtomType = matchAtomType;
         /*
          * Call the MCS
          */
@@ -173,8 +174,7 @@ public class MCSS {
             }
             List<IAtomContainer> subList = new ArrayList<>(mcssList.subList(i, endPoint));
             if (subList.size() > 1) {
-                MCSSThread mcssJobThread = new MCSSThread(subList, jobType, taskNumber, matchBonds, matchRings,
-                        matchAtomType);
+                MCSSThread mcssJobThread = new MCSSThread(subList, jobType, taskNumber, am ,bm);
                 callablesQueue.add(mcssJobThread);
                 taskNumber++;
             } else {

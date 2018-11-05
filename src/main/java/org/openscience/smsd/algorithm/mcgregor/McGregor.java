@@ -35,6 +35,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.BinaryTree;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -55,11 +57,10 @@ import org.openscience.smsd.tools.IterationManager;
  */
 public final class McGregor {
 
-    private final boolean shouldMatchRings;
-    private final boolean bondMatch;
-    private final boolean matchAtomType;
     private IterationManager iterationManager = null;
     private boolean timeout = false;
+    final AtomMatcher atomMatcher;
+    final BondMatcher bondMatcher;
 
     /**
      * @return the timeout
@@ -121,19 +122,15 @@ public final class McGregor {
      * @param source
      * @param target
      * @param mappings
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
      */
     public McGregor(IAtomContainer source,
             IAtomContainer target,
             List<List<Integer>> mappings,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-        this.shouldMatchRings = shouldMatchRings;
-        this.bondMatch = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+            AtomMatcher atomMatcher,
+            BondMatcher bondMatcher) {
+        this.atomMatcher = atomMatcher;
+        this.bondMatcher = bondMatcher;
+
         this.target = target;
         this.mappings = Collections.synchronizedList(mappings);
         this.bestarcsleft = 0;
@@ -159,9 +156,9 @@ public final class McGregor {
      * @param mappings
      */
     public McGregor(IQueryAtomContainer source, IAtomContainer target, List<List<Integer>> mappings) {
-        this.shouldMatchRings = true;
-        this.bondMatch = true;
-        this.matchAtomType = true;
+        this.atomMatcher = AtomMatcher.forQuery();
+        this.bondMatcher = BondMatcher.forQuery();
+
         this.target = target;
         this.mappings = Collections.synchronizedList(mappings);
         this.bestarcsleft = 0;
@@ -322,9 +319,9 @@ public final class McGregor {
 //        //check possible mappings:
         boolean furtherMappingFlag;
         if (source instanceof IQueryAtomContainer) {
-            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible((IQueryAtomContainer) source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
+            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible((IQueryAtomContainer) source, target, mcGregorHelper, atomMatcher, bondMatcher);
         } else {
-            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, isBondMatch(), isMatchRings(), isMatchAtomType());
+            furtherMappingFlag = McGregorChecks.isFurtherMappingPossible(source, target, mcGregorHelper, atomMatcher, bondMatcher);
         }
 
         if (neighborBondNumA == 0 || neighborBondNumB == 0 || mappingCheckFlag || !furtherMappingFlag) {
@@ -577,7 +574,7 @@ public final class McGregor {
                     IAtom P1_B = target.getAtom(Index_J);
                     IAtom P2_B = target.getAtom(Index_JPlus1);
                     IBond productBond = target.getBond(P1_B, P2_B);
-                    if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+                    if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
                         modifiedARCS.set(row * neighborBondNumB + column, 1);
                     }
                 } else if (source instanceof IQueryAtomContainer) {
@@ -594,7 +591,7 @@ public final class McGregor {
                     IAtom P1_B = target.getAtom(Index_J);
                     IAtom P2_B = target.getAtom(Index_JPlus1);
                     IBond productBond = target.getBond(P1_B, P2_B);
-                    if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+                    if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
                         modifiedARCS.set(row * neighborBondNumB + column, 1);
                     }
                 }
@@ -847,7 +844,7 @@ public final class McGregor {
         IBond productBond = target.getBond(P1_B, P2_B);
 
 //      Bond Order Check Introduced by Asad
-        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isBondMatch(), isMatchRings(), isMatchAtomType())) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
 
             for (int indexZ = 0; indexZ < mcGregorHelper.getMappedAtomCount(); indexZ++) {
 
@@ -894,28 +891,5 @@ public final class McGregor {
      */
     public synchronized void setNewMatrix(boolean newMatrix) {
         this.newMatrix = newMatrix;
-    }
-
-    /**
-     * Should bonds match
-     *
-     * @return the bondMatch
-     */
-    private synchronized boolean isBondMatch() {
-        return bondMatch;
-    }
-
-    /**
-     * @return the shouldMatchRings
-     */
-    public boolean isMatchRings() {
-        return shouldMatchRings;
-    }
-
-    /**
-     * @return the matchAtomType
-     */
-    public boolean isMatchAtomType() {
-        return matchAtomType;
     }
 }

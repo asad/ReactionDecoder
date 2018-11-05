@@ -26,6 +26,9 @@ import java.util.List;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getTotalFormalCharge;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 
 /**
@@ -217,7 +220,10 @@ public class ReactionIsomorphismHandler implements Serializable {
 
                     try {
 
-                        Substructure isomorphism = new Substructure(ac1, ac2, true, true, true, false);
+                        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+                        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+                        Substructure isomorphism = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false);
                         if (isomorphism.isSubgraph()) {
                             isomorphism.setChemFilters(true, true, true);
 

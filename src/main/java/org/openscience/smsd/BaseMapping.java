@@ -34,6 +34,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.filters.ChemicalFilters;
 import org.openscience.smsd.interfaces.IAtomMapping;
 
@@ -49,15 +51,14 @@ import org.openscience.smsd.interfaces.IAtomMapping;
  */
 public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
-    private final boolean matchBonds;
-    private final boolean matchRings;
-    private final boolean matchAtomType;
     private boolean subgraph;
     private List<Double> stereoScoreList;
     private List<Integer> fragmentSizeList;
     private List<Double> bondEnergiesList;
     private final static ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BaseMapping.class);
+    final AtomMatcher atomMatcher;
+    final BondMatcher bondMatcher;
 
     /**
      *
@@ -67,23 +68,21 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @param mol1
      * @param mol2
      */
-    public BaseMapping(IAtomContainer mol1, IAtomContainer mol2, boolean matchBonds,
-            boolean matchRings, boolean matchAtomType) {
+    public BaseMapping(IAtomContainer mol1, IAtomContainer mol2, AtomMatcher am, BondMatcher bm) {
         super(mol1, mol2);
-        this.matchBonds = matchBonds;
-        this.matchRings = matchRings;
-        this.matchAtomType = matchAtomType;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
     }
 
     /**
      * @param mol1
      * @param mol2
      */
-    public BaseMapping(IQueryAtomContainer mol1, IAtomContainer mol2) {
+    public BaseMapping(IQueryAtomContainer mol1, IAtomContainer mol2,
+            AtomMatcher am, BondMatcher bm) {
         super(mol1, mol2);
-        this.matchBonds = true;
-        this.matchRings = true;
-        this.matchAtomType = true;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
 
     }
 
@@ -261,24 +260,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     }
 
     /**
-     * Returns true if bond are to be matched.
-     *
-     * @return true if bond are to be matched
-     */
-    protected synchronized boolean isMatchBonds() {
-        return matchBonds;
-    }
-
-    /**
-     * Returns true if rings are to be matched.
-     *
-     * @return true if rings are to be matched
-     */
-    protected synchronized boolean isMatchRings() {
-        return matchRings;
-    }
-
-    /**
      * Returns true if Query is a subgraph of the Target.
      *
      * @return true if Query is a subgraph of the Target
@@ -358,13 +339,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         });
 //        System.out.println("Mol Map size:" + bondbondMappingMap.size());
         return bondbondMappingMap;
-    }
-
-    /**
-     * @return the matchAtomType
-     */
-    public boolean isMatchAtomType() {
-        return matchAtomType;
     }
 
     /*

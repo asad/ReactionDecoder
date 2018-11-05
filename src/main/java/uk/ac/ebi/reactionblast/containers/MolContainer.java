@@ -34,6 +34,9 @@ import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
@@ -210,7 +213,10 @@ public class MolContainer implements IMolContainer {
         IAtomContainer mol1 = _mol;
         IAtomContainer mol2 = _rMol;
 
-        Substructure mcs = new Substructure(mol1, mol2, true, true, true, false);
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+        Substructure mcs = new Substructure(mol1, mol2, atomMatcher, bondMatcher, false);
         mcs.setChemFilters(false, false, false);
         return mcs.isSubgraph() && !mcs.isStereoMisMatch()
                 && mol1.getAtomCount() == mol2.getAtomCount();

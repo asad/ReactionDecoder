@@ -36,6 +36,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  * This algorithm derives from the algorithm described in [Tonnelier, C. and
@@ -106,7 +108,7 @@ public final class CDKRMapHandler {
      * @throws CDKException
      */
     public synchronized List<Map<Integer, Integer>> calculateOverlapsAndReduce(IAtomContainer molecule1,
-            IAtomContainer molecule2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+            IAtomContainer molecule2, AtomMatcher am, BondMatcher bm) throws CDKException {
         setSource(molecule1);
         setTarget(molecule2);
         List<Map<Integer, Integer>> solution = new ArrayList<>();
@@ -126,7 +128,7 @@ public final class CDKRMapHandler {
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true, am, bm);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -171,7 +173,8 @@ public final class CDKRMapHandler {
             }
 
         } else {
-            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), (IQueryAtomContainer) getTarget(), new BitSet(), new BitSet(), true, true, true, true, true);
+            List<List<CDKRMap>> overlaps = CDKMCS.search(getSource(), (IQueryAtomContainer) getTarget(), new BitSet(), new BitSet(), true, true,
+                    AtomMatcher.forQuery(), BondMatcher.forQuery());
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -202,9 +205,8 @@ public final class CDKRMapHandler {
     public synchronized void calculateOverlapsAndReduceExactMatch(
             IAtomContainer Molecule1,
             IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
+            AtomMatcher am,
+            BondMatcher bm) throws CDKException {
 
         setSource(Molecule1);
         setTarget(Molecule2);
@@ -227,7 +229,7 @@ public final class CDKRMapHandler {
 
             List<List<CDKRMap>> overlaps
                     = CDKMCS.search(getSource(), getTarget(), new BitSet(), new BitSet(), true, true,
-                            shouldMatchBonds, shouldMatchRings, matchAtomType);
+                            am, bm);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -255,9 +257,7 @@ public final class CDKRMapHandler {
      */
     public synchronized List<Map<Integer, Integer>> calculateSubGraphs(IAtomContainer Molecule1,
             IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
 
         setSource(Molecule1);
         setTarget(Molecule2);
@@ -281,9 +281,7 @@ public final class CDKRMapHandler {
 
             List<List<CDKRMap>> overlaps
                     = CDKMCS.getSubgraphMaps(getSource(), getTarget(),
-                            shouldMatchBonds,
-                            shouldMatchRings,
-                            matchAtomType);
+                            am, bm);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);
@@ -312,9 +310,7 @@ public final class CDKRMapHandler {
      */
     public synchronized List<Map<Integer, Integer>> calculateIsomorphs(IAtomContainer Molecule1,
             IAtomContainer Molecule2,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws CDKException {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
 
         setSource(Molecule1);
         setTarget(Molecule2);
@@ -336,7 +332,7 @@ public final class CDKRMapHandler {
         } else {
 
             List<List<CDKRMap>> overlaps
-                    = CDKMCS.getIsomorphMaps(getSource(), getTarget(), shouldMatchBonds, shouldMatchRings, matchAtomType);
+                    = CDKMCS.getIsomorphMaps(getSource(), getTarget(), am, bm);
             this.setTimeout(CDKMCS.isTimeout());
             List<List<CDKRMap>> reducedList = removeSubGraph(overlaps);
             Stack<List<CDKRMap>> allMaxOverlaps = getAllMaximum(reducedList);

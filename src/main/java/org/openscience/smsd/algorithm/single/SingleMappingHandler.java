@@ -31,6 +31,7 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -48,7 +49,7 @@ public class SingleMappingHandler implements IResults {
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchRings;
+    private final AtomMatcher atomMatcher;
 
     /**
      *
@@ -59,11 +60,11 @@ public class SingleMappingHandler implements IResults {
     public SingleMappingHandler(
             IAtomContainer source,
             IAtomContainer target,
-            boolean shouldMatchRings) {
+            AtomMatcher am) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = shouldMatchRings;
+        this.atomMatcher = am;
         searchMCS();
     }
 
@@ -74,11 +75,12 @@ public class SingleMappingHandler implements IResults {
      */
     public SingleMappingHandler(
             IQueryAtomContainer source,
-            IAtomContainer target) {
+            IAtomContainer target,
+            AtomMatcher am) {
         allAtomMCS = new ArrayList<>();
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = true;
+        this.atomMatcher = am;
         searchMCS();
     }
 
@@ -94,9 +96,9 @@ public class SingleMappingHandler implements IResults {
             if (target instanceof IQueryAtomContainer) {
                 throw new CDKException("Target can't be IQueryAtomContainer");
             } else if (!(source instanceof IQueryAtomContainer)) {
-                mappings = singleMapping.getOverLaps(source, target);
+                mappings = singleMapping.getOverLaps(source, target, atomMatcher);
             } else {
-                mappings = singleMapping.getOverLaps((IQueryAtomContainer) source, target);
+                mappings = singleMapping.getOverLaps((IQueryAtomContainer) source, target, atomMatcher);
             }
         } catch (CDKException ex) {
             Logger.error(Level.SEVERE, null, ex);

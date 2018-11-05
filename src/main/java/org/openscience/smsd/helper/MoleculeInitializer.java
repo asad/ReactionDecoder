@@ -46,6 +46,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.RingSetManipulator;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCDK;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
@@ -319,7 +321,8 @@ public class MoleculeInitializer {
     public synchronized static boolean testIsSubgraphHeuristics(
             IAtomContainer ac1,
             IAtomContainer ac2,
-            boolean shouldMatchBonds) {
+            AtomMatcher am,
+            BondMatcher bm) {
 
         int ac1SingleBondCount = 0;
         int ac1DoubleBondCount = 0;
@@ -332,7 +335,7 @@ public class MoleculeInitializer {
 
         IBond bond;
 
-        if (shouldMatchBonds) {
+        if (false) {
             for (int i = 0; i < ac1.getBondCount(); i++) {
                 bond = ac1.getBond(i);
                 if (bond == null) {

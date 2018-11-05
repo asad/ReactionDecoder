@@ -32,6 +32,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.filters.PostFilter;
 import org.openscience.smsd.interfaces.IResults;
 
@@ -50,10 +52,9 @@ public final class MCSPlusMapper implements IResults {
     private final IAtomContainer source;
     private final IAtomContainer target;
     private boolean flagExchange = false;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
-    private final boolean matchAtomType;
     private final boolean timeout;
+    private AtomMatcher am;
+    private BondMatcher bm;
 
     /**
      * Constructor for the MCS Plus algorithm class
@@ -65,12 +66,11 @@ public final class MCSPlusMapper implements IResults {
      * @param matchAtomType
      */
     public MCSPlusMapper(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+            AtomMatcher am, BondMatcher bm) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+        this.am = am;
+        this.bm = bm;
         allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -85,9 +85,8 @@ public final class MCSPlusMapper implements IResults {
     public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = true;
-        this.shouldMatchBonds = true;
-        this.matchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
         allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -104,19 +103,19 @@ public final class MCSPlusMapper implements IResults {
 
         if (source instanceof IQueryAtomContainer) {
             mcsplus = new MCSPlus((IQueryAtomContainer) source, target);
-            List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mcsplus.search_cliques();
+            mappings = Collections.synchronizedList(mcsplus.getFinalMappings());
 
         } else if (!(source instanceof IQueryAtomContainer) && source.getAtomCount() < target.getAtomCount()) {
-            mcsplus = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
-            List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mcsplus = new MCSPlus(source, target, am, bm);
+            mcsplus.search_cliques();
+            mappings = Collections.synchronizedList(mcsplus.getFinalMappings());
 
         } else {
             flagExchange = true;
-            mcsplus = new MCSPlus(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
-            List<List<Integer>> overlaps = mcsplus.getOverlaps();
-            mappings = Collections.synchronizedList(overlaps);
+            mcsplus = new MCSPlus(target, source, am, bm);
+            mcsplus.search_cliques();
+            mappings = Collections.synchronizedList(mcsplus.getFinalMappings());
         }
         if (flagExchange) {
             mappings = reverseMappings(mappings);

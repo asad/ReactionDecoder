@@ -28,7 +28,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**

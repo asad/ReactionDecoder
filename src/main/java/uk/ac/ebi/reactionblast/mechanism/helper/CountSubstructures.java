@@ -29,6 +29,9 @@ import org.openscience.cdk.smiles.SmilesParser;
 import static org.openscience.cdk.smiles.smarts.parser.SMARTSParser.parse;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.vflib.substructure.VF2;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
@@ -61,9 +64,12 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
     }
 
     public int substructureSize(String smiles) throws CDKException {
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+
         try {
             IAtomContainer parseSmiles = sp.parseSmiles(smiles);
-            VF2 vf = new VF2(parseSmiles, mol, true, true, true);
+            VF2 vf = new VF2(parseSmiles, mol, atomMatcher, bondMatcher);
             return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
         } catch (InvalidSmilesException ex) {
             VF2 vf = new VF2(parse(smiles, mol.getBuilder()), mol);

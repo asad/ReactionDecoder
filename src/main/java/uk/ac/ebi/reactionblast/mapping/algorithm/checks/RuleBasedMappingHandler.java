@@ -452,7 +452,7 @@ public final class RuleBasedMappingHandler implements Serializable {
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
-            am = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomType);
+            am = AtomBondMatcher.atomMatcher(matchAtomType, shouldMatchRings);
             bm = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
 
         }
@@ -485,8 +485,11 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) throws CDKException {
 
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, false);
+
         if (ac1.getAtomCount() <= ac2.getAtomCount()) {
-            Substructure pattern = new Substructure(ac1, ac2, true, false, true, false); // create pattern
+            Substructure pattern = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false); // create pattern
 
             if (DEBUG2) {
                 out.println("Sub " + pattern.isSubgraph());
@@ -494,7 +497,7 @@ public final class RuleBasedMappingHandler implements Serializable {
             return pattern.isSubgraph();
         }
         if (ac1.getAtomCount() >= ac2.getAtomCount()) {
-            Substructure pattern = new Substructure(ac2, ac1, true, false, true, false); // create pattern
+            Substructure pattern = new Substructure(ac2, ac1, atomMatcher, bondMatcher, false); // create pattern
             if (DEBUG2) {
                 out.println("Sub " + pattern.isSubgraph());
             }

@@ -36,6 +36,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -58,10 +60,9 @@ public class CDKMCSHandler implements IResults {
     private boolean rOnPFlag = false;
     private final List<AtomAtomMapping> allAtomMCS;
     private final List<Map<Integer, Integer>> allMCS;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
-    private final boolean matchAtomType;
     private boolean timeout;
+    private AtomMatcher am;
+    private BondMatcher bm;
 
     //~--- constructors -------------------------------------------------------
     /*
@@ -76,12 +77,11 @@ public class CDKMCSHandler implements IResults {
      * @param matchAtomType
      */
     public CDKMCSHandler(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+            AtomMatcher am, BondMatcher bm) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+        this.am = am;
+        this.bm = bm;
         this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -95,9 +95,8 @@ public class CDKMCSHandler implements IResults {
     public CDKMCSHandler(IAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = true;
-        this.shouldMatchBonds = true;
-        this.matchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
         this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -118,10 +117,10 @@ public class CDKMCSHandler implements IResults {
                 rOnPFlag = false;
             } else if (source.getAtomCount() < target.getAtomCount()) {
                 rOnPFlag = false;
-                solutions = rmap.calculateOverlapsAndReduce(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                solutions = rmap.calculateOverlapsAndReduce(target, source, am, bm);
             } else {
                 rOnPFlag = true;
-                solutions = rmap.calculateOverlapsAndReduce(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                solutions = rmap.calculateOverlapsAndReduce(source, target, am, bm);
             }
 
             setAllMapping(solutions);
@@ -148,7 +147,7 @@ public class CDKMCSHandler implements IResults {
             boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
         ArrayList<Integer> atomSerialsToDelete = new ArrayList<>();
 
-        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, am, bm);
         List<CDKRMap> mapList = matches.get(0);
         mapList.stream().map((o) -> (CDKRMap) o).forEach((rmap) -> {
             atomSerialsToDelete.add(rmap.getId1());

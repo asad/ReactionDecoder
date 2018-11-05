@@ -19,6 +19,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
@@ -45,9 +47,8 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
 
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
-    private final boolean matchAtomType;
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
 
     /**
      *
@@ -55,24 +56,21 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
      * @param endIndex
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param atomMatcher
+     * @param bondMatcher
      */
     public GenerateCompatibilityGraphFJ(int startIndex,
             int endIndex,
             IAtomContainer source,
             IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
+            AtomMatcher atomMatcher,
+            BondMatcher bondMatcher) {
         this.endIndex = endIndex;
         this.source = source;
         this.target = target;
         this.startIndex = startIndex;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+        this.atomMatcher = atomMatcher;
+        this.bondMatcher = bondMatcher;
     }
 
     @Override
@@ -110,8 +108,8 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
         List<GenerateCompatibilityGraphFJ> dividedTasks = new ArrayList<>();
         int middle = (endIndex + startIndex) / 2;
 
-        GenerateCompatibilityGraphFJ partOne = new GenerateCompatibilityGraphFJ(startIndex, middle, source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
-        GenerateCompatibilityGraphFJ partTwo = new GenerateCompatibilityGraphFJ(middle, endIndex, source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        GenerateCompatibilityGraphFJ partOne = new GenerateCompatibilityGraphFJ(startIndex, middle, source, target, atomMatcher, bondMatcher);
+        GenerateCompatibilityGraphFJ partTwo = new GenerateCompatibilityGraphFJ(middle, endIndex, source, target, atomMatcher, bondMatcher);
         dividedTasks.add(partOne);
         dividedTasks.add(partTwo);
 
@@ -125,8 +123,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
             System.out.println("Splitting workLoad startIndex: " + startIndex + ", endIndex: " + endIndex);
         }
 
-        if ((!shouldMatchBonds || !matchAtomType)
-                && source.getAtomCount() > COMPLEX_MAX_GRAPH_NODE_COUNT
+        if (source.getAtomCount() > COMPLEX_MAX_GRAPH_NODE_COUNT
                 || target.getAtomCount() > COMPLEX_MAX_GRAPH_NODE_COUNT) {
             result = new Result();
             if (DEBUG) {
@@ -279,7 +276,7 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
     private void addZeroEdges(List<Edge> cEdges, List<Edge> dEdges,
             IBond reactantBond, IBond productBond,
             int indexI, int indexJ) {
-        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
             Edge edge = new Edge(new Vertex((indexI / 4) + 1), new Vertex((indexJ / 4) + 1));
             if (!cEdges.contains(edge)) {
                 cEdges.add(edge);
@@ -314,10 +311,8 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                 if (DEBUG) {
                     System.out.println("referenceAtom " + referenceAtom);
                 }
-            } else if (!(refAtom instanceof IQueryAtom) && this.matchAtomType) {
-                referenceAtom = refAtom.getAtomTypeName() == null ? refAtom.getSymbol() : refAtom.getAtomTypeName();
             } else {
-                referenceAtom = refAtom.getSymbol();
+                referenceAtom = refAtom.getSymbol(); //+ refAtom.getAtomicNumber();
             }
             label.set(0, referenceAtom);
             List<IAtom> connAtoms = atomCont.getConnectedAtomsList(refAtom);
@@ -329,10 +324,8 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                 if (refAtom instanceof IQueryAtom) {
                     neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : ((IQueryAtom) negAtom).getSymbol();
 //                    System.out.println("neighbouringAtom " + neighbouringAtom);
-                } else if (!(negAtom instanceof IQueryAtom) && this.matchAtomType) {
-                    neighbouringAtom = negAtom.getAtomTypeName() == null ? negAtom.getSymbol() : negAtom.getAtomTypeName();
                 } else {
-                    neighbouringAtom = negAtom.getSymbol();
+                    neighbouringAtom = negAtom.getSymbol(); //+ negAtom.getAtomicNumber();
                 }
                 label.set(counter, neighbouringAtom);
                 counter += 1;
@@ -450,7 +443,8 @@ public class GenerateCompatibilityGraphFJ extends RecursiveTask<List<Result>> {
                     }
 
                     if (connectedFlag
-                            && AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                            && AtomBondMatcher.
+                                    matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
                         matchBondFlag = true;
                     }
 

@@ -53,8 +53,6 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
-import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.atomMatcher;
-import static org.openscience.smsd.algorithm.matchers.AtomBondMatcher.bondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
@@ -69,11 +67,10 @@ import org.openscience.smsd.algorithm.matchers.BondMatcher;
 // algorithm. Every state uses and modifies the same SharedState object.
 final class State {
 
-    private final boolean shouldMatchBonds;
-    private final boolean shouldMatchRings;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchAtomType;
+    private AtomMatcher am;
+    private BondMatcher bm;
 
     // Returns true if the state contains an isomorphism.
     public boolean isGoal() {
@@ -117,7 +114,7 @@ final class State {
     private boolean isMatchPossible = false;
 
     State(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+            AtomMatcher am, BondMatcher bm) {
         this.size = 0;
         this.sourceTerminalSize = 0;
         this.targetTerminalSize = 0;
@@ -130,9 +127,8 @@ final class State {
         this.lastAddition = new Pair<>(-1, -1);
         this.sharedState = new SharedState(source.getAtomCount(),
                 target.getAtomCount());
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchAtomType = matchAtomType;
+        this.am = am;
+        this.bm = bm;
     }
 
     State(IQueryAtomContainer source, IAtomContainer target) {
@@ -148,9 +144,8 @@ final class State {
         this.lastAddition = new Pair<>(-1, -1);
         this.sharedState = new SharedState(source.getAtomCount(),
                 target.getAtomCount());
-        this.shouldMatchBonds = true;
-        this.shouldMatchRings = true;
-        this.shouldMatchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
     }
 
     State(State state) {
@@ -163,9 +158,8 @@ final class State {
         this.matches = state.matches;
         this.lastAddition = new Pair<>(-1, -1);
         this.sharedState = state.sharedState;
-        this.shouldMatchBonds = state.shouldMatchBonds;
-        this.shouldMatchRings = state.shouldMatchRings;
-        this.shouldMatchAtomType = state.shouldMatchAtomType;
+        this.am = state.am;
+        this.bm = state.bm;
     }
 
     private boolean isFeasible() {
@@ -483,13 +477,11 @@ final class State {
     }
 
     boolean matchBonds(IBond queryBond, IBond targetBond) {
-        BondMatcher bondMatcher = bondMatcher(shouldMatchBonds, shouldMatchRings);
-        return AtomBondMatcher.matches(queryBond, queryBond, bondMatcher);
+        return AtomBondMatcher.matches(queryBond, queryBond, bm);
     }
 
     boolean matchAtoms(IAtom sourceAtom, IAtom targetAtom) {
-        AtomMatcher atomMatcher = atomMatcher(shouldMatchRings, shouldMatchAtomType);
-        return AtomBondMatcher.matches(sourceAtom, targetAtom, atomMatcher);
+        return AtomBondMatcher.matches(sourceAtom, targetAtom, am);
     }
 
     private boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mappings) {

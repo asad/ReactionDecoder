@@ -25,6 +25,8 @@ package org.openscience.smsd.algorithm.mcsplus1;
 import java.util.ArrayList;
 import java.util.List;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  *
@@ -40,8 +42,8 @@ public class Filter extends McGregor {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public Filter(IAtomContainer f1,IAtomContainer f2, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
-        super(f1, f2,  shouldMatchBonds,  shouldMatchRings,  matchAtomType);
+    public Filter(IAtomContainer f1, IAtomContainer f2, AtomMatcher am, BondMatcher bm) {
+        super(f1, f2, am, bm);
     }
 
     int postfilter() {

@@ -51,13 +51,15 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
  * This class finds mapping states between query and target molecules.
  *
- *  
+ *
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
@@ -66,13 +68,12 @@ public final class VF2 implements IResults {
     private List<AtomAtomMapping> allAtomMCS = null;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
-    private final boolean matchAtomType;
 
     private boolean isSubgraph = false;
     private final ILoggingTool Logger
             = LoggingToolFactory.createLoggingTool(VF2.class);
+    private AtomMatcher am;
+    private BondMatcher bm;
 
     /**
      * Constructor for an extended VF Algorithm for the MCS search
@@ -83,14 +84,13 @@ public final class VF2 implements IResults {
      * @param shouldMatchRings
      * @param matchAtomType
      */
-    public VF2(IAtomContainer source, IAtomContainer target, boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+    public VF2(IAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
         this.allAtomMCS = new ArrayList<>();
         this.isSubgraph = findSubgraph();
-        this.matchAtomType = matchAtomType;
+        this.am = am;
+        this.bm = bm;
     }
 
     /**
@@ -102,18 +102,18 @@ public final class VF2 implements IResults {
     public VF2(IQueryAtomContainer source, IAtomContainer target) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = true;
-        this.shouldMatchBonds = true;
-        this.matchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
         allAtomMCS = new ArrayList<>();
         this.isSubgraph = findSubgraph();
     }
 
     /**
-     * The isomorphism method returns an isomorphism between two molecular graphs using the VF2Automorphism algorithm.
-     * This can be used for finding both graph-graph isomorphisms and graph-subgraph isomorphisms. In the latter case
-     * graph 'a' is the subgraph, implying a.size() < b.size(). In the case that no isomorphism is found an empty
-     * mapping is returned.
+     * The isomorphism method returns an isomorphism between two molecular
+     * graphs using the VF2Automorphism algorithm. This can be used for finding
+     * both graph-graph isomorphisms and graph-subgraph isomorphisms. In the
+     * latter case graph 'a' is the subgraph, implying a.size() < b.size(). In
+     * the case that no isomorphism is found an empty mapping is returned.
      *
      *
      *
@@ -128,8 +128,8 @@ public final class VF2 implements IResults {
      */
     private synchronized void isomorphism() {
 
-        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
-            State state = new State(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, am, bm)) {
+            State state = new State(source, target, am, bm);
             if (!state.isDead()) {
                 state.matchFirst(state, allAtomMCS);
             }
@@ -137,17 +137,18 @@ public final class VF2 implements IResults {
     }
 
     /**
-     * The isomorphism method returns an isomorphism between two molecular graphs using the VF2Automorphism algorithm.
-     * This can be used for finding both graph-graph isomorphisms and graph-subgraph isomorphisms. In the latter case
-     * graph 'a' is the subgraph, implying a.size() < b.size(). In the case that no isomorphism is found an empty
-     * mapping is returned.
+     * The isomorphism method returns an isomorphism between two molecular
+     * graphs using the VF2Automorphism algorithm. This can be used for finding
+     * both graph-graph isomorphisms and graph-subgraph isomorphisms. In the
+     * latter case graph 'a' is the subgraph, implying a.size() < b.size(). In
+     * the case that no isomorphism is found an empty mapping is returned.
      *
      *
      */
     private synchronized void isomorphisms() {
 
-        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, shouldMatchBonds)) {
-            State state = new State(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        if (!isDead(source, target) && MoleculeInitializer.testIsSubgraphHeuristics(source, target, am, bm)) {
+            State state = new State(source, target, am, bm);
             if (!state.isDead()) {
                 state.matchAll(state, allAtomMCS);
             }

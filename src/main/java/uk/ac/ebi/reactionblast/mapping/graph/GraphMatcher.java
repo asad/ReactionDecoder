@@ -57,6 +57,9 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -437,24 +440,5 @@ public class GraphMatcher extends Debugger {
             }
         }
         return null;
-    }
-
-    /**
-     *
-     * @param educt
-     * @param product
-     * @param matchesBond bond type matching
-     * @param ringMatcher ring matcher
-     * @return
-     * @throws CDKException
-     */
-    static boolean isSubgraph(IAtomContainer educt, IAtomContainer product, boolean matchesBond, boolean ringMatcher) throws CDKException {
-        if (educt.getAtomCount() <= product.getAtomCount()) {
-            Substructure smsd = new Substructure(educt, product, matchesBond, ringMatcher, false, false);
-            return smsd.isSubgraph();
-        } else {
-            Substructure smsd = new Substructure(product, educt, matchesBond, ringMatcher, false, false);
-            return smsd.isSubgraph();
-        }
     }
 }

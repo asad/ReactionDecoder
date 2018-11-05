@@ -39,6 +39,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
@@ -63,9 +65,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
     private int dEdgesSize = 0;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean shouldMatchBonds;
-    private final boolean shouldMatchRings;
-    private final boolean matchAtomType;
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
 
     /**
      * Generates a compatibility graph between two molecules
@@ -80,12 +81,9 @@ public final class GenerateCompatibilityGraph implements Serializable {
     public GenerateCompatibilityGraph(
             IAtomContainer source,
             IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) throws IOException {
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
+            AtomMatcher am, BondMatcher bm) throws IOException {
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
         this.source = source;
         this.target = target;
         compGraphNodes = new ArrayList<>();
@@ -99,8 +97,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
  /*
          Modification for AAM only
          */
-        if ((!shouldMatchBonds || !matchAtomType)
-                && source.getAtomCount() > 30 && target.getAtomCount() > 30) {
+        if (source.getAtomCount() > 30 && target.getAtomCount() > 30) {
 //            System.out.println("CASE LARGE GRAPH");
             compatibilityGraphNodesIfCEdgeIsZero();
             compatibilityGraphCEdgeZero();
@@ -149,10 +146,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
             if (refAtom instanceof IQueryAtom) {
                 referenceAtom = ((IQueryAtom) refAtom).getSymbol() == null ? "*" : ((IQueryAtom) refAtom).getSymbol();
 //                System.out.println("referenceAtom " + referenceAtom);
-            } else if (!(refAtom instanceof IQueryAtom) && this.matchAtomType) {
-                referenceAtom = refAtom.getAtomTypeName() == null ? refAtom.getSymbol() : refAtom.getAtomTypeName();
             } else {
-                referenceAtom = refAtom.getSymbol();
+                referenceAtom = refAtom.getSymbol();// + refAtom.getAtomicNumber();
             }
             label.set(0, referenceAtom);
             List<IAtom> connAtoms = atomCont.getConnectedAtomsList(refAtom);
@@ -164,10 +159,8 @@ public final class GenerateCompatibilityGraph implements Serializable {
                 if (refAtom instanceof IQueryAtom) {
                     neighbouringAtom = ((IQueryAtom) negAtom).getSymbol() == null ? "*" : ((IQueryAtom) negAtom).getSymbol();
 //                    System.out.println("neighbouringAtom " + neighbouringAtom);
-                } else if (!(negAtom instanceof IQueryAtom) && this.matchAtomType) {
-                    neighbouringAtom = negAtom.getAtomTypeName() == null ? negAtom.getSymbol() : negAtom.getAtomTypeName();
                 } else {
-                    neighbouringAtom = negAtom.getSymbol();
+                    neighbouringAtom = negAtom.getSymbol();// + negAtom.getAtomicNumber();
                 }
                 label.set(counter, neighbouringAtom);
                 counter += 1;
@@ -279,36 +272,13 @@ public final class GenerateCompatibilityGraph implements Serializable {
     }
 
     private void addEdges(IBond reactantBond, IBond productBond, int iIndex, int jIndex) {
-
-        if (!isMatchBond() && !isMatchRings() && !matchAtomType) {
-            if (isRawMatch(reactantBond, productBond)) {
-                Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
-                cEdges.add(edge);
-            }
-        } else if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
             Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
             cEdges.add(edge);
         } else {
             Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
             dEdges.add(edge);
         }
-    }
-
-    private boolean isRawMatch(IBond reactantBond, IBond productBond) {
-        if (reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(0).getSymbol())
-                && reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-            if (reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(0).getHybridization())
-                    && reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
-                return true;
-            }
-        } else if (reactantBond.getAtom(1).getSymbol().equals(productBond.getAtom(0).getSymbol())
-                && reactantBond.getAtom(0).getSymbol().equals(productBond.getAtom(1).getSymbol())) {
-            if (reactantBond.getAtom(1).getHybridization().equals(productBond.getAtom(0).getHybridization())
-                    && reactantBond.getAtom(0).getHybridization().equals(productBond.getAtom(1).getHybridization())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -417,7 +387,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
     }
 
     private void addZeroEdges(IBond reactantBond, IBond productBond, int indexI, int indexJ) {
-        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, isMatchBond(), isMatchRings(), matchAtomType)) {
+        if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
             Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
             cEdges.add(edge);
         } else {
@@ -479,19 +449,5 @@ public final class GenerateCompatibilityGraph implements Serializable {
         dEdges.clear();
         compGraphNodes.clear();
         compGraphNodesCZero.clear();
-    }
-
-    /**
-     * @return the shouldMatchBonds
-     */
-    private boolean isMatchBond() {
-        return shouldMatchBonds;
-    }
-
-    /**
-     * @return the shouldMatchRings
-     */
-    private boolean isMatchRings() {
-        return shouldMatchRings;
     }
 }

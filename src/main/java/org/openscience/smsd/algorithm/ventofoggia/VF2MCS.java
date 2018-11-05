@@ -85,10 +85,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
      */
     public VF2MCS(IAtomContainer source,
             IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean shouldMatchRings,
-            boolean matchAtomType) {
-        super(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            AtomMatcher am, BondMatcher bm) {
+        super(source, target, am, bm);
         boolean timeoutVF = searchVFCDKMappings();
 
         if (DEBUG) {
@@ -156,7 +154,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 for (IBond b1 : targetClone.bonds()) {
                     boolean flag = false;
                     for (IBond b2 : source.bonds()) {
-                        if (AtomBondMatcher.matchAtomAndBond(b1, b2, shouldMatchBonds, shouldMatchRings, matchAtomType)) {
+                        if (AtomBondMatcher.matchAtomAndBond(b1, b2, atomMatcher, bondMatcher, true)) {
                             flag = true;
                             break;
                         }
@@ -191,8 +189,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                     }
                     MCSSeedGenerator mcsSeedGeneratorUIT
                             = new MCSSeedGenerator(source, targetClone,
-                                    shouldMatchBonds, shouldMatchRings,
-                                    matchAtomType, Algorithm.CDKMCS);
+                                    Algorithm.CDKMCS, atomMatcher, bondMatcher);
                     cs.submit(mcsSeedGeneratorUIT);
                     jobCounter++;
                 }
@@ -202,8 +199,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 System.out.println(" CALLING MCSPLUS ");
             }
             MCSSeedGenerator mcsSeedGeneratorKoch
-                    = new MCSSeedGenerator(source, targetClone, shouldMatchBonds,
-                            shouldMatchRings, matchAtomType, Algorithm.MCSPlus);
+                    = new MCSSeedGenerator(source, targetClone, Algorithm.MCSPlus, atomMatcher, bondMatcher);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 
@@ -377,8 +373,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @param source
      * @param target
      */
-    public VF2MCS(IQueryAtomContainer source, IAtomContainer target) {
-        super((IQueryAtomContainer) source, target, true, true, true);
+    public VF2MCS(IQueryAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
+        super((IQueryAtomContainer) source, target, am, bm);
         boolean timeoutVF = searchVFCDKMappings();
 
 //        System.out.println("time for VF search " + timeoutVF);
@@ -642,24 +638,15 @@ public final class VF2MCS extends BaseMCS implements IResults {
         if (DEBUG) {
             System.out.println("searchVFCDKMappings ");
         }
-        AtomMatcher am = null;
-        BondMatcher bm = null;
 
         if (!(source instanceof IQueryAtomContainer)
                 && !(target instanceof IQueryAtomContainer)) {
 
             countR = getReactantMol().getAtomCount();
             countP = getProductMol().getAtomCount();
-            am = AtomBondMatcher.atomMatcher(isMatchRings(), isMatchAtomType());
-            bm = AtomBondMatcher.bondMatcher(isBondMatchFlag(), isMatchRings());
-
         }
         if (source instanceof IQueryAtomContainer) {
-            am = AtomBondMatcher.queryAtomMatcher();
-            bm = AtomBondMatcher.queryBondMatcher();
-        }
-        if (source instanceof IQueryAtomContainer) {
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -668,7 +655,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             setVFMappings(true);
         } else if (countR <= countP) {
 
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll(target);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -677,7 +664,7 @@ public final class VF2MCS extends BaseMCS implements IResults {
             setVFMappings(true);
         } else if (countR > countP) {
 
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(target, am, bm); // create pattern
+            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(target, atomMatcher, bondMatcher); // create pattern
             Mappings matchAll = findSubstructure.matchAll(source);
             Iterable<Map<IAtom, IAtom>> toAtomMap = matchAll.limit(10).toAtomMap();
             for (Map<IAtom, IAtom> map : toAtomMap) {
@@ -691,16 +678,6 @@ public final class VF2MCS extends BaseMCS implements IResults {
             System.out.println("Sol size " + (vfLibSolutions.iterator().hasNext() ? vfLibSolutions.iterator().next().size() : 0));
         }
         return !vfLibSolutions.isEmpty();
-    }
-
-    /**
-     * Constructor for an extended VF Algorithm for the MCS search
-     *
-     * @param source
-     * @param target
-     */
-    public VF2MCS(IQueryAtomContainer source, IQueryAtomContainer target) {
-        this(source, target, true, true, true);
     }
 
     /**

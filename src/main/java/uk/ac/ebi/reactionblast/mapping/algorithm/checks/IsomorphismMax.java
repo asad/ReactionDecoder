@@ -28,7 +28,6 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import org.openscience.smsd.Substructure;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
 
@@ -180,21 +179,6 @@ public class IsomorphismMax extends Selector implements IResult {
 
     private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
         return educt.getAtomCount() == mcsSize;
-    }
-
-    private synchronized boolean isSubGraph(IAtomContainer educt, IAtomContainer product) {
-        try {
-            if (educt.getAtomCount() <= product.getAtomCount()) {
-                Substructure s = new Substructure(educt, product, false, true, true, false);
-                return s.isSubgraph();
-            } else if (educt.getAtomCount() > product.getAtomCount()) {
-                Substructure s = new Substructure(product, educt, false, true, true, false);
-                return s.isSubgraph();
-            }
-        } catch (CDKException ex) {
-            LOGGER.error(SEVERE, null, ex);
-        }
-        return false;
     }
 
     /**

@@ -30,6 +30,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.interfaces.IResults;
 
 /**
@@ -48,9 +50,8 @@ public class CDKSubGraphHandler implements IResults {
     private boolean rOnPFlag = false;
     private List<AtomAtomMapping> allAtomMCS = null;
     private List<Map<Integer, Integer>> allMCS = null;
-    private final boolean shouldMatchRings;
-    private final boolean shouldMatchBonds;
-    private final boolean matchAtomType;
+    private AtomMatcher am;
+    private BondMatcher bm;
 
     //~--- constructors -------------------------------------------------------
     /*
@@ -65,15 +66,14 @@ public class CDKSubGraphHandler implements IResults {
      * @param matchAtomType
      */
     public CDKSubGraphHandler(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+            AtomMatcher am, BondMatcher bm) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = shouldMatchRings;
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.matchAtomType = matchAtomType;
         this.allAtomMCS = new ArrayList<>();
         this.allMCS = new ArrayList<>();
         isSubgraph();
+        this.am = am;
+        this.bm = bm;
     }
 
     /**
@@ -84,9 +84,8 @@ public class CDKSubGraphHandler implements IResults {
     public CDKSubGraphHandler(IQueryAtomContainer source, IQueryAtomContainer target) {
         this.source = source;
         this.target = target;
-        this.shouldMatchRings = true;
-        this.shouldMatchBonds = true;
-        this.matchAtomType = true;
+        this.am = AtomMatcher.forQuery();
+        this.bm = BondMatcher.forQuery();
         this.allAtomMCS = new ArrayList<>();
         this.allMCS = new ArrayList<>();
         isSubgraph();
@@ -104,15 +103,15 @@ public class CDKSubGraphHandler implements IResults {
 
             if ((source.getAtomCount() == target.getAtomCount()) && source.getBondCount() == target.getBondCount()) {
                 rOnPFlag = true;
-                solutions = rmap.calculateIsomorphs(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                solutions = rmap.calculateIsomorphs(source, target, am, bm);
 
             } else if (source.getAtomCount() > target.getAtomCount() && source.getBondCount() != target.getBondCount()) {
                 rOnPFlag = true;
-                solutions = rmap.calculateSubGraphs(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                solutions = rmap.calculateSubGraphs(source, target, am, bm);
 
             } else {
                 rOnPFlag = false;
-                solutions = rmap.calculateSubGraphs(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
+                solutions = rmap.calculateSubGraphs(target, source, am, bm);
             }
 
             setAllMapping(solutions);
@@ -136,7 +135,7 @@ public class CDKSubGraphHandler implements IResults {
     protected IAtomContainerSet getUncommon(IAtomContainer mol, IAtomContainer mcss) throws CDKException {
         ArrayList<Integer> atomSerialsToDelete = new ArrayList<>();
 
-        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, shouldMatchBonds, shouldMatchRings, matchAtomType);
+        List<List<CDKRMap>> matches = CDKMCS.getSubgraphAtomsMaps(mol, mcss, am, bm);
         List<CDKRMap> mapList = matches.get(0);
         mapList.stream().map((o) -> (CDKRMap) o).forEach((rmap) -> {
             atomSerialsToDelete.add(rmap.getId1());

@@ -31,6 +31,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.single.SingleMappingHandler;
 import org.openscience.smsd.algorithm.ventofoggia.VF2Substructure;
 
@@ -103,11 +105,9 @@ public final class Substructure extends BaseMapping {
     public Substructure(
             IAtomContainer query,
             IAtomContainer target,
-            boolean shouldMatchBonds,
-            boolean matchRings,
-            boolean matchAtomType,
+            AtomMatcher am, BondMatcher bm,
             boolean findAllSubgraph) throws CDKException {
-        super(query, target, shouldMatchBonds, matchRings, matchAtomType);
+        super(query, target, am, bm);
         super.setSubgraph(findSubgraphs(findAllSubgraph));
     }
 
@@ -123,7 +123,7 @@ public final class Substructure extends BaseMapping {
             IQueryAtomContainer query,
             IAtomContainer target,
             boolean findAllSubgraph) throws CDKException {
-        super(query, target);
+        super(query, target, AtomMatcher.forQuery(), BondMatcher.forQuery());
         super.setSubgraph(findSubgraphs(findAllSubgraph));
     }
 
@@ -154,12 +154,12 @@ public final class Substructure extends BaseMapping {
             List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();
             VF2Substructure mapper;
             if (getQuery() instanceof IQueryAtomContainer) {
-                mapper = new VF2Substructure((IQueryAtomContainer) getQuery(), getTarget(), findAllMatches);
+                mapper = new VF2Substructure((IQueryAtomContainer) getQuery(), getTarget(), findAllMatches, atomMatcher, bondMatcher);
             } else {
                 if (DEBUG) {
                     System.out.println("calling VF2Sub");
                 }
-                mapper = new VF2Substructure(getQuery(), getTarget(), isMatchBonds(), isMatchRings(), isMatchAtomType(), findAllMatches);
+                mapper = new VF2Substructure(getQuery(), getTarget(), atomMatcher, bondMatcher, findAllMatches);
                 if (DEBUG) {
                     System.out.println("done calling VF2Sub");
                 }
@@ -212,9 +212,9 @@ public final class Substructure extends BaseMapping {
     private synchronized boolean singleMapping() {
         SingleMappingHandler mcs;
         if (!(getQuery() instanceof IQueryAtomContainer) && !(getTarget() instanceof IQueryAtomContainer)) {
-            mcs = new SingleMappingHandler(getQuery(), getTarget(), isMatchRings());
+            mcs = new SingleMappingHandler(getQuery(), getTarget(), atomMatcher);
         } else {
-            mcs = new SingleMappingHandler((IQueryAtomContainer) getQuery(), getTarget());
+            mcs = new SingleMappingHandler((IQueryAtomContainer) getQuery(), getTarget(), atomMatcher);
         }
         return mcs.getAllAtomMapping() != null && !mcs.getAllAtomMapping().isEmpty();
     }

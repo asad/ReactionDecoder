@@ -36,6 +36,8 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.filters.PostFilter;
 import org.openscience.smsd.interfaces.IResults;
 
@@ -57,10 +59,9 @@ public final class MCSPlusMapper implements IResults {
     private final IAtomContainer target;
     private boolean flagExchange = false;
     private final boolean timeout;
-    private boolean shouldMatchBonds;
-    private boolean shouldMatchRings;
-    private boolean matchAtomType;
     private final boolean DEBUG = false;
+    private AtomMatcher atomMatcher;
+    private BondMatcher bondMatcher;
 
     /**
      * Constructor for the MCSPlus Plus algorithm class
@@ -73,14 +74,12 @@ public final class MCSPlusMapper implements IResults {
      * @throws org.openscience.cdk.exception.CDKException
      */
     public MCSPlusMapper(IAtomContainer source, IAtomContainer target,
-            boolean shouldMatchBonds, boolean shouldMatchRings, boolean matchAtomType) throws CDKException {
+            AtomMatcher am,
+            BondMatcher bm) throws CDKException {
         this.source = source;
         this.target = target;
-
-        this.shouldMatchBonds = shouldMatchBonds;
-        this.shouldMatchRings = shouldMatchRings;
-        this.matchAtomType = matchAtomType;
-
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
         allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -93,9 +92,13 @@ public final class MCSPlusMapper implements IResults {
      * @param target
      * @throws org.openscience.cdk.exception.CDKException
      */
-    public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target) throws CDKException {
+    public MCSPlusMapper(IQueryAtomContainer source, IAtomContainer target,
+            AtomMatcher am,
+            BondMatcher bm) throws CDKException {
         this.source = source;
         this.target = target;
+        this.atomMatcher = am;
+        this.bondMatcher = bm;
         this.allAtomMCS = Collections.synchronizedList(new ArrayList<>());
         this.allMCS = Collections.synchronizedList(new ArrayList<>());
         this.timeout = searchMCS();
@@ -111,18 +114,19 @@ public final class MCSPlusMapper implements IResults {
         MCSPlus mcsplus;
 
         if (source instanceof IQueryAtomContainer) {
-            mcsplus = new MCSPlus((IQueryAtomContainer) source, target);
+            mcsplus = new MCSPlus((IQueryAtomContainer) source, target, atomMatcher, bondMatcher);
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
 
         } else if (!(source instanceof IQueryAtomContainer) && source.getAtomCount() <= target.getAtomCount()) {
-            mcsplus = new MCSPlus(source, target, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            mcsplus
+                    = new MCSPlusBuilder().setQuery(source).setTarget(target).setAtomMatcher(atomMatcher).setBondMatcher(bondMatcher).createMCSPlus();
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
 
         } else {
             flagExchange = true;
-            mcsplus = new MCSPlus(target, source, shouldMatchBonds, shouldMatchRings, matchAtomType);
+            mcsplus = new MCSPlusBuilder().setQuery(target).setTarget(source).setAtomMatcher(atomMatcher).setBondMatcher(bondMatcher).createMCSPlus();
             List<List<Integer>> overlaps = mcsplus.getOverlaps();
             mappings = Collections.synchronizedList(overlaps);
         }

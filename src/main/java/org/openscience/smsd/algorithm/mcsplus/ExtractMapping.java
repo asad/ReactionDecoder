@@ -51,6 +51,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.BondManipulator;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Graph;
 import org.openscience.smsd.graph.Vertex;
 
@@ -124,7 +125,8 @@ public class ExtractMapping {
      * @param clique_List_org
      * @return
      */
-    public static Map<Integer, Integer> getMapping(List<Integer> comp_graph_nodes, Collection<Integer> clique_List_org) {
+    public static Map<Integer, Integer> getMapping(List<Integer> comp_graph_nodes,
+            Collection<Integer> clique_List_org) {
         Map<Integer, Integer> clique_mapping = Collections.synchronizedSortedMap(new TreeMap<>());
 
         try {
@@ -164,7 +166,8 @@ public class ExtractMapping {
             IAtomContainer s,
             IAtomContainer t,
             Set<Vertex> cliques,
-            boolean shouldMatchRings, boolean matchAtomTypes) {
+            AtomMatcher am,
+            BondMatcher bm) {
         TreeMap<Integer, Integer> bondCliques = new TreeMap<>();
 
         /*
@@ -205,7 +208,7 @@ public class ExtractMapping {
             }
         }
 
-        Map<Integer, Integer> clique_mapping = makeAtomsMapOfBondsMap(bondCliques, s, t, shouldMatchRings, matchAtomTypes);
+        Map<Integer, Integer> clique_mapping = makeAtomsMapOfBondsMap(bondCliques, s, t, am, bm);
         if (DEBUG) {
             System.out.println("bondCliques " + bondCliques.size());
             System.out.println("clique_mapping " + clique_mapping);
@@ -247,7 +250,7 @@ public class ExtractMapping {
      */
     public static Map<Integer, Integer> makeAtomsMapOfBondsMap(
             Map<Integer, Integer> l, IAtomContainer g1, IAtomContainer g2,
-            boolean shouldMatchRings, boolean matchAtomTypes) {
+            AtomMatcher am, BondMatcher bm) {
         if (l == null) {
             return (new TreeMap<>());
         }
@@ -302,7 +305,7 @@ public class ExtractMapping {
             }
         }
         if (result.isEmpty() && l.size() == 1) {
-            result = SingleMappingCase(l, g1, g2, shouldMatchRings, matchAtomTypes);
+            result = SingleMappingCase(l, g1, g2, am, bm);
         }
         return result;
     }
@@ -397,7 +400,7 @@ public class ExtractMapping {
 
     private static Map<Integer, Integer> SingleMappingCase(
             Map<Integer, Integer> l, IAtomContainer g1, IAtomContainer g2,
-            boolean shouldMatchRings, boolean matchAtomTypes) {
+            AtomMatcher am, BondMatcher bm) {
         Map<Integer, Integer> result = new TreeMap<>();
         if (l.size() == 1) {
             IBond bond1 = g1.getBond(l.keySet().iterator().next());
@@ -423,15 +426,14 @@ public class ExtractMapping {
                 IAtom a2 = bond1.getEnd();
                 IAtom b1 = bond2.getBegin();
                 IAtom b2 = bond2.getEnd();
-                AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(shouldMatchRings, matchAtomTypes);
 
-                if (AtomBondMatcher.matches(a1, b1, atomMatcher)
-                        && AtomBondMatcher.matches(a2, b2, atomMatcher)) {
+                if (AtomBondMatcher.matches(a1, b1, am)
+                        && AtomBondMatcher.matches(a2, b2, am)) {
                     result.put(g1.indexOf(bond1.getAtom(0)), g2.indexOf(bond2.getAtom(0)));
                     result.put(g1.indexOf(bond1.getAtom(1)), g2.indexOf(bond2.getAtom(1)));
                 }
-                if (AtomBondMatcher.matches(a1, b2, atomMatcher)
-                        && AtomBondMatcher.matches(a2, b1, atomMatcher)) {
+                if (AtomBondMatcher.matches(a1, b2, am)
+                        && AtomBondMatcher.matches(a2, b1, am)) {
                     result.put(g1.indexOf(bond1.getAtom(0)), g2.indexOf(bond2.getAtom(1)));
                     result.put(g1.indexOf(bond1.getAtom(1)), g2.indexOf(bond2.getAtom(0)));
                 }

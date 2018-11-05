@@ -52,6 +52,9 @@ import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
@@ -198,6 +201,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
     @Override
     public synchronized MCSSolution call() throws Exception {
+        AtomMatcher am = AtomBondMatcher.atomMatcher(false, isHasPerfectRings());
+        BondMatcher bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
         try {
             if (DEBUG1) {
                 String createSM1 = null;
@@ -217,7 +223,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         + NEW_LINE
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount()
-                        + " [bonds: " + bondMatcher
+                        + " [bonds: " + bm
                         + " rings: " + ringMatcher
                         + " isHasPerfectRings: " + isHasPerfectRings()
                         + "]");
@@ -256,21 +262,20 @@ public class MCSThread implements Callable<MCSSolution> {
                     System.out.println("---1.1---");
                 }
                 Substructure substructure;
-                substructure = new Substructure(ac1, ac2,
-                        false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, isHasPerfectRings(), true);
+
+                substructure = new Substructure(ac1, ac2, am, bm, true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---1.2---");
                     }
-                    substructure = new Substructure(ac1, ac2,
-                            false, isHasPerfectRings(), !isHasPerfectRings(), true);
+                    substructure = new Substructure(ac1, ac2, am, bm, true);
                 }
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                     if (DEBUG1) {
                         System.out.println("---1.3---");
                     }
                     substructure = new Substructure(ac1, ac2,
-                            false, false, false, true);
+                            am, bm, true);
                 }
                 substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
@@ -313,18 +318,18 @@ public class MCSThread implements Callable<MCSSolution> {
                 if (DEBUG1) {
                     System.out.println("---2.1---");
                 }
-                substructure = new Substructure(ac2, ac1, false, numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0, isHasPerfectRings(), true);
+                substructure = new Substructure(ac2, ac1, am, bm, true);
                 if (!substructure.isSubgraph()) {
                     if (DEBUG1) {
                         System.out.println("---2.2---");
                     }
-                    substructure = new Substructure(ac2, ac1, false, isHasPerfectRings(), !isHasPerfectRings(), true);
+                    substructure = new Substructure(ac2, ac1, am, bm, true);
                 }
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                     if (DEBUG1) {
                         System.out.println("---2.3---");
                     }
-                    substructure = new Substructure(ac2, ac1, false, false, false, true);
+                    substructure = new Substructure(ac2, ac1, am, bm, true);
                 }
                 substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
 
@@ -385,7 +390,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         + NEW_LINE
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount()
-                        + " [bonds: " + bondMatcher
+                        + " [bonds: " + bm
                         + " rings: " + ringMatcher
                         + " isHasPerfectRings: " + isHasPerfectRings()
                         + "]");
@@ -563,6 +568,9 @@ public class MCSThread implements Callable<MCSSolution> {
 
         switch (theory) {
             case RINGS:
+                org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+                org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
                 if (moleculeConnected
                         && expectedMaxGraphmatch > 3
                         && ac1.getBondCount() > 2
@@ -588,9 +596,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                false,
-                                hasRings,
-                                false);
+                                atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
@@ -617,15 +623,16 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else {
                         isomorphism
                                 = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                        false,
-                                        isHasPerfectRings(),
-                                        false);
+                                        atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
                 break;
 
             case MIN:
+                atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+                bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
                 if (moleculeConnected
                         && expectedMaxGraphmatch > 3
                         && ac1.getBondCount() > 2
@@ -651,9 +658,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                false,
-                                false,
-                                false);
+                                atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
@@ -678,14 +683,15 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                false,
-                                false,
-                                false);
+                                atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
                 break;
             default:
+                atomMatcher = AtomBondMatcher.atomMatcher(false, false);
+                bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+
                 if (moleculeConnected
                         && expectedMaxGraphmatch > 3
                         && ac1.getBondCount() > 2
@@ -712,9 +718,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
                     } else {
                         isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                false,
-                                isHasPerfectRings(),
-                                false);
+                                atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 } else {
@@ -741,9 +745,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     } else {
                         isomorphism
                                 = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                        false,
-                                        isHasPerfectRings(),
-                                        false);
+                                        atomMatcher, bondMatcher);
                         mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                     }
                 }
