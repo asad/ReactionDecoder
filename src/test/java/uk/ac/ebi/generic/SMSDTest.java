@@ -16,6 +16,7 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.interfaces.Algorithm;
 
 /**
@@ -31,6 +32,10 @@ public class SMSDTest {
      */
     public static void main(String[] args) throws CloneNotSupportedException, CDKException {
         try {
+
+            org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
+            org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+
             // TODO code application logic here
             SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
             IAtomContainer ac1 = smilesParser.parseSmiles("*C1OC(CO)C(OP=O)C1O");
@@ -38,7 +43,7 @@ public class SMSDTest {
 
 //            IAtomContainer ac1 = smilesParser.parseSmiles("OCc1[nH]c(Cc2[nH]c(Cc3[nH]c(Cc4[nH]cc(CCC(O)=O)c4CC(O)=O)c(CCC(O)=O)c3CC(O)=O)c(CCC(O)=O)c2CC(O)=O)c(CCC(O)=O)c1CC(O)=O");
 //            IAtomContainer ac2 = smilesParser.parseSmiles("OC(=O)CCc1c2Cc3[nH]c(Cc4[nH]c(Cc5[nH]c(Cc([nH]2)c1CC(O)=O)c(CCC(O)=O)c5CC(O)=O)c(CCC(O)=O)c4CC(O)=O)c(CC(O)=O)c3CCC(O)=O");
-            Isomorphism smsd = new Isomorphism(ac1, ac2, Algorithm.MCSPlus, false, false, true);
+            Isomorphism smsd = new Isomorphism(ac1, ac2, Algorithm.MCSPlus, atomMatcher, bondMatcher);
             smsd.setChemFilters(true, true, true);
             AtomAtomMapping aam = smsd.getAllAtomMapping().iterator().next();
             System.out.println("Mapping " + aam.getCommonFragmentAsSMILES());
