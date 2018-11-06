@@ -79,7 +79,7 @@ public class AtomBondMatcher {
             System.out.println(" atomMatch " + atomMatch
                     + ", bondMatch " + bondMatch);
         }
-        return atomMatch;
+        return atomMatch && bondMatch;
     }
 
     /**
@@ -121,7 +121,7 @@ public class AtomBondMatcher {
     public static AtomMatcher atomMatcher(
             boolean matchAtomTypes,
             boolean shouldMatchRings) {
-        
+
         AtomMatcher am = AtomMatcher.forElement();
 
         if (shouldMatchRings) {
@@ -150,19 +150,26 @@ public class AtomBondMatcher {
     public static BondMatcher bondMatcher(
             boolean matchBond,
             boolean shouldMatchRings) {
-        
+
         BondMatcher bm = BondMatcher.forAny();
 
         if (matchBond) {
             if (DEBUG) {
-                System.out.println("matchBond " + matchBond);
+                System.out.println("Order Match Choosen " + matchBond);
             }
             bm = BondMatcher.forOrder();
         }
 
-        if (shouldMatchRings) {
+        if (!matchBond && shouldMatchRings) {
             if (DEBUG) {
-                System.out.println("shouldMatchRings " + shouldMatchRings);
+                System.out.println("Ring Match Choosen " + shouldMatchRings);
+            }
+            bm = BondMatcher.forRing();
+        }
+
+        if (matchBond && shouldMatchRings) {
+            if (DEBUG) {
+                System.out.println("Strict Order Match Choosen " + (shouldMatchRings & matchBond));
             }
             bm = BondMatcher.forStrictOrder();
         }

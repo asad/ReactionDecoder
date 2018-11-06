@@ -57,6 +57,17 @@ public abstract class BondMatcher {
     }
 
     /**
+     * Bonds are compatible if they are both aromatic or they are non aromatic.
+     * This matcher allows a single/double bond to match a single/double
+     * aromatic bond.
+     *
+     * @return a bond matcher
+     */
+    public static BondMatcher forRing() {
+        return new RingMatcher();
+    }
+
+    /**
      * Bonds are compatible if the first {@code bond1} (an {@link IQueryBond})
      * matches the second, {@code bond2}.
      *
@@ -75,6 +86,23 @@ public abstract class BondMatcher {
         public boolean matches(IBond bond1, IBond bond2) {
             return bond1.isAromatic() && bond2.isAromatic()
                     || bond1.getOrder() == bond2.getOrder();
+        }
+    }
+
+    /**
+     * Bonds are compatible if they are both aromatic or they are non-aromatic.
+     * In this matcher a single or double bond will match a single or double
+     * bond which is part of an aromatic system.
+     */
+    private static final class RingMatcher extends BondMatcher {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean matches(IBond bond1, IBond bond2) {
+            return (bond1.isAromatic() == bond2.isAromatic())
+                    || (!bond1.isAromatic() && !bond2.isAromatic());
         }
     }
 
