@@ -237,7 +237,7 @@ public class MCSTest {
         Isomorphism mcs
                 = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
         String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
-        System.out.println("MCS " + create);
+//        System.out.println("MCS " + create);
         assertEquals(0, mcs.getFirstAtomMapping().getCount());
 
     }
@@ -262,7 +262,7 @@ public class MCSTest {
 //            System.out.println("CALLING Substructure");
             Substructure sub
                     = new Substructure(query, target, atomMatcher, bondMatcher, true);
-            System.out.println("Subgraph " + sub.isSubgraph());
+//            System.out.println("Subgraph " + sub.isSubgraph());
             //System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
             assertEquals(Boolean.FALSE, sub.isSubgraph());
         } catch (Exception e) {
@@ -285,7 +285,7 @@ public class MCSTest {
 
         Isomorphism mcs
                 = new Isomorphism(query, target, Algorithm.CDKMCS, atomMatcher, bondMatcher);
-        System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+//        System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
         assertEquals(9, mcs.getFirstAtomMapping().getCount());
 
     }
@@ -329,7 +329,7 @@ public class MCSTest {
 
 //            org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
 //                    = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, false, false, false);
-        System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+//        System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
         assertEquals(11, mcs.getFirstAtomMapping().getCount());
 
     }
