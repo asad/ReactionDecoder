@@ -20,6 +20,71 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 public abstract class AtomMatcher {
 
     /**
+     * Atom should match ring size and is atom type or non ring atoms with same
+     * atom type
+     *
+     */
+    public static AtomMatcher forRingAtomTypeMatcher() {
+        return new RingAtomTypeMatcher();
+    }
+
+    /**
+     * A matcher to use when all atoms are {@link IQueryAtom}s. {@code atom1} is
+     * cast to a query atom and matched against {@code atom2}.
+     */
+    private static final class RingAtomTypeMatcher extends AtomMatcher {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean matches(IAtom atom1, IAtom atom2) {
+            return atomicNumber(atom1) == atomicNumber(atom2)
+                    && matchAtomType(atom1, atom2)
+                    && isRingSizeMatch(atom1, atom2);
+        }
+
+        /**
+         * Null safe atomic number access.
+         *
+         * @param atom an atom
+         * @return the atomic number
+         */
+        private int atomicNumber(IAtom atom) {
+            Integer elem = atom.getAtomicNumber();
+            if (elem != null) {
+                return elem;
+            }
+            if (atom instanceof IPseudoAtom) {
+                return 0;
+            }
+            throw new NullPointerException("an atom had unset atomic number");
+        }
+
+        private boolean matchAtomType(IAtom atom1, IAtom atom2) {
+            String rAtom = atom1.getAtomTypeName() == null
+                    ? atom1.getSymbol() : atom1.getAtomTypeName();
+            String tAtom = atom2.getAtomTypeName() == null
+                    ? atom2.getSymbol() : atom2.getAtomTypeName();
+            return rAtom.equals(tAtom);
+        }
+
+        private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
+            if (atom1.isInRing() & atom2.isInRing()) {
+                List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
+                List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
+                if (ringsizesQ == null || ringsizesT == null) {
+                    return false;
+                } else {
+                    return ringsizesT.containsAll(ringsizesQ)
+                            || ringsizesQ.containsAll(ringsizesT);
+                }
+            }
+            return !atom1.isAromatic() && !atom2.isAromatic();
+        }
+    }
+
+    /**
      * Are the semantics of {@code atom1} compatible with {@code atom2}.
      *
      * @param atom1 an atom from a query container
@@ -160,9 +225,7 @@ public abstract class AtomMatcher {
         }
 
         private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
-
             if (atom1.isInRing() & atom2.isInRing()) {
-                //System.out.println("isRingSizeMatch");
                 List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
                 List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
                 if (ringsizesQ == null || ringsizesT == null) {
@@ -172,10 +235,7 @@ public abstract class AtomMatcher {
                             || ringsizesQ.containsAll(ringsizesT);
                 }
             }
-            if (!atom1.isInRing() & !atom2.isInRing()) {
-                return true;
-            }
-            return false;
+            return !atom1.isAromatic() && !atom2.isAromatic();
         }
     }
 
@@ -199,8 +259,6 @@ public abstract class AtomMatcher {
          */
         @Override
         public boolean matches(IAtom atom1, IAtom atom2) {
-//            System.out.print(atom1.getSymbol() + " : " + atomicNumber(atom1) + ", ");
-//            System.out.println(atom2.getSymbol() + " : " + atomicNumber(atom2));
             return atomicNumber(atom1) == atomicNumber(atom2)
                     && matchAtomType(atom1, atom2);
         }

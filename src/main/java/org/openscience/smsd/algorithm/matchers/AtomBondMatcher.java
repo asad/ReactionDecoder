@@ -124,18 +124,25 @@ public class AtomBondMatcher {
 
         AtomMatcher am = AtomMatcher.forElement();
 
-        if (shouldMatchRings) {
+        if (matchAtomTypes) {
+            if (DEBUG) {
+                System.out.println("matchAtomTypes " + matchAtomTypes);
+            }
+            am = AtomMatcher.forAtomTypeMatcher();
+        }
+
+        if (shouldMatchRings && !matchAtomTypes) {
             if (DEBUG) {
                 System.out.println("shouldMatchRings " + shouldMatchRings);
             }
             am = AtomMatcher.forRingMatcher();
         }
 
-        if (matchAtomTypes) {
+        if (shouldMatchRings && matchAtomTypes) {
             if (DEBUG) {
                 System.out.println("matchAtomTypes " + matchAtomTypes);
             }
-            am = AtomMatcher.forAtomTypeMatcher();
+            am = AtomMatcher.forRingAtomTypeMatcher();
         }
         return am;
     }

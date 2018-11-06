@@ -403,9 +403,6 @@ public class McGregorChecks {
      * @param cBondNeighborsA
      * @param cBondNeighborsB
      * @param modifiedARCS
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
      * @return List
      */
     protected static List<Integer> setArcs(IAtomContainer source,

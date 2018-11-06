@@ -60,17 +60,14 @@ public final class MCSPlusMapper implements IResults {
     private boolean flagExchange = false;
     private final boolean timeout;
     private final boolean DEBUG = false;
-    private AtomMatcher atomMatcher;
-    private BondMatcher bondMatcher;
+    private final AtomMatcher atomMatcher;
+    private final BondMatcher bondMatcher;
 
     /**
      * Constructor for the MCSPlus Plus algorithm class
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
      * @throws org.openscience.cdk.exception.CDKException
      */
     public MCSPlusMapper(IAtomContainer source, IAtomContainer target,

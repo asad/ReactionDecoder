@@ -38,9 +38,6 @@ public class Filter extends McGregor {
      *
      * @param f1
      * @param f2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
      */
     public Filter(IAtomContainer f1, IAtomContainer f2, AtomMatcher am, BondMatcher bm) {
         super(f1, f2, am, bm);

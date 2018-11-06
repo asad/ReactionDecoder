@@ -157,8 +157,6 @@ public class MappingHandler {
      * @param s
      * @param t
      * @param cliques
-     * @param shouldMatchRings
-     * @param matchAtomTypes
      * @return
      */
     public static Map<Integer, Integer> getMapping(

@@ -86,9 +86,6 @@ public class CompatibilityGraph {
      *
      * @param f1
      * @param f2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
      */
     public CompatibilityGraph(IAtomContainer f1, IAtomContainer f2,
             AtomMatcher am, BondMatcher bm) {

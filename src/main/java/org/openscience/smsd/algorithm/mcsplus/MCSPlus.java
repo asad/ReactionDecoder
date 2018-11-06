@@ -134,8 +134,6 @@ public final class MCSPlus {
      *
      * @param ac1
      * @param ac2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
      * @return
      * @throws CDKException
      */
