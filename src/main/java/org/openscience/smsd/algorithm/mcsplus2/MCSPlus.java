@@ -22,7 +22,7 @@
  */
 package org.openscience.smsd.algorithm.mcsplus2;
 
-import org.openscience.smsd.algorithm.mcsplus.ExtractMapping;
+import org.openscience.smsd.algorithm.mcsplus.MappingHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,7 +164,7 @@ public final class MCSPlus {
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, maxCliqueSet.peek());
+                indexindexMapping = MappingHandler.getMapping(comp_graph_nodes, maxCliqueSet.peek());
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);
                 }

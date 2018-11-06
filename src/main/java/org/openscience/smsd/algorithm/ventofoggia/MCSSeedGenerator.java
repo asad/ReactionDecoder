@@ -37,7 +37,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.algorithm.mcsplus.ExtractMapping;
+import org.openscience.smsd.algorithm.mcsplus.MappingHandler;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.graph.EdgeProductGraph;
 import org.openscience.smsd.graph.EdgeType;
@@ -52,8 +52,8 @@ import org.openscience.smsd.interfaces.Algorithm;
  *
  * First the algorithm runs VF lib
  * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS
- * between run source and target graphs. Then these solutions are extended using
- * McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
+ between run source and MappingHandler graphs. Then these solutions are extended using
+ McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
  * where ever required.
  *
  *
@@ -185,7 +185,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
 
         while (!maxCliqueSet.empty()) {
             Map<Integer, Integer> indexindexMapping;
-            indexindexMapping = ExtractMapping.getMapping(
+            indexindexMapping = MappingHandler.getMapping(
                     comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(), am, bm);
             if (indexindexMapping != null) {
                 mappings.add(indexindexMapping);

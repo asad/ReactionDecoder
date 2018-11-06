@@ -137,7 +137,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
             try {
                 mcsSolutions = matcher(mh);
             } catch (InterruptedException e) {
-                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
+                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
             }
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
                 for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
@@ -330,7 +330,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 try {
                     fpSim = getTanimotoSimilarity(a, b);
                 } catch (Exception ex) {
-                    LOGGER.error(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, " error in calculating fingerprint ", ex.getMessage());
                 }
             }
 
@@ -407,20 +407,20 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-//        if (DEBUG) {
+        //if (DEBUG) {
         System.out.println("====Quick Mapping====");
-//        }
+        //}
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
         } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, "Error in config. mol ", ex.getMessage());
         }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(product);
             MoleculeInitializer.initializeMolecule(product);
         } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, null, ex);
+            LOGGER.error(Level.SEVERE, "Error in config. mol ", ex.getMessage());
         }
 
         try {
@@ -461,7 +461,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 Isomorphism isomorphism;
                 AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
                 BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
-                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
+                isomorphism = new Isomorphism(educt, product, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
 
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
                 return mcs;

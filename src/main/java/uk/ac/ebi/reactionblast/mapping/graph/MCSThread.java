@@ -192,11 +192,16 @@ public class MCSThread implements Callable<MCSSolution> {
         int overlap = isomorphism.getFirstAtomMapping().isEmpty() ? 0
                 : isomorphism.getFirstAtomMapping().getCount();
 
-        System.out.println("Q: " + isomorphism.getQuery().getID()
-                + " T: " + isomorphism.getTarget().getID()
-                + " atoms: " + isomorphism.getQuery().getAtomCount()
-                + " atoms: " + isomorphism.getTarget().getAtomCount()
-                + " overlaps " + overlap);
+        try {
+            System.out.println("Q: " + isomorphism.getQuery().getID()
+                    + " T: " + isomorphism.getTarget().getID()
+                    + " atoms: " + isomorphism.getQuery().getAtomCount()
+                    + " atoms: " + isomorphism.getTarget().getAtomCount()
+                    + " overlaps: " + overlap
+                    + " mcs " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
+        } catch (CloneNotSupportedException | CDKException ex) {
+            LOGGER.error(Level.SEVERE, "Print MCS ", ex.getMessage());
+        }
     }
 
     @Override
@@ -562,193 +567,104 @@ public class MCSThread implements Callable<MCSSolution> {
             System.out.println("Expected matches " + expectedMaxGraphmatch);
         }
 
-//        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
         String key;
         MCSSolution mcs;
+        AtomMatcher am;
+        BondMatcher bm;
 
         switch (theory) {
             case RINGS:
-                org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
-                org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+                am = AtomBondMatcher.atomMatcher(false, ringFlag);
+                bm = AtomBondMatcher.bondMatcher(false, ringFlag);
 
-                if (moleculeConnected
-                        && expectedMaxGraphmatch > 3
-                        && ac1.getBondCount() > 2
-                        && ac2.getBondCount() > 2) {
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            hasRings,
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
-
-                    } else {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
+                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                        compound1.getAtomCount(), compound2.getAtomCount(),
+                        compound1.getBondCount(), compound2.getBondCount(),
+                        false,
+                        ringFlag,
+                        false,
+                        numberOfCyclesEduct,
+                        numberOfCyclesProduct
+                );
+                if (ThreadSafeCache.getInstance().containsKey(key)) {
+                    if (DEBUG3) {
+                        System.out.println("===={Aladdin} Mapping {Gini}====");
                     }
+                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
+                    mcs = copyOldSolutionToNew(
+                            getQueryPosition(), getTargetPosition(),
+                            getCompound1(), getCompound2(),
+                            solution);
+
                 } else {
-                    key = generateUniqueKey(
-                            getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            isHasPerfectRings(),
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
-
-                    } else {
-                        isomorphism
-                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                        atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                    }
+                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                            am, bm);
+                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                 }
+
                 break;
 
             case MIN:
-                atomMatcher = AtomBondMatcher.atomMatcher(true, true);
-                bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+                am = AtomBondMatcher.atomMatcher(true, false);
+                bm = AtomBondMatcher.bondMatcher(false, false);
 
-                if (moleculeConnected
-                        && expectedMaxGraphmatch > 3
-                        && ac1.getBondCount() > 2
-                        && ac2.getBondCount() > 2) {
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            false,
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
+                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                        compound1.getAtomCount(), compound2.getAtomCount(),
+                        compound1.getBondCount(), compound2.getBondCount(),
+                        false,
+                        false,
+                        true,
+                        numberOfCyclesEduct,
+                        numberOfCyclesProduct
+                );
 
-                    } else {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
+                if (ThreadSafeCache.getInstance().containsKey(key)) {
+                    if (DEBUG3) {
+                        System.out.println("===={Aladdin} Mapping {Gini}====");
                     }
+                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
+                    mcs = copyOldSolutionToNew(
+                            getQueryPosition(), getTargetPosition(),
+                            getCompound1(), getCompound2(),
+                            solution);
+
                 } else {
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            false,
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
-
-                    } else {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                    }
+                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                            am, bm);
+                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                 }
+
                 break;
             default:
-                atomMatcher = AtomBondMatcher.atomMatcher(false, false);
-                bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+                am = AtomBondMatcher.atomMatcher(false, isHasPerfectRings());
+                bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
-                if (moleculeConnected
-                        && expectedMaxGraphmatch > 3
-                        && ac1.getBondCount() > 2
-                        && ac2.getBondCount() > 2) {
 //                    System.out.println("MCS Connected Default");
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            isHasPerfectRings(),
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
-
-                    } else {
-                        isomorphism = new Isomorphism(ac1, ac2, Algorithm.DEFAULT,
-                                atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
+                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                        compound1.getAtomCount(), compound2.getAtomCount(),
+                        compound1.getBondCount(), compound2.getBondCount(),
+                        false,
+                        isHasPerfectRings(),
+                        false,
+                        numberOfCyclesEduct,
+                        numberOfCyclesProduct
+                );
+                if (ThreadSafeCache.getInstance().containsKey(key)) {
+                    if (DEBUG3) {
+                        System.out.println("===={Aladdin} Mapping {Gini}====");
                     }
+                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
+                    mcs = copyOldSolutionToNew(
+                            getQueryPosition(), getTargetPosition(),
+                            getCompound1(), getCompound2(),
+                            solution);
+
                 } else {
-//                    System.out.println("MCS DisConnected Default");
-                    key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                            compound1.getAtomCount(), compound2.getAtomCount(),
-                            compound1.getBondCount(), compound2.getBondCount(),
-                            false,
-                            isHasPerfectRings(),
-                            false,
-                            numberOfCyclesEduct,
-                            numberOfCyclesProduct
-                    );
-                    if (ThreadSafeCache.getInstance().containsKey(key)) {
-                        if (DEBUG3) {
-                            System.out.println("===={Aladdin} Mapping {Gini}====");
-                        }
-                        MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                        mcs = copyOldSolutionToNew(
-                                getQueryPosition(), getTargetPosition(),
-                                getCompound1(), getCompound2(),
-                                solution);
-
-                    } else {
-                        isomorphism
-                                = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                                        atomMatcher, bondMatcher);
-                        mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                    }
+                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
+                            am, bm);
+                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
                 }
+
                 break;
         }
 //        System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
@@ -939,9 +855,7 @@ public class MCSThread implements Callable<MCSSolution> {
             long time = stopTime - startTime;
             printMatch(isomorphism);
             System.out.println("\" Time:\" " + time);
-
         }
-
         if (!mappingcache.containsKey(key)) {
             if (DEBUG3) {
                 System.out.println("Key " + key);
