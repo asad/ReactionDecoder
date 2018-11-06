@@ -407,9 +407,9 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         /*
          * This function is called as a backup emergency step to avoid null if matching is possible
          */
-        //if (DEBUG) {
-        System.out.println("====Quick Mapping====");
-        //}
+        if (DEBUG) {
+            System.out.println("====Quick Mapping====");
+        }
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
@@ -461,7 +461,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 Isomorphism isomorphism;
                 AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
                 BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
-                isomorphism = new Isomorphism(educt, product, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
+                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
 
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
                 return mcs;
