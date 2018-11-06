@@ -70,7 +70,7 @@ public class MCSTest {
 
         MoleculeInitializer.initializeMolecule(query);
         MoleculeInitializer.initializeMolecule(target);
-        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
         org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, true);
 
         org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
@@ -94,7 +94,7 @@ public class MCSTest {
         MoleculeInitializer.initializeMolecule(query);
         MoleculeInitializer.initializeMolecule(target);
 
-        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
         org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, true);
 
         Isomorphism mcs
@@ -104,7 +104,7 @@ public class MCSTest {
 //        System.out.println("mcs.getFirstAtomMapping() " + mcs.getFirstAtomMapping());
 //        List<AtomAtomMapping> allAtomMapping = mcs.getAllAtomMapping();
         // assertEquals(2, allAtomMapping.size());
-//        System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
+        System.out.println("MCS " + (mcs.getFirstAtomMapping().getCommonFragmentAsSMILES()));
         assertEquals(9, mcs.getFirstAtomMapping().getCount());
     }
 
@@ -278,7 +278,7 @@ public class MCSTest {
         MoleculeInitializer.initializeMolecule(query);
         MoleculeInitializer.initializeMolecule(target);
 
-        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
+        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
         org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
 
         Isomorphism mcs
