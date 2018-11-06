@@ -173,7 +173,7 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         boolean disconnected = ConnectivityChecker.isConnected(ac1)
                 && ConnectivityChecker.isConnected(ac2);
 
-        init = new GraphKoch(comp_graph_nodes, disconnected);
+        init = new GraphKoch(comp_graph_nodes);
         init.findMaximalCliques();
 
         Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();
@@ -189,9 +189,9 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
                     comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(), am, bm);
             if (indexindexMapping != null) {
                 mappings.add(indexindexMapping);
-//                    if (DEBUG) {
-//                        System.out.println("mappings " + mappings);
-//                    }
+//                if (DEBUG) {
+//                    System.out.println("mappings " + mappings);
+//                }
             }
             maxCliqueSet.pop();
         }
@@ -227,7 +227,6 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
             }
         }
         gcg.clear();
-//        mergedResult.clear();
         return Collections.unmodifiableList(allCliqueAtomMCS);
     }
 

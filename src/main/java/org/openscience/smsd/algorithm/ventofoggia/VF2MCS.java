@@ -199,7 +199,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 System.out.println(" CALLING MCSPLUS ");
             }
             MCSSeedGenerator mcsSeedGeneratorKoch
-                    = new MCSSeedGenerator(source, targetClone, Algorithm.MCSPlus, atomMatcher, bondMatcher);
+                    = new MCSSeedGenerator(source, targetClone,
+                            Algorithm.MCSPlus, atomMatcher, bondMatcher);
             cs.submit(mcsSeedGeneratorKoch);
             jobCounter++;
 
