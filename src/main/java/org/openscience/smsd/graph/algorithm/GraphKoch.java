@@ -71,11 +71,15 @@ public class GraphKoch implements IClique {
     public GraphKoch(Graph compatibilityGraph) {
         this.graph = compatibilityGraph;
         this.cliques = new HashSet<>();
-        int interation = 2 * this.graph.V();
-        if (interation > 30000) {
-            interation = 30000;
+        int interation = this.graph.E();
+        if (interation > 200000) {
+            interation = 50000;
         } else {
             interation = -1;
+        }
+        if (DEBUG2) {
+            System.out.println("Edges: " + (this.graph.E()) + ", Vertex: " + (this.graph.V()));
+            System.out.println(" GraphKoch Iterations " + interation);
         }
         this.manager = new IterationManager(interation);
 
