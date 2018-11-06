@@ -74,8 +74,6 @@ public class GraphKoch implements IClique {
         int interation = this.graph.E();
         if (interation > 200000) {
             interation = 50000;
-        } else {
-            interation = -1;
         }
         if (DEBUG2) {
             System.out.println("Edges: " + (this.graph.E()) + ", Vertex: " + (this.graph.V()));

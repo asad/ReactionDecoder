@@ -850,12 +850,12 @@ public class MCSThread implements Callable<MCSSolution> {
         mcs.setEnergy(isomorphism.getEnergyScore(0));
         mcs.setFragmentSize(isomorphism.getFragmentSize(0));
         mcs.setStereoScore(isomorphism.getStereoScore(0));
-        if (DEBUG1) {
+        //if (DEBUG1) {
             long stopTime = currentTimeMillis();
             long time = stopTime - startTime;
             printMatch(isomorphism);
             System.out.println("\" Time:\" " + time);
-        }
+        //}
         if (!mappingcache.containsKey(key)) {
             if (DEBUG3) {
                 System.out.println("Key " + key);
