@@ -8,7 +8,6 @@ package org.openscience.smsd.mcs;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.AtomMatcher;
 import org.openscience.cdk.isomorphism.BondMatcher;
@@ -212,15 +211,36 @@ public class MCSTest {
 
         org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
                 = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
-
-//            Isomorphism mcs
-//                    = new Isomorphism(query, target, Algorithm.VFLibMCS, false, false, false);
+//        Isomorphism mcs
+//                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
         String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
         System.out.println("MCS " + create);
         assertEquals(63, mcs.getFirstAtomMapping().getCount());
 
     }
-//
+
+    @Test
+    public void test_Ring_Match() throws Exception {
+        ////////System.out.println("3");
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+
+        IAtomContainer query = sp.parseSmiles("OC1=CC=CC=C1");
+        IAtomContainer target = sp.parseSmiles("OC(=C)\\C=C/C=C");
+        MoleculeInitializer.initializeMolecule(query);
+        MoleculeInitializer.initializeMolecule(target);
+
+        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+        org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, true);
+
+//        org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
+//                = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
+        Isomorphism mcs
+                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
+        String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
+        System.out.println("MCS " + create);
+        assertEquals(0, mcs.getFirstAtomMapping().getCount());
+
+    }
 
     @Test
     public void test_MCSPlusBig_count() throws Exception {
