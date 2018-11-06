@@ -432,7 +432,7 @@ final public class CDKMCS {
     public static CDKRGraph buildRGraph(IAtomContainer g1, IAtomContainer g2,
             AtomMatcher am, BondMatcher bm) throws CDKException {
         CDKRGraph rGraph = new CDKRGraph();
-        nodeConstructor(rGraph, g1, g2, am, bm);
+        nodeConstructor(rGraph, g1, g2, bm);
         arcConstructor(rGraph, g1, g2);
         return rGraph;
     }
@@ -758,7 +758,6 @@ final public class CDKMCS {
             CDKRGraph gr,
             IAtomContainer ac1,
             IAtomContainer ac2,
-            AtomMatcher am,
             BondMatcher bm) throws CDKException {
         if (ac1 instanceof IQueryAtomContainer) {
             throw new CDKException(
@@ -776,8 +775,7 @@ final public class CDKMCS {
             for (int j = 0; j < ac2.getBondCount(); j++) {
 //                // if both bonds are compatible then create an association node
 //                // in the resolution graph
-
-                if (AtomBondMatcher.matchAtomAndBond(ac1.getBond(i), ac2.getBond(j), am, bm, true)) {
+                if (bm.matches(ac1.getBond(i), ac2.getBond(j))) {
                     gr.addNode(new CDKRNode(i, j));
                 }
             }

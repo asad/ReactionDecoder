@@ -116,7 +116,8 @@ public final class VentoFoggia {
      * @param bondMatcher how bonds should be matched
      * @param substructure substructure search
      */
-    private VentoFoggia(IAtomContainer query, AtomMatcher atomMatcher, 
+    private VentoFoggia(IAtomContainer query, 
+            AtomMatcher atomMatcher, 
             BondMatcher bondMatcher, 
             boolean substructure) {
         this.query = query;
