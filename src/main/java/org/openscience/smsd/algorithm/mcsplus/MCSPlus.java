@@ -166,7 +166,7 @@ public final class MCSPlus {
             IClique init = null;
             boolean connected = ConnectivityChecker.isConnected(ac1)
                     && ConnectivityChecker.isConnected(ac2);
-            init = new GraphKoch(comp_graph_nodes, connected);
+            init = new GraphKoch(comp_graph_nodes);
             init.findMaximalCliques();
 
             Stack<Set<Vertex>> maxCliqueSet = init.getMaxCliquesSet();
@@ -178,7 +178,7 @@ public final class MCSPlus {
 
             while (!maxCliqueSet.empty()) {
                 Map<Integer, Integer> indexindexMapping;
-                indexindexMapping = ExtractMapping.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
+                indexindexMapping = MappingHandler.getMapping(comp_graph_nodes, ac1, ac2, maxCliqueSet.peek(),
                         atomMatcher, bondMatcher);
                 if (indexindexMapping != null) {
                     mappings.add(indexindexMapping);

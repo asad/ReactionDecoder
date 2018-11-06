@@ -63,10 +63,10 @@ import org.openscience.smsd.graph.Vertex;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public class ExtractMapping {
+public class MappingHandler {
 
     private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(ExtractMapping.class);
+            = LoggingToolFactory.createLoggingTool(MappingHandler.class);
 
     private static final boolean DEBUG = false;
 
@@ -185,26 +185,26 @@ public class ExtractMapping {
 
         if (DEBUG) {
             try {
-                for (Integer bond : bondCliques.keySet()) {
+                bondCliques.keySet().forEach((bond) -> {
                     IBond b = s.getBond(bond);
                     System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + s.indexOf(b.getBegin()) + "), atom1 "
                             + b.getEnd().getSymbol() + "(" + s.indexOf(b.getEnd()) + ")");
-                }
+                });
                 System.out.println("Bonds projected Smiles s "
                         + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, s, bondCliques.keySet())));
             } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MappingHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
-                for (Integer bond : bondCliques.values()) {
+                bondCliques.values().forEach((bond) -> {
                     IBond b = t.getBond(bond);
                     System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + t.indexOf(b.getBegin()) + "), atom1 "
                             + b.getEnd().getSymbol() + "(" + t.indexOf(b.getEnd()) + ")");
-                }
+                });
                 System.out.println("Bonds projected Smiles t "
                         + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, t, bondCliques.values())));
             } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(ExtractMapping.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MappingHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -213,7 +213,41 @@ public class ExtractMapping {
             System.out.println("bondCliques " + bondCliques.size());
             System.out.println("clique_mapping " + clique_mapping);
         }
+        if (DEBUG) {
+            try {
+                System.out.println("mcs " + new SmilesGenerator(SmiFlavor.Generic)
+                        .create(toSubstructures(bondCliques.keySet(), s)));
+            } catch (CDKException ex) {
+                LOGGER.error(Level.SEVERE, "Unable to extract mcs ", ex.getMessage());
+            }
+        }
         return clique_mapping;
+    }
+
+    /**
+     * Returns matched sub graph
+     *
+     * @param bondMap
+     * @param ac
+     * @return
+     */
+    public static IAtomContainer toSubstructures(
+            Set<Integer> bondMap,
+            IAtomContainer ac) {
+
+        final IAtomContainer submol = ac.getBuilder()
+                .newInstance(IAtomContainer.class);
+        bondMap.stream().map((b) -> {
+            submol.addAtom(ac.getBond(b).getAtom(0));
+            return b;
+        }).map((b) -> {
+            submol.addAtom(ac.getBond(b).getAtom(1));
+            return b;
+        }).forEachOrdered((b) -> {
+            submol.addBond(ac.getBond(b));
+        });
+
+        return submol;
     }
 
     /**
@@ -226,13 +260,15 @@ public class ExtractMapping {
     public synchronized static Set<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
         Set<Map<Integer, Integer>> final_MAPPINGS = new TreeSet<>();
 
-        for (List<Integer> map : mappings) {
+        mappings.stream().map((map) -> {
             Map<Integer, Integer> mapping = new TreeMap<>();
             for (int i = 0; i < map.size(); i = i + 2) {
                 mapping.put(map.get(i), map.get(i + 1));
             }
+            return mapping;
+        }).forEachOrdered((mapping) -> {
             final_MAPPINGS.add(mapping);
-        }
+        });
         return final_MAPPINGS;
     }
 
@@ -348,14 +384,11 @@ public class ExtractMapping {
         IAtomContainer result = ac.clone();
 
         Set<Integer> commonAtoms = new HashSet<>();
-        for (Integer b1 : mapping) {
-            for (Integer b2 : mapping) {
-                Set<Integer> commonVertices = commonVertices(ac, ac.getBond(b1), ac.getBond(b2));
-                if (!commonVertices.isEmpty()) {
-                    commonAtoms.addAll(commonVertices);
-                }
-            }
-        }
+        mapping.forEach((b1) -> {
+            mapping.stream().map((b2) -> commonVertices(ac, ac.getBond(b1), ac.getBond(b2))).filter((commonVertices) -> (!commonVertices.isEmpty())).forEachOrdered((commonVertices) -> {
+                commonAtoms.addAll(commonVertices);
+            });
+        });
 //        System.out.println("Common Index " + commonAtoms);
         Set<IAtom> removeAtoms = new HashSet<>();
         for (IAtom a : result.atoms()) {
@@ -364,9 +397,9 @@ public class ExtractMapping {
             }
         }
 
-        for (IAtom a : removeAtoms) {
+        removeAtoms.forEach((a) -> {
             result.removeAtom(a);
-        }
+        });
 
         if (DEBUG) {
             System.out.println("Number of atoms mapped " + commonAtoms.size());
