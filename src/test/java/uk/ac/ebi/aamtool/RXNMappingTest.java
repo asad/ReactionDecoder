@@ -134,7 +134,7 @@ public class RXNMappingTest extends MappingUtility {
      *
      * It should cleave the bonds between the ring systems (bridge)
      *
-     * MIN, fp ID=R01557:Bond Cleaved and Formed (2) [C-O:2.0, H-O:2.0]
+     * MIN, fp ID=R01557:Bond Cleaved and Formed (1) [C-O:2.0]
      *
      * BE 716.0, Fragment 0
      *
@@ -149,7 +149,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
 
     /**
@@ -158,7 +158,7 @@ public class RXNMappingTest extends MappingUtility {
      * MIN, fp ID=R02007:Bond Cleaved and Formed (3) [C%C:2.0, C-C:2.0, C-H:4.0]
      *
      * BE 1374.0, Fragment 0
-     *
+     * @BUG - beta phosphate should cut
      *
      * @throws Exception
      */
