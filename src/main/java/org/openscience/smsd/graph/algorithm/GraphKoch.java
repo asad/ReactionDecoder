@@ -27,7 +27,6 @@ public class GraphKoch implements IClique {
     private final Collection<Set<Vertex>> cliques;
     private final Graph graph;
     IterationManager manager;
-    private final boolean connected;
 
     /**
      *
@@ -69,15 +68,16 @@ public class GraphKoch implements IClique {
      * @param compatibilityGraph
      * @param connected
      */
-    public GraphKoch(Graph compatibilityGraph, boolean connected) {
+    public GraphKoch(Graph compatibilityGraph) {
         this.graph = compatibilityGraph;
         this.cliques = new HashSet<>();
         int interation = 2 * this.graph.V();
         if (interation > 30000) {
             interation = 30000;
+        } else {
+            interation = -1;
         }
         this.manager = new IterationManager(interation);
-        this.connected = connected;
 
         if (DEBUG) {
             System.out.println("GraphKoch");
@@ -104,55 +104,48 @@ public class GraphKoch implements IClique {
     @Override
     public void findMaximalCliques() {
         if (DEBUG) {
-            System.out.println("Starting koch " + connected);
+            System.out.println("Starting koch ");
         }
         Set<Vertex> result = new LinkedHashSet<>();
         int currentmaxresult = 0;
+        Set<Vertex> T = new LinkedHashSet<>();		// T <- Empty
+        Set<Vertex> P, D, N, S;
 
-        if (!connected) {
-            Set<Vertex> P = new LinkedHashSet<>(graph.nodes());
-            Set<Vertex> C = new LinkedHashSet<>();
-            Set<Vertex> enumerateCliques = enumerateCliques(C, P, currentmaxresult);
-            cliques.add(enumerateCliques);
-        } else {
-            Set<Vertex> T = new LinkedHashSet<>();		// T <- Empty
-            Set<Vertex> P, D, N, S;
+        //set of vertices which have already been used for the initialization of Enumerate_C_Cliques()
+        for (Vertex u : graph.nodes()) {				//for all u ELEMENTOF Vertex
 
-            //set of vertices which have already been used for the initialization of Enumerate_C_Cliques()
-            for (Vertex u : graph.nodes()) {				//for all u ELEMENTOF Vertex
+            if (manager.isMaxIteration()) {
+                //System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
+                return;
+            }
 
-                if (manager.isMaxIteration()) {
-                    //System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
-                    return;
-                }
-
-                P = new LinkedHashSet<>();			// P <- Empty
-                D = new LinkedHashSet<>();			// D <- Empty
-                S = new LinkedHashSet<>();			// S <- Empty
-                N = findNeighbors(u);	// N <- {v ELEMENTOF Vertex | {u,v} ELEMENTOF E}
-                //System.out.println("findNeighbors = u => " + N.size());
-                for (Vertex v : N) {					// for each v ELEMENTOF N
-                    if (isCEdge(u, v)) {		// if u and v are adjacent via a c-edge
-                        if (DEBUG) {
-                            System.out.println("u " + u + ", v " + v);
-                        }
-                        if (T.contains(v)) {		// then if v ELEMENTOF T
-                            S.add(v);			// S <- S UNION {v}
-                        } else {
-                            P.add(v);			// else P <- P UNION {v}
-                        }
-                    } else if (isDEdge(u, v)) {// else if u and v are adjacent via a d-edge
-                        D.add(v);				// D <- D UNION {v}
+            P = new LinkedHashSet<>();			// P <- Empty
+            D = new LinkedHashSet<>();			// D <- Empty
+            S = new LinkedHashSet<>();			// S <- Empty
+            N = findNeighbors(u);	// N <- {v ELEMENTOF Vertex | {u,v} ELEMENTOF E}
+            //System.out.println("findNeighbors = u => " + N.size());
+            for (Vertex v : N) {					// for each v ELEMENTOF N
+                if (isCEdge(u, v)) {		// if u and v are adjacent via a c-edge
+                    if (DEBUG) {
+                        System.out.println("u " + u + ", v " + v);
                     }
+                    if (T.contains(v)) {		// then if v ELEMENTOF T
+                        S.add(v);			// S <- S UNION {v}
+                    } else {
+                        P.add(v);			// else P <- P UNION {v}
+                    }
+                } else if (isDEdge(u, v)) {// else if u and v are adjacent via a d-edge
+                    D.add(v);				// D <- D UNION {v}
                 }
-                Set<Vertex> C = new LinkedHashSet<>();
-                C.add(u);
+            }
+            Set<Vertex> C = new LinkedHashSet<>();
+            C.add(u);
 
-                if (DEBUG) {
-                    System.out.println("C " + C + ", P " + P + ", D " + D + ", T " + T);
-                }
-                Set<Vertex> subresult;
-                subresult = Enumerate_C_Cliques(C, P, D, currentmaxresult); //ENUMERATE....(small footprint)
+            if (DEBUG) {
+                System.out.println("C " + C + ", P " + P + ", D " + D + ", T " + T);
+            }
+            Set<Vertex> subresult;
+            subresult = Enumerate_C_Cliques(C, P, D, currentmaxresult); //ENUMERATE....(small footprint)
 //            if (this.graph.V() < 2000) {
 //                if (DEBUG) {
 //                    System.out.println("Small world");
@@ -164,19 +157,18 @@ public class GraphKoch implements IClique {
 //                }
 //                subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
 //            }
-                if (subresult != null && subresult.size() >= result.size()) {
-                    result = subresult;
-                    currentmaxresult = result.size();
-                    cliques.add(result);
-                }
-                T.add(u);						// T <- T UNION {v}
-                if (DEBUG) {
-                    System.out.println("Current Max " + currentmaxresult);
-                }
+            if (subresult != null && subresult.size() >= result.size()) {
+                result = subresult;
+                currentmaxresult = result.size();
+                cliques.add(result);
             }
+            T.add(u);						// T <- T UNION {v}
             if (DEBUG) {
-                System.out.println("cliques " + cliques);
+                System.out.println("Current Max " + currentmaxresult);
             }
+        }
+        if (DEBUG) {
+            System.out.println("cliques " + cliques);
         }
     }
 
@@ -209,24 +201,24 @@ public class GraphKoch implements IClique {
             //that has already been reported/found
             return result;                                   //REPORT {CLIQUE}
         } else {
-            List<Vertex> pList = new ArrayList<>(P);
-            Vertex ut = pList.get(0);                           	 //Let ut be a vertex from P
+            List<Vertex> P_Copy = new ArrayList<>(P);
+            Vertex ut = P_Copy.get(0);                           	 //Let ut be a vertex from P
             for (Vertex currentVertex : P) {                        //for i <- 1 to k
                 if (!graph.hasEdge(ut, currentVertex)) {      //if ui is not adjacent ut ut
-                    pList.remove(currentVertex);             //P <-P\{ui}
-                    Set<Vertex> P_Prime = new LinkedHashSet<>(pList);    //P' <- P
-                    Set<Vertex> n = new LinkedHashSet<>();
+                    P_Copy.remove(currentVertex);             //P <-P\{ui}
+                    Set<Vertex> P_Prime = new LinkedHashSet<>(P_Copy);    //P' <- P
+                    Set<Vertex> N = new LinkedHashSet<>();
                     for (Edge edge : graph.edgesOf(currentVertex)) {
                         Vertex neighbour = graph.getEdgeSource(edge);
                         if (neighbour.equals(currentVertex)) {
                             neighbour = graph.getEdgeTarget(edge);
                         }
-                        n.add(neighbour);
+                        N.add(neighbour);
                     }                                        //N <- { v ELEMENTOF Vertex | {ui,v} ELEMENTOF Edge }
 
                     Set<Vertex> C_Copy = new LinkedHashSet<>(C);
                     C_Copy.add(currentVertex);                //C UNION {ui}
-                    P_Prime.retainAll(n);                      //P' INTERSECTION N
+                    P_Prime.retainAll(N);                      //P' INTERSECTION N
 
                     Set<Vertex> clique = enumerateCliques(C_Copy, P_Prime, currentmaxresult); //ENUMERATE.CLIQUES....
                     if (clique.size() > result.size()) {

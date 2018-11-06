@@ -47,7 +47,7 @@ public class MCSAlgorithm {
         compatibilityGraph.searchCliques();
         boolean disconnected = ConnectivityChecker.isConnected(source) && ConnectivityChecker.isConnected(target);
 
-        GraphKoch graphKoch = new GraphKoch(compatibilityGraph.getCompatibilityGraph(), disconnected);
+        GraphKoch graphKoch = new GraphKoch(compatibilityGraph.getCompatibilityGraph());
         graphKoch.findMaximalCliques();
         if (DEBUG) {
             System.out.println("graphKoch.getMaxCliquesSet() " + graphKoch.getMaxCliquesSet());
