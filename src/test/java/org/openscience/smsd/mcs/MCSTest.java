@@ -210,10 +210,10 @@ public class MCSTest {
         org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
         org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
 
-        org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
-                = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
-//        Isomorphism mcs
-//                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
+//        org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
+//                = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
+        Isomorphism mcs
+                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
         String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
 //        System.out.println("MCS " + create);
         assertEquals(63, mcs.getFirstAtomMapping().getCount());
