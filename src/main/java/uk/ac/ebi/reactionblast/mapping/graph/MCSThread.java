@@ -206,8 +206,8 @@ public class MCSThread implements Callable<MCSSolution> {
 
     @Override
     public synchronized MCSSolution call() throws Exception {
-        AtomMatcher am = AtomBondMatcher.atomMatcher(false, isHasPerfectRings());
-        BondMatcher bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+        AtomMatcher am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
+        BondMatcher bm = AtomBondMatcher.bondMatcher(false, false);
 
         try {
             if (DEBUG1) {
@@ -575,7 +575,7 @@ public class MCSThread implements Callable<MCSSolution> {
         switch (theory) {
             case RINGS:
                 am = AtomBondMatcher.atomMatcher(false, ringFlag);
-                bm = AtomBondMatcher.bondMatcher(false, ringFlag);
+                bm = AtomBondMatcher.bondMatcher(false, false);
 
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                         compound1.getAtomCount(), compound2.getAtomCount(),
@@ -605,7 +605,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 break;
 
             case MIN:
-                am = AtomBondMatcher.atomMatcher(true, false);
+                am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
                 bm = AtomBondMatcher.bondMatcher(false, false);
 
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
@@ -636,8 +636,8 @@ public class MCSThread implements Callable<MCSSolution> {
 
                 break;
             default:
-                am = AtomBondMatcher.atomMatcher(false, isHasPerfectRings());
-                bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+                am = AtomBondMatcher.atomMatcher(false, false);
+                bm = AtomBondMatcher.bondMatcher(false, false);
 
 //                    System.out.println("MCS Connected Default");
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),

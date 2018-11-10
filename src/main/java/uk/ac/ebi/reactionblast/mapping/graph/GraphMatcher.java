@@ -166,11 +166,12 @@ public class GraphMatcher extends Debugger {
                 out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
             }
 
-            if (DEBUG) {
-                executor = newSingleThreadExecutor();
-            } else {
-                executor = Executors.newFixedThreadPool(threadsAvailable);
-            }
+//            if (DEBUG) {
+//                executor = newSingleThreadExecutor();
+//            } else {
+//                executor = Executors.newFixedThreadPool(threadsAvailable);
+//            }
+            executor = newSingleThreadExecutor();
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
 
             for (Combination c : jobMap.keySet()) {

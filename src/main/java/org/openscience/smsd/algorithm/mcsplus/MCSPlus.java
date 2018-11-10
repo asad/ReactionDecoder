@@ -154,8 +154,8 @@ public final class MCSPlus {
             if (DEBUG) {
                 System.out.println("**************************************************");
                 System.out.println("--Compatibility Graph--");
-                System.out.println("C_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.C_EDGE).size());
-                System.out.println("D_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.D_EDGE).size());
+                System.out.println("C_edges: " + comp_graph_nodes.getCEdges().size());
+                System.out.println("D_edges: " + comp_graph_nodes.getDEdges().size());
                 System.out.println("Vertices: " + comp_graph_nodes.V());
                 System.out.println("Edges: " + comp_graph_nodes.E());
                 System.out.println("**************************************************");

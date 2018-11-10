@@ -9,6 +9,7 @@ import org.openscience.smsd.graph.Graph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -96,9 +97,10 @@ public class GraphBronKerbosch implements IClique {
         TreeSet<Vertex> candidates_P = new TreeSet<>();//P
         TreeSet<Vertex> already_found_X = new TreeSet<>();//X
         // add all candidate vertices
-        graph.nodes().forEach((n) -> {
-            candidates_P.add(n);
-        });
+        Iterator<Vertex> iterator = graph.iterator();
+        while (iterator.hasNext()) {
+            candidates_P.add(iterator.next());
+        }
 
         int printDepth = 1;
 

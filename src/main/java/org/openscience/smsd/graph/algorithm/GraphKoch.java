@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 import org.openscience.smsd.graph.Edge;
 import org.openscience.smsd.tools.IterationManager;
 
@@ -56,10 +57,11 @@ public class GraphKoch implements IClique {
                     best_clique_size = clique.size();
                 }
                 if (clique.size() == best_clique_size) {
-                    maxCliquesSet.push(clique);
+                    maxCliquesSet.push(new TreeSet<>(clique));
                 }
             }
         }
+//        System.out.println("maxCliquesSet " + maxCliquesSet);
         return maxCliquesSet;
     }
 
@@ -71,8 +73,8 @@ public class GraphKoch implements IClique {
     public GraphKoch(Graph compatibilityGraph) {
         this.graph = compatibilityGraph;
         this.cliques = new HashSet<>();
-        int interation = this.graph.E();
-        if (interation > 200000) {
+        int interation = this.graph.V() * 10;
+        if (interation > 50000) {
             interation = 50000;
         }
         if (DEBUG2) {
@@ -115,7 +117,6 @@ public class GraphKoch implements IClique {
 
         //set of vertices which have already been used for the initialization of Enumerate_C_Cliques()
         for (Vertex u : graph.nodes()) {				//for all u ELEMENTOF Vertex
-
             if (manager.isMaxIteration()) {
                 //System.out.println("Reached max limit, " + manager.getIterationLimit() + " itertions. ");
                 return;
@@ -125,7 +126,9 @@ public class GraphKoch implements IClique {
             D = new LinkedHashSet<>();			// D <- Empty
             S = new LinkedHashSet<>();			// S <- Empty
             N = findNeighbors(u);	// N <- {v ELEMENTOF Vertex | {u,v} ELEMENTOF E}
-            //System.out.println("findNeighbors = u => " + N.size());
+            if (DEBUG) {
+                System.out.println("\n\n\nfindNeighbors = u => " + N.size());
+            }
             for (Vertex v : N) {					// for each v ELEMENTOF N
                 if (isCEdge(u, v)) {		// if u and v are adjacent via a c-edge
                     if (DEBUG) {
@@ -148,17 +151,6 @@ public class GraphKoch implements IClique {
             }
             Set<Vertex> subresult;
             subresult = Enumerate_C_Cliques(C, P, D, currentmaxresult); //ENUMERATE....(small footprint)
-//            if (this.graph.V() < 2000) {
-//                if (DEBUG) {
-//                    System.out.println("Small world");
-//                }
-//                subresult = Enumerate_C_Cliques(graph, C, P, D, currentmaxresult); //ENUMERATE....
-//            } else {
-//                if (DEBUG) {
-//                    System.out.println("Big world");
-//                }
-//                subresult = Enumerate_C_Cliques_Complex(graph, C, P, D, T, currentmaxresult); //ENUMERATE....
-//            }
             if (subresult != null && subresult.size() >= result.size()) {
                 result = subresult;
                 currentmaxresult = result.size();

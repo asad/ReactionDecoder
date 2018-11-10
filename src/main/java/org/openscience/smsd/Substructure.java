@@ -116,15 +116,15 @@ public final class Substructure extends BaseMapping {
      *
      * @param query
      * @param target
-     * @param findAllSubgraph report all subgraphs
+     * @param findAllSubgraphFlag report all subgraphs
      * @throws CDKException
      */
     public Substructure(
             IQueryAtomContainer query,
             IAtomContainer target,
-            boolean findAllSubgraph) throws CDKException {
+            boolean findAllSubgraphFlag) throws CDKException {
         super(query, target, AtomMatcher.forQuery(), BondMatcher.forQuery());
-        super.setSubgraph(findSubgraphs(findAllSubgraph));
+        super.setSubgraph(findSubgraphs(findAllSubgraphFlag));
     }
 
     private synchronized boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mapGlobal) {
@@ -148,7 +148,20 @@ public final class Substructure extends BaseMapping {
             return false;
         }
 
-        if (getQuery().getAtomCount() == 1 || getTarget().getAtomCount() == 1) {
+        int rBondCount = getQuery().getBondCount();
+        int pBondCount = getTarget().getBondCount();
+
+        int rAtomCount = getQuery().getAtomCount();
+        int pAtomCount = getTarget().getAtomCount();
+
+        int expectedMaxGraphmatch = expectedMaxGraphmatch(getQuery(), getTarget());
+
+        if (DEBUG) {
+            System.out.println("Expected match: " + expectedMaxGraphmatch);
+            System.out.println("rAtomCount " + rAtomCount + ", rBondCount " + rBondCount);
+            System.out.println("pAtomCount " + pAtomCount + ", pBondCount " + pBondCount);
+        }
+        if (expectedMaxGraphmatch == 1 && rAtomCount <= pAtomCount) {
             isSubgraph = singleMapping();
         } else {
             List<AtomAtomMapping> mappingsVF2 = new ArrayList<>();

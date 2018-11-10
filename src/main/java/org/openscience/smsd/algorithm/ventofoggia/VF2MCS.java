@@ -139,8 +139,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 threadsAvailable = 2;
             }
 
-            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
-//            ExecutorService executor = Executors.newSingleThreadExecutor();
+//            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*

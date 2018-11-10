@@ -40,7 +40,6 @@ import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.mcsplus.MappingHandler;
 import org.openscience.smsd.algorithm.rgraph.CDKRMapHandler;
 import org.openscience.smsd.graph.EdgeProductGraph;
-import org.openscience.smsd.graph.EdgeType;
 import org.openscience.smsd.graph.Graph;
 import org.openscience.smsd.graph.IClique;
 import org.openscience.smsd.graph.Vertex;
@@ -52,9 +51,10 @@ import org.openscience.smsd.interfaces.Algorithm;
  *
  * First the algorithm runs VF lib
  * {@link org.openscience.smsd.algorithm.ventofoggia1.VF2MCS} and reports MCS
- between run source and MappingHandler graphs. Then these solutions are extended using
- McGregor {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm
- * where ever required.
+ * between run source and MappingHandler graphs. Then these solutions are
+ * extended using McGregor
+ * {@link org.openscience.smsd.algorithm.mcgregor.McGregor} algorithm where ever
+ * required.
  *
  *
  *
@@ -162,8 +162,8 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
         if (DEBUG) {
             System.out.println("**************************************************");
             System.out.println("--Compatibility Graph--");
-            System.out.println("C_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.C_EDGE).size());
-            System.out.println("D_edges: " + comp_graph_nodes.getEdgesOfType(EdgeType.D_EDGE).size());
+            System.out.println("C_edges: " + comp_graph_nodes.getCEdges().size());
+            System.out.println("D_edges: " + comp_graph_nodes.getDEdges().size());
             System.out.println("Vertices: " + comp_graph_nodes.V());
             System.out.println("Edges: " + comp_graph_nodes.E());
             System.out.println("**************************************************");

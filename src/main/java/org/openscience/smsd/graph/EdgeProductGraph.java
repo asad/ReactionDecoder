@@ -6,6 +6,7 @@ package org.openscience.smsd.graph;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -27,6 +28,8 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public final class EdgeProductGraph implements Serializable {
+
+    private final boolean DEBUG = false;
 
     /**
      * Generates a compatibility graph between two molecules
@@ -58,7 +61,6 @@ public final class EdgeProductGraph implements Serializable {
     private final Graph g;
     private final IAtomContainer source;
     private final IAtomContainer target;
-    private final boolean DEBUG = false;
 
     /**
      * Generates a compatibility graph between two molecules
@@ -79,7 +81,7 @@ public final class EdgeProductGraph implements Serializable {
         this.bondMatcher = bm;
         this.source = source;
         this.target = target;
-        this.g = new Graph(false);
+        this.g = new Graph();
 
     }
 
@@ -89,8 +91,8 @@ public final class EdgeProductGraph implements Serializable {
         if (DEBUG) {
             System.out.println("**************************************************");
             System.out.println("--Compatibility Graph--");
-            System.out.println("C_edges: " + g.getEdgesOfType(EdgeType.C_EDGE).size());
-            System.out.println("D_edges: " + g.getEdgesOfType(EdgeType.D_EDGE).size());
+            System.out.println("C_edges: " + g.getCEdges().size());
+            System.out.println("D_edges: " + g.getDEdges().size());
             System.out.println("Vertices: " + g.V());
             System.out.println("Edges: " + g.E());
         }
@@ -106,6 +108,7 @@ public final class EdgeProductGraph implements Serializable {
                 //Asad-Imp for large graphs
                 //Only add the edge product vertex if the edge labels and vertex labels are the same
                 //IMP: directed manner i.e. if {a-b = a-b} then true else false 
+                //Only add the edge product vertex if the edge labels and end vertex labels are the same
                 if (AtomBondMatcher.matchAtomAndBond(a, b, atomMatcher, bondMatcher, true)) {
                     Vertex node = new Vertex(compatibilityNodeCounter);
                     if (DEBUG) {
@@ -121,7 +124,7 @@ public final class EdgeProductGraph implements Serializable {
         }
 
         if (DEBUG) {
-            System.out.println("Vertices " + g.nodes().size());
+            System.out.println("Vertices " + g.V());
         }
     }
 
@@ -132,15 +135,10 @@ public final class EdgeProductGraph implements Serializable {
                 System.out.println("n1: " + n1.getID()
                         + ", " + "n2: " + n2.getID() + ", Edge " + edgetype);
             }
-            Edge edge = new Edge(n1, n2);
-            edge.setEdgeType(edgetype);
-            if (edgetype == EdgeType.C_EDGE) {
+            if (edgetype == EdgeType.C_EDGE
+                    || edgetype == EdgeType.D_EDGE) {
                 //Assume it to be a undirected graph
-                g.addEdge(edge);
-            }
-            if (edgetype == EdgeType.D_EDGE) {
-                //Assume it to bea a undirected graph
-                g.addEdge(edge);
+                g.addEdge(n1, n2, edgetype);
             }
         }
     }
@@ -152,18 +150,28 @@ public final class EdgeProductGraph implements Serializable {
      * @throws IOException
      */
     private int compatibilityGraphDirected() {
-
+        int counter = 1;
         Stack<Vertex> nodesToCompare = new Stack<>();
-        nodesToCompare.addAll(g.nodes());
+        Iterator<Vertex> iterator = g.iterator();
+        while (iterator.hasNext()) {
+            nodesToCompare.add(iterator.next());
+        }
         while (!nodesToCompare.empty()) {
             Vertex n1 = nodesToCompare.pop();
-            nodesToCompare.forEach((n2) -> {
+            for (Vertex n2 : nodesToCompare) {
                 addEdge(n1, n2);
-            });
+                if (DEBUG && counter % 100000 == 0) {
+                    System.out.println(nodesToCompare.size() + "    Found clique #" + counter);
+                    System.out.println("    C-Edges #" + g.getCEdges().size() + ".\n");
+                    System.out.println("    D-Edges #" + g.getDEdges().size() + ".\n");
+                    System.out.println("    Edges #" + g.E() + ".\n");
+                }
+                counter++;
+            }
         }
 
         if (DEBUG) {
-            System.out.println("Edges " + g.edges().size());
+            System.out.println("Edges " + g.E());
         }
         return g.E();
     }
@@ -181,10 +189,10 @@ public final class EdgeProductGraph implements Serializable {
         //either e1,f1 in G1 are connected via a vertex of the same label as the vertex shared by e2,f2 in G2
         //or e1,f1 and e2,f2 are not adjacent in G1 and in G2, respectively
         IBond e1, e2, f1, f2;
-        e1 = source.getBond(p1.getQueryBond()); //Edge in G1
-        e2 = target.getBond(p1.getTargetBond()); //Edge in G2
-        f1 = source.getBond(p2.getQueryBond()); //Edge in G1
-        f2 = target.getBond(p2.getTargetBond()); //Edge in G2
+        e1 = source.getBond(p1.getQueryBondIndex()); //Edge in G1
+        e2 = target.getBond(p1.getTargetBondIndex()); //Edge in G2
+        f1 = source.getBond(p2.getQueryBondIndex()); //Edge in G1
+        f2 = target.getBond(p2.getTargetBondIndex()); //Edge in G2
 
         //check condition 1)
         if (e1 == f1 || e2 == f2) {
@@ -207,7 +215,6 @@ public final class EdgeProductGraph implements Serializable {
             for (IAtom v1 : possibleVerticesG1) {
                 for (IAtom v2 : possibleVerticesG2) {
                     if (AtomBondMatcher.matches(v1, v2, atomMatcher)) {
-//                    if (v1.getSymbol().equals(v2.getSymbol())) {
                         // e1,f1 in G1 are connected via a vertex of
                         // the same label as the vertex shared by e2,f2 in G2.
                         //A C_edge should be created
@@ -265,7 +272,7 @@ public final class EdgeProductGraph implements Serializable {
 
         //Add the left Edge (including vertices) from all the EdgeProducts in vertices
         Set<IAtom> atomsMapped = new HashSet<>();
-        edgeProductVertices.stream().map((ep) -> ep.getQueryBond()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+        edgeProductVertices.stream().map((ep) -> ep.getQueryBondIndex()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
             atomsMapped.add(bond.getBegin());
             return bond;
         }).forEachOrdered((bond) -> {
@@ -300,7 +307,7 @@ public final class EdgeProductGraph implements Serializable {
 
         //Add the left Edge (including vertices) from all the EdgeProducts in vertices
         Set<IAtom> atomsMapped = new HashSet<>();
-        edgeProductVertices.stream().map((ep) -> ep.getTargetBond()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+        edgeProductVertices.stream().map((ep) -> ep.getTargetBondIndex()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
             atomsMapped.add(bond.getBegin());
             return bond;
         }).forEachOrdered((bond) -> {

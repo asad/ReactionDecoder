@@ -24,6 +24,7 @@ package org.openscience.smsd;
 
 import java.math.BigDecimal;
 import java.util.*;
+import static java.util.Collections.sort;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -367,4 +368,49 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         }
         return connected1 & connected2;
     }
+
+    int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
+
+        /*
+         a={c,c,c,o,n}
+         b={c,c,c,p}
+       
+         expectedMaxGraphmatch=3;
+         */
+        List<String> atomUniqueCounter1 = new ArrayList<>();
+        List<String> atomUniqueCounter2 = new ArrayList<>();
+
+        for (IAtom a : q.atoms()) {
+            String hyb = a.getAtomicNumber() == null
+                    ? a.getSymbol() : a.getAtomicNumber() + "";
+            atomUniqueCounter1.add(hyb);
+        }
+
+        for (IAtom b : t.atoms()) {
+            String hyb = b.getAtomicNumber() == null
+                    ? b.getSymbol() : b.getAtomicNumber() + "";
+            atomUniqueCounter2.add(hyb);
+        }
+
+        sort(atomUniqueCounter1);
+        sort(atomUniqueCounter2);
+
+        if (atomUniqueCounter1.isEmpty()) {
+            return 0;
+        }
+        List<String> common = new LinkedList<>(atomUniqueCounter1);
+        common.retainAll(atomUniqueCounter2);
+
+//        if (DEBUG) {
+//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
+//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
+//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
+//            System.out.println("Common " + common.size());
+//        }
+        atomUniqueCounter1.clear();
+        atomUniqueCounter2.clear();
+        return common.size();
+    }
+
 }

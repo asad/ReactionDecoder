@@ -42,7 +42,6 @@ import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Edge;
-import org.openscience.smsd.graph.Vertex;
 import org.openscience.smsd.helper.LabelContainer;
 
 /**
@@ -216,7 +215,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
 //                        System.LOGGER.debug("labelB.getValue() " + labelB.getValue());
                     int atomNumberI = source.indexOf(labelA.getKey());
                     int atomNumberJ = target.indexOf(labelB.getKey());
-                    Edge e = new Edge(new Vertex(atomNumberI), new Vertex(atomNumberJ));
+                    Edge e = new Edge(atomNumberI, atomNumberJ);
                     if (!edges.contains(e)) {
                         edges.add(e);
                         compGraphNodes.add(atomNumberI);
@@ -260,7 +259,7 @@ public final class GenerateCompatibilityGraph implements Serializable {
                     if (reactantBond != null && productBond != null) {
                         addEdges(reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null) {
-                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
                         dEdges.add(edge);
                     }
                 }
@@ -273,10 +272,10 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
     private void addEdges(IBond reactantBond, IBond productBond, int iIndex, int jIndex) {
         if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
-            Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
+            Edge edge = new Edge(((iIndex / 3) + 1), ((jIndex / 3) + 1));
             cEdges.add(edge);
         } else {
-            Edge edge = new Edge(new Vertex(((iIndex / 3) + 1)), new Vertex(((jIndex / 3) + 1)));
+            Edge edge = new Edge(((iIndex / 3) + 1), ((jIndex / 3) + 1));
             dEdges.add(edge);
         }
     }
@@ -365,12 +364,12 @@ public final class GenerateCompatibilityGraph implements Serializable {
                         addZeroEdges(reactantBond, productBond, a, b);
                     } else if (reactantBond == null && productBond == null
                             && dEdges.size() < compGraphNodes.size()) {
-                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
                         dEdges.add(edge);
                     } else if (reactantBond == null && productBond == null
                             && source.getAtomCount() < 50 && target.getAtomCount() < 50) {
                         //50 unique condition to speed up the AAM
-                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
                         dEdges.add(edge);
                     }
 
@@ -388,10 +387,10 @@ public final class GenerateCompatibilityGraph implements Serializable {
 
     private void addZeroEdges(IBond reactantBond, IBond productBond, int indexI, int indexJ) {
         if (AtomBondMatcher.matchAtomAndBond(reactantBond, productBond, atomMatcher, bondMatcher, true)) {
-            Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
+            Edge edge = new Edge(((indexI / 4) + 1), ((indexJ / 4) + 1));
             cEdges.add(edge);
         } else {
-            Edge edge = new Edge(new Vertex(((indexI / 4) + 1)), new Vertex(((indexJ / 4) + 1)));
+            Edge edge = new Edge(((indexI / 4) + 1), ((indexJ / 4) + 1));
             dEdges.add(edge);
         }
     }

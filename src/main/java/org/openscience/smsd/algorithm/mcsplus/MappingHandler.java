@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -141,7 +140,7 @@ public class MappingHandler {
                 }
             }
 
-//            System.out.println("clique_mapping  SIZE " + clique_mapping.size());
+//            System.out.println("atomatommapping  SIZE " + atomatommapping.size());
         } catch (Exception e) {
             LOGGER.debug("Error in FinalMapping List: " + e.getCause());
             e.printStackTrace();
@@ -171,45 +170,18 @@ public class MappingHandler {
         /*
          * Retrive Bond index for mapped vertices in the compatibility graph
          */
-        comp_graph_nodes.nodes().forEach((Vertex v) -> {
-            cliques.stream().filter((m) -> (v.equals(m))).forEachOrdered((_item) -> {
-                bondCliques.put(v.getQueryBond(), v.getTargetBond());
-            });
+        cliques.forEach((v) -> {
+            bondCliques.put(v.getQueryBondIndex(), v.getTargetBondIndex());
         });
 
         if (DEBUG) {
             System.out.println("Bond clique_mapping " + bondCliques);
         }
 
-        if (DEBUG) {
-            try {
-                bondCliques.keySet().forEach((bond) -> {
-                    IBond b = s.getBond(bond);
-                    System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + s.indexOf(b.getBegin()) + "), atom1 "
-                            + b.getEnd().getSymbol() + "(" + s.indexOf(b.getEnd()) + ")");
-                });
-                System.out.println("Bonds projected Smiles s "
-                        + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, s, bondCliques.keySet())));
-            } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(MappingHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                bondCliques.values().forEach((bond) -> {
-                    IBond b = t.getBond(bond);
-                    System.out.println("BOND NO " + bond + " atom0 " + b.getBegin().getSymbol() + "(" + t.indexOf(b.getBegin()) + "), atom1 "
-                            + b.getEnd().getSymbol() + "(" + t.indexOf(b.getEnd()) + ")");
-                });
-                System.out.println("Bonds projected Smiles t "
-                        + new SmilesGenerator(SmiFlavor.Generic).create(getSubgraphProjectBonds(comp_graph_nodes, t, bondCliques.values())));
-            } catch (CloneNotSupportedException | CDKException ex) {
-                Logger.getLogger(MappingHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        Map<Integer, Integer> clique_mapping = makeAtomsMapOfBondsMap(bondCliques, s, t, am, bm);
+        Map<Integer, Integer> atomatommapping = makeAtomsMapOfBondsMap(bondCliques, s, t, am, bm);
         if (DEBUG) {
             System.out.println("bondCliques " + bondCliques.size());
-            System.out.println("clique_mapping " + clique_mapping);
+            System.out.println("clique_mapping " + atomatommapping);
         }
         if (DEBUG) {
             try {
@@ -219,7 +191,7 @@ public class MappingHandler {
                 LOGGER.error(Level.SEVERE, "Unable to extract mcs ", ex.getMessage());
             }
         }
-        return clique_mapping;
+        return atomatommapping;
     }
 
     /**

@@ -25,10 +25,7 @@
 package org.openscience.smsd.graph;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * This class generates compatibility graph between query and target molecule.
@@ -39,7 +36,36 @@ import java.util.TreeMap;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
+public class Edge implements Serializable {
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + Objects.hashCode(this.source);
+        hash = 11 * hash + Objects.hashCode(this.sink);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Edge other = (Edge) obj;
+        if (!Objects.equals(this.source, other.source)) {
+            return false;
+        }
+        if (!Objects.equals(this.sink, other.sink)) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * @return the edgeType
@@ -57,50 +83,13 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
 
     @Override
     public String toString() {
-        return "Edge{" + "i=" + i + ", j=" + j + '}';
+        return "Edge{" + "i=" + source + ", j=" + sink + '}';
     }
 
     private static final long serialVersionUID = 52343464641L;
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.i);
-        hash = 19 * hash + Objects.hashCode(this.j);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Edge other = (Edge) obj;
-
-//        return this.i.getID() == other.i.getID() && this.j.getID() == other.j.getID()
-//                || this.i.getID() == other.j.getID() && this.j.getID() == other.i.getID();
-        if (!Objects.equals(this.i, other.i)) {
-            return false;
-        }
-        return Objects.equals(this.j, other.j);
-    }
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public int hashCode() {
-//        return i.getID() ^ j.getID();
-//    }
-
-    private final Vertex i;
-    private final Vertex j;
+    private final Integer source;
+    private final Integer sink;
     private EdgeType edgeType;
 
     /**
@@ -108,51 +97,24 @@ public class Edge implements Comparable<Edge>, Comparator<Edge>, Serializable {
      * @param i
      * @param j
      */
-    public Edge(Vertex i, Vertex j) {
-        this.i = i;
-        this.j = j;
+    public Edge(Integer i, Integer j) {
+        this.source = i;
+        this.sink = j;
         this.edgeType = EdgeType.UNSET;
     }
 
-    @Override
-    public int compareTo(Edge o) {
-        String a = this.getSource() + "_" + this.getSink();
-        String b = o.getSource() + "_" + o.getSink();
-
-        return a.compareTo(b);
-    }
-
-    @Override
-    public int compare(Edge o1, Edge o2) {
-        String a = o1.getSource() + "_" + o1.getSink();
-        String b = o2.getSource() + "_" + o2.getSink();
-
-        return a.compareTo(b);
+    /**
+     * @return the source
+     */
+    public Integer getSource() {
+        return source;
     }
 
     /**
-     * @return the i
+     * @return the sink
      */
-    public Vertex getSource() {
-        return i;
-    }
-
-    /**
-     * @return the j
-     */
-    public Vertex getSink() {
-        return j;
-    }
-
-    /**
-     * Get Mapping Index/ID between two nodes
-     *
-     * @return
-     */
-    public Map<Integer, Integer> getMapping() {
-        TreeMap<Integer, Integer> mapping = new TreeMap<>();
-        mapping.put(getSource().getID(), getSink().getID());
-        return mapping;
+    public Integer getSink() {
+        return sink;
     }
 
     public boolean isC_Edge() {

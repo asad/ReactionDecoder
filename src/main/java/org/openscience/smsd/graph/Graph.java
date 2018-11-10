@@ -3,9 +3,12 @@
  */
 package org.openscience.smsd.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -15,7 +18,7 @@ import java.util.TreeSet;
  *
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  */
-public final class Graph {
+public final class Graph implements Iterable<Vertex> {
 
     private static final String NEWLINE = System.getProperty("line.separator");
 
@@ -23,8 +26,7 @@ public final class Graph {
     private final Map<Vertex, Set<Vertex>> c_adj;
     private final Map<Vertex, Set<Vertex>> d_adj;
     private final Map<EdgeType, Set<Edge>> adj_type_Map;
-    private final Set<Vertex> vertices;
-    private final boolean directed;
+    private final List<Vertex> vertices;
 
     /**
      * Initializes an empty graph with {@code V} vertices and 0 edges.param V
@@ -32,13 +34,12 @@ public final class Graph {
      *
      * @param directed
      */
-    public Graph(boolean directed) {
-        this.vertices = new HashSet<>();
+    public Graph() {
+        this.vertices = new ArrayList<>();
         this.adj = new TreeMap<>();
         this.c_adj = new TreeMap<>();
         this.d_adj = new TreeMap<>();
         this.adj_type_Map = new HashMap<>();
-        this.directed = directed;
     }
 
     /**
@@ -89,15 +90,22 @@ public final class Graph {
         }
     }
 
+    public void addEdge(Vertex v, Vertex u, EdgeType e) {
+
+        validateVertex(v);
+        validateVertex(u);
+        Edge edge = new Edge(vertices.indexOf(v), vertices.indexOf(u));
+        edge.setEdgeType(e);
+        addEdge(edge);
+    }
+
     /**
      * Adds the undirected edge v-w to this graph. Assumes that the nodes
      * assigned in the edge is already present
      *
      * @param e edge to be added
      */
-    public void addEdge(Edge e) {
-        validateVertex(e.getSource());
-        validateVertex(e.getSink());
+    private void addEdge(Edge e) {
 
         /*
          * Add edges to the map
@@ -127,10 +135,9 @@ public final class Graph {
     }
 
     private void addEdge(Map map, Edge e) {
-        addEdge(map, e.getSource(), e.getSink());
-        if (!directed) {
-            addEdge(map, e.getSink(), e.getSource());
-        }
+        addEdge(map, vertices.get(e.getSource()), vertices.get(e.getSink()));
+        addEdge(map, vertices.get(e.getSink()), vertices.get(e.getSource()));
+
     }
 
     private void addEdge(Map<Vertex, Set<Vertex>> map, Vertex u, Vertex v) {
@@ -219,7 +226,7 @@ public final class Graph {
      */
     public boolean hasEdge(Vertex u, Vertex v) {
         return adj.containsKey(u) && adj.get(u).contains(v) ? true
-                : !directed && adj.containsKey(v) && adj.get(v).contains(u);
+                : adj.containsKey(v) && adj.get(v).contains(u);
     }
 
     /**
@@ -229,13 +236,15 @@ public final class Graph {
      * @return
      */
     public Iterable<Edge> edgesOf(Vertex currentVertex) {
+        validateVertex(currentVertex);
+        Integer v = vertices.indexOf(currentVertex);
         Set<Edge> edgesOfVertex = new LinkedHashSet<>();
         edges().stream().map((e) -> {
-            if (e.getSource().equals(currentVertex)) {
+            if (e.getSource().equals(v)) {
                 edgesOfVertex.add(e);
             }
             return e;
-        }).filter((e) -> (!directed && e.getSink().equals(currentVertex))).forEachOrdered((e) -> {
+        }).filter((e) -> (e.getSink().equals(v))).forEachOrdered((e) -> {
             edgesOfVertex.add(e);
         });
         return edgesOfVertex;
@@ -252,7 +261,7 @@ public final class Graph {
         validateVertex(u);
         validateVertex(v);
         return c_adj.containsKey(u) && c_adj.get(u).contains(v) ? true
-                : !directed && c_adj.containsKey(v) && c_adj.get(v).contains(u);
+                : c_adj.containsKey(v) && c_adj.get(v).contains(u);
     }
 
     /**
@@ -266,7 +275,7 @@ public final class Graph {
         validateVertex(u);
         validateVertex(v);
         return d_adj.containsKey(u) && d_adj.get(u).contains(v) ? true
-                : !directed && d_adj.containsKey(v) && d_adj.get(v).contains(u);
+                : d_adj.containsKey(v) && d_adj.get(v).contains(u);
     }
 
     /**
@@ -280,7 +289,7 @@ public final class Graph {
      * @return
      */
     public Vertex getEdgeSource(Edge edge) {
-        return edge.getSource();
+        return vertices.get(edge.getSource());
     }
 
     /**
@@ -292,7 +301,7 @@ public final class Graph {
      * @return
      */
     public Vertex getEdgeTarget(Edge edge) {
-        return edge.getSink();
+        return vertices.get(edge.getSink());
     }
 
     /**
@@ -316,7 +325,8 @@ public final class Graph {
         });
 
         adj_type_Map.entrySet().forEach((c) -> {
-            c.getValue().stream().filter((e) -> (e.getSource() == v || e.getSink() == v)).forEachOrdered((e) -> {
+            c.getValue().stream().filter((e) -> (vertices.get(e.getSource()) == v
+                    || vertices.get(e.getSink()) == v)).forEachOrdered((e) -> {
                 adj_type_Map.get(c.getKey()).remove(e);
             });
         });
@@ -335,7 +345,7 @@ public final class Graph {
      * @param e
      * @return Set of edges of type C-Edges/D-Edges etc
      */
-    public Set<Edge> getEdgesOfType(EdgeType e) {
+    private Set<Edge> getEdgesOfType(EdgeType e) {
         Set<Edge> edgesOfTypes = new HashSet<>();
         if (adj_type_Map.containsKey(e)) {
             edgesOfTypes.addAll(adj_type_Map.get(e));
@@ -346,5 +356,30 @@ public final class Graph {
     public Set<Vertex> getCEdgeNeighbours(Vertex u) {
         validateVertex(u);
         return c_adj.containsKey(u) ? new HashSet<>(c_adj.get(u)) : new HashSet<>();
+    }
+
+    @Override
+    public Iterator<Vertex> iterator() {
+        return vertices.iterator();
+    }
+
+    public Set<Edge> getCEdges() {
+        return getEdgesOfType(EdgeType.C_EDGE);
+    }
+
+    public Set<Edge> getDEdges() {
+        return getEdgesOfType(EdgeType.D_EDGE);
+    }
+
+    /**
+     * Return Index of Length
+     * @param index
+     * @return
+     */
+    public Vertex resolveVertex(Integer index) {
+        if (vertices.size() > index) {
+            return vertices.get(index);
+        }
+        return null;
     }
 }

@@ -16,6 +16,9 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
  */
 public abstract class BondMatcher {
 
+    @Override
+    public abstract String toString();
+
     /**
      * Determines if {@code bond1} is compatible with {@code bond2}.
      *
@@ -87,6 +90,12 @@ public abstract class BondMatcher {
             return bond1.isAromatic() && bond2.isAromatic()
                     || bond1.getOrder() == bond2.getOrder();
         }
+
+        @Override
+        public String toString() {
+            return "OrderMatcher";
+        }
+
     }
 
     /**
@@ -104,6 +113,12 @@ public abstract class BondMatcher {
             return (bond1.isAromatic() == bond2.isAromatic())
                     || (!bond1.isAromatic() && !bond2.isAromatic());
         }
+
+        @Override
+        public String toString() {
+            return "RingMatcher";
+        }
+
     }
 
     /**
@@ -122,6 +137,12 @@ public abstract class BondMatcher {
                     && (bond1.getOrder() == bond2.getOrder()
                     || bond1.isAromatic() && bond2.isAromatic());
         }
+
+        @Override
+        public String toString() {
+            return "StrictOrderMatcher";
+        }
+
     }
 
     /**
@@ -136,6 +157,12 @@ public abstract class BondMatcher {
         public boolean matches(IBond bond1, IBond bond2) {
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "AnyMatcher";
+        }
+
     }
 
     /**
@@ -151,5 +178,11 @@ public abstract class BondMatcher {
         public boolean matches(IBond bond1, IBond bond2) {
             return ((IQueryBond) bond1).matches(bond2);
         }
+
+        @Override
+        public String toString() {
+            return "QueryMatcher";
+        }
+
     }
 }

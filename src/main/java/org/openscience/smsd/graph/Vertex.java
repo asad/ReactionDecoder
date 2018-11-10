@@ -5,8 +5,6 @@ package org.openscience.smsd.graph;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class holds Nodes (vertex)
@@ -24,7 +22,7 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 23 * hash + this.id;
+        hash = 37 * hash + this.id;
         return hash;
     }
 
@@ -40,17 +38,20 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
             return false;
         }
         final Vertex other = (Vertex) obj;
-        return this.id == other.id;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
         if (label.isEmpty()) {
-            return "Vertex{" + "Q=" + query + ", T=" + target + '}';
+            return "V{" + "id=" + id + "(" + query + "," + target + ")" + '}';
         } else if (query == null) {
-            return "Node{" + "id=" + id + ", label=" + label + '}';
+            return "V{" + "id=" + id + ", label=" + label + '}';
         }
-        return "Vertex{" + "Q=" + query + ", T=" + target + ", id=" + id + ", label=" + label + '}';
+        return "V{" + "Q=" + query + ", T=" + target + ", id=" + id + ", label=" + label + '}';
     }
 
     /**
@@ -108,7 +109,7 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
      *
      * @return
      */
-    public Integer getTargetBond() {
+    public Integer getTargetBondIndex() {
         return target;
     }
 
@@ -116,20 +117,7 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
      *
      * @return
      */
-    public Integer getQueryBond() {
+    public Integer getQueryBondIndex() {
         return query;
-    }
-
-    /**
-     * Get Mapping Index/ID between two nodes
-     *
-     * @return
-     */
-    public Map<Integer, Integer> getBondMapping() {
-        Map<Integer, Integer> mapping = new HashMap<>();
-        if (getQueryBond() != null && getTargetBond() != null) {
-            mapping.put(getQueryBond(), getTargetBond());
-        }
-        return mapping;
     }
 }

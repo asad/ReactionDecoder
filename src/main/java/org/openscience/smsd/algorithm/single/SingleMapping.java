@@ -77,17 +77,12 @@ public class SingleMapping {
         this.source = source;
         this.target = target;
 
-        if (source.getAtomCount() == 1
-                || (source.getAtomCount() > 0 && source.getBondCount() == 0)) {
-            setSourceTargetSingleAtomMap(mappings, am);
-        }
-        if (target.getAtomCount() == 1
-                || (target.getAtomCount() > 0 && target.getBondCount() == 0)) {
-            setTargetSourceSingleAtomMap(mappings, am);
+        if (source.getAtomCount() > 0) {
+            setSingleAtomMap(mappings, am);
         }
         return postFilter(mappings);
     }
-    
+
     /**
      * Returns single mapping solutions.
      *
@@ -102,18 +97,13 @@ public class SingleMapping {
         this.source = source;
         this.target = target;
 
-        if (source.getAtomCount() == 1
-                || (source.getAtomCount() > 0 && source.getBondCount() == 0)) {
-            setSourceTargetSingleAtomMap(mappings, am);
-        }
-        if (target.getAtomCount() == 1
-                || (target.getAtomCount() > 0 && target.getBondCount() == 0)) {
-            setTargetSourceSingleAtomMap(mappings, am);
+        if (source.getAtomCount() > 0) {
+            setSingleAtomMap(mappings, am);
         }
         return postFilter(mappings);
     }
 
-    private synchronized void setSourceTargetSingleAtomMap(List<Map<IAtom, IAtom>> mappings, AtomMatcher am) throws CDKException {
+    private synchronized void setSingleAtomMap(List<Map<IAtom, IAtom>> mappings, AtomMatcher am) throws CDKException {
         int counter = 0;
         BondEnergies be = BondEnergies.getInstance();
         for (IAtom sourceAtom : source.atoms()) {
@@ -138,35 +128,6 @@ public class SingleMapping {
 
                     connectedBondOrder.put(counter, totalOrder);
                     mappings.add(counter++, mapAtoms);
-                }
-            }
-        }
-    }
-
-    private synchronized void setTargetSourceSingleAtomMap(List<Map<IAtom, IAtom>> mappings, AtomMatcher am) throws CDKException {
-        int counter = 0;
-        BondEnergies be = BondEnergies.getInstance();
-        for (IAtom targetAtom : target.atoms()) {
-            for (IAtom sourceAtom : source.atoms()) {
-                Map<IAtom, IAtom> mapAtoms = new HashMap<>();
-                if (am.matches(targetAtom, sourceAtom)) {
-                    mapAtoms.put(sourceAtom, targetAtom);
-                    List<IBond> Bonds = source.getConnectedBondsList(sourceAtom);
-
-                    double totalOrder = 0;
-                    for (IBond bond : Bonds) {
-                        Order bondOrder = bond.getOrder();
-                        if (bondOrder == null) {
-                            continue;
-                        }
-                        totalOrder += bondOrder.numeric() + be.getEnergies(bond);
-                    }
-                    if (!Objects.equals(sourceAtom.getFormalCharge(), targetAtom.getFormalCharge())) {
-                        totalOrder += 0.5;
-                    }
-                    connectedBondOrder.put(counter, totalOrder);
-                    mappings.add(counter, mapAtoms);
-                    counter++;
                 }
             }
         }

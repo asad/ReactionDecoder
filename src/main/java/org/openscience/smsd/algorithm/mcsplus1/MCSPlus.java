@@ -33,7 +33,6 @@ import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.graph.Edge;
-import org.openscience.smsd.graph.Vertex;
 
 /**
  * This class implements Bron-Kerbosch clique detection algorithm as it is
@@ -367,19 +366,19 @@ public class MCSPlus extends Filter {
 
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
                         global_c_edges.add(edge);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
                         global_d_edges.add(edge);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (connectedFlag && !matchBondFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 3) + 1)), new Vertex(((b / 3) + 1)));
+                        Edge edge = new Edge(((a / 3) + 1), ((b / 3) + 1));
                         global_d_edges.add(edge);
                     }
                 }
@@ -524,19 +523,19 @@ public class MCSPlus extends Filter {
 //                    }
                     //in case that both molecule pairs are connected a c-edge is generated
                     if (connectedFlag && matchBondFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
                         global_c_edges.add(edge);
                     }
 //
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (disConnectedFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
                         global_d_edges.add(edge);
                     }
 
                     //in case that both molecule pairs are not connected a d-edge is generated
                     if (connectedFlag && !matchBondFlag) {
-                        Edge edge = new Edge(new Vertex(((a / 4) + 1)), new Vertex(((b / 4) + 1)));
+                        Edge edge = new Edge(((a / 4) + 1), ((b / 4) + 1));
                         global_d_edges.add(edge);
                     }
                 }
