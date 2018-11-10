@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
  */
 package org.openscience.smsd.mcs;
 
@@ -76,6 +74,7 @@ public class MCSTest {
         org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
                 = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
         AtomAtomMapping firstAtomMapping = mcs.getFirstAtomMapping();
+//        System.out.println("mcs " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
         assertEquals(9, (firstAtomMapping.getCount()));
     }
 
@@ -177,7 +176,7 @@ public class MCSTest {
         SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
 //        IAtomContainer query = sp.parseSmiles("cccc");
-//        IAtomContainer target = sp.parseSmiles("ccnc");
+//        IAtomContainer target = sp.parseSmiles("nccc");
 //        IAtomContainer query = sp.parseSmiles("C1=CC=CC=C1");
 //        IAtomContainer target = sp.parseSmiles("C1=CC=CC=C1");
         IAtomContainer query = sp.parseSmiles("*C1OC(CO)C(OP=O)C1O");
@@ -187,12 +186,14 @@ public class MCSTest {
         MoleculeInitializer.initializeMolecule(query);
         MoleculeInitializer.initializeMolecule(target);
 
-        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
-        org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, true);
+        org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
+        org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
 
         org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
                 = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
-//            assertEquals("C1OC(CO)C(O)C1O", mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+
+        System.out.println("MCS " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+        assertEquals("C1OC(CO)C(O)C1O", mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
 
     }
 
@@ -209,11 +210,11 @@ public class MCSTest {
         org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
         org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
 
-//        org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
-//                = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
-        Isomorphism mcs
-                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
-//        String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
+        org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
+                = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
+//        Isomorphism mcs
+//                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
+        String create = new SmilesGenerator(SmiFlavor.Canonical).create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery());
 //        System.out.println("MCS " + create);
         assertEquals(63, mcs.getFirstAtomMapping().getCount());
 
@@ -254,7 +255,7 @@ public class MCSTest {
         MoleculeInitializer.initializeMolecule(target);
 
         org.openscience.smsd.algorithm.matchers.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
-        org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, true);
+        org.openscience.smsd.algorithm.matchers.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
 
         try {
 //            System.out.println("CALLING Substructure");
