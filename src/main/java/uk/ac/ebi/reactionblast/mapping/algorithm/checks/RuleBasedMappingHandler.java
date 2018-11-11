@@ -38,7 +38,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.isMatch;
+import static org.openscience.smsd.tools.Utility.isMatch;
 
 /**
  *

@@ -184,38 +184,12 @@ public class MCSThread implements Callable<MCSSolution> {
     public synchronized MCSSolution call() throws Exception {
         boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
 
-        AtomMatcher am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
-        BondMatcher bm = AtomBondMatcher.bondMatcher(false, false);
+        AtomMatcher am;
+        BondMatcher bm;
 
         try {
-            if (DEBUG1) {
-                String createSM1 = null;
-                String createSM2 = null;
-                try {
-                    createSM1 = smiles.create(this.compound1);
-                    createSM2 = smiles.create(this.compound2);
-                } catch (CDKException e) {
-                    LOGGER.error(SEVERE, "Unable to generate SMILES: ", e.getMessage());
-                }
-                System.out.println("==============================================");
-                System.out.println("Q: " + getCompound1().getID()
-                        + " molQ: " + createSM1
-                        + NEW_LINE
-                        + " T: " + getCompound2().getID()
-                        + " molT: " + createSM2
-                        + NEW_LINE
-                        + " atomsE: " + compound1.getAtomCount()
-                        + " atomsP: " + compound2.getAtomCount()
-                        + " [bonds: " + bm
-                        + " rings: " + ringFlag
-                        + " isHasPerfectRings: " + isHasPerfectRings()
-                        + "]");
-                System.out.println("==============================================");
-
-            }
-
             /*
-                 * IMP: Do not perform substructure matching for disconnected molecules
+             * IMP: Do not perform substructure matching for disconnected molecules
              */
             boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
             // boolean moleculeConnected = true;
@@ -245,20 +219,28 @@ public class MCSThread implements Callable<MCSSolution> {
                     System.out.println("---1.1---");
                 }
                 Substructure substructure;
+                am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
+                bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                 substructure = new Substructure(ac1, ac2, am, bm, true);
-                if (!substructure.isSubgraph()) {
-                    if (DEBUG1) {
-                        System.out.println("---1.2---");
-                    }
-                    substructure = new Substructure(ac1, ac2, am, bm, true);
-                }
+
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
+                    am = AtomBondMatcher.atomMatcher(false, ringFlag);
+                    bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
                     if (DEBUG1) {
                         System.out.println("---1.3---");
                     }
                     substructure = new Substructure(ac1, ac2,
                             am, bm, true);
+                } else if (moleculeConnected && !substructure.isSubgraph()) {
+                    am = AtomBondMatcher.atomMatcher(false, false);
+                    bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
+                    if (DEBUG1) {
+                        System.out.println("---1.2---");
+                    }
+                    substructure = new Substructure(ac1, ac2, am, bm, true);
                 }
                 substructure.setChemFilters(true, true, true);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
@@ -301,16 +283,25 @@ public class MCSThread implements Callable<MCSSolution> {
                 if (DEBUG1) {
                     System.out.println("---2.1---");
                 }
+                am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
+                bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
                 substructure = new Substructure(ac2, ac1, am, bm, true);
-                if (!substructure.isSubgraph()) {
-                    if (DEBUG1) {
-                        System.out.println("---2.2---");
-                    }
-                    substructure = new Substructure(ac2, ac1, am, bm, true);
-                }
+
                 if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
+                    am = AtomBondMatcher.atomMatcher(false, ringFlag);
+                    bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
                     if (DEBUG1) {
                         System.out.println("---2.3---");
+                    }
+                    substructure = new Substructure(ac2, ac1, am, bm, true);
+                } else if (moleculeConnected && !substructure.isSubgraph()) {
+                    am = AtomBondMatcher.atomMatcher(false, false);
+                    bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
+
+                    if (DEBUG1) {
+                        System.out.println("---2.2---");
                     }
                     substructure = new Substructure(ac2, ac1, am, bm, true);
                 }
@@ -372,11 +363,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         + " molT: " + createSM2
                         + NEW_LINE
                         + " atomsE: " + compound1.getAtomCount()
-                        + " atomsP: " + compound2.getAtomCount()
-                        + " [bonds: " + bm
-                        + " rings: " + ringFlag
-                        + " isHasPerfectRings: " + isHasPerfectRings()
-                        + "]");
+                        + " atomsP: " + compound2.getAtomCount());
                 System.out.println("==============================================");
 
             }
@@ -520,7 +507,7 @@ public class MCSThread implements Callable<MCSSolution> {
         IAtomContainer ac2 = duplicate(getCompound2());
         Isomorphism isomorphism;
         int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
-        boolean moleculeConnected = isMoleculeConnected(ac1, ac2);
+        //boolean moleculeConnected = isMoleculeConnected(ac1, ac2);
         boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
 
         if (DEBUG3) {
@@ -544,35 +531,6 @@ public class MCSThread implements Callable<MCSSolution> {
                 ringMatch = ringFlag;
                 ringSizeMatch = isHasPerfectRings();
 
-                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
-                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
-
-                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                        compound1.getAtomCount(), compound2.getAtomCount(),
-                        compound1.getBondCount(), compound2.getBondCount(),
-                        atomType,
-                        bondMatch,
-                        ringMatch,
-                        ringSizeMatch,
-                        numberOfCyclesEduct,
-                        numberOfCyclesProduct
-                );
-                if (ThreadSafeCache.getInstance().containsKey(key)) {
-                    if (DEBUG3) {
-                        System.out.println("===={Aladdin} Mapping {Gini}====");
-                    }
-                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                    mcs = copyOldSolutionToNew(
-                            getQueryPosition(), getTargetPosition(),
-                            getCompound1(), getCompound2(),
-                            solution);
-
-                } else {
-                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                            am, bm);
-                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                }
-
                 break;
 
             case MIN:
@@ -582,35 +540,14 @@ public class MCSThread implements Callable<MCSSolution> {
                 ringMatch = isHasPerfectRings();
                 ringSizeMatch = false;
 
-                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
-                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
+                break;
 
-                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                        compound1.getAtomCount(), compound2.getAtomCount(),
-                        compound1.getBondCount(), compound2.getBondCount(),
-                        atomType,
-                        bondMatch,
-                        ringMatch,
-                        ringSizeMatch,
-                        numberOfCyclesEduct,
-                        numberOfCyclesProduct
-                );
+            case MAX:
 
-                if (ThreadSafeCache.getInstance().containsKey(key)) {
-                    if (DEBUG3) {
-                        System.out.println("===={Aladdin} Mapping {Gini}====");
-                    }
-                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                    mcs = copyOldSolutionToNew(
-                            getQueryPosition(), getTargetPosition(),
-                            getCompound1(), getCompound2(),
-                            solution);
-
-                } else {
-                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                            am, bm);
-                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                }
+                atomType = false;
+                bondMatch = true;
+                ringMatch = isHasPerfectRings();
+                ringSizeMatch = false;
 
                 break;
             default:
@@ -620,40 +557,37 @@ public class MCSThread implements Callable<MCSSolution> {
                 ringMatch = isHasPerfectRings();
                 ringSizeMatch = false;
 
-                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
-                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
-
-                key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                        compound1.getAtomCount(), compound2.getAtomCount(),
-                        compound1.getBondCount(), compound2.getBondCount(),
-                        atomType,
-                        bondMatch,
-                        ringMatch,
-                        ringSizeMatch,
-                        numberOfCyclesEduct,
-                        numberOfCyclesProduct
-                );
-                if (ThreadSafeCache.getInstance().containsKey(key)) {
-                    if (DEBUG3) {
-                        System.out.println("===={Aladdin} Mapping {Gini}====");
-                    }
-                    MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
-                    mcs = copyOldSolutionToNew(
-                            getQueryPosition(), getTargetPosition(),
-                            getCompound1(), getCompound2(),
-                            solution);
-
-                } else {
-                    if (DEBUG3) {
-                        System.out.println("====NEW MAPPING====");
-                    }
-                    isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
-                            am, bm);
-                    mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
-                }
-
                 break;
         }
+
+        am = AtomBondMatcher.atomMatcher(atomType, ringSizeMatch);
+        bm = AtomBondMatcher.bondMatcher(bondMatch, ringMatch);
+
+        key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
+                compound1.getAtomCount(), compound2.getAtomCount(),
+                compound1.getBondCount(), compound2.getBondCount(),
+                atomType,
+                bondMatch,
+                ringMatch,
+                ringSizeMatch,
+                numberOfCyclesEduct,
+                numberOfCyclesProduct
+        );
+        if (ThreadSafeCache.getInstance().containsKey(key)) {
+            if (DEBUG3) {
+                System.out.println("===={Aladdin} Mapping {Gini}====");
+            }
+            MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
+            mcs = copyOldSolutionToNew(
+                    getQueryPosition(), getTargetPosition(),
+                    getCompound1(), getCompound2(),
+                    solution);
+
+        } else {
+            isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, am, bm);
+            mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
+        }
+
         //System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
         return mcs;
 
@@ -724,25 +658,15 @@ public class MCSThread implements Callable<MCSSolution> {
         boolean connected1 = true;
 
         IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-            if (DEBUG1) {
-                System.out.println("QContainer size " + a.getAtomCount());
-            }
-            if (a.getAtomCount() == 1) {
-                connected1 = false;
-            }
+        if (partitionIntoMolecules.getAtomContainerCount() > 1) {
+            connected1 = false;
         }
 
         boolean connected2 = true;
 
         partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-            if (DEBUG1) {
-                System.out.println("TContainer size " + a.getAtomCount());
-            }
-            if (a.getAtomCount() == 1) {
-                connected2 = false;
-            }
+        if (partitionIntoMolecules.getAtomContainerCount() > 1) {
+            connected2 = false;
         }
 
         if (DEBUG1) {

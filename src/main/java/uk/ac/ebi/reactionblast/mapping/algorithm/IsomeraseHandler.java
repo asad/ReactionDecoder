@@ -50,8 +50,8 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
-import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.findSubgraph;
-import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.isMatch;
+import static org.openscience.smsd.tools.Utility.findSubgraph;
+import static org.openscience.smsd.tools.Utility.isMatch;
 
 /**
  *

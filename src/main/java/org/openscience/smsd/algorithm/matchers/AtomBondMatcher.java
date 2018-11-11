@@ -169,6 +169,13 @@ public class AtomBondMatcher {
 
         if (shouldMatchRings) {
             if (DEBUG) {
+                System.out.println("Ring Match Choosen " + shouldMatchRings);
+            }
+            bm = BondMatcher.forRing();
+        }
+
+        if (matchBond && shouldMatchRings) {
+            if (DEBUG) {
                 System.out.println("Order & Ring Match Choosen " + shouldMatchRings);
             }
             bm = BondMatcher.forStrictOrder();

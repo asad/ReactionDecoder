@@ -24,9 +24,18 @@ package org.openscience.smsd.tools;
 
 import static java.lang.System.getProperty;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.openscience.cdk.interfaces.IBond;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 
 /**
  *
@@ -116,5 +125,60 @@ public class Utility {
         }
 //        System.out.println("Bubble Sort: " + sortedVector);
         return sortedVector;
+    }
+
+    /**
+     * If either is a subgraph
+     *
+     * @param ac1
+     * @param ac2
+     * @return
+     * @throws CDKException
+     */
+    public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2, boolean either) throws CDKException {
+
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+        if (ac1.getAtomCount() <= ac2.getAtomCount()) {
+            Substructure pattern = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false); // create pattern
+            return pattern.isSubgraph();
+        }
+        if (either && ac1.getAtomCount() >= ac2.getAtomCount()) {
+            Substructure pattern = new Substructure(ac2, ac1, atomMatcher, bondMatcher, false); // create pattern
+            return pattern.isSubgraph();
+        }
+        return false;
+    }
+
+    /**
+     * ac1 is subgraph of ac2
+     *
+     * @param source
+     * @param target
+     * @param matchBonds
+     * @param shouldMatchRings
+     * @param matchAtomType
+     * @return
+     */
+    public static Map<IAtom, IAtom> findSubgraph(
+            IAtomContainer source, IAtomContainer target,
+            boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(matchAtomType, shouldMatchRings);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
+
+        Substructure s;
+        if (source.getAtomCount() <= target.getAtomCount()) {
+            try {
+                s = new Substructure(source, target, atomMatcher, bondMatcher, false);
+                s.setChemFilters(true, true, true);
+                return s.getFirstAtomMapping().getMappingsByAtoms();
+            } catch (CDKException ex) {
+                Logger.getLogger(uk.ac.ebi.reactionblast.mechanism.helper.Utility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return new HashMap<>();
     }
 }
