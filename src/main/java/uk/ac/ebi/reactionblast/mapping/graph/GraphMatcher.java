@@ -257,7 +257,7 @@ public class GraphMatcher extends Debugger {
                 switch (mh.getTheory()) {
 
                     case MIN:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
+                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductRingCount(numberOfCyclesEduct);
                         mcsThread.setProductRingCount(numberOfCyclesProduct);
@@ -265,14 +265,14 @@ public class GraphMatcher extends Debugger {
                         break;
 
                     case MAX:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
+                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductRingCount(numberOfCyclesEduct);
                         mcsThread.setProductRingCount(numberOfCyclesProduct);
                         break;
 
                     case MIXTURE:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, false);
+                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductRingCount(numberOfCyclesEduct);
                         mcsThread.setProductRingCount(numberOfCyclesProduct);
@@ -287,7 +287,7 @@ public class GraphMatcher extends Debugger {
                          * atom type=true;
                          * Ex: R05219
                          */
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product, false, ring, true);
+                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
                         mcsThread.setHasPerfectRings(ringSizeEqual);
                         mcsThread.setEductRingCount(numberOfCyclesEduct);
                         mcsThread.setProductRingCount(numberOfCyclesProduct);

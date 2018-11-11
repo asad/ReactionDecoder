@@ -33,7 +33,6 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
-import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.CycleFinder;
@@ -259,30 +258,21 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             ac.getAtom(i).setID(container.getAtom(i).getID());
             if (ac.getAtom(i).getProperties() == null) {
                 ac.getAtom(i).setProperties(new HashMap<>());
+            } else {
+                ac.getAtom(i).setID(container.getAtom(i).getID());
+                ac.getAtom(i).setFlags(container.getAtom(i).getFlags());
+                ac.getAtom(i).setProperties(container.getAtom(i).getProperties());
+                ac.getAtom(i).setIsInRing(container.getAtom(i).isInRing());
+                ac.getAtom(i).setIsAromatic(container.getAtom(i).isAromatic());
             }
-//            if (!(ac.getAtom(i) instanceof IPseudoAtom)
-//                    && ac.getAtom(i).getMassNumber() == null) {
-//                try {
-////                    Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-////                    System.out.println("atomicNumber " + atomicNumber);
-//                    int massNumber = Isotopes.getInstance().getMajorIsotope(ac.getAtom(i).getAtomicNumber()).getMassNumber();
-//                    ac.getAtom(i).setMassNumber(massNumber);
-//                } catch (Exception e) {
-//                    //e.printStackTrace();
-//                    ac.getAtom(i).setMassNumber(11);
-//                    LOGGER.error(Level.WARNING, "Failed to set mass number ", ac.getAtom(i).getSymbol(), e.getMessage());
-//                }
-//            } else if ((ac.getAtom(i) instanceof IPseudoAtom)) {
-//                //PseudoAtoms
-////                Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-////                System.out.println("atomicNumber " + atomicNumber);
-//                ac.getAtom(i).setMassNumber(11);
-//            }
         }
 
         for (int i = 0; i < ac.getBondCount(); i++) {
             if (ac.getBond(i).getProperties() == null) {
                 ac.getBond(i).setProperties(new HashMap<>());
+            } else {
+                ac.getBond(i).setFlags(container.getBond(i).getFlags());
+                ac.getBond(i).setProperties(container.getBond(i).getProperties());
             }
         }
 

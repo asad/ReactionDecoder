@@ -445,6 +445,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     false,
                     false,
                     false,
+                    false,
                     numberOfCyclesEduct,
                     numberOfCyclesProduct
             );
@@ -555,27 +556,33 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     }
 
     synchronized String generateUniqueKey(
-            IAtomContainer educt, IAtomContainer product,
+            IAtomContainer compound1,
+            IAtomContainer compound2,
             String id1, String id2,
             int atomCount1, int atomCount2,
             int bondCount1, int bondCount2,
-            boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
+            boolean atomtypeMatcher,
+            boolean bondMatcher,
+            boolean ringMatcher,
+            boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
-//        System.out.println("====generate Unique Key====");
+        //System.out.println("====generate Unique Key====");
         StringBuilder key = new StringBuilder();
         key.append(id1).append(id2)
                 .append(atomCount1)
                 .append(atomCount2)
                 .append(bondCount1)
                 .append(bondCount2)
+                .append(atomtypeMatcher)
                 .append(bondMatcher)
                 .append(ringMatcher)
                 .append(hasPerfectRings)
                 .append(numberOfCyclesEduct)
                 .append(numberOfCyclesProduct);
+
         try {
-            int[] sm1 = getCircularFP(educt);
-            int[] sm2 = getCircularFP(product);
+            int[] sm1 = getCircularFP(compound1);
+            int[] sm2 = getCircularFP(compound2);
             key.append(Arrays.toString(sm1));
             key.append(Arrays.toString(sm2));
         } catch (CDKException ex) {

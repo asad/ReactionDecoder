@@ -50,7 +50,8 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.findSubgraph;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.isMatch;
 
 /**
  *
@@ -356,17 +357,17 @@ class IsomeraseHandler {
         IAtomContainer lGlutamateAC = smilesParser.parseSmiles(lGlutamate);
         IAtomContainer patternAC = smilesParser.parseSmiles(pattern);
 
-        if ((RuleBasedMappingHandler.isMatch(s, lGlutamateAC) && RuleBasedMappingHandler.isMatch(t, lGlutamineAC))
-                || (RuleBasedMappingHandler.isMatch(s, lGlutamineAC) && RuleBasedMappingHandler.isMatch(t, lGlutamateAC))) {
+        if ((isMatch(s, lGlutamateAC, false) && isMatch(t, lGlutamineAC, false))
+                || (isMatch(s, lGlutamineAC, false) && isMatch(t, lGlutamateAC, false))) {
             IAtomContainer ac = s;
-            Iterable<Map<IAtom, IAtom>> subgraph = RuleBasedMappingHandler.findSubgraph(patternAC, ac, true, false, true);
-            if (subgraph != null && !subgraph.iterator().hasNext()) {
+            Map<IAtom, IAtom> subgraph = findSubgraph(patternAC, ac, true, true, false);
+            if (subgraph != null && !subgraph.isEmpty()) {
                 ac = t;
-                subgraph = RuleBasedMappingHandler.findSubgraph(patternAC, ac, true, false, true);
+                subgraph = findSubgraph(patternAC, ac, true, true, false);
             }
 
-            if (subgraph != null && subgraph.iterator().hasNext()) {
-                Map<IAtom, IAtom> map = subgraph.iterator().next();
+            if (subgraph != null && !subgraph.isEmpty()) {
+                Map<IAtom, IAtom> map = subgraph;
                 for (IAtom a : map.values()) {
                     for (IAtom b : map.values()) {
                         if (a != b) {

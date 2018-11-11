@@ -29,9 +29,7 @@ import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
@@ -40,12 +38,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import org.openscience.smsd.Substructure;
-import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
-import org.openscience.smsd.algorithm.matchers.AtomMatcher;
-import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.graph.algorithm.VentoFoggia;
-import org.openscience.smsd.helper.Mappings;
+import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.isMatch;
 
 /**
  *
@@ -122,7 +115,7 @@ public final class RuleBasedMappingHandler implements Serializable {
 
             if (ac1.getAtomCount() >= getSmartsPhosphate().getAtomCount()
                     || ac1.getAtomCount() >= getSmartsSulphate().getAtomCount()) {
-                if (isMatch(getSmartsPhosphate(), ac1) || isMatch(getSmartsSulphate(), ac1)) {
+                if (isMatch(getSmartsPhosphate(), ac1, false) || isMatch(getSmartsSulphate(), ac1, false)) {
                     if (smallestMatchedReactant > ac1.getAtomCount()) {
                         smallestMatchedReactant = ac1.getAtomCount();
                     }
@@ -140,7 +133,7 @@ public final class RuleBasedMappingHandler implements Serializable {
             }
             if (ac2.getAtomCount() >= getSmartsPhosphate().getAtomCount()
                     || ac2.getAtomCount() >= getSmartsSulphate().getAtomCount()) {
-                if (isMatch(getSmartsPhosphate(), ac2) || isMatch(getSmartsSulphate(), ac2)) {
+                if (isMatch(getSmartsPhosphate(), ac2, false) || isMatch(getSmartsSulphate(), ac2, false)) {
                     if (smallestMatchedProduct > ac2.getAtomCount()) {
                         smallestMatchedProduct = ac2.getAtomCount();
                     }
@@ -171,8 +164,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                         out.println("Product found " + ac2.getAtomCount());
                     }
                     if (DEBUG2) {
-                        out.println("Match 1 " + isMatch(getSmartsWater(), ac1));
-                        out.println("Match 2 " + isMatch(getSmartsPhosphate(), ac2));
+                        out.println("Match 1 " + isMatch(getSmartsWater(), ac1, false));
+                        out.println("Match 2 " + isMatch(getSmartsPhosphate(), ac2, false));
                         out.println("Query " + ac1.getAtomCount());
                         out.println("Target " + ac2.getAtomCount());
                         out.println("smallest R  " + smallestMatchedReactant);
@@ -187,8 +180,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                     Rule 1_A water and Phosphate
                      */
                     if (ac1.getAtomCount() == 1
-                            && isMatch(getSmartsWater(), ac1)
-                            && isMatch(getSmartsPhosphate(), ac2)
+                            && isMatch(getSmartsWater(), ac1, false)
+                            && isMatch(getSmartsPhosphate(), ac2, false)
                             && ac2.getAtomCount() == smallestMatchedProduct) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -204,8 +197,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                     } else /*
                         Rule 1_B phophate and water
                      */ if (ac2.getAtomCount() == 1
-                            && isMatch(getSmartsWater(), ac2)
-                            && isMatch(getSmartsPhosphate(), ac1)
+                            && isMatch(getSmartsWater(), ac2, false)
+                            && isMatch(getSmartsPhosphate(), ac1, false)
                             && ac1.getAtomCount() == smallestMatchedReactant) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -223,8 +216,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                     Rule 1_C water and Sulphate
                      */
                     if (ac1.getAtomCount() == 1
-                            && isMatch(getSmartsWater(), ac1)
-                            && isMatch(getSmartsSulphate(), ac2)
+                            && isMatch(getSmartsWater(), ac1, false)
+                            && isMatch(getSmartsSulphate(), ac2, false)
                             && ac2.getAtomCount() == smallestMatchedProduct) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -240,8 +233,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                     } else /*
                         Rule 1_D Sulphate and water
                      */ if (ac2.getAtomCount() == 1
-                            && isMatch(getSmartsWater(), ac2)
-                            && isMatch(getSmartsSulphate(), ac1)
+                            && isMatch(getSmartsWater(), ac2, false)
+                            && isMatch(getSmartsSulphate(), ac1, false)
                             && ac1.getAtomCount() == smallestMatchedReactant) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -257,9 +250,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     }/*
                         Rule 2 L_Glutamate and L_Glutamine
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamate(), ac1) && isMatch(getSmartsGlutamine(), ac2))
+                            && isMatch(getSmartsGlutamate(), ac1, false) && isMatch(getSmartsGlutamine(), ac2, false))
                             || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamine(), ac1) && isMatch(getSmartsGlutamate(), ac2))) {
+                            && isMatch(getSmartsGlutamine(), ac1, false) && isMatch(getSmartsGlutamate(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
@@ -268,9 +261,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     } /*
                         Rule 2 L_Glutamate and L_Glutamine_clipped
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamate(), ac1) && isMatch(getSmartsGlutamineClipped(), ac2))
+                            && isMatch(getSmartsGlutamate(), ac1, false) && isMatch(getSmartsGlutamineClipped(), ac2, false))
                             || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamineClipped(), ac1) && isMatch(getSmartsGlutamate(), ac2))) {
+                            && isMatch(getSmartsGlutamineClipped(), ac1, false) && isMatch(getSmartsGlutamate(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
@@ -279,9 +272,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     }/*
                         Rule 3 D_Glutamate and TwoOxoglutarate
                      */ else if ((ac2.getAtomCount() == 10 && ac1.getAtomCount() == 10
-                            && isMatch(getSmartsTwoOxoglutarate(), ac2) && isMatch(getSmartsD_Glutamate(), ac1))
+                            && isMatch(getSmartsTwoOxoglutarate(), ac2, false) && isMatch(getSmartsD_Glutamate(), ac1, false))
                             || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsTwoOxoglutarate(), ac1) && isMatch(getSmartsD_Glutamate(), ac2))) {
+                            && isMatch(getSmartsTwoOxoglutarate(), ac1, false) && isMatch(getSmartsD_Glutamate(), ac2, false))) {
 
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -291,10 +284,10 @@ public final class RuleBasedMappingHandler implements Serializable {
 
                     }/*
                         Rule 4 water and Acetate (exact match)
-                     */ else if ((ac1.getAtomCount() == 1 && isMatch(getSmartsWater(), ac1)
-                            && ac2.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac2))
-                            || (ac2.getAtomCount() == 1 && isMatch(getSmartsWater(), ac2)
-                            && ac1.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac1))) {
+                     */ else if ((ac1.getAtomCount() == 1 && isMatch(getSmartsWater(), ac1, false)
+                            && ac2.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac2, false))
+                            || (ac2.getAtomCount() == 1 && isMatch(getSmartsWater(), ac2, false)
+                            && ac1.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac1, false))) {
                         if (DEBUG1) {
                             out.println("Rule 4 Water and Acetate found");
                         }
@@ -302,10 +295,10 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 5 ADP_ATP
-                     */ else if ((ac1.getAtomCount() == getSmartsATP().getAtomCount() && isMatch(getSmartsATP(), ac1)
-                            && isMatch(getSmartsADP(), ac2))
-                            || (ac1.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac1)
-                            && isMatch(getSmartsATP(), ac2))) {
+                     */ else if ((ac1.getAtomCount() == getSmartsATP().getAtomCount() && isMatch(getSmartsATP(), ac1, false)
+                            && isMatch(getSmartsADP(), ac2, false))
+                            || (ac1.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac1, false)
+                            && isMatch(getSmartsATP(), ac2, false))) {
                         if (DEBUG1) {
                             out.println("Rule 5 ADP_ATP found");
                         }
@@ -313,10 +306,10 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 6 CoA_Acetyl_CoA
-                     */ else if ((ac1.getAtomCount() == getSmartsCoA().getAtomCount() && isMatch(getSmartsCoA(), ac1)
-                            && isMatch(getSmartsAcetyl_CoA(), ac2))
-                            || (ac1.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac1)
-                            && isMatch(getSmartsCoA(), ac2))) {
+                     */ else if ((ac1.getAtomCount() == getSmartsCoA().getAtomCount() && isMatch(getSmartsCoA(), ac1, false)
+                            && isMatch(getSmartsAcetyl_CoA(), ac2, false))
+                            || (ac1.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac1, false)
+                            && isMatch(getSmartsCoA(), ac2, false))) {
                         if (DEBUG1) {
                             out.println("Rule 6 CoA_Acetyl_CoA found");
                         }
@@ -324,10 +317,10 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 7 C00003_C00006
-                     */ else if ((ac1.getAtomCount() == getSmartsC00003().getAtomCount() && isMatch(getSmartsC00003(), ac1)
-                            && isMatch(getSmartsC00006(), ac2))
-                            || (ac1.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac1)
-                            && isMatch(getSmartsC00003(), ac2))) {
+                     */ else if ((ac1.getAtomCount() == getSmartsC00003().getAtomCount() && isMatch(getSmartsC00003(), ac1, false)
+                            && isMatch(getSmartsC00006(), ac2, false))
+                            || (ac1.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac1, false)
+                            && isMatch(getSmartsC00003(), ac2, false))) {
                         if (DEBUG1) {
                             out.println("Rule 7 C00003_C00006 found");
                         }
@@ -335,10 +328,10 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 8 C00004_C00005
-                     */ else if ((ac1.getAtomCount() == getSmartsC00004().getAtomCount() && isMatch(getSmartsC00004(), ac1)
-                            && isMatch(getSmartsC00005(), ac2))
-                            || (ac1.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac1)
-                            && isMatch(getSmartsC00004(), ac2))) {
+                     */ else if ((ac1.getAtomCount() == getSmartsC00004().getAtomCount() && isMatch(getSmartsC00004(), ac1, false)
+                            && isMatch(getSmartsC00005(), ac2, false))
+                            || (ac1.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac1, false)
+                            && isMatch(getSmartsC00004(), ac2, false))) {
                         if (DEBUG1) {
                             out.println("Rule 8 C00004_C00005 found");
                         }
@@ -346,10 +339,10 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     } /*
                         Rule 9 C00022_C00041
-                     */ else if ((ac1.getAtomCount() == getSmartsPyruvate().getAtomCount() && isMatch(getSmartsPyruvate(), ac1)
-                            && isMatch(getSmartsAlanine(), ac2))
-                            || (ac1.getAtomCount() == getSmartsAlanine().getAtomCount() && isMatch(getSmartsAlanine(), ac1)
-                            && isMatch(getSmartsPyruvate(), ac2))) {
+                     */ else if ((ac1.getAtomCount() == getSmartsPyruvate().getAtomCount() && isMatch(getSmartsPyruvate(), ac1, false)
+                            && isMatch(getSmartsAlanine(), ac2, false))
+                            || (ac1.getAtomCount() == getSmartsAlanine().getAtomCount() && isMatch(getSmartsAlanine(), ac1, false)
+                            && isMatch(getSmartsPyruvate(), ac2, false))) {
                         if (DEBUG1) {
                             out.println("Rule 9 C00022_C00041 found");
                         }
@@ -357,8 +350,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 10 N_C
-                     */ else if (isMatch(getSmartsNRule(), ac1) && isMatch(getSmartsCRule(), ac2)
-                            || (isMatch(getSmartsCRule(), ac1) && isMatch(getSmartsNRule(), ac2))) {
+                     */ else if (isMatch(getSmartsNRule(), ac1, false) && isMatch(getSmartsCRule(), ac2, false)
+                            || (isMatch(getSmartsCRule(), ac1, false) && isMatch(getSmartsNRule(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
@@ -428,82 +421,6 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     private synchronized void setRuleMatched(boolean ruleMatched) {
         this.ruleMatched = ruleMatched;
-    }
-
-    /**
-     * ac1 is subgraph of ac2
-     *
-     * @param source
-     * @param target
-     * @param matchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
-     * @return
-     */
-    public static Iterable<Map<IAtom, IAtom>> findSubgraph(
-            IAtomContainer source, IAtomContainer target,
-            boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
-        if (source == null) {
-            return null;
-        }
-
-        AtomMatcher am = null;
-        BondMatcher bm = null;
-
-        if (!(source instanceof IQueryAtomContainer)
-                && !(target instanceof IQueryAtomContainer)) {
-            am = AtomBondMatcher.atomMatcher(matchAtomType, shouldMatchRings);
-            bm = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
-
-        }
-        if (source instanceof IQueryAtomContainer) {
-            am = AtomBondMatcher.queryAtomMatcher();
-            bm = AtomBondMatcher.queryBondMatcher();
-        }
-
-        if (source instanceof IQueryAtomContainer) {
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = findSubstructure.matchAll((IQueryAtomContainer) target).limit(1);
-            return matchAll.toAtomMap();
-
-        } else if (source.getAtomCount() <= target.getAtomCount()) {
-            VentoFoggia findSubstructure = VentoFoggia.findSubstructure(source, am, bm); // create pattern
-            Mappings matchAll = findSubstructure.matchAll(target).limit(1);
-            return matchAll.toAtomMap();
-
-        }
-        return null;
-    }
-
-    /**
-     * If either is a subgraph
-     *
-     * @param ac1
-     * @param ac2
-     * @return
-     * @throws CDKException
-     */
-    public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2) throws CDKException {
-
-        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
-        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, false);
-
-        if (ac1.getAtomCount() <= ac2.getAtomCount()) {
-            Substructure pattern = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false); // create pattern
-
-            if (DEBUG2) {
-                out.println("Sub " + pattern.isSubgraph());
-            }
-            return pattern.isSubgraph();
-        }
-        if (ac1.getAtomCount() >= ac2.getAtomCount()) {
-            Substructure pattern = new Substructure(ac2, ac1, atomMatcher, bondMatcher, false); // create pattern
-            if (DEBUG2) {
-                out.println("Sub " + pattern.isSubgraph());
-            }
-            return pattern.isSubgraph();
-        }
-        return false;
     }
 
     private void setRulesSmiles() throws CDKException {

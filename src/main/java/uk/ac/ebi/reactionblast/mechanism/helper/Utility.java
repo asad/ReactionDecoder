@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import static java.util.Arrays.sort;
 import java.util.Collection;
 import static java.util.Collections.sort;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
@@ -54,6 +57,10 @@ import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import org.openscience.smsd.Substructure;
+import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
+import org.openscience.smsd.algorithm.matchers.AtomMatcher;
+import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
@@ -658,5 +665,60 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, -1, type);
         fragmentsRC.add(reactionCenterFragment);
         return fragmentsRC;
+    }
+
+    /**
+     * If either is a subgraph
+     *
+     * @param ac1
+     * @param ac2
+     * @return
+     * @throws CDKException
+     */
+    public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2, boolean either) throws CDKException {
+
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+        if (ac1.getAtomCount() <= ac2.getAtomCount()) {
+            Substructure pattern = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false); // create pattern
+            return pattern.isSubgraph();
+        }
+        if (either && ac1.getAtomCount() >= ac2.getAtomCount()) {
+            Substructure pattern = new Substructure(ac2, ac1, atomMatcher, bondMatcher, false); // create pattern
+            return pattern.isSubgraph();
+        }
+        return false;
+    }
+
+    /**
+     * ac1 is subgraph of ac2
+     *
+     * @param source
+     * @param target
+     * @param matchBonds
+     * @param shouldMatchRings
+     * @param matchAtomType
+     * @return
+     */
+    public static Map<IAtom, IAtom> findSubgraph(
+            IAtomContainer source, IAtomContainer target,
+            boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(matchAtomType, shouldMatchRings);
+        BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
+
+        Substructure s;
+        if (source.getAtomCount() <= target.getAtomCount()) {
+            try {
+                s = new Substructure(source, target, atomMatcher, bondMatcher, false);
+                s.setChemFilters(true, true, true);
+                return s.getFirstAtomMapping().getMappingsByAtoms();
+            } catch (CDKException ex) {
+                Logger.getLogger(Utility.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return new HashMap<>();
     }
 }

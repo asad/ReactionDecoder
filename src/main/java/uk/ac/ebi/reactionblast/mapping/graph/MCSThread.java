@@ -73,10 +73,6 @@ public class MCSThread implements Callable<MCSSolution> {
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(MCSThread.class);
 
-    private boolean stereoFlag;
-    private boolean fragmentFlag;
-    private boolean energyFlag;
-
     private final SmilesGenerator smiles;
 
     static final String NEW_LINE = getProperty("line.separator");
@@ -104,23 +100,11 @@ public class MCSThread implements Callable<MCSSolution> {
     /**
      *
      */
-    protected final boolean bondMatcher;
-
-    /**
-     *
-     */
-    protected final boolean ringMatcher;
-
-    /**
-     *
-     */
     protected final IMappingAlgorithm theory;
 
     /**
      *
      */
-    protected final boolean atomMatcher;
-
     long startTime;
     private boolean hasRings;
     private int numberOfCyclesEduct;
@@ -140,34 +124,13 @@ public class MCSThread implements Callable<MCSSolution> {
      * @throws org.openscience.cdk.exception.CDKException
      */
     MCSThread(IMappingAlgorithm theory, int queryPosition, int targetPosition,
-            IAtomContainer educt, IAtomContainer product,
-            boolean bondMatcher, boolean ringMatcher, boolean atomMatcher)
+            IAtomContainer educt, IAtomContainer product)
             throws CloneNotSupportedException, CDKException {
-
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
-            MoleculeInitializer.initializeMolecule(educt);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. r.mol: ", ex.getMessage());
-        }
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(product);
-            MoleculeInitializer.initializeMolecule(product);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. p.mol: ", ex.getMessage());
-        }
-
-        this.stereoFlag = true;
-        this.fragmentFlag = true;
-        this.energyFlag = true;
         this.compound1 = getNewContainerWithIDs(educt);
         this.compound2 = getNewContainerWithIDs(product);
         this.queryPosition = queryPosition;
         this.targetPosition = targetPosition;
-        this.bondMatcher = bondMatcher;
-        this.ringMatcher = ringMatcher;
         this.theory = theory;
-        this.atomMatcher = atomMatcher;
         this.numberOfCyclesEduct = 0;
         this.numberOfCyclesProduct = 0;
 
@@ -177,6 +140,19 @@ public class MCSThread implements Callable<MCSSolution> {
                                 Cycles.essential())));
         aromaticity.apply(this.compound1);
         aromaticity.apply(this.compound2);
+
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(this.compound1);
+            MoleculeInitializer.initializeMolecule(this.compound1);
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. r.mol: ", ex.getMessage());
+        }
+        try {
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(this.compound2);
+            MoleculeInitializer.initializeMolecule(this.compound2);
+        } catch (CDKException ex) {
+            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. p.mol: ", ex.getMessage());
+        }
 
         /*
          * create SMILES
@@ -206,6 +182,8 @@ public class MCSThread implements Callable<MCSSolution> {
 
     @Override
     public synchronized MCSSolution call() throws Exception {
+        boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
+
         AtomMatcher am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
         BondMatcher bm = AtomBondMatcher.bondMatcher(false, false);
 
@@ -229,7 +207,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount()
                         + " [bonds: " + bm
-                        + " rings: " + ringMatcher
+                        + " rings: " + ringFlag
                         + " isHasPerfectRings: " + isHasPerfectRings()
                         + "]");
                 System.out.println("==============================================");
@@ -282,7 +260,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     substructure = new Substructure(ac1, ac2,
                             am, bm, true);
                 }
-                substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+                substructure.setChemFilters(true, true, true);
 //                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                 if (substructure.isSubgraph()
                         && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
@@ -336,7 +314,7 @@ public class MCSThread implements Callable<MCSSolution> {
                     }
                     substructure = new Substructure(ac2, ac1, am, bm, true);
                 }
-                substructure.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+                substructure.setChemFilters(true, true, true);
 
                 if (substructure.isSubgraph()
                         && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
@@ -396,7 +374,7 @@ public class MCSThread implements Callable<MCSSolution> {
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount()
                         + " [bonds: " + bm
-                        + " rings: " + ringMatcher
+                        + " rings: " + ringFlag
                         + " isHasPerfectRings: " + isHasPerfectRings()
                         + "]");
                 System.out.println("==============================================");
@@ -436,24 +414,6 @@ public class MCSThread implements Callable<MCSSolution> {
         ac.setID(containerID);
 
         return ac;
-    }
-
-    synchronized void setStereoFlag(boolean b) {
-        this.stereoFlag = b;
-    }
-
-    /**
-     * @param fragmentFilterFlag the fragmentFlag to set
-     */
-    synchronized void setFragmentFilterFlag(boolean fragmentFilterFlag) {
-        this.fragmentFlag = fragmentFilterFlag;
-    }
-
-    /**
-     * @param energyFlag the energyFlag to set
-     */
-    synchronized void setEnergyFlag(boolean energyFlag) {
-        this.energyFlag = energyFlag;
     }
 
     private synchronized boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
@@ -571,18 +531,29 @@ public class MCSThread implements Callable<MCSSolution> {
         MCSSolution mcs;
         AtomMatcher am;
         BondMatcher bm;
+        boolean atomType = false;
+        boolean bondMatch = false;
+        boolean ringMatch = false;
+        boolean ringSizeMatch = false;
 
         switch (theory) {
             case RINGS:
-                am = AtomBondMatcher.atomMatcher(false, ringFlag);
-                bm = AtomBondMatcher.bondMatcher(false, false);
+
+                atomType = false;
+                bondMatch = false;
+                ringMatch = ringFlag;
+                ringSizeMatch = isHasPerfectRings();
+
+                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
+                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
 
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
-                        false,
-                        ringFlag,
-                        false,
+                        atomType,
+                        ringMatch,
+                        bondMatch,
+                        ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
                 );
@@ -605,15 +576,22 @@ public class MCSThread implements Callable<MCSSolution> {
                 break;
 
             case MIN:
-                am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
-                bm = AtomBondMatcher.bondMatcher(false, false);
+
+                atomType = true;
+                bondMatch = false;
+                ringMatch = isHasPerfectRings();
+                ringSizeMatch = isHasPerfectRings();
+
+                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
+                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
 
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
-                        false,
-                        false,
-                        true,
+                        atomType,
+                        ringMatch,
+                        bondMatch,
+                        ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
                 );
@@ -636,16 +614,22 @@ public class MCSThread implements Callable<MCSSolution> {
 
                 break;
             default:
-                am = AtomBondMatcher.atomMatcher(false, false);
-                bm = AtomBondMatcher.bondMatcher(false, false);
 
-//                    System.out.println("MCS Connected Default");
+                atomType = true;
+                bondMatch = false;
+                ringMatch = isHasPerfectRings();
+                ringSizeMatch = false;
+
+                am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
+                bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
+
                 key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
-                        false,
-                        isHasPerfectRings(),
-                        false,
+                        atomType,
+                        ringMatch,
+                        bondMatch,
+                        ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
                 );
@@ -660,6 +644,9 @@ public class MCSThread implements Callable<MCSSolution> {
                             solution);
 
                 } else {
+                    if (DEBUG3) {
+                        System.out.println("====NEW MAPPING====");
+                    }
                     isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS,
                             am, bm);
                     mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
@@ -667,7 +654,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
                 break;
         }
-//        System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
+        //System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
         return mcs;
 
     }
@@ -675,9 +662,16 @@ public class MCSThread implements Callable<MCSSolution> {
     private synchronized IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
         IAtomContainer a = ac.clone();
         a.setID(ac.getID());
+
         for (int i = 0; i < a.getAtomCount(); i++) {
             a.getAtom(i).setID(ac.getAtom(i).getID());
         }
+
+        ac.setProperties(ac.getProperties());
+        ac.setFlags(ac.getFlags());
+        ac.setID(ac.getID());
+        ac.notifyChanged();
+
         return a;
     }
 
@@ -772,7 +766,10 @@ public class MCSThread implements Callable<MCSSolution> {
             String id1, String id2,
             int atomCount1, int atomCount2,
             int bondCount1, int bondCount2,
-            boolean bondMatcher, boolean ringMatcher, boolean hasPerfectRings,
+            boolean atomtypeMatcher,
+            boolean bondMatcher,
+            boolean ringMatcher,
+            boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
         //System.out.println("====generate Unique Key====");
         StringBuilder key = new StringBuilder();
@@ -781,6 +778,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 .append(atomCount2)
                 .append(bondCount1)
                 .append(bondCount2)
+                .append(atomtypeMatcher)
                 .append(bondMatcher)
                 .append(ringMatcher)
                 .append(hasPerfectRings)
@@ -832,7 +830,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
     synchronized MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
 
-        isomorphism.setChemFilters(stereoFlag, fragmentFlag, energyFlag);
+        isomorphism.setChemFilters(true, true, true);
         if (DEBUG3) {
             try {
                 System.out.println("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
