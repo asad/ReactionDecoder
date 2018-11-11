@@ -118,20 +118,20 @@ public class CallableAtomMappingTool implements Serializable {
          */
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();;
-//        if (DEBUG) {
-//            executor = Executors.newSingleThreadExecutor();
-//        } else {
-//            int threadsAvailable = getRuntime().availableProcessors() - 1;
-//            if (threadsAvailable == 0) {
-//                threadsAvailable = 1;
-//            }
-//
-//            if (threadsAvailable > 4) {
-//                threadsAvailable = 4;
-//            }
-//            executor = Executors.newFixedThreadPool(threadsAvailable);
-//        }
+        ExecutorService executor;// = Executors.newSingleThreadExecutor();;
+        if (DEBUG) {
+            executor = Executors.newSingleThreadExecutor();
+        } else {
+            int threadsAvailable = getRuntime().availableProcessors() - 1;
+            if (threadsAvailable == 0) {
+                threadsAvailable = 1;
+            }
+
+            if (threadsAvailable > 4) {
+                threadsAvailable = 4;
+            }
+            executor = Executors.newFixedThreadPool(threadsAvailable);
+        }
         int jobCounter = 0;
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);

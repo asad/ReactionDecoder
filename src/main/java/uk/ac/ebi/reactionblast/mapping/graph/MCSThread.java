@@ -531,10 +531,10 @@ public class MCSThread implements Callable<MCSSolution> {
         MCSSolution mcs;
         AtomMatcher am;
         BondMatcher bm;
-        boolean atomType = false;
-        boolean bondMatch = false;
-        boolean ringMatch = false;
-        boolean ringSizeMatch = false;
+        boolean atomType;
+        boolean bondMatch;
+        boolean ringMatch;
+        boolean ringSizeMatch;
 
         switch (theory) {
             case RINGS:
@@ -551,8 +551,8 @@ public class MCSThread implements Callable<MCSSolution> {
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
                         atomType,
-                        ringMatch,
                         bondMatch,
+                        ringMatch,
                         ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
@@ -580,7 +580,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 atomType = true;
                 bondMatch = false;
                 ringMatch = isHasPerfectRings();
-                ringSizeMatch = isHasPerfectRings();
+                ringSizeMatch = false;
 
                 am = AtomBondMatcher.atomMatcher(atomType, ringMatch);
                 bm = AtomBondMatcher.bondMatcher(bondMatch, ringSizeMatch);
@@ -589,8 +589,8 @@ public class MCSThread implements Callable<MCSSolution> {
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
                         atomType,
-                        ringMatch,
                         bondMatch,
+                        ringMatch,
                         ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
@@ -615,7 +615,7 @@ public class MCSThread implements Callable<MCSSolution> {
                 break;
             default:
 
-                atomType = true;
+                atomType = false;
                 bondMatch = false;
                 ringMatch = isHasPerfectRings();
                 ringSizeMatch = false;
@@ -627,8 +627,8 @@ public class MCSThread implements Callable<MCSSolution> {
                         compound1.getAtomCount(), compound2.getAtomCount(),
                         compound1.getBondCount(), compound2.getBondCount(),
                         atomType,
-                        ringMatch,
                         bondMatch,
+                        ringMatch,
                         ringSizeMatch,
                         numberOfCyclesEduct,
                         numberOfCyclesProduct
