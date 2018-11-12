@@ -402,6 +402,7 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
+//        System.out.println("FP: "+formedCleavedWFingerprint);
         assertEquals(5, formedCleavedWFingerprint.getFeatureCount());
     }
 
@@ -1527,8 +1528,8 @@ public class RXNMappingTest extends MappingUtility {
         double rc = Math.round(similarityRC * 100);
         double bc = Math.round(similarityBC * 100);
 
-        assertEquals(1, rc, 0.001);
-        assertEquals(94, bc, 0.001);
+        assertEquals(2, rc, 0.001);
+        assertEquals(90, bc, 0.001);
     }
 
     /*
