@@ -36,10 +36,10 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public class IsomorphismMax extends Selector implements IResult {
+public class MaxSelection extends Selector implements IResult {
 
     private final static ILoggingTool LOGGER
-            = createLoggingTool(IsomorphismMax.class);
+            = createLoggingTool(MaxSelection.class);
     private static final long serialVersionUID = 0x192aa60a59L;
     private final Holder mHolder;
     private final Holder updatedHolder;
@@ -53,11 +53,11 @@ public class IsomorphismMax extends Selector implements IResult {
      * @throws IOException
      * @throws Exception
      */
-    public IsomorphismMax(Holder mHolder,
+    public MaxSelection(Holder mHolder,
             List<String> EdMapOrignal,
             List<String> PdMapOrignal) throws IOException, Exception {
 
-//        System.out.println("\n********* INSIDE IsomorphismMax**********");
+//        System.out.println("\n********* INSIDE MaxSelection**********");
         this.mHolder = mHolder;
         this.updatedHolder = (Holder) mHolder.clone();
         rowSize = mHolder.getCliqueMatrix().getRowDimension();

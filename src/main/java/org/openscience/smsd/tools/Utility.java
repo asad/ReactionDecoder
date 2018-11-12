@@ -36,6 +36,7 @@ import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
+import org.openscience.smsd.helper.MoleculeInitializer;
 
 /**
  *
@@ -163,9 +164,16 @@ public class Utility {
      */
     public static Map<IAtom, IAtom> findSubgraph(
             IAtomContainer source, IAtomContainer target,
-            boolean matchBonds, boolean shouldMatchRings, boolean matchAtomType) {
+            boolean matchAtomType, boolean matchBonds, boolean shouldMatchRings,
+            boolean matchRingSize) throws CDKException {
 
-        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(matchAtomType, shouldMatchRings);
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(source);
+        MoleculeInitializer.initializeMolecule(source);
+
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(target);
+        MoleculeInitializer.initializeMolecule(target);
+
+        AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(matchAtomType, matchRingSize);
         BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
 
         Substructure s;

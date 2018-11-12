@@ -350,34 +350,62 @@ class IsomeraseHandler {
         boolean flag = false;
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
-        String pattern = "CC(N)=O";
+        String pattern1 = "CC(N)=O";
+        String pattern2 = "CC(O)=O";
         String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
         String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
         IAtomContainer lGlutamineAC = smilesParser.parseSmiles(lGlutamine);
         IAtomContainer lGlutamateAC = smilesParser.parseSmiles(lGlutamate);
-        IAtomContainer patternAC = smilesParser.parseSmiles(pattern);
+        IAtomContainer patternAC1 = smilesParser.parseSmiles(pattern1);
+        IAtomContainer patternAC2 = smilesParser.parseSmiles(pattern2);
 
-        if ((isMatch(s, lGlutamateAC, false) && isMatch(t, lGlutamineAC, false))
-                || (isMatch(s, lGlutamineAC, false) && isMatch(t, lGlutamateAC, false))) {
-            IAtomContainer ac = s;
-            Map<IAtom, IAtom> subgraph = findSubgraph(patternAC, ac, true, true, false);
-            if (subgraph != null && !subgraph.isEmpty()) {
-                ac = t;
-                subgraph = findSubgraph(patternAC, ac, true, true, false);
+        if ((isMatch(lGlutamateAC, s, false) && isMatch(lGlutamineAC, t, false))
+                || (isMatch(lGlutamineAC, s, false) && isMatch(lGlutamateAC, t, false))) {
+
+            IAtomContainer ac1 = s;
+            IAtomContainer ac2 = t;
+
+            Map<IAtom, IAtom> subgraph1 = findSubgraph(patternAC1, ac1, true, true, true, true);
+            Map<IAtom, IAtom> subgraph2 = findSubgraph(patternAC2, ac2, true, true, true, true);
+
+            if (subgraph1 != null && subgraph2 != null
+                    && subgraph1.isEmpty() && subgraph2.isEmpty()) {
+                ac1 = t;
+                ac2 = s;
+                subgraph1 = findSubgraph(patternAC1, ac1, true, true, true, true);
+                subgraph2 = findSubgraph(patternAC2, ac2, true, true, true, true);
             }
 
-            if (subgraph != null && !subgraph.isEmpty()) {
-                Map<IAtom, IAtom> map = subgraph;
+            if (subgraph1 != null && !subgraph1.isEmpty()) {
+                Map<IAtom, IAtom> map = subgraph1;
                 for (IAtom a : map.values()) {
                     for (IAtom b : map.values()) {
-                        if (a != b) {
-                            IBond bond = ac.getBond(a, b);
-                            ac.removeBond(bond);
+                        if (a != b
+                                && a.getAtomicNumber() == 6
+                                && b.getAtomicNumber() == 6) {
+                            IBond bond = ac1.getBond(a, b);
+                            ac1.removeBond(bond);
                             flag = true;
                         }
                     }
                 }
             }
+
+            if (subgraph2 != null && !subgraph2.isEmpty()) {
+                Map<IAtom, IAtom> map = subgraph2;
+                for (IAtom a : map.values()) {
+                    for (IAtom b : map.values()) {
+                        if (a != b
+                                && a.getAtomicNumber() == 6
+                                && b.getAtomicNumber() == 6) {
+                            IBond bond = ac2.getBond(a, b);
+                            ac2.removeBond(bond);
+                            flag = true;
+                        }
+                    }
+                }
+            }
+
         }
         return flag;
     }

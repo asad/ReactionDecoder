@@ -535,7 +535,7 @@ public class MCSThread implements Callable<MCSSolution> {
 
             case MIN:
 
-                atomType = true;
+                atomType = false;
                 bondMatch = false;
                 ringMatch = isHasPerfectRings();
                 ringSizeMatch = false;

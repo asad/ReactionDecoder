@@ -122,7 +122,7 @@ public class ChooseWinner extends Selector implements Serializable {
         this.setEnergyMatrix(mHolder.getEnergyMatrix());
         this.setCarbonOverlapMatrix(mHolder.getCarbonOverlapMatrix());
 
-        this.crossMappingTracer = synchronizedList(new ArrayList<Cell>());
+        this.crossMappingTracer = synchronizedList(new ArrayList<>());
 
         boolean isMappingFesiable = checkStatusFlag();
         List<Double> scores = new ArrayList<>();

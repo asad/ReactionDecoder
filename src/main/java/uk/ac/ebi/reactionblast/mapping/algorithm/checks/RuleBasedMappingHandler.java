@@ -71,6 +71,7 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsL_Glutamate;
     private IAtomContainer smartsL_Glutamine;
     private IAtomContainer smartsL_Glutamine_clipped;
+    private IAtomContainer smartsL_Glutamate_clipped;
     private IAtomContainer smartsTwoOxoglutarate;
     private IAtomContainer smartsD_Glutamate;
     private IAtomContainer smartsAcetate;
@@ -261,9 +262,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     } /*
                         Rule 2 L_Glutamate and L_Glutamine_clipped
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamate(), ac1, false) && isMatch(getSmartsGlutamineClipped(), ac2, false))
+                            && isMatch(getSmartsGlutamateClipped(), ac1, false) && isMatch(getSmartsGlutamineClipped(), ac2, false))
                             || (ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
-                            && isMatch(getSmartsGlutamineClipped(), ac1, false) && isMatch(getSmartsGlutamate(), ac2, false))) {
+                            && isMatch(getSmartsGlutamineClipped(), ac1, false) && isMatch(getSmartsGlutamateClipped(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
@@ -441,7 +442,9 @@ public final class RuleBasedMappingHandler implements Serializable {
          */
         final String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
         final String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
-        final String lGlutamine_clipped = "[C].[O].O=C(O)C(N)C[CH2].[NH2]";
+
+        final String lGlutamate_clipped = "O=[C]O.O=C(O)C(N)C[CH2]";
+        final String lGlutamine_clipped = "O=[C]N.O=C(O)C(N)C[CH2]";
         /*
          * 2-Oxoglutarate to D-Glutamate
          */
@@ -500,6 +503,7 @@ public final class RuleBasedMappingHandler implements Serializable {
         smartsL_Glutamate = smilesParser.parseSmiles(lGlutamate);
         smartsL_Glutamine = smilesParser.parseSmiles(lGlutamine);
         smartsL_Glutamine_clipped = smilesParser.parseSmiles(lGlutamine_clipped);
+        smartsL_Glutamate_clipped = smilesParser.parseSmiles(lGlutamate_clipped);
 
 
         /*
@@ -584,6 +588,13 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     private IAtomContainer getSmartsGlutamineClipped() {
         return smartsL_Glutamine_clipped;
+    }
+
+    /**
+     * @return the smartsL_Glutamine
+     */
+    private IAtomContainer getSmartsGlutamateClipped() {
+        return smartsL_Glutamate_clipped;
     }
 
     /**

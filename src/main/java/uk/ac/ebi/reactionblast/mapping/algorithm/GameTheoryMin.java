@@ -57,7 +57,6 @@ import java.util.Map;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.IsomorphismMin;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
@@ -70,6 +69,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MinSelection;
 
 final class GameTheoryMin extends BaseGameTheory {
 
@@ -184,13 +184,13 @@ final class GameTheoryMin extends BaseGameTheory {
             if (DEBUG) {
                 out.println("Subgraph/Exact Match Test");
             }
-            IsomorphismMin omorphismMin
-                    = new IsomorphismMin(mh, eductList, productList);
-            if (omorphismMin.isSubAndCompleteMatchFlag()) {
+            MinSelection select
+                    = new MinSelection(mh, eductList, productList);
+            if (select.isSubAndCompleteMatchFlag()) {
                 if (DEBUG) {
                     out.println("Subgraph/Exact Match");
                 }
-                mh = omorphismMin.getUpdatedHolder();
+                mh = select.getUpdatedHolder();
             }
         }
         if (DEBUG) {

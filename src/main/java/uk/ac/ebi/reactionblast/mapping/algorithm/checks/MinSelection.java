@@ -40,10 +40,10 @@ import uk.ac.ebi.reactionblast.mapping.interfaces.IResult;
  * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
  * @contact asad@ebi.ac.uk
  */
-public class IsomorphismMin extends Selector implements IResult {
+public class MinSelection extends Selector implements IResult {
 
     private final static ILoggingTool LOGGER
-            = createLoggingTool(IsomorphismMin.class);
+            = createLoggingTool(MinSelection.class);
     private static final long serialVersionUID = 1908987778L;
     private final Holder mHolder;
     private final Holder updatedHolder;
@@ -57,11 +57,11 @@ public class IsomorphismMin extends Selector implements IResult {
      * @throws IOException
      * @throws CloneNotSupportedException
      */
-    public IsomorphismMin(Holder mHolder,
+    public MinSelection(Holder mHolder,
             List<String> EdMapOrignal,
             List<String> PdMapOrignal) throws IOException, CloneNotSupportedException {
 
-//        System.out.println("Check Subgraph IsomorphismMin ");
+//        System.out.println("Check Subgraph MinSelection ");
         this.mHolder = mHolder;
         this.updatedHolder = (Holder) mHolder.clone();
         rowSize = mHolder.getCliqueMatrix().getRowDimension();
