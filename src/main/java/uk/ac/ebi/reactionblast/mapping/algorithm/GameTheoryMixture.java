@@ -159,16 +159,17 @@ final class GameTheoryMixture extends BaseGameTheory {
 //        printEnergyMatrix(mh, eductList, productList);
         }
 
-        if (!ruleMatchingFlag) {
-            RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
-            if (ruleBasedMappingHandler.isMatchFound()) {
-                if (DEBUG) {
-                    out.println("Rule Based Mapping Handler Match Found");
-                }
-                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
-            }
-            ruleMatchingFlag = true;
-        }
+//        if (!ruleMatchingFlag) {
+//            RuleBasedMappingHandler ruleBasedMappingHandler = 
+//                    new RuleBasedMappingHandler(mh, eductList, productList);
+//            if (ruleBasedMappingHandler.isMatchFound()) {
+//                if (DEBUG) {
+//                    out.println("Rule Based Mapping Handler Match Found");
+//                }
+//                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+//            }
+//            ruleMatchingFlag = true;
+//        }
 
         winner.searchWinners(educts, products, mh);
         if (DEBUG) {

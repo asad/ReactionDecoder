@@ -87,6 +87,7 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsAlanine;
     private IAtomContainer smartsNRule;
     private IAtomContainer smartsCRule;
+    private IAtomContainer smartsDoublePhosphate;
 
     /**
      *
@@ -183,6 +184,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                     if (ac1.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac1, false)
                             && isMatch(getSmartsPhosphate(), ac2, false)
+                            && !isMatch(getSmartsDoublePhosphate(), ac2, false)
                             && ac2.getAtomCount() == smallestMatchedProduct) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -200,6 +202,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                      */ if (ac2.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac2, false)
                             && isMatch(getSmartsPhosphate(), ac1, false)
+                            && !isMatch(getSmartsDoublePhosphate(), ac1, false)
                             && ac1.getAtomCount() == smallestMatchedReactant) {
                         if (DEBUG2) {
                             out.println("Match ");
@@ -431,6 +434,7 @@ public final class RuleBasedMappingHandler implements Serializable {
 
         final String waterSMILES = "O";
         final String phosphateSMILES = "OP(O)(O)=O";
+        final String double_phosphateSMILES = "OP(O)(=O)OP(O)(O)=O";
 
         /*
          * Acetate C00033
@@ -495,6 +499,7 @@ public final class RuleBasedMappingHandler implements Serializable {
          */
         smartsWater = smilesParser.parseSmiles(waterSMILES);
         smartsPhosphate = smilesParser.parseSmiles(phosphateSMILES);
+        smartsDoublePhosphate = smilesParser.parseSmiles(double_phosphateSMILES);
         smartsSulphate = smilesParser.parseSmiles(sulphateSMILES);
 
         /*
@@ -567,6 +572,13 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     private IAtomContainer getSmartsPhosphate() {
         return smartsPhosphate;
+    }
+
+    /**
+     * @return the smartsPhosphate
+     */
+    private IAtomContainer getSmartsDoublePhosphate() {
+        return smartsDoublePhosphate;
     }
 
     /**
