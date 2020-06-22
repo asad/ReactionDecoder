@@ -305,17 +305,17 @@ public class RXNMappingTest extends MappingUtility {
      *
      * @throws Exception
      */
-    @Test
-    public void R00097() throws Exception {
-
-        String reactionID = "R00097";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-    }
+//    @Test
+//    public void R00097() throws Exception {
+//
+//        String reactionID = "R00097";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+//    }
 
     /*
      * @Flips

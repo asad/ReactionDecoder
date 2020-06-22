@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.rdt</groupId>
     <artifactId>rdt</artifactId>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>2.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <jdk.version>1.8</jdk.version>
@@ -49,7 +49,7 @@
         <developer>
             <name>Syed Asad Rahman</name>
             <email>s9asad@gmail.com</email>
-            <url>https://chembioinfo.com</url>
+            <url>https://github.com/asad</url>
         </developer>
         <developer>
             <name>Gilliean Torrance</name>
@@ -114,17 +114,17 @@
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-bundle</artifactId>
-            <version>2.2</version>
+            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-core</artifactId>
-            <version>2.2</version>
+            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-smiles</artifactId>
-            <version>2.2</version>
+            <version>2.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
