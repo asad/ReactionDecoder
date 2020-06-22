@@ -35,7 +35,6 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.exception.Intractable;
-import org.openscience.cdk.geometry.GeometryTools;
 import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;

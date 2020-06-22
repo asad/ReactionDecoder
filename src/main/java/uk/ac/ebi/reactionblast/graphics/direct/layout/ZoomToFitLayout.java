@@ -25,7 +25,6 @@ import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
 
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
 import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -90,7 +89,7 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         double canvasHeight = h;
         double scaleFactor
                 = getScaleFactor(ac, drawer.getParams().bondLength);
-        Rectangle2D r2D = getRectangle2D(ac);
+        Rectangle2D r2D = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
 //        Rectangle2D tmp = new Rectangle2D.Double(r2D.getMinX(), r2D.getMinY(), r2D.getWidth(), r2D.getHeight());
         translateTo(ac, 0, 0, r2D);
 //        translateTo(ac, 0, 0, tmp);

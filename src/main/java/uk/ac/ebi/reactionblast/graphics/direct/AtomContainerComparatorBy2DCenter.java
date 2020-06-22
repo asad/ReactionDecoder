@@ -44,9 +44,9 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
             Point2d p2 = get2DCenter(atCont2);
             if (p1 != null && p2 != null) {
                 if (p1.x != p2.x) {
-                    return new Double(p1.x).compareTo(p2.x);
+                    return  Double.valueOf(p1.x).compareTo(p2.x);
                 } else {
-                    return new Double(p1.y).compareTo(p2.y);
+                    return Double.valueOf(p1.y).compareTo(p2.y);
                 }
             }
         }

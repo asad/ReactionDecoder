@@ -96,7 +96,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                 if (withoutH && at.getSymbol().equalsIgnoreCase("H")) {
                     continue;
                 }
-                int atomID = (new Integer(at.getID()));
+                int atomID = (Integer.valueOf(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }
@@ -157,7 +157,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                     continue;
                 }
 
-                int atomID = (new Integer(at.getID()));
+                int atomID = (Integer.valueOf(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }

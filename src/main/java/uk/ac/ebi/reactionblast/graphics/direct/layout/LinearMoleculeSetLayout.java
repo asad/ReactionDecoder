@@ -25,7 +25,6 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
 import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
@@ -118,7 +117,7 @@ public class LinearMoleculeSetLayout extends AbstractDirectLayout<IAtomContainer
             }
             scaleMolecule(molecule,
                     getScaleFactor(molecule, bondLength));
-            Rectangle2D bounds = getRectangle2D(molecule);
+            Rectangle2D bounds = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(molecule);
 
             double boundsWidth = bounds.getWidth();
             double halfBoundsWidth = boundsWidth / 2;

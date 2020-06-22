@@ -187,7 +187,7 @@ public class MinSelection extends Selector implements IResult {
     }
 
     private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
-        return new Double(educt.getAtomCount()) == mcsSize;
+        return Double.valueOf(educt.getAtomCount()) == mcsSize;
     }
 
     /**

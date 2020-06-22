@@ -88,6 +88,8 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsNRule;
     private IAtomContainer smartsCRule;
     private IAtomContainer smartsDoublePhosphate;
+    private IAtomContainer smartsC04666Rule;
+    private IAtomContainer smartsC04916Rule;
 
     /**
      *
@@ -252,6 +254,15 @@ public final class RuleBasedMappingHandler implements Serializable {
                         }
 
                     }/*
+                        Rule 11 C04666_C04916
+                     */ else if (isMatch(getSmartsC04666Rule(), ac1, false) && isMatch(getSmartsC04916Rule(), ac2, false)
+                            || (isMatch(getSmartsC04916Rule(), ac1, false) && isMatch(getSmartsC04666Rule(), ac2, false))) {
+                        if (DEBUG1) {
+                            out.println("Rule 11 C04666 with C04916 found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    } /*
                         Rule 2 L_Glutamate and L_Glutamine
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
                             && isMatch(getSmartsGlutamate(), ac1, false) && isMatch(getSmartsGlutamine(), ac2, false))
@@ -260,7 +271,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
-                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                            out.println("Rule 2.1 L-Glutamate with L-Glutamine found");
                         }
                     } /*
                         Rule 2 L_Glutamate and L_Glutamine_clipped
@@ -271,7 +282,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
-                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                            out.println("Rule 2.2 L-Glutamate with L-Glutamine found");
                         }
                     }/*
                         Rule 3 D_Glutamate and TwoOxoglutarate
@@ -356,8 +367,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 10 N_C
                      */ else if (isMatch(getSmartsNRule(), ac1, false) && isMatch(getSmartsCRule(), ac2, false)
                             || (isMatch(getSmartsCRule(), ac1, false) && isMatch(getSmartsNRule(), ac2, false))) {
-                        setRuleMatched(true);
-                        matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
                             out.println("Rule 10 N with C found");
                         }
@@ -493,6 +502,12 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String N = "CC(C)[C@H](N)C(O)=O";
         final String C = "CC(C)C(=O)C(O)=O";
 
+        /*
+         * smartsC04666_smartsC04916 OC[C@H](O)COP(O)(O)=O>>OC[C@H](O)COP(O)(O)=O
+         */
+        final String smartsC04666 = "O=P(O)(O)O[CH2].[CH]O.O[CH]C=1N=CNC1";
+        final String smartsC04916 = "O=C(N)C=1N=CN(C1N=CNCC(=O)[CH]O)C(O[CH])C(O)[CH]O.O=P(O)(O)O[CH2].O=P(O)(O)O[CH2].[CH]O";
+
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         /*
          * Rule 1
@@ -558,6 +573,14 @@ public final class RuleBasedMappingHandler implements Serializable {
         smartsNRule = smilesParser.parseSmiles(N);
         smartsCRule = smilesParser.parseSmiles(C);
 
+        /*
+        * Rule 11 
+        *
+        * C04666_C04916
+        *
+         */
+        smartsC04666Rule = smilesParser.parseSmiles(smartsC04666);
+        smartsC04916Rule = smilesParser.parseSmiles(smartsC04916);
     }
 
     /**
@@ -719,5 +742,19 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public IAtomContainer getSmartsCRule() {
         return smartsCRule;
+    }
+
+    /**
+     * @return the smartsC04666Rule
+     */
+    public IAtomContainer getSmartsC04666Rule() {
+        return smartsC04666Rule;
+    }
+
+    /**
+     * @return the smartsC04916Rule
+     */
+    public IAtomContainer getSmartsC04916Rule() {
+        return smartsC04916Rule;
     }
 }

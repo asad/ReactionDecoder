@@ -23,6 +23,7 @@
 package org.openscience.smsd;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import static java.util.Collections.sort;
 import java.util.logging.Level;
@@ -63,9 +64,8 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
 
     /**
      *
-     * @param matchBonds
-     * @param matchRings
-     * @param matchAtomType
+     * @param bm bond matcher
+     * @param am atom matcher
      * @param mol1
      * @param mol2
      */
@@ -78,6 +78,8 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * @param mol1
      * @param mol2
+     * @param am atom matcher
+     * @param bm bond matcher
      */
     public BaseMapping(IQueryAtomContainer mol1, IAtomContainer mol2,
             AtomMatcher am, BondMatcher bm) {
@@ -157,7 +159,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                 double matchCount = (double) firstAtomMCS.getCount();
                 tanimotoAtom = (matchCount) / (rAtomCount + pAtomCount - matchCount);
                 BigDecimal tan = new BigDecimal(tanimotoAtom);
-                tan = tan.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
+                tan = tan.setScale(decimalPlaces, RoundingMode.HALF_UP);
                 tanimotoAtom = tan.doubleValue();
             }
         }
@@ -232,7 +234,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                 double common = (double) firstAtomMCS.getCount();
                 euclidean = Math.sqrt(sourceAtomCount + targetAtomCount - 2 * common);
                 BigDecimal dist = new BigDecimal(euclidean);
-                dist = dist.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
+                dist = dist.setScale(decimalPlaces, RoundingMode.HALF_UP);
                 euclidean = dist.doubleValue();
             }
         }

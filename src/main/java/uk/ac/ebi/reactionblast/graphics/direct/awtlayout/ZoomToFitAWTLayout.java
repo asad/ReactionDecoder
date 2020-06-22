@@ -29,7 +29,6 @@ import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
 
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
 import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
 import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
@@ -140,7 +139,7 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
     }
 
     private BoundsTree getBoundsTree(IAtomContainer mol, Graphics2D g) {
-        Rectangle2D bb = getRectangle2D(mol);
+        Rectangle2D bb = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(mol);
         translate2D(mol, -bb.getCenterX(), -bb.getCenterY());
         scaleMolecule(mol,
                 getScaleFactor(mol, params.bondLength));

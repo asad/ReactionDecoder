@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.vecmath.Point2f;
 import org.openscience.cdk.exception.Intractable;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -236,7 +235,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
 
         Color savedColor = g.getColor();
         if (params.drawBounds) {
-            Rectangle2D bounds = getRectangle2D(molecule);
+            Rectangle2D bounds = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(molecule);
             g.draw(bounds);
         }
 
@@ -280,7 +279,7 @@ public class DirectMoleculeDrawer extends AbstractDirectDrawer {
         if (id == null) {
             return null;
         }
-        Rectangle2D moleculeBounds = getRectangle2D(atomContainer);
+        Rectangle2D moleculeBounds = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(atomContainer);
         double labelCenterX = moleculeBounds.getCenterX();
         double labelCenterY = moleculeBounds.getMaxY() + params.labelYGap;
         Point2f textPoint = getTextPoint(g, id, labelCenterX, labelCenterY);

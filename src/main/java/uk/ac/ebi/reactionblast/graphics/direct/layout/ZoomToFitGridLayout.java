@@ -26,7 +26,6 @@ import static java.lang.Math.min;
 import java.util.List;
 
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
 import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
 import static org.openscience.cdk.geometry.GeometryUtil.translate2DCenterTo;
@@ -110,7 +109,7 @@ public class ZoomToFitGridLayout {
                 = getScaleFactor(ac, drawer.getParams().bondLength);
         translate2DCenterTo(ac, new Point2d(0, 0));
         scaleMolecule(ac, scaleFactor);
-        Rectangle2D r2D = getRectangle2D(ac);
+        Rectangle2D r2D = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
         double canvasWidth = canvas.width;
         double canvasHeight = canvas.height;
         double borderX = drawer.getParams().borderX;

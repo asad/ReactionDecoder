@@ -73,11 +73,11 @@ public class GlobalEntropyCalculator implements Serializable {
                     typeMap.put(key, val);
                     freqMap.put(key, 0);
                 }
-                Integer frequency = val.get(new Double(m.getValue(i, j)).intValue());
+                Integer frequency = val.get(Double.valueOf(m.getValue(i, j)).intValue());
                 if (frequency == null) {
                     frequency = 0;
                 }
-                val.put(new Double(m.getValue(i, j)).intValue(), frequency + 1);
+                val.put(Double.valueOf(m.getValue(i, j)).intValue(), frequency + 1);
                 freqMap.put(key, freqMap.get(key) + 1);
             }
         }

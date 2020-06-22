@@ -50,6 +50,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.helper.MoleculeInitializer;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static org.openscience.smsd.tools.Utility.findSubgraph;
 import static org.openscience.smsd.tools.Utility.isMatch;
 
@@ -57,10 +58,10 @@ import static org.openscience.smsd.tools.Utility.isMatch;
  *
  * @author Syed Asad Rahman <asad at ebi.ac.uk>
  */
-class IsomeraseHandler {
+class CaseHandler {
 
     private final static ILoggingTool LOGGER
-            = createLoggingTool(IsomeraseHandler.class);
+            = createLoggingTool(CaseHandler.class);
 
     /**
      *
@@ -71,6 +72,7 @@ class IsomeraseHandler {
      */
     protected static void initializeMolecule(IAtomContainer atomContainer) throws CDKException {
         MoleculeInitializer.initializeMolecule(atomContainer);
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
     }
 
     private final Map<IRingSet, IAtomContainer> ringContainerCountR;
@@ -81,7 +83,7 @@ class IsomeraseHandler {
 
     protected final IReaction reaction;
 
-    IsomeraseHandler(IReaction reaction) throws Intractable {
+    CaseHandler(IReaction reaction) throws Intractable {
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
@@ -348,32 +350,46 @@ class IsomeraseHandler {
 
     private boolean deleteBonds(IAtomContainer s, IAtomContainer t) throws InvalidSmilesException, CDKException {
         boolean flag = false;
+
+        flag = flag | case1(s, t);
+        if (DEBUG) {
+            System.out.println("Case 1: " + flag);
+        }
+        return flag;
+    }
+    
+    /*
+    * ex. R04558
+     */
+    private boolean case1(IAtomContainer s, IAtomContainer t) throws InvalidSmilesException, CDKException {
+        boolean flag = false;
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        String moiety = "NC(=O)C1=CN(C=N1)C1OC(COP(O)(O)=O)C(O)C1O";
+        IAtomContainer query = smilesParser.parseSmiles(moiety);
 
-        String pattern1 = "CC(N)=O";
-        String pattern2 = "CC(O)=O";
-        String lGlutamate = "N[C@@H](CCC(O)=O)C(O)=O";
-        String lGlutamine = "N[C@@H](CCC(N)=O)C(O)=O";
-        IAtomContainer lGlutamineAC = smilesParser.parseSmiles(lGlutamine);
-        IAtomContainer lGlutamateAC = smilesParser.parseSmiles(lGlutamate);
-        IAtomContainer patternAC1 = smilesParser.parseSmiles(pattern1);
-        IAtomContainer patternAC2 = smilesParser.parseSmiles(pattern2);
+        if (DEBUG) {
+            out.println("case2 QSM " + new SmilesGenerator(SmiFlavor.Generic).create(s));
+            out.println("case2 TSM " + new SmilesGenerator(SmiFlavor.Generic).create(t));
+//            boolean match1 = isMatch(query, s, true);
+//            boolean match2 = isMatch(query, t, true);
+//            System.out.println("Sub 1 " + match1);
+//            System.out.println("Sub 2 " + match2);
+        }
 
-        if ((isMatch(lGlutamateAC, s, false) && isMatch(lGlutamineAC, t, false))
-                || (isMatch(lGlutamineAC, s, false) && isMatch(lGlutamateAC, t, false))) {
+        if (isMatch(query, s, false) && isMatch(query, t, false)) {
 
             IAtomContainer ac1 = s;
             IAtomContainer ac2 = t;
 
-            Map<IAtom, IAtom> subgraph1 = findSubgraph(patternAC1, ac1, true, true, true, true);
-            Map<IAtom, IAtom> subgraph2 = findSubgraph(patternAC2, ac2, true, true, true, true);
+            Map<IAtom, IAtom> subgraph1 = findSubgraph(query, ac1, true, true, true, true);
+            Map<IAtom, IAtom> subgraph2 = findSubgraph(query, ac2, true, true, true, true);
 
             if (subgraph1 != null && subgraph2 != null
                     && subgraph1.isEmpty() && subgraph2.isEmpty()) {
                 ac1 = t;
                 ac2 = s;
-                subgraph1 = findSubgraph(patternAC1, ac1, true, true, true, true);
-                subgraph2 = findSubgraph(patternAC2, ac2, true, true, true, true);
+                subgraph1 = findSubgraph(query, ac1, true, true, true, true);
+                subgraph2 = findSubgraph(query, ac2, true, true, true, true);
             }
 
             if (subgraph1 != null && !subgraph1.isEmpty()) {
@@ -407,6 +423,7 @@ class IsomeraseHandler {
             }
 
         }
+
         return flag;
     }
 

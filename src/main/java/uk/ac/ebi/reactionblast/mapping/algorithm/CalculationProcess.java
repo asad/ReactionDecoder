@@ -43,7 +43,7 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class CalculationProcess extends IsomeraseHandler implements Serializable {
+public class CalculationProcess extends CaseHandler implements Serializable {
 
     private final static boolean DEBUG = false;
     static final String NEW_LINE = getProperty("line.separator");

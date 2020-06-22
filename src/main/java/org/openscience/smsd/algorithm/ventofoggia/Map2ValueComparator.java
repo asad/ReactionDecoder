@@ -51,7 +51,7 @@ public class Map2ValueComparator implements Comparator<Map<IAtom, IAtom>> {
     public int compare(Map<IAtom, IAtom> object1, Map<IAtom, IAtom> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
-        int compare = Integer.signum(new Integer(size1).compareTo(size2));
+        int compare = Integer.signum(Integer.valueOf(size1).compareTo(size2));
 
         if (sortOrder == SortOrder.ASCENDING) {
             return compare;

@@ -45,7 +45,6 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -777,7 +776,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
     private Rectangle2D molSetBounds(IAtomContainerSet molSet) {
         Rectangle2D bounds = null;
         for (IAtomContainer ac : molSet.atomContainers()) {
-            Rectangle2D currentBounds = getRectangle2D(ac);
+            Rectangle2D currentBounds = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
             if (bounds == null) {
                 bounds = (Rectangle2D) currentBounds.clone();
             } else {
@@ -828,7 +827,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
 
         Rectangle2D bounds;
         if (boundsTree == null) {
-            bounds = getRectangle2D(ac);
+            bounds = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
         } else {
 //            System.out.print("looking up " + acLabel);
             bounds = boundsTree.get(acLabel);
