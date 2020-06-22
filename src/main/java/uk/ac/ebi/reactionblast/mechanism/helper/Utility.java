@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,10 +50,12 @@ import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
@@ -63,6 +65,7 @@ import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 
 /**
  *
@@ -75,7 +78,33 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             = LoggingToolFactory.createLoggingTool(Utility.class);
 
     /**
-     * Used Chemaxon to generate smikrs
+     * Used CDK to generate moiety
+     *
+     * @param reactant
+     * @param product
+     * @param remove_AAM
+     * @return
+     */
+    public static String getMoietyAsSMILES(IAtomContainer reactant, IAtomContainer product, boolean remove_AAM) {
+        AtomAtomMapping atomAtomMapping = new AtomAtomMapping(reactant, product);
+        for (IAtom a : reactant.atoms()) {
+            for (IAtom b : product.atoms()) {
+                if (a.getID() == null ? b.getID() == null : a.getID().equals(b.getID())) {
+                    atomAtomMapping.put(a, b);//store mapping if they share IDs
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder("");
+        try {
+            sb.append(getSMILES(atomAtomMapping.getCommonFragment(), remove_AAM));
+        } catch (Exception ex) {
+            LOGGER.error(SEVERE, null, ex);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Used CDK to generate smikrs
      *
      * @param reaction
      * @param remove_AAM
@@ -85,13 +114,13 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         StringBuilder sb = new StringBuilder("");
         try {
             for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
-                sb.append(getSMILES(mol, true));
+                sb.append(getSMILES(mol, remove_AAM));
             }
 
             sb.append(">>");
 
             for (IAtomContainer mol : reaction.getProducts().atomContainers()) {
-                sb.append(getSMILES(mol, true));
+                sb.append(getSMILES(mol, remove_AAM));
             }
 
         } catch (Exception ex) {
@@ -129,7 +158,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             IAtomContainer mol, boolean remove_AAM) {
         String smiles = "";
         try {
-            return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
+            return new CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
         } catch (CloneNotSupportedException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
@@ -491,9 +520,17 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         IMP: Suggested by John May
          */
         try {
-            unique().create(cloneMolecule, p);
-        } catch (CDKException e) {
+//            unique().create(cloneMolecule, p);
+            SmilesGenerator smiles = new SmilesGenerator(
+                    SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Unique
+                    //                    | SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.Stereo);
+
+            String sm = smiles.create(cloneMolecule, p);
+        } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.debug("Fragment not fit to canonicalise!");
         }
 
         permuteWithoutClone(p, cloneMolecule);

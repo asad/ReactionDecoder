@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Math.abs;
-import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.synchronizedList;
@@ -32,11 +31,11 @@ import static java.util.Collections.unmodifiableCollection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.MAPPED;
@@ -118,6 +117,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     private int energySum;
     private int energyDelta;
     private int totalSmallestFragmentSize;
+    private int totalFragmentCount;
 
     /**
      *
@@ -133,6 +133,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         this.energySum = 0;
         this.energyDelta = 0;
         this.totalSmallestFragmentSize = 0;
+        this.totalFragmentCount = 0;
         this.mappedReaction = reaction;
 
         this.formedCleavedWFingerprint = new PatternFingerprinter();
@@ -997,7 +998,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         Map<String, Collection<String>> uniqueRPAIRS = new TreeMap<>();
         this.getReactionCentreTransformationPairs().stream().map((m) -> {
             if (!uniqueRPAIRS.containsKey(m.getName().toString())) {
-                LinkedList<String> l = new LinkedList<>();
+                Set<String> l = new TreeSet<>();
                 uniqueRPAIRS.put(m.getName().toString(), l);
             }
             return m;
@@ -1059,6 +1060,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     System.out.println("Bond Change Annotator END");
                 }
             } catch (Exception e) {
+                if (DEBUG) {
+                    e.printStackTrace();
+                }
                 throw new Exception("Failed to compute bond changes", e);
             }
 
@@ -1066,12 +1070,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 System.out.println("Loop for stereo conformation changes count: " + bondChangeAnnotator.getConformationChangeList().size());
             }
             /*
-         * Loop for stereo changes
+             * Loop for stereo changes
              */
             for (AtomStereoChangeInformation atomConformation : bondChangeAnnotator.getConformationChangeList()) {
 
                 /*
-             * Stereo changes are marked only once in the Fingerprint
+                 * Stereo changes are marked only once in the Fingerprint
                  */
                 if (atomConformation.getReactantAtom() != null && atomConformation.getProductAtom() != null) {
                     String keyE = atomConformation.getReactantAtom().getSymbol().concat("(E/Z)");
@@ -1080,14 +1084,14 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 }
 
                 /*
-             * Stereo changes are marked on reactant and product for mappedReaction center identification
+                 * Stereo changes are marked on reactant and product for mappedReaction center identification
                  */
                 if (atomConformation.getReactantAtom() != null) {
                     atomConformation.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
                     AtomStereoRMap.put(atomConformation.getReactantAtom(), getMoleculeID(atomConformation.getReactantAtom(), mappedReaction.getReactants()));
 
                     /*
-                 * Update Reaction center FP
+                     * Update Reaction center FP
                      */
                     IAtom atomR1 = atomConformation.getReactantAtom();
                     IAtomContainer moleculeR = getAtomContainer(atomConformation.getReactantAtom(), mappedReaction.getReactants());
@@ -1110,7 +1114,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     AtomStereoPMap.put(atomConformation.getProductAtom(), getMoleculeID(atomConformation.getProductAtom(), mappedReaction.getProducts()));
 
                     /*
-                 * Update Reaction center FP
+                     * Update Reaction center FP
                      */
                     IAtom atomP1 = atomConformation.getProductAtom();
                     IAtomContainer moleculeP = getAtomContainer(atomConformation.getProductAtom(), mappedReaction.getProducts());
@@ -1135,12 +1139,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * Loop for stereo changes
+             * Loop for stereo changes
              */
             for (AtomStereoChangeInformation atomStereo : bondChangeAnnotator.getStereoChangeList()) {
 
                 /*
-             * Stereo changes are marked only once in the Fingerprint
+                 * Stereo changes are marked only once in the Fingerprint
                  */
                 if (atomStereo.getReactantAtom() != null && atomStereo.getProductAtom() != null) {
                     String key = atomStereo.getReactantAtom().getSymbol().concat("(R/S)");
@@ -1149,14 +1153,14 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 }
 
                 /*
-             * Stereo changes are marked on reactant and product for mappedReaction center identification
+                 * Stereo changes are marked on reactant and product for mappedReaction center identification
                  */
                 if (atomStereo.getReactantAtom() != null) {
                     atomStereo.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
                     AtomStereoRMap.put(atomStereo.getReactantAtom(), getMoleculeID(atomStereo.getReactantAtom(), mappedReaction.getReactants()));
 
                     /*
-                 * Update Reaction center FP
+                     * Update Reaction center FP
                      */
                     IAtom atomR1 = atomStereo.getReactantAtom();
                     IAtomContainer moleculeR = getAtomContainer(atomStereo.getReactantAtom(), mappedReaction.getReactants());
@@ -1174,7 +1178,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     AtomStereoPMap.put(atomStereo.getProductAtom(), getMoleculeID(atomStereo.getProductAtom(), mappedReaction.getProducts()));
 
                     /*
-                 * Update Reaction center FP
+                     * Update Reaction center FP
                      */
                     IAtom atomP1 = atomStereo.getProductAtom();
                     IAtomContainer moleculeP = getAtomContainer(atomStereo.getProductAtom(), mappedReaction.getProducts());
@@ -1190,7 +1194,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * Loop over atom order and generate unique list to atoms
+             * Loop over atom order and generate unique list to atoms
              */
             Set<IAtom> reactantAtoms = new HashSet<>();
             Set<IAtom> productAtoms = new HashSet<>();
@@ -1232,7 +1236,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * Store changes in the bond order
+             * Store changes in the bond order
              */
             IAtomContainerSet reactants = mappedReaction.getReactants();
             IAtomContainerSet products = mappedReaction.getProducts();
@@ -1255,7 +1259,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
 
             /*
-         * Loop for formed, cleaved changes
+             * Loop for formed, cleaved changes
              */
             for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
                 IBond bondR = bcinfo.getReactantBond();
@@ -1288,7 +1292,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         }
 
                         /*
-                     * Update Reaction center FP
+                         * Update Reaction center FP
                          */
                         IAtomContainer moleculeP = getAtomContainer(bondP, mappedReaction.getProducts());
 
@@ -1302,7 +1306,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                                 System.out.println("Bond formed, cleaved changes FP IN");
                             }
                             /*
-                         * Mark mappedReaction centers
+                             * Mark mappedReaction centers
                              */
                             IAtom atomP1 = bondP.getAtom(0);
                             IAtom atomP2 = bondP.getAtom(1);
@@ -1361,7 +1365,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         if (moleculeE != null && moleculeE.getAtomCount() > 1) {
 
                             /*
-                         * Mark mappedReaction centers
+                             * Mark mappedReaction centers
                              */
                             IAtom atomE1 = bondR.getAtom(0);
                             IAtom atomE2 = bondR.getAtom(1);
@@ -1389,7 +1393,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * IMP for RC Fingerprint: compute all the unique mappedReaction centers atoms
+             * IMP for RC Fingerprint: compute all the unique mappedReaction centers atoms
              */
             Map<IAtom, IAtom> reactionCenterMap = new HashMap<>();
             bondChangeAnnotator.getReactionCenterSet().stream().filter((atom) -> (!atom.getSymbol().equals("H"))).forEachOrdered((atom) -> {
@@ -1401,7 +1405,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * Store changes in the charges like Mg2+ too Mg3+
+             * Store changes in the charges like Mg2+ too Mg3+
              */
             for (IAtom atom : bondChangeAnnotator.getReactionCenterSet()) {
                 if (!atom.getSymbol().equals("H")) {
@@ -1431,7 +1435,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             }
 
             /*
-         * Assign Reaction Center Fingerprints
+             * Assign Reaction Center Fingerprints
              */
             for (Map.Entry<IAtom, IAtom> mapRC : reactionCenterMap.entrySet()) {
 
@@ -1463,8 +1467,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         level.append(circularSMILESSource).append(">>").append(circularSMILESSink);
                         reactionCenterWFingerprint.add(new Feature(level.toString(), 1.0));
                     }
-                    MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
-                    this.reactionMoleculeMoleculePairList.add(molMolPair);
+                    try {
+                        MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
+                        this.reactionMoleculeMoleculePairList.add(molMolPair);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        throw new Exception("Failed to compute MMPAIR ", ex);
+                    }
                 }
             }
 
@@ -1474,8 +1483,57 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 System.out.println("Bond Change Calculator END");
             }
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("Failed to assign bond changes", e);
         }
+        /*
+         * total number of fragments generated
+         */
+        this.totalFragmentCount = getReactionFragmentCount();
+        if (DEBUG) {
+            System.out.println("totalFragmentCount " + totalFragmentCount);
+        }
+    }
 
+    private int getReactionFragmentCount() {
+        int totalFragCount = 0;
+        /*
+         * Mine Fragment Count
+         */
+        for (IAtomContainer reactant : mappedReaction.getReactants().atomContainers()) {
+            IAtomContainer clone = reactant.getBuilder().newInstance(IAtomContainer.class, reactant);
+            bondChangeAnnotator.getBondChangeList().stream().map(bondChange -> bondChange.getProductBond()).map(bondR -> reactant.indexOf(bondR)).forEachOrdered(chippedBondIndex -> {
+                clone.removeBond(chippedBondIndex);
+            });
+            totalFragCount += getFragmentCount(clone);
+        }
+
+        for (IAtomContainer product : mappedReaction.getProducts().atomContainers()) {
+            IAtomContainer clone = product.getBuilder().newInstance(IAtomContainer.class, product);
+            bondChangeAnnotator.getBondChangeList().stream().map(bondChange -> bondChange.getProductBond()).map(bondP -> product.indexOf(bondP)).forEachOrdered(chippedBondIndex -> {
+                clone.removeBond(chippedBondIndex);
+            });
+            totalFragCount += getFragmentCount(clone);
+        }
+        return totalFragCount;
+    }
+
+    private int getFragmentCount(IAtomContainer ac) {
+        boolean fragmentFlag = isConnected(ac);
+        int fragmentCount = 0;
+        if (!fragmentFlag) {
+            IAtomContainerSet partitionIntoMolecules = partitionIntoMolecules(ac);
+            fragmentCount = partitionIntoMolecules.getAtomContainerCount();
+        }
+        return fragmentCount;
+    }
+
+    /**
+     * @return the totalFragmentCount
+     */
+    public int getTotalFragmentCount() {
+        return totalFragmentCount;
     }
 }

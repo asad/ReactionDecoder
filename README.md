@@ -12,7 +12,7 @@ Introduction
 
 Contact
 ============
-Author: Dr. Syed Asad Rahman,
+Author: Dr. Syed Asad Rahman
 e-mail: asad.rahman@bioinceptionlabs.com
 
 Installation
@@ -30,9 +30,9 @@ use POM.xml and mvn commands to build your project
 1) mvn -DskipTests=true install (skip test)
 2) mvn install (include test)
 3) mvn clean (clean)
-4) mvn install -DskipTests=true
-5) mvn package
-6) mvn -P local clean install (with -jar-with-dependencies)
+4) mvn package
+5) mvn -P local clean install -DskipTests=true (fast single jar compilation, skip test)
+6) mvn -P local clean install (single jar compilation with test)
 
 ```
 
@@ -107,7 +107,7 @@ How to Cite RDT?
 [doi: 10.1093/bioinformatics/btw096](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4920114/)
 
 
-Subcommands
+Sub-commands
 ===========
 
 
@@ -117,18 +117,14 @@ Subcommands
 `AAM using SMILES`
   
   ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j AAM -f TEXT
-  ```
-
-  ```
-  java -cp dist/*:lib/* aamtool.ReactionDecoder -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j  AAM -f TEXT
+  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
   ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j ANNOTATE -f XML
+  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
   ```
 
 

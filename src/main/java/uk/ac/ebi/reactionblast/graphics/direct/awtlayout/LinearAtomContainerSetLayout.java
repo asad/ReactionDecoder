@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,8 @@ import static java.awt.Font.PLAIN;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.valueOf;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -36,6 +37,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContainerSet> {
+
+    private static final Logger LOG = getLogger(LinearAtomContainerSetLayout.class.getName());
 
     private Vector2d moleculeSetAxis;
     private MoleculeLayout moleculeLayout;

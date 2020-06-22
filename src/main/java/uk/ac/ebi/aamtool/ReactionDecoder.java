@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -90,20 +89,22 @@ public class ReactionDecoder extends Annotator {
                 complexMappingFlag = true;
             }
 
+            /*
+             * Initialize Reaction Decoder
+             */
+            ReactionDecoder rxn = new ReactionDecoder();
+
             if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")
                     && aamLine.hasOption('Q') && aamLine.hasOption('q') && aamLine.hasOption('f')) {
 
                 out.println("-- AAM --");
-                ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AAMTask(aamLine, createAAMOptions, complexMappingFlag);
-
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("COMPARE")
                     && compareLine.hasOption('Q') && compareLine.hasOption('q')
                     && compareLine.hasOption('T') && compareLine.hasOption('t')
                     && compareLine.hasOption('f')) {
 
                 out.println("-- COMPARE --");
-                ReactionDecoder rxn = new ReactionDecoder();
                 rxn.CompareTask(compareLine, createCompareOptions, complexMappingFlag);
 
             } else if (annotateLine.hasOption('j') && annotateLine.getOptionValue("j").equalsIgnoreCase("ANNOTATE")
@@ -111,7 +112,6 @@ public class ReactionDecoder extends Annotator {
                     && annotateLine.hasOption('f')) {
 
                 out.println("-- ANNOTATE --");
-                ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AnnotateTask(annotateLine, createAnnotateOptions, complexMappingFlag);
 
             } else if (aamLine.hasOption('j') && aamLine.getOptionValue("j").equalsIgnoreCase("AAM")) {
@@ -129,15 +129,15 @@ public class ReactionDecoder extends Annotator {
                 options.put("Atom-Atom Mapping (AAM-Tool)", createAAMOptions);
                 options.put("Reaction Annotation (RA-Tool)", createAnnotateOptions);
                 options.put("Reaction Comparison (RC-Tool)", createCompareOptions);
-                printHelp(options, 80, "EC-BLAST", "End of Help",
-                        5, 3, true, out);
+                printHelp(options, 80, "EC-BLAST", "End of Help", 5, 3, true, out);
             }
-        } catch (ParseException ex) {
-            LOGGER.error(SEVERE, null, ex);
         } catch (Exception ex) {
-            LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, " CommandLine option parsing error: ", ex);
         }
-
+        /*
+        * Force exit
+        */
+        System.exit(1);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ReactionDecoder extends Annotator {
         super();
     }
 
-    private void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
+    private synchronized void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
 
         // write xml to file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -177,7 +177,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+    private synchronized void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         File file = new File(fileName + ".txt");
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
             writer.write(doc.toString());
@@ -191,7 +191,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void AAMTask(CommandLine aamLine, Options createAAMOptions, boolean complexMappingFlag)
+    private synchronized void AAMTask(CommandLine aamLine, Options createAAMOptions, boolean complexMappingFlag)
             throws Exception {
 
         // TODO code application logic here
@@ -298,7 +298,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void CompareTask(CommandLine compareLine, Options createCompareOptions, boolean complexMappingFlag)
+    private synchronized void CompareTask(CommandLine compareLine, Options createCompareOptions, boolean complexMappingFlag)
             throws ParserConfigurationException, Exception {
 
         String optionValueQ = compareLine.getOptionValue("q");
@@ -456,7 +456,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private void AnnotateTask(CommandLine annotateLine, Options createAnnotateOptions, boolean complexMappingFlag)
+    private synchronized void AnnotateTask(CommandLine annotateLine, Options createAnnotateOptions, boolean complexMappingFlag)
             throws TransformerException,
             CloneNotSupportedException,
             FileNotFoundException,
@@ -577,5 +577,4 @@ public class ReactionDecoder extends Annotator {
             LOGGER.error(SEVERE, null, e);
         }
     }
-
 }

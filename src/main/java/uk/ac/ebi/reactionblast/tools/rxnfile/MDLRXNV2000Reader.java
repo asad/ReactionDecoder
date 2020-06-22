@@ -45,10 +45,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.openscience.cdk.io.DefaultChemObjectReader;
-import org.openscience.cdk.io.IChemObjectReader.Mode;
+import org.openscience.cdk.io.IChemObjectReader;
 
 /**
  * Reads a molecule from an MDL RXN file {
@@ -68,9 +70,8 @@ import org.openscience.cdk.io.IChemObjectReader.Mode;
  */
 public class MDLRXNV2000Reader extends DefaultChemObjectReader {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
     BufferedReader input = null;
-    private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLRXNV2000Reader.class);
+    private static ILoggingTool logger = LoggingToolFactory.createLoggingTool(MDLRXNV2000Reader.class);
 
     /**
      * Constructs a new MDLReader that can read Molecule from a given Reader.
@@ -78,10 +79,10 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
      * @param in The Reader to read from
      */
     public MDLRXNV2000Reader(Reader in) {
-        this(in, Mode.RELAXED);
+        this(in, IChemObjectReader.Mode.RELAXED);
     }
 
-    public MDLRXNV2000Reader(Reader in, Mode mode) {
+    public MDLRXNV2000Reader(Reader in, IChemObjectReader.Mode mode) {
         if (in instanceof BufferedReader) {
             input = (BufferedReader) in;
         } else {
@@ -91,10 +92,10 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
     }
 
     public MDLRXNV2000Reader(InputStream input) {
-        this(input, Mode.RELAXED);
+        this(input, IChemObjectReader.Mode.RELAXED);
     }
 
-    public MDLRXNV2000Reader(InputStream input, Mode mode) {
+    public MDLRXNV2000Reader(InputStream input, IChemObjectReader.Mode mode) {
         this(new InputStreamReader(input), mode);
     }
 
@@ -213,12 +214,12 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
             input.readLine(); // third line
             input.readLine(); // fourth line
         } catch (IOException exception) {
-            LOGGER.debug(exception);
+            logger.debug(exception);
             throw new CDKException("Error while reading header of RXN file", exception);
         }
 
-        int reactantCount = 0;
-        int productCount = 0;
+        int numReactans = 0;
+        int numProducts = 0;
         int agentCount = 0;
         try {
             String countsLine = input.readLine();
@@ -226,113 +227,69 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
              * this line contains the number of reactants and products
              */
             StringTokenizer tokenizer = new StringTokenizer(countsLine);
-            reactantCount = Integer.valueOf(tokenizer.nextToken());
-            LOGGER.info("Expecting " + reactantCount + " reactants in file");
-            productCount = Integer.valueOf(tokenizer.nextToken());
-            LOGGER.info("Expecting " + productCount + " products in file");
-
+            numReactans = Integer.valueOf(tokenizer.nextToken());
+            logger.info("Expecting " + numReactans + " reactants in file");
+            numProducts = Integer.valueOf(tokenizer.nextToken());
             if (tokenizer.hasMoreTokens()) {
                 agentCount = Integer.valueOf(tokenizer.nextToken());
                 // ChemAxon extension, technically BIOVIA now support this but
                 // not documented yet
-                if (mode == Mode.STRICT && agentCount > 0) {
+                if (mode == IChemObjectReader.Mode.STRICT && agentCount > 0) {
                     throw new CDKException("RXN files uses agent count extension");
                 }
             }
+            logger.info("Expecting " + numProducts + " products in file");
         } catch (IOException | NumberFormatException exception) {
-            LOGGER.debug(exception);
+            logger.debug(exception);
             throw new CDKException("Error while counts line of RXN file", exception);
         }
 
-        // now read the reactants
+        // now read the molecules
         try {
-            for (int i = 1; i <= reactantCount; i++) {
-                StringBuilder molFile = new StringBuilder();
-                input.readLine(); // announceMDLFileLine
-                String molFileLine = "";
-                do {
-                    molFileLine = input.readLine();
-                    molFile.append(molFileLine);
-                    molFile.append(NEW_LINE);
-                } while (!molFileLine.equals("M  END"));
-
-                IAtomContainer reactant;
-                try ( // read MDL molfile content
-                        // Changed this to mdlv2000 reader
-                        MDLV2000Reader reader = new MDLV2000Reader(new StringReader(molFile.toString()), super.mode)) {
-                    reactant = (IAtomContainer) reader.read(builder.newInstance(IAtomContainer.class));
-                }
-
-                // add reactant
-                reaction.addReactant(reactant);
+            String line = input.readLine();
+            if (line == null || !line.startsWith("$MOL")) {
+                throw new CDKException("Expected $MOL to start, was" + line);
             }
+
+            List<IAtomContainer> components = new ArrayList<>();
+
+            StringBuilder sb = new StringBuilder();
+            while ((line = input.readLine()) != null) {
+                if (line.startsWith("$MOL")) {
+                    processMol(builder.newAtomContainer(), components, sb);
+                    sb.setLength(0);
+                } else {
+                    sb.append(line).append('\n');
+                }
+            }
+
+            // last record
+            if (sb.length() > 0) {
+                processMol(builder.newAtomContainer(), components, sb);
+            }
+
+            for (IAtomContainer component : components.subList(0, numReactans)) {
+                reaction.addReactant(component);
+            }
+            for (IAtomContainer component : components.subList(numReactans,
+                    numReactans + numProducts)) {
+                reaction.addProduct(component);
+            }
+            for (IAtomContainer component : components.subList(numReactans + numProducts,
+                    components.size())) {
+                reaction.addAgent(component);
+            }
+
         } catch (CDKException exception) {
             // rethrow exception from MDLReader
             throw exception;
         } catch (IOException | IllegalArgumentException exception) {
-            LOGGER.debug(exception);
+            logger.debug(exception);
             throw new CDKException("Error while reading reactant", exception);
         }
 
-        // now read the products
-        try {
-            for (int i = 1; i <= productCount; i++) {
-                StringBuilder molFile = new StringBuilder();
-                input.readLine(); // String announceMDLFileLine =
-                String molFileLine = "";
-                do {
-                    molFileLine = input.readLine();
-                    molFile.append(molFileLine);
-                    molFile.append(NEW_LINE);
-                } while (!molFileLine.equals("M  END"));
-
-                IAtomContainer product;
-                try ( // read MDL molfile content
-                        MDLV2000Reader reader = new MDLV2000Reader(new StringReader(molFile.toString()))) {
-                    product = (IAtomContainer) reader.read(builder.newInstance(IAtomContainer.class));
-                }
-
-                // add reactant
-                reaction.addProduct(product);
-            }
-        } catch (CDKException exception) {
-            // rethrow exception from MDLReader
-            throw exception;
-        } catch (IOException | IllegalArgumentException exception) {
-            LOGGER.debug(exception);
-            throw new CDKException("Error while reading products", exception);
-        }
-        // now read the agents
-        try {
-            for (int i = 1; i <= agentCount; i++) {
-                StringBuilder molFile = new StringBuilder();
-                input.readLine(); // String announceMDLFileLine =
-                String molFileLine = "";
-                do {
-                    molFileLine = input.readLine();
-                    molFile.append(molFileLine);
-                    molFile.append(NEW_LINE);
-                } while (!molFileLine.equals("M  END"));
-
-                IAtomContainer agent;
-                try ( // read MDL molfile content
-                        MDLV2000Reader reader = new MDLV2000Reader(new StringReader(molFile.toString()))) {
-                    agent = (IAtomContainer) reader.read(builder.newInstance(IAtomContainer.class));
-                }
-
-                // add agent
-                reaction.addAgent(agent);
-            }
-        } catch (CDKException exception) {
-            // rethrow exception from MDLReader
-            throw exception;
-        } catch (IOException | IllegalArgumentException exception) {
-            LOGGER.debug(exception);
-            throw new CDKException("Error while reading products", exception);
-        }
-
         // now try to map things, if wanted
-        LOGGER.info("Reading atom-atom mapping from file");
+        logger.info("Reading atom-atom mapping from file");
         // distribute all atoms over two AtomContainer's
         IAtomContainer reactingSide = builder.newInstance(IAtomContainer.class);
         Iterator<IAtomContainer> molecules = reaction.getReactants().atomContainers().iterator();
@@ -362,9 +319,15 @@ public class MDLRXNV2000Reader extends DefaultChemObjectReader {
                 }
             }
         }
-        LOGGER.info("Mapped atom pairs: " + mappingCount);
+        logger.info("Mapped atom pairs: " + mappingCount);
 
         return reaction;
+    }
+
+    private void processMol(IAtomContainer mol, List<IAtomContainer> components, StringBuilder sb) throws CDKException, IOException {
+        try (MDLV2000Reader reader = new MDLV2000Reader(new StringReader(sb.toString()), super.mode)) {
+            components.add(reader.read(mol));
+        }
     }
 
     @Override

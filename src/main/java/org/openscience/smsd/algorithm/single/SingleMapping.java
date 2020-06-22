@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -68,6 +68,7 @@ public class SingleMapping {
      *
      * @param source
      * @param target
+     * @param am
      * @return Mappings
      * @throws CDKException
      */
@@ -88,6 +89,7 @@ public class SingleMapping {
      *
      * @param source
      * @param target
+     * @param am
      * @return Mappings
      * @throws CDKException
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
  */
 package org.openscience.smsd.graph;
 
@@ -38,10 +38,7 @@ public class Vertex implements Comparable<Vertex>, Comparator<Vertex>, Serializa
             return false;
         }
         final Vertex other = (Vertex) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
     @Override

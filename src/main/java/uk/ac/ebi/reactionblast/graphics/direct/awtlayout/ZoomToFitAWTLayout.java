@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,14 +27,15 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
-import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getScaleFactor;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.scaleMolecule;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.translate2D;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
@@ -44,6 +45,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
+
+    private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 

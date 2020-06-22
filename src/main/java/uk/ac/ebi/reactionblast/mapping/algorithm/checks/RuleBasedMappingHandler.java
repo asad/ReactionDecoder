@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -88,6 +91,8 @@ public final class RuleBasedMappingHandler implements Serializable {
     private IAtomContainer smartsNRule;
     private IAtomContainer smartsCRule;
     private IAtomContainer smartsDoublePhosphate;
+    private IAtomContainer smartsC04666Rule;
+    private IAtomContainer smartsC04916Rule;
 
     /**
      *
@@ -97,7 +102,9 @@ public final class RuleBasedMappingHandler implements Serializable {
      * @throws CDKException
      * @throws IOException
      */
-    public RuleBasedMappingHandler(Holder matrixHolder, List<String> EdMapOrignal, List<String> PdMapOrignal) throws CDKException, IOException {
+    public RuleBasedMappingHandler(Holder matrixHolder,
+            List<String> EdMapOrignal, List<String> PdMapOrignal)
+            throws CDKException, IOException {
         setRulesSmiles();
         if (DEBUG1) {
             out.println("Mapping Rules Checked");
@@ -146,6 +153,9 @@ public final class RuleBasedMappingHandler implements Serializable {
             out.println("smallestMatchedProduct " + smallestMatchedProduct);
             out.println(NEW_LINE + NEW_LINE + "----------------------" + NEW_LINE + NEW_LINE + NEW_LINE);
         }
+
+        boolean phosphate_changed = phosphate_cleaved(this.matrixHolder.getReactionContainer().getEducts(), this.matrixHolder.getReactionContainer().getProducts());
+
         try {
             for (int i = 0; i < this.matrixHolder.getReactionContainer().getEductCount(); i++) {
                 IAtomContainer educt = this.matrixHolder.getReactionContainer().getEduct(i);
@@ -179,9 +189,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     }
 
                     /*
-                    Rule 1_A water and Phosphate
+                     * Rule 1_A water and Phosphate
                      */
-                    if (ac1.getAtomCount() == 1
+                    if (phosphate_changed && ac1.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac1, false)
                             && isMatch(getSmartsPhosphate(), ac2, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac2, false)
@@ -197,9 +207,12 @@ public final class RuleBasedMappingHandler implements Serializable {
                             out.println(" Rule 1 water and Phosphate");
                         }
 
-                    } else /*
-                        Rule 1_B phophate and water
-                     */ if (ac2.getAtomCount() == 1
+                    }
+                    /*
+                     * Rule 1_B phophate and water/*
+                     * Rule 1_B phophate and water
+                     */ if (phosphate_changed
+                            && ac2.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac2, false)
                             && isMatch(getSmartsPhosphate(), ac1, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac1, false)
@@ -216,6 +229,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         }
 
                     }
+
                     /*
                     Rule 1_C water and Sulphate
                      */
@@ -225,8 +239,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && ac2.getAtomCount() == smallestMatchedProduct) {
                         if (DEBUG2) {
                             out.println("Match ");
-                            out.println("smallest R phosphate " + smallestMatchedReactant);
-                            out.println("smallest P phosphate " + smallestMatchedProduct);
+                            out.println("smallest R sulphate " + smallestMatchedReactant);
+                            out.println("smallest P sulphate " + smallestMatchedProduct);
                         }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -242,8 +256,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && ac1.getAtomCount() == smallestMatchedReactant) {
                         if (DEBUG2) {
                             out.println("Match ");
-                            out.println("smallest R phosphate " + smallestMatchedReactant);
-                            out.println("smallest P phosphate " + smallestMatchedProduct);
+                            out.println("smallest R sulphate " + smallestMatchedReactant);
+                            out.println("smallest P sulphate " + smallestMatchedProduct);
                         }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -252,6 +266,15 @@ public final class RuleBasedMappingHandler implements Serializable {
                         }
 
                     }/*
+                        Rule 11 C04666_C04916
+                     */ else if (isMatch(getSmartsC04666Rule(), ac1, false) && isMatch(getSmartsC04916Rule(), ac2, false)
+                            || (isMatch(getSmartsC04916Rule(), ac1, false) && isMatch(getSmartsC04666Rule(), ac2, false))) {
+                        if (DEBUG1) {
+                            out.println("Rule 11 C04666 with C04916 found");
+                        }
+                        setRuleMatched(true);
+                        matchedRowColoumn.put(i, j);
+                    } /*
                         Rule 2 L_Glutamate and L_Glutamine
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
                             && isMatch(getSmartsGlutamate(), ac1, false) && isMatch(getSmartsGlutamine(), ac2, false))
@@ -260,7 +283,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
-                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                            out.println("Rule 2.1 L-Glutamate with L-Glutamine found");
                         }
                     } /*
                         Rule 2 L_Glutamate and L_Glutamine_clipped
@@ -271,7 +294,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
-                            out.println("Rule 2 L-Glutamate with L-Glutamine found");
+                            out.println("Rule 2.2 L-Glutamate with L-Glutamine found");
                         }
                     }/*
                         Rule 3 D_Glutamate and TwoOxoglutarate
@@ -356,8 +379,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                         Rule 10 N_C
                      */ else if (isMatch(getSmartsNRule(), ac1, false) && isMatch(getSmartsCRule(), ac2, false)
                             || (isMatch(getSmartsCRule(), ac1, false) && isMatch(getSmartsNRule(), ac2, false))) {
-                        setRuleMatched(true);
-                        matchedRowColoumn.put(i, j);
                         if (DEBUG1) {
                             out.println("Rule 10 N with C found");
                         }
@@ -488,10 +509,16 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String C00041 = "[CH3][C](N)C(O)=O";
 
         /*
-         * N_C CC(C)[C@H](N)C(O)=O>>CC(C)C(=O)C(O)=O
+         * N_C 
          */
         final String N = "CC(C)[C@H](N)C(O)=O";
         final String C = "CC(C)C(=O)C(O)=O";
+
+        /*
+         * smartsC04666_smartsC04916 
+         */
+        final String smartsC04666 = "O=P(O)(O)O[CH2].[CH]O.O[CH]C=1N=CNC1";
+        final String smartsC04916 = "O=C(N)C=1N=CN(C1N=CNCC(=O)[CH]O)C(O[CH])C(O)[CH]O.O=P(O)(O)O[CH2].O=P(O)(O)O[CH2].[CH]O";
 
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         /*
@@ -558,6 +585,14 @@ public final class RuleBasedMappingHandler implements Serializable {
         smartsNRule = smilesParser.parseSmiles(N);
         smartsCRule = smilesParser.parseSmiles(C);
 
+        /*
+        * Rule 11 
+        *
+        * C04666_C04916
+        *
+         */
+        smartsC04666Rule = smilesParser.parseSmiles(smartsC04666);
+        smartsC04916Rule = smilesParser.parseSmiles(smartsC04916);
     }
 
     /**
@@ -719,5 +754,46 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public IAtomContainer getSmartsCRule() {
         return smartsCRule;
+    }
+
+    /**
+     * @return the smartsC04666Rule
+     */
+    public IAtomContainer getSmartsC04666Rule() {
+        return smartsC04666Rule;
+    }
+
+    /**
+     * @return the smartsC04916Rule
+     */
+    public IAtomContainer getSmartsC04916Rule() {
+        return smartsC04916Rule;
+    }
+
+    private boolean phosphate_cleaved(Collection<IAtomContainer> molsE, Collection<IAtomContainer> molsP) {
+        int countphosE = 0;
+        int countphosP = 0;
+
+        for (IAtomContainer ac : molsE) {
+            try {
+                if (isMatch(getSmartsPhosphate(), ac, false)) {
+                    countphosE += ac.getAtomCount();
+                }
+            } catch (CDKException ex) {
+                Logger.getLogger(RuleBasedMappingHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        for (IAtomContainer ac : molsP) {
+            try {
+                if (isMatch(getSmartsPhosphate(), ac, false)) {
+                    countphosP += ac.getAtomCount();
+                }
+            } catch (CDKException ex) {
+                Logger.getLogger(RuleBasedMappingHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return countphosE != countphosP;
     }
 }

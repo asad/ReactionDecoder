@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +30,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import static java.util.logging.Level.SEVERE;
@@ -50,8 +48,8 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import static java.util.Collections.synchronizedCollection;
+import java.util.List;
 import java.util.concurrent.Executors;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
@@ -63,7 +61,6 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
-    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
@@ -162,17 +159,21 @@ public class GraphMatcher extends Debugger {
             if (threadsAvailable > jobMap.size()) {
                 threadsAvailable = jobMap.size();
             }
+            
+            if (threadsAvailable > 4) {
+                threadsAvailable = 4;
+            }
+
             if (DEBUG) {
                 out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
             }
 
-//            if (DEBUG) {
-//                executor = newSingleThreadExecutor();
-//            } else {
-//                executor = Executors.newFixedThreadPool(threadsAvailable);
-//            }
-            executor = newSingleThreadExecutor();
+//            executor = Executors.newSingleThreadExecutor();
+//            executor = Executors.newCachedThreadPool();
+            executor = Executors.newFixedThreadPool(threadsAvailable);
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
+
+            List<MCSThread> listOfJobs = new ArrayList<>();
 
             for (Combination c : jobMap.keySet()) {
                 int substrateIndex = c.getRowIndex();
@@ -249,11 +250,15 @@ public class GraphMatcher extends Debugger {
                         out.println("Ring " + ring);
                         out.println("----------------------------------");
                     } catch (CDKException e) {
+                        if (DEBUG) {
+                            e.printStackTrace();
+                        }
                         LOGGER.error(SEVERE, null, e);
                     }
                 }
 
                 MCSThread mcsThread;
+
                 switch (mh.getTheory()) {
 
                     case MIN:
@@ -298,11 +303,26 @@ public class GraphMatcher extends Debugger {
                         break;
                 }
                 if (mcsThread != null) {
-                    callablesQueue.submit(mcsThread);
+                    listOfJobs.add(mcsThread);
+                }
+            }
+
+            /*
+             * Choose unique combination to run
+             */
+            if (listOfJobs.size() > 1000) {
+                System.err.println("holy moly...thats alot of molecules to compare...time for a coffee break!");
+            }
+            if (!listOfJobs.isEmpty()) {
+                for (MCSThread mcsThreadJob : listOfJobs) {
+                    callablesQueue.submit(mcsThreadJob);
                     taskCounter++;
                 }
             }
 
+            if (DEBUG) {
+                System.out.printf("submited %d jobs %n", taskCounter);
+            }
             Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<>());
             for (int count = 0; count < taskCounter; count++) {
                 MCSSolution isomorphism = callablesQueue.take().get();
@@ -358,7 +378,10 @@ public class GraphMatcher extends Debugger {
             jobReplicatorList.clear();
             gc();
 
-        } catch (IOException | CDKException | ExecutionException | InterruptedException | CloneNotSupportedException ex) {
+        } catch (Exception ex) {
+            if (DEBUG) {
+                ex.printStackTrace();
+            }
             LOGGER.error(SEVERE, null, ex);
         } finally {
             if (executor != null) {

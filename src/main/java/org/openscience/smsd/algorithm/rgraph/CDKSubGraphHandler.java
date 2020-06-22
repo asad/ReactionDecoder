@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -61,9 +61,8 @@ public class CDKSubGraphHandler implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public CDKSubGraphHandler(IAtomContainer source, IAtomContainer target,
             AtomMatcher am, BondMatcher bm) {

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -37,7 +37,6 @@ import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.algorithm.mcgregor.McGregor;
@@ -72,7 +71,7 @@ public class BaseMCS {
     final BondMatcher bondMatcher;
 
     BaseMCS(IAtomContainer source, IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
         this.allLocalAtomAtomMapping = new ArrayList<>();
         this.allLocalMCS = new ArrayList<>();
         this.vfLibSolutions = new ArrayList<>();

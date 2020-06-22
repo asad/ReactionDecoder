@@ -48,9 +48,9 @@ public class SMSDTest {
             AtomAtomMapping aam = smsd.getAllAtomMapping().iterator().next();
             System.out.println("Mapping " + aam.getCommonFragmentAsSMILES());
             System.out.println("size " + aam.getCount());
-            for (Map.Entry<IAtom, IAtom> m : aam.getMappingsByAtoms().entrySet()) {
+            aam.getMappingsByAtoms().entrySet().forEach(m -> {
                 System.out.println(m.getKey().getID() + "," + m.getValue().getID());
-            }
+            });
 
         } catch (InvalidSmilesException ex) {
             Logger.getLogger(SMSDTest.class.getName()).log(Level.SEVERE, null, ex);

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -72,15 +72,15 @@ public final class GenerateCompatibilityGraph implements Serializable {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @throws java.io.IOException
      */
     public GenerateCompatibilityGraph(
             IAtomContainer source,
             IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) throws IOException {
+            AtomMatcher am, 
+            BondMatcher bm) throws IOException {
         this.atomMatcher = am;
         this.bondMatcher = bm;
         this.source = source;

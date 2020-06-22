@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,8 +56,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.container.helper.MolMapping;
@@ -67,6 +65,8 @@ import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import static java.util.Collections.synchronizedList;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 
 final class GameTheoryMixture extends BaseGameTheory {
 
@@ -159,17 +159,17 @@ final class GameTheoryMixture extends BaseGameTheory {
 //        printEnergyMatrix(mh, eductList, productList);
         }
 
-//        if (!ruleMatchingFlag) {
-//            RuleBasedMappingHandler ruleBasedMappingHandler = 
-//                    new RuleBasedMappingHandler(mh, eductList, productList);
-//            if (ruleBasedMappingHandler.isMatchFound()) {
-//                if (DEBUG) {
-//                    out.println("Rule Based Mapping Handler Match Found");
-//                }
-//                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
-//            }
-//            ruleMatchingFlag = true;
-//        }
+        if (!ruleMatchingFlag) {//First map the biggest fragment the call rules
+            RuleBasedMappingHandler ruleBasedMappingHandler
+                    = new RuleBasedMappingHandler(mh, eductList, productList);
+            if (ruleBasedMappingHandler.isMatchFound()) {
+                if (DEBUG) {
+                    out.println("Rule Based Mapping Handler Match Found");
+                }
+                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+            }
+            ruleMatchingFlag = true;
+        }
 
         winner.searchWinners(educts, products, mh);
         if (DEBUG) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.format;
-import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * A tree of bounding boxes for objects.
@@ -37,7 +38,8 @@ import java.util.Map;
  */
 public final class BoundsTree implements Iterable<Rectangle2D> {
 
-    static final String NEW_LINE = getProperty("line.separator");
+    private static final Logger LOG = getLogger(BoundsTree.class.getName());
+
     private Rectangle2D root;
 
     private String rootLabel;
@@ -86,9 +88,11 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      */
     public BoundsTree getSubtree(String prefix) {
         BoundsTree subtree = new BoundsTree(rootLabel);
-        childMap.keySet().stream().filter((label) -> (label.startsWith(prefix))).forEachOrdered((label) -> {
-            subtree.add(label, childMap.get(label));
-        });
+        for (String label : childMap.keySet()) {
+            if (label.startsWith(prefix)) {
+                subtree.add(label, childMap.get(label));
+            }
+        }
         return subtree;
     }
 
@@ -181,16 +185,15 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
 
     /**
      * Add all the members of another tree, prefixing their labels with the
-     * supplied label, separated by an underscore. So if the prefix was 'mol1',
+     * supplied label, separated by an underscore.So if the prefix was 'mol1',
      * and the tree had labels {'atom1', 'atom2'}, the resulting bounds would be
      * labeled {'mol1_atom1', 'mol2_atom2'}.
      *
      * @param prefix
-     * @param label
      * @param tree
      */
     public void add(String prefix, BoundsTree tree) {
-        tree.getBoundLabels().forEach((label) -> {
+        tree.getBoundLabels().forEach(label -> {
             add(prefix + "_" + label, tree.get(label));
         });
     }
@@ -209,7 +212,7 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      * @param dy
      */
     public void shift(double dx, double dy) {
-        childMap.keySet().stream().map((key) -> childMap.get(key)).forEachOrdered((bounds) -> {
+        childMap.keySet().stream().map(key -> childMap.get(key)).forEachOrdered(bounds -> {
             //            System.out.print(key + " Before : " + BoundsPrinter.toString(bounds));
             bounds.setRect(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
@@ -263,27 +266,24 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      */
     public BoundsTree transform(AffineTransform transform) {
         BoundsTree transformedTree = new BoundsTree(rootLabel);
-        childMap.keySet().forEach((key) -> {
+        for (String key : childMap.keySet()) {
             Rectangle2D shape = childMap.get(key);
 
             // annoyingly, createTransformedShape returns a Path2D! 
             // (so we can't just cast to R2D)...
             transformedTree.add(key, transform.createTransformedShape(shape).getBounds2D());
-        });
+        }
         return transformedTree;
     }
 
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        childMap.keySet().stream().map((key) -> {
+        for (String key : childMap.keySet()) {
             Rectangle2D rect = get(key);
             sb.append(key).append("=").append(format("[(%2.0f, %2.0f), (%2.0f, %2.0f)]",
                     rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY()));
-            return key;
-        }).forEachOrdered((_item) -> {
-            sb.append(NEW_LINE);
-        });
+            sb.append("\n");
+        }
         return sb.toString();
     }
 

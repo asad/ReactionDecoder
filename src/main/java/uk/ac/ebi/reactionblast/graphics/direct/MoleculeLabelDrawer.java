@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,9 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
@@ -34,8 +34,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  */
 public class MoleculeLabelDrawer extends AbstractDirectDrawer {
 
-    private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(MoleculeLabelDrawer.class);
+    private static final Logger LOG = getLogger(MoleculeLabelDrawer.class.getName());
 
     // TODO: remove axis
     /**
@@ -55,7 +54,7 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
      */
     public void draw(Map<String, String> labelMap, BoundsTree labelBounds, Graphics2D g) {
         // layout labels according to the positions in the moleculeBounds
-        labelMap.keySet().forEach((boundsLabel) -> {
+        for (String boundsLabel : labelMap.keySet()) {
             String label = labelMap.get(boundsLabel);
             Rectangle2D bounds = labelBounds.get(boundsLabel);
             double x = bounds.getCenterX();
@@ -63,6 +62,6 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             Point2f p = super.getTextPoint(g, label, x, y);
 //            System.out.println("drawing string at " + x + " " + y);
             g.drawString(label, p.x, p.y);
-        });
+        }
     }
 }

@@ -94,14 +94,16 @@ final public class CDKMCS {
      *
      * @param g1 first molecule. Must not be an {@link IQueryAtomContainer}.
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return true if the 2 molecule are isomorph
      * @throws CDKException if the first molecule is an instance of
      * IQueryAtomContainer
      */
-    public static boolean isIsomorph(IAtomContainer g1, IAtomContainer g2, AtomMatcher am, BondMatcher bm) throws CDKException {
+    public static boolean isIsomorph(IAtomContainer g1,
+            IAtomContainer g2,
+            AtomMatcher am,
+            BondMatcher bm) throws CDKException {
         if (g1 instanceof IQueryAtomContainer) {
             throw new CDKException(
                     "The first IAtomContainer must not be an IQueryAtomContainer");
@@ -193,9 +195,8 @@ final public class CDKMCS {
      *
      * @param g1 first molecule. Must not be an {@link IQueryAtomContainer}.
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return the list of all the 'mappings'
      * @throws CDKException
      */
@@ -322,9 +323,8 @@ final public class CDKMCS {
      *
      * @param g1 first molecule. Must not be an {@link IQueryAtomContainer}.
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return true if g2 a subgraph on g1
      * @throws CDKException
      */
@@ -372,9 +372,8 @@ final public class CDKMCS {
      *
      * @param g1 first molecule. Must not be an {@link IQueryAtomContainer}.
      * @param g2 second molecule. May be an {@link IQueryAtomContainer}.
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return the list of all the maximal common substructure found projected
      * of g1 (list of GraphAtomContainer )
      * @throws CDKException
@@ -423,9 +422,8 @@ final public class CDKMCS {
      *
      * @param g1 Description of the first molecule
      * @param g2 Description of the second molecule
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return the rGraph
      * @throws CDKException
      */

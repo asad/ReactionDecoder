@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,6 +89,8 @@ final class GameTheoryMax extends BaseGameTheory {
     private Integer stepIndex = 0;
     private final ICanonicalMoleculeLabeller canonLabeler;
 
+    private int counter = 0;
+
     //~--- constructors -------------------------------------------------------
     GameTheoryMax(
             IReaction reaction,
@@ -100,6 +102,7 @@ final class GameTheoryMax extends BaseGameTheory {
         if (DEBUG) {
             out.println("I am MAX");
         }
+        this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -118,6 +121,8 @@ final class GameTheoryMax extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
+        this.counter++;
+
         if (DEBUG) {
             out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
@@ -146,7 +151,7 @@ final class GameTheoryMax extends BaseGameTheory {
                 out.println("DONE CHECK Rule Based Mapping Handler");
             }
         }
-        if (!conditionmet) {
+        if (!conditionmet && counter <= 5) {
             if (DEBUG) {
                 out.println("Subgraph/Exact Match Test");
             }

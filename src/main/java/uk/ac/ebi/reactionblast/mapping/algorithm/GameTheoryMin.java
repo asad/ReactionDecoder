@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -90,6 +90,8 @@ final class GameTheoryMin extends BaseGameTheory {
     private Integer stepIndex = 0;
     private final ICanonicalMoleculeLabeller canonLabeler;
 
+    private int counter = 0;
+
     //~--- constructors -------------------------------------------------------
     GameTheoryMin(
             IReaction reaction,
@@ -101,6 +103,7 @@ final class GameTheoryMin extends BaseGameTheory {
         if (DEBUG) {
             out.println("I am MIN MIX");
         }
+        this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -152,6 +155,7 @@ final class GameTheoryMin extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
+        this.counter++;
         if (DEBUG) {
             System.out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
@@ -180,8 +184,9 @@ final class GameTheoryMin extends BaseGameTheory {
             }
         }
 
-        if (!conditionmet) {
+        if (!conditionmet && counter <= 5) {
             if (DEBUG) {
+                out.println("call counter " + counter);
                 out.println("Subgraph/Exact Match Test");
             }
             MinSelection select
@@ -193,6 +198,7 @@ final class GameTheoryMin extends BaseGameTheory {
                 mh = select.getUpdatedHolder();
             }
         }
+
         if (DEBUG) {
             out.println("**********Modified Matrix**************");
 //            printMatrixAtomContainer(mh, eductList, productList);

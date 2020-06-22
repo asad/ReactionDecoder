@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
-import static java.lang.System.getProperty;
 
 import org.openscience.cdk.interfaces.IReaction;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
@@ -66,7 +65,18 @@ public class MappingSolution implements Serializable {
      * @param reaction
      * @param energyDelta
      */
-    public MappingSolution(BondChangeCalculator bondChangeCalculator, IMappingAlgorithm ma, IReaction reaction, Reactor reactor, double bondEnergyChange, int totalCarbonBondChanges, int totalBondChanges, int totalFragmentChanges, int totalStereoChanges, int smallestFragmentCount, int localScore, double energyDelta) {
+    public MappingSolution(BondChangeCalculator bondChangeCalculator,
+            IMappingAlgorithm ma,
+            IReaction reaction,
+            Reactor reactor,
+            double bondEnergyChange,
+            int totalCarbonBondChanges,
+            int totalBondChanges,
+            int totalFragmentChanges,
+            int totalStereoChanges,
+            int smallestFragmentCount,
+            int localScore,
+            double energyDelta) {
         this.algorithmID = ma;
         this.bondEnergySum = bondEnergyChange;
         this.totalBondChanges = totalBondChanges;
@@ -99,10 +109,19 @@ public class MappingSolution implements Serializable {
         sb.append(NEW_LINE);
         sb.append("-----------------------------------");
         sb.append(NEW_LINE);
-        sb.append("MappingSolution{" + "algorithmID=").append(algorithmID).append(", bondEnergyChange=").append(bondEnergySum).append(", totalBondChanges=").append(totalBondChanges).append(", totalFragmentChanges=").append(totalFragmentChanges).append(", totalStereoChanges=").append(totalStereoChanges).append(", smallestFragmentCount=").append(smallestFragmentCount) //                .append(", reaction=").append(reaction)
+        sb.append("MappingSolution{" + "algorithmID=").append(algorithmID)
+                .append(", bondEnergyChange=").append(bondEnergySum)
+                .append(", totalBondChanges=").append(totalBondChanges)
+                .append(", totalFragmentChanges=").append(totalFragmentChanges)
+                .append(", totalStereoChanges=").append(totalStereoChanges)
+                .append(", smallestFragmentCount=").append(smallestFragmentCount)
+                //                .append(", reaction=").append(reaction)
                 //                .append(", reactor=").append(reactor)
-                .append(", totalChanges=").append(totalChanges).append(", chosen=").append(chosen) //                .append(", bondChangeCalculator=").append(bondChangeCalculator)
-                .append(", generate3D=").append(generate3D).append(", generate2D=").append(generate2D).append('}');
+                .append(", totalChanges=").append(totalChanges)
+                .append(", chosen=").append(chosen)
+                //                .append(", bondChangeCalculator=").append(bondChangeCalculator)
+                .append(", generate3D=").append(generate3D)
+                .append(", generate2D=").append(generate2D).append('}');
         sb.append(NEW_LINE);
         return sb.toString();
     }

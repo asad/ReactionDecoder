@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,13 +34,13 @@ import org.openscience.cdk.interfaces.IReaction;
  */
 public abstract class BasicDebugger {
 
-    static final String NEW_LINE = getProperty("line.separator");
+    protected static final String NEW_LINE = getProperty("line.separator");
 
     /**
      *
      * @param mappings
      */
-    public void printAtomAtomMapping(Map<IAtom, IAtom> mappings) {
+    public static void printAtomAtomMapping(Map<IAtom, IAtom> mappings) {
         out.println();
         mappings.entrySet().stream().map((m) -> {
             out.println("e:" + m.getKey().getID());
@@ -54,7 +54,7 @@ public abstract class BasicDebugger {
      *
      * @param reaction
      */
-    protected void printReaction(IReaction reaction) {
+    protected static void printReaction(IReaction reaction) {
         IAtomContainerSet Educt = reaction.getReactants();
         IAtomContainerSet Product = reaction.getProducts();
 
@@ -99,7 +99,7 @@ public abstract class BasicDebugger {
      *
      * @param mol
      */
-    protected void printAtoms(IAtomContainer mol) {
+    protected static void printAtoms(IAtomContainer mol) {
         out.print("Atom: ");
         for (IAtom a : mol.atoms()) {
 
@@ -118,7 +118,7 @@ public abstract class BasicDebugger {
      *
      * @param molecule
      */
-    protected void printMolecule(IAtomContainer molecule) {
+    protected static void printMolecule(IAtomContainer molecule) {
 
         out.println("AtomContainer " + molecule.getID() + ": " + molecule.getAtomCount());
 

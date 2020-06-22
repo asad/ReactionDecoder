@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,12 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org._3pq.jgrapht.graph.SimpleGraph;
 import org.openscience.cdk.AtomContainer;
 import static org.openscience.cdk.CDKConstants.VISITED;
-import static org.openscience.cdk.graph.BFSShortestPath.findPathBetween;
-import static org.openscience.cdk.graph.MoleculeGraphs.getMoleculeGraph;
-import static org.openscience.cdk.graph.PathTools.computeFloydAPSP;
+import org.openscience.cdk.graph.ShortestPaths;
 import static org.openscience.cdk.graph.matrix.AdjacencyMatrix.getMatrix;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -60,9 +57,6 @@ public class CanonicalNumberingGenerator {
     }
 
     private final IAtomContainer atomContainer;
-    private final SimpleGraph simpleGraph;
-    private final int costMatrix[][];
-    private final int distanceMatrix[][];
     private final List<Integer> canonicalPermutationList;
     private final List<Integer> orbitalCanonicalLabellingList;
 
@@ -73,10 +67,6 @@ public class CanonicalNumberingGenerator {
      */
     public CanonicalNumberingGenerator(IAtomContainer atomContainer) {
         this.atomContainer = new AtomContainer(atomContainer);
-        this.costMatrix = getMatrix(this.atomContainer);
-        this.distanceMatrix = computeFloydAPSP(costMatrix);
-        this.simpleGraph = getMoleculeGraph(atomContainer);
-
         resetFlags(this.atomContainer);
 
         ICanonicalMoleculeLabeller molLabel
@@ -181,13 +171,13 @@ public class CanonicalNumberingGenerator {
          */
         @Override
         public synchronized int compare(Label t1, Label t2) {
-            List<org._3pq.jgrapht.Edge> sp
-                    = findPathBetween(simpleGraph, t1.atom, t2.atom);
+            ShortestPaths sp = new ShortestPaths(atomContainer, t1.atom);
+            IAtom[] atomsTo = sp.atomsTo(t2.atom);
             if (t1.atom == t2.atom) {
                 return 0;
-            } else if (sp.isEmpty()) {
+            } else if (atomsTo.length == 0) {
                 return 99999;
-            } else if (sp.size() == 1) {
+            } else if (atomsTo.length == 1) {
                 return 1;
             }
             return -1;

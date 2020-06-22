@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,26 +36,27 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.System.err;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.translate2D;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BACKWARD;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.FORWARD;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.XAlign;
@@ -75,8 +76,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.TopToBottomReactionLayout;
  */
 public class DirectReactionDrawer extends AbstractDirectDrawer {
 
-    private final static ILoggingTool LOGGER
-            = createLoggingTool(DirectReactionDrawer.class);
+    private static final Logger LOG = getLogger(DirectReactionDrawer.class.getName());
 
     private AbstractDirectReactionLayout reactionLayout;
     private AbstractAWTReactionLayout exactReactionLayout;
@@ -344,7 +344,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             Rectangle2D bb = boundsTree.getRoot();
             double dx = (boundsTree.getWidth() / 2) - bb.getCenterX();
             double dy = (boundsTree.getHeight() / 2) - bb.getCenterY();
-            LOGGER.debug(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
+            err.println(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
 
             // AARGH!
             boundsTree = shift(reaction, boundsTree, dx, 0);
@@ -461,23 +461,15 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
         arrowCenter = new Point2d(xPos, yPos);
 
-        if (null == params.arrowType) {
+//        System.out.println("arrow center @ " + arrowCenter);
+        if (params.arrowType == FORWARD) {
             arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
-        } else//        System.out.println("arrow center @ " + arrowCenter);
-        {
-            switch (params.arrowType) {
-                case FORWARD:
-                    arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
-                    break;
-                case BACKWARD:
-                    Vector2d backAxis = new Vector2d(reactionAxis);
-                    backAxis.negate();
-                    arrowDrawer.drawArrow(g, arrowCenter, backAxis);
-                    break;
-                default:
-                    arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
-                    break;
-            }
+        } else if (params.arrowType == BACKWARD) {
+            Vector2d backAxis = new Vector2d(reactionAxis);
+            backAxis.negate();
+            arrowDrawer.drawArrow(g, arrowCenter, backAxis);
+        } else {
+            arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
         }
 
         IAtomContainerSet products = reaction.getProducts();
@@ -498,7 +490,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
      */
     private void drawBoundsTree(BoundsTree tree, List<String> labels, Color color, Graphics2D g) {
         java.util.Random random = new java.util.Random();
-        labels.forEach((label) -> {
+        labels.forEach(label -> {
             Rectangle2D bounds = tree.get(label);
 //            int dx = random.nextInt(5) * ((random.nextBoolean())? 1 : -1);
 //            int dy = random.nextInt(5) * ((random.nextBoolean())? 1 : -1);
@@ -517,7 +509,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
      * @param labels
      */
     public void printBoundsTree(BoundsTree tree, List<String> labels) {
-        labels.forEach((label) -> {
+        labels.forEach(label -> {
             Rectangle2D r = tree.get(label);
             if (r == null) {
                 out.println(label + ":NULL");
@@ -613,7 +605,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             String subLabel = label + "_" + atomContainer.getID() + ":" + counter;
 //            System.out.println(fullLabel);
 
-//            System.out.println("Atoms From" + BoundsPrinter.toString(GeometryUtil.getRectangle2D(atomContainer)));
+//            System.out.println("Atoms From" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
             translate2D(atomContainer, dx, dy);
             Rectangle2D uBounds = unshiftedMolSetTree.get(fullLabel);
             Rectangle2D sBounds = new Rectangle2D.Double(uBounds.getMinX() + dx,
@@ -622,7 +614,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
                     uBounds.getHeight());
 //            System.out.println("From " + BoundsPrinter.toString(uBounds));
 //            System.out.println("To   " + BoundsPrinter.toString(sBounds));
-//            System.out.println("Atoms To" + BoundsPrinter.toString(GeometryUtil.getRectangle2D(atomContainer)));
+//            System.out.println("Atoms To" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
             boundsTree.add(subLabel, sBounds);
             counter++;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -60,7 +59,6 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  */
 public class Annotator extends Helper {
 
-    static final String NEW_LINE = getProperty("line.separator");
     static final String TAB = "\t";
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Annotator.class);
@@ -118,7 +116,7 @@ public class Annotator extends Helper {
      * @return
      * @throws Exception
      */
-    protected ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
+    protected static ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
         ReactionMechanismTool rmt;
         /*
          Check if the reaction is already mapped
@@ -146,7 +144,7 @@ public class Annotator extends Helper {
      * @throws CDKException
      * @throws Exception
      */
-    protected boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
+    protected synchronized boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
 
         MappingSolution s = mech.getSelectedSolution();
         if (s == null) {
@@ -179,7 +177,7 @@ public class Annotator extends Helper {
      * @param jobID
      * @throws IOException
      */
-    private void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
+    private static void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
         String rootPath = new File(".").getCanonicalPath();
         File bcMatrix = new File(rootPath, jobID + "_Bond_Change" + ".mat");
         File rcMatrix = new File(rootPath, jobID + "_Reaction_Centre" + ".mat");
@@ -608,8 +606,9 @@ public class Annotator extends Helper {
                             .getReactionWithCompressUnChangedHydrogens()));
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
-                    sb.append("SCORE: ").append((m.getTotalBondChanges() + m.getTotalFragmentChanges()));
-                    sb.append(", CHAOS: ").append(m.getTotalFragmentChanges()).append(" <=> ").append(m.getSmallestFragmentCount());
+                    sb.append("SCORE: ").append((m.getTotalChanges()));
+                    sb.append(", CHAOS: ").append((m.getTotalBondChanges()));
+                    sb.append(", FRAG: ").append(m.getTotalFragmentChanges()).append(" <=> ").append(m.getSmallestFragmentCount());
                     sb.append(", SIGMA: ").append(m.getTotalCarbonBondChanges());
                     sb.append(", ENERGY: ").append(df.format(m.getBondEnergySum()));
                     sb.append(", DELTA: ").append(df.format(m.getEnergyDelta()));
@@ -763,10 +762,14 @@ public class Annotator extends Helper {
                     aam.appendChild(solutionAAM);
                     // AAM elements
                     Element score = doc.createElement("SCORE");
-                    score.appendChild(doc.createTextNode((m.getTotalBondChanges() + m.getTotalFragmentChanges()) + ""));
+                    score.appendChild(doc.createTextNode((m.getTotalChanges()) + ""));
                     aam.appendChild(score);
                     // AAM elements
                     score = doc.createElement("CHAOS");
+                    score.appendChild(doc.createTextNode(m.getTotalBondChanges() + ""));
+                    aam.appendChild(score);
+                    // AAM elements
+                    score = doc.createElement("FRAG");
                     score.appendChild(doc.createTextNode(m.getTotalFragmentChanges() + " <=> " + m.getSmallestFragmentCount()));
                     aam.appendChild(score);
                     // AAM elements

@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -34,11 +34,7 @@ import java.util.logging.Level;
 
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
-import org.openscience.cdk.aromaticity.Aromaticity;
-import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
-import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -50,6 +46,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
@@ -296,34 +293,17 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
-                uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
-        Set<IBond> removeUncommonBonds = new HashSet<>();
-        for (IBond bondQ : ac.bonds()) {
-            if (mapping.containsKey(bondQ.getBegin()) && mapping.containsKey(bondQ.getEnd())) {
-                IAtom atom1 = mapping.get(bondQ.getBegin());
-                IAtom atom2 = mapping.get(bondQ.getEnd());
-                IBond bondT = getTarget().getBond(atom1, atom2);
-                if (bondT == null) {
-                    removeUncommonBonds.add(bondQ);
-                }
-            }
-        }
-        /*
-         * Remove umcommon bonds
-         */
-        removeUncommonBonds.forEach((b) -> {
-            ac.removeBond(b);
-        });
 
         /*
          * Remove umcommon atoms
          */
-        uniqueAtoms.stream().forEach((atom) -> {
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
         return ac;
@@ -336,16 +316,15 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CloneNotSupportedException
      */
     public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
-
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
-                uniqueAtoms.add(ac.getAtom(getTargetIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getTargetIndex(atom)));
             }
         }
 
-        uniqueAtoms.stream().forEach((atom) -> {
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
         return ac;
@@ -359,37 +338,51 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
-                uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
 
         /*
-         Remove bond(s) from the query molecule if they are not present in the target.
-         As we are mapping/projecting atoms, it might happen that a bond may or maynot 
+         Remove queryBond(s) from the query molecule if they are not present in the target.
+         As we are mapping/projecting atoms, it might happen that a queryBond may or maynot 
          exist between atoms.
          */
-        for (IBond bond : getQuery().bonds()) {
-            IAtom atom1ForBondInTarget = mapping.get(bond.getAtom(0));
-            IAtom atom2ForBondInTarget = mapping.get(bond.getAtom(1));
-            if (atom1ForBondInTarget == null) {
+        for (IBond queryBond : getQuery().bonds()) {
+            IAtom targetAtomBegin = mapping.get(queryBond.getBegin());
+            IAtom targetAtomEnd = mapping.get(queryBond.getEnd());
+            if (targetAtomBegin == null) {
                 continue;
             }
-            if (atom2ForBondInTarget == null) {
+            if (targetAtomEnd == null) {
                 continue;
             }
 
-            IBond bondInTarget = getTarget().getBond(atom1ForBondInTarget, atom2ForBondInTarget);
-            if (bondInTarget == null) {
-                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(0)));
-                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(1)));
+            IBond targetBond = getTarget().getBond(targetAtomBegin, targetAtomEnd);
+            if (targetBond == null) {
+                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getBegin()));
+                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getEnd()));
                 ac.removeBond(ac.getBond(atom1InCommonContainer, atom2InCommonContainer));
+            }
+            /*
+             * if the target bond order is lower then reduce the order new container
+             */
+            if (targetBond != null && !queryBond.isAromatic() && !targetBond.isAromatic()) {
+                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getBegin()));
+                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getEnd()));
+                IBond bond = ac.getBond(atom1InCommonContainer, atom2InCommonContainer);
+                if (queryBond.getOrder().numeric() > targetBond.getOrder().numeric()) {
+                    bond.setOrder(targetBond.getOrder());
+                }
             }
         }
 
-        uniqueAtoms.stream().forEach((atom) -> {
+        /*
+         * Remove unmapped atoms
+         */
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
 
@@ -402,8 +395,10 @@ public final class AtomAtomMapping implements Serializable {
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
+
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
+            MoleculeInitializer.initializeMolecule(ac);
         } catch (CDKException ex) {
             LOGGER.error(Level.SEVERE, null, ex);
         }
@@ -419,16 +414,12 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
         SmilesGenerator smiles = new SmilesGenerator(
-                //                SmiFlavor.Unique|
-                //SmiFlavor.UseAromaticSymbols|
-                SmiFlavor.AtomAtomMap
-                | SmiFlavor.Stereo);
+                SmiFlavor.Unique
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.AtomAtomMap
+                | SmiFlavor.Stereo
+        );
         IAtomContainer commonFragment = getCommonFragment();
-        Aromaticity aromaticity = new Aromaticity(daylight(),
-                Cycles.or(Cycles.all(),
-                        Cycles.or(Cycles.relevant(),
-                                Cycles.essential())));
-        aromaticity.apply(commonFragment);
         return smiles.create(commonFragment);
     }
 

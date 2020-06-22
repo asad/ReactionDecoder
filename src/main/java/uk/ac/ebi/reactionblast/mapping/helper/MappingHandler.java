@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -176,8 +176,7 @@ public class MappingHandler extends BasicDebugger {
             if (I_Atom != null && J_Atom != null) {
 
                 /*
-                *******************************
-                * Mapping the Reactants ******************************
+                 * Mapping the Reactants 
                  */
                 boolean eFlag = false;
                 IAtom firstAtom = null;
@@ -208,8 +207,7 @@ public class MappingHandler extends BasicDebugger {
 
                 }
                 /*
-                *******************************
-                * Mapping the Products ******************************
+                 * Mapping the Products 
                  */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {

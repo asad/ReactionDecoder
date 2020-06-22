@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,18 +27,21 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.get2DCenter;
 
 /**
  *
  * @author asad
  */
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
+
+    private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 

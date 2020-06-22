@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import static java.lang.Math.toDegrees;
@@ -24,12 +25,12 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.N;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.NE;
@@ -45,6 +46,7 @@ import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPos
  * @author asad
  */
 public class LabelManager {
+
 
     private static final Vector2d POS_X = new Vector2d(1, 0);
 
@@ -65,8 +67,7 @@ public class LabelManager {
     private static final Vector2d vW = new Vector2d(-1, 0);
 
     private static final Vector2d vNW = new Vector2d(-1, -1);
-    private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(LabelManager.class);
+    private static final Logger LOG = getLogger(LabelManager.class.getName());
 
     private final Map<IAtom, BitSet> atomAnnotationPositions;
 
@@ -126,24 +127,15 @@ public class LabelManager {
      */
     public Vector2d getVectorFromPosition(AnnotationPosition position) {
         switch (position) {
-            case N:
-                return vN;
-            case NE:
-                return vNE;
-            case E:
-                return vE;
-            case SE:
-                return vSE;
-            case S:
-                return vS;
-            case SW:
-                return vSW;
-            case W:
-                return vW;
-            case NW:
-                return vNW;
-            default:
-                return vN;
+            case N:     return vN;
+            case NE:    return vNE;
+            case E:     return vE;
+            case SE:    return vSE;
+            case S:     return vS;
+            case SW:    return vSW;
+            case W:     return vW;
+            case NW:    return vNW;
+            default:    return vN;
         }
     }
 
@@ -154,24 +146,15 @@ public class LabelManager {
      */
     public Vector2d getLeftPerpendicularFromPosition(AnnotationPosition position) {
         switch (position) {
-            case N:
-                return vW;
-            case NE:
-                return vNW;
-            case E:
-                return vN;
-            case SE:
-                return vNE;
-            case S:
-                return vE;
-            case SW:
-                return vSE;
-            case W:
-                return vS;
-            case NW:
-                return vSW;
-            default:
-                return vN;
+            case N:     return vW;
+            case NE:    return vNW;
+            case E:     return vN;
+            case SE:    return vNE;
+            case S:     return vE;
+            case SW:    return vSE;
+            case W:     return vS;
+            case NW:    return vSW;
+            default:    return vN;
         }
     }
 
@@ -182,24 +165,15 @@ public class LabelManager {
      */
     public Vector2d getRightPerpendicularFromPosition(AnnotationPosition position) {
         switch (position) {
-            case N:
-                return vE;
-            case NE:
-                return vSE;
-            case E:
-                return vS;
-            case SE:
-                return vSW;
-            case S:
-                return vW;
-            case SW:
-                return vNW;
-            case W:
-                return vN;
-            case NW:
-                return vNE;
-            default:
-                return vS;
+            case N:     return vE;
+            case NE:    return vSE;
+            case E:     return vS;
+            case SE:    return vSW;
+            case S:     return vW;
+            case SW:    return vNW;
+            case W:     return vN;
+            case NW:    return vNE;
+            default:    return vS;
         }
     }
 
@@ -242,16 +216,11 @@ public class LabelManager {
      */
     public AnnotationPosition alignmentToAnnotationPosition(int align) {
         switch (align) {
-            case 1:
-                return E;
-            case -1:
-                return W;
-            case -2:
-                return N;
-            case 2:
-                return S;
-            default:
-                return E;
+            case 1: return E;
+            case -1: return W;
+            case -2: return N;
+            case 2: return S;
+            default: return E;
         }
     }
 
@@ -412,31 +381,38 @@ public class LabelManager {
         /**
          *
          */
-        N,
+        N, 
+
         /**
          *
          */
-        W,
+        W, 
+
         /**
          *
          */
-        S,
+        S, 
+
         /**
          *
          */
-        E,
+        E, 
+
         /**
          *
          */
-        NW,
+        NW, 
+
         /**
          *
          */
-        NE,
+        NE, 
+
         /**
          *
          */
-        SW,
+        SW, 
+
         /**
          *
          */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
  */
 package org.openscience.smsd.graph.algorithm;
 
@@ -31,9 +31,8 @@ public class MCSAlgorithm {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return
      * @throws IOException
      * @throws java.lang.CloneNotSupportedException

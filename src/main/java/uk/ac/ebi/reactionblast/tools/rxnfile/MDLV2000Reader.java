@@ -139,13 +139,6 @@ public class MDLV2000Reader extends DefaultChemObjectReader {
     private static final String RECORD_DELIMITER = "$$$$";
 
     /**
-     * @deprecated Incorrect spelling
-     */
-    private static final Set<String> PSUEDO_LABELS = ImmutableSet.<String>builder().add("*").add("A").add("Q")
-            .add("L").add("LP").add("R") // XXX: not in spec
-            .add("R#").build();
-
-    /**
      * Valid pseudo labels.
      */
     private static final Set<String> PSEUDO_LABELS = ImmutableSet.<String>builder().add("*").add("A").add("Q")

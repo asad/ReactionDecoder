@@ -81,9 +81,8 @@ public class MCSSThread implements Callable<LinkedBlockingQueue<IAtomContainer>>
      * @param mcssList
      * @param jobType
      * @param taskNumber
-     * @param matchBonds
-     * @param matchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public MCSSThread(List<IAtomContainer> mcssList, JobType jobType, int taskNumber,
             AtomMatcher am, BondMatcher bm) {

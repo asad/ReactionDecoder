@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -187,7 +187,7 @@ public class MinSelection extends Selector implements IResult {
     }
 
     private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
-        return new Double(educt.getAtomCount()) == mcsSize;
+        return Double.valueOf(educt.getAtomCount()) == mcsSize;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -126,6 +126,15 @@ public class MCSThread implements Callable<MCSSolution> {
     MCSThread(IMappingAlgorithm theory, int queryPosition, int targetPosition,
             IAtomContainer educt, IAtomContainer product)
             throws CloneNotSupportedException, CDKException {
+        /*
+         * create SMILES
+         */
+        smiles = new SmilesGenerator(
+                //SmiFlavor.Unique|
+                SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo
+                | SmiFlavor.AtomAtomMap);
+
         this.compound1 = getNewContainerWithIDs(educt);
         this.compound2 = getNewContainerWithIDs(product);
         this.queryPosition = queryPosition;
@@ -133,35 +142,6 @@ public class MCSThread implements Callable<MCSSolution> {
         this.theory = theory;
         this.numberOfCyclesEduct = 0;
         this.numberOfCyclesProduct = 0;
-
-        Aromaticity aromaticity = new Aromaticity(daylight(),
-                Cycles.or(Cycles.all(),
-                        Cycles.or(Cycles.relevant(),
-                                Cycles.essential())));
-        aromaticity.apply(this.compound1);
-        aromaticity.apply(this.compound2);
-
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(this.compound1);
-            MoleculeInitializer.initializeMolecule(this.compound1);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. r.mol: ", ex.getMessage());
-        }
-        try {
-            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(this.compound2);
-            MoleculeInitializer.initializeMolecule(this.compound2);
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "WARNING: Error in Config. p.mol: ", ex.getMessage());
-        }
-
-        /*
-         * create SMILES
-         */
-        smiles = new SmilesGenerator(
-                //SmiFlavor.Unique|
-                SmiFlavor.Stereo
-                | SmiFlavor.AtomAtomMap);
-
     }
 
     synchronized void printMatch(BaseMapping isomorphism) {
@@ -186,6 +166,10 @@ public class MCSThread implements Callable<MCSSolution> {
 
         AtomMatcher am;
         BondMatcher bm;
+
+        if (DEBUG1) {
+            System.out.println("in mcsthread call ");
+        }
 
         try {
             /*
@@ -338,29 +322,28 @@ public class MCSThread implements Callable<MCSSolution> {
             }
 
             /*
-            * If substructure matches have failed then call MCS
+             * If substructure matches have failed then call MCS
              */
             if (DEBUG1) {
-
-                /*
-                 * create SMILES
-                 */
-                String createSM1 = null;
-                String createSM2 = null;
-                try {
-                    createSM1 = smiles.create(this.compound1);
-                    createSM2 = smiles.create(this.compound2);
-                } catch (CDKException e) {
-                    LOGGER.error(SEVERE, "Error in generating SMILES: ", e.getMessage());
-                }
+//                /*
+//                 * create SMILES
+//                 */
+//                String createSM1 = null;
+//                String createSM2 = null;
+//                try {
+//                    createSM1 = smiles.create(getCompound1());
+//                    createSM2 = smiles.create(getCompound2());
+//                } catch (Exception e) {
+//                    LOGGER.error(SEVERE, "Error in generating SMILES: ", e.getMessage());
+//                }
                 System.out.println("==============================================");
 
                 System.out.println("No Substructure found - switching to MCS");
                 System.out.println("Q: " + getCompound1().getID()
-                        + " molQ: " + createSM1
+                        //                        + " molQ: " + createSM1
                         + NEW_LINE
                         + " T: " + getCompound2().getID()
-                        + " molT: " + createSM2
+                        //                        + " molT: " + createSM2
                         + NEW_LINE
                         + " atomsE: " + compound1.getAtomCount()
                         + " atomsP: " + compound2.getAtomCount());
@@ -379,6 +362,7 @@ public class MCSThread implements Callable<MCSSolution> {
             return mcs;
 
         } catch (CDKException | CloneNotSupportedException ex) {
+//            ex.printStackTrace();
             LOGGER.error(SEVERE, "Error in generating MCS Solution: ", ex.getMessage());
         }
         return null;
@@ -390,21 +374,41 @@ public class MCSThread implements Callable<MCSSolution> {
          Generating SMILES speed ups the mapping process by n-FOLDS
          May be this is CDK inherent bug, which relies on the properties set by the SMILES
          */
-        IAtomContainer ac;
-        ac = mol.clone();
-        for (int i = 0; i < ac.getAtomCount(); i++) {
-            String atomID = mol.getAtom(i).getID() == null
-                    ? valueOf(i) : mol.getAtom(i).getID();
-            ac.getAtom(i).setID(atomID);
-        }
-        String containerID = mol.getID() == null ? valueOf(nanoTime()) : mol.getID();
-        ac.setID(containerID);
+        if (mol != null && mol.getAtomCount() > 0) {
+            IAtomContainer ac;
+            ac = ExtAtomContainerManipulator.cloneWithIDs(mol);
+            Aromaticity aromaticity = new Aromaticity(daylight(),
+                    Cycles.or(Cycles.all(),
+                            Cycles.or(Cycles.relevant(),
+                                    Cycles.essential())));
+            aromaticity.apply(ac);
+            try {
+                ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
+                MoleculeInitializer.initializeMolecule(ac);
+            } catch (Exception ex) {
+                if (DEBUG1) {
+                    ex.printStackTrace();
+                }
+                LOGGER.error(Level.SEVERE, "WARNING: Error in Config. r.mol: ", ex.getMessage());
+            }
 
-        return ac;
+            for (int i = 0; i < ac.getAtomCount(); i++) {
+                String atomID = mol.getAtom(i).getID() == null
+                        ? valueOf(i) : mol.getAtom(i).getID();
+                ac.getAtom(i).setID(atomID);
+            }
+            String containerID = mol.getID() == null ? valueOf(nanoTime()) : mol.getID();
+            ac.setID(containerID);
+
+            return ac;
+        }
+        return mol;
     }
 
     private synchronized boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
-
+        if (DEBUG1) {
+            System.out.println("check isPossibleSubgraphMatch " + q.getID() + "," + t.getID());
+        }
         Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
         Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
 
@@ -695,6 +699,7 @@ public class MCSThread implements Callable<MCSSolution> {
             boolean ringMatcher,
             boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
+
         //System.out.println("====generate Unique Key====");
         StringBuilder key = new StringBuilder();
         key.append(id1).append(id2)
@@ -710,18 +715,23 @@ public class MCSThread implements Callable<MCSSolution> {
                 .append(numberOfCyclesProduct);
 
         try {
-            int[] sm1 = getCircularFP(compound1);
-            int[] sm2 = getCircularFP(compound2);
-            key.append(Arrays.toString(sm1));
-            key.append(Arrays.toString(sm2));
-            if (DEBUG3) {
-                System.out.println(" sm1 " + smiles.create(compound1));
-                System.out.println(" sm2 " + smiles.create(compound2));
+            try {
+                int[] sm1 = getCircularFP(compound1);
+                int[] sm2 = getCircularFP(compound2);
+                key.append(Arrays.toString(sm1));
+                key.append(Arrays.toString(sm2));
+            } catch (Exception ex) {
+                LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
             }
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
+            if (DEBUG1) {
+                System.out.println("Unique KEY " + key);
+            }
+        } catch (Exception ex) {
+            if (DEBUG1) {
+                ex.printStackTrace();
+            }
+            LOGGER.error(SEVERE, "Error in generating Unique Key: ", ex.getMessage());
         }
-        //System.out.println("KEY " + key);
         return key.toString();
     }
 

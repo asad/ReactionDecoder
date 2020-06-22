@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
  */
 package org.openscience.smsd.graph;
 
@@ -45,5 +45,5 @@ public interface IClique {
      * @return the largest cliques
      */
     Stack<Set<Vertex>> getMaxCliquesSet();
-    
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Collection;
 import static java.util.Collections.synchronizedMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -88,7 +89,13 @@ public class ReactionContainer implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return "ReactionContainer{" + "eAtomContainerMap=" + eAtomContainerMap + ", pAtomContainerMap=" + pAtomContainerMap + ", eFingerPrintMap=" + eFingerPrintMap + ", pFingerPrintMap=" + pFingerPrintMap + ", eductContainerModificationMap=" + eductContainerModificationMap + ", productContainerModificationMap=" + productContainerModificationMap + ", fpr=" + fpr + '}';
+        return "ReactionContainer{" + "eAtomContainerMap=" + eAtomContainerMap
+                + ", pAtomContainerMap=" + pAtomContainerMap
+                + ", eFingerPrintMap=" + eFingerPrintMap
+                + ", pFingerPrintMap=" + pFingerPrintMap
+                + ", eductContainerModificationMap=" + eductContainerModificationMap
+                + ", productContainerModificationMap=" + productContainerModificationMap
+                + ", fpr=" + fpr + '}';
     }
 
     //~--- methods ------------------------------------------------------------
@@ -167,6 +174,27 @@ public class ReactionContainer implements Cloneable, Serializable {
     public synchronized IAtomContainer getProduct(int value)
             throws IOException, CDKException {
         return pAtomContainerMap.containsKey(value) ? pAtomContainerMap.get(value) : null;
+    }
+
+    /**
+     *
+     * @return @throws java.io.IOException
+     * @throws CDKException
+     */
+    public synchronized Collection<IAtomContainer> getEducts()
+            throws IOException, CDKException {
+        return eAtomContainerMap.values();
+
+    }
+
+    /**
+     *
+     * @return @throws java.io.IOException
+     * @throws CDKException
+     */
+    public synchronized Collection<IAtomContainer> getProducts()
+            throws IOException, CDKException {
+        return pAtomContainerMap.values();
     }
 
     //~--- get methods --------------------------------------------------------
@@ -342,4 +370,5 @@ public class ReactionContainer implements Cloneable, Serializable {
     public synchronized Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad at ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad at ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -305,17 +305,17 @@ public class RXNMappingTest extends MappingUtility {
      *
      * @throws Exception
      */
-    @Test
-    public void R00097() throws Exception {
-
-        String reactionID = "R00097";
-        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-    }
+//    @Test
+//    public void R00097() throws Exception {
+//
+//        String reactionID = "R00097";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+//    }
 
     /*
      * @Flips

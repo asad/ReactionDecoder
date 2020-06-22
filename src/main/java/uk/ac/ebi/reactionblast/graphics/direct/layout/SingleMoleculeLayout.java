@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,19 +19,20 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
+import static java.lang.System.err;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
-import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
-import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
-import org.openscience.cdk.tools.ILoggingTool;
-import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getScaleFactor;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.has2DCoordinates;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.scaleMolecule;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
@@ -39,8 +40,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  * @author asad
  */
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
-     private final static ILoggingTool LOGGER
-            = createLoggingTool(SingleMoleculeLayout.class);
+
+    private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
@@ -81,7 +82,7 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
                 if (isConnected(atomContainer)) {
                     sdg.generateCoordinates();
                 } else {
-                    LOGGER.debug("Disconnected components needs to be layout separately");
+                    err.println("Disconnected components needs to be layout separately");
                 }
             } catch (CDKException e) {
                 e.printStackTrace();

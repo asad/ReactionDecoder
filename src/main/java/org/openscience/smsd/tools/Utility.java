@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -133,10 +133,16 @@ public class Utility {
      *
      * @param ac1
      * @param ac2
+     * @param either
      * @return
      * @throws CDKException
      */
     public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2, boolean either) throws CDKException {
+
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac1);
+        MoleculeInitializer.initializeMolecule(ac1);
+        ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac2);
+        MoleculeInitializer.initializeMolecule(ac2);
 
         AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
         BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
@@ -160,7 +166,9 @@ public class Utility {
      * @param matchBonds
      * @param shouldMatchRings
      * @param matchAtomType
+     * @param matchRingSize
      * @return
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public static Map<IAtom, IAtom> findSubgraph(
             IAtomContainer source, IAtomContainer target,

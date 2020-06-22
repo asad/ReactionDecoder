@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,13 +30,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import org.openscience.cdk.exception.Intractable;
-import org.openscience.cdk.geometry.GeometryTools;
-import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -54,6 +53,8 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.get2DCenter;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
 
@@ -62,6 +63,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin;
  * @author asad
  */
 public class DirectBondDrawer extends AbstractDirectDrawer {
+
+    private static final Logger LOG = getLogger(DirectBondDrawer.class.getName());
 
     private final LabelManager labelManager;
     private final Stroke dashedWedgeStroke;
@@ -99,55 +102,56 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
      *
      * @param molecule
      * @param g
-     * @throws org.openscience.cdk.exception.Intractable
      */
-    public void drawBonds(IAtomContainer molecule, Graphics2D g) throws Intractable {
+    public void drawBonds(IAtomContainer molecule, Graphics2D g) {
         setBondStroke();
         g.setStroke(bondStroke);
 
-        //IRingSet ringSet = new SSSRFinder(molecule).findSSSR();
-        //New Method
-        CycleFinder cf = Cycles.mcb();
-        Cycles cycles = cf.find(molecule); // ignore error - essential cycles do not check tractability
-        IRingSet ringSet = cycles.toRingSet();
+        try {
+            CycleFinder cf = Cycles.essential();
+            Cycles cycles = cf.find(molecule);
+            IRingSet ringSet = cycles.toRingSet();
+            ringSet.sortAtomContainers(new AtomContainerComparatorBy2DCenter());
 
-        ringSet.sortAtomContainers(new AtomContainerComparatorBy2DCenter());
-        addRingCentersToAtomAnnotationPositions(molecule, ringSet);
-        Map<IBond, IAtomContainer> bondRingMap = fillBondRingMap(ringSet);
+            addRingCentersToAtomAnnotationPositions(molecule, ringSet);
+            Map<IBond, IAtomContainer> bondRingMap = fillBondRingMap(ringSet);
 
-        g.setColor(BLACK);
-        for (IBond bond : molecule.bonds()) {
-            if (shouldDraw(bond)) {
-                drawBond(bond, bondRingMap, g);
+            g.setColor(BLACK);
+            for (IBond bond : molecule.bonds()) {
+                if (shouldDraw(bond)) {
+                    drawBond(bond, bondRingMap, g);
+                }
+                labelManager.addBondToAtomAnnotationPositions(bond);
             }
-            labelManager.addBondToAtomAnnotationPositions(bond);
-        }
 
-        if (params.drawAromaticCircles) {
+            if (params.drawAromaticCircles) {
+                for (IAtomContainer ring : ringSet.atomContainers()) {
+                    if (ringIsAromatic(ring)) {
+                        drawRingCircle(ring, g);
+                    }
+                }
+            }
+            List<IBond> drawnRingBonds = new ArrayList<>();
             for (IAtomContainer ring : ringSet.atomContainers()) {
-                if (ringIsAromatic(ring)) {
-                    drawRingCircle(ring, g);
+                Point2d c = get2DCenter(ring);
+                for (IBond bond : ring.bonds()) {
+                    if (drawnRingBonds.contains(bond)) {
+                    } else if (bond.getFlag(ISAROMATIC) && params.drawAromaticCircles) {
+                        Point2d p1 = bond.getAtom(0).getPoint2d();
+                        Point2d p2 = bond.getAtom(1).getPoint2d();
+                        drawOffsetBond(p1, p2, c, g);
+                        drawnRingBonds.add(bond);
+                    } else if (bond.getOrder() == SINGLE) {
+                    } else {
+                        Point2d p1 = bond.getAtom(0).getPoint2d();
+                        Point2d p2 = bond.getAtom(1).getPoint2d();
+                        drawOffsetBond(p1, p2, c, g);
+                        drawnRingBonds.add(bond);
+                    }
                 }
             }
-        }
-        List<IBond> drawnRingBonds = new ArrayList<>();
-        for (IAtomContainer ring : ringSet.atomContainers()) {
-            Point2d c = get2DCenter(ring);
-            for (IBond bond : ring.bonds()) {
-                if (drawnRingBonds.contains(bond)) {
-                } else if (bond.getFlag(ISAROMATIC) && params.drawAromaticCircles) {
-                    Point2d p1 = bond.getAtom(0).getPoint2d();
-                    Point2d p2 = bond.getAtom(1).getPoint2d();
-                    drawOffsetBond(p1, p2, c, g);
-                    drawnRingBonds.add(bond);
-                } else if (bond.getOrder() == SINGLE) {
-                } else {
-                    Point2d p1 = bond.getAtom(0).getPoint2d();
-                    Point2d p2 = bond.getAtom(1).getPoint2d();
-                    drawOffsetBond(p1, p2, c, g);
-                    drawnRingBonds.add(bond);
-                }
-            }
+        } catch (Intractable e) {
+            // ignore error - edge short cycles do not check tractability
         }
     }
 
@@ -156,11 +160,9 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
             for (IAtom atom : ring.atoms()) {
                 List<IAtom> connectedAtoms = mol.getConnectedAtomsList(atom);
                 List<IAtom> connectedAtomsInRing = new ArrayList<>();
-                for (IAtom connectedAtom : connectedAtoms) {
-                    if (ring.contains(connectedAtom)) {
-                        connectedAtomsInRing.add(connectedAtom);
-                    }
-                }
+                connectedAtoms.stream().filter(connectedAtom -> (ring.contains(connectedAtom))).forEachOrdered(connectedAtom -> {
+                    connectedAtomsInRing.add(connectedAtom);
+                });
                 labelManager.addRingCenterToAtomAnnotationPosition(
                         atom, connectedAtomsInRing);
             }
@@ -437,7 +439,7 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
 
     private void drawRingCircle(IAtomContainer ring, Graphics2D g) {
         Point2d center = get2DCenter(ring);
-        Rectangle2D bounds = GeometryTools.getRectangle2D(ring);
+        Rectangle2D bounds = getRectangle2D(ring);
         double diameter = min(bounds.getWidth(), bounds.getHeight());
         diameter *= params.ringProportion;
         double radius = diameter / 2;

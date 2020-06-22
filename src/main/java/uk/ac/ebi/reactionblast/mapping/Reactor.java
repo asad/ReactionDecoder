@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,6 @@ import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getTotalFormalCharge;
 import uk.ac.ebi.reactionblast.mapping.algorithm.CalculationProcess;
 import uk.ac.ebi.reactionblast.mapping.container.MoleculeMoleculeMapping;
@@ -56,18 +55,21 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.valueOf;
-import static java.lang.System.getProperty;
 import static java.util.Arrays.sort;
 import static java.util.Collections.synchronizedList;
 
 import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
+import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
-import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
@@ -97,7 +99,6 @@ public class Reactor extends AbstractReactor implements Serializable {
     private int delta;
     private boolean balanceFlag;
     private IReaction reactionWithUniqueSTOICHIOMETRY;
-    static final String NEW_LINE = getProperty("line.separator");
     private final SmilesGenerator smiles;
 
     //~--- constructors -------------------------------------------------------
@@ -113,7 +114,6 @@ public class Reactor extends AbstractReactor implements Serializable {
             boolean partialMapping,
             IMappingAlgorithm algorithm)
             throws Exception {
-
         //SmilesGenerator smiles = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols | SmiFlavor.AtomAtomMap);
         if (partialMapping) {
             //else CDKToBeam throws an error "Aromatic bond connects non-aromatic atomic atoms"
@@ -157,7 +157,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         cleanMapping(reaction);
         if (DEBUG) {
             out.println("|++++++++++++++++++++++++++++|");
-            super.printReaction(reaction);
+            printReaction(reaction);
             out.println("|ii. Create Mapping Objects");
         }
         copyReferenceReaction(reaction);
@@ -168,7 +168,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
         calculateAtomAtomMapping();
         if (DEBUG) {
-            super.printReaction(reactionWithUniqueSTOICHIOMETRY);
+            printReaction(reactionWithUniqueSTOICHIOMETRY);
             out.println("|++++++++++++++++++++++++++++|");
             out.println("|iv. Done|");
             out.println("|++++++++++++++++++++++++++++|" + NEW_LINE + NEW_LINE);
@@ -193,12 +193,15 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (int i = 0; i < referenceReaction.getReactantCount(); i++) {
                 IAtomContainer refMol = referenceReaction.getReactants().getAtomContainer(i);
                 IAtomContainer mol = cloneWithIDs(refMol);
-                mol = canonicalLabelling(mol);
-
-                mol.setID(referenceReaction.getReactants().getAtomContainer(i).getID());
+//                IAtomContainer mol = refMol.clone();
+                SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+                IAtomContainer cloneMolecule = sp.parseSmiles(smiles.create(mol));
+                ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(cloneMolecule);
+                cloneMolecule = prepareMol(cloneMolecule);
+                cloneMolecule.setID(refMol.getID());
                 Double st = referenceReaction.getReactantCoefficient(refMol);
-                aromatizeMolecule(mol);
-                reactionWithSTOICHIOMETRY.addReactant(mol, st);
+                aromatizeMolecule(cloneMolecule);
+                reactionWithSTOICHIOMETRY.addReactant(cloneMolecule, st);
             }
         } catch (CloneNotSupportedException | CDKException e) {
             LOGGER.error(SEVERE, null, e);
@@ -206,17 +209,20 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             for (int i = 0; i < referenceReaction.getProductCount(); i++) {
                 IAtomContainer refMol = referenceReaction.getProducts().getAtomContainer(i);
-                IAtomContainer mol = cloneWithIDs(refMol);//refMol.clone();
-                mol = canonicalLabelling(mol);
-
-                mol.setID(referenceReaction.getProducts().getAtomContainer(i).getID());
+                IAtomContainer mol = cloneWithIDs(refMol);
+//                IAtomContainer mol = refMol.clone();
+                SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+                IAtomContainer cloneMolecule = sp.parseSmiles(smiles.create(mol));
+                ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(cloneMolecule);
+                cloneMolecule = prepareMol(cloneMolecule);
+                cloneMolecule.setID(refMol.getID());
                 Double st = referenceReaction.getProductCoefficient(refMol);
-                aromatizeMolecule(mol);
-                reactionWithSTOICHIOMETRY.addProduct(mol, st);
+                aromatizeMolecule(cloneMolecule);
+                reactionWithSTOICHIOMETRY.addProduct(cloneMolecule, st);
             }
             reactionWithSTOICHIOMETRY.setID(referenceReaction.getID());
             reactionWithSTOICHIOMETRY.setDirection(referenceReaction.getDirection());
-        } catch (Exception e) {
+        } catch (CloneNotSupportedException | CDKException e) {
             LOGGER.error(SEVERE, "Error in Reactor class", e.getMessage());
         }
     }
@@ -278,7 +284,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("EAtom: " + k + " " + atom.getSymbol() + " Rank Atom: " + atom.getProperty("OLD_RANK") + " " + " Id: " + atom.getID());
                 rLabelledAtoms.put(atom.hashCode(), i);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsReactant().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant++));
+                    inputRankLabelledAtomsReactant.put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant++));
                 }
             }
 
@@ -296,7 +302,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("PAtom: " + k + " " + atom.getSymbol() + " Id: " + atom.getID());
                 pLabelledAtoms.put(atom.hashCode(), j);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsProduct().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product++));
+                    inputRankLabelledAtomsProduct.put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product++));
                 }
             }
 
@@ -520,7 +526,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         /*
-        * Mark unmapped H atoms i.e. protonations
+         * Mark unmapped H atoms i.e. protonations
          */
         counter = markUnMappedHAtoms(mappedReaction, counter);
 
@@ -885,7 +891,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         int localCounter = counter;
 
         /*
-        * Mark unmapped H atoms
+         * Mark unmapped H atoms
          */
         for (int eMol = 0; eMol < mappedReaction.getReactantCount(); eMol++) {
             IAtomContainer eMolecule = mappedReaction.getReactants().getAtomContainer(eMol);
@@ -964,7 +970,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
 
         /*
-        Re-arrange the molecule index for mappings
+         * Re-arrange the molecule index for mappings
          */
         for (IAtomContainer mol : rMolSet.atomContainers()) {
             List<Integer> atom_index = new ArrayList<>();
@@ -1118,34 +1124,29 @@ public class Reactor extends AbstractReactor implements Serializable {
         return algorithm;
     }
 
-    private IAtomContainer canonicalLabelling(IAtomContainer org_mol) throws CloneNotSupportedException, CDKException {
-
-        IAtomContainer cloneMolecule = cloneWithIDs(org_mol);
+    private synchronized IAtomContainer prepareMol(IAtomContainer cloneMolecule)
+            throws CloneNotSupportedException, CDKException {
 
         if (DEBUG) {
             LOGGER.debug("Orignal");
             printAtoms(cloneMolecule);
         }
-
-        if (DEBUG) {
-            LOGGER.debug(NEW_LINE + "mol before: ");
-            printAtoms(cloneMolecule);
-        }
         /*
         Use the Canonical labelling from the SMILES
         IMP: Suggested by John May
+        It throws java.util.concurrent.ExecutionException
          */
         int[] p = new int[cloneMolecule.getAtomCount()];
 
         try {
-            String smiles = unique().create(cloneMolecule, p);
+            //this helps to avoid concurrent modification error, reason unknown
+            String sm = unique().create(cloneMolecule, p);
             if (DEBUG) {
-                LOGGER.debug("smiles " + smiles);
+                LOGGER.debug("smiles " + sm);
             }
         } catch (CDKException e) {
             LOGGER.error(SEVERE, null, e);
         }
-
         permuteWithoutClone(p, cloneMolecule);
 
         if (DEBUG) {
@@ -1165,6 +1166,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 sdg.setMolecule(cloneMolecule, false);
                 sdg.generateCoordinates();
             } catch (CDKException e) {
+                LOGGER.error(SEVERE, "Error in 2D Generation ", e.getMessage());
             }
         }
 
@@ -1173,13 +1175,6 @@ public class Reactor extends AbstractReactor implements Serializable {
          */
         for (IAtom atom : cloneMolecule.atoms()) {
             atom.setID("-1");
-        }
-
-        /*
-        Set the IDs to container
-         */
-        if (org_mol.getID() != null) {
-            cloneMolecule.setID(org_mol.getID());
         }
 
         if (DEBUG) {
@@ -1194,10 +1189,10 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     /*
-    This is a very imp code modified by John May
-    The idea is to canonicalise the atoms and bonds
+     * This is a very imp code modified by John May
+     * The idea is to canonicalise the atoms and bonds
      */
-    private void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
+    private synchronized void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
         if (DEBUG) {
             LOGGER.debug("permuting " + java.util.Arrays.toString(p));

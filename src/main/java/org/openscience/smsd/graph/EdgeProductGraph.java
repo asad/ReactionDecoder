@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
  */
 package org.openscience.smsd.graph;
 
@@ -36,6 +36,8 @@ public final class EdgeProductGraph implements Serializable {
      *
      * @param source
      * @param target
+     * @param am
+     * @param bm
      * @return
      * @throws IOException
      */
@@ -307,7 +309,9 @@ public final class EdgeProductGraph implements Serializable {
 
         //Add the left Edge (including vertices) from all the EdgeProducts in vertices
         Set<IAtom> atomsMapped = new HashSet<>();
-        edgeProductVertices.stream().map((ep) -> ep.getTargetBondIndex()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+        edgeProductVertices.stream().map((ep)
+                -> ep.getTargetBondIndex()).map((bondIndex)
+                -> ac.getBond(bondIndex)).map((bond) -> {
             atomsMapped.add(bond.getBegin());
             return bond;
         }).forEachOrdered((bond) -> {

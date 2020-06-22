@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009-2018 Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020 Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,7 +24,6 @@
 package org.openscience.smsd.filters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,13 +54,15 @@ public class PostFilter {
     public synchronized static List<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
         List<Map<Integer, Integer>> final_MAPPINGS = new ArrayList<>();
 
-        for (List<Integer> map : mappings) {
+        mappings.stream().map(map -> {
             Map<Integer, Integer> mapping = new TreeMap<>();
             for (int i = 0; i < map.size(); i = i + 2) {
                 mapping.put(map.get(i), map.get(i + 1));
             }
+            return mapping;
+        }).forEachOrdered(mapping -> {
             final_MAPPINGS.add(mapping);
-        }
+        });
         return final_MAPPINGS;
     }
 

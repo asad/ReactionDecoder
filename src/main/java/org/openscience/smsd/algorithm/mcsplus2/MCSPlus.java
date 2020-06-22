@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -89,15 +88,15 @@ public final class MCSPlus {
 
     /**
      *
-     * @param shouldMatchRings
-     * @param shouldMatchBonds
      * @param ac1
      * @param ac2
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public MCSPlus(IAtomContainer ac1,
             IAtomContainer ac2,
-            AtomMatcher am, BondMatcher bm) {
+            AtomMatcher am, 
+            BondMatcher bm) {
         this.ac1 = ac1;
         this.ac2 = ac2;
         this.am = am;
@@ -122,12 +121,7 @@ public final class MCSPlus {
 
     /**
      *
-     * @param ac1
-     * @param ac2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
      * @return
-     * @throws CDKException
      */
     public int search_cliques() {
 

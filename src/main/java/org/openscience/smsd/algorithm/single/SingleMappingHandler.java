@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -55,7 +55,7 @@ public class SingleMappingHandler implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchRings
+     * @param am
      */
     public SingleMappingHandler(
             IAtomContainer source,
@@ -72,6 +72,7 @@ public class SingleMappingHandler implements IResults {
      *
      * @param source
      * @param target
+     * @param am
      */
     public SingleMappingHandler(
             IQueryAtomContainer source,

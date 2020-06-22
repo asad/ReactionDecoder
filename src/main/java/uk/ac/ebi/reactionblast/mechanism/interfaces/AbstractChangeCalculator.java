@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -211,40 +211,59 @@ public abstract class AbstractChangeCalculator extends Utility {
         reaction.addProduct(fragP, 1.0);
 
         String smirks;
+        String moiety;
         String smirks1;
         String smirks2;
         String smirks3;
 
-        smirks = getSMILES(reaction, true);
-        smirks1 = getSMILES(reaction1, true);
-        smirks2 = getSMILES(reaction2, true);
-        smirks3 = getSMILES(reaction3, true);
+//        smirks = getSMILES(reaction, true);
+//        smirks1 = getSMILES(reaction1, true);
+//        smirks2 = getSMILES(reaction2, true);
+//        smirks3 = getSMILES(reaction3, true);
+
+        /*
+         * get SMILES with AAM
+         */
+        smirks = getSMILES(reaction, false);
+        moiety = getMoietyAsSMILES(fragR, fragP, false);
+        smirks1 = getSMILES(reaction1, false);
+        smirks2 = getSMILES(reaction2, false);
+        smirks3 = getSMILES(reaction3, false);
 
         String smartsR;
         String smartsR1;
         String smartsR2;
         String smartsR3;
 
+//        smartsR = getSMILES(fragR, true);
+//        smartsR1 = getSMILES(fragR1, true);
+//        smartsR2 = getSMILES(fragR2, true);
+//        smartsR3 = getSMILES(fragR3, true);
+
         smartsR = getSMILES(fragR, true);
-        smartsR1 = getSMILES(fragR1, true);
-        smartsR2 = getSMILES(fragR2, true);
-        smartsR3 = getSMILES(fragR3, true);
+        smartsR1 = getSMILES(fragR1, false);
+        smartsR2 = getSMILES(fragR2, false);
+        smartsR3 = getSMILES(fragR3, false);
 
         String smartsP;
         String smartsP1;
         String smartsP2;
         String smartsP3;
 
+//        smartsP = getSMILES(fragP, true);
+//        smartsP1 = getSMILES(fragP1, true);
+//        smartsP2 = getSMILES(fragP2, true);
+//        smartsP3 = getSMILES(fragP3, true);
         smartsP = getSMILES(fragP, true);
-        smartsP1 = getSMILES(fragP1, true);
-        smartsP2 = getSMILES(fragP2, true);
-        smartsP3 = getSMILES(fragP3, true);
-
+        smartsP1 = getSMILES(fragP1, false);
+        smartsP2 = getSMILES(fragP2, false);
+        smartsP3 = getSMILES(fragP3, false);
+        
         ReactantProductPair rrpName = new ReactantProductPair(atomContainerR.getID(), atomContainerP.getID());
         ReactantProductPair rrpSMARTS = new ReactantProductPair(smartsR, smartsP);
         ReactantProductPair rrpSignature = new ReactantProductPair(signatureR, signatureP);
 
-        MoleculeMoleculePair mmp = new MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks);
+        MoleculeMoleculePair mmp = new MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks, moiety);
         mmp.setSignature1(new ReactantProductPair(signatureR1, signatureP1));
         mmp.setSignature2(new ReactantProductPair(signatureR2, signatureP2));
         mmp.setSignature3(new ReactantProductPair(signatureR3, signatureP3));

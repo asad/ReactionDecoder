@@ -10,7 +10,7 @@ Changes (25/03/2014)
 ----------------------
 a) Code optimisation
 b) Bug fix (Rule)
-c) RXN File path tokenizer fixed.
+c) RXN File path tokeniser fixed.
 d) Similarity matrix printing updated.
 e) Matching optimisations ported.
 
@@ -32,7 +32,7 @@ d) Ring vs non-ring bug fixed.
 Changes (30/03/2014)
 -----------------------
 a) Stereo conservation is restored.
-b) InChi labeling promoted if available.
+b) InChi labelling promoted if available.
 c) Canonical container and serialised mapping.
 d) 2D relayout for missing atoms.
 e) Accept user defined customised AAM for balanced
@@ -52,7 +52,7 @@ a) RXN file property block with unsupported potential
    DIAT COORDINATE BOND TYPE handled.
 b) Fixed Thread bug in MCSPlus algorithm.
 c) Radical based changes highlighted in the images.
-d) Image size optimized 2048*600.
+d) Image size optimised 2048*600.
 e) Unique naming sensitive to Radicals.
 
 -----------------------
@@ -84,7 +84,7 @@ c) MMP output format updated.
 Changes (11/05/2014)
 -----------------------
 a) Algorithm call for subgraph mapping updated (case R03775)
-b) FP updation
+b) FP updating
 
 -----------------------
 Changes (15/05/2014)
@@ -110,7 +110,7 @@ a) Single mapping bug fixed in substructure search
 Changes (16/08/2014)
 -----------------------
 a) Mapping bug fixed
-b) Code optimization
+b) Code optimisation
 c) SMSD updated
 
 -----------------------
@@ -193,6 +193,7 @@ Changes (01/06/2016)
 a) Migrate to Maven project with POM.xml
 b) Version rdt-2.0-SNAPSHOT
 
+
 -----------------------
 Changes (14/04/2017)
 -----------------------
@@ -241,6 +242,7 @@ a) Major gain in AAM speed
 b) Improved MCS code in the SMSD
 c) Code Clean and Bug fixes 
 
+
 -----------------------
 Changes (22/10/2018)
 -----------------------
@@ -248,6 +250,29 @@ a) Code clean up
 b) Subgraph mapping improved
 c) improved AAM Speed for complex graph  
 
+-----------------------
+Changes (21/06/2020)
+-----------------------
+a) Code clean up and minor bug fixed (improved mapping)
+b) CDK 2.3 add to the new build
+c) Code dependency with the CDK
+d) POM Updated   
+
+-----------------------
+Changes (30/06/2020)
+-----------------------
+a) Concurrent modification error fixed
+b) Exit when job done
+c) Command line input typo in -c option fixed 
+d) Mol layout fixed
+e) Enrich mapping pair
+f) Moiety added
+g) Use multi core
+
+-----------------------
+Changes (07/07/2020)
+-----------------------
+a) BioInception Labs mapping algorithm patch added
 
 -----------------------
 TO DO

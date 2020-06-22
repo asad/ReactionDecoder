@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Syed Asad Rahman <asad at ebi.ac.uk>.
+ * Copyright (C) 2014-2020 Syed Asad Rahman <asad at ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -77,10 +77,9 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
      *
      * @param source
      * @param target
-     * @param bondMatch
-     * @param ringMatch
-     * @param matchAtomType
      * @param algorithm
+     * @param am
+     * @param bm
      */
     public MCSSeedGenerator(IAtomContainer source,
             IAtomContainer target,

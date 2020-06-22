@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
  */
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
@@ -27,6 +29,8 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Axis.Y;
  * @author asad
  */
 public class TopToBottomReactionLayout extends AbstractDirectReactionLayout {
+
+    private static final Logger LOG = getLogger(TopToBottomReactionLayout.class.getName());
 
     /**
      *

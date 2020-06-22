@@ -1,7 +1,7 @@
 /*
  *
  *
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  * 
  * 
- ** Copyright (C) 2009-2018 Kyle Lutz <kyle.r.lutz@gmail.com>
+ ** Copyright (C) 2009-2020 Kyle Lutz <kyle.r.lutz@gmail.com>
  **
  ** This file is part of chemkit. For more information see
  ** <http://www.chemkit.org>.
@@ -80,9 +80,8 @@ public final class VF2 implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public VF2(IAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         this.source = source;

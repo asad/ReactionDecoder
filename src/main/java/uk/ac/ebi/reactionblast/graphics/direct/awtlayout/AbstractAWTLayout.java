@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.FontMetrics;
@@ -30,8 +29,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
 
 /**
- * A layout object that uses a java.awt.Graphics2D instance to work out text sizes, which makes the layout more precise
- * than just using atom positions.
+ * A layout object that uses a java.awt.Graphics2D instance to work out text
+ * sizes, which makes the layout more precise than just using atom positions.
  *
  * @author maclean
  * @param <T>

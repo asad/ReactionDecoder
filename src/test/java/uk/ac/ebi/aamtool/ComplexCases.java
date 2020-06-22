@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad at ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad at ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,6 +60,27 @@ public class ComplexCases extends MappingUtility {
     /**
      * Lowest Bond Energy Solution not accepted
      *
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void complex_unbalanced() throws Exception {
+
+        String reactionID = "complex_unbalanced";
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
+        IPatternFingerprinter formedCleavedWFingerprint = null;
+
+        formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * Lowest Bond Energy Solution not accepted
+     *
      * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
      *
      * BE 2208.0, Fragment 0
@@ -77,6 +98,36 @@ public class ComplexCases extends MappingUtility {
                 .getFormedCleavedWFingerprint();
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
+
+    /*
+     * Rhea 10069
+     */
+    @Test
+    public void Rhea10069() throws Exception {
+
+        String reactionID = "10069";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+//    /*
+//     * Rhea 10069
+//     */
+//    @Test
+//    public void Rhea58905() throws Exception {
+//
+//        String reactionID = "58905";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(9, formedCleavedWFingerprint.getFeatureCount());
+//    }
 
 //    /*
 //     * Complex case, Takes longer to Run
@@ -104,7 +155,6 @@ public class ComplexCases extends MappingUtility {
 //                .getFormedCleavedWFingerprint();
 //        assertEquals(0, formedCleavedWFingerprint.getFeatureCount());
 //    }
-
 //    /*
 //     * Complex case, Takes longer to Run
 //     * 

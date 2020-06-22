@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -79,13 +79,13 @@ public final class VF2MCS extends BaseMCS implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds bond match
-     * @param shouldMatchRings ring match
-     * @param matchAtomType
+     * @param am
+     * @param bm
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public VF2MCS(IAtomContainer source,
             IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
         super(source, target, am, bm);
         boolean timeoutVF = searchVFCDKMappings();
 
@@ -139,8 +139,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 threadsAvailable = 2;
             }
 
-//            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+//            ExecutorService executor = Executors.newCachedThreadPool();
+            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
+//            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
@@ -222,7 +223,10 @@ public final class VF2MCS extends BaseMCS implements IResults {
                     }).forEach((map) -> {
                         mcsSeeds.add(map);
                     });
-                } catch (InterruptedException | ExecutionException ex) {
+                } catch (Exception ex) {
+                    if (DEBUG) {
+                        ex.printStackTrace();
+                    }
                     LOGGER.error(Level.SEVERE, null, ex);
                 }
             }
@@ -373,6 +377,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
      *
      * @param source
      * @param target
+     * @param am
+     * @param bm
      */
     public VF2MCS(IQueryAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         super((IQueryAtomContainer) source, target, am, bm);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -175,6 +175,9 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             }
             this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("WARNING: Unable to compute reaction matrix", e);
         }
         /*
@@ -201,6 +204,9 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         try {
             this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("WARNING: 2D CDK based stereo centers perception failed", e);
         }
         if (DEBUG) {

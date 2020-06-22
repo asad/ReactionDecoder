@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,8 @@ package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.Graphics2D;
 import static java.lang.Math.max;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IReaction;
 import static uk.ac.ebi.reactionblast.graphics.direct.Axis.X;
@@ -32,6 +33,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
+
+    private static final Logger LOG = getLogger(LeftToRightAWTReactionLayout.class.getName());
 
     /**
      *
@@ -93,6 +96,7 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
      *
      * @return
      */
+    @Override
     public Vector2d getAxis() {
         return new Vector2d(1, 0);
     }

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -50,7 +50,7 @@ public class Map1ValueComparator implements Comparator<Map<Integer, Integer>> {
     public int compare(Map<Integer, Integer> object1, Map<Integer, Integer> object2) {
         int size1 = object1.size();
         int size2 = object2.size();
-        int compare = Integer.signum(new Integer(size1).compareTo(size2));
+        int compare = Integer.signum(Integer.valueOf(size1).compareTo(size2));
 
         if (sortOrder == SortOrder.ASCENDING) {
             return compare;

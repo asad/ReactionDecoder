@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +95,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                 if (withoutH && at.getSymbol().equalsIgnoreCase("H")) {
                     continue;
                 }
-                int atomID = (new Integer(at.getID()));
+                int atomID = (Integer.valueOf(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }
@@ -157,7 +156,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                     continue;
                 }
 
-                int atomID = (new Integer(at.getID()));
+                int atomID = (Integer.valueOf(at.getID()));
                 if (atomID <= 0) {
                     continue;
                 }

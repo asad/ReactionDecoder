@@ -1,4 +1,15 @@
 language: java
-script: mvn test -fn
+
 jdk:
-  - oraclejdk8
+- openjdk11
+- openjdk14
+
+sudo: false
+
+cache:
+  directories:
+  - $HOME/.m2
+
+install: true
+
+script: mvn clean test -q

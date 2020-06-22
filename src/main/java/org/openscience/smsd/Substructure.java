@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2018  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -96,16 +96,16 @@ public final class Substructure extends BaseMapping {
      *
      * @param query
      * @param target
-     * @param shouldMatchBonds Match bond types (i.e. double to double etc)
-     * @param matchRings Match ring atoms and ring size
+     * @param am
+     * @param bm
      * @param findAllSubgraph report all subgraphs
-     * @param matchAtomType
      * @throws CDKException
      */
     public Substructure(
             IAtomContainer query,
             IAtomContainer target,
-            AtomMatcher am, BondMatcher bm,
+            AtomMatcher am,
+            BondMatcher bm,
             boolean findAllSubgraph) throws CDKException {
         super(query, target, am, bm);
         super.setSubgraph(findSubgraphs(findAllSubgraph));

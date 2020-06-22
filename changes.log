@@ -110,7 +110,7 @@ a) Single mapping bug fixed in substructure search
 Changes (16/08/2014)
 -----------------------
 a) Mapping bug fixed
-b) Code optimization
+b) Code optimisation
 c) SMSD updated
 
 -----------------------
@@ -250,7 +250,29 @@ a) Code clean up
 b) Subgraph mapping improved
 c) improved AAM Speed for complex graph  
 
+-----------------------
+Changes (21/06/2020)
+-----------------------
+a) Code clean up and minor bug fixed (improved mapping)
+b) CDK 2.3 add to the new build
+c) Code dependency with the CDK
+d) POM Updated  
 
+-----------------------
+Changes (30/06/2020)
+-----------------------
+a) Concurrent modification error fixed
+b) Exit when job done
+c) Command line input typo in -c option fixed 
+d) Mol layout fixed
+e) Enrich mapping pair
+f) Moiety added
+g) Use multi core
+
+-----------------------
+Changes (07/07/2020)
+-----------------------
+a) BioInception's mapping algorithm patch added
 
 -----------------------
 TO DO

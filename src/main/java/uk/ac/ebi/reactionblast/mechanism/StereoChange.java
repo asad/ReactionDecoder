@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,10 @@ public class StereoChange implements Serializable {
      * @param rAtom
      * @param pAtom
      */
-    public StereoChange(IStereoAndConformation rAtomStereo, IStereoAndConformation pAtomStereo, IAtom rAtom, IAtom pAtom) {
+    public StereoChange(IStereoAndConformation rAtomStereo,
+            IStereoAndConformation pAtomStereo,
+            IAtom rAtom,
+            IAtom pAtom) {
         this.rAtomStereo = rAtomStereo;
         this.pAtomStereo = pAtomStereo;
         this.rAtom = rAtom;

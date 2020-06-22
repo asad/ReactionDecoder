@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,8 @@ class MappingThread implements Callable<Reactor> {
      *
      * @return Mapped Object
      */
-    MappingThread(String message, IReaction cleanedReaction, IMappingAlgorithm algorithm, boolean removeHydrogen) {
+    MappingThread(String message, IReaction cleanedReaction, 
+            IMappingAlgorithm algorithm, boolean removeHydrogen) {
         this.cleanedReaction = cleanedReaction;
         this.algorithm = algorithm;
         this.removeHydrogen = removeHydrogen;

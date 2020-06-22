@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,18 +20,28 @@ package uk.ac.ebi.reactionblast.stereo.ebi;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import uk.ac.ebi.centres.cdk.CDKPerceptor;
 import uk.ac.ebi.centres.descriptor.Planar;
 import uk.ac.ebi.centres.descriptor.Tetrahedral;
 import uk.ac.ebi.centres.descriptor.Trigonal;
 import uk.ac.ebi.reactionblast.mechanism.helper.Utility;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  * Tool for comparing chiralities.
@@ -42,6 +52,8 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public abstract class StereoCenteralityTool extends Utility {
 
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(StereoCenteralityTool.class);
     private static final long serialVersionUID = 17867606807697859L;
 
     private static IAtom getAtomByID(String id, IAtomContainer ac) {
@@ -107,7 +119,32 @@ public abstract class StereoCenteralityTool extends Utility {
      */
     public static Map<IAtom, IStereoAndConformation> getChirality2D(IAtomContainer ac, CDKPerceptor perceptor) {
         Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
-        perceptor.perceive(ac);
+//        perceptor.perceive(ac);
+
+        /*
+         * time out function added
+         */
+        Boolean flag = false;
+        ExecutorService executor = Executors.newCachedThreadPool();
+        Callable<Boolean> task = () -> {
+            perceptor.perceive(ac);
+            return true;
+        };
+        Future<Boolean> future = executor.submit(task);
+        try {
+            flag = future.get(30, TimeUnit.SECONDS);
+        } catch (TimeoutException | InterruptedException | ExecutionException ex) {
+            flag = false;
+        } // handle the interrupts
+        // handle other exceptions
+        finally {
+            future.cancel(true); // may or may not desire this
+        }
+
+        if (flag == false) {
+            LOGGER.error(Level.WARNING, null, "Time out hit in computing stereo centers");
+        }
+
         for (IAtom atom : ac.atoms()) {
             if (Tetrahedral.R.equals(atom.getProperty("descriptor"))) {
                 chiralityMap.put(atom, IStereoAndConformation.R);

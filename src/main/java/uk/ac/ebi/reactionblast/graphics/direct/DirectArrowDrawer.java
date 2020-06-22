@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.BIDIRECTIONAL;
@@ -47,6 +48,7 @@ public class DirectArrowDrawer extends AbstractDirectDrawer {
 
     private final static Vector2d X_AXIS = new Vector2d(1, 0);
     private final static Vector2d Y_AXIS = new Vector2d(0, 1);
+    private static final Logger LOG = getLogger(DirectArrowDrawer.class.getName());
 
     private final Params params;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -41,6 +42,8 @@ import uk.ac.ebi.reactionblast.signature.SignatureMatcher;
  *
  */
 public class SignatureRootFinder {
+
+    private static final Logger LOG = getLogger(SignatureRootFinder.class.getName());
 
     /**
      *
@@ -79,23 +82,19 @@ public class SignatureRootFinder {
                 = new HashMap<>();
 
         // separate bond and atom changes by atomContainer
-        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
+        getAllAtomContainers(reaction).forEach((IAtomContainer atomContainer) -> {
             List<IBond> bonds = new ArrayList<>();
-            for (IBond bond : bondChanges) {
-                if (atomContainer.contains(bond)) {
-                    bonds.add(bond);
-                }
-            }
+            bondChanges.stream().filter(bond -> (atomContainer.contains(bond))).forEachOrdered(bond -> {
+                bonds.add(bond);
+            });
             List<IAtom> atoms = new ArrayList<>();
-            for (IAtom atom : atomChanges) {
-                if (atomContainer.contains(atom)) {
-                    atoms.add(atom);
-                }
-            }
+            atomChanges.stream().filter(atom -> (atomContainer.contains(atom))).forEachOrdered(atom -> {
+                atoms.add(atom);
+            });
             rootSystems.put(atomContainer,
                     findRootSystems(
                             atomContainer, bonds, atoms));
-        }
+        });
         return rootSystems;
     }
 
@@ -211,13 +210,11 @@ public class SignatureRootFinder {
         // finally add in the leaves
         for (RootSystem rs : rootSystems) {
             List<IAtom> roots = rs.getRoots();
-            for (IAtom root : roots) {
-                for (IAtom leaf : atomContainer.getConnectedAtomsList(root)) {
-                    if (!roots.contains(leaf)) {
-                        rs.addLeaf(leaf);
-                    }
-                }
-            }
+            roots.forEach(root -> {
+                atomContainer.getConnectedAtomsList(root).stream().filter(leaf -> (!roots.contains(leaf))).forEachOrdered(leaf -> {
+                    rs.addLeaf(leaf);
+                });
+            });
         }
 
 //        System.out.println("RS for " + atomContainer.getID() + " = " + rootSystems + " after merging ");
@@ -240,15 +237,7 @@ public class SignatureRootFinder {
     }
 
     private static boolean adjacent(IBond bond, RootSystem rootSystem, IAtomContainer atomContainer) {
-        for (IAtom root : rootSystem.getRoots()) {
-            for (IBond connectedBond : atomContainer.getConnectedBondsList(root)) {
-                if (bond == connectedBond) {
-                    return true;
-                }
-
-            }
-        }
-        return false;
+        return rootSystem.getRoots().stream().anyMatch(root -> (atomContainer.getConnectedBondsList(root).stream().anyMatch(connectedBond -> (bond == connectedBond))));
     }
 
     private static boolean adjacent(IAtom atom, RootSystem rootSystem, IAtomContainer atomContainer) {
@@ -268,11 +257,11 @@ public class SignatureRootFinder {
 
         // find the root atoms for each container, and connect them
         SignatureMatcher matcher = new SignatureMatcher();
-        for (IAtomContainer atomContainer : getAllAtomContainers(reaction)) {
+        getAllAtomContainers(reaction).forEach(atomContainer -> {
             List<IAtom> roots
                     = matcher.getMatchingRootAtoms(signatureStrings, atomContainer);
             rootSystems.addAll(find(atomContainer, roots));
-        }
+        });
         return rootSystems;
     }
 
@@ -292,17 +281,16 @@ public class SignatureRootFinder {
             // for non-empty components, add all the atoms as roots
             if (component.size() > 0) {
                 RootSystem rootSystem = new RootSystem();
-                for (IAtom rootAtom : component) {
+                component.stream().map(rootAtom -> {
                     rootSystem.addRoot(rootAtom);
-
+                    return rootAtom;
+                }).forEachOrdered(rootAtom -> {
                     // atoms directly connected to the roots are leaves
                     // (unless they are already roots)
-                    for (IAtom possibleLeaf : atomContainer.getConnectedAtomsList(rootAtom)) {
-                        if (!component.contains(possibleLeaf)) {
-                            rootSystem.addLeaf(possibleLeaf);
-                        }
-                    }
-                }
+                    atomContainer.getConnectedAtomsList(rootAtom).stream().filter(possibleLeaf -> (!component.contains(possibleLeaf))).forEachOrdered(possibleLeaf -> {
+                        rootSystem.addLeaf(possibleLeaf);
+                    });
+                });
                 rootSystems.add(rootSystem);
                 currentLabel++;
             }
@@ -330,12 +318,10 @@ public class SignatureRootFinder {
         if (atomV == null || (roots.contains(atomU) && labels[uIndex] == 0)) {
             labels[uIndex] = cLabel;
             component.add(atomU);
-            for (IAtom atomW : atomContainer.getConnectedAtomsList(atomU)) {
-                if (atomW != atomV) {
-                    dfs(
-                            atomU, atomW, cLabel, labels, atomContainer, roots, component);
-                }
-            }
+            atomContainer.getConnectedAtomsList(atomU).stream().filter(atomW -> (atomW != atomV)).forEachOrdered((IAtom atomW) -> {
+                dfs(
+                        atomU, atomW, cLabel, labels, atomContainer, roots, component);
+            });
         } else {
         }
     }

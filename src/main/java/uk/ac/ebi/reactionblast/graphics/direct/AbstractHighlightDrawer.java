@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,16 @@ package uk.ac.ebi.reactionblast.graphics.direct;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author asad
  */
 public class AbstractHighlightDrawer extends AbstractDirectDrawer {
+
+    private static final Logger LOG = getLogger(AbstractHighlightDrawer.class.getName());
 
     /**
      *
@@ -67,7 +71,7 @@ public class AbstractHighlightDrawer extends AbstractDirectDrawer {
      * @param color
      * @return
      */
-    protected Color getTranslucentColor(Color color) {
+    protected final Color getTranslucentColor(Color color) {
         if (opaqueToTranslucentColorMap.containsKey(color)) {
             return opaqueToTranslucentColorMap.get(color);
         } else {

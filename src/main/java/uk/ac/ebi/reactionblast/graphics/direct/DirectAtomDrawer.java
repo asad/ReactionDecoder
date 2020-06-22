@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.BasicStroke;
@@ -33,13 +34,12 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.PseudoAtom;
-import static org.openscience.cdk.geometry.GeometryUtil.getBestAlignmentForLabel;
-import static org.openscience.cdk.geometry.GeometryUtil.getBestAlignmentForLabelXY;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -48,6 +48,8 @@ import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getBestAlignmentForLabel;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getBestAlignmentForLabelXY;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.N;
@@ -69,6 +71,7 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  * @author asad
  */
 public class DirectAtomDrawer extends AbstractDirectDrawer {
+    private static final Logger LOG = getLogger(DirectAtomDrawer.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -200,10 +203,10 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 Integer implicitHydrogenCount = atom.getImplicitHydrogenCount();
                 if (implicitHydrogenCount != null
                         && implicitHydrogenCount > 0) {
-                    int align
-                            = getBestAlignmentForLabel(molecule, atom);
-                    AnnotationPosition suggestedPosition
-                            = labelManager.alignmentToAnnotationPosition(align);
+                    int align =
+                            getBestAlignmentForLabel(molecule, atom);
+                    AnnotationPosition suggestedPosition =
+                            labelManager.alignmentToAnnotationPosition(align);
 
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
@@ -215,8 +218,8 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                         suggestedPosition = labelManager.getNextSparePosition(atom);
                     }
                     labelManager.setUsedPosition(atom, suggestedPosition);
-                    Rectangle2D hBounds
-                            = drawImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
+                    Rectangle2D hBounds =
+                            drawImplicitHydrogens(atom, implicitHydrogenCount, suggestedPosition, g);
                     if (hBounds != null) {  // TODO - shouldn't be null!
                         symbolBounds.add(hBounds);
                     }
@@ -319,12 +322,12 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
                 cy += params.subscriptHeight;
                 Point2f sP = getTextPoint(g, hCount, cx, cy);
                 double subscriptHeight = subscriptBounds.getHeight();
-                Rectangle2D finalHBounds
-                        = new Rectangle2D.Double(
-                                cx - (subscriptWidth / 2),
-                                cy - (subscriptHeight / 2),
-                                subscriptWidth,
-                                subscriptHeight);
+                Rectangle2D finalHBounds =
+                        new Rectangle2D.Double(
+                        cx - (subscriptWidth / 2),
+                        cy - (subscriptHeight / 2),
+                        subscriptWidth,
+                        subscriptHeight);
                 g.setColor(WHITE);
                 g.fill(finalHBounds);
                 g.setColor(BLACK);
@@ -428,8 +431,8 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         g.setFont(atomIDFont);
         Rectangle2D bounds = getTextBounds(g, atomID);
         Point2d pID = new Point2d(p);
-        AnnotationPosition suggestedPosition
-                = labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
+        AnnotationPosition suggestedPosition =
+                labelManager.alignmentToAnnotationPosition(getBestAlignmentForLabelXY(container, atom));
         AnnotationPosition pos;
         if (labelManager.isUsed(atom, suggestedPosition)) {
             pos = labelManager.getNextSparePosition(atom);
@@ -440,6 +443,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         //        System.out.println("Alignment for atom " + atomID + " " + pos
         //                + " given annotations at "
         //                + labelManager.getAnnotationPositionsAsString(atom));
+
         double aW2 = atomSymbolBounds.getWidth() / 2;
         double bW2 = bounds.getWidth() / 2;
         double aH2 = atomSymbolBounds.getHeight() / 2;
@@ -484,7 +488,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-//            System.LOGGER.debug("position null for ID " + atomID);
+//            System.err.println("position null for ID " + atomID);
         }
 
         Point2f tp = getTextPoint(g, atomID, pID.x, pID.y);
@@ -563,11 +567,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
     private int getAttachedMultipleBondCount(
             IAtom atom, IAtomContainer atomContainer) {
         int count = 0;
-        for (IBond bond : atomContainer.getConnectedBondsList(atom)) {
-            if (bond.getOrder() != SINGLE) {
-                count++;
-            }
-        }
+        count = atomContainer.getConnectedBondsList(atom).stream().filter(bond -> (bond.getOrder() != SINGLE)).map(_item -> 1).reduce(count, Integer::sum);
         return count;
     }
 
@@ -583,11 +583,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
 
     private boolean isTerminal(IAtom atom, IAtomContainer atomContainer) {
         int numberOfHeavyAtomsConnected = 0;
-        for (IAtom connected : atomContainer.getConnectedAtomsList(atom)) {
-            if (!connected.getSymbol().equals("H")) {
-                numberOfHeavyAtomsConnected++;
-            }
-        }
+        numberOfHeavyAtomsConnected = atomContainer.getConnectedAtomsList(atom).stream().filter(connected -> (!connected.getSymbol().equals("H"))).map(_item -> 1).reduce(numberOfHeavyAtomsConnected, Integer::sum);
         return numberOfHeavyAtomsConnected < 2;
     }
 

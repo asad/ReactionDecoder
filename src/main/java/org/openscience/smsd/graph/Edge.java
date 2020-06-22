@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2009-2018  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad@ebi.ebi.ac.uk>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -61,10 +61,7 @@ public class Edge implements Serializable {
         if (!Objects.equals(this.source, other.source)) {
             return false;
         }
-        if (!Objects.equals(this.sink, other.sink)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.sink, other.sink);
     }
 
     /**

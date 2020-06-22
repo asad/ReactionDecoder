@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class CalculationProcess extends IsomeraseHandler implements Serializable {
+public class CalculationProcess extends CaseHandler implements Serializable {
 
     private final static boolean DEBUG = false;
     static final String NEW_LINE = getProperty("line.separator");
@@ -73,6 +73,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
          */
         super(reaction);
 
+        if (DEBUG) {
+            System.out.println("=====CalculationProcess====");
+        }
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
@@ -80,6 +83,9 @@ public class CalculationProcess extends IsomeraseHandler implements Serializable
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         this.algorithm = algorithm;
         run();
+        if (DEBUG) {
+            System.out.println("=====Done CalculationProcess====");
+        }
     }
 
     private synchronized void run() {

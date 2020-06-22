@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -422,6 +422,9 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(reactantAtom);
                             }
                         } catch (CDKException ex) {
+                            if (DEBUG) {
+                                ex.printStackTrace();
+                            }
                             LOGGER.error(SEVERE, null, ex);
                         }
                         try {
@@ -431,6 +434,9 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(productAtom);
                             }
                         } catch (CDKException ex) {
+                            if (DEBUG) {
+                                ex.printStackTrace();
+                            }
                             LOGGER.error(SEVERE, null, ex);
                         }
                     }
@@ -541,6 +547,9 @@ public final class BondChangeAnnotator extends DUModel {
 
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
+                        if (DEBUG) {
+                            ex.printStackTrace();
+                        }
                         LOGGER.error(SEVERE, null, ex);
                     }
                 }
