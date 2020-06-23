@@ -12,7 +12,7 @@
         <properties>
             <exec.args>-Xms4G -classpath %classpath uk.ac.ebi.aamtool.ReactionDecoder</exec.args>
             <exec.executable>java</exec.executable>
-            <exec.workingdir></exec.workingdir>
+            <exec.workingdir>/Users/asad/github/ReactionDecoder</exec.workingdir>
         </properties>
     </action>
     <action>
@@ -28,7 +28,7 @@
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Xms4G -classpath %classpath uk.ac.ebi.aamtool.ReactionDecoder</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
-            <exec.workingdir></exec.workingdir>
+            <exec.workingdir>/Users/asad/github/ReactionDecoder</exec.workingdir>
         </properties>
     </action>
     <action>
@@ -43,7 +43,7 @@
         <properties>
             <exec.args>-Xms4G -classpath %classpath uk.ac.ebi.aamtool.ReactionDecoder</exec.args>
             <exec.executable>java</exec.executable>
-            <exec.workingdir></exec.workingdir>
+            <exec.workingdir>/Users/asad/github/ReactionDecoder</exec.workingdir>
         </properties>
     </action>
     <action>
@@ -57,21 +57,32 @@
                
         </goals>
         <properties>
-                <skipTests>true</skipTests>
-            </properties>
+            <skipTests>true</skipTests>
+        </properties>
     </action>
     <action>
-            <actionName>build</actionName>
+        <actionName>build</actionName>
+        <preAction>build-with-dependencies</preAction>
+        <packagings>
+            <packaging>*</packaging>
+        </packagings>
+        <goals>
+            <goal>install</goal>
+                
+        </goals>
+        <properties>
+            <skipTests>true</skipTests>
+        </properties>
+    </action>
+    <action>
+            <actionName>rebuild</actionName>
             <preAction>build-with-dependencies</preAction>
             <packagings>
                 <packaging>*</packaging>
             </packagings>
             <goals>
+                <goal>clean</goal>
                 <goal>install</goal>
-                
             </goals>
-            <properties>
-                <skipTests>true</skipTests>
-            </properties>
         </action>
 </actions>

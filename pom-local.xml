@@ -20,16 +20,22 @@
             <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
         </license>
     </licenses>
-    <prerequisites>
+    <!--<prerequisites>
         <maven>3.0</maven>
-    </prerequisites>
+    </prerequisites>-->
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.13</version>
             <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.4.0</version>
         </dependency>
         
         <dependency>
@@ -47,7 +53,6 @@
             <artifactId>cdk-smiles</artifactId>
             <version>2.3</version>
         </dependency>
-        
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
             <groupId>commons-cli</groupId>
@@ -65,12 +70,11 @@
     
     <build>
         <plugins>
-            
             <!-- download source code in Eclipse, best practice -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>false</downloadJavadocs>
@@ -81,10 +85,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
 
@@ -92,7 +97,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <!-- get all project dependencies -->
                     <descriptorRefs>
@@ -120,5 +125,5 @@
 
         </plugins>
     </build>
-        
+    <name>Reaction Decoder Tool</name>  
 </project>

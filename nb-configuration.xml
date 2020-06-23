@@ -16,5 +16,6 @@
         <org-netbeans-modules-whitelist.whitelist-oracle>false</org-netbeans-modules-whitelist.whitelist-oracle>
         <org-netbeans-modules-javascript2-requirejs.enabled>true</org-netbeans-modules-javascript2-requirejs.enabled>
         <netbeans.checkstyle.format>true</netbeans.checkstyle.format>
+        <netbeans.hint.license>gpl30</netbeans.hint.license>
     </properties>
 </project-shared-configuration>
