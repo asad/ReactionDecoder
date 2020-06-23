@@ -60,6 +60,24 @@ public class ComplexCases extends MappingUtility {
     /**
      * Lowest Bond Energy Solution not accepted
      *
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void complex_unbalanced() throws Exception {
+
+        String reactionID = "complex_unbalanced";
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+    
+        /**
+     * Lowest Bond Energy Solution not accepted
+     *
      * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
      *
      * BE 2208.0, Fragment 0

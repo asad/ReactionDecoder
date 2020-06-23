@@ -43,6 +43,8 @@ import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import static uk.ac.ebi.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
@@ -168,17 +170,30 @@ public class MappingUtility extends TestUtility {
     public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
         IReaction cdkReaction = null;
         try {
-            System.out.println("Mapping Reaction " + reactionID);
+//            System.out.println("Mapping Reaction " + reactionID);
             cdkReaction = readReaction(reactionID, directory, false);
-
             ExtReactionManipulatorTool.addExplicitH(cdkReaction);
             SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-//            out.println("Input reactions " + sm.create(cdkReaction));
+            try {
+                for (IAtomContainer a : cdkReaction.getReactants().atomContainers()) {
+                    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(a);
+                    AtomContainerManipulator.percieveAtomTypesAndConfigureUnsetProperties(a);
+                }
+                for (IAtomContainer a : cdkReaction.getProducts().atomContainers()) {
+                    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(a);
+                    AtomContainerManipulator.percieveAtomTypesAndConfigureUnsetProperties(a);
+                }
+//                out.println("Input reactions " + sm.create(cdkReaction));
+            } catch (Exception e) {
+//                e.printStackTrace();
+                LOGGER.error(SEVERE, NEW_LINE, " Sorry- failed to create reaction smiles: ", e.getMessage());
+            }
             ReactionMechanismTool annotation = getAnnotation(cdkReaction);
             MappingSolution s = annotation.getSelectedSolution();
 //            System.out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e.getMessage());
         }
         return null;
