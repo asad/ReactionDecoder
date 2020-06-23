@@ -30,9 +30,9 @@ use POM.xml and mvn commands to build your project
 1) mvn -DskipTests=true install (skip test)
 2) mvn install (include test)
 3) mvn clean (clean)
-4) mvn install -DskipTests=true
-5) mvn package
-6) mvn -P local clean install (with -jar-with-dependencies)
+4) mvn package
+5) mvn -P local clean install -DskipTests=true (fast single jar compilation, skip test)
+6) mvn -P local clean install (single jar compilation with test)
 
 ```
 
