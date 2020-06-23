@@ -54,7 +54,24 @@
         </packagings>
         <goals>
             <goal>install</goal>
-            <goal>-Dmaven.test.skip=true</goal>   
+               
         </goals>
+        <properties>
+                <skipTests>true</skipTests>
+            </properties>
     </action>
+    <action>
+            <actionName>build</actionName>
+            <preAction>build-with-dependencies</preAction>
+            <packagings>
+                <packaging>*</packaging>
+            </packagings>
+            <goals>
+                <goal>install</goal>
+                
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
 </actions>
