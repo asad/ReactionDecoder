@@ -68,14 +68,20 @@ public class ComplexCases extends MappingUtility {
 
         String reactionID = "complex_unbalanced";
         ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
+        IPatternFingerprinter formedCleavedWFingerprint = null;
+        try {
+            formedCleavedWFingerprint = testReactions
+                    .getSelectedSolution()
+                    .getBondChangeCalculator()
+                    .getFormedCleavedWFingerprint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
     }
-    
-        /**
+
+    /**
      * Lowest Bond Energy Solution not accepted
      *
      * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
@@ -122,7 +128,6 @@ public class ComplexCases extends MappingUtility {
 //                .getFormedCleavedWFingerprint();
 //        assertEquals(0, formedCleavedWFingerprint.getFeatureCount());
 //    }
-
 //    /*
 //     * Complex case, Takes longer to Run
 //     * 
