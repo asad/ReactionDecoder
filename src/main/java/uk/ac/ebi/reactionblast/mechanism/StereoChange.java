@@ -43,7 +43,10 @@ public class StereoChange implements Serializable {
      * @param rAtom
      * @param pAtom
      */
-    public StereoChange(IStereoAndConformation rAtomStereo, IStereoAndConformation pAtomStereo, IAtom rAtom, IAtom pAtom) {
+    public StereoChange(IStereoAndConformation rAtomStereo,
+            IStereoAndConformation pAtomStereo,
+            IAtom rAtom,
+            IAtom pAtom) {
         this.rAtomStereo = rAtomStereo;
         this.pAtomStereo = pAtomStereo;
         this.rAtom = rAtom;

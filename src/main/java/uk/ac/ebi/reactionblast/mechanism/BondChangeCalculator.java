@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Math.abs;
-import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.synchronizedList;

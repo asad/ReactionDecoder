@@ -34,11 +34,8 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
-import static org.openscience.cdk.io.IChemObjectReader.Mode.RELAXED;
-import org.openscience.cdk.io.Mol2Reader;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
@@ -47,7 +44,6 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
-import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
@@ -140,6 +136,11 @@ class ChemicalFormatParser {
             try {
                 IReaction parseReactionSmile = sp.parseReactionSmiles(s);
                 try {
+                    parseReactionSmile = convertRoundTripRXNSMILES(parseReactionSmile);
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, NEW_LINE, " Sorry - error in Configuring reaction smiles: ", e.getMessage());
+                }
+                try {
                     LOGGER.error(INFO, "Annotating Reaction " + "smiles");
                     if (smiles.length > 1) {
                         parseReactionSmile.setID("smiles_" + smilesIndex);
@@ -148,66 +149,13 @@ class ChemicalFormatParser {
                     }
                     reactions.add(parseReactionSmile);
                 } catch (Exception ex) {
-                    LOGGER.error(SEVERE, null, ex);
+                    LOGGER.error(SEVERE, NEW_LINE, ex);
                 }
             } catch (InvalidSmilesException ex) {
-                LOGGER.error(SEVERE, null, ex);
+                LOGGER.error(SEVERE, NEW_LINE, ex);
             }
             smilesIndex++;
         }
         return reactions;
-    }
-
-    protected IReaction parseSMILES(String smiles) {
-        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
-        try {
-            IAtomContainer mol = sp.parseSmiles(smiles);
-            try {
-                IReaction parseReactionSmiles = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
-                parseReactionSmiles.addReactant(mol, 1.0);
-                LOGGER.error(INFO, "Annotating Reaction " + "smiles");
-                parseReactionSmiles.setID("smiles");
-                return parseReactionSmiles;
-            } catch (IllegalArgumentException ex) {
-                LOGGER.error(SEVERE, null, ex);
-            }
-        } catch (InvalidSmilesException ex) {
-            LOGGER.error(SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    protected IReaction parseMOL2(String input) throws FileNotFoundException, CDKException {
-        File f = new File(input);
-        if (!f.isFile()) {
-            LOGGER.error(WARNING, format("Mol2 file not found! " + f.getName()));
-            exit(1);
-        }
-
-        String[] split = f.getName().split(".mol");
-        MDLV2000Reader mdlV2000Reader = new MDLV2000Reader(
-                new FileReader(input), RELAXED);
-        AtomContainer ac = mdlV2000Reader.read(new AtomContainer());
-        IReaction r = new Reaction();
-        r.addReactant(ac, 1.0);
-        r.addProduct(ac, 1.0);
-        r.setID(split[0]);
-        return r;
-    }
-
-    protected IReaction parseSDF(String input) throws FileNotFoundException, CDKException {
-        File f = new File(input);
-        if (!f.isFile()) {
-            LOGGER.error(WARNING, format("SDF file not found! " + f.getName()));
-            exit(1);
-        }
-        String[] split = f.getName().split(".sdf");
-        Mol2Reader mol2Reader = new Mol2Reader(new FileReader(input));
-        AtomContainer ac = mol2Reader.read(new AtomContainer());
-        IReaction r = new Reaction();
-        r.addReactant(ac, 1.0);
-        r.addProduct(ac, 1.0);
-        r.setID(split[0]);
-        return r;
     }
 }
