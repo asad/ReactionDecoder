@@ -19,7 +19,7 @@
         <developerConnection>scm:git:git@github.com:asad/ReactionDecoder.git
         </developerConnection>
         <url>https://github.com/asad/ReactionDecoder.git</url>
-        <tag>HEAD</tag>
+        <tag>v@{project.version}</tag>
     </scm>
     <issueManagement>
         <url>https://github.com/asad/ReactionDecoder/issues</url>
