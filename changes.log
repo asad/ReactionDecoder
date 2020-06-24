@@ -253,9 +253,9 @@ c) improved AAM Speed for complex graph
 -----------------------
 Changes (21/06/2020)
 -----------------------
-a) Code clean up
-b) Deprecated code dependency in the CDK resolved
-c) CDK 2.3 add to the new build
+a) Code clean up and minor bug fixed (improved mapping)
+b) CDK 2.3 add to the new build
+c) Code dependency with the CDK
 d) POM Updated  
 
 -----------------------
