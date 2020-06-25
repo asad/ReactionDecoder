@@ -6,7 +6,7 @@ name: Maven Package
 on:
   push:
     branches:
-      - 'github-ci'
+      - 'master'
   # release:
   #   types: [created]
 
