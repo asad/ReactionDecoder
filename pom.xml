@@ -25,7 +25,7 @@
         <url>https://github.com/asad/ReactionDecoder/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
-    <distributionManagement>
+    <!-- <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -34,8 +34,15 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-    </distributionManagement>
-    
+    </distributionManagement> -->
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/asad/ReactionDecoder</url>
+    </repository>
+  </distributionManagement>
+
     <licenses>
         <license>
             <name>GNU General Lesser Public License (LGPL) version 3.0</name>
