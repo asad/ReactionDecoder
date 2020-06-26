@@ -143,7 +143,7 @@ public class Utility {
         MoleculeInitializer.initializeMolecule(ac1);
         ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac2);
         MoleculeInitializer.initializeMolecule(ac2);
-        
+
         AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
         BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
 
@@ -168,6 +168,7 @@ public class Utility {
      * @param matchAtomType
      * @param matchRingSize
      * @return
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public static Map<IAtom, IAtom> findSubgraph(
             IAtomContainer source, IAtomContainer target,

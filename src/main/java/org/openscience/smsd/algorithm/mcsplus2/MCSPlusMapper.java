@@ -61,11 +61,11 @@ public final class MCSPlusMapper implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
-    public MCSPlusMapper(IAtomContainer source, IAtomContainer target,
+    public MCSPlusMapper(IAtomContainer source, 
+            IAtomContainer target,
             AtomMatcher am, BondMatcher bm) {
         this.source = source;
         this.target = target;

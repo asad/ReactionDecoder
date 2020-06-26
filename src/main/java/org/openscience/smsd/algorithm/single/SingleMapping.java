@@ -68,6 +68,7 @@ public class SingleMapping {
      *
      * @param source
      * @param target
+     * @param am
      * @return Mappings
      * @throws CDKException
      */
@@ -88,6 +89,7 @@ public class SingleMapping {
      *
      * @param source
      * @param target
+     * @param am
      * @return Mappings
      * @throws CDKException
      */

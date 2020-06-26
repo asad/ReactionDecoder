@@ -96,10 +96,10 @@ public class ChemicalFilters extends BaseFilter {
      * @throws CDKException
      */
     public synchronized void sortResultsByEnergies() throws CDKException {
-        Map<Integer, AtomAtomMapping> allEnergyAtomMCS = Collections.synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
-        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-        Map<Integer, Double> energySelectionMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
+        Map<Integer, AtomAtomMapping> allEnergyAtomMCS = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> energySelectionMap = Collections.synchronizedSortedMap(new TreeMap<>());
 
         initializeMaps(allEnergyAtomMCS, stereoScoreMap, fragmentScoreMap, energySelectionMap);
         double lowestEnergyScore = energyFilter.sortResults(allEnergyAtomMCS, energySelectionMap);
@@ -126,10 +126,10 @@ public class ChemicalFilters extends BaseFilter {
      * Sort solution by ascending order of the fragment count.
      */
     public synchronized void sortResultsByFragments() {
-        Map<Integer, AtomAtomMapping> allFragmentAtomMCS = Collections.synchronizedSortedMap(new TreeMap<Integer, AtomAtomMapping>());
-        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
+        Map<Integer, AtomAtomMapping> allFragmentAtomMCS = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
 
         initializeMaps(
                 allFragmentAtomMCS,
@@ -172,10 +172,10 @@ public class ChemicalFilters extends BaseFilter {
      * @throws CDKException
      */
     public synchronized void sortResultsByStereoAndBondMatch() throws CDKException {
-        Map<Integer, AtomAtomMapping> allStereoAtomMCS = Collections.synchronizedMap(new HashMap<Integer, AtomAtomMapping>());
-        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Integer>());
-        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<Integer, Double>());
-        Map<Integer, Double> stereoScoreMap = Collections.synchronizedMap(new HashMap<Integer, Double>());
+        Map<Integer, AtomAtomMapping> allStereoAtomMCS = Collections.synchronizedMap(new HashMap<>());
+        Map<Integer, Integer> fragmentScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> energyScoreMap = Collections.synchronizedSortedMap(new TreeMap<>());
+        Map<Integer, Double> stereoScoreMap = Collections.synchronizedMap(new HashMap<>());
 
         initializeMaps(
                 allStereoAtomMCS,

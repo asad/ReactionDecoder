@@ -77,10 +77,9 @@ public class MCSSeedGenerator implements Callable<List<AtomAtomMapping>> {
      *
      * @param source
      * @param target
-     * @param bondMatch
-     * @param ringMatch
-     * @param matchAtomType
      * @param algorithm
+     * @param am
+     * @param bm
      */
     public MCSSeedGenerator(IAtomContainer source,
             IAtomContainer target,

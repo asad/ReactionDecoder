@@ -31,9 +31,8 @@ public class MCSAlgorithm {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return
      * @throws IOException
      * @throws java.lang.CloneNotSupportedException

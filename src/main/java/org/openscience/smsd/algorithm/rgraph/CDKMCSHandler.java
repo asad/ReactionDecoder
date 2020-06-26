@@ -72,9 +72,8 @@ public class CDKMCSHandler implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public CDKMCSHandler(IAtomContainer source, IAtomContainer target,
             AtomMatcher am, BondMatcher bm) {

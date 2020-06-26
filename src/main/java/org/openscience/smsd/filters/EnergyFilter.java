@@ -50,7 +50,7 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
 
     EnergyFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        bEnergies = Collections.synchronizedList(new ArrayList<Double>());
+        bEnergies = Collections.synchronizedList(new ArrayList<>());
 
     }
 

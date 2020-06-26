@@ -45,5 +45,5 @@ public interface IClique {
      * @return the largest cliques
      */
     Stack<Set<Vertex>> getMaxCliquesSet();
-    
+
 }

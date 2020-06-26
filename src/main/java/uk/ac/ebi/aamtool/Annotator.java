@@ -60,7 +60,6 @@ import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
  */
 public class Annotator extends Helper {
 
-    static final String NEW_LINE = getProperty("line.separator");
     static final String TAB = "\t";
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Annotator.class);

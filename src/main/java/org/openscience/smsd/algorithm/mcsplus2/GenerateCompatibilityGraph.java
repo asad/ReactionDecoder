@@ -72,15 +72,15 @@ public final class GenerateCompatibilityGraph implements Serializable {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @throws java.io.IOException
      */
     public GenerateCompatibilityGraph(
             IAtomContainer source,
             IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) throws IOException {
+            AtomMatcher am, 
+            BondMatcher bm) throws IOException {
         this.atomMatcher = am;
         this.bondMatcher = bm;
         this.source = source;

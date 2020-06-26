@@ -101,9 +101,8 @@ public final class CDKRMapHandler {
      *
      * @param molecule1
      * @param molecule2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return List
      * @throws CDKException
      */
@@ -197,9 +196,8 @@ public final class CDKRMapHandler {
      *
      * @param Molecule1
      * @param Molecule2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @throws CDKException
      */
     public synchronized void calculateOverlapsAndReduceExactMatch(
@@ -249,9 +247,8 @@ public final class CDKRMapHandler {
      *
      * @param Molecule1
      * @param Molecule2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return List
      * @throws CDKException
      */
@@ -302,9 +299,8 @@ public final class CDKRMapHandler {
      *
      * @param Molecule1
      * @param Molecule2
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @return List
      * @throws CDKException
      */

@@ -80,9 +80,8 @@ public final class VF2 implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds
-     * @param shouldMatchRings
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public VF2(IAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         this.source = source;

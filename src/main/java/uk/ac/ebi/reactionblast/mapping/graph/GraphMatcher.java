@@ -50,7 +50,6 @@ import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.mapping.container.ReactionContainer;
 import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import static java.util.Collections.synchronizedCollection;
-import java.util.concurrent.Executors;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import org.openscience.cdk.aromaticity.Aromaticity;

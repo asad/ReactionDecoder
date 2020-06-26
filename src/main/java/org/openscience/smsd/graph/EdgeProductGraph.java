@@ -36,6 +36,8 @@ public final class EdgeProductGraph implements Serializable {
      *
      * @param source
      * @param target
+     * @param am
+     * @param bm
      * @return
      * @throws IOException
      */

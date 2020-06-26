@@ -61,10 +61,7 @@ public class Edge implements Serializable {
         if (!Objects.equals(this.source, other.source)) {
             return false;
         }
-        if (!Objects.equals(this.sink, other.sink)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.sink, other.sink);
     }
 
     /**

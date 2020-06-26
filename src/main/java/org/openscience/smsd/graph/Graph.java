@@ -32,7 +32,6 @@ public final class Graph implements Iterable<Vertex> {
      * Initializes an empty graph with {@code V} vertices and 0 edges.param V
      * the number of vertices
      *
-     * @param directed
      */
     public Graph() {
         this.vertices = new ArrayList<>();

@@ -81,7 +81,6 @@ public class Pair<T, S> {
 
     /**
      * @param first
-     * @param source the source to set
      */
     public synchronized void setSourceAtom(T first) {
         this.source = first;

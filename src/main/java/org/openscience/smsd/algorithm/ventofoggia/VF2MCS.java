@@ -79,9 +79,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchBonds bond match
-     * @param shouldMatchRings ring match
-     * @param matchAtomType
+     * @param am
+     * @param bm
      */
     public VF2MCS(IAtomContainer source,
             IAtomContainer target,
@@ -373,6 +372,8 @@ public final class VF2MCS extends BaseMCS implements IResults {
      *
      * @param source
      * @param target
+     * @param am
+     * @param bm
      */
     public VF2MCS(IQueryAtomContainer source, IAtomContainer target, AtomMatcher am, BondMatcher bm) {
         super((IQueryAtomContainer) source, target, am, bm);

@@ -55,7 +55,7 @@ public class SingleMappingHandler implements IResults {
      *
      * @param source
      * @param target
-     * @param shouldMatchRings
+     * @param am
      */
     public SingleMappingHandler(
             IAtomContainer source,
@@ -72,6 +72,7 @@ public class SingleMappingHandler implements IResults {
      *
      * @param source
      * @param target
+     * @param am
      */
     public SingleMappingHandler(
             IQueryAtomContainer source,
