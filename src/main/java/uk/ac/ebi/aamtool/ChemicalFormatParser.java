@@ -88,7 +88,7 @@ class ChemicalFormatParser {
                 exit(1);
             }
             try {
-                LOGGER.error(INFO, "Annotating Reaction {0}", filepath.getName());
+                LOGGER.info(INFO, "Annotating Reaction {0}", filepath.getName());
                 IReaction rxnReactions;
                 try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath));) {
                     try {
@@ -141,7 +141,7 @@ class ChemicalFormatParser {
                     LOGGER.error(SEVERE, NEW_LINE, " Sorry - error in Configuring reaction smiles: ", e.getMessage());
                 }
                 try {
-                    LOGGER.error(INFO, "Annotating Reaction " + "smiles");
+                    LOGGER.info(INFO, "Annotating Reaction " + "smiles");
                     if (smiles.length > 1) {
                         parseReactionSmile.setID("smiles_" + smilesIndex);
                     } else {

@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

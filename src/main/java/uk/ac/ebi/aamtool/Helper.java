@@ -124,7 +124,7 @@ class Helper extends ChemicalFormatParser {
      5, 3, true, System.out);
      */
     protected static void printHelp(final OutputStream out, final Options options) {
-        final String commandLineSyntax = "java -jar RXNDecoder.jar";
+        final String commandLineSyntax = "java -jar ReactionDecoder.jar";
         try (PrintWriter writer = new PrintWriter(out)) {
             final HelpFormatter formatter = new HelpFormatter();
             displayBlankLines(2, out);

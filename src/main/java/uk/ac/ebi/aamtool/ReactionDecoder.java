@@ -45,7 +45,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -96,7 +95,6 @@ public class ReactionDecoder extends Annotator {
                 out.println("-- AAM --");
                 ReactionDecoder rxn = new ReactionDecoder();
                 rxn.AAMTask(aamLine, createAAMOptions, complexMappingFlag);
-
             } else if (compareLine.hasOption('j') && compareLine.getOptionValue("j").equalsIgnoreCase("COMPARE")
                     && compareLine.hasOption('Q') && compareLine.hasOption('q')
                     && compareLine.hasOption('T') && compareLine.hasOption('t')
@@ -129,15 +127,11 @@ public class ReactionDecoder extends Annotator {
                 options.put("Atom-Atom Mapping (AAM-Tool)", createAAMOptions);
                 options.put("Reaction Annotation (RA-Tool)", createAnnotateOptions);
                 options.put("Reaction Comparison (RC-Tool)", createCompareOptions);
-                printHelp(options, 80, "EC-BLAST", "End of Help",
-                        5, 3, true, out);
+                printHelp(options, 80, "EC-BLAST", "End of Help", 5, 3, true, out);
             }
-        } catch (ParseException ex) {
-            LOGGER.error(SEVERE, null, ex);
         } catch (Exception ex) {
-            LOGGER.error(SEVERE, null, ex);
+            LOGGER.error(SEVERE, " CommandLine option parsing error: ", ex);
         }
-
     }
 
     /**
