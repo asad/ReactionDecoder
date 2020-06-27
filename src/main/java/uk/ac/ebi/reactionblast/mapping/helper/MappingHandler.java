@@ -176,8 +176,7 @@ public class MappingHandler extends BasicDebugger {
             if (I_Atom != null && J_Atom != null) {
 
                 /*
-                *******************************
-                * Mapping the Reactants ******************************
+                 * Mapping the Reactants 
                  */
                 boolean eFlag = false;
                 IAtom firstAtom = null;
@@ -208,8 +207,7 @@ public class MappingHandler extends BasicDebugger {
 
                 }
                 /*
-                *******************************
-                * Mapping the Products ******************************
+                 * Mapping the Products 
                  */
                 boolean pFlag = false;
                 for (int pMol = 0; pMol < expProductSet.getAtomContainerCount(); pMol++) {

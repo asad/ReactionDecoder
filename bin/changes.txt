@@ -259,6 +259,11 @@ c) Code dependency with the CDK
 d) POM Updated   
 
 -----------------------
+Changes (27/06/2020)
+-----------------------
+a) concurrent modification error fixed
+
+-----------------------
 TO DO
 -----------------------
 a) CDK to handle missing atom types like Fe, Co etc.

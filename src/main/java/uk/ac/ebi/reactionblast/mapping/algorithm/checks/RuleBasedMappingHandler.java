@@ -99,7 +99,9 @@ public final class RuleBasedMappingHandler implements Serializable {
      * @throws CDKException
      * @throws IOException
      */
-    public RuleBasedMappingHandler(Holder matrixHolder, List<String> EdMapOrignal, List<String> PdMapOrignal) throws CDKException, IOException {
+    public RuleBasedMappingHandler(Holder matrixHolder,
+            List<String> EdMapOrignal, List<String> PdMapOrignal)
+            throws CDKException, IOException {
         setRulesSmiles();
         if (DEBUG1) {
             out.println("Mapping Rules Checked");
@@ -497,13 +499,13 @@ public final class RuleBasedMappingHandler implements Serializable {
         final String C00041 = "[CH3][C](N)C(O)=O";
 
         /*
-         * N_C CC(C)[C@H](N)C(O)=O>>CC(C)C(=O)C(O)=O
+         * N_C 
          */
         final String N = "CC(C)[C@H](N)C(O)=O";
         final String C = "CC(C)C(=O)C(O)=O";
 
         /*
-         * smartsC04666_smartsC04916 OC[C@H](O)COP(O)(O)=O>>OC[C@H](O)COP(O)(O)=O
+         * smartsC04666_smartsC04916 
          */
         final String smartsC04666 = "O=P(O)(O)O[CH2].[CH]O.O[CH]C=1N=CNC1";
         final String smartsC04916 = "O=C(N)C=1N=CN(C1N=CNCC(=O)[CH]O)C(O[CH])C(O)[CH]O.O=P(O)(O)O[CH2].O=P(O)(O)O[CH2].[CH]O";

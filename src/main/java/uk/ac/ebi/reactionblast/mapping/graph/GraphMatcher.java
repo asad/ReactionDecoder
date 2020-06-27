@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +61,6 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
-    static final String NEW_LINE = getProperty("line.separator");
     private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);

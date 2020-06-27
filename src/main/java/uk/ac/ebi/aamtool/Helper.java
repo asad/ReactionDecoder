@@ -24,7 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.Map;
 import org.apache.commons.cli.HelpFormatter;
@@ -33,7 +32,6 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
@@ -43,7 +41,6 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
  */
 class Helper extends ChemicalFormatParser {
 
-    static final String NEW_LINE = getProperty("line.separator");
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Helper.class);
 
@@ -163,19 +160,19 @@ class Helper extends ChemicalFormatParser {
         }
     }
 
-    protected File generateImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+    protected static File generateImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
         File file = new File(canonicalRootPath);
         new ImageGenerator().drawLeftToRightReactionLayout(file, mappedReaction, reactionID);
         return new File(file.getCanonicalFile(), reactionID + ".png");
     }
 
-    protected File generateAAMImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
+    protected static File generateAAMImage(String canonicalRootPath, IReaction mappedReaction, String reactionID) throws Exception {
         File file = new File(canonicalRootPath);
         new ImageGenerator().drawTopToBottomReactionLayout(file, mappedReaction, reactionID);
         return new File(file.getCanonicalFile(), reactionID + ".png");
     }
 
-    protected File writeRXNMappedFile(String canonicalRootPath, IReaction mappedReaction, String name) throws IOException, CDKException {
+    protected static File writeRXNMappedFile(String canonicalRootPath, IReaction mappedReaction, String name) throws IOException, CDKException {
 //        printReaction(mappedReaction);
         File f = new File(canonicalRootPath + separator + name + ".rxn");
         try (MDLV2000RXNWriter writer = new MDLV2000RXNWriter(new FileWriter(f))) {

@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.String.format;
 import static java.lang.System.exit;
+import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.logging.Level.INFO;
@@ -42,7 +43,6 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import static uk.ac.ebi.aamtool.Annotator.NEW_LINE;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 /**
@@ -51,10 +51,11 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 class ChemicalFormatParser {
 
+    static final String NEW_LINE = getProperty("line.separator");
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(ChemicalFormatParser.class);
 
-    protected IReaction parseCML(String input) throws FileNotFoundException, CDKException {
+    protected static IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
             LOGGER.warn(WARNING, format("CML file not found! " + f.getName()));
@@ -70,7 +71,7 @@ class ChemicalFormatParser {
         return r;
     }
 
-    protected List<IReaction> parseRXN(String fileNames) {
+    protected static List<IReaction> parseRXN(String fileNames) {
         /*
          split of file extension
          */
@@ -109,7 +110,7 @@ class ChemicalFormatParser {
         return reactions;
     }
 
-    protected IReaction convertRoundTripRXNSMILES(IReaction r) throws CDKException {
+    protected static IReaction convertRoundTripRXNSMILES(IReaction r) throws CDKException {
         final SmilesGenerator sg = new SmilesGenerator(
                 SmiFlavor.AtomAtomMap
                 | SmiFlavor.UseAromaticSymbols
@@ -127,7 +128,7 @@ class ChemicalFormatParser {
         return parseReactionSmiles;
     }
 
-    protected List<IReaction> parseReactionSMILES(String reactionSmiles) {
+    protected static List<IReaction> parseReactionSMILES(String reactionSmiles) {
         SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         String[] smiles = reactionSmiles.split("\\s+");
         List<IReaction> reactions = new ArrayList<>();

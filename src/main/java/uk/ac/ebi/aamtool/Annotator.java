@@ -116,7 +116,7 @@ public class Annotator extends Helper {
      * @return
      * @throws Exception
      */
-    protected ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
+    protected static ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
         ReactionMechanismTool rmt;
         /*
          Check if the reaction is already mapped
@@ -144,7 +144,7 @@ public class Annotator extends Helper {
      * @throws CDKException
      * @throws Exception
      */
-    protected boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
+    protected synchronized boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
 
         MappingSolution s = mech.getSelectedSolution();
         if (s == null) {
@@ -177,7 +177,7 @@ public class Annotator extends Helper {
      * @param jobID
      * @throws IOException
      */
-    private void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
+    private static void writeSimilarityMatrix(List<SimilarityResult> results, String jobID) throws IOException {
         String rootPath = new File(".").getCanonicalPath();
         File bcMatrix = new File(rootPath, jobID + "_Bond_Change" + ".mat");
         File rcMatrix = new File(rootPath, jobID + "_Reaction_Centre" + ".mat");
@@ -237,7 +237,7 @@ public class Annotator extends Helper {
 
     }
 
-    private void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {
+    private static void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {
         Map<String, Collection<String>> moleculeMoleculeTransformationPairs = s.getBondChangeCalculator().getMoleculeMoleculeTransformationPairs();
 
         StringBuilder sbcomp = new StringBuilder();
@@ -352,7 +352,7 @@ public class Annotator extends Helper {
         sb.append(NEW_LINE);
     }
 
-    private void printRPAIRPatternAsXML(MappingSolution s, org.w3c.dom.Document doc, org.w3c.dom.Element rootElement) {
+    private static void printRPAIRPatternAsXML(MappingSolution s, org.w3c.dom.Document doc, org.w3c.dom.Element rootElement) {
 
         Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
         Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
@@ -482,7 +482,7 @@ public class Annotator extends Helper {
      * @param sb
      * @throws java.lang.CloneNotSupportedException
      */
-    protected void annotateReactionAsText(ReactionMechanismTool rmt, String reactionID, StringBuilder sb) throws CloneNotSupportedException {
+    protected synchronized void annotateReactionAsText(ReactionMechanismTool rmt, String reactionID, StringBuilder sb) throws CloneNotSupportedException {
         DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
         instance.setExponentSeparator("E");//x10^
         DecimalFormat df = new DecimalFormat("##E00", instance);
@@ -628,7 +628,7 @@ public class Annotator extends Helper {
      * @param doc
      * @param rootElement
      */
-    protected void annotateReactionAsXML(ReactionMechanismTool rmt, String reactionID, Document doc, Element rootElement) {
+    protected synchronized void annotateReactionAsXML(ReactionMechanismTool rmt, String reactionID, Document doc, Element rootElement) {
         DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
         instance.setExponentSeparator("E");//x10^
         DecimalFormat df = new DecimalFormat("##E00", instance);
@@ -797,7 +797,7 @@ public class Annotator extends Helper {
      * @param rootElement
      * @throws Exception
      */
-    protected void compareRXNXML(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, Document doc, Element rootElement) throws Exception {
+    protected synchronized void compareRXNXML(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, Document doc, Element rootElement) throws Exception {
         NumberFormat myFormatter = NumberFormat.getInstance();
         myFormatter.setMinimumFractionDigits(2);
         myFormatter.setMaximumFractionDigits(2);
@@ -870,7 +870,7 @@ public class Annotator extends Helper {
      * @return
      * @throws Exception
      */
-    protected Map<String, String> similarityReactions(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID) throws Exception {
+    protected static Map<String, String> similarityReactions(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID) throws Exception {
 
         Map<String, String> scores = new HashMap<>();
 
@@ -908,7 +908,7 @@ public class Annotator extends Helper {
      * @param sb StreactionWithLayouting buildereactionWithLayout
      * @throws Exception
      */
-    protected void compareRXNText(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, StringBuilder sb) throws Exception {
+    protected synchronized void compareRXNText(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, StringBuilder sb) throws Exception {
         NumberFormat myFormatter = NumberFormat.getInstance();
         myFormatter.setMinimumFractionDigits(2);
         myFormatter.setMaximumFractionDigits(2);

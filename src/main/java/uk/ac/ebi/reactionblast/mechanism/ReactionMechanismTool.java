@@ -168,15 +168,16 @@ public class ReactionMechanismTool implements Serializable {
             try {
                 if (DEBUG) {
                     SmilesGenerator withAtomClasses = new SmilesGenerator(
-                            SmiFlavor.Unique
+                            //                            SmiFlavor.Unique |
+                            SmiFlavor.UseAromaticSymbols
                             | SmiFlavor.Stereo
                             | SmiFlavor.AtomAtomMap);
                     LOGGER.debug("Input reaction mapped " + withAtomClasses.create(reaction));
                 }
 
                 boolean onlyCoreMappingByMCS = true;
-                CallableAtomMappingTool amt
-                        = new CallableAtomMappingTool(reaction, standardizer, onlyCoreMappingByMCS, checkComplex);
+                CallableAtomMappingTool amt = new CallableAtomMappingTool(reaction, standardizer,
+                        onlyCoreMappingByMCS, checkComplex);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
 
                 if (DEBUG) {
@@ -193,9 +194,9 @@ public class ReactionMechanismTool implements Serializable {
                     }
 
                     if (DEBUG) {
-
                         SmilesGenerator withAtomClasses = new SmilesGenerator(
-                                SmiFlavor.Unique
+                                //                            SmiFlavor.Unique |
+                                SmiFlavor.UseAromaticSymbols
                                 | SmiFlavor.Stereo
                                 | SmiFlavor.AtomAtomMap);
                         out.println("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
