@@ -52,7 +52,7 @@ public class CommandLineOptions {
         optionsAAM.addOption("u", "premap", false, "use user defined mappings");
         optionsAAM.addOption("p", "prefix", true, "Job prefix");
         optionsAAM.addOption("f", "formatO", true, "Output format (TEXT/XML)");
-        optionsAAM.addOption("c", "complexMode", true, "Use Rings etc. bit time comsuming");
+        optionsAAM.addOption("c", "complexMode", false, "Use Rings etc. bit time comsuming");
 
         return optionsAAM;
     }
@@ -72,7 +72,7 @@ public class CommandLineOptions {
         optionsCompare.addOption("p", "prefix", true, "Job prefix");
         optionsCompare.addOption("f", "formatO", true, "Output format (TEXT/XML/BOTH)");
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
-        optionsCompare.addOption("c", "complexMode", true, "Use Rings etc. bit time comsuming");
+        optionsCompare.addOption("c", "complexMode", false, "Use Rings etc. bit time comsuming");
         return optionsCompare;
     }
 
@@ -93,7 +93,7 @@ public class CommandLineOptions {
         optionsCompare.addOption("p", "prefix", true, "Job prefix");
         optionsCompare.addOption("f", "formatO", true, "Output format (TEXT/XML/BOTH)");
         optionsCompare.addOption("x", "patterns", false, "Report all matched molecular pairs (RPAIR type)");
-        optionsCompare.addOption("c", "complexMode", true, "Use Rings etc. bit time comsuming");
+        optionsCompare.addOption("c", "complexMode", false, "Use Rings etc. bit time comsuming");
         return optionsCompare;
     }
 
