@@ -134,6 +134,7 @@ public class ReactionDecoder extends Annotator {
         } catch (Exception ex) {
             LOGGER.error(SEVERE, " CommandLine option parsing error: ", ex);
         }
+        System.exit(1);
     }
 
     /**
