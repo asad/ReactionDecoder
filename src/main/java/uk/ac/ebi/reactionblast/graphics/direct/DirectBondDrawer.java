@@ -53,7 +53,6 @@ import static org.openscience.cdk.interfaces.IBond.Stereo.UP_INVERTED;
 import static org.openscience.cdk.interfaces.IBond.Stereo.UP_OR_DOWN;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
-import org.openscience.cdk.ringsearch.SSSRFinder;
 import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.get2DCenter;
 import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
 import uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap;
@@ -108,11 +107,10 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
         setBondStroke();
         g.setStroke(bondStroke);
 
-        CycleFinder cf = Cycles.cdkAromaticSet();
-        IRingSet ringSet = null;
         try {
+            CycleFinder cf = Cycles.essential();
             Cycles cycles = cf.find(molecule);
-            ringSet = cycles.toRingSet();
+            IRingSet ringSet = cycles.toRingSet();
             ringSet.sortAtomContainers(new AtomContainerComparatorBy2DCenter());
 
             addRingCentersToAtomAnnotationPositions(molecule, ringSet);
@@ -162,11 +160,9 @@ public class DirectBondDrawer extends AbstractDirectDrawer {
             for (IAtom atom : ring.atoms()) {
                 List<IAtom> connectedAtoms = mol.getConnectedAtomsList(atom);
                 List<IAtom> connectedAtomsInRing = new ArrayList<>();
-                for (IAtom connectedAtom : connectedAtoms) {
-                    if (ring.contains(connectedAtom)) {
-                        connectedAtomsInRing.add(connectedAtom);
-                    }
-                }
+                connectedAtoms.stream().filter(connectedAtom -> (ring.contains(connectedAtom))).forEachOrdered(connectedAtom -> {
+                    connectedAtomsInRing.add(connectedAtom);
+                });
                 labelManager.addRingCenterToAtomAnnotationPosition(
                         atom, connectedAtomsInRing);
             }
