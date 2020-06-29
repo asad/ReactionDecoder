@@ -31,11 +31,11 @@ import static java.util.Collections.unmodifiableCollection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.MAPPED;
@@ -996,7 +996,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         Map<String, Collection<String>> uniqueRPAIRS = new TreeMap<>();
         this.getReactionCentreTransformationPairs().stream().map((m) -> {
             if (!uniqueRPAIRS.containsKey(m.getName().toString())) {
-                LinkedList<String> l = new LinkedList<>();
+                Set<String> l = new TreeSet<>();
                 uniqueRPAIRS.put(m.getName().toString(), l);
             }
             return m;
@@ -1462,8 +1462,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         level.append(circularSMILESSource).append(">>").append(circularSMILESSink);
                         reactionCenterWFingerprint.add(new Feature(level.toString(), 1.0));
                     }
-                    MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
-                    this.reactionMoleculeMoleculePairList.add(molMolPair);
+                    try {
+                        MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
+                        this.reactionMoleculeMoleculePairList.add(molMolPair);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        throw new Exception("Failed to compute MMPAIR ", ex);
+                    }
                 }
             }
 

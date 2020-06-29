@@ -50,7 +50,8 @@ import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.RingSet;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
@@ -63,6 +64,7 @@ import uk.ac.ebi.reactionblast.signature.RBlastMoleculeSignature;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 
 /**
  *
@@ -85,13 +87,13 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         StringBuilder sb = new StringBuilder("");
         try {
             for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
-                sb.append(getSMILES(mol, true));
+                sb.append(getSMILES(mol, remove_AAM));
             }
 
             sb.append(">>");
 
             for (IAtomContainer mol : reaction.getProducts().atomContainers()) {
-                sb.append(getSMILES(mol, true));
+                sb.append(getSMILES(mol, remove_AAM));
             }
 
         } catch (Exception ex) {
@@ -129,7 +131,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             IAtomContainer mol, boolean remove_AAM) {
         String smiles = "";
         try {
-            return new uk.ac.ebi.reactionblast.tools.CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
+            return new CDKSMILES(mol, true, remove_AAM).getCanonicalSMILES();
         } catch (CloneNotSupportedException ex) {
             LOGGER.error(SEVERE, null, ex);
         }
@@ -491,7 +493,14 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         IMP: Suggested by John May
          */
         try {
-            unique().create(cloneMolecule, p);
+//            unique().create(cloneMolecule, p);
+            SmilesGenerator smiles = new SmilesGenerator(
+                    //SmiFlavor.Unique| 
+                    SmiFlavor.UseAromaticSymbols
+                    | SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Stereo);
+            
+            String sm = smiles.create(cloneMolecule, p);
         } catch (CDKException e) {
             e.printStackTrace();
         }
