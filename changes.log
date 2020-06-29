@@ -265,6 +265,7 @@ a) concurrent modification error fixed
 b) exit when job done
 c) command line input typo in -c option fixed 
 d) mol layout fixed
+e) enrich mapping pair
 
 -----------------------
 TO DO
