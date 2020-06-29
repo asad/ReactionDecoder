@@ -256,7 +256,7 @@ public class Annotator extends Helper {
         StringBuilder pair1 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair1.append(index).append(": ").append(m.getSmirks1());
+            pair1.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks1());
             pair1.append(NEW_LINE);
             index++;
         }
@@ -264,7 +264,7 @@ public class Annotator extends Helper {
         StringBuilder pair2 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair2.append(index).append(": ").append(m.getSmirks2());
+            pair2.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks2());
             pair2.append(NEW_LINE);
             index++;
         }
@@ -272,7 +272,7 @@ public class Annotator extends Helper {
         StringBuilder pair3 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair3.append(index).append(": ").append(m.getSmirks3());
+            pair3.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks3());
             pair3.append(NEW_LINE);
             index++;
         }
