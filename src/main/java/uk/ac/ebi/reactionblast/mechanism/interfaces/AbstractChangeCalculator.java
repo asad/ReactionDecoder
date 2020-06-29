@@ -220,7 +220,10 @@ public abstract class AbstractChangeCalculator extends Utility {
 //        smirks2 = getSMILES(reaction2, true);
 //        smirks3 = getSMILES(reaction3, true);
 
-        smirks = getSMILES(reaction, true);
+        /*
+         * get SMILES with AAM
+         */
+        smirks = getSMILES(reaction, false);
         smirks1 = getSMILES(reaction1, false);
         smirks2 = getSMILES(reaction2, false);
         smirks3 = getSMILES(reaction3, false);
@@ -249,7 +252,6 @@ public abstract class AbstractChangeCalculator extends Utility {
 //        smartsP1 = getSMILES(fragP1, true);
 //        smartsP2 = getSMILES(fragP2, true);
 //        smartsP3 = getSMILES(fragP3, true);
-
         smartsP = getSMILES(fragP, true);
         smartsP1 = getSMILES(fragP1, false);
         smartsP2 = getSMILES(fragP2, false);
