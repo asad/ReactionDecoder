@@ -35,6 +35,7 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.CMLReader;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -43,6 +44,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 /**
@@ -110,20 +112,26 @@ class ChemicalFormatParser {
         return reactions;
     }
 
-    protected static IReaction convertRoundTripRXNSMILES(IReaction r) throws CDKException {
+    protected static IReaction convertRoundTripRXNSMILES(IReaction ref_reaction) throws CDKException {
         final SmilesGenerator sg = new SmilesGenerator(
                 SmiFlavor.AtomAtomMap
                 | SmiFlavor.UseAromaticSymbols
                 | SmiFlavor.Stereo);
-        String createSmilesFromReaction = sg.create(r);
+        String createSmilesFromReaction = sg.create(ref_reaction);
         final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(createSmilesFromReaction);
-        parseReactionSmiles.setID(r.getID());
-        for (int i = 0; i < r.getReactantCount(); i++) {
-            parseReactionSmiles.getReactants().getAtomContainer(i).setID(r.getReactants().getAtomContainer(i).getID());
+        parseReactionSmiles.setID(ref_reaction.getID());
+        for (int i = 0; i < ref_reaction.getReactantCount(); i++) {
+            IAtomContainer atomContainer = parseReactionSmiles.getReactants().getAtomContainer(i);
+            String id = ref_reaction.getReactants().getAtomContainer(i).getID();
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            atomContainer.setID(id);
         }
-        for (int i = 0; i < r.getProductCount(); i++) {
-            parseReactionSmiles.getProducts().getAtomContainer(i).setID(r.getProducts().getAtomContainer(i).getID());
+        for (int i = 0; i < ref_reaction.getProductCount(); i++) {
+            IAtomContainer atomContainer = parseReactionSmiles.getProducts().getAtomContainer(i);
+            String id = ref_reaction.getProducts().getAtomContainer(i).getID();
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            atomContainer.setID(id);
         }
         return parseReactionSmiles;
     }
