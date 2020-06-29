@@ -314,7 +314,7 @@ public class SignatureRootFinder {
             int cLabel, int[] labels,
             IAtomContainer atomContainer, List<IAtom> roots,
             List<IAtom> component) {
-        int uIndex = atomContainer.getAtomNumber(atomU);
+        int uIndex = atomContainer.indexOf(atomU);
         if (atomV == null || (roots.contains(atomU) && labels[uIndex] == 0)) {
             labels[uIndex] = cLabel;
             component.add(atomU);

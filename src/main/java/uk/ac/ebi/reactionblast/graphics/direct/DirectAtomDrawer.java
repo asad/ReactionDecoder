@@ -210,7 +210,7 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
 
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
-                            && molecule.getConnectedAtomsCount(atom) == 0) {
+                            && molecule.getConnectedBondsCount(atom) == 0) {
                         suggestedPosition = W;
                     }
 

@@ -31,10 +31,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2f;
-import static org.openscience.cdk.geometry.GeometryTools.getRectangle2D;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
 import uk.ac.ebi.reactionblast.stereo.IStereoAndConformation;
 
 /**

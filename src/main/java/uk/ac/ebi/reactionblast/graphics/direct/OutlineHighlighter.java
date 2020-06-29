@@ -30,10 +30,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.get2DCenter;
 
 /**
  *

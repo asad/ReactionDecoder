@@ -37,16 +37,15 @@ import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.PseudoAtom;
-import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabel;
-import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabelXY;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.ILonePair;
 import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.renderer.color.CDK2DAtomColors;
 import org.openscience.cdk.renderer.color.IAtomColorer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getBestAlignmentForLabel;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getBestAlignmentForLabelXY;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager;
 import uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition;
 import static uk.ac.ebi.reactionblast.graphics.direct.LabelManager.AnnotationPosition.E;
@@ -139,7 +138,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
                             && (molecule == null
-                            || molecule.getConnectedAtomsCount(atom) == 0)) {
+                            || molecule.getConnectedBondsCount(atom) == 0)) {
                         suggestedPosition = W;
                     }
 

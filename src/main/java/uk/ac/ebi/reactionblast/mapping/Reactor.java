@@ -284,7 +284,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("EAtom: " + k + " " + atom.getSymbol() + " Rank Atom: " + atom.getProperty("OLD_RANK") + " " + " Id: " + atom.getID());
                 rLabelledAtoms.put(atom.hashCode(), i);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsReactant().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant++));
+                    inputRankLabelledAtomsReactant.put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_reactant++));
                 }
             }
 
@@ -302,7 +302,7 @@ public class Reactor extends AbstractReactor implements Serializable {
 //                System.out.println("PAtom: " + k + " " + atom.getSymbol() + " Id: " + atom.getID());
                 pLabelledAtoms.put(atom.hashCode(), j);
                 if (atom.getProperty("OLD_RANK") != null) {
-                    getInputRankLabelledAtomsProduct().put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product++));
+                    inputRankLabelledAtomsProduct.put((int) atom.getProperty("OLD_RANK"), (new_atom_rank_index_product++));
                 }
             }
 
