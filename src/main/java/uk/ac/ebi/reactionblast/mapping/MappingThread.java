@@ -46,7 +46,8 @@ class MappingThread implements Callable<Reactor> {
      *
      * @return Mapped Object
      */
-    MappingThread(String message, IReaction cleanedReaction, IMappingAlgorithm algorithm, boolean removeHydrogen) {
+    MappingThread(String message, IReaction cleanedReaction, 
+            IMappingAlgorithm algorithm, boolean removeHydrogen) {
         this.cleanedReaction = cleanedReaction;
         this.algorithm = algorithm;
         this.removeHydrogen = removeHydrogen;

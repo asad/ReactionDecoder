@@ -73,6 +73,9 @@ public class CalculationProcess extends CaseHandler implements Serializable {
          */
         super(reaction);
 
+        if (DEBUG) {
+            System.out.println("=====CalculationProcess====");
+        }
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
@@ -80,6 +83,9 @@ public class CalculationProcess extends CaseHandler implements Serializable {
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         this.algorithm = algorithm;
         run();
+        if (DEBUG) {
+            System.out.println("=====Done CalculationProcess====");
+        }
     }
 
     private synchronized void run() {

@@ -84,6 +84,9 @@ class CaseHandler {
     protected final IReaction reaction;
 
     CaseHandler(IReaction reaction) throws Intractable {
+        if (DEBUG) {
+            System.out.println("=====CaseHandler====");
+        }
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
@@ -145,6 +148,9 @@ class CaseHandler {
                     LOGGER.error(SEVERE, null, ex);
                 }
             }
+        }
+        if (DEBUG) {
+            System.out.println("=====DONE CaseHandler====");
         }
     }
 
@@ -357,7 +363,7 @@ class CaseHandler {
         }
         return flag;
     }
-    
+
     /*
     * ex. R04558
      */

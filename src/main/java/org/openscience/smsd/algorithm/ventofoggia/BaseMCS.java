@@ -71,7 +71,7 @@ public class BaseMCS {
     final BondMatcher bondMatcher;
 
     BaseMCS(IAtomContainer source, IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
         this.allLocalAtomAtomMapping = new ArrayList<>();
         this.allLocalMCS = new ArrayList<>();
         this.vfLibSolutions = new ArrayList<>();

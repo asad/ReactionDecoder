@@ -159,7 +159,8 @@ public class MCSThread implements Callable<MCSSolution> {
          */
         smiles = new SmilesGenerator(
                 //SmiFlavor.Unique|
-                SmiFlavor.Stereo
+                SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo
                 | SmiFlavor.AtomAtomMap);
 
     }
@@ -379,6 +380,7 @@ public class MCSThread implements Callable<MCSSolution> {
             return mcs;
 
         } catch (CDKException | CloneNotSupportedException ex) {
+//            ex.printStackTrace();
             LOGGER.error(SEVERE, "Error in generating MCS Solution: ", ex.getMessage());
         }
         return null;

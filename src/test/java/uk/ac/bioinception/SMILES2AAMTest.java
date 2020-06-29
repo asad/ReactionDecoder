@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
  */
 package uk.ac.bioinception;
 

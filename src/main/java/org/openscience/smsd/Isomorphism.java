@@ -119,14 +119,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     /**
      *
      * IMP: Initialize query and target molecules
-     * (MoleculeInitializer.initializeMolecule).
-     *
-     *
-     * Note: Here its assumed that hydrogens are implicit and user has called
-     * these two methods percieveAtomTypesAndConfigureAtoms and
-     * CDKAromicityDetector before initializing calling this method.
-     *
-     * Please call MoleculeInitializer before calling substructure search
+     * (MoleculeInitializer.initializeMolecule).Note: Here its assumed that
+     * hydrogens are implicit and user has called these two methods
+     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
+     * initializing calling this method.Please call MoleculeInitializer before
+     * calling substructure search
      *
      * if (super.isMatchRings()) { try {
      * MoleculeInitializer.initializeMolecule(super.getQuery());
@@ -139,6 +136,8 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * initializing calling this method.
      *
      *
+     *
+     *
      * @param query query mol
      * @param target target mol This is the algorithm factory and entry port for
      * all the MCS algorithm in the Isomorphism supported algorithm
@@ -146,9 +145,8 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
      * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
-     * @param bondTypeFlag Match bond types (i.e. double to double etc)
-     * @param matchRings Match ring atoms and ring size
-     * @param matchAtomType
+     * @param am
+     * @param bm
      * @throws org.openscience.cdk.exception.CDKException
      */
     public Isomorphism(
@@ -165,14 +163,11 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     /**
      *
      * IMP: Initialize query and target molecules
-     * (MoleculeInitializer.initializeMolecule).
-     *
-     *
-     * Note: Here its assumed that hydrogens are implicit and user has called
-     * these two methods percieveAtomTypesAndConfigureAtoms and
-     * CDKAromicityDetector before initializing calling this method.
-     *
-     * Please call MoleculeInitializer before calling substructure search
+     * (MoleculeInitializer.initializeMolecule).Note: Here its assumed that
+     * hydrogens are implicit and user has called these two methods
+     * percieveAtomTypesAndConfigureAtoms and CDKAromicityDetector before
+     * initializing calling this method.Please call MoleculeInitializer before
+     * calling substructure search
      *
      * if (super.isMatchRings()) { try {
      * MoleculeInitializer.initializeMolecule(super.getQuery());
@@ -185,6 +180,8 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * initializing calling this method.
      *
      *
+     *
+     *
      * @param query query mol
      * @param target target mol This is the algorithm factory and entry port for
      * all the MCS algorithm in the Isomorphism supported algorithm
@@ -192,9 +189,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
      * Default,
      * <lI>1: MCSPlus, <lI>2: VFLibMCS, <lI>3: CDKMCS </OL>
      * @param algorithmType {@link org.openscience.smsd.interfaces.Algorithm}
-     * @param bondTypeFlag Match bond types (i.e. double to double etc)
-     * @param matchRings Match ring atoms and ring size
-     * @param matchAtomType
      * @throws org.openscience.cdk.exception.CDKException
      */
     public Isomorphism(
@@ -329,7 +323,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         return mcs.isSubgraph();
     }
 
-    private synchronized void vfLibMCSAlgorithm() {
+    private synchronized void vfLibMCSAlgorithm() throws CDKException {
         VF2MCS mcs;
         if (getQuery() instanceof IQueryAtomContainer) {
             mcs = new VF2MCS((IQueryAtomContainer) getQuery(), getTarget(), atomMatcher, bondMatcher);

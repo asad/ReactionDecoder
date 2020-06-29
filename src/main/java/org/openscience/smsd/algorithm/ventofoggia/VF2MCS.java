@@ -81,10 +81,11 @@ public final class VF2MCS extends BaseMCS implements IResults {
      * @param target
      * @param am
      * @param bm
+     * @throws org.openscience.cdk.exception.CDKException
      */
     public VF2MCS(IAtomContainer source,
             IAtomContainer target,
-            AtomMatcher am, BondMatcher bm) {
+            AtomMatcher am, BondMatcher bm) throws CDKException {
         super(source, target, am, bm);
         boolean timeoutVF = searchVFCDKMappings();
 
@@ -138,8 +139,9 @@ public final class VF2MCS extends BaseMCS implements IResults {
                 threadsAvailable = 2;
             }
 
-//            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+//            ExecutorService executor = Executors.newCachedThreadPool();
+            ExecutorService executor = Executors.newFixedThreadPool(threadsAvailable);
+//            ExecutorService executor = Executors.newSingleThreadExecutor();
             CompletionService<List<AtomAtomMapping>> cs = new ExecutorCompletionService<>(executor);
 
             /*
