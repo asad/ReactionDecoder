@@ -341,9 +341,10 @@
                         <version>2.22.2</version>
                         <configuration>
                             <excludes>
-                                <!-- not a test class -->
-                                <exclude>uk.ac.ebi.aamtool.ComplexCases.java</exclude>
-                                <exclude>uk.ac.ebi.aamtool.RXNMappingTest.java</exclude>
+                                <!-- skip test class -->
+                                <exclude>**/MCSTest.java</exclude>
+                                <exclude>**/ComplexCases.java</exclude>
+                                <exclude>**/RXNMappingTest.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
