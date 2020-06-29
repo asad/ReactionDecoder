@@ -495,14 +495,15 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         try {
 //            unique().create(cloneMolecule, p);
             SmilesGenerator smiles = new SmilesGenerator(
-                    //SmiFlavor.Unique| 
-                    SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap
+                    SmiFlavor.AtomAtomMap
+                    | SmiFlavor.Unique
+                    //                    | SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.Stereo);
-            
+
             String sm = smiles.create(cloneMolecule, p);
-        } catch (CDKException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.debug("Fragment not fit to canonicalise!");
         }
 
         permuteWithoutClone(p, cloneMolecule);
