@@ -264,6 +264,7 @@ Changes (27/06/2020)
 a) concurrent modification error fixed
 b) exit when job done
 c) command line input typo in -c option fixed 
+d) mol layout fixed
 
 -----------------------
 TO DO
