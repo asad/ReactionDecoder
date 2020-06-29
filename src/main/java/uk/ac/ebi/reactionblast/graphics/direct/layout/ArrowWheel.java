@@ -22,7 +22,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -33,6 +34,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.DirectArrowDrawer;
  * @author asad
  */
 public class ArrowWheel {
+
+    private static final Logger LOG = getLogger(ArrowWheel.class.getName());
 
     private DirectArrowDrawer arrowDrawer;
 
@@ -69,9 +72,9 @@ public class ArrowWheel {
         arrows = new ArrayList<>();
         hub = hubMolecule;
 
-        for (IAtomContainer molecule : rimMolecules) {
+        rimMolecules.forEach(molecule -> {
             arrows.add(new Arrow(hub, molecule));
-        }
+        });
         this.arrowLabels = arrowLabels;
     }
 
@@ -82,7 +85,7 @@ public class ArrowWheel {
      */
     public void draw(CanvasGenerator canvasGenerator, Graphics2D g) {
         // layout the arrows
-        for (Arrow arrow : arrows) {
+        arrows.stream().map(arrow -> {
             Rectangle2D tailCanvas
                     = canvasGenerator.getCanvasForAtomContainer(arrow.tail);
             Rectangle2D headCanvas
@@ -95,11 +98,12 @@ public class ArrowWheel {
                             headCanvas.getCenterX(), headCanvas.getCenterY());
             arrow.center = new Point2d(tailCenter);
             arrow.center.interpolate(headCenter, 0.5);
-
             arrow.vector = new Vector2d(headCenter);
             arrow.vector.sub(tailCenter);
+            return arrow;
+        }).forEachOrdered(arrow -> {
             arrow.vector.normalize();
-        }
+        });
 
         // draw them
         int i = 0;

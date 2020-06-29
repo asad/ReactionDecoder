@@ -24,12 +24,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
 import java.util.List;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
-import static org.openscience.cdk.geometry.GeometryUtil.translate2DCenterTo;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getScaleFactor;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.scaleMolecule;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.translate2DCenterTo;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.CanvasGenerator;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
 
@@ -38,6 +40,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.GridCanvasGenerator;
  * @author asad
  */
 public class ZoomToFitDrawer {
+
+    private static final Logger LOG = getLogger(ZoomToFitDrawer.class.getName());
 
     private DirectMoleculeDrawer moleculeDrawer;
 
@@ -73,22 +77,23 @@ public class ZoomToFitDrawer {
     public void draw(List<IAtomContainer> mols, Dimension cellCanvas, Graphics2D g) {
         canvasGenerator.layout(mols, cellCanvas);
         AffineTransform originalTransform = g.getTransform();
-        for (IAtomContainer mol : mols) {
+        mols.stream().map(mol -> {
             Rectangle2D canvas = canvasGenerator.getCanvasForAtomContainer(mol);
             g.translate(canvas.getCenterX(), canvas.getCenterY());
             double zoom = calculateZoom(mol, canvas);
             g.scale(zoom, zoom);
-
             moleculeDrawer.drawMolecule(mol, g);
+            return mol;
+        }).forEachOrdered(_item -> {
             g.setTransform(originalTransform);
-        }
+        });
     }
 
     private double calculateZoom(IAtomContainer ac, Rectangle2D canvas) {
         double scaleFactor = getScaleFactor(ac, params.bondLength);
         translate2DCenterTo(ac, new Point2d(0, 0));
         scaleMolecule(ac, scaleFactor);
-        Rectangle2D r2D = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
+        Rectangle2D r2D = getRectangle2D(ac);
         double canvasWidth = canvas.getWidth();
         double canvasHeight = canvas.getHeight();
         double objectWidth = r2D.getWidth() + (params.borderX * 2);

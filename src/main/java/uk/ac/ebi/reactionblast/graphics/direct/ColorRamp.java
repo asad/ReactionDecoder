@@ -23,6 +23,8 @@ import static java.awt.Color.RGBtoHSB;
 import static java.awt.Color.getHSBColor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  * Simple utility class to generate a 'ramp' of colors between two values.
@@ -31,6 +33,8 @@ import java.util.List;
  *
  */
 public class ColorRamp {
+
+    private static final Logger LOG = getLogger(ColorRamp.class.getName());
 
     /**
      * Get N colors as a list.

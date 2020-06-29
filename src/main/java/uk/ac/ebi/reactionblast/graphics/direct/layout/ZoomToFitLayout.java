@@ -23,12 +23,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getScaleFactor;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.scaleMolecule;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 
 /**
@@ -42,6 +44,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
  *
  */
 public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
+
+    private static final Logger LOG = getLogger(ZoomToFitLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -89,7 +93,7 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
         double canvasHeight = h;
         double scaleFactor
                 = getScaleFactor(ac, drawer.getParams().bondLength);
-        Rectangle2D r2D = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(ac);
+        Rectangle2D r2D = getRectangle2D(ac);
 //        Rectangle2D tmp = new Rectangle2D.Double(r2D.getMinX(), r2D.getMinY(), r2D.getWidth(), r2D.getHeight());
         translateTo(ac, 0, 0, r2D);
 //        translateTo(ac, 0, 0, tmp);

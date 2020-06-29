@@ -27,8 +27,7 @@ public enum Axis {
     /**
      *
      */
-    X, 
-
+    X,
     /**
      *
      */

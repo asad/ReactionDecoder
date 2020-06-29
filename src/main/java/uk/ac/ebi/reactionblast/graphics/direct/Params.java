@@ -16,13 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.awt.Color;
 import static java.awt.Color.BLUE;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.ArrowType.FORWARD;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeCap.BUTT;
 import static uk.ac.ebi.reactionblast.graphics.direct.Params.BondStrokeJoin.MITRE;
@@ -33,8 +32,8 @@ import static uk.ac.ebi.reactionblast.graphics.direct.Params.MoleculeAlignMethod
  * @author asad
  */
 public class Params {
-    private static final ILoggingTool LOGGER
-            = LoggingToolFactory.createLoggingTool(Params.class);
+
+    private static final Logger LOG = getLogger(Params.class.getName());
 
     /**
      *
@@ -464,7 +463,9 @@ public class Params {
     /**
      *
      */
-    public double labelGap = 10;;
+    public double labelGap = 10;
+
+    ;
 
     /**
      *
@@ -474,13 +475,11 @@ public class Params {
         /**
          *
          */
-        BUTT, 
-
+        BUTT,
         /**
          *
          */
-        ROUND, 
-
+        ROUND,
         /**
          *
          */
@@ -495,13 +494,11 @@ public class Params {
         /**
          *
          */
-        BEVEL, 
-
+        BEVEL,
         /**
          *
          */
-        MITRE, 
-
+        MITRE,
         /**
          *
          */
@@ -516,13 +513,11 @@ public class Params {
         /**
          *
          */
-        LEFT, 
-
+        LEFT,
         /**
          *
          */
-        CENTER, 
-
+        CENTER,
         /**
          *
          */
@@ -537,13 +532,11 @@ public class Params {
         /**
          *
          */
-        TOP, 
-
+        TOP,
         /**
          *
          */
-        CENTER, 
-
+        CENTER,
         /**
          *
          */
@@ -558,13 +551,11 @@ public class Params {
         /**
          *
          */
-        FORWARD, 
-
+        FORWARD,
         /**
          *
          */
-        BACKWARD, 
-
+        BACKWARD,
         /**
          *
          */
@@ -579,8 +570,7 @@ public class Params {
         /**
          *
          */
-        MAX_AXIS, 
-
+        MAX_AXIS,
         /**
          *
          */

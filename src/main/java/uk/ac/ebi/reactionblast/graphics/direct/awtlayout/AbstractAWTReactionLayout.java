@@ -16,14 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
-
 package uk.ac.ebi.reactionblast.graphics.direct.awtlayout;
 
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
+import static org.openscience.cdk.geometry.GeometryTools.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
@@ -36,42 +34,42 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReaction> {
-    
+
     /**
      *
      */
     protected BoundsTree reactantBoundsTree;
-    
+
     /**
      *
      */
     protected BoundsTree productBoundsTree;
-    
+
     /**
      *
      */
     protected Vector2d axis;
-    
+
     /**
      *
      */
     protected Axis arrowAxis;
-    
+
     /**
      *
      */
     protected double arrowPos;
-    
+
     /**
      *
      */
     protected LinearAtomContainerSetLayout reactantLayout;
-    
+
     /**
      *
      */
     protected LinearAtomContainerSetLayout productLayout;
-   
+
     /**
      *
      * @param molSet
@@ -79,22 +77,22 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
      * @param dx
      * @param dy
      */
-    public void shiftMoleculeSet(IAtomContainerSet molSet, 
+    public void shiftMoleculeSet(IAtomContainerSet molSet,
             BoundsTree molSetBoundsTree, double dx, double dy) {
 //        System.out.println(molSetBoundsTree);
         int counter = 0;
         for (IAtomContainer molecule : molSet.atomContainers()) {
-            String molLabel = molSet.getID() + "_" + molecule.getID() + ":" + counter; 
-//            System.out.println("shifting " + molLabel + " from " + BoundsPrinter.toString(GeometryUtil.getRectangle2D(molecule)));
+            String molLabel = molSet.getID() + "_" + molecule.getID() + ":" + counter;
+//            System.out.println("shifting " + molLabel + " from " + BoundsPrinter.toString(GeometryTools.getRectangle2D(molecule)));
             Rectangle2D bounds = molSetBoundsTree.get(molLabel);
             bounds.setFrame(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
             translate2D(molecule, dx, dy);
-//            System.out.println("shifting " + molecule.getID() + " to " + BoundsPrinter.toString(GeometryUtil.getRectangle2D(molecule)));
+//            System.out.println("shifting " + molecule.getID() + " to " + BoundsPrinter.toString(GeometryTools.getRectangle2D(molecule)));
             counter++;
         }
     }
-    
+
     /**
      *
      * @return
@@ -102,7 +100,7 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
     public Axis getArrowAxis() {
         return arrowAxis;
     }
-    
+
     /**
      *
      * @param pos
@@ -110,7 +108,7 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
     public void setArrowPos(double pos) {
         arrowPos = pos;
     }
-    
+
     /**
      *
      * @return
@@ -129,5 +127,5 @@ public abstract class AbstractAWTReactionLayout extends AbstractAWTLayout<IReact
      * @return
      */
     public abstract Vector2d getAxis();
-  
+
 }

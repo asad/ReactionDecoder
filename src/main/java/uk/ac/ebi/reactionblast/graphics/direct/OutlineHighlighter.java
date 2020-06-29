@@ -27,9 +27,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
+import static org.openscience.cdk.geometry.GeometryTools.get2DCenter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -39,6 +40,8 @@ import org.openscience.cdk.interfaces.IBond;
  * @author asad
  */
 public class OutlineHighlighter extends AbstractHighlightDrawer implements Highlighter {
+
+    private static final Logger LOG = getLogger(OutlineHighlighter.class.getName());
 
     private final Map<IAtomContainer, Color> colorMap;
 

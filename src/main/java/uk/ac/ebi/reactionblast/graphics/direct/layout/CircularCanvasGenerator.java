@@ -24,7 +24,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 import java.util.List;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -35,6 +36,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class CircularCanvasGenerator extends
         AbstractCanvasGenerator implements CanvasGenerator {
+
+    private static final Logger LOG = getLogger(CircularCanvasGenerator.class.getName());
 
     private Vector2d vectorToStart;
 

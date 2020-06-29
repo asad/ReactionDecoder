@@ -33,7 +33,8 @@ import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import java.awt.geom.Ellipse2D;
 import static java.lang.String.valueOf;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -43,6 +44,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author asad
  */
 public class DirectHullDrawer extends AbstractDirectDrawer {
+
+    private static final Logger LOG = getLogger(DirectHullDrawer.class.getName());
 
     private final DirectMoleculeDrawer moleculeDrawer;
 

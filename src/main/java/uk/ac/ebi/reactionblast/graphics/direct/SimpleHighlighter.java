@@ -26,7 +26,8 @@ import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -37,6 +38,8 @@ import org.openscience.cdk.interfaces.IBond;
  * @author asad
  */
 public class SimpleHighlighter extends AbstractHighlightDrawer implements Highlighter {
+
+    private static final Logger LOG = getLogger(SimpleHighlighter.class.getName());
 
     private Map<IAtom, Color> atomColorMap;
     private final Map<IBond, Color> bondColorMap;
@@ -58,18 +61,14 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
      */
     @Override
     public void drawHighlights(IAtomContainer molecule, Graphics2D g) {
-        for (IAtom atom : atomColorMap.keySet()) {
-            if (molecule.contains(atom)) {
-                Color color = atomColorMap.get(atom);
-                drawHighlight(atom, color, g);
-            }
-        }
-        for (IBond bond : bondColorMap.keySet()) {
-            if (molecule.contains(bond)) {
-                Color color = bondColorMap.get(bond);
-                drawHighlight(bond, color, g);
-            }
-        }
+        atomColorMap.keySet().stream().filter(atom -> (molecule.contains(atom))).forEachOrdered(atom -> {
+            Color color = atomColorMap.get(atom);
+            drawHighlight(atom, color, g);
+        });
+        bondColorMap.keySet().stream().filter(bond -> (molecule.contains(bond))).forEachOrdered(bond -> {
+            Color color = bondColorMap.get(bond);
+            drawHighlight(bond, color, g);
+        });
     }
 
     /**
@@ -99,12 +98,12 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
      */
     @Override
     public void addHighlights(List<IAtom> atoms, List<IBond> bonds) {
-        for (IAtom atom : atoms) {
+        atoms.forEach(atom -> {
             atomColorMap.put(atom, params.highlightColor);
-        }
-        for (IBond bond : bonds) {
+        });
+        bonds.forEach(bond -> {
             bondColorMap.put(bond, params.highlightColor);
-        }
+        });
     }
 
     /**

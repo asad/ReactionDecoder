@@ -19,16 +19,19 @@
 package uk.ac.ebi.reactionblast.graphics.direct;
 
 import java.util.Comparator;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
-import static org.openscience.cdk.geometry.GeometryUtil.get2DCenter;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.get2DCenter;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContainer> {
+
+    private static final Logger LOG = getLogger(AtomContainerComparatorBy2DCenter.class.getName());
 
     /**
      * Compare two AtomContainers based on their 2D position.
@@ -44,7 +47,7 @@ public class AtomContainerComparatorBy2DCenter implements Comparator<IAtomContai
             Point2d p2 = get2DCenter(atCont2);
             if (p1 != null && p2 != null) {
                 if (p1.x != p2.x) {
-                    return  Double.valueOf(p1.x).compareTo(p2.x);
+                    return Double.valueOf(p1.x).compareTo(p2.x);
                 } else {
                     return Double.valueOf(p1.y).compareTo(p2.y);
                 }

@@ -20,12 +20,16 @@ package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
 import static java.lang.String.format;
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 
 /**
  *
  * @author asad
  */
 public class BoundsPrinter {
+
+    private static final Logger LOG = getLogger(BoundsPrinter.class.getName());
 
     /**
      * DEBUG method for printing readable rectangle 2Ds

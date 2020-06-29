@@ -29,7 +29,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 
@@ -38,6 +39,8 @@ import javax.vecmath.Point2f;
  * @author asad
  */
 public class AbstractDirectDrawer {
+
+    private static final Logger LOG = getLogger(AbstractDirectDrawer.class.getName());
 
     /**
      *

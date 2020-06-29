@@ -31,13 +31,14 @@ import static java.lang.String.valueOf;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.PseudoAtom;
-import static org.openscience.cdk.geometry.GeometryUtil.getBestAlignmentForLabel;
-import static org.openscience.cdk.geometry.GeometryUtil.getBestAlignmentForLabelXY;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabel;
+import static org.openscience.cdk.geometry.GeometryTools.getBestAlignmentForLabelXY;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -74,6 +75,8 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  *
  */
 public class AtomLayout extends AbstractAWTLayout<IAtom> {
+
+    private static final Logger LOG = getLogger(AtomLayout.class.getName());
 
     private Font atomSymbolFont;
     private Font subscriptFont;
@@ -136,7 +139,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
                     // special case for H2O
                     if (atom.getSymbol().equals("O")
                             && (molecule == null
-                            || molecule.getConnectedBondsCount(atom) == 0)) {
+                            || molecule.getConnectedAtomsCount(atom) == 0)) {
                         suggestedPosition = W;
                     }
 
@@ -437,7 +440,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-            //                System.LOGGER.debug("position null for ID " + atomID);
+            //                System.err.println("position null for ID " + atomID);
         }
 
         g.setFont(atomSymbolFont);
@@ -513,11 +516,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
     private int getAttachedMultipleBondCount(
             IAtom atom, IAtomContainer atomContainer) {
         int count = 0;
-        for (IBond bond : atomContainer.getConnectedBondsList(atom)) {
-            if (bond.getOrder() != SINGLE) {
-                count++;
-            }
-        }
+        count = atomContainer.getConnectedBondsList(atom).stream().filter(bond -> (bond.getOrder() != SINGLE)).map(_item -> 1).reduce(count, Integer::sum);
         return count;
     }
 
@@ -533,11 +532,7 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
 
     private boolean isTerminal(IAtom atom, IAtomContainer atomContainer) {
         int numberOfHeavyAtomsConnected = 0;
-        for (IAtom connected : atomContainer.getConnectedAtomsList(atom)) {
-            if (!connected.getSymbol().equals("H")) {
-                numberOfHeavyAtomsConnected++;
-            }
-        }
+        numberOfHeavyAtomsConnected = atomContainer.getConnectedAtomsList(atom).stream().filter(connected -> (!connected.getSymbol().equals("H"))).map(_item -> 1).reduce(numberOfHeavyAtomsConnected, Integer::sum);
         return numberOfHeavyAtomsConnected < 2;
     }
 

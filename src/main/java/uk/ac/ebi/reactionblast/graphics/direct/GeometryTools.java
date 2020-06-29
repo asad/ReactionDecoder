@@ -69,9 +69,8 @@ import org.openscience.cdk.tools.manipulator.ChemModelManipulator;
  *
  * @cdk.module standard
  * @cdk.githash
- * 
+ *
  */
-
 public class GeometryTools {
 
     private static ILoggingTool logger = LoggingToolFactory.createLoggingTool(GeometryTools.class);

@@ -27,13 +27,15 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.min;
-
+import java.util.logging.Logger;
+import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Vector2d;
-import static org.openscience.cdk.geometry.GeometryUtil.getScaleFactor;
-import static org.openscience.cdk.geometry.GeometryUtil.scaleMolecule;
-import static org.openscience.cdk.geometry.GeometryUtil.translate2D;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getScaleFactor;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.scaleMolecule;
+import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.translate2D;
 import uk.ac.ebi.reactionblast.graphics.direct.Params;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.AbstractDirectLayout;
 import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
@@ -43,6 +45,8 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.BoundsTree;
  * @author asad
  */
 public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
+
+    private static final Logger LOG = getLogger(ZoomToFitAWTLayout.class.getName());
 
     private final DirectMoleculeDrawer drawer;
 
@@ -139,7 +143,7 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
     }
 
     private BoundsTree getBoundsTree(IAtomContainer mol, Graphics2D g) {
-        Rectangle2D bb = uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D(mol);
+        Rectangle2D bb = getRectangle2D(mol);
         translate2D(mol, -bb.getCenterX(), -bb.getCenterY());
         scaleMolecule(mol,
                 getScaleFactor(mol, params.bondLength));
