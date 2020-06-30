@@ -259,13 +259,14 @@ c) Code dependency with the CDK
 d) POM Updated  
 
 -----------------------
-Changes (27/06/2020)
+Changes (30/06/2020)
 -----------------------
-a) concurrent modification error fixed
-b) exit when job done
-c) command line input typo in -c option fixed 
-d) mol layout fixed
-e) enrich mapping pair
+a) Concurrent modification error fixed
+b) Exit when job done
+c) Command line input typo in -c option fixed 
+d) Mol layout fixed
+e) Enrich mapping pair
+f) Moiety added
 
 -----------------------
 TO DO
