@@ -196,19 +196,8 @@ final class GameTheoryMin extends BaseGameTheory {
                 }
                 mh = select.getUpdatedHolder();
             }
-        } else if (!conditionmet) {//after 5 rounds of min switch to max 
-            if (DEBUG) {
-                out.println("Subgraph/Exact Match Test");
-            }
-            MaxSelection select
-                    = new MaxSelection(mh, eductList, productList);
-            if (select.isSubAndCompleteMatchFlag()) {
-                if (DEBUG) {
-                    out.println("Subgraph/Exact Match");
-                }
-                mh = select.getUpdatedHolder();
-            }
         }
+        
         if (DEBUG) {
             out.println("**********Modified Matrix**************");
 //            printMatrixAtomContainer(mh, eductList, productList);
