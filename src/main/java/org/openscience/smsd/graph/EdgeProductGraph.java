@@ -309,7 +309,9 @@ public final class EdgeProductGraph implements Serializable {
 
         //Add the left Edge (including vertices) from all the EdgeProducts in vertices
         Set<IAtom> atomsMapped = new HashSet<>();
-        edgeProductVertices.stream().map((ep) -> ep.getTargetBondIndex()).map((bondIndex) -> ac.getBond(bondIndex)).map((bond) -> {
+        edgeProductVertices.stream().map((ep)
+                -> ep.getTargetBondIndex()).map((bondIndex)
+                -> ac.getBond(bondIndex)).map((bond) -> {
             atomsMapped.add(bond.getBegin());
             return bond;
         }).forEachOrdered((bond) -> {

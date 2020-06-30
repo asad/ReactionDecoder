@@ -391,13 +391,14 @@ public class MCSTest {
         org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper mcs
                 = new org.openscience.smsd.algorithm.mcsplus.MCSPlusMapper(query, target, atomMatcher, bondMatcher);
 //        Isomorphism mcs
-//                = new Isomorphism(query, target, Algorithm.VFLibMCS, atomMatcher, bondMatcher);
-//        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Generic);
-//        System.out.println("MCS " + mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+//                = new Isomorphism(query, target, Algorithm.CDKMCS, atomMatcher, bondMatcher);
+        String moiety=mcs.getFirstAtomMapping().getCommonFragmentAsSMILES();
+        SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Generic|SmiFlavor.AtomAtomMap);
+//        System.out.println("MCS " + moiety);
 //        System.out.println("R MCS " + smilesGenerator.create(mcs.getFirstAtomMapping().getMapCommonFragmentOnQuery()));
 //        System.out.println("P MCS " + smilesGenerator.create(mcs.getFirstAtomMapping().getMapCommonFragmentOnTarget()));
-
-        assertEquals("O[C@H](CO)[C@@H]([C@H](CO)O)O", mcs.getFirstAtomMapping().getCommonFragmentAsSMILES());
+//        System.out.println("MCS " + mcs.getFirstAtomMapping().toString());
+        assertEquals("O[C@H](CO)[C@@H]([C@H](CO)O)O", moiety);
 
     }
 }
