@@ -34,6 +34,7 @@ public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMo
     private final ReactantProductPair smarts;
     private final ReactantProductPair signature;
     private final String smirks;
+    private final String moiety;
     private ReactantProductPair smarts1;
     private ReactantProductPair signature1;
     private String smirks1;
@@ -50,16 +51,19 @@ public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMo
      * @param smarts
      * @param signature
      * @param smirks
+     * @param moiety
      */
     public MoleculeMoleculePair(
             ReactantProductPair name,
             ReactantProductPair smarts,
             ReactantProductPair signature,
-            String smirks) {
+            String smirks,
+            String moiety) {
         this.name = name;
         this.smarts = smarts;
         this.signature = signature;
         this.smirks = smirks;
+        this.moiety = moiety;
     }
 
     /**
@@ -267,5 +271,12 @@ public class MoleculeMoleculePair implements Serializable, Comparable<MoleculeMo
             return false;
         }
         return Objects.equals(this.smirks, other.smirks);
+    }
+
+    /**
+     * @return the moiety
+     */
+    public String getMoiety() {
+        return moiety;
     }
 }

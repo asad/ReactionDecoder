@@ -238,25 +238,37 @@ public class Annotator extends Helper {
     }
 
     private static void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {
-        Map<String, Collection<String>> moleculeMoleculeTransformationPairs = s.getBondChangeCalculator().getMoleculeMoleculeTransformationPairs();
+//        Map<String, Collection<String>> moleculeMoleculeTransformationPairs = s.getBondChangeCalculator().getMoleculeMoleculeTransformationPairs();
+//        StringBuilder sbcomp = new StringBuilder();
+//        int index = 1;
+//        for (String m : moleculeMoleculeTransformationPairs.keySet()) {
+//            StringBuilder mmp = new StringBuilder(m);
+//            mmp.append(", ");
+//            mmp.append(moleculeMoleculeTransformationPairs.get(m));
+//            sbcomp.append(index).append(": ").append(mmp);
+//            sbcomp.append(NEW_LINE);
+//            index++;
+//        }
+
+        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
 
         StringBuilder sbcomp = new StringBuilder();
         int index = 1;
-        for (String m : moleculeMoleculeTransformationPairs.keySet()) {
-            StringBuilder mmp = new StringBuilder(m);
-            mmp.append("\t");
-            mmp.append(moleculeMoleculeTransformationPairs.get(m));
-            sbcomp.append(index).append(": ").append(mmp);
+        for (MoleculeMoleculePair m : reactionTransform) {
+            sbcomp.append(index).append(": ")
+                    .append(m.getName())
+                    .append(", ")
+                    .append(m.getSmirks())
+                    .append(", ")
+                    .append(m.getMoiety());
             sbcomp.append(NEW_LINE);
             index++;
         }
 
-        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
-
         StringBuilder pair1 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair1.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks1());
+            pair1.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks1());
             pair1.append(NEW_LINE);
             index++;
         }
@@ -264,7 +276,7 @@ public class Annotator extends Helper {
         StringBuilder pair2 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair2.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks2());
+            pair2.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks2());
             pair2.append(NEW_LINE);
             index++;
         }
@@ -272,7 +284,7 @@ public class Annotator extends Helper {
         StringBuilder pair3 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair3.append(index).append(": ").append(m.getName()).append("\t").append(m.getSmirks3());
+            pair3.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks3());
             pair3.append(NEW_LINE);
             index++;
         }
@@ -313,7 +325,6 @@ public class Annotator extends Helper {
             sbST.append(value).append(NEW_LINE);
         }
 
-        sb.append(NEW_LINE);
         sb.append("//");
         sb.append(NEW_LINE);
         sb.append("Reaction Centre Formed/Cleaved");
@@ -350,6 +361,8 @@ public class Annotator extends Helper {
         sb.append(NEW_LINE);
         sb.append(sbcomp.toString());
         sb.append(NEW_LINE);
+        sb.append(NEW_LINE);
+        sb.append("//").append(NEW_LINE);
     }
 
     private static void printRPAIRPatternAsXML(MappingSolution s, org.w3c.dom.Document doc, org.w3c.dom.Element rootElement) {

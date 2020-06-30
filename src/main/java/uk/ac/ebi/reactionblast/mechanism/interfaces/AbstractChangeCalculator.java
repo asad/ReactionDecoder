@@ -211,6 +211,7 @@ public abstract class AbstractChangeCalculator extends Utility {
         reaction.addProduct(fragP, 1.0);
 
         String smirks;
+        String moiety;
         String smirks1;
         String smirks2;
         String smirks3;
@@ -224,6 +225,7 @@ public abstract class AbstractChangeCalculator extends Utility {
          * get SMILES with AAM
          */
         smirks = getSMILES(reaction, false);
+        moiety = getMoietyAsSMILES(fragR, fragP, false);
         smirks1 = getSMILES(reaction1, false);
         smirks2 = getSMILES(reaction2, false);
         smirks3 = getSMILES(reaction3, false);
@@ -256,12 +258,12 @@ public abstract class AbstractChangeCalculator extends Utility {
         smartsP1 = getSMILES(fragP1, false);
         smartsP2 = getSMILES(fragP2, false);
         smartsP3 = getSMILES(fragP3, false);
-
+        
         ReactantProductPair rrpName = new ReactantProductPair(atomContainerR.getID(), atomContainerP.getID());
         ReactantProductPair rrpSMARTS = new ReactantProductPair(smartsR, smartsP);
         ReactantProductPair rrpSignature = new ReactantProductPair(signatureR, signatureP);
 
-        MoleculeMoleculePair mmp = new MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks);
+        MoleculeMoleculePair mmp = new MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks, moiety);
         mmp.setSignature1(new ReactantProductPair(signatureR1, signatureP1));
         mmp.setSignature2(new ReactantProductPair(signatureR2, signatureP2));
         mmp.setSignature3(new ReactantProductPair(signatureR3, signatureP3));

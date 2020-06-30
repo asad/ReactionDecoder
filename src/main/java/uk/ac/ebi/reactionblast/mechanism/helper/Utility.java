@@ -55,6 +55,7 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
+import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import uk.ac.ebi.reactionblast.fingerprints.Feature;
 import uk.ac.ebi.reactionblast.fingerprints.PatternFingerprinter;
@@ -77,7 +78,33 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             = LoggingToolFactory.createLoggingTool(Utility.class);
 
     /**
-     * Used Chemaxon to generate smikrs
+     * Used CDK to generate moiety
+     *
+     * @param reactant
+     * @param product
+     * @param remove_AAM
+     * @return
+     */
+    public static String getMoietyAsSMILES(IAtomContainer reactant, IAtomContainer product, boolean remove_AAM) {
+        AtomAtomMapping atomAtomMapping = new AtomAtomMapping(reactant, product);
+        for (IAtom a : reactant.atoms()) {
+            for (IAtom b : product.atoms()) {
+                if (a.getID() == null ? b.getID() == null : a.getID().equals(b.getID())) {
+                    atomAtomMapping.put(a, b);//store mapping if they share IDs
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder("");
+        try {
+            sb.append(getSMILES(atomAtomMapping.getCommonFragment(), remove_AAM));
+        } catch (Exception ex) {
+            LOGGER.error(SEVERE, null, ex);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Used CDK to generate smikrs
      *
      * @param reaction
      * @param remove_AAM

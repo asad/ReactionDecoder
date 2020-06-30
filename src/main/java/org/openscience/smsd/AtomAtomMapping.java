@@ -40,7 +40,6 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -295,34 +294,17 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
-                uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
-        Set<IBond> removeUncommonBonds = new HashSet<>();
-        for (IBond bondQ : ac.bonds()) {
-            if (mapping.containsKey(bondQ.getBegin()) && mapping.containsKey(bondQ.getEnd())) {
-                IAtom atom1 = mapping.get(bondQ.getBegin());
-                IAtom atom2 = mapping.get(bondQ.getEnd());
-                IBond bondT = getTarget().getBond(atom1, atom2);
-                if (bondT == null) {
-                    removeUncommonBonds.add(bondQ);
-                }
-            }
-        }
-        /*
-         * Remove umcommon bonds
-         */
-        removeUncommonBonds.forEach((b) -> {
-            ac.removeBond(b);
-        });
 
         /*
          * Remove umcommon atoms
          */
-        uniqueAtoms.stream().forEach((atom) -> {
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
         return ac;
@@ -337,14 +319,14 @@ public final class AtomAtomMapping implements Serializable {
     public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
 
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
-                uniqueAtoms.add(ac.getAtom(getTargetIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getTargetIndex(atom)));
             }
         }
 
-        uniqueAtoms.stream().forEach((atom) -> {
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
         return ac;
@@ -358,40 +340,19 @@ public final class AtomAtomMapping implements Serializable {
      */
     public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> uniqueAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
-                uniqueAtoms.add(ac.getAtom(getQueryIndex(atom)));
+                unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
             }
         }
 
         /*
-         Remove bond(s) from the query molecule if they are not present in the target.
-         As we are mapping/projecting atoms, it might happen that a bond may or maynot 
-         exist between atoms.
+         * Remove umcommon atoms
          */
-        for (IBond bond : getQuery().bonds()) {
-            IAtom atom1ForBondInTarget = mapping.get(bond.getAtom(0));
-            IAtom atom2ForBondInTarget = mapping.get(bond.getAtom(1));
-            if (atom1ForBondInTarget == null) {
-                continue;
-            }
-            if (atom2ForBondInTarget == null) {
-                continue;
-            }
-
-            IBond bondInTarget = getTarget().getBond(atom1ForBondInTarget, atom2ForBondInTarget);
-            if (bondInTarget == null) {
-                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(0)));
-                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(1)));
-                ac.removeBond(ac.getBond(atom1InCommonContainer, atom2InCommonContainer));
-            }
-        }
-
-        uniqueAtoms.stream().forEach((atom) -> {
+        unmappedAtoms.stream().forEach((atom) -> {
             ac.removeAtom(atom);
         });
-
         /*
          Get canonicalised by fixing hydrogens 
          o/p i.e. atom type + CDKHydrogenManipulator
