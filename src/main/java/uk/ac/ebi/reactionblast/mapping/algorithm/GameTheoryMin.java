@@ -91,7 +91,7 @@ final class GameTheoryMin extends BaseGameTheory {
     private Integer stepIndex = 0;
     private final ICanonicalMoleculeLabeller canonLabeler;
 
-    private int counter = 1;
+    private int counter = 0;
 
     //~--- constructors -------------------------------------------------------
     GameTheoryMin(
@@ -104,6 +104,7 @@ final class GameTheoryMin extends BaseGameTheory {
         if (DEBUG) {
             out.println("I am MIN MIX");
         }
+        this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -197,7 +198,7 @@ final class GameTheoryMin extends BaseGameTheory {
                 mh = select.getUpdatedHolder();
             }
         }
-        
+
         if (DEBUG) {
             out.println("**********Modified Matrix**************");
 //            printMatrixAtomContainer(mh, eductList, productList);
