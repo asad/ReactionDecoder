@@ -69,6 +69,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MaxSelection;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MinSelection;
 
 final class GameTheoryMin extends BaseGameTheory {
@@ -89,6 +90,8 @@ final class GameTheoryMin extends BaseGameTheory {
     private int delta = 0;
     private Integer stepIndex = 0;
     private final ICanonicalMoleculeLabeller canonLabeler;
+
+    private int counter = 1;
 
     //~--- constructors -------------------------------------------------------
     GameTheoryMin(
@@ -152,6 +155,7 @@ final class GameTheoryMin extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
+        this.counter++;
         if (DEBUG) {
             System.out.println("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
@@ -180,12 +184,24 @@ final class GameTheoryMin extends BaseGameTheory {
             }
         }
 
-        if (!conditionmet) {
+        if (!conditionmet && counter <= 5) {
             if (DEBUG) {
                 out.println("Subgraph/Exact Match Test");
             }
             MinSelection select
                     = new MinSelection(mh, eductList, productList);
+            if (select.isSubAndCompleteMatchFlag()) {
+                if (DEBUG) {
+                    out.println("Subgraph/Exact Match");
+                }
+                mh = select.getUpdatedHolder();
+            }
+        } else if (!conditionmet) {//after 5 rounds of min switch to max 
+            if (DEBUG) {
+                out.println("Subgraph/Exact Match Test");
+            }
+            MaxSelection select
+                    = new MaxSelection(mh, eductList, productList);
             if (select.isSubAndCompleteMatchFlag()) {
                 if (DEBUG) {
                     out.println("Subgraph/Exact Match");

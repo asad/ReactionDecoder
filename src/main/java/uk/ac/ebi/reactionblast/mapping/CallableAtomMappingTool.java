@@ -158,6 +158,7 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction1, MAX, removeHydrogen);
             cs.submit(maxThread);
             jobCounter++;
+
             /*
              * MIN Algorithm
              */
@@ -177,6 +178,7 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", cleanedReaction2, MIN, removeHydrogen);
             cs.submit(minThread);
             jobCounter++;
+
             /*
              * MIXTURE Algorithm
              */
