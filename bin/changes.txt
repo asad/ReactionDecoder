@@ -267,6 +267,7 @@ c) Command line input typo in -c option fixed
 d) Mol layout fixed
 e) Enrich mapping pair
 f) Moiety added
+g) Use multi core
 
 -----------------------
 TO DO
