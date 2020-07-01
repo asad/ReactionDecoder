@@ -346,25 +346,36 @@ public final class AtomAtomMapping implements Serializable {
         }
 
         /*
-         Remove bond(s) from the query molecule if they are not present in the target.
-         As we are mapping/projecting atoms, it might happen that a bond may or maynot 
+         Remove queryBond(s) from the query molecule if they are not present in the target.
+         As we are mapping/projecting atoms, it might happen that a queryBond may or maynot 
          exist between atoms.
          */
-        for (IBond bond : getQuery().bonds()) {
-            IAtom atom1ForBondInTarget = mapping.get(bond.getAtom(0));
-            IAtom atom2ForBondInTarget = mapping.get(bond.getAtom(1));
-            if (atom1ForBondInTarget == null) {
+        for (IBond queryBond : getQuery().bonds()) {
+            IAtom targetAtomBegin = mapping.get(queryBond.getBegin());
+            IAtom targetAtomEnd = mapping.get(queryBond.getEnd());
+            if (targetAtomBegin == null) {
                 continue;
             }
-            if (atom2ForBondInTarget == null) {
+            if (targetAtomEnd == null) {
                 continue;
             }
 
-            IBond bondInTarget = getTarget().getBond(atom1ForBondInTarget, atom2ForBondInTarget);
-            if (bondInTarget == null) {
-                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(0)));
-                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(bond.getAtom(1)));
+            IBond targetBond = getTarget().getBond(targetAtomBegin, targetAtomEnd);
+            if (targetBond == null) {
+                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getBegin()));
+                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getEnd()));
                 ac.removeBond(ac.getBond(atom1InCommonContainer, atom2InCommonContainer));
+            }
+            /*
+             * if the target bond order is lower then reduce the order new container
+             */
+            if (targetBond != null && !queryBond.isAromatic() && !targetBond.isAromatic()) {
+                IAtom atom1InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getBegin()));
+                IAtom atom2InCommonContainer = ac.getAtom(getQueryIndex(queryBond.getEnd()));
+                IBond bond = ac.getBond(atom1InCommonContainer, atom2InCommonContainer);
+                if (queryBond.getOrder().numeric() > targetBond.getOrder().numeric()) {
+                    bond.setOrder(targetBond.getOrder());
+                }
             }
         }
 
