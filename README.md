@@ -12,7 +12,7 @@ Introduction
 
 Contact
 ============
-Author: Dr. Syed Asad Rahman,
+Author: Dr. Syed Asad Rahman
 e-mail: asad.rahman@bioinceptionlabs.com
 
 Installation
@@ -107,7 +107,7 @@ How to Cite RDT?
 [doi: 10.1093/bioinformatics/btw096](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4920114/)
 
 
-Subcommands
+Sub-commands
 ===========
 
 
@@ -117,18 +117,14 @@ Subcommands
 `AAM using SMILES`
   
   ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j AAM -f TEXT
-  ```
-
-  ```
-  java -cp dist/*:lib/* aamtool.ReactionDecoder -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j  AAM -f TEXT
+  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
   ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j ANNOTATE -f XML
+  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
   ```
 
 
