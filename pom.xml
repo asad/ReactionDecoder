@@ -4,7 +4,7 @@
     <groupId>uk.ac.ebi.rdt</groupId>
     <artifactId>rdt</artifactId>
     <description>Reaction Decoder Tool</description>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>2.3.1</version>
     <packaging>jar</packaging>
     <properties>
         <jdk.version>11</jdk.version>
