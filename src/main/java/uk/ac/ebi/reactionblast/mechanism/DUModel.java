@@ -175,6 +175,9 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             }
             this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("WARNING: Unable to compute reaction matrix", e);
         }
         /*
@@ -201,6 +204,9 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         try {
             this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("WARNING: 2D CDK based stereo centers perception failed", e);
         }
         if (DEBUG) {

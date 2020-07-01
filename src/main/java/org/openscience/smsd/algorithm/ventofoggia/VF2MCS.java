@@ -223,7 +223,10 @@ public final class VF2MCS extends BaseMCS implements IResults {
                     }).forEach((map) -> {
                         mcsSeeds.add(map);
                     });
-                } catch (InterruptedException | ExecutionException ex) {
+                } catch (Exception ex) {
+                    if (DEBUG) {
+                        ex.printStackTrace();
+                    }
                     LOGGER.error(Level.SEVERE, null, ex);
                 }
             }

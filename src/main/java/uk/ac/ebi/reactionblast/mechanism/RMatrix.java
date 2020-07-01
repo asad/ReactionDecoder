@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mechanism;
 
 import java.io.Serializable;
 import static java.lang.Math.abs;
-import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +82,14 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         if (DEBUG) {
             System.out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
         }
-        if (expectedOverlap != mapping.getSize()) {
+        //Bug fixed by Asad
+        int umapped_atoms_remaining = productBE.getRowDimension() - (mapping.getSize() + 1);
+        if (expectedOverlap != mapping.getSize() & umapped_atoms_remaining != 0) {
             LOGGER.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
             LOGGER.debug("Core Product Atoms: " + (productBE.getRowDimension() - 1));
             LOGGER.debug("Mapping Atoms: " + mapping.getSize());
             throw new Exception("Unable to construct a reaction matrix; "
-                    + ((productBE.getRowDimension() - (mapping.getSize() + 1)))
+                    + umapped_atoms_remaining
                     + " atom(s) remain unmapped!.");
         }
         initMatrix(0.);

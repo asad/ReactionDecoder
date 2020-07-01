@@ -118,7 +118,8 @@ public class CallableAtomMappingTool implements Serializable {
          */
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
 
-        ExecutorService executor;// = Executors.newSingleThreadExecutor();;
+        ExecutorService executor;
+//        executor = Executors.newSingleThreadExecutor();
         if (DEBUG) {
             executor = Executors.newSingleThreadExecutor();
         } else {
@@ -198,7 +199,7 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
-
+//
             if (checkComplex) {/*
              * RINGS Minimization
                  */

@@ -69,7 +69,6 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 import static java.util.Collections.synchronizedList;
-import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MaxSelection;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MinSelection;
 
 final class GameTheoryMin extends BaseGameTheory {
@@ -187,6 +186,7 @@ final class GameTheoryMin extends BaseGameTheory {
 
         if (!conditionmet && counter <= 5) {
             if (DEBUG) {
+                out.println("call counter " + counter);
                 out.println("Subgraph/Exact Match Test");
             }
             MinSelection select

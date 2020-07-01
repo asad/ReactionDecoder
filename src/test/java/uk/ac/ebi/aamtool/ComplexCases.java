@@ -115,6 +115,21 @@ public class ComplexCases extends MappingUtility {
     }
 
 //    /*
+//     * Rhea 10069
+//     */
+//    @Test
+//    public void Rhea58905() throws Exception {
+//
+//        String reactionID = "58905";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(9, formedCleavedWFingerprint.getFeatureCount());
+//    }
+
+//    /*
 //     * Complex case, Takes longer to Run
 //     */
 //    @Test

@@ -1058,6 +1058,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     System.out.println("Bond Change Annotator END");
                 }
             } catch (Exception e) {
+                if (DEBUG) {
+                    e.printStackTrace();
+                }
                 throw new Exception("Failed to compute bond changes", e);
             }
 
@@ -1478,6 +1481,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 System.out.println("Bond Change Calculator END");
             }
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception("Failed to assign bond changes", e);
         }
 

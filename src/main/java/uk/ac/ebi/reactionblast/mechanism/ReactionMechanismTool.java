@@ -162,6 +162,9 @@ public class ReactionMechanismTool implements Serializable {
                 boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED, reaction, generate2D, generate3D);
                 LOGGER.info("is solution: " + USER_DEFINED + " selected: " + selected);
             } catch (Exception e) {
+                if (DEBUG) {
+                    e.printStackTrace();
+                }
                 throw new CDKException(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage());
             }
         } else {
@@ -195,9 +198,9 @@ public class ReactionMechanismTool implements Serializable {
 
                     if (DEBUG) {
                         SmilesGenerator withAtomClasses = new SmilesGenerator(
-                                //                            SmiFlavor.Unique |
-                                SmiFlavor.UseAromaticSymbols
-                                | SmiFlavor.Stereo
+                                //                                SmiFlavor.Unique
+                                //                                | SmiFlavor.UseAromaticSymbols |
+                                SmiFlavor.Stereo
                                 | SmiFlavor.AtomAtomMap);
                         out.println("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
                     }
@@ -222,6 +225,9 @@ public class ReactionMechanismTool implements Serializable {
                 }
                 gc();
             } catch (Exception e) {
+                if (DEBUG) {
+                    e.printStackTrace();
+                }
                 throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e);
             }
             if (DEBUG) {
@@ -310,7 +316,15 @@ public class ReactionMechanismTool implements Serializable {
             IReaction reaction,
             boolean generate2D,
             boolean generate3D) throws Exception {
-
+        if (reactor.getMappingCount() > 500 & reactor.getMappingCount() < 1000) {
+            System.err.println("wolla...are after something big?...so many atoms to compute bond changes!");
+            System.err.println("...Let me try..hold on your horses!");
+        }
+        if (reactor.getMappingCount() > 1000) {
+            System.err.println("...wolla...are after something big?...!");
+            System.err.println("...This might drive me bit crazy ... have to compute so many atoms for bond changes...!");
+            System.err.println("...Let me try..hold on your horses!");
+        }
         boolean chosen = false;
         try {
             BondChangeCalculator bcc;
@@ -399,6 +413,9 @@ public class ReactionMechanismTool implements Serializable {
                 this.allSolutions.add(mappingSolution);
             }
         } catch (Exception e) {
+            if (DEBUG) {
+                e.printStackTrace();
+            }
             throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage());
         }
         return chosen;
