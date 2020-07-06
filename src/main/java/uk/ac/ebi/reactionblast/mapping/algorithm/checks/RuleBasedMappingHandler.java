@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -150,6 +153,9 @@ public final class RuleBasedMappingHandler implements Serializable {
             out.println("smallestMatchedProduct " + smallestMatchedProduct);
             out.println(NEW_LINE + NEW_LINE + "----------------------" + NEW_LINE + NEW_LINE + NEW_LINE);
         }
+
+        boolean phosphate_changed = phosphate_cleaved(this.matrixHolder.getReactionContainer().getEducts(), this.matrixHolder.getReactionContainer().getProducts());
+
         try {
             for (int i = 0; i < this.matrixHolder.getReactionContainer().getEductCount(); i++) {
                 IAtomContainer educt = this.matrixHolder.getReactionContainer().getEduct(i);
@@ -183,9 +189,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                     }
 
                     /*
-                    Rule 1_A water and Phosphate
+                     * Rule 1_A water and Phosphate
                      */
-                    if (ac1.getAtomCount() == 1
+                    if (phosphate_changed && ac1.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac1, false)
                             && isMatch(getSmartsPhosphate(), ac2, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac2, false)
@@ -201,9 +207,12 @@ public final class RuleBasedMappingHandler implements Serializable {
                             out.println(" Rule 1 water and Phosphate");
                         }
 
-                    } else /*
-                        Rule 1_B phophate and water
-                     */ if (ac2.getAtomCount() == 1
+                    }
+                    /*
+                     * Rule 1_B phophate and water/*
+                     * Rule 1_B phophate and water
+                     */ if (phosphate_changed
+                            && ac2.getAtomCount() == 1
                             && isMatch(getSmartsWater(), ac2, false)
                             && isMatch(getSmartsPhosphate(), ac1, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac1, false)
@@ -220,6 +229,7 @@ public final class RuleBasedMappingHandler implements Serializable {
                         }
 
                     }
+
                     /*
                     Rule 1_C water and Sulphate
                      */
@@ -229,8 +239,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && ac2.getAtomCount() == smallestMatchedProduct) {
                         if (DEBUG2) {
                             out.println("Match ");
-                            out.println("smallest R phosphate " + smallestMatchedReactant);
-                            out.println("smallest P phosphate " + smallestMatchedProduct);
+                            out.println("smallest R sulphate " + smallestMatchedReactant);
+                            out.println("smallest P sulphate " + smallestMatchedProduct);
                         }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -246,8 +256,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && ac1.getAtomCount() == smallestMatchedReactant) {
                         if (DEBUG2) {
                             out.println("Match ");
-                            out.println("smallest R phosphate " + smallestMatchedReactant);
-                            out.println("smallest P phosphate " + smallestMatchedProduct);
+                            out.println("smallest R sulphate " + smallestMatchedReactant);
+                            out.println("smallest P sulphate " + smallestMatchedProduct);
                         }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
@@ -758,5 +768,32 @@ public final class RuleBasedMappingHandler implements Serializable {
      */
     public IAtomContainer getSmartsC04916Rule() {
         return smartsC04916Rule;
+    }
+
+    private boolean phosphate_cleaved(Collection<IAtomContainer> molsE, Collection<IAtomContainer> molsP) {
+        int countphosE = 0;
+        int countphosP = 0;
+
+        for (IAtomContainer ac : molsE) {
+            try {
+                if (isMatch(getSmartsPhosphate(), ac, false)) {
+                    countphosE += ac.getAtomCount();
+                }
+            } catch (CDKException ex) {
+                Logger.getLogger(RuleBasedMappingHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        for (IAtomContainer ac : molsP) {
+            try {
+                if (isMatch(getSmartsPhosphate(), ac, false)) {
+                    countphosP += ac.getAtomCount();
+                }
+            } catch (CDKException ex) {
+                Logger.getLogger(RuleBasedMappingHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return countphosE != countphosP;
     }
 }

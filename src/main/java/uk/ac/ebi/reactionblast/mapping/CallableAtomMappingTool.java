@@ -22,7 +22,6 @@ import java.io.File;
 import static java.io.File.separator;
 import java.io.FileWriter;
 import java.io.Serializable;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
@@ -119,47 +118,10 @@ public class CallableAtomMappingTool implements Serializable {
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
 
         ExecutorService executor;
-//        executor = Executors.newSingleThreadExecutor();
-        if (DEBUG) {
-            executor = Executors.newSingleThreadExecutor();
-        } else {
-            int threadsAvailable = getRuntime().availableProcessors() - 1;
-            if (threadsAvailable == 0) {
-                threadsAvailable = 1;
-            }
-
-            if (threadsAvailable > 4) {
-                threadsAvailable = 4;
-            }
-            executor = Executors.newFixedThreadPool(threadsAvailable);
-        }
+        executor = Executors.newSingleThreadExecutor();
         int jobCounter = 0;
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
-
-            /*
-             * MAX Algorithm
-             */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("a) Global Model: ");
-            if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
-            }
-            IReaction cleanedReaction1 = null;
-            try {
-                cleanedReaction1 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
-            }
-            if (DEBUG) {
-                out.println(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
-            }
-            MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction1, MAX, removeHydrogen);
-            cs.submit(maxThread);
-            jobCounter++;
-
             /*
              * MIN Algorithm
              */
@@ -169,6 +131,25 @@ public class CallableAtomMappingTool implements Serializable {
                 out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
                 out.println(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
             }
+            IReaction cleanedReaction1 = null;
+            try {
+                cleanedReaction1 = standardizer.standardize(reaction);
+            } catch (Exception e) {
+                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
+                LOGGER.error(e);
+            }
+            MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", cleanedReaction1, MIN, removeHydrogen);
+            cs.submit(minThread);
+            jobCounter++;
+            /*
+             * MAX Algorithm
+             */
+            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
+            LOGGER.info("a) Global Model: ");
+            if (DEBUG) {
+                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                out.println(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
+            }
             IReaction cleanedReaction2 = null;
             try {
                 cleanedReaction2 = standardizer.standardize(reaction);
@@ -176,8 +157,11 @@ public class CallableAtomMappingTool implements Serializable {
                 LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
                 LOGGER.error(e);
             }
-            MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", cleanedReaction2, MIN, removeHydrogen);
-            cs.submit(minThread);
+            if (DEBUG) {
+                out.println(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
+            }
+            MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen);
+            cs.submit(maxThread);
             jobCounter++;
 
             /*
@@ -199,7 +183,7 @@ public class CallableAtomMappingTool implements Serializable {
             MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
             cs.submit(maxMixtureThread);
             jobCounter++;
-//
+
             if (checkComplex) {/*
              * RINGS Minimization
                  */

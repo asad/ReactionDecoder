@@ -65,6 +65,8 @@ import uk.ac.ebi.reactionblast.tools.CDKSMILES;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import uk.ac.ebi.reactionblast.tools.labelling.SmilesMoleculeLabeller;
 import static java.util.Collections.synchronizedList;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
+import uk.ac.ebi.reactionblast.mapping.algorithm.checks.Selector;
 
 final class GameTheoryMixture extends BaseGameTheory {
 
@@ -157,17 +159,17 @@ final class GameTheoryMixture extends BaseGameTheory {
 //        printEnergyMatrix(mh, eductList, productList);
         }
 
-//        if (!ruleMatchingFlag) {
-//            RuleBasedMappingHandler ruleBasedMappingHandler = 
-//                    new RuleBasedMappingHandler(mh, eductList, productList);
-//            if (ruleBasedMappingHandler.isMatchFound()) {
-//                if (DEBUG) {
-//                    out.println("Rule Based Mapping Handler Match Found");
-//                }
-//                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
-//            }
-//            ruleMatchingFlag = true;
-//        }
+        if (!ruleMatchingFlag) {//First map the biggest fragment the call rules
+            RuleBasedMappingHandler ruleBasedMappingHandler
+                    = new RuleBasedMappingHandler(mh, eductList, productList);
+            if (ruleBasedMappingHandler.isMatchFound()) {
+                if (DEBUG) {
+                    out.println("Rule Based Mapping Handler Match Found");
+                }
+                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+            }
+            ruleMatchingFlag = true;
+        }
 
         winner.searchWinners(educts, products, mh);
         if (DEBUG) {

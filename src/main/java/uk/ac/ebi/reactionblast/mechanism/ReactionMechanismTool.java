@@ -332,7 +332,7 @@ public class ReactionMechanismTool implements Serializable {
             if (reactor == null && ma.equals(USER_DEFINED)) {
                 bcc = new BondChangeCalculator(reaction);
                 bcc.computeBondChanges(generate2D, generate3D);
-                fragmentDeltaChanges = 0;
+                fragmentDeltaChanges = bcc.getTotalFragmentCount();
                 int bondChange = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 bondChange += getTotalBondChange(bcc.getOrderChangesWFingerprint());
                 int stereoChanges = (int) getTotalBondChange(bcc.getStereoChangesWFingerprint());
@@ -366,7 +366,7 @@ public class ReactionMechanismTool implements Serializable {
 
                 bcc = new BondChangeCalculator(reactor.getReactionWithAtomAtomMapping());
                 bcc.computeBondChanges(generate2D, generate3D);
-                fragmentDeltaChanges = reactor.getDelta();
+                fragmentDeltaChanges = bcc.getTotalFragmentCount() + reactor.getDelta();
 
                 int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
                 int bondChange = bondCleavedFormed;
@@ -376,7 +376,7 @@ public class ReactionMechanismTool implements Serializable {
                 int bondBreakingEnergy = getTotalBondChangeEnergy(bcc.getFormedCleavedWFingerprint(), skipHydrogenRealtedBondChanges);
                 int totalSmallestFragmentCount = bcc.getTotalSmallestFragmentSize();
                 int totalCarbonBondChanges = getTotalCarbonBondChange(bcc.getFormedCleavedWFingerprint());
-
+                int localScore = bondChange + fragmentDeltaChanges;
                 LOGGER.info(
                         "Score: " + fragmentDeltaChanges + " : " + bondChange);
                 LOGGER.info(
@@ -384,7 +384,6 @@ public class ReactionMechanismTool implements Serializable {
                 LOGGER.info(
                         ", Energy Delta: " + bcc.getEnergyDelta());
 
-                int localScore = bondChange + fragmentDeltaChanges;
                 bcc.getReaction().setFlag(MAPPED, true);
 
                 MappingSolution mappingSolution = new MappingSolution(
@@ -441,6 +440,7 @@ public class ReactionMechanismTool implements Serializable {
                 out.println(" selectedMapping.getSmallestFragmentCount() " + selectedMapping.getSmallestFragmentCount());
                 out.println(" selectedMapping.getBondEnergyChange() " + selectedMapping.getBondEnergySum());
                 out.println(" selectedMapping.getTotalFragmentChanges() " + selectedMapping.getTotalFragmentChanges());
+                out.println(" ms.getTotalChanges() " + selectedMapping.getTotalChanges());
                 out.println(" Total Carbon Bond Changes " + selectedMapping.getTotalCarbonBondChanges());
             }
             out.println(NEW_LINE + " ms.getAlgorithmID().description() " + ms.getAlgorithmID().description());
@@ -448,6 +448,7 @@ public class ReactionMechanismTool implements Serializable {
             out.println(" ms.getSmallestFragmentCount() " + ms.getSmallestFragmentCount());
             out.println(" ms.getBondEnergyChange() " + ms.getBondEnergySum());
             out.println(" ms.getTotalFragmentChanges() " + ms.getTotalFragmentChanges());
+            out.println(" ms.getTotalChanges() " + ms.getTotalChanges());
             out.println(" Total Carbon Bond Changes " + ms.getTotalCarbonBondChanges());
         }
 
@@ -583,10 +584,10 @@ public class ReactionMechanismTool implements Serializable {
             return true;
         } else if (this.selectedMapping.getTotalBondChanges() == ms.getTotalBondChanges()
                 && this.selectedMapping.getTotalCarbonBondChanges() == ms.getTotalCarbonBondChanges()
-                && this.selectedMapping.getSmallestFragmentCount() > ms.getSmallestFragmentCount()) {
-            /*This condition is for reactions like:
-            CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(O)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(O)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(=O)OP(O)(O)=O)C(O)C1O.NC(CCC(N)=O)C(O)=O.NC(CCC(N)=O)C(O)=O.O[H].O[H]>>CC1=C2NC(C(CC(O)=O)C2(C)CCC(O)=O)C2(C)N=C(C(CCC(O)=O)C2(C)CC(N)=O)C(C)=C2N=C(C=C3N=C1C(CCC(O)=O)C3(C)C)C(CCC(O)=O)C2(C)CC(N)=O.Nc1ncnc2n(cnc12)C1OC(COP(O)(=O)OP(O)(O)=O)C(O)C1O.[H]OP(O)(=O)OP(O)(=O)OCC1OC(C(O)C1O)n1cnc2c(N)ncnc12.NC(CCC(O)=O)C(O)=O.NC(CCC(O)=O)C(O)=O.[H]OP(O)(O)=O.OP(O)(O)=O
-            **/
+                && this.selectedMapping.getSmallestFragmentCount() < ms.getSmallestFragmentCount()) {
+            /*
+            * Rhea  reaction RHEA:20301 bigger fragment preferred 
+             */
             LOGGER.info("Condition 14 " + ms.getAlgorithmID().description());
             if (DEBUG) {
                 out.println("CASE: Condition 14");
