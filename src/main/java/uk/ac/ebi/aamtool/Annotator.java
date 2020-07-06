@@ -237,38 +237,26 @@ public class Annotator extends Helper {
 
     }
 
-    private static void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {
-//        Map<String, Collection<String>> moleculeMoleculeTransformationPairs = s.getBondChangeCalculator().getMoleculeMoleculeTransformationPairs();
-//        StringBuilder sbcomp = new StringBuilder();
-//        int index = 1;
-//        for (String m : moleculeMoleculeTransformationPairs.keySet()) {
-//            StringBuilder mmp = new StringBuilder(m);
-//            mmp.append(", ");
-//            mmp.append(moleculeMoleculeTransformationPairs.get(m));
-//            sbcomp.append(index).append(": ").append(mmp);
-//            sbcomp.append(NEW_LINE);
-//            index++;
-//        }
-
-        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
+    private void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {
+        Map<String, Collection<String>> moleculeMoleculeTransformationPairs = s.getBondChangeCalculator().getMoleculeMoleculeTransformationPairs();
 
         StringBuilder sbcomp = new StringBuilder();
         int index = 1;
-        for (MoleculeMoleculePair m : reactionTransform) {
-            sbcomp.append(index).append(": ")
-                    .append(m.getName())
-                    .append(", ")
-                    .append(m.getSmirks())
-                    .append(", ")
-                    .append(m.getMoiety());
+        for (String m : moleculeMoleculeTransformationPairs.keySet()) {
+            StringBuilder mmp = new StringBuilder(m);
+            mmp.append("\t");
+            mmp.append(moleculeMoleculeTransformationPairs.get(m));
+            sbcomp.append(index).append(": ").append(mmp);
             sbcomp.append(NEW_LINE);
             index++;
         }
 
+        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
+
         StringBuilder pair1 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair1.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks1());
+            pair1.append(index).append(": ").append(m.getSmirks1());
             pair1.append(NEW_LINE);
             index++;
         }
@@ -276,7 +264,7 @@ public class Annotator extends Helper {
         StringBuilder pair2 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair2.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks2());
+            pair2.append(index).append(": ").append(m.getSmirks2());
             pair2.append(NEW_LINE);
             index++;
         }
@@ -284,7 +272,7 @@ public class Annotator extends Helper {
         StringBuilder pair3 = new StringBuilder();
         index = 1;
         for (MoleculeMoleculePair m : reactionTransform) {
-            pair3.append(index).append(": ").append(m.getName()).append(", ").append(m.getSmirks3());
+            pair3.append(index).append(": ").append(m.getSmirks3());
             pair3.append(NEW_LINE);
             index++;
         }
@@ -325,6 +313,7 @@ public class Annotator extends Helper {
             sbST.append(value).append(NEW_LINE);
         }
 
+        sb.append(NEW_LINE);
         sb.append("//");
         sb.append(NEW_LINE);
         sb.append("Reaction Centre Formed/Cleaved");
@@ -361,11 +350,9 @@ public class Annotator extends Helper {
         sb.append(NEW_LINE);
         sb.append(sbcomp.toString());
         sb.append(NEW_LINE);
-        sb.append(NEW_LINE);
-        sb.append("//").append(NEW_LINE);
     }
 
-    private static void printRPAIRPatternAsXML(MappingSolution s, org.w3c.dom.Document doc, org.w3c.dom.Element rootElement) {
+    private void printRPAIRPatternAsXML(MappingSolution s, org.w3c.dom.Document doc, org.w3c.dom.Element rootElement) {
 
         Map<Integer, IPatternFingerprinter> reactionCenterFormedCleavedFingerprint = s.getBondChangeCalculator().getReactionCenterFormedCleavedFingerprint();
         Map<Integer, IPatternFingerprinter> reactionCenterOrderChangeFingerprint = s.getBondChangeCalculator().getReactionCenterOrderChangeFingerprint();
@@ -495,7 +482,7 @@ public class Annotator extends Helper {
      * @param sb
      * @throws java.lang.CloneNotSupportedException
      */
-    protected synchronized void annotateReactionAsText(ReactionMechanismTool rmt, String reactionID, StringBuilder sb) throws CloneNotSupportedException {
+    protected void annotateReactionAsText(ReactionMechanismTool rmt, String reactionID, StringBuilder sb) throws CloneNotSupportedException {
         DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
         instance.setExponentSeparator("E");//x10^
         DecimalFormat df = new DecimalFormat("##E00", instance);
@@ -641,7 +628,7 @@ public class Annotator extends Helper {
      * @param doc
      * @param rootElement
      */
-    protected synchronized void annotateReactionAsXML(ReactionMechanismTool rmt, String reactionID, Document doc, Element rootElement) {
+    protected void annotateReactionAsXML(ReactionMechanismTool rmt, String reactionID, Document doc, Element rootElement) {
         DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
         instance.setExponentSeparator("E");//x10^
         DecimalFormat df = new DecimalFormat("##E00", instance);
@@ -810,7 +797,7 @@ public class Annotator extends Helper {
      * @param rootElement
      * @throws Exception
      */
-    protected synchronized void compareRXNXML(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, Document doc, Element rootElement) throws Exception {
+    protected void compareRXNXML(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, Document doc, Element rootElement) throws Exception {
         NumberFormat myFormatter = NumberFormat.getInstance();
         myFormatter.setMinimumFractionDigits(2);
         myFormatter.setMaximumFractionDigits(2);
@@ -883,7 +870,7 @@ public class Annotator extends Helper {
      * @return
      * @throws Exception
      */
-    protected static Map<String, String> similarityReactions(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID) throws Exception {
+    protected Map<String, String> similarityReactions(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID) throws Exception {
 
         Map<String, String> scores = new HashMap<>();
 
@@ -921,7 +908,7 @@ public class Annotator extends Helper {
      * @param sb StreactionWithLayouting buildereactionWithLayout
      * @throws Exception
      */
-    protected synchronized void compareRXNText(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, StringBuilder sb) throws Exception {
+    protected void compareRXNText(ReactionMechanismTool annotateRXNQ, String reactionQID, ReactionMechanismTool annotateRXNT, String reactionTID, StringBuilder sb) throws Exception {
         NumberFormat myFormatter = NumberFormat.getInstance();
         myFormatter.setMinimumFractionDigits(2);
         myFormatter.setMaximumFractionDigits(2);
