@@ -270,6 +270,11 @@ f) Moiety added
 g) Use multi core
 
 -----------------------
+Changes (07/07/2020)
+-----------------------
+a) BioInception's mapping algorithm patch added
+
+-----------------------
 TO DO
 -----------------------
 a) CDK to handle missing atom types like Fe, Co etc.
