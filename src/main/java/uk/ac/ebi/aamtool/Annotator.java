@@ -606,8 +606,9 @@ public class Annotator extends Helper {
                             .getReactionWithCompressUnChangedHydrogens()));
                     sb.append(NEW_LINE);
                     //Start of Fingerprint elements
-                    sb.append("SCORE: ").append((m.getTotalBondChanges() + m.getTotalFragmentChanges()));
-                    sb.append(", CHAOS: ").append(m.getTotalFragmentChanges()).append(" <=> ").append(m.getSmallestFragmentCount());
+                    sb.append("SCORE: ").append((m.getTotalChanges()));
+                    sb.append(", CHAOS: ").append((m.getTotalBondChanges()));
+                    sb.append(", FRAG: ").append(m.getTotalFragmentChanges()).append(" <=> ").append(m.getSmallestFragmentCount());
                     sb.append(", SIGMA: ").append(m.getTotalCarbonBondChanges());
                     sb.append(", ENERGY: ").append(df.format(m.getBondEnergySum()));
                     sb.append(", DELTA: ").append(df.format(m.getEnergyDelta()));
@@ -761,10 +762,14 @@ public class Annotator extends Helper {
                     aam.appendChild(solutionAAM);
                     // AAM elements
                     Element score = doc.createElement("SCORE");
-                    score.appendChild(doc.createTextNode((m.getTotalBondChanges() + m.getTotalFragmentChanges()) + ""));
+                    score.appendChild(doc.createTextNode((m.getTotalChanges()) + ""));
                     aam.appendChild(score);
                     // AAM elements
                     score = doc.createElement("CHAOS");
+                    score.appendChild(doc.createTextNode(m.getTotalBondChanges() + ""));
+                    aam.appendChild(score);
+                    // AAM elements
+                    score = doc.createElement("FRAG");
                     score.appendChild(doc.createTextNode(m.getTotalFragmentChanges() + " <=> " + m.getSmallestFragmentCount()));
                     aam.appendChild(score);
                     // AAM elements
