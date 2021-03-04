@@ -52,7 +52,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import static uk.ac.ebi.aamtool.Annotator.getReactionMechanismTool;
 import static uk.ac.ebi.aamtool.ChemicalFormatParser.parseRXN;
-import static uk.ac.ebi.aamtool.ChemicalFormatParser.parseReactionSMILES;
 import static uk.ac.ebi.aamtool.Helper.displayBlankLines;
 import static uk.ac.ebi.aamtool.Helper.getHeader;
 import static uk.ac.ebi.aamtool.Helper.printHelp;
