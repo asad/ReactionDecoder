@@ -99,20 +99,20 @@ public class ComplexCases extends MappingUtility {
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
 
-    /*
-     * Rhea 10069
-     */
-    @Test
-    public void Rhea10069() throws Exception {
-
-        String reactionID = "10069";
-        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-                .getSelectedSolution()
-                .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-    }
+//    /*
+//     * Rhea 10069
+//     */
+//    @Test
+//    public void Rhea10069() throws Exception {
+//
+//        String reactionID = "10069";
+//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+//                .getSelectedSolution()
+//                .getBondChangeCalculator()
+//                .getFormedCleavedWFingerprint();
+//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+//    }
 
 //    /*
 //     * Rhea 10069
