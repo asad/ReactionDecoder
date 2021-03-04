@@ -67,7 +67,7 @@ public class RXNMappingTest extends MappingUtility {
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         parseReactionSmiles.setID("TestReaction");
-        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles, false);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
@@ -87,12 +87,12 @@ public class RXNMappingTest extends MappingUtility {
      */
     @Test
     public void EC2_6_1_32() throws Exception {
-
+        //R02200 () L-Valine <=>  L-Isoleucine (C-N Rule)
         String reactionSM = "CC(C)C(N)C(=O)O.CCC(C)C(=O)C(=O)[O-]>>CCC(C)C(N)C(=O)O.CC(C)C(=O)C(=O)[O-]";
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         parseReactionSmiles.setID("EC2_6_1_32");
-        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles);
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSmiles, false);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
@@ -158,6 +158,7 @@ public class RXNMappingTest extends MappingUtility {
      * MIN, fp ID=R02007:Bond Cleaved and Formed (3) [C%C:2.0, C-C:2.0, C-H:4.0]
      *
      * BE 1374.0, Fragment 0
+     *
      * @BUG - beta phosphate should cut
      *
      * @throws Exception
@@ -1251,6 +1252,40 @@ public class RXNMappingTest extends MappingUtility {
     }
 
     /*
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea_10901() throws Exception {
+
+        String reactionID = "10901";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        //System.out.println("BC " + formedCleavedWFingerprint);
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea_20302() throws Exception {
+
+        String reactionID = "20302";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        //System.out.println("BC " + formedCleavedWFingerprint);
+        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /*
      * @25405	5.4.99.3 Rhea_25405
      * ID=25405:Bond Cleaved and Formed (1)
      * [C-C:2.0]
@@ -1669,6 +1704,29 @@ public class RXNMappingTest extends MappingUtility {
                 .getOrderChangesWFingerprint();
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
         assertEquals(2, orderChangesWFingerprint.getFeatureCount());
+    }
+
+    /*
+     * MIN, fp 
+     *  ID=R00045:Bond Cleaved and Formed (2)
+     *  [H-O:8.0, O=O:1.0]
+     * 
+     *  BE 494.0, Fragment 0
+     * keuekal bond changes mapping misplaced
+     *
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea10266() throws Exception {
+
+        String reactionID = "10266";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter streoChangesWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getStereoChangesWFingerprint();
+        assertEquals(1, streoChangesWFingerprint.getFeatureCount());
     }
 
 //    /**

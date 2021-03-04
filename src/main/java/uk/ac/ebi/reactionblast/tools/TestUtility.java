@@ -18,25 +18,11 @@ package uk.ac.ebi.reactionblast.tools;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-import static java.awt.Color.WHITE;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import static java.awt.RenderingHints.KEY_ANTIALIASING;
-import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
-import java.awt.image.BufferedImage;
-import static java.awt.image.BufferedImage.TYPE_INT_BGR;
-import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainerSet;
-import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -45,24 +31,11 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IElement;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.interfaces.IReactionSet;
-import org.openscience.cdk.layout.StructureDiagramGenerator;
-import static org.openscience.cdk.tools.CDKHydrogenAdder.getInstance;
-import org.openscience.cdk.tools.LonePairElectronChecker;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import uk.ac.ebi.reactionblast.graphics.direct.DirectMoleculeDrawer;
-import uk.ac.ebi.reactionblast.graphics.direct.layout.SingleMoleculeLayout;
-import uk.ac.ebi.reactionblast.graphics.direct.layout.ZoomToFitLayout;
-import uk.ac.ebi.reactionblast.mapping.blocks.BlockReactionCanoniser;
 import static uk.ac.ebi.reactionblast.mapping.helper.MappingHandler.cleanMapping;
-import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCDK;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.convertExplicitToImplicitHydrogens;
-import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 import static java.lang.String.valueOf;
-import static javax.imageio.ImageIO.write;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
@@ -84,78 +57,78 @@ public class TestUtility {
             = createLoggingTool(TestUtility.class);
     private static boolean DEBUG = false;
 
-    /**
-     *
-     * @param reaction
-     */
-    protected void setLonePairs(IReaction reaction) {
-        LonePairElectronChecker checker = new LonePairElectronChecker();
-        setLonePairs(reaction.getReactants(), checker);
-        setLonePairs(reaction.getProducts(), checker);
-    }
-
-    /**
-     *
-     * @param AtomContainerSet
-     * @param checker
-     */
-    protected void setLonePairs(IAtomContainerSet AtomContainerSet, LonePairElectronChecker checker) {
-        for (IAtomContainer atomContainer : AtomContainerSet.atomContainers()) {
-            try {
-                checker.saturate(atomContainer);
-            } catch (CDKException c) {
-                LOGGER.error(SEVERE, null, c);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param reaction
-     */
-    protected void detectAromaticity(IReaction reaction) {
-        detectAromaticity(reaction.getReactants());
-        detectAromaticity(reaction.getProducts());
-    }
-
-    /**
-     *
-     * @param molSet
-     */
-    protected void detectAromaticity(IAtomContainerSet molSet) {
-        for (IAtomContainer ac : molSet.atomContainers()) {
-            try {
-                aromatizeCDK(ac);
-            } catch (CDKException e) {
-                // TODO Auto-generated catch block
-                LOGGER.error(e);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param reaction
-     */
-    protected void setMappingIDs(IReaction reaction) {
-        int i = 0;
-        for (IMapping mapping : reaction.mappings()) {
-            IAtom a0 = (IAtom) mapping.getChemObject(0);
-            IAtom a1 = (IAtom) mapping.getChemObject(1);
-            Object mappingID = a0.getProperty(ATOM_ATOM_MAPPING);
-            //            Integer mappingID =
-            //                (Integer)a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
-            if (mappingID != null) {
-                a0.setID(valueOf(mappingID));
-                a1.setID(valueOf(mappingID));
-            } else {
-                a0.setID(valueOf(i));
-                a1.setID(valueOf(i));
-            }
-            i++;
-        }
-    }
-
+//    /**
+//     *
+//     * @param reaction
+//     */
+//    protected void setLonePairs(IReaction reaction) {
+//        LonePairElectronChecker checker = new LonePairElectronChecker();
+//        setLonePairs(reaction.getReactants(), checker);
+//        setLonePairs(reaction.getProducts(), checker);
+//    }
+//
+//    /**
+//     *
+//     * @param AtomContainerSet
+//     * @param checker
+//     */
+//    protected void setLonePairs(IAtomContainerSet AtomContainerSet, LonePairElectronChecker checker) {
+//        for (IAtomContainer atomContainer : AtomContainerSet.atomContainers()) {
+//            try {
+//                checker.saturate(atomContainer);
+//            } catch (CDKException c) {
+//                LOGGER.error(SEVERE, null, c);
+//            }
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param reaction
+//     */
+//    protected void detectAromaticity(IReaction reaction) {
+//        detectAromaticity(reaction.getReactants());
+//        detectAromaticity(reaction.getProducts());
+//    }
+//
+//    /**
+//     *
+//     * @param molSet
+//     */
+//    protected void detectAromaticity(IAtomContainerSet molSet) {
+//        for (IAtomContainer ac : molSet.atomContainers()) {
+//            try {
+//                aromatizeCDK(ac);
+//            } catch (CDKException e) {
+//                // TODO Auto-generated catch block
+//                LOGGER.error(e);
+//            }
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param reaction
+//     */
+//    protected void setMappingIDs(IReaction reaction) {
+//        int i = 0;
+//        for (IMapping mapping : reaction.mappings()) {
+//            IAtom a0 = (IAtom) mapping.getChemObject(0);
+//            IAtom a1 = (IAtom) mapping.getChemObject(1);
+//            Object mappingID = a0.getProperty(ATOM_ATOM_MAPPING);
+//            //            Integer mappingID =
+//            //                (Integer)a0.getProperty(CDKConstants.ATOM_ATOM_MAPPING);
+//            if (mappingID != null) {
+//                a0.setID(valueOf(mappingID));
+//                a1.setID(valueOf(mappingID));
+//            } else {
+//                a0.setID(valueOf(i));
+//                a1.setID(valueOf(i));
+//            }
+//            i++;
+//        }
+//    }
+//
     /**
      *
      * @param reaction
@@ -171,122 +144,123 @@ public class TestUtility {
             i++;
         }
     }
-
-    /**
-     *
-     * @param reaction
-     */
-    protected void addImplicitHydrogens(IReaction reaction) {
-        addImplicitHydrogens(reaction.getReactants());
-        addImplicitHydrogens(reaction.getProducts());
-    }
-
-    /**
-     *
-     * @param molSet
-     */
-    protected void addImplicitHydrogens(IAtomContainerSet molSet) {
-        for (IAtomContainer atomContainer : molSet.atomContainers()) {
-            addImplicitHydrogens(atomContainer);
-        }
-    }
-
-    /**
-     *
-     * @param atomContainer
-     */
-    protected void addImplicitHydrogens(IAtomContainer atomContainer) {
-        try {
-            getInstance(SilentChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
-        } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            LOGGER.error(SEVERE, null, e);
-        }
-    }
-
-    /**
-     *
-     * @param atomContainer
-     */
-    protected void typeAtoms(IAtomContainer atomContainer) {
-        try {
-            percieveAtomTypesAndConfigureAtoms(atomContainer);
-        } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            LOGGER.error(SEVERE, null, e);
-        }
-    }
-
-    /**
-     *
-     * @param reaction
-     * @return
-     */
-    protected IReaction canonise(IReaction reaction) {
-        ICanonicalReactionLabeller labeller = new BlockReactionCanoniser();
-        return labeller.getCanonicalReaction(reaction);
-    }
-
-    /**
-     *
-     * @param AtomContainer
-     * @return
-     */
-    protected IAtomContainer layout(IAtomContainer AtomContainer) {
-        try {
-            StructureDiagramGenerator sdg = new StructureDiagramGenerator();
-            sdg.setMolecule(AtomContainer, true);
-            sdg.generateCoordinates();
-            return sdg.getMolecule();
-        } catch (CDKException e) {
-            return AtomContainer;
-        }
-    }
-
-    /**
-     *
-     * @param width
-     * @param height
-     * @return
-     */
-    protected BufferedImage makeBlankImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
-        g.setColor(WHITE);
-        g.fillRect(0, 0, width, height);
-        return image;
-    }
-
-    /**
-     *
-     * @param molDrawer
-     * @param AtomContainer
-     * @param dirPath
-     * @param name
-     * @throws IOException
-     */
-    protected void draw(DirectMoleculeDrawer molDrawer, IAtomContainer AtomContainer,
-            String dirPath, String name) throws IOException {
-        int width = 700;
-        int height = 700;
-        SingleMoleculeLayout layout = new SingleMoleculeLayout(molDrawer.getParams());
-        layout.layout(AtomContainer, new Vector2d(width / 2, height / 2));
-        ZoomToFitLayout layout2 = new ZoomToFitLayout(molDrawer);
-        Image image = makeBlankImage(width, height);
-        Graphics2D g = (Graphics2D) image.getGraphics();
-//        if (molDrawer.getParams().useAntialias) {
-//            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-//                               RenderingHints.VALUE_ANTIALIAS_ON);
+//
+//    /**
+//     *
+//     * @param reaction
+//     */
+//    protected void addImplicitHydrogens(IReaction reaction) {
+//        addImplicitHydrogens(reaction.getReactants());
+//        addImplicitHydrogens(reaction.getProducts());
+//    }
+//
+//    /**
+//     *
+//     * @param molSet
+//     */
+//    protected void addImplicitHydrogens(IAtomContainerSet molSet) {
+//        for (IAtomContainer atomContainer : molSet.atomContainers()) {
+//            addImplicitHydrogens(atomContainer);
 //        }
-//        molDrawer.drawAtomContainer(AtomContainer, g);
-        layout2.layout(AtomContainer, new Dimension(width, height), g);
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
-    }
+//    }
+//
+//    /**
+//     *
+//     * @param atomContainer
+//     */
+//    protected void addImplicitHydrogens(IAtomContainer atomContainer) {
+//        try {
+//            getInstance(SilentChemObjectBuilder.getInstance()).addImplicitHydrogens(atomContainer);
+//        } catch (CDKException e) {
+//            // TODO Auto-generated catch block
+//            LOGGER.error(SEVERE, null, e);
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param atomContainer
+//     */
+//    protected void typeAtoms(IAtomContainer atomContainer) {
+//        try {
+//            percieveAtomTypesAndConfigureAtoms(atomContainer);
+//        } catch (CDKException e) {
+//            // TODO Auto-generated catch block
+//            LOGGER.error(SEVERE, null, e);
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param reaction
+//     * @return
+//     */
+//    protected IReaction canonise(IReaction reaction) {
+//        ICanonicalReactionLabeller labeller = new BlockReactionCanoniser();
+//        return labeller.getCanonicalReaction(reaction);
+//    }
+//
+//    /**
+//     *
+//     * @param AtomContainer
+//     * @return
+//     */
+//    protected IAtomContainer layout(IAtomContainer AtomContainer) {
+//        try {
+//            StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+//            sdg.setMolecule(AtomContainer, true);
+//            sdg.generateCoordinates();
+//            return sdg.getMolecule();
+//        } catch (CDKException e) {
+//            return AtomContainer;
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param width
+//     * @param height
+//     * @return
+//     */
+//    protected BufferedImage makeBlankImage(int width, int height) {
+//        BufferedImage image = new BufferedImage(width, height, TYPE_INT_BGR);
+//        Graphics2D g = (Graphics2D) image.getGraphics();
+//        g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
+//        g.setColor(WHITE);
+//        g.fillRect(0, 0, width, height);
+//        return image;
+//    }
+//
+//    /**
+//     *
+//     * @param molDrawer
+//     * @param AtomContainer
+//     * @param dirPath
+//     * @param name
+//     * @throws IOException
+//     */
+//    protected void draw(DirectMoleculeDrawer molDrawer, IAtomContainer AtomContainer,
+//            String dirPath, String name) throws IOException {
+//        int width = 700;
+//        int height = 700;
+//        SingleMoleculeLayout layout = new SingleMoleculeLayout(molDrawer.getParams());
+//        layout.layout(AtomContainer, new Vector2d(width / 2, height / 2));
+//        ZoomToFitLayout layout2 = new ZoomToFitLayout(molDrawer);
+//        Image image = makeBlankImage(width, height);
+//        Graphics2D g = (Graphics2D) image.getGraphics();
+////        if (molDrawer.getParams().useAntialias) {
+////            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+////                               RenderingHints.VALUE_ANTIALIAS_ON);
+////        }
+////        molDrawer.drawAtomContainer(AtomContainer, g);
+//        layout2.layout(AtomContainer, new Dimension(width, height), g);
+//        File dir = new File(dirPath);
+//        if (!dir.exists()) {
+//            dir.mkdir();
+//        }
+//        write((RenderedImage) image, "PNG", new File(dir, name + ".png"));
+//    }
+//
 
     private InputStream getFileWithUtil(String fileName) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
@@ -380,72 +354,72 @@ public class TestUtility {
             }
         }
     }
-
-    /**
-     *
-     * @param reactionSet
-     * @param remap override existing mappings
-     * @return
-     * @throws FileNotFoundException
-     * @throws Exception
-     */
-    protected List<IReaction> mapReactions(IReactionSet reactionSet, boolean remap) throws FileNotFoundException, Exception {
-        List<IReaction> mappedReactionList = new ArrayList<>();
-        for (IReaction cdkReaction : reactionSet.reactions()) {
-
-            IReaction mappedReaction = mapReaction(cdkReaction, remap);
-            /*
-            Add mapped reaction to the list
-             */ mappedReactionList.add(mappedReaction);
-        }
-        return mappedReactionList;
-    }
-
-    /**
-     *
-     * @param cdkReaction reaction for be mapped
-     * @param remap override existing mappings
-     * @return
-     * @throws FileNotFoundException
-     * @throws Exception
-     */
-    protected IReaction mapReaction(IReaction cdkReaction, boolean remap) throws FileNotFoundException, Exception {
-
-        String reactionName = cdkReaction.getID();
-        IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
-        /*
-        * RMT for the reaction mapping
-         */
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, true, new StandardizeReaction());
-
-        /*
-        Reaction with hydrogens mapped but unchanged hydrogens suppressed
-         */
-        //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
-        /*
-        Reaction with hydrogens mapped
-         */
-        IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
-
-        /*
-        optional step: Renumber the atoms as per mapping
-         */
-        renumberMappingIDs(mappedReaction);
-
-        return mappedReaction;
-    }
-
-    /**
-     *
-     * @param reaction
-     * @param reactionName
-     * @return
-     * @throws FileNotFoundException
-     */
-    protected IReaction cleanReaction(IReaction reaction, String reactionName) throws Exception {
-        //write code to fix reactions (Atom type , hydrogens etc.)
-        //TO DO
-        reaction.setID(reactionName);
-        return reaction;
-    }
+//
+////    /**
+////     *
+////     * @param reactionSet
+////     * @param remap override existing mappings
+////     * @return
+////     * @throws FileNotFoundException
+////     * @throws Exception
+////     */
+////    protected List<IReaction> mapReactions(IReactionSet reactionSet, boolean remap) throws FileNotFoundException, Exception {
+////        List<IReaction> mappedReactionList = new ArrayList<>();
+////        for (IReaction cdkReaction : reactionSet.reactions()) {
+////
+////            IReaction mappedReaction = mapReaction(cdkReaction, remap);
+////            /*
+////            Add mapped reaction to the list
+////             */ mappedReactionList.add(mappedReaction);
+////        }
+////        return mappedReactionList;
+////    }
+//
+////    /**
+////     *
+////     * @param cdkReaction reaction for be mapped
+////     * @param remap override existing mappings
+////     * @return
+////     * @throws FileNotFoundException
+////     * @throws Exception
+////     */
+////    protected IReaction mapReaction(IReaction cdkReaction, boolean remap) throws FileNotFoundException, Exception {
+////
+////        String reactionName = cdkReaction.getID();
+////        IReaction cleanReaction = cleanReaction(cdkReaction, reactionName);
+////        /*
+////        * RMT for the reaction mapping
+////         */
+////        ReactionMechanismTool rmt = new ReactionMechanismTool(cleanReaction, remap, true, false, true, false, new StandardizeReaction());
+////
+////        /*
+////        Reaction with hydrogens mapped but unchanged hydrogens suppressed
+////         */
+////        //IReaction reactionWithCompressUnChangedHydrogens = rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
+////        /*
+////        Reaction with hydrogens mapped
+////         */
+////        IReaction mappedReaction = rmt.getSelectedSolution().getReaction();
+////
+////        /*
+////        optional step: Renumber the atoms as per mapping
+////         */
+////        renumberMappingIDs(mappedReaction);
+////
+////        return mappedReaction;
+////    }
+//
+//    /**
+//     *
+//     * @param reaction
+//     * @param reactionName
+//     * @return
+//     * @throws FileNotFoundException
+//     */
+//    protected IReaction cleanReaction(IReaction reaction, String reactionName) throws Exception {
+//        //write code to fix reactions (Atom type , hydrogens etc.)
+//        //TO DO
+//        reaction.setID(reactionName);
+//        return reaction;
+//    }
 }

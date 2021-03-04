@@ -51,7 +51,7 @@ public class ReArrangments extends MappingUtility {
     public void MolecularRearrangments() throws Exception {
 
         String reactionID = "unbalanced_rearrangement_reactions";
-        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR, false);
         IPatternFingerprinter formedCleavedWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()

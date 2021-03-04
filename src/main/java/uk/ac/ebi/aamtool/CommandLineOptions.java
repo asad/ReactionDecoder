@@ -53,6 +53,7 @@ public class CommandLineOptions {
         optionsAAM.addOption("p", "prefix", true, "Job prefix");
         optionsAAM.addOption("f", "formatO", true, "Output format (TEXT/XML)");
         optionsAAM.addOption("c", "complexMode", false, "Use Rings etc. bit time comsuming");
+        optionsAAM.addOption("b", "acceptNoChange", false, "Accept Transporter Reactions (no bond change)");
 
         return optionsAAM;
     }

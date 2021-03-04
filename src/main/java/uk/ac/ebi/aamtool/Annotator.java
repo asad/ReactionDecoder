@@ -113,10 +113,12 @@ public class Annotator extends Helper {
      * @param cdkReaction
      * @param reMap remap the reaction
      * @param complexMappingFlag complex mapping ..ring system etc.
+     * @param accept_no_change accept transporter
      * @return
      * @throws Exception
      */
-    protected static ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction, boolean reMap, boolean complexMappingFlag) throws Exception {
+    protected static ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction,
+            boolean reMap, boolean complexMappingFlag, boolean accept_no_change) throws Exception {
         ReactionMechanismTool rmt;
         /*
          Check if the reaction is already mapped
@@ -126,7 +128,8 @@ public class Annotator extends Helper {
         } else {
             cdkReaction.setFlag(MAPPED, false);
         }
-        rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false, complexMappingFlag, new StandardizeReaction());
+        rmt = new ReactionMechanismTool(cdkReaction, reMap, true, false,
+                complexMappingFlag, accept_no_change, new StandardizeReaction());
 //        IPatternFingerprinter formedCleavedWFingerprint = rmt
 //                .getSelectedSolution()
 //                .getBondChangeCalculator()

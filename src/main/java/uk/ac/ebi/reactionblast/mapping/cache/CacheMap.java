@@ -11,17 +11,19 @@ import java.util.Map.Entry;
 /**
  *
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
+ * @param <K>
+ * @param <V>
  */
 public class CacheMap<K, V> implements Cache<K, V> {
-    
-    private long timeToLive;
-    private HashMap<K, V> cacheMap;
-    
+
+    private final long timeToLive;
+    private final HashMap<K, V> cacheMap;
+
     protected class CrunchifyCacheObject {
-        
+
         public long lastAccessed = System.currentTimeMillis();
         public String value;
-        
+
         protected CrunchifyCacheObject(String value) {
             this.value = value;
         }
@@ -44,27 +46,29 @@ public class CacheMap<K, V> implements Cache<K, V> {
      */
     public CacheMap(long timeToLive, final long timeInterval, int max) {
         this.timeToLive = timeToLive * 2000;
-        
+
         cacheMap = new HashMap<>(max);
-        
+
         if (timeToLive > 0 && timeInterval > 0) {
-            
-            Thread t = new Thread(() -> {
+
+            Thread t;
+            t = new Thread(() -> {
                 while (true) {
                     try {
                         Thread.sleep(timeInterval * 1000);
                     } catch (InterruptedException ex) {
                     }
-                    
+
                 }
             });
-            
+
             t.setDaemon(true);
             t.start();
         }
     }
 
     // PUT method
+    @Override
     public void put(K key, V value) {
         synchronized (cacheMap) {
             cacheMap.put(key, value);
@@ -73,10 +77,11 @@ public class CacheMap<K, V> implements Cache<K, V> {
 
     // GET method
     @SuppressWarnings("unchecked")
+    @Override
     public V get(K key) {
         synchronized (cacheMap) {
             CrunchifyCacheObject c = (CrunchifyCacheObject) cacheMap.get(key);
-            
+
             if (c == null) {
                 return null;
             } else {
@@ -102,16 +107,16 @@ public class CacheMap<K, V> implements Cache<K, V> {
 
     // CLEANUP method
     public void cleanup() {
-        
+
         long now = System.currentTimeMillis();
         ArrayList<String> deleteKey = null;
-        
+
         synchronized (cacheMap) {
             Iterator<?> itr = cacheMap.entrySet().iterator();
-            
+
             deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
             CrunchifyCacheObject c = null;
-            
+
             while (itr.hasNext()) {
                 String key = (String) itr.next();
                 c = (CrunchifyCacheObject) ((Entry<?, ?>) itr).getValue();
@@ -120,12 +125,12 @@ public class CacheMap<K, V> implements Cache<K, V> {
                 }
             }
         }
-        
+
         for (String key : deleteKey) {
             synchronized (cacheMap) {
                 cacheMap.remove(key);
             }
-            
+
             Thread.yield();
         }
     }

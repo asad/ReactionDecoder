@@ -80,6 +80,7 @@ public class ReactionMechanismTool implements Serializable {
     private static final long serialVersionUID = 07342630505L;
     private MappingSolution selectedMapping;
     private Collection<MappingSolution> allSolutions;
+    private final boolean accept_no_change;
 
     /**
      *
@@ -91,8 +92,46 @@ public class ReactionMechanismTool implements Serializable {
      * rearrangement
      * @throws Exception
      */
-    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping, boolean generate2D, boolean generate3D, boolean checkComplex) throws Exception {
-        this(reaction, forcedMapping, generate2D, generate3D, checkComplex, new StandardizeReaction());
+    public ReactionMechanismTool(IReaction reaction,
+            boolean forcedMapping,
+            boolean generate2D,
+            boolean generate3D,
+            boolean checkComplex) throws Exception {
+        this(reaction,
+                forcedMapping,
+                generate2D,
+                generate3D,
+                checkComplex,
+                false,
+                new StandardizeReaction());
+    }
+
+    /**
+     *
+     * @param reaction
+     * @param forcedMapping force re-mapping of the reactions
+     * @param generate2D deduce stereo on 2D
+     * @param generate3D deduce stereo on 3D
+     *
+     * @param checkComplex check complex mapping like rings systems
+     * @param accept_no_change accept no bond change, transporter reactions
+     * rearrangement
+     * @throws Exception
+     */
+    public ReactionMechanismTool(IReaction reaction,
+            boolean forcedMapping,
+            boolean generate2D,
+            boolean generate3D,
+            boolean checkComplex,
+            boolean accept_no_change
+    ) throws Exception {
+        this(reaction,
+                forcedMapping,
+                generate2D,
+                generate3D,
+                checkComplex,
+                accept_no_change,
+                new StandardizeReaction());
     }
 
     /**
@@ -102,15 +141,22 @@ public class ReactionMechanismTool implements Serializable {
      * @param generate2D deduce stereo on 2D
      * @param generate3D deduce stereo on 3D
      * @param checkComplex check complex mapping like rings systems
+     * @param accept_no_change accept no bond change, transporter reactions
      * @param standardizer standardize reaction
      * @throws CDKException
      * @throws AssertionError
      * @throws Exception
      */
-    public ReactionMechanismTool(IReaction reaction, boolean forcedMapping,
-            boolean generate2D, boolean generate3D, boolean checkComplex, IStandardizer standardizer) throws CDKException, AssertionError, Exception {
+    public ReactionMechanismTool(IReaction reaction,
+            boolean forcedMapping,
+            boolean generate2D,
+            boolean generate3D,
+            boolean checkComplex,
+            boolean accept_no_change,
+            IStandardizer standardizer) throws CDKException, AssertionError, Exception {
         this.allSolutions = synchronizedList(new ArrayList<>());
         this.selectedMapping = null;
+        this.accept_no_change = accept_no_change;//transporter reactions
 
         /*
          * IMP: Set all null hydrogen counts to 0, else CDKToBeam cries out loudly
@@ -159,7 +205,8 @@ public class ReactionMechanismTool implements Serializable {
                         map.getChemObject(1).setFlag(MAPPED, true);
                     }
                 }
-                boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED, reaction, generate2D, generate3D);
+                boolean selected = isMappingSolutionAcceptable(null, USER_DEFINED,
+                        reaction, generate2D, generate3D);
                 LOGGER.info("is solution: " + USER_DEFINED + " selected: " + selected);
             } catch (Exception e) {
                 if (DEBUG) {
@@ -218,7 +265,11 @@ public class ReactionMechanismTool implements Serializable {
                     if (DEBUG) {
                         System.out.println("===isMappingSolutionAcceptable===");
                     }
-                    selected = isMappingSolutionAcceptable(solutions.get(algorithm), algorithm, reactor.getReactionWithAtomAtomMapping(), generate2D, generate3D);
+                    selected = isMappingSolutionAcceptable(solutions.get(algorithm),
+                            algorithm,
+                            reactor.getReactionWithAtomAtomMapping(),
+                            generate2D,
+                            generate3D);
                     if (DEBUG) {
                         System.out.println("is solution: " + algorithm + " selected: " + selected);
                     }
@@ -315,7 +366,8 @@ public class ReactionMechanismTool implements Serializable {
             IMappingAlgorithm ma,
             IReaction reaction,
             boolean generate2D,
-            boolean generate3D) throws Exception {
+            boolean generate3D
+    ) throws Exception {
         if (reactor.getMappingCount() > 500 & reactor.getMappingCount() < 1000) {
             System.err.println("wolla...are after something big?...so many atoms to compute bond changes!");
             System.err.println("...Let me try..hold on your horses!");
@@ -353,7 +405,8 @@ public class ReactionMechanismTool implements Serializable {
                         stereoChanges,
                         totalSmallestFragmentCount,
                         localScore,
-                        bcc.getEnergyDelta());
+                        bcc.getEnergyDelta()
+                );
 
                 chosen = true;
                 mappingSolution.setChosen(chosen);
@@ -404,9 +457,10 @@ public class ReactionMechanismTool implements Serializable {
                     throw new CDKException("Model is pointing to NULL");
                 }
                 LOGGER.info("MA: " + ma.description());
-                if (isChangeFeasible(mappingSolution)) {
-                    chosen = true;
-                    mappingSolution.setChosen(chosen);
+                boolean changeFeasible = isChangeFeasible(mappingSolution);
+                if (changeFeasible) {
+                    chosen = changeFeasible;
+                    mappingSolution.setChosen(changeFeasible);
                     this.selectedMapping = mappingSolution;
                 }
                 this.allSolutions.add(mappingSolution);
@@ -436,6 +490,7 @@ public class ReactionMechanismTool implements Serializable {
 
             if (this.selectedMapping != null) {
                 out.println(NEW_LINE + " selectedMapping.getAlgorithmID().description() " + selectedMapping.getAlgorithmID().description());
+                out.println(" selectedMapping.getTotalStereoChanges() " + selectedMapping.getTotalStereoChanges());
                 out.println(" selectedMapping.getTotalBondChanges() " + selectedMapping.getTotalBondChanges());
                 out.println(" selectedMapping.getSmallestFragmentCount() " + selectedMapping.getSmallestFragmentCount());
                 out.println(" selectedMapping.getBondEnergyChange() " + selectedMapping.getBondEnergySum());
@@ -444,6 +499,7 @@ public class ReactionMechanismTool implements Serializable {
                 out.println(" Total Carbon Bond Changes " + selectedMapping.getTotalCarbonBondChanges());
             }
             out.println(NEW_LINE + " ms.getAlgorithmID().description() " + ms.getAlgorithmID().description());
+            out.println(" ms.getTotalStereoChanges() " + ms.getTotalStereoChanges());
             out.println(" ms.getTotalBondChanges() " + ms.getTotalBondChanges());
             out.println(" ms.getSmallestFragmentCount() " + ms.getSmallestFragmentCount());
             out.println(" ms.getBondEnergyChange() " + ms.getBondEnergySum());
@@ -453,8 +509,21 @@ public class ReactionMechanismTool implements Serializable {
         }
 
         /*
-        This is to skip reaction where the no change is detected.
-        Example: R02996
+         * only transporter reactions where we expect no bond change
+         */
+        if (this.selectedMapping != null
+                && this.accept_no_change == true
+                && ms.getTotalBondChanges() == 0
+                && ms.getTotalStereoChanges() == 0) {
+            if (DEBUG) {
+                out.println("CASE: Transporter");
+            }
+            return true;
+        }
+
+        /*
+         * This is to skip reaction where the no change is detected.
+         * Example: R02996
          */
         if (this.selectedMapping != null
                 && ms.getTotalBondChanges() == 0
@@ -605,7 +674,6 @@ public class ReactionMechanismTool implements Serializable {
             }
             return true;
         }
-
         if (DEBUG) {
             out.println("CASE: FAILED");
         }

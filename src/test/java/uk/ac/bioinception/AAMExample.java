@@ -90,8 +90,15 @@ public class AAMExample {
         boolean generate2D = true;//2D perception of the stereo centers
         boolean generate3D = false;//2D perception of the stereo centers
         boolean complexMapping = true;//Rings
+        boolean accept_no_change = false;//accept no change
         StandardizeReaction standardizeReaction = new StandardizeReaction(); //Standardize the reaction
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, complexMapping, standardizeReaction);
+        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction,
+                forceMapping,
+                generate2D,
+                generate3D,
+                complexMapping,
+                accept_no_change,
+                standardizeReaction);
         MappingSolution s = rmt.getSelectedSolution();//Fetch the AAM Solution
         IReaction reaction = s.getReaction();//Fetch Mapped Reaction
         return reaction;

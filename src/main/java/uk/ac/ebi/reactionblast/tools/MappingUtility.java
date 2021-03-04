@@ -27,15 +27,22 @@ import java.io.IOException;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import java.util.Map;
+import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static javax.imageio.ImageIO.write;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
+import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
 import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
@@ -127,7 +134,7 @@ public class MappingUtility extends TestUtility {
         try {
             ReactionMechanismTool rmt = new ReactionMechanismTool(
                     //                    reaction, true, true, true, new CDKReactionStandardizer());
-                    reaction, true, false, false, true, new StandardizeReaction());
+                    reaction, true, false, false, true, false, new StandardizeReaction());
             return rmt.getSelectedSolution().getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
         } catch (Exception e) {
             LOGGER.error(SEVERE, null, e);
@@ -154,15 +161,20 @@ public class MappingUtility extends TestUtility {
         write((RenderedImage) image, "PNG", outfile);
     }
 
+    public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
+        return testReactions(reactionID, directory, false);
+    }
+
     /**
      *
      * @param reactionID
      * @param directory
+     * @param accept_no_change
      * @return
      * @throws FileNotFoundException
      * @throws Exception
      */
-    public ReactionMechanismTool testReactions(String reactionID, String directory) throws FileNotFoundException, Exception {
+    public ReactionMechanismTool testReactions(String reactionID, String directory, boolean accept_no_change) throws FileNotFoundException, Exception {
         IReaction cdkReaction = null;
         try {
 //            System.out.println("Mapping Reaction " + reactionID);
@@ -183,7 +195,7 @@ public class MappingUtility extends TestUtility {
             } catch (Exception e) {
                 LOGGER.error(SEVERE, NEW_LINE, " Sorry- failed to create reaction smiles: ", e.getMessage());
             }
-            ReactionMechanismTool annotation = getAnnotation(cdkReaction);
+            ReactionMechanismTool annotation = getAnnotation(cdkReaction, accept_no_change);
 //            MappingSolution s = annotation.getSelectedSolution();
 //            SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
 //            System.out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
@@ -201,13 +213,13 @@ public class MappingUtility extends TestUtility {
      * @throws AssertionError
      * @throws Exception
      */
-    public ReactionMechanismTool getAnnotation(IReaction cdkReaction) throws AssertionError, Exception {
+    public ReactionMechanismTool getAnnotation(IReaction cdkReaction, boolean accept_no_change) throws AssertionError, Exception {
         /*
          RMT for the reaction mapping
          */
         ReactionMechanismTool rmt = null;
         try {
-            rmt = new ReactionMechanismTool(cdkReaction, true, true, false, true, new StandardizeReaction());
+            rmt = new ReactionMechanismTool(cdkReaction, true, true, false, true, accept_no_change, new StandardizeReaction());
             MappingSolution s = rmt.getSelectedSolution();
 
 //            out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
@@ -317,5 +329,72 @@ public class MappingUtility extends TestUtility {
         MappingSolution s = rmt.getSelectedSolution();
         new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
         return s.getBondChangeCalculator();
+    }
+
+    /**
+     *
+     * @param ref_reaction
+     * @return
+     * @throws CDKException
+     */
+    public static IReaction convertRoundTripRXNSMILES(IReaction ref_reaction) throws CDKException {
+        final SmilesGenerator sg = new SmilesGenerator(
+                SmiFlavor.AtomAtomMap
+                | SmiFlavor.UseAromaticSymbols
+                | SmiFlavor.Stereo);
+        String createSmilesFromReaction = sg.create(ref_reaction);
+        final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(createSmilesFromReaction);
+        parseReactionSmiles.setID(ref_reaction.getID());
+        for (int i = 0; i < ref_reaction.getReactantCount(); i++) {
+            IAtomContainer atomContainer = parseReactionSmiles.getReactants().getAtomContainer(i);
+            String id = ref_reaction.getReactants().getAtomContainer(i).getID();
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            atomContainer.setID(id);
+        }
+        for (int i = 0; i < ref_reaction.getProductCount(); i++) {
+            IAtomContainer atomContainer = parseReactionSmiles.getProducts().getAtomContainer(i);
+            String id = ref_reaction.getProducts().getAtomContainer(i).getID();
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
+            atomContainer.setID(id);
+        }
+        return parseReactionSmiles;
+    }
+
+    /**
+     *
+     * @param reactionSmiles
+     * @return
+     */
+    public static IReaction parseReactionSMILES(String reactionSmiles) {
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        String[] smiles = reactionSmiles.split("\\s+");
+        IReaction reaction = null;
+        int smilesIndex = 1;
+        for (String s : smiles) {
+            try {
+                IReaction parseReactionSmile = sp.parseReactionSmiles(s);
+                try {
+                    parseReactionSmile = convertRoundTripRXNSMILES(parseReactionSmile);
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, NEW_LINE, " Sorry - error in Configuring reaction smiles: ", e.getMessage());
+                }
+                try {
+                    LOGGER.info(INFO, "Annotating Reaction " + "smiles");
+                    if (smiles.length > 1) {
+                        parseReactionSmile.setID("smiles_" + smilesIndex);
+                    } else {
+                        parseReactionSmile.setID("smiles");
+                    }
+                    reaction = parseReactionSmile;
+                } catch (Exception ex) {
+                    LOGGER.error(SEVERE, NEW_LINE, ex);
+                }
+            } catch (InvalidSmilesException ex) {
+                LOGGER.error(SEVERE, NEW_LINE, ex);
+            }
+            smilesIndex++;
+        }
+        return reaction;
     }
 }
