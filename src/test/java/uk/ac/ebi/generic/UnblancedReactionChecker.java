@@ -36,14 +36,14 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import uk.ac.ebi.reactionblast.tools.TestUtility;
+import uk.ac.ebi.reactionblast.tools.MappingUtility;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-public class UnblancedReactionChecker extends TestUtility {
+public class UnblancedReactionChecker extends MappingUtility {
 
     private static final boolean DEBUG = false;
     private static final File DIR = new File(RHEA_RXN_DIR);
