@@ -275,6 +275,13 @@ Changes (07/07/2020)
 a) BioInception's mapping algorithm patch added
 
 -----------------------
+Changes (05/03/2021)
+-----------------------
+a) -b option for transporter reactions (no bond change)
+b) cdk-2.4-SNAPSHOT.jar added
+c) clean up
+
+-----------------------
 TO DO
 -----------------------
 a) CDK to handle missing atom types like Fe, Co etc.
