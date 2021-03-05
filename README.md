@@ -120,10 +120,10 @@ Sub-commands
   java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
-`Perform AAM` for Transporters (accept mapping with no bond changes -b)
+`Perform AAM` for Transporters
 -------------
 
-`AAM using SMILES`
+`AAM using SMILES` (accept mapping with no bond changes -b)
   
   ```
   java -jar ReactionDecoder.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
