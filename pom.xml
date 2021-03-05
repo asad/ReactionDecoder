@@ -352,7 +352,7 @@
             </properties>
         </profile>
     </profiles>
-    <name>Reaction Decoder Tool</name>
+    <name>ReactionDecoderTool</name>
     <build>
         <plugins>
             <plugin>
