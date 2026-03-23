@@ -72,6 +72,7 @@ import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.Selector;
 final class GameTheoryMixture extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
+    private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 1808979786969868698L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMixture.class);
     private final List<String> eductList;
@@ -149,10 +150,9 @@ final class GameTheoryMixture extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
-        int maxIterations = 100;
         int iteration = 0;
         boolean continueMapping = true;
-        while (continueMapping && iteration < maxIterations) {
+        while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             if (DEBUG) {
                 printMatrixAtomContainer(mh, eductList, productList);
                 LOGGER.debug("**********Orignal Matrix**************");

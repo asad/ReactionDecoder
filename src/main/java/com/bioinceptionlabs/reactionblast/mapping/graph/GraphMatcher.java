@@ -61,6 +61,8 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
+    private static final int MAX_MCS_THREADS = 8;
+    private static final int LARGE_JOB_THRESHOLD = 1000;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
 
@@ -153,8 +155,8 @@ public class GraphMatcher extends Debugger {
                 threadsAvailable = jobMap.size();
             }
             
-            if (threadsAvailable > 8) {
-                threadsAvailable = 8;
+            if (threadsAvailable > MAX_MCS_THREADS) {
+                threadsAvailable = MAX_MCS_THREADS;
             }
 
             LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
@@ -286,7 +288,7 @@ public class GraphMatcher extends Debugger {
             /*
              * Choose unique combination to run
              */
-            if (listOfJobs.size() > 1000) {
+            if (listOfJobs.size() > LARGE_JOB_THRESHOLD) {
                 LOGGER.warn("holy moly...thats alot of molecules to compare...time for a coffee break!");
             }
             if (!listOfJobs.isEmpty()) {

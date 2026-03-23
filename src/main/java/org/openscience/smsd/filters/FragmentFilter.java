@@ -43,6 +43,8 @@ import org.openscience.smsd.AtomAtomMapping;
  */
 public final class FragmentFilter extends Sotter implements IChemicalFilter<Integer> {
 
+    static final int MAX_FRAGMENT_SCORE = 9999;
+
     private final List<Integer> fragmentSize;
     private final ChemicalFilters chemfilter;
 
@@ -56,7 +58,7 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
             Map<Integer, AtomAtomMapping> allFragmentAtomMCS,
             Map<Integer, Integer> fragmentScoreMap) throws CDKException {
 
-        int _minFragmentScore = 9999;
+        int _minFragmentScore = MAX_FRAGMENT_SCORE;
         for (Integer key : allFragmentAtomMCS.keySet()) {
             AtomAtomMapping mcsAtom = allFragmentAtomMCS.get(key);
             int fragmentCount = getMappedMoleculeFragmentSize(mcsAtom);

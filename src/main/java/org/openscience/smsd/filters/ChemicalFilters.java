@@ -120,7 +120,7 @@ public class ChemicalFilters extends BaseFilter {
             int minFragmentScore = fragmentFilter.sortResults(allFragmentAtomMCS, fragmentScoreMap);
 
             boolean flag = false;
-            if (minFragmentScore < 9999) {
+            if (minFragmentScore < FragmentFilter.MAX_FRAGMENT_SCORE) {
                 flag = true;
                 clear();
             }

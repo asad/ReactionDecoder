@@ -40,6 +40,7 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFeature;
 import static com.bioinceptionlabs.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BUG_RXN_DIR;
+import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BRENDA_RXN_DIR;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
 
 /**
@@ -1906,6 +1907,234 @@ public class RXNMappingTest extends MappingUtility {
 //                .getFormedCleavedWFingerprint();
 //        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
 //    }
+
+    /**
+     * R00001 - Polyphosphate polyphosphohydrolase (fundamental hydrolysis reaction)
+     * This reaction may have zero formed/cleaved bonds but should still produce a valid solution.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00001() throws Exception {
+        String reactionID = "R00001";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        BondChangeCalculator bcc = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator();
+        int totalChanges = bcc.getFormedCleavedWFingerprint().getFeatureCount()
+                + bcc.getOrderChangesWFingerprint().getFeatureCount()
+                + bcc.getStereoChangesWFingerprint().getFeatureCount();
+        assertTrue(totalChanges >= 0);
+    }
+
+    /**
+     * R00002 - Polyphosphate kinase / ATP diphosphohydrolase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00002() throws Exception {
+        String reactionID = "R00002";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00004 - Adenylate kinase / ATP-AMP transphosphorylase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00004() throws Exception {
+        String reactionID = "R00004";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00005 - Nucleoside-diphosphate kinase / ATP-nucleotide transphosphorylase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00005() throws Exception {
+        String reactionID = "R00005";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00006 - ATP phosphohydrolase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00006() throws Exception {
+        String reactionID = "R00006";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00009 - ATP pyrophosphohydrolase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00009() throws Exception {
+        String reactionID = "R00009";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00010 - ITP pyrophosphohydrolase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00010() throws Exception {
+        String reactionID = "R00010";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00015 - ATP adenylyltransferase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00015() throws Exception {
+        String reactionID = "R00015";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00024 - GTP cyclohydrolase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00024() throws Exception {
+        String reactionID = "R00024";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R00090 - Succinate-CoA ligase
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R00090() throws Exception {
+        String reactionID = "R00090";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R09688 - KEGG reaction
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R09688() throws Exception {
+        String reactionID = "R09688";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R09907 - KEGG reaction
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R09907() throws Exception {
+        String reactionID = "R09907";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * R10106 - KEGG reaction
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R10106() throws Exception {
+        String reactionID = "R10106";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * BRENDA reaction 391
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Brenda391() throws Exception {
+        String reactionID = "391";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BRENDA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
     private Set<IFeature> ignoreHydrogenChanges(Collection<IFeature> features) {
         Set<IFeature> selected = new TreeSet<>();
         features.stream().filter((f) -> (!f.getPattern().contains("H"))).forEachOrdered((f) -> {

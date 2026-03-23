@@ -75,6 +75,7 @@ import static java.util.Collections.synchronizedList;
 final class GameTheoryRings extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
+    private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 0x152ec264bc2L;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(GameTheoryRings.class);
@@ -159,10 +160,9 @@ final class GameTheoryRings extends BaseGameTheory {
     }
 
     private synchronized void GenerateMapping() throws Exception {
-        int maxIterations = 100;
         int iteration = 0;
         boolean continueMapping = true;
-        while (continueMapping && iteration < maxIterations) {
+        while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             LOGGER.debug("GenerateMapping");
             if (DEBUG) {
                 LOGGER.debug("**********Orignal Matrix**************");

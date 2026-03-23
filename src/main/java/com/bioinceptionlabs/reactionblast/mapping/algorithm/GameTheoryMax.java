@@ -74,6 +74,7 @@ import com.bioinceptionlabs.reactionblast.tools.labelling.SmilesMoleculeLabeller
 final class GameTheoryMax extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
+    private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 1887868678797L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMax.class);
     private final List<String> eductList;
@@ -121,10 +122,9 @@ final class GameTheoryMax extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
-        int maxIterations = 100;
         int iteration = 0;
         boolean continueMapping = true;
-        while (continueMapping && iteration < maxIterations) {
+        while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             this.counter++;
 
             if (DEBUG) {
