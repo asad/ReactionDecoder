@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -201,12 +202,7 @@ public class CallableAtomMappingTool implements Serializable {
                 putSolution(chosen.getAlgorithm(), chosen);
             }
             executor.shutdown();
-            /*
-             Wait until all threads are finish
-             *
-             */
-            while (!executor.isTerminated()) {
-            }
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             LOGGER.debug("======DONE CallableAtomMappingTool=======");
             gc();
         } catch (InterruptedException | ExecutionException e) {

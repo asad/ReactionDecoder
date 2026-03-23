@@ -186,58 +186,33 @@ public class Annotator extends Helper {
         File rcMatrix = new File(rootPath, jobID + "_Reaction_Centre" + ".mat");
         File stMatrix = new File(rootPath, jobID + "_Structure_Similarity" + ".mat");
 
-        FileWriter writerBC = new FileWriter(bcMatrix);
-        BufferedWriter bufferedWriterBC = new BufferedWriter(writerBC);
-
-        FileWriter writerRC = new FileWriter(rcMatrix);
-        BufferedWriter bufferedWriterRC = new BufferedWriter(writerRC);
-
-        FileWriter writerST = new FileWriter(stMatrix);
-        BufferedWriter bufferedWriterST = new BufferedWriter(writerST);
-
-        bufferedWriterBC.newLine();
-        try {
+        try (BufferedWriter bufferedWriterBC = new BufferedWriter(new FileWriter(bcMatrix))) {
+            bufferedWriterBC.newLine();
             for (SimilarityResult s : results) {
-                if (s.getSimilarityReactions().containsKey("BC")) {
-                    bufferedWriterBC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + s.getSimilarityReactions().get("BC"));
-                    bufferedWriterBC.newLine();
-                } else {
-                    bufferedWriterBC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + "NA");
-                    bufferedWriterBC.newLine();
-                }
+                String val = s.getSimilarityReactions().containsKey("BC")
+                        ? s.getSimilarityReactions().get("BC").toString() : "NA";
+                bufferedWriterBC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + val);
+                bufferedWriterBC.newLine();
             }
-        } finally {
-            bufferedWriterBC.close();
         }
 
-        try {
+        try (BufferedWriter bufferedWriterRC = new BufferedWriter(new FileWriter(rcMatrix))) {
             for (SimilarityResult s : results) {
-                if (s.getSimilarityReactions().containsKey("RC")) {
-                    bufferedWriterRC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + s.getSimilarityReactions().get("RC"));
-                    bufferedWriterRC.newLine();
-                } else {
-                    bufferedWriterRC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + "NA");
-                    bufferedWriterRC.newLine();
-                }
+                String val = s.getSimilarityReactions().containsKey("RC")
+                        ? s.getSimilarityReactions().get("RC").toString() : "NA";
+                bufferedWriterRC.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + val);
+                bufferedWriterRC.newLine();
             }
-        } finally {
-            bufferedWriterRC.close();
         }
 
-        try {
+        try (BufferedWriter bufferedWriterST = new BufferedWriter(new FileWriter(stMatrix))) {
             for (SimilarityResult s : results) {
-                if (s.getSimilarityReactions().containsKey("ST")) {
-                    bufferedWriterST.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + s.getSimilarityReactions().get("ST"));
-                    bufferedWriterST.newLine();
-                } else {
-                    bufferedWriterST.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + "NA");
-                    bufferedWriterST.newLine();
-                }
+                String val = s.getSimilarityReactions().containsKey("ST")
+                        ? s.getSimilarityReactions().get("ST").toString() : "NA";
+                bufferedWriterST.write("\"" + s.getQuery() + "\"" + TAB + "\"" + s.getTarget() + "\"" + TAB + val);
+                bufferedWriterST.newLine();
             }
-        } finally {
-            bufferedWriterST.close();
         }
-
     }
 
     private void printRPAIRPatternAsText(MappingSolution s, StringBuilder sb) throws CloneNotSupportedException {

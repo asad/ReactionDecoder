@@ -413,7 +413,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer eMolecule = mappedReaction.getReactants().getAtomContainer(eMol);
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
                 IAtom atom = mappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
-                if (!atom.getSymbol().equalsIgnoreCase("H") && atom.getID().equalsIgnoreCase("-1")) {
+                if (!atom.getSymbol().equalsIgnoreCase("H") && "-1".equalsIgnoreCase(atom.getID())) {
                     String atomLabel = Integer.toString(counter);
                     atom.setID(atomLabel);
                     atom.setFlag(MAPPED, false);
@@ -426,7 +426,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer pMolecule = mappedReaction.getProducts().getAtomContainer(pMol);
             for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
                 IAtom atom = mappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
-                if (!atom.getSymbol().equalsIgnoreCase("H") && atom.getID().equalsIgnoreCase("-1")) {
+                if (!atom.getSymbol().equalsIgnoreCase("H") && "-1".equalsIgnoreCase(atom.getID())) {
                     String atomLabel = Integer.toString(counter);
                     atom.setID(atomLabel);
                     atom.setFlag(MAPPED, false);
@@ -442,12 +442,12 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer eMolecule = mappedReaction.getReactants().getAtomContainer(eMol);
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
                 IAtom atom = mappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
-                if (!atom.getSymbol().equalsIgnoreCase("H") && !atom.getID().equalsIgnoreCase("-1")) {
+                if (!atom.getSymbol().equalsIgnoreCase("H") && !"-1".equalsIgnoreCase(atom.getID())) {
                     List<IAtom> eductConnAtoms = eMolecule.getConnectedAtomsList(atom);
                     List<IAtom> productHAtoms = markHAroundCoreAtoms(atom.getID(), mappedReaction.getProducts());
                     for (IAtom eAtomH : eductConnAtoms) {
                         //Collect ummmarked H and map common ones
-                        if (eAtomH.getID().equalsIgnoreCase("-1") && eAtomH.getSymbol().equalsIgnoreCase("H")) {
+                        if ("-1".equalsIgnoreCase(eAtomH.getID()) && eAtomH.getSymbol().equalsIgnoreCase("H")) {
                             if (!productHAtoms.isEmpty()) {
                                 String atomLabel = Integer.toString(counter);
                                 eAtomH.setID(atomLabel);
@@ -818,10 +818,10 @@ public class Reactor extends AbstractReactor implements Serializable {
             IAtomContainer pMolecule = molSet.getAtomContainer(pMol);
             for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
                 IAtom atom = molSet.getAtomContainer(pMol).getAtom(pAtom);
-                if (!atom.getSymbol().equalsIgnoreCase("H") && !atom.getID().equalsIgnoreCase("-1")) {
-                    if (atom.getID().equalsIgnoreCase(id)) {
+                if (!atom.getSymbol().equalsIgnoreCase("H") && !"-1".equalsIgnoreCase(atom.getID())) {
+                    if (id != null && id.equalsIgnoreCase(atom.getID())) {
                         List<IAtom> conAtoms = pMolecule.getConnectedAtomsList(atom);
-                        conAtoms.stream().filter((atomH) -> (atomH.getID().equalsIgnoreCase("-1") && atomH.getSymbol().equalsIgnoreCase("H"))).forEach((atomH) -> {
+                        conAtoms.stream().filter((atomH) -> ("-1".equalsIgnoreCase(atomH.getID()) && atomH.getSymbol().equalsIgnoreCase("H"))).forEach((atomH) -> {
                             list.add(atomH);
                         });
                     }
@@ -845,7 +845,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                     IAtom atom = molSet.getAtomContainer(index).getAtom(atomIndex);
                     if (atom.getSymbol().equalsIgnoreCase("H")
                             && !atom.getFlag(MAPPED)
-                            && atom.getID().equalsIgnoreCase("-1")) {
+                            && "-1".equalsIgnoreCase(atom.getID())) {
                         list.add(atom);
                     }
                 }
@@ -867,7 +867,7 @@ public class Reactor extends AbstractReactor implements Serializable {
                 IAtom atom = molSet.getAtomContainer(index).getAtom(atomIndex);
                 if (atom.getSymbol().equalsIgnoreCase("H")
                         && !atom.getFlag(MAPPED)
-                        && atom.getID().equalsIgnoreCase("-1")) {
+                        && "-1".equalsIgnoreCase(atom.getID())) {
                     list.add(atom);
                 }
             }
@@ -893,7 +893,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
                 IAtom atom = mappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                 if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(MAPPED)
-                        && atom.getID().equalsIgnoreCase("-1")) {
+                        && "-1".equalsIgnoreCase(atom.getID())) {
                     String atomLabel = Integer.toString(localCounter);
                     atom.setFlag(MAPPED, false);
                     atom.setID(atomLabel);
@@ -907,7 +907,7 @@ public class Reactor extends AbstractReactor implements Serializable {
             for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
                 IAtom atom = mappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                 if (atom.getSymbol().equalsIgnoreCase("H") && !atom.getFlag(MAPPED)
-                        && atom.getID().equalsIgnoreCase("-1")) {
+                        && "-1".equalsIgnoreCase(atom.getID())) {
                     String atomLabel = Integer.toString(localCounter);
                     atom.setID(atomLabel);
                     atom.setFlag(MAPPED, false);
@@ -940,9 +940,12 @@ public class Reactor extends AbstractReactor implements Serializable {
     }
 
     private synchronized IAtom getContainerAtomByID(IAtomContainerSet products, String mappingID) {
+        if (mappingID == null) {
+            return null;
+        }
         for (IAtomContainer ac : products.atomContainers()) {
             for (IAtom atom : ac.atoms()) {
-                if (atom.getID().equals(mappingID)) {
+                if (mappingID.equals(atom.getID())) {
                     return atom;
                 }
             }

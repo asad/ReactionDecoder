@@ -162,15 +162,21 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                     IMapping im = SilentChemObjectBuilder.getInstance().newInstance(IMapping.class, eAtom, pAtom);
                     reaction.addMapping(im);
                 }
-                educt.removeAtom(eAtom);
-                product.removeAtom(pAtom);
+                if (eAtom != null) {
+                    educt.removeAtom(eAtom);
+                }
+                if (pAtom != null) {
+                    product.removeAtom(pAtom);
+                }
                 delta = fragmentCount;
             }
         }
 
         for (IAtom atom : educt.atoms()) {
             IAtom matchedAtom = getAtomByID(matchedPart, atom.getID());
-            matchedPart.removeAtom(matchedAtom);
+            if (matchedAtom != null) {
+                matchedPart.removeAtom(matchedAtom);
+            }
         }
 
         LOGGER.debug("After removing Mol Size E: " + educt.getAtomCount()
@@ -197,8 +203,11 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
     }
 
     private synchronized IAtom getAtomByID(IAtomContainer ac, String ID) {
+        if (ID == null) {
+            return null;
+        }
         for (IAtom atom : ac.atoms()) {
-            if (atom.getID().equalsIgnoreCase(ID)) {
+            if (ID.equalsIgnoreCase(atom.getID())) {
                 return atom;
             }
         }

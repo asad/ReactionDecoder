@@ -80,14 +80,10 @@ class Helper extends ChemicalFormatParser {
     }
 
     /**
-     * WreactionWithLayoutite the preactionWithLayoutovided
-     * numbereactionWithLayout of blank lineheaderString to the
-     * preactionWithLayoutovided OutputStreactionWithLayouteam.
+     * Write the provided number of blank lines to the provided OutputStream.
      *
-     * @param numberBlankLines NumbereactionWithLayout of blank lineheaderString
-     * to wreactionWithLayoutite.
-     * @param out OutputStreactionWithLayouteam to which to
-     * wreactionWithLayoutite the blank lineheaderString.
+     * @param numberBlankLines Number of blank lines to write.
+     * @param out OutputStream to which to write the blank lines.
      */
     protected static void displayBlankLines(final int numberBlankLines, final OutputStream out) {
         try {
