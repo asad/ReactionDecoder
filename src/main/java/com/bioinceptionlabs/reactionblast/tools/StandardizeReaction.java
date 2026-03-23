@@ -19,36 +19,77 @@
 package com.bioinceptionlabs.reactionblast.tools;
 
 import static java.lang.System.currentTimeMillis;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
 import com.bioinceptionlabs.reactionblast.mapping.container.CDKReactionBuilder;
 import static com.bioinceptionlabs.reactionblast.mapping.helper.MappingHandler.cleanMapping;
 
 /**
+ * Standardizes reaction objects for atom-atom mapping.
+ * Validates atom balance and prepares reaction containers.
  *
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class StandardizeReaction implements IStandardizer {
 
+    private static final ILoggingTool LOGGER = createLoggingTool(StandardizeReaction.class);
+
     /**
+     * Standardize a reaction: clean mappings, validate balance, build containers.
      *
-     * @param reaction
+     * @param reaction the input reaction
      * @return New Standardized reaction Object
-     * @throws Exception
+     * @throws Exception if standardization fails
      */
     @Override
-    public synchronized IReaction standardize(IReaction reaction) throws Exception {
-        String ReactionID = reaction.getID();
+    public IReaction standardize(IReaction reaction) throws Exception {
+        String reactionID = reaction.getID();
         cleanMapping(reaction);
 
-        if (ReactionID == null) {
-            ReactionID = Long.toString(currentTimeMillis());
-            reaction.setID(ReactionID);
+        if (reactionID == null) {
+            reactionID = Long.toString(currentTimeMillis());
+            reaction.setID(reactionID);
         }
+
+        // Validate atom balance (warn but don't fail — some reactions are intentionally unbalanced)
+        checkAtomBalance(reaction);
+
         CDKReactionBuilder rBuilder = new CDKReactionBuilder();
-        IReaction standardizedReaction = rBuilder.standardize(reaction);
-        return standardizedReaction;
+        return rBuilder.standardize(reaction);
+    }
+
+    /**
+     * Check if a reaction is atom-balanced. Logs a warning if not.
+     * Does not throw — unbalanced reactions are handled gracefully.
+     *
+     * @param reaction the reaction to check
+     */
+    private void checkAtomBalance(IReaction reaction) {
+        Map<String, Integer> reactantAtoms = countAtoms(reaction.getReactants());
+        Map<String, Integer> productAtoms = countAtoms(reaction.getProducts());
+
+        if (!reactantAtoms.equals(productAtoms)) {
+            LOGGER.warn("Reaction " + reaction.getID() + " may be unbalanced: "
+                    + "reactants=" + reactantAtoms + " products=" + productAtoms);
+        }
+    }
+
+    private Map<String, Integer> countAtoms(org.openscience.cdk.interfaces.IAtomContainerSet molSet) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (IAtomContainer mol : molSet.atomContainers()) {
+            for (IAtom atom : mol.atoms()) {
+                counts.merge(atom.getSymbol(), 1, Integer::sum);
+            }
+        }
+        return counts;
     }
 }

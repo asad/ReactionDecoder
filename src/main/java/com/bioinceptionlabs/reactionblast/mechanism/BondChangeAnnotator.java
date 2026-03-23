@@ -312,16 +312,14 @@ public final class BondChangeAnnotator extends DUModel {
                 getReactionCenterSet().add(atomE);
                 getReactionCenterSet().add(atomP);
 
-                if ((sc.getReactantAtomStereo().equals(E)
-                        || sc.getProductAtomStereo().equals(Z))
-                        || (sc.getReactantAtomStereo().equals(Z)
-                        || sc.getProductAtomStereo().equals(E))) {
-                    getConformationChangeList().add(new AtomStereoChangeInformation(atomE, atomP, sc.getReactantAtomStereo(), sc.getProductAtomStereo()));
-                } else if ((sc.getReactantAtomStereo().equals(R)
-                        || sc.getProductAtomStereo().equals(S))
-                        || (sc.getReactantAtomStereo().equals(S)
-                        || sc.getProductAtomStereo().equals(R))) {
-                    getStereoChangeList().add(new AtomStereoChangeInformation(atomE, atomP, sc.getReactantAtomStereo(), sc.getProductAtomStereo()));
+                if ((rsb.equals(E) && psb.equals(Z))
+                        || (rsb.equals(Z) && psb.equals(E))) {
+                    // E⇌Z geometric isomerization detected
+                    getConformationChangeList().add(new AtomStereoChangeInformation(atomE, atomP, rsb, psb));
+                } else if ((rsb.equals(R) && psb.equals(S))
+                        || (rsb.equals(S) && psb.equals(R))) {
+                    // R⇌S stereocenter inversion detected
+                    getStereoChangeList().add(new AtomStereoChangeInformation(atomE, atomP, rsb, psb));
                 }
             }
         }

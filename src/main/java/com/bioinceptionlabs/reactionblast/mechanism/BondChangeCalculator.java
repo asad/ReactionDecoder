@@ -26,8 +26,7 @@ import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.unmodifiableCollection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -140,18 +139,18 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         this.reactionCenterWFingerprint = new PatternFingerprinter();
         this.reactionCenterWFingerprint.setFingerprintID(reaction.getID() + ":" + "Reaction Center");
 
-        this.reactionCenterFormedCleavedFingerprint = new HashMap<>();
-        this.reactionCenterOrderChangeFingerprint = new HashMap<>();
-        this.reactionCenterStereoChangeFingerprint = new HashMap<>();
+        this.reactionCenterFormedCleavedFingerprint = new LinkedHashMap<>();
+        this.reactionCenterOrderChangeFingerprint = new LinkedHashMap<>();
+        this.reactionCenterStereoChangeFingerprint = new LinkedHashMap<>();
 
         this.reactionMoleculeMoleculePairList = new LinkedHashSet<>();
 
-        this.bondFormedMap = new HashMap<>();
-        this.bondCleavedMap = new HashMap<>();
-        this.bondOrderRMap = new HashMap<>();
-        this.bondOrderPMap = new HashMap<>();
-        this.AtomStereoRMap = new HashMap<>();
-        this.AtomStereoPMap = new HashMap<>();
+        this.bondFormedMap = new LinkedHashMap<>();
+        this.bondCleavedMap = new LinkedHashMap<>();
+        this.bondOrderRMap = new LinkedHashMap<>();
+        this.bondOrderPMap = new LinkedHashMap<>();
+        this.AtomStereoRMap = new LinkedHashMap<>();
+        this.AtomStereoPMap = new LinkedHashMap<>();
         this.reactionCenterFragmentList = new ArrayList<>();
     }
 
@@ -714,7 +713,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             compressedReaction = deepClone(mappedReaction);
             compressedReaction.setProperties(mappedReaction.getProperties());
             //Add mapping to the clone
-            Map<IAtom, IAtom> mappings = new HashMap<>();
+            Map<IAtom, IAtom> mappings = new LinkedHashMap<>();
             for (IMapping mapping : compressedReaction.mappings()) {
                 mappings.put((IAtom) mapping.getChemObject(0), (IAtom) mapping.getChemObject(1));
             }
@@ -1169,8 +1168,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             /*
              * Loop over atom order and generate unique list to atoms
              */
-            Set<IAtom> reactantAtoms = new HashSet<>();
-            Set<IAtom> productAtoms = new HashSet<>();
+            Set<IAtom> reactantAtoms = new LinkedHashSet<>();
+            Set<IAtom> productAtoms = new LinkedHashSet<>();
 
             LOGGER.debug("Bond Change List: " + bondChangeAnnotator.getBondChangeList().size());
 
@@ -1180,10 +1179,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
                 // Mark Bond Order Changes
                 if (bondR != null && bondP != null
-                        && bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                                equals(BOND_ORDER)
-                        && bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                                equals(BOND_ORDER)) {
+                        && BOND_ORDER.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION))
+                        && BOND_ORDER.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION))) {
 
                     bondOrderRMap.put(bondR, getMoleculeID(bondR, mappedReaction.getReactants()));
                     bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
@@ -1235,10 +1232,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 LOGGER.debug("Bond formed, cleaved changes 1 ");
 
                 //Mark Formed Bonds in the Product
-                if (bondP != null && (bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                        equals(BOND_FORMED)
-                        || bondP.getProperties().get(BOND_CHANGE_INFORMATION).
-                                equals(PSEUDO_BOND))) {
+                if (bondP != null && (BOND_FORMED.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION))
+                        || PSEUDO_BOND.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION)))) {
 
                     LOGGER.debug("Bond formed, cleaved changes 1 - 1");
 
@@ -1291,10 +1286,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 LOGGER.debug("Bond formed, cleaved changes 2");
 
                 //Mark Cleaved Bonds in Reactants
-                if (bondR != null && (bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                        equals(BOND_CLEAVED)
-                        || bondR.getProperties().get(BOND_CHANGE_INFORMATION).
-                                equals(PSEUDO_BOND))) {
+                if (bondR != null && (BOND_CLEAVED.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION))
+                        || PSEUDO_BOND.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION)))) {
 
                     LOGGER.debug("Bond formed, cleaved changes 1 - 2 - 1");
 
@@ -1342,7 +1335,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             /*
              * IMP for RC Fingerprint: compute all the unique mappedReaction centers atoms
              */
-            Map<IAtom, IAtom> reactionCenterMap = new HashMap<>();
+            Map<IAtom, IAtom> reactionCenterMap = new LinkedHashMap<>();
             bondChangeAnnotator.getReactionCenterSet().stream().filter((atom) -> (!atom.getSymbol().equals("H"))).forEachOrdered((atom) -> {
                 reactionCenterMap.put(atom, bondChangeAnnotator.getMappingMap().get(atom));
             });

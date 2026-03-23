@@ -38,25 +38,23 @@ public class BondChange implements Serializable {
      * @param bond
      * @return
      */
-    public static synchronized int convertBondOrder(IBond bond) {
-        int value;
+    public static int convertBondOrder(IBond bond) {
+        if (bond.getOrder() == null) {
+            return bond.isAromatic() ? 2 : 1;
+        }
         switch (bond.getOrder()) {
             case QUADRUPLE:
-                value = 4;
-                break;
+                return 4;
             case TRIPLE:
-                value = 3;
-                break;
+                return 3;
             case DOUBLE:
-                value = 2;
-                break;
+                return 2;
             case SINGLE:
-                value = 1;
-                break;
+                return 1;
             default:
-                value = 1;
+                // Handle UNSET or other cases — check aromaticity flag
+                return bond.isAromatic() ? 2 : 1;
         }
-        return value;
     }
 
     /**
@@ -64,7 +62,7 @@ public class BondChange implements Serializable {
      * @param bond
      * @return
      */
-    public static synchronized int convertBondStereo(IBond bond) {
+    public static int convertBondStereo(IBond bond) {
         int value;
         switch (bond.getStereo()) {
             case UP:
@@ -124,33 +122,33 @@ public class BondChange implements Serializable {
     /**
      * @return the reactantBond
      */
-    public synchronized IBond getReactantBond() {
+    public IBond getReactantBond() {
         return reactantBond;
     }
 
     /**
      * @return the productBond
      */
-    public synchronized IBond getProductBond() {
+    public IBond getProductBond() {
         return productBond;
     }
 
     /**
      * @return the bondChangeDelta
      */
-    public synchronized float getBondChangeDelta() {
+    public float getBondChangeDelta() {
         return bondChangeDelta;
     }
 
     /**
      * @param bondChangeDelta the bondChangeDelta to set
      */
-    private synchronized void setBondChangeInformation(float bondChangeInformation) {
+    private void setBondChangeInformation(float bondChangeInformation) {
         this.bondChangeDelta = bondChangeInformation;
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("\t");
         result.append(NEW_LINE);
