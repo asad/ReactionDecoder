@@ -90,13 +90,11 @@ License
 
 ```
 Author: Syed Asad Rahman
-e-mail: asad@ebi.ac.uk
-c/o EMBL-European BioInformatics Institute (EBI)
-WTGC, CB10 1SD Hinxton
-UK
+e-mail: asad.rahman@bioinceptionlabs.com
+BioInception
 
 Note: The copyright of this software belongs to the author
-and EMBL-European BioInformatics Institute (EBI).
+and BioInception.
 ```
 
 How to Cite RDT?

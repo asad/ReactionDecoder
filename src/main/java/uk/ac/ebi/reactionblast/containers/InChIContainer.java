@@ -25,6 +25,8 @@ import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
 
 //~--- classes ----------------------------------------------------------------
@@ -58,6 +60,8 @@ import uk.ac.ebi.reactionblast.interfaces.IInChIContainer;
  *
  */
 public class InChIContainer implements IInChIContainer, Cloneable {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(InChIContainer.class);
 
     /* Singleton Pattern Implementation */
     private static InChIContainer _instance = null;
@@ -129,7 +133,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
                 InChIMap.put(Key, Value);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
     }
 
@@ -160,7 +164,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
             if (map.getValue().equals(Value)) {
                 return Key;
             }
-        }//System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
+        }//LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 

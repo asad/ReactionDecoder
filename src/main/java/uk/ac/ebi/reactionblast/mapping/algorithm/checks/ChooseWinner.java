@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.mapping.algorithm.Holder;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
 import static java.util.Collections.synchronizedList;
@@ -48,6 +50,8 @@ public class ChooseWinner extends Selector implements Serializable {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x296558709L;
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(ChooseWinner.class);
     private EBIMatrix stereoMatrix;
     private EBIMatrix energyMatrix;
     private EBIMatrix carbonOverlapMatrix;
@@ -165,15 +169,15 @@ public class ChooseWinner extends Selector implements Serializable {
             }
         }
         if (DEBUG) {
-            System.out.println("resolveDeadLocks");
+            LOGGER.debug("resolveDeadLocks");
         }
         resolveDeadLocks(scores);
         if (DEBUG) {
-            System.out.println("setWinOverFlags");
+            LOGGER.debug("setWinOverFlags");
         }
         setWinOverFlags();
         if (DEBUG) {
-            System.out.println("Done");
+            LOGGER.debug("Done");
         }
     }
 
@@ -374,13 +378,13 @@ public class ChooseWinner extends Selector implements Serializable {
             double minEnergy = getMinEnergy(choosenCells);
             double maxCarbonOverlap = getMaxCarbonOverlap(choosenCells);
             if (DEBUG) {
-                System.out.println("maxStereo " + maxStereo);
+                LOGGER.debug("maxStereo " + maxStereo);
             }
             if (DEBUG) {
-                System.out.println("minEnergy " + minEnergy);
+                LOGGER.debug("minEnergy " + minEnergy);
             }
             if (DEBUG) {
-                System.out.println("maxCarbon " + maxCarbonOverlap);
+                LOGGER.debug("maxCarbon " + maxCarbonOverlap);
             }
             for (var cell : choosenCells) {
                 double stereoVal = stereoMatrix.getValue(cell.indexI, cell.indexJ);
@@ -388,21 +392,18 @@ public class ChooseWinner extends Selector implements Serializable {
                 double carbonOverlap = carbonOverlapMatrix.getValue(cell.indexI, cell.indexJ);
 
                 if (DEBUG) {
-                    System.out.println("Comparing " + cell.indexI + "," + cell.indexJ);
+                    LOGGER.debug("Comparing " + cell.indexI + "," + cell.indexJ);
                 }
 
                 if (DEBUG) {
-                    System.out.print("maxStereo " + maxStereo);
-                    System.out.println(", stereoVal " + stereoVal);
+                    LOGGER.debug("maxStereo " + maxStereo + ", stereoVal " + stereoVal);
                 }
                 if (DEBUG) {
-                    System.out.print("minEnergy " + minEnergy);
-                    System.out.println(", energyVal " + energyVal);
+                    LOGGER.debug("minEnergy " + minEnergy + ", energyVal " + energyVal);
                 }
 
                 if (DEBUG) {
-                    System.out.print("maxCarbon " + maxCarbonOverlap);
-                    System.out.println(", Carbon " + carbonOverlap);
+                    LOGGER.debug("maxCarbon " + maxCarbonOverlap + ", Carbon " + carbonOverlap);
                 }
 
                 if (stereoVal >= maxStereo

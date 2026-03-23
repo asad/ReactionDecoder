@@ -58,8 +58,6 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(DUModel.class);
 
-    private final static boolean DEBUG = false;
-
     private static final long serialVersionUID = 179876660968690L;
     final IAtomContainerSet reactantSet;
     final IAtomContainerSet productSet;
@@ -108,29 +106,19 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
         /*
          Set Atom-Atom Mapping
          */
-        if (DEBUG) {
-            System.out.println("setMappingMap");
-        }
+        LOGGER.debug("setMappingMap");
         setMappingMap(reaction.mappings());
-        if (DEBUG) {
-            System.out.println("Done setMappingMap");
-        }
+        LOGGER.debug("Done setMappingMap");
 
-        if (DEBUG) {
-            System.out.println("Mark Aromatic Bonds");
-        }
+        LOGGER.debug("Mark Aromatic Bonds");
         List<IBond> rBonds = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             /*
              * Aromatise and mark rings (imp for detecting keukal changes)
              */
-            if (DEBUG) {
-                System.out.println("MoleculeInitializer");
-            }
+            LOGGER.debug("MoleculeInitializer");
             MoleculeInitializer.initializeMolecule(ac);
-            if (DEBUG) {
-                System.out.println("MoleculeInitializer Done");
-            }
+            LOGGER.debug("MoleculeInitializer Done");
             for (IBond bond : ac.bonds()) {
                 rBonds.add(bond);
             }
@@ -140,79 +128,50 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             /*
              Aromatise and mark rings (imp for detecting keukal changes)
              */
-            if (DEBUG) {
-                System.out.println("MoleculeInitializer");
-            }
+            LOGGER.debug("MoleculeInitializer");
             MoleculeInitializer.initializeMolecule(ac);
-            if (DEBUG) {
-                System.out.println("Done");
-            }
+            LOGGER.debug("Done");
             for (IBond bond : ac.bonds()) {
                 pBonds.add(bond);
             }
         }
 
-        if (DEBUG) {
-            System.out.println("Done Marking Aromatic Bonds");
-        }
+        LOGGER.debug("Done Marking Aromatic Bonds");
 
         try {
 
-            if (DEBUG) {
-                System.out.println("=====Educt createBEMatrix=====");
-            }
+            LOGGER.debug("=====Educt createBEMatrix=====");
             this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
-            if (DEBUG) {
-                System.out.println("=====Product createBEMatrix=====");
-            }
+            LOGGER.debug("=====Product createBEMatrix=====");
             this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
-            if (DEBUG) {
-                System.out.println("=====AAM Container=====");
-            }
+            LOGGER.debug("=====AAM Container=====");
             this.mapping = new AtomAtomMappingContainer(reaction, withoutHydrogen);
-            if (DEBUG) {
-                System.out.println("=====createRMatrix=====");
-            }
+            LOGGER.debug("=====createRMatrix=====");
             this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
         } catch (Exception e) {
-            if (DEBUG) {
-                e.printStackTrace();
-            }
             throw new Exception("WARNING: Unable to compute reaction matrix", e);
         }
         /*
          * Stereo mapping
          */
-        if (DEBUG) {
-            System.out.println("Assign Stereo");
-        }
+        LOGGER.debug("Assign Stereo");
         Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
             chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
             throw new Exception("WARNING: 2D CDK based stereo perception failed", ex);
         }
-        if (DEBUG) {
-            System.out.println("Done Assign Stereo");
-        }
+        LOGGER.debug("Done Assign Stereo");
         /*
          * Generate stereo information
          */
-        if (DEBUG) {
-            System.out.println("Assign Stereo Center");
-        }
+        LOGGER.debug("Assign Stereo Center");
         try {
             this.stereogenicCenters = new StereogenicCenterCalculator().compare(reaction, chiralityCDK2D);
         } catch (Exception e) {
-            if (DEBUG) {
-                e.printStackTrace();
-            }
             throw new Exception("WARNING: 2D CDK based stereo centers perception failed", e);
         }
-        if (DEBUG) {
-            System.out.println("Done Assign Stereo Center");
-
-        }
+        LOGGER.debug("Done Assign Stereo Center");
     }
 
     /**

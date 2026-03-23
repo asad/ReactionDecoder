@@ -186,7 +186,7 @@ public class CDKInChI {
         INCHI_RET ret = _genInchi.getReturnStatus();
         if (ret == WARNING) {
             // CDKInChI generated, but with warning message
-//            System.LOGGER.debug("InChI warning: " + _genInchi.getMessage());
+//            LOGGER.debug("InChI warning: " + _genInchi.getMessage());
         } else if (ret != OKAY) {
             // CDKInChI generation failed
             throw new CDKException("InChI failed: " + ret.toString() + " [" + _genInchi.getMessage() + "]");

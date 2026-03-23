@@ -19,7 +19,6 @@ package uk.ac.ebi.centres.graph;
 
 import static com.google.common.collect.ArrayListMultimap.create;
 import com.google.common.collect.ListMultimap;
-import static java.lang.System.err;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

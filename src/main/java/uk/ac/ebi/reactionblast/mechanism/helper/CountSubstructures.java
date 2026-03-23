@@ -29,27 +29,23 @@ import org.openscience.cdk.smiles.SmilesParser;
 import static org.openscience.cdk.smiles.smarts.parser.SMARTSParser.parse;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.algorithm.vflib.substructure.VF2;
 import org.openscience.smsd.helper.MoleculeInitializer;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
- *
  * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
-/**
- * Return Substructure match
- */
 class CountSubstructures extends MoleculeInitializer implements Serializable {
 
-    private final static ILoggingTool LOGGER
+    private static final ILoggingTool LOGGER
             = createLoggingTool(CountSubstructures.class);
     private static final long serialVersionUID = 12343289751445148L;
-    private SmilesParser sp;
+    private final SmilesParser sp;
     private IAtomContainer mol;
 
     CountSubstructures(IAtomContainer atomContainer) throws CloneNotSupportedException {
@@ -69,11 +65,11 @@ class CountSubstructures extends MoleculeInitializer implements Serializable {
 
         try {
             IAtomContainer parseSmiles = sp.parseSmiles(smiles);
-            VF2 vf = new VF2(parseSmiles, mol, atomMatcher, bondMatcher);
-            return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
+            Substructure sub = new Substructure(parseSmiles, mol, atomMatcher, bondMatcher, false);
+            return sub.isSubgraph() ? sub.getFirstAtomMapping().getCount() : 0;
         } catch (InvalidSmilesException ex) {
-            VF2 vf = new VF2(parse(smiles, mol.getBuilder()), mol);
-            return vf.isSubgraph() ? vf.getFirstAtomMapping().getCount() : 0;
+            Substructure sub = new Substructure(parse(smiles, mol.getBuilder()), mol, false);
+            return sub.isSubgraph() ? sub.getFirstAtomMapping().getCount() : 0;
         }
     }
 }

@@ -147,7 +147,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
         int delta = 0;
 
         if (DEBUG) {
-            System.out.println("Before removing Mol Size E: " + educt.getAtomCount()
+            LOGGER.debug("Before removing Mol Size E: " + educt.getAtomCount()
                     + " , Before removing Mol Size P: " + product.getAtomCount());
         }
         int beforeESize = educt.getAtomCount();
@@ -158,7 +158,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                 IAtom eAtom = getAtomByID(educt, eID);
                 String pID = map.getValue().getID();
                 if (DEBUG) {
-                    System.out.println("eID " + eID + ",pID " + pID);
+                    LOGGER.debug("eID " + eID + ",pID " + pID);
                 }
                 IAtom pAtom = getAtomByID(product, pID);
 
@@ -178,15 +178,15 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
         }
 
         if (DEBUG) {
-            System.out.println("After removing Mol Size E: " + educt.getAtomCount()
+            LOGGER.debug("After removing Mol Size E: " + educt.getAtomCount()
                     + " , After removing Mol Size P: " + product.getAtomCount());
         }
 
         if (beforeESize == educt.getAtomCount()) {
             try {
                 if (DEBUG) {
-                    System.out.println(educt.getID() + ": SMILES " + SmilesGenerator.generic().create(educt));
-                    System.out.println(product.getID() + ": SMILES " + SmilesGenerator.generic().create(product));
+                    LOGGER.debug(educt.getID() + ": SMILES " + SmilesGenerator.generic().create(educt));
+                    LOGGER.debug(product.getID() + ": SMILES " + SmilesGenerator.generic().create(product));
                 }
                 throw new CDKException("Failed to remove matched parts between " + educt.getID() + ": "
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()

@@ -36,14 +36,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.err;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point2f;
 import javax.vecmath.Vector2d;
@@ -77,6 +77,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.layout.TopToBottomReactionLayout;
 public class DirectReactionDrawer extends AbstractDirectDrawer {
 
     private static final Logger LOG = getLogger(DirectReactionDrawer.class.getName());
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(DirectReactionDrawer.class);
 
     private AbstractDirectReactionLayout reactionLayout;
     private AbstractAWTReactionLayout exactReactionLayout;
@@ -304,7 +305,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
 //                            + " crop " + cropX + " " + cropY + " " 
 //                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
-                out.println("Not cropping " + (cropX + cropW) + " " + w + " "
+                LOGGER.debug("Not cropping " + (cropX + cropW) + " " + w + " "
                         + (cropY + cropH) + " " + h);
                 return image;
             }
@@ -344,7 +345,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             Rectangle2D bb = boundsTree.getRoot();
             double dx = (boundsTree.getWidth() / 2) - bb.getCenterX();
             double dy = (boundsTree.getHeight() / 2) - bb.getCenterY();
-            err.println(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
+            LOGGER.error(BoundsPrinter.toString(bb) + " " + dx + " " + dy);
 
             // AARGH!
             boundsTree = shift(reaction, boundsTree, dx, 0);
@@ -512,9 +513,9 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         labels.forEach(label -> {
             Rectangle2D r = tree.get(label);
             if (r == null) {
-                out.println(label + ":NULL");
+                LOGGER.debug(label + ":NULL");
             } else {
-                out.println(label + ":" + BoundsPrinter.toString(r));
+                LOGGER.debug(label + ":" + BoundsPrinter.toString(r));
             }
         });
     }

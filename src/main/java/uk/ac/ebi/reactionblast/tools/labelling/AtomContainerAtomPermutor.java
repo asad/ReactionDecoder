@@ -18,12 +18,13 @@
  */
 package uk.ac.ebi.reactionblast.tools.labelling;
 
-import static java.lang.System.out;
 import java.util.Iterator;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  *
@@ -34,6 +35,9 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class AtomContainerAtomPermutor extends Permutor
         implements Iterator<IAtomContainer> {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(AtomContainerAtomPermutor.class);
 
     private static boolean useA = false;
     private static boolean clone = false;
@@ -79,7 +83,7 @@ public class AtomContainerAtomPermutor extends Permutor
 
         } catch (CloneNotSupportedException cne) {
             //?
-            out.println(cne);
+            LOGGER.error(cne);
         }
 
         return permutedContainer;
@@ -105,7 +109,7 @@ public class AtomContainerAtomPermutor extends Permutor
             permutedContainer.setAtoms(permutedAtoms);
         } catch (CloneNotSupportedException cne) {
             //?
-            out.println(cne);
+            LOGGER.error(cne);
         }
         return permutedContainer;
     }

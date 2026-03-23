@@ -22,6 +22,8 @@ import static java.lang.System.out;
 import java.util.List;
 import java.util.Map;
 
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.CDKConstants.ISAROMATIC;
 import static org.openscience.cdk.CDKConstants.ISINRING;
 import org.openscience.cdk.interfaces.IAtom;
@@ -34,6 +36,8 @@ import signature.AbstractVertexSignature;
  * @author asad
  */
 public class SubgraphAtomSignature extends AbstractVertexSignature {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(SubgraphAtomSignature.class);
 
     private final IAtomContainer atomContainer;
     private Map<Integer, int[]> subgraphAdjacencyLists;
@@ -154,10 +158,8 @@ public class SubgraphAtomSignature extends AbstractVertexSignature {
                 return atom.getSymbol() + charge;
             }
         } catch (NullPointerException npe) {
-            //XXX remove!
-            out.println("npe getting atom " + atomIndex
-                    + " from " + atomContainer.getID());
-            npe.printStackTrace();
+            LOGGER.error("npe getting atom " + atomIndex
+                    + " from " + atomContainer.getID(), npe);
             return "C";
         }
     }

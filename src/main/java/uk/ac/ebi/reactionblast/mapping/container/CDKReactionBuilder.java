@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mapping.container;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -124,8 +123,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                     SmiFlavor.Unique
                     | SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap);
-            out.println("createReactionSMILES " + createReactionSMILES.create(reaction));
-            out.println("standardize reaction module start");
+            LOGGER.debug("createReactionSMILES " + createReactionSMILES.create(reaction));
+            LOGGER.debug("standardize reaction module start");
         }
 
         List<IAtomContainer> _metabolites = new ArrayList<>();
@@ -152,7 +151,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         Double tempStoic;
 
         if (DEBUG) {
-            out.println("standardize reaction module phase 1");
+            LOGGER.debug("standardize reaction module phase 1");
         }
         for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
             String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
@@ -162,8 +161,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             }
 
             if (DEBUG) {
-                out.println("q_mol " + unique().create(mol));
-                out.println("standardize reaction module phase 1.1");
+                LOGGER.debug("q_mol " + unique().create(mol));
+                LOGGER.debug("standardize reaction module phase 1.1");
             }
 
             IAtomContainer gMol = cloneWithIDs(mol);
@@ -178,11 +177,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 a.setProperty("OLD_RANK", old_atom_rank_index_reactant++);
             }
             if (DEBUG) {
-                out.println("standardize reaction module phase 1.1.1");
+                LOGGER.debug("standardize reaction module phase 1.1.1");
             }
             fixDativeBonds(gMol);
             if (DEBUG) {
-                out.println("standardize reaction module phase 1.1.2");
+                LOGGER.debug("standardize reaction module phase 1.1.2");
             }
             percieveAtomTypesAndConfigureAtoms(gMol);
             IAtomContainer molWithH = gMol;
@@ -190,7 +189,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             aromatizeMolecule(molWithH);
 
             if (DEBUG) {
-                out.println(id + " standardize reaction module phase 1.2");
+                LOGGER.debug(id + " standardize reaction module phase 1.2");
             }
 
             if (id == null || id.isEmpty()) {
@@ -200,9 +199,9 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             }
 
             if (DEBUG) {
-                out.println("standardize reaction module phase 1.3");
-                out.println("After Cleanup " + molWithH.getID());
-                out.println(unique().create(mol));
+                LOGGER.debug("standardize reaction module phase 1.3");
+                LOGGER.debug("After Cleanup " + molWithH.getID());
+                LOGGER.debug(unique().create(mol));
             }
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
@@ -225,12 +224,12 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         _metabolites.clear();
 
         if (DEBUG) {
-            out.println("standardize reaction module phase 2");
+            LOGGER.debug("standardize reaction module phase 2");
         }
         if (DEBUG) {
-            out.println();
-            out.println("****************************");
-            out.println();
+            LOGGER.debug("");
+            LOGGER.debug("****************************");
+            LOGGER.debug("");
         }
         for (IAtomContainer mol : reaction.getProducts().atomContainers()) {
             String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
@@ -239,8 +238,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 tempStoic = reaction.getProductCoefficient(mol);
             }
             if (DEBUG) {
-                out.println("standardize reaction module phase 2.1");
-                out.println("t_mol " + unique().create(mol));
+                LOGGER.debug("standardize reaction module phase 2.1");
+                LOGGER.debug("t_mol " + unique().create(mol));
             }
             IAtomContainer gMol = cloneWithIDs(mol);
 
@@ -254,13 +253,13 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 a.setProperty("OLD_RANK", old_atom_rank_index_product++);
             }
             if (DEBUG) {
-                out.println("standardize reaction module phase 2.1.1");
-                out.println("t_mol " + unique().create(gMol));
+                LOGGER.debug("standardize reaction module phase 2.1.1");
+                LOGGER.debug("t_mol " + unique().create(gMol));
             }
             fixDativeBonds(gMol);
             if (DEBUG) {
-                out.println("standardize reaction module phase 2.1.2");
-                out.println("t_mol " + unique().create(gMol));
+                LOGGER.debug("standardize reaction module phase 2.1.2");
+                LOGGER.debug("t_mol " + unique().create(gMol));
             }
             percieveAtomTypesAndConfigureAtoms(gMol);
             IAtomContainer molWithH = gMol;
@@ -268,8 +267,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             aromatizeMolecule(molWithH);
 
             if (DEBUG) {
-                out.println("standardize reaction module phase 2.2");
-                out.println("t_mol " + unique().create(molWithH));
+                LOGGER.debug("standardize reaction module phase 2.2");
+                LOGGER.debug("t_mol " + unique().create(molWithH));
             }
             if (id == null) {
                 molWithH = setProperty(molWithH);
@@ -277,8 +276,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 molWithH.setID(id);
             }
             if (DEBUG) {
-                out.println("standardize reaction module phase 2.3");
-                out.println("standardize t_mol " + unique().create(molWithH));
+                LOGGER.debug("standardize reaction module phase 2.3");
+                LOGGER.debug("standardize t_mol " + unique().create(molWithH));
             }
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
@@ -320,11 +319,11 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                     | SmiFlavor.UseAromaticSymbols
                     | SmiFlavor.AtomAtomMap);
             String postCreateReactionSMILES = smiles.create(standardizedReaction);
-            out.println("post CreateReactionSMILES " + postCreateReactionSMILES);
+            LOGGER.debug("post CreateReactionSMILES " + postCreateReactionSMILES);
         }
 
         if (DEBUG) {
-            out.println("standardize reaction module end");
+            LOGGER.debug("standardize reaction module end");
         }
         return standardizedReaction;
     }
@@ -336,7 +335,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         String molID = molecule.getID() == null
                 || molecule.getID().isEmpty() ? null : molecule.getID();
         if (DEBUG) {
-            System.out.println("BEFORE");
+            LOGGER.debug("BEFORE");
             printAtoms(molecule);
         }
         try {
@@ -390,7 +389,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 LOGGER.error(SEVERE, " Error in setting mol id: ", ex.getMessage());
             }
             if (DEBUG) {
-                System.out.println("After");
+                LOGGER.debug("After");
                 printAtoms(molecule);
             }
             if (molecule.getID() == null) {
@@ -405,7 +404,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             LOGGER.error(SEVERE, null, ex);
         }
         if (DEBUG) {
-            System.out.println("After Cleanup Mol ID is " + molID);
+            LOGGER.debug("After Cleanup Mol ID is " + molID);
             printAtoms(molecule);
         }
         return molecule;
@@ -486,7 +485,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 LOGGER.error(SEVERE, null, ex);
             }
         }
-        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
+        //System.out.println("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 
@@ -558,7 +557,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         }
         if (DEBUG) {
             try {
-                out.println("Q=mol " + generic().create(queryMol));
+                LOGGER.debug("Q=mol " + generic().create(queryMol));
             } catch (CDKException ex) {
                 LOGGER.error(SEVERE, null, ex);
             }
@@ -580,15 +579,15 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         }
         if (DEBUG) {
             try {
-                out.println("T=mol " + generic().create(targetMol));
+                LOGGER.debug("T=mol " + generic().create(targetMol));
             } catch (CDKException ex) {
                 LOGGER.error(SEVERE, null, ex);
             }
         }
 
         if (DEBUG) {
-            out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            out.println("atomUniqueCounter2 " + rightHandAtomCount);
+            LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
+            LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
         }
 
         if (leftHandAtomCount != rightHandAtomCount) {
@@ -608,10 +607,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         }
 
         if (DEBUG) {
-            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
+            LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1);
+            LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2);
             boolean flag = queryMol.getElectronContainerCount() == targetMol.getElectronContainerCount();
-            out.println("is Radical same " + flag);
+            LOGGER.debug("is Radical same " + flag);
         }
 
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())

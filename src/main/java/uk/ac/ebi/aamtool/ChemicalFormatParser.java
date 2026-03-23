@@ -63,14 +63,18 @@ class ChemicalFormatParser {
             LOGGER.warn(WARNING, format("CML file not found! " + f.getName()));
             exit(1);
         }
-        String[] split = f.getName().split(".cml");
-        CMLReader cmlReader = new CMLReader(new FileInputStream(input));
-        AtomContainer ac = cmlReader.read(new AtomContainer());
-        IReaction r = new Reaction();
-        r.addReactant(ac, 1.0);
-        r.addProduct(ac, 1.0);
-        r.setID(split[0]);
-        return r;
+        String[] split = f.getName().split("\\.cml");
+        try (FileInputStream fis = new FileInputStream(input);
+             CMLReader cmlReader = new CMLReader(fis)) {
+            AtomContainer ac = cmlReader.read(new AtomContainer());
+            IReaction r = new Reaction();
+            r.addReactant(ac, 1.0);
+            r.addProduct(ac, 1.0);
+            r.setID(split[0]);
+            return r;
+        } catch (IOException ex) {
+            throw new CDKException("Error reading CML file: " + input, ex);
+        }
     }
 
     protected static List<IReaction> parseRXN(String fileNames) {
@@ -90,23 +94,15 @@ class ChemicalFormatParser {
                 LOGGER.error(WARNING, format("RXN file not found! %s", filepath.getName()));
                 exit(1);
             }
-            try {
-                LOGGER.info(INFO, "Annotating Reaction {0}", filepath.getName());
-                IReaction rxnReactions;
-                try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath));) {
-                    try {
-                        rxnReactions = reader.read(new Reaction());
-                        reader.close();
-                        rxnReactions.setID(filepath.getName().split(".rxn")[0]);
-                        rxnReactions = convertRoundTripRXNSMILES(rxnReactions);
-                        reactions.add(rxnReactions);
-                    } catch (IOException | CDKException ex) {
-                        LOGGER.debug("ERROR in Reading Reaction file " + filepath + NEW_LINE + ex);
-                    }
-                }
-            } catch (IOException ex) {
-                LOGGER.debug("Failed to Read and Annotate RXN File ");
-                LOGGER.error(SEVERE, null, ex);
+            LOGGER.info(INFO, "Annotating Reaction {0}", filepath.getName());
+            IReaction rxnReactions;
+            try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(filepath))) {
+                rxnReactions = reader.read(new Reaction());
+                rxnReactions.setID(filepath.getName().split("\\.rxn")[0]);
+                rxnReactions = convertRoundTripRXNSMILES(rxnReactions);
+                reactions.add(rxnReactions);
+            } catch (IOException | CDKException ex) {
+                LOGGER.error(SEVERE, "ERROR in Reading Reaction file " + filepath, ex);
             }
         }
         return reactions;

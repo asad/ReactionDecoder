@@ -1414,8 +1414,7 @@ public class GeometryTools {
                 firstAC = (IAtomContainer) secondAC.clone();
                 secondAC = (IAtomContainer) tmp.clone();
             } catch (CloneNotSupportedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.error(e);
             }
         }
     }

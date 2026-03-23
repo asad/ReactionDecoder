@@ -27,6 +27,8 @@ import javax.vecmath.Vector2d;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import static uk.ac.ebi.reactionblast.graphics.direct.GeometryTools.getRectangle2D;
@@ -42,6 +44,7 @@ import uk.ac.ebi.reactionblast.graphics.direct.Params;
 public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
 
     private static final Logger LOG = getLogger(SingleMoleculeLayout.class.getName());
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(SingleMoleculeLayout.class);
 
     private StructureDiagramGenerator sdg;
     private boolean forceRelayout;
@@ -85,7 +88,7 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
                     err.println("Disconnected components needs to be layout separately");
                 }
             } catch (CDKException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
         double scale = getScaleFactor(atomContainer, params.bondLength);

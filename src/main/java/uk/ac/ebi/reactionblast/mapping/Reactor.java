@@ -20,7 +20,6 @@ package uk.ac.ebi.reactionblast.mapping;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.synchronizedSortedMap;
@@ -129,9 +128,9 @@ public class Reactor extends AbstractReactor implements Serializable {
                     | SmiFlavor.Stereo);
         }
 
-//        System.LOGGER.debug("In Reaction");
+//        System.out.println("In Reaction");
 //        SmilesGenerator withAtomClasses = SmilesGenerator.unique().aromatic().withAtomClasses();
-//        System.LOGGER.debug("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
+//        System.out.println("Input reaction to be mapped " + withAtomClasses.createReactionSMILES(reaction));
         this.partialMapping = partialMapping;
         this.algorithm = algorithm;
         this.reactionWithSTOICHIOMETRY = reaction.getBuilder().newInstance(IReaction.class);
@@ -151,27 +150,27 @@ public class Reactor extends AbstractReactor implements Serializable {
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
         if (DEBUG) {
-            out.println("|++++++++++++++++++++++++++++|");
-            out.println("|i. Reactor Initialized");
+            LOGGER.debug("|++++++++++++++++++++++++++++|");
+            LOGGER.debug("|i. Reactor Initialized");
         }
         cleanMapping(reaction);
         if (DEBUG) {
-            out.println("|++++++++++++++++++++++++++++|");
+            LOGGER.debug("|++++++++++++++++++++++++++++|");
             printReaction(reaction);
-            out.println("|ii. Create Mapping Objects");
+            LOGGER.debug("|ii. Create Mapping Objects");
         }
         copyReferenceReaction(reaction);
         expandReaction();
         checkReactionBalance();
         if (DEBUG) {
-            out.println("|iii. Compute atom-atom Mappings");
+            LOGGER.debug("|iii. Compute atom-atom Mappings");
         }
         calculateAtomAtomMapping();
         if (DEBUG) {
             printReaction(reactionWithUniqueSTOICHIOMETRY);
-            out.println("|++++++++++++++++++++++++++++|");
-            out.println("|iv. Done|");
-            out.println("|++++++++++++++++++++++++++++|" + NEW_LINE + NEW_LINE);
+            LOGGER.debug("|++++++++++++++++++++++++++++|");
+            LOGGER.debug("|iv. Done|");
+            LOGGER.debug("|++++++++++++++++++++++++++++|" + NEW_LINE + NEW_LINE);
         }
     }
 

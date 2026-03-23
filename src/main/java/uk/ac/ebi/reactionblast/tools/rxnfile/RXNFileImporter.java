@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import static java.lang.System.out;
 import org.openscience.cdk.exception.CDKException;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import org.openscience.cdk.interfaces.IAtom;
@@ -74,7 +73,7 @@ public class RXNFileImporter {
                 reaction = reader.read(reaction);
             }
         } catch (CDKException cdkerr) {
-            out.println("Error: only RXN V2000 file format is "
+            LOGGER.error("Error: only RXN V2000 file format is "
                     + "supported by this Software");
             LOGGER.debug("Error: " + cdkerr);
         } catch (FileNotFoundException e) {
@@ -131,21 +130,19 @@ public class RXNFileImporter {
     }
 
     private void printAtoms(IAtomContainer mol) {
-        out.print("Atom: ");
+        StringBuilder sb = new StringBuilder("Atom: ");
         for (IAtom a : mol.atoms()) {
-            out.print(a.getSymbol());
+            sb.append(a.getSymbol());
         }
-        out.println();
-        out.println();
+        LOGGER.debug(sb.toString());
     }
 
     private void printRadicalAtoms(IAtomContainer mol) {
-        out.print("Atom: ");
+        StringBuilder sb = new StringBuilder("Atom: ");
         for (Integer a = 0; a < mol.getSingleElectronCount(); a++) {
-            out.print(mol.getSingleElectron(a).getAtom().getSymbol());
-            out.print(mol.getSingleElectron(a).getElectronCount());
+            sb.append(mol.getSingleElectron(a).getAtom().getSymbol());
+            sb.append(mol.getSingleElectron(a).getElectronCount());
         }
-        out.println();
-        out.println();
+        LOGGER.debug(sb.toString());
     }
 }

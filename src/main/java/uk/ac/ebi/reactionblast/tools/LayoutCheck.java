@@ -25,6 +25,8 @@ import static org.openscience.cdk.graph.ConnectivityChecker.partitionIntoMolecul
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemModel;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAllAtomContainers;
 
 /**
@@ -33,6 +35,8 @@ import static org.openscience.cdk.tools.manipulator.MoleculeSetManipulator.getAl
  * @author Syed Asad Rahman <asad @ ebi.ac.uk>
  */
 public class LayoutCheck {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(LayoutCheck.class);
 
     /**
      *
@@ -46,7 +50,7 @@ public class LayoutCheck {
                 sdg.generateCoordinates();
                 mol = sdg.getMolecule();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
 
@@ -68,7 +72,7 @@ public class LayoutCheck {
                     sdg.generateCoordinates();
                     chemModel = (IChemModel) sdg.getMolecule();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error(e);
                 }
             }
         }

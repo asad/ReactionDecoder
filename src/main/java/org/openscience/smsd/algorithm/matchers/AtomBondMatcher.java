@@ -40,7 +40,6 @@ public class AtomBondMatcher {
 
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(AtomBondMatcher.class);
-    private final static boolean DEBUG = false;
 
     /**
      *
@@ -57,9 +56,7 @@ public class AtomBondMatcher {
             AtomMatcher atomMatcher,
             BondMatcher bondMatcher,
             boolean undirected) {
-        if (DEBUG) {
-            System.out.println("\n\n matchAtomAndBond ");
-        }
+        LOGGER.debug("matchAtomAndBond");
 
         boolean atomMatch = matches(b1.getBegin(), b2.getBegin(), atomMatcher)
                 && matches(b1.getEnd(), b2.getEnd(), atomMatcher);
@@ -70,15 +67,12 @@ public class AtomBondMatcher {
                     && matches(b1.getEnd(), b2.getBegin(), atomMatcher);
         }
 
-        if (DEBUG) {
-            System.out.println(" bondA1 a0:" + b1.getBegin().getSymbol()
-                    + " a1:" + b1.getEnd().getSymbol());
-            System.out.println(" bondB1 b0:" + b2.getBegin().getSymbol()
-                    + " b1:" + b2.getEnd().getSymbol());
-
-            System.out.println(" atomMatch " + atomMatch
-                    + ", bondMatch " + bondMatch);
-        }
+        LOGGER.debug(" bondA1 a0:" + b1.getBegin().getSymbol()
+                + " a1:" + b1.getEnd().getSymbol());
+        LOGGER.debug(" bondB1 b0:" + b2.getBegin().getSymbol()
+                + " b1:" + b2.getEnd().getSymbol());
+        LOGGER.debug(" atomMatch " + atomMatch
+                + ", bondMatch " + bondMatch);
         return atomMatch && bondMatch;
     }
 
@@ -125,23 +119,17 @@ public class AtomBondMatcher {
         AtomMatcher am = AtomMatcher.forElement();
 
         if (matchAtomTypes) {
-            if (DEBUG) {
-                System.out.println("matchAtomTypes " + matchAtomTypes);
-            }
+            LOGGER.debug("matchAtomTypes " + matchAtomTypes);
             am = AtomMatcher.forAtomTypeMatcher();
         }
 
         if (shouldMatchRings && !matchAtomTypes) {
-            if (DEBUG) {
-                System.out.println("shouldMatchRings " + shouldMatchRings);
-            }
+            LOGGER.debug("shouldMatchRings " + shouldMatchRings);
             am = AtomMatcher.forRingMatcher();
         }
 
         if (shouldMatchRings && matchAtomTypes) {
-            if (DEBUG) {
-                System.out.println("matchAtomTypes " + matchAtomTypes);
-            }
+            LOGGER.debug("matchAtomTypes " + matchAtomTypes);
             am = AtomMatcher.forRingAtomTypeMatcher();
         }
         return am;
@@ -161,23 +149,17 @@ public class AtomBondMatcher {
         BondMatcher bm = BondMatcher.forAny();
 
         if (matchBond) {
-            if (DEBUG) {
-                System.out.println("Order Match Choosen " + matchBond);
-            }
+            LOGGER.debug("Order Match Choosen " + matchBond);
             bm = BondMatcher.forOrder();
         }
 
         if (shouldMatchRings) {
-            if (DEBUG) {
-                System.out.println("Ring Match Choosen " + shouldMatchRings);
-            }
+            LOGGER.debug("Ring Match Choosen " + shouldMatchRings);
             bm = BondMatcher.forRing();
         }
 
         if (matchBond && shouldMatchRings) {
-            if (DEBUG) {
-                System.out.println("Order & Ring Match Choosen " + shouldMatchRings);
-            }
+            LOGGER.debug("Order & Ring Match Choosen " + shouldMatchRings);
             bm = BondMatcher.forStrictOrder();
         }
         return bm;

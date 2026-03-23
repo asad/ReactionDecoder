@@ -177,7 +177,7 @@ public class MDLFileReader {
                 sdg.generateCoordinates();
                 molecule = sdg.getMolecule();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
 
@@ -201,7 +201,7 @@ public class MDLFileReader {
                     sdg.generateCoordinates();
                     ac = sdg.getMolecule();
                 } catch (IllegalArgumentException | CDKException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e);
                 }
             }
         }

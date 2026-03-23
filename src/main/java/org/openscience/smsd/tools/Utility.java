@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
@@ -44,6 +46,8 @@ import org.openscience.smsd.helper.MoleculeInitializer;
  */
 public class Utility {
 
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(Utility.class);
     static final String NEW_LINE = getProperty("line.separator");
 
     //print matrix of type MARCS on shell
@@ -62,47 +66,47 @@ public class Utility {
             int bondnum_A, List<Integer> i_bonds_A, List<String> c_bonds_A,
             int bondnum_B, List<Integer> i_bonds_B, List<String> c_bonds_B) {
 
-        System.out.println("bondnum_A " + bondnum_A);
-        System.out.println("bondnum_B " + bondnum_B);
+        LOGGER.debug("bondnum_A " + bondnum_A);
+        LOGGER.debug("bondnum_B " + bondnum_B);
 
-        System.out.println("c_bonds_A " + c_bonds_A.size());
+        LOGGER.debug("c_bonds_A " + c_bonds_A.size());
         print_list(c_bonds_A);
-        System.out.println("i_bonds_A " + i_bonds_A.size());
+        LOGGER.debug("i_bonds_A " + i_bonds_A.size());
         print_list(i_bonds_A);
-        System.out.println("c_bonds_B " + c_bonds_B.size());
+        LOGGER.debug("c_bonds_B " + c_bonds_B.size());
         print_list(c_bonds_B);
-        System.out.println("i_bonds_B " + i_bonds_B.size());
+        LOGGER.debug("i_bonds_B " + i_bonds_B.size());
         print_list(i_bonds_B);
 
-        System.out.print("matrix: " + NEW_LINE + "-" + "    ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("matrix: ").append(NEW_LINE).append("-").append("    ");
         for (int a = 0; a < bondnum_B; a++) {
-            System.out.print(" " + c_bonds_B.get((a * 4) + 0) + c_bonds_B.get((a * 4) + 1));
+            sb.append(" ").append(c_bonds_B.get((a * 4) + 0)).append(c_bonds_B.get((a * 4) + 1));
         }
-        System.out.print(NEW_LINE + "     ");
+        sb.append(NEW_LINE).append("     ");
         for (int a = 0; a < bondnum_B; a++) {
-            System.out.print(" " + i_bonds_B.get((a * 3) + 0) + i_bonds_B.get((a * 3) + 1));
+            sb.append(" ").append(i_bonds_B.get((a * 3) + 0)).append(i_bonds_B.get((a * 3) + 1));
         }
-        System.out.println("");
+        sb.append(NEW_LINE);
         for (int a = 0; a < bondnum_A; a++) {
-            System.out.print(c_bonds_A.get((a * 4) + 0) + "" + c_bonds_A.get((a * 4) + 1));
-            System.out.print(" " + i_bonds_A.get((a * 3) + 0) + i_bonds_A.get((a * 3) + 1));
+            sb.append(c_bonds_A.get((a * 4) + 0)).append("").append(c_bonds_A.get((a * 4) + 1));
+            sb.append(" ").append(i_bonds_A.get((a * 3) + 0)).append(i_bonds_A.get((a * 3) + 1));
             for (int b = 0; b < bondnum_B; b++) {
-                System.out.print("   " + MCGregor_Matrix.get((a * bondnum_B) + b));
+                sb.append("   ").append(MCGregor_Matrix.get((a * bondnum_B) + b));
             }
-            System.out.println("");
-
+            sb.append(NEW_LINE);
         }
-        System.out.println("");
+        LOGGER.debug(sb.toString());
 
         return 0;
     }
 
     static void print_list(List list) {
+        StringBuilder sb = new StringBuilder();
         list.stream().forEach((o) -> {
-            System.out.print(o + " ");
+            sb.append(o).append(" ");
         });
-        System.out.println("");
-
+        LOGGER.debug(sb.toString());
     }
 
     public static List<Integer> getBubbleSort(List<Integer> unSortedVector) {

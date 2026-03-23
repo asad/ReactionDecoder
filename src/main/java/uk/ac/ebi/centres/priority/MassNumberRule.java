@@ -17,10 +17,11 @@
  */
 package uk.ac.ebi.centres.priority;
 
-import static java.lang.System.out;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IPseudoAtom;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.centres.Ligand;
 import static uk.ac.ebi.centres.PriorityRule.Type.CONSTITUTIONAL;
 import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
@@ -36,6 +37,9 @@ import uk.ac.ebi.centres.priority.access.MassNumberAccessor;
  */
 public class MassNumberRule<A>
         extends AbstractPriorityRule<A> {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(MassNumberRule.class);
 
     /**
      * Accessor used to get the atomic number from an atom.
@@ -61,10 +65,10 @@ public class MassNumberRule<A>
     @Override
     public int compare(Ligand<A> o1, Ligand<A> o2) {
         if (accessor == null || o1.getAtom() == null) {
-            out.println(accessor + " 1 NULL");
+            LOGGER.debug(accessor + " 1 NULL");
         }
         if (accessor == null || o2.getAtom() == null) {
-            out.println(accessor + " 2 NULL");
+            LOGGER.debug(accessor + " 2 NULL");
         }
         IAtom a = (IAtom) o1.getAtom();
         IAtom b = (IAtom) o2.getAtom();
@@ -79,7 +83,7 @@ public class MassNumberRule<A>
         if (o != null && !(o instanceof IPseudoAtom) && o.getMassNumber() == null) {
             try {
 //                    Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-//                    System.out.println("atomicNumber " + atomicNumber);
+//                    LOGGER.debug("atomicNumber " + atomicNumber);
                 int massNumber = Isotopes.getInstance().getMajorIsotope(o.getAtomicNumber()).getMassNumber();
                 return massNumber;
             } catch (Exception e) {
@@ -89,7 +93,7 @@ public class MassNumberRule<A>
         } else if (o instanceof IPseudoAtom) {
             //PseudoAtoms
 //                Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-//                System.out.println("atomicNumber " + atomicNumber);
+//                LOGGER.debug("atomicNumber " + atomicNumber);
             return 11;//less than carbon for 'R'
         }
         return 0;

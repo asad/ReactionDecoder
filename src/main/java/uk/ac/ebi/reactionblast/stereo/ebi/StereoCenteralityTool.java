@@ -80,9 +80,9 @@ public abstract class StereoCenteralityTool extends Utility {
         CDKPerceptor perceptor = new CDKPerceptor();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-//            System.LOGGER.debug("R 2D CDK based stereo perception for " + ac.getID());
+//            LOGGER.debug("R 2D CDK based stereo perception for " + ac.getID());
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
-//            System.LOGGER.debug("R 2D CDK based stereo " + chirality2D.size());
+//            LOGGER.debug("R 2D CDK based stereo " + chirality2D.size());
             if (!chirality2D.isEmpty()) {
                 chirality2D.entrySet().stream().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);
@@ -95,9 +95,9 @@ public abstract class StereoCenteralityTool extends Utility {
         }
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
             IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-//            System.LOGGER.debug("P 2D CDK based stereo perception for " + ac.getID());
+//            LOGGER.debug("P 2D CDK based stereo perception for " + ac.getID());
             Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH, perceptor);
-//            System.LOGGER.debug("P 2D CDK based stereo " + chirality2D.size());
+//            LOGGER.debug("P 2D CDK based stereo " + chirality2D.size());
             if (!chirality2D.isEmpty()) {
                 chirality2D.entrySet().stream().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);

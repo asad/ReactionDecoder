@@ -69,7 +69,6 @@ public final class BondChangeAnnotator extends DUModel {
     private static final long serialVersionUID = 988987678877861L;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(BondChangeAnnotator.class);
-    private static final boolean DEBUG = false;
 
     /**
      *
@@ -249,19 +248,12 @@ public final class BondChangeAnnotator extends DUModel {
         BEMatrix substrateBEMatrix = reactantBE;
         BEMatrix productBEMatrix = productBE;
 
-        if (DEBUG) {
-            System.out.println("markBondChanges method START");
-//        System.out.println(reactantBE.toString());
-//        System.out.println(productBE.toString());
-//        System.out.println(reactionMatrix.toString
-        }
+        LOGGER.debug("markBondChanges method START");
 
         /*
          * Marking CDKConstants.ISINRING FLAGS
          */
-        if (DEBUG) {
-            System.out.println("Marking Rings");
-        }
+        LOGGER.debug("Marking Rings");
         for (IAtomContainer atomContainerQ : reactantSet.atomContainers()) {
             try {
                 /*
@@ -299,9 +291,7 @@ public final class BondChangeAnnotator extends DUModel {
          * Mining Stereo Atom Changes E/Z or R/S only
          */
 
-        if (DEBUG) {
-            System.out.println("Marking E/Z or R/S");
-        }
+        LOGGER.debug("Marking E/Z or R/S");
         for (StereoChange sc : stereogenicCenters) {
             IAtom atomE = sc.getReactantAtom();
             IAtom atomP = sc.getProductAtom();
@@ -340,17 +330,13 @@ public final class BondChangeAnnotator extends DUModel {
          *
          */
 
-        if (DEBUG) {
-            System.out.println("Marking Bond Changes");
-        }
+        LOGGER.debug("Marking Bond Changes");
         int sizeQ = reactionMatrix.getReactantsAtomArray().size();
         int sizeT = reactionMatrix.getProductsAtomArray().size();
 
         for (int i = 0; i < reactionMatrix.getRowDimension(); i++) {
             for (int j = i; j < reactionMatrix.getColumnDimension(); j++) {
-                if (DEBUG) {
-                    System.out.println("Marking Bond Changes-1");
-                }
+                LOGGER.debug("Marking Bond Changes-1");
                 if (i != j && reactionMatrix.getValue(i, j) == 0.) {
                     IBond affectedBondReactants = null;
                     IBond affectedBondProducts = null;
@@ -398,18 +384,11 @@ public final class BondChangeAnnotator extends DUModel {
                 /*
                  * R-Matrix with changes
                  */
-                if (DEBUG) {
-                    System.out.println("Marking Bond Changes-2");
-                }
+                LOGGER.debug("Marking Bond Changes-2");
                 if (reactionMatrix.getValue(i, j) != 0.) {
 
-                    /*
-                     * DEBUG
-                     */
-                    if (DEBUG) {
-                        System.out.println("Bond Change in R Matrix " + " i "
-                                + (i + 1) + ", j " + (j + 1) + " " + reactionMatrix.getValue(i, j));
-                    }
+                    LOGGER.debug("Bond Change in R Matrix " + " i "
+                            + (i + 1) + ", j " + (j + 1) + " " + reactionMatrix.getValue(i, j));
 
                     //Diagonal free valence electron changes 
                     if (i == j) {
@@ -422,9 +401,6 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(reactantAtom);
                             }
                         } catch (CDKException ex) {
-                            if (DEBUG) {
-                                ex.printStackTrace();
-                            }
                             LOGGER.error(SEVERE, null, ex);
                         }
                         try {
@@ -434,9 +410,6 @@ public final class BondChangeAnnotator extends DUModel {
                                 getReactionCenterSet().add(productAtom);
                             }
                         } catch (CDKException ex) {
-                            if (DEBUG) {
-                                ex.printStackTrace();
-                            }
                             LOGGER.error(SEVERE, null, ex);
                         }
                     }
@@ -447,9 +420,7 @@ public final class BondChangeAnnotator extends DUModel {
                     IBond affectedBondReactants;
                     IBond affectedBondProducts;
                     ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
-                    if (DEBUG) {
-                        System.out.println("Marking Bond Changes-2");
-                    }
+                    LOGGER.debug("Marking Bond Changes-2");
                     try {
                         affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
                         affectedBondProducts = getBondOfProductsByRMatrix(reactionMatrix.getProductAtom(i), reactionMatrix.getProductAtom(j));
@@ -467,17 +438,13 @@ public final class BondChangeAnnotator extends DUModel {
                             continue;
                         }
 
-                        if (DEBUG) {
-                            System.out.println(i + "," + j + " reactionMatrix.getValue(i, j) " + reactionMatrix.getValue(i, j));
-                        }
+                        LOGGER.debug(i + "," + j + " reactionMatrix.getValue(i, j) " + reactionMatrix.getValue(i, j));
 
                         /*
                          * Changes in the product
                          */
                         if (reactionMatrix.getValue(i, j) < 0.0d) {
-                            if (DEBUG) {
-                                System.out.println("Marking Bond Changes-2 product");
-                            }
+                            LOGGER.debug("Marking Bond Changes-2 product");
 
                             if (productBEMatrix.getValue(i, j) == 0.0d && affectedBondProducts == null) {
                                 /*
@@ -508,9 +475,7 @@ public final class BondChangeAnnotator extends DUModel {
                            * Changes in the educt
                          */ else if (reactionMatrix.getValue(i, j) > 0.d) {
 
-                            if (DEBUG) {
-                                System.out.println("Marking Bond Changes-2 educt");
-                            }
+                            LOGGER.debug("Marking Bond Changes-2 educt");
 
                             if (substrateBEMatrix.getValue(i, j) == 0.0d && affectedBondReactants == null) {
                                 /*
@@ -541,23 +506,16 @@ public final class BondChangeAnnotator extends DUModel {
                         /*
                          * Store the bond changes
                          */
-                        if (DEBUG) {
-                            System.out.println("Marking Bond Changes-2 STORED ");
-                        }
+                        LOGGER.debug("Marking Bond Changes-2 STORED ");
 
                         getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
-                        if (DEBUG) {
-                            ex.printStackTrace();
-                        }
                         LOGGER.error(SEVERE, null, ex);
                     }
                 }
             }
         }
-        if (DEBUG) {
-            System.out.println("Marking Bond Changes-DONE");
-        }
+        LOGGER.debug("Marking Bond Changes-DONE");
         /*
          * Marking Missing Bond Changes
          */
@@ -567,16 +525,12 @@ public final class BondChangeAnnotator extends DUModel {
          */
         markUnMappedAtoms();
 
-        if (DEBUG) {
-            System.out.println("markBondChanges method END");
-        }
+        LOGGER.debug("markBondChanges method END");
     }
 
     private synchronized void markHydrogenDisplacementBondChanges() {
 
-        if (DEBUG) {
-            System.out.println("markHydrogenDisplacementBondChanges method START");
-        }
+        LOGGER.debug("markHydrogenDisplacementBondChanges method START");
         /*
          * Mark Hydrogen bond broken/Formed in the reaction
          *
@@ -697,16 +651,12 @@ public final class BondChangeAnnotator extends DUModel {
                 }
             }
         }
-        if (DEBUG) {
-            System.out.println("markHydrogenDisplacementBondChanges method END");
-        }
+        LOGGER.debug("markHydrogenDisplacementBondChanges method END");
 
     }
 
     private synchronized void markUnMappedAtoms() {
-        if (DEBUG) {
-            System.out.println("markUnMappedAtoms method START");
-        }
+        LOGGER.debug("markUnMappedAtoms method START");
         for (IAtomContainer acE : reactantSet.atomContainers()) {
             for (IBond affectedBondReactants : acE.bonds()) {
                 boolean isNotMapped = false;
@@ -719,10 +669,8 @@ public final class BondChangeAnnotator extends DUModel {
                 IBond pBond = null;
                 if (isNotMapped) {
 
-                    if (DEBUG) {
-                        System.out.println("affectedBondReactants-0 " + affectedBondReactants.getAtom(0).getID());
-                        System.out.println("affectedBondReactants-1 " + affectedBondReactants.getAtom(1).getID());
-                    }
+                    LOGGER.debug("affectedBondReactants-0 " + affectedBondReactants.getAtom(0).getID());
+                    LOGGER.debug("affectedBondReactants-1 " + affectedBondReactants.getAtom(1).getID());
                     affectedBondReactants.getAtom(0).setFlag(REACTIVE_CENTER, true);
                     affectedBondReactants.getAtom(1).setFlag(REACTIVE_CENTER, true);
                     getReactionCenterSet().add(affectedBondReactants.getAtom(0));
@@ -755,9 +703,7 @@ public final class BondChangeAnnotator extends DUModel {
                 }
             }
         }
-        if (DEBUG) {
-            System.out.println("markUnMappedAtoms method END");
-        }
+        LOGGER.debug("markUnMappedAtoms method END");
     }
 
     private synchronized IBond getBondOfReactantsByRMatrix(IAtom atom1, IAtom atom2) {

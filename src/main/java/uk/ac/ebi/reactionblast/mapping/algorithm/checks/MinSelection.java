@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
 import java.io.IOException;
 import static java.lang.Double.MAX_VALUE;
 import static java.lang.Double.MIN_VALUE;
-import static java.lang.System.out;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -205,31 +204,31 @@ public class MinSelection extends Selector implements IResult {
      */
     static void printSimMatrix(Holder mh) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        out.println();
-        out.println("********* MATRIX **********");
+        LOGGER.debug("");
+        LOGGER.debug("********* MATRIX **********");
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
-            out.println("Similarity Matrix");
-            out.print("\t\t");
+            LOGGER.debug("Similarity Matrix");
+            LOGGER.debug("\t\t");
             for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            out.println();
+            LOGGER.debug("");
             double val = 0;
             for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
-                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
                     val = mh.getGraphSimilarityMatrix().getValue(i, j);
                     result = format.format(val);
-                    out.print("   " + result);
+                    LOGGER.debug("   " + result);
                 }
-                out.println();
+                LOGGER.debug("");
             }
         } catch (IOException | CDKException e) {
             LOGGER.debug(" Parser Error: ");
         }
-        out.println();
+        LOGGER.debug("");
 
     }
 
@@ -240,31 +239,31 @@ public class MinSelection extends Selector implements IResult {
      */
     static void printCliqueMatrix(Holder mh) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        out.println();
-        out.println("********* MATRIX **********");
+        LOGGER.debug("");
+        LOGGER.debug("********* MATRIX **********");
         try {
             NumberFormat format = new DecimalFormat("0.00");
             String result;
-            out.println("Clique Matrix");
-            out.print("\t\t");
+            LOGGER.debug("Clique Matrix");
+            LOGGER.debug("\t\t");
             for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            out.println();
+            LOGGER.debug("");
             double val = 0;
             for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
-                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
                     val = mh.getCliqueMatrix().getValue(i, j);
                     result = format.format(val);
-                    out.print("   " + result);
+                    LOGGER.debug("   " + result);
                 }
-                out.println();
+                LOGGER.debug("");
             }
         } catch (IOException | CDKException e) {
             LOGGER.debug(" Parser Error: ");
         }
-        out.println();
+        LOGGER.debug("");
 
     }
 
@@ -275,28 +274,28 @@ public class MinSelection extends Selector implements IResult {
      */
     static void printFLAGMatrix(Holder mh, boolean[][] flagMatrix) {
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
-        out.println();
-        out.println("********* MATRIX **********");
+        LOGGER.debug("");
+        LOGGER.debug("********* MATRIX **********");
         try {
             String result;
-            out.println("Flag Matrix");
-            out.print("\t\t");
+            LOGGER.debug("Flag Matrix");
+            LOGGER.debug("\t\t");
             for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                out.print(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getProduct(j).getID() + ":(" + reactionStructureInformationContainer.getProduct(j).getAtomCount() + ")");
             }
-            out.println();
+            LOGGER.debug("");
             boolean val;
             for (int i = 0; i < reactionStructureInformationContainer.getEductCount(); i++) {
-                out.print(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
+                LOGGER.debug(" " + reactionStructureInformationContainer.getEduct(i).getID() + ":(" + reactionStructureInformationContainer.getEduct(i).getAtomCount() + ")");
                 for (int j = 0; j < reactionStructureInformationContainer.getProductCount(); j++) {
-                    out.print("   " + flagMatrix[i][j]);
+                    LOGGER.debug("   " + flagMatrix[i][j]);
                 }
-                out.println();
+                LOGGER.debug("");
             }
         } catch (IOException | CDKException e) {
             LOGGER.error("Parser Error", e.getMessage());
         }
-        out.println();
+        LOGGER.debug("");
 
     }
 }

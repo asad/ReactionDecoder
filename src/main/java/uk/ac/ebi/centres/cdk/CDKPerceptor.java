@@ -99,7 +99,6 @@ public class CDKPerceptor extends DefaultPerceptor<IAtom> {
             }
             perceive(new CDKCentreProvider(container), new CDKManager(container));
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("WARNING: 2D CDK based stereo perception failed! " + e);
         }
     }

@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.IOException;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +84,7 @@ class CaseHandler {
 
     CaseHandler(IReaction reaction) throws Intractable {
         if (DEBUG) {
-            System.out.println("=====CaseHandler====");
+            LOGGER.debug("=====CaseHandler====");
         }
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
@@ -150,7 +149,7 @@ class CaseHandler {
             }
         }
         if (DEBUG) {
-            System.out.println("=====DONE CaseHandler====");
+            LOGGER.debug("=====DONE CaseHandler====");
         }
     }
 
@@ -206,7 +205,7 @@ class CaseHandler {
             SmartsPattern smartsPhosphate;
 
             if (DEBUG) {
-                out.println("String phosphateSMILES = \"OP(O)(O)=O\";");
+                LOGGER.debug("String phosphateSMILES = \"OP(O)(O)=O\";");
             }
 
             smartsPhosphate = SmartsPattern.create(phosphateSMILES, SilentChemObjectBuilder.getInstance());
@@ -214,17 +213,17 @@ class CaseHandler {
             boolean matchesP = smartsPhosphate.matches(product);
 
             if (DEBUG) {
-                out.println("String smartsPhosphate Q " + matchesE);
-                out.println("String smartsPhosphate T " + matchesP);
+                LOGGER.debug("String smartsPhosphate Q " + matchesE);
+                LOGGER.debug("String smartsPhosphate T " + matchesP);
             }
             if (matchesE && matchesP) {
                 boolean findAndChipBondPhophate1 = findAndChipBondPhophate(educt);
                 boolean findAndChipBondPhophate2 = findAndChipBondPhophate(product);
                 if (DEBUG) {
-                    out.println("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
-                    out.println("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
-                    out.println("SM " + new SmilesGenerator(SmiFlavor.Generic).create(educt));
-                    out.println("SM " + new SmilesGenerator(SmiFlavor.Generic).create(product));
+                    LOGGER.debug("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
+                    LOGGER.debug("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
+                    LOGGER.debug("SM " + new SmilesGenerator(SmiFlavor.Generic).create(educt));
+                    LOGGER.debug("SM " + new SmilesGenerator(SmiFlavor.Generic).create(product));
                 }
                 return findAndChipBondPhophate1 && findAndChipBondPhophate2;
             }
@@ -289,13 +288,13 @@ class CaseHandler {
                             container.removeBond(b);
                             return b;
                         }).filter((b) -> (DEBUG)).map((b) -> {
-                            out.println("bondToBeChipped " + b.getAtom(0).getSymbol());
+                            LOGGER.debug("bondToBeChipped " + b.getAtom(0).getSymbol());
                             return b;
                         }).map((b) -> {
-                            out.println("bondToBeChipped " + b.getAtom(1).getSymbol());
+                            LOGGER.debug("bondToBeChipped " + b.getAtom(1).getSymbol());
                             return b;
                         }).forEach((_item) -> {
-                            out.println("removeBond o-p ");
+                            LOGGER.debug("removeBond o-p ");
                         });
                         return true;
                     }
@@ -312,21 +311,21 @@ class CaseHandler {
      */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
         if (DEBUG) {
-            out.println("Find and Chip Bond Between Rings");
+            LOGGER.debug("Find and Chip Bond Between Rings");
         }
         List<IBond> bond_to_be_removed = new ArrayList<>();
         for (IAtom atom : container.atoms()) {
             if (atom.getSymbol().equals("O") && !atom.isAromatic()) {
                 int number_of_rings = ((Integer) atom.getProperty(RING_CONNECTIONS));
                 if (DEBUG) {
-                    out.println("number_of_rings " + number_of_rings);
+                    LOGGER.debug("number_of_rings " + number_of_rings);
                 }
 
                 List<IBond> bonds = container.getConnectedBondsList(atom);
                 if (DEBUG) {
-                    out.println("number_of_bonds " + bonds.size());
+                    LOGGER.debug("number_of_bonds " + bonds.size());
                     bonds.stream().forEach((bond) -> {
-                        out.println("BONDS "
+                        LOGGER.debug("BONDS "
                                 + " B0 " + bond.getAtom(0).getSymbol()
                                 + " B1 " + bond.getAtom(1).getSymbol());
                     });
@@ -343,10 +342,10 @@ class CaseHandler {
             return bond;
         }).filter((bond) -> (DEBUG)).forEach((bond) -> {
             try {
-                out.println("CHIPPING BONDS "
+                LOGGER.debug("CHIPPING BONDS "
                         + " B0 " + bond.getAtom(0).getSymbol()
                         + " B1 " + bond.getAtom(1).getSymbol());
-                out.println("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
+                LOGGER.debug("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
             } catch (CDKException ex) {
                 LOGGER.error(SEVERE, "Clipping Bonds: ", ex.getMessage());
             }
@@ -359,7 +358,7 @@ class CaseHandler {
 
         flag = flag | case1(s, t);
         if (DEBUG) {
-            System.out.println("Case 1: " + flag);
+            LOGGER.debug("Case 1: " + flag);
         }
         return flag;
     }
@@ -374,8 +373,8 @@ class CaseHandler {
         IAtomContainer query = smilesParser.parseSmiles(moiety);
 
         if (DEBUG) {
-            out.println("case2 QSM " + new SmilesGenerator(SmiFlavor.Generic).create(s));
-            out.println("case2 TSM " + new SmilesGenerator(SmiFlavor.Generic).create(t));
+            LOGGER.debug("case2 QSM " + new SmilesGenerator(SmiFlavor.Generic).create(s));
+            LOGGER.debug("case2 TSM " + new SmilesGenerator(SmiFlavor.Generic).create(t));
 //            boolean match1 = isMatch(query, s, true);
 //            boolean match2 = isMatch(query, t, true);
 //            System.out.println("Sub 1 " + match1);

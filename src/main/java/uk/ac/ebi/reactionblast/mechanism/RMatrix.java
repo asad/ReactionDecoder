@@ -80,11 +80,11 @@ public final class RMatrix extends EBIMatrix implements Serializable {
          */
         int expectedOverlap = countAtomOverlap(reactantBE.getAtoms(), productBE.getAtoms());
         if (DEBUG) {
-            System.out.println("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
+            LOGGER.debug("expectedOverlap " + expectedOverlap + ", " + mapping.getSize());
         }
         //Bug fixed by Asad
         int umapped_atoms_remaining = productBE.getRowDimension() - (mapping.getSize() + 1);
-        if (expectedOverlap != mapping.getSize() & umapped_atoms_remaining != 0) {
+        if (expectedOverlap != mapping.getSize() && umapped_atoms_remaining != 0) {
             LOGGER.debug("Core Reactant Atoms: " + (reactantBE.getRowDimension() - 1));
             LOGGER.debug("Core Product Atoms: " + (productBE.getRowDimension() - 1));
             LOGGER.debug("Mapping Atoms: " + mapping.getSize());
@@ -135,9 +135,9 @@ public final class RMatrix extends EBIMatrix implements Serializable {
             }
         }
         if (DEBUG) {
-            System.out.println("BE-React " + reactantBE.toString());
-            System.out.println("BE-Prod " + productBE.toString());
-            System.out.println("R " + toString());
+            LOGGER.debug("BE-React " + reactantBE.toString());
+            LOGGER.debug("BE-Prod " + productBE.toString());
+            LOGGER.debug("R " + toString());
         }
     }
 
@@ -411,11 +411,11 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         int total = 0;
         total = atomOverlap.values().stream().map((i) -> i).reduce(total, Integer::sum);
         if (DEBUG) {
-            System.out.println("LEFT " + atomUniqueCounter1);
-            System.out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            System.out.println("RIGHT " + atomUniqueCounter2);
-            System.out.println("atomUniqueCounter2 " + rightHandAtomCount);
-            System.out.println("overlap " + total);
+            LOGGER.debug("LEFT " + atomUniqueCounter1);
+            LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
+            LOGGER.debug("RIGHT " + atomUniqueCounter2);
+            LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
+            LOGGER.debug("overlap " + total);
         }
 
         return total;

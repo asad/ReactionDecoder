@@ -692,7 +692,7 @@ public class ImageGenerator {
         try {
             write((RenderedImage) image, "PNG", new File(outImageFileName + ".png"));
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            LOGGER.error(ioe);
         }
 
     }

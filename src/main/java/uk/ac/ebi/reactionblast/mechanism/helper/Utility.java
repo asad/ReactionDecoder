@@ -529,8 +529,7 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
 
             String sm = smiles.create(cloneMolecule, p);
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.debug("Fragment not fit to canonicalise!");
+            LOGGER.debug("Fragment not fit to canonicalise: " + e.getMessage());
         }
 
         permuteWithoutClone(p, cloneMolecule);

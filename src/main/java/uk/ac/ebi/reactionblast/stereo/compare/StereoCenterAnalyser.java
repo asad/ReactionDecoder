@@ -30,6 +30,8 @@ import org.openscience.cdk.geometry.cip.ILigand;
 import org.openscience.cdk.geometry.cip.VisitedAtoms;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.SaturationChecker;
 
 /**
@@ -41,6 +43,8 @@ import org.openscience.cdk.tools.SaturationChecker;
  *
  */
 public class StereoCenterAnalyser {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(StereoCenterAnalyser.class);
 
     /**
      * Check an atom to see if it has a potential tetrahedral stereo center.
@@ -74,7 +78,7 @@ public class StereoCenterAnalyser {
                         hasImplicitHydrogen = true;
                     }
                 } catch (CDKException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e);
                 }
             }
             if (!hasImplicitHydrogen) {

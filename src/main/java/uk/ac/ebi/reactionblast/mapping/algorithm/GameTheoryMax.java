@@ -49,7 +49,6 @@
 package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
-import static java.lang.System.out;
 import java.util.BitSet;
 import static java.util.Collections.synchronizedList;
 import java.util.List;
@@ -57,6 +56,8 @@ import java.util.Map;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.MaxSelection;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
@@ -74,6 +75,7 @@ final class GameTheoryMax extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 1887868678797L;
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMax.class);
     private final List<String> eductList;
     private final List<String> productList;
     private final ChooseWinner winner;
@@ -100,7 +102,7 @@ final class GameTheoryMax extends BaseGameTheory {
             GameTheoryMatrix rpsh)
             throws Exception {
         if (DEBUG) {
-            out.println("I am MAX");
+            LOGGER.debug("I am MAX");
         }
         this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
@@ -124,7 +126,7 @@ final class GameTheoryMax extends BaseGameTheory {
         this.counter++;
 
         if (DEBUG) {
-            out.println("**********Orignal Matrix**************");
+            LOGGER.debug("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
             printCliqueMatrix(mh, eductList, productList);
@@ -136,24 +138,24 @@ final class GameTheoryMax extends BaseGameTheory {
         boolean conditionmet = false;
         if (!ruleMatchingFlag) {
             if (DEBUG) {
-                out.println("CHECK Rule Based Mapping Handler Match");
+                LOGGER.debug("CHECK Rule Based Mapping Handler Match");
             }
             RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
                 if (DEBUG) {
-                    out.println("Rule Based Mapping Handler Match Found");
+                    LOGGER.debug("Rule Based Mapping Handler Match Found");
                 }
                 mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
                 conditionmet = true;
             }
             ruleMatchingFlag = true;
             if (DEBUG) {
-                out.println("DONE CHECK Rule Based Mapping Handler");
+                LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
             }
         }
         if (!conditionmet && counter <= 5) {
             if (DEBUG) {
-                out.println("Subgraph/Exact Match Test");
+                LOGGER.debug("Subgraph/Exact Match Test");
             }
             MaxSelection select = new MaxSelection(mh, eductList, productList);
             if (select.isSubAndCompleteMatchFlag()) {
@@ -162,7 +164,7 @@ final class GameTheoryMax extends BaseGameTheory {
             }
         }
         if (DEBUG) {
-            out.println("**********Modified Matrix**************");
+            LOGGER.debug("**********Modified Matrix**************");
 //            printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
             printCliqueMatrix(mh, eductList, productList);
@@ -176,15 +178,15 @@ final class GameTheoryMax extends BaseGameTheory {
         }
         if (winner.getFlag()) {
             if (DEBUG) {
-                out.println("**********Updated Mapping**************");
+                LOGGER.debug("**********Updated Mapping**************");
             }
             UpdateMapping();
             if (DEBUG) {
-                out.println("**********Updated Matrix**************");
+                LOGGER.debug("**********Updated Matrix**************");
             }
             UpdateMatrix(mh, removeHydrogen);
             if (DEBUG) {
-                out.println("**********Generate Mapping**************");
+                LOGGER.debug("**********Generate Mapping**************");
             }
             GenerateMapping(ruleMatchingFlag);
         }

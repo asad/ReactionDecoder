@@ -88,8 +88,8 @@ public class EigenvalueDecomposition implements java.io.Serializable {
         e = new double[n];
 
         issymmetric = true;
-        for (int j = 0; (j < n) & issymmetric; j++) {
-            for (int i = 0; (i < n) & issymmetric; i++) {
+        for (int j = 0; (j < n) && issymmetric; j++) {
+            for (int i = 0; (i < n) && issymmetric; i++) {
                 issymmetric = (A[i][j] == A[j][i]);
             }
         }
@@ -801,7 +801,7 @@ public class EigenvalueDecomposition implements java.io.Serializable {
                             y = H[i + 1][i];
                             vr = (d[i] - p) * (d[i] - p) + e[i] * e[i] - q * q;
                             vi = (d[i] - p) * 2.0 * q;
-                            if (vr == 0.0 & vi == 0.0) {
+                            if (vr == 0.0 && vi == 0.0) {
                                 vr = eps * norm * (abs(w) + abs(q)
                                         + abs(x) + abs(y) + abs(z));
                             }

@@ -172,7 +172,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
             }
 
         }
-        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
+        //LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 

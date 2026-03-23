@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.graph;
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.gc;
-import static java.lang.System.out;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.unmodifiableCollection;
@@ -75,9 +75,7 @@ public class GraphMatcher extends Debugger {
         ExecutorService executor = null;
         Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<>());
 
-        if (DEBUG) {
-            System.out.println("Matcher Class for " + mh.getTheory());
-        }
+        LOGGER.debug("Matcher Class for " + mh.getTheory());
         Set<Combination> jobReplicatorList = new TreeSet<>();
         int taskCounter = 0;
 
@@ -89,10 +87,8 @@ public class GraphMatcher extends Debugger {
                 for (int productIndex = 0; productIndex < productCount; productIndex++) {
                     IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                     IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
-                    if (DEBUG) {
-                        System.out.println("reactionStructureInformation.getEduct(substrateIndex).getAtomCount() " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount());
-                        System.out.println("reactionStructureInformation.getProduct(productIndex).getAtomCount() " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
-                    }
+                    LOGGER.debug("reactionStructureInformation.getEduct(substrateIndex).getAtomCount() " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount());
+                    LOGGER.debug("reactionStructureInformation.getProduct(productIndex).getAtomCount() " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
                     if ((educt != null && product != null)
                             && (reactionStructureInformation.getEduct(substrateIndex).getAtomCount() > 0
                             && reactionStructureInformation.getProduct(productIndex).getAtomCount() > 0)
@@ -107,9 +103,7 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
-            if (DEBUG) {
-                System.out.println("jobReplicatorList " + jobReplicatorList.size());
-            }
+            LOGGER.debug("jobReplicatorList " + jobReplicatorList.size());
 
             if (jobReplicatorList.isEmpty()) {
                 return unmodifiableCollection(mcsSolutions);
@@ -164,9 +158,7 @@ public class GraphMatcher extends Debugger {
                 threadsAvailable = 4;
             }
 
-            if (DEBUG) {
-                out.println(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
-            }
+            LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
 
 //            executor = Executors.newSingleThreadExecutor();
 //            executor = Executors.newCachedThreadPool();
@@ -193,18 +185,14 @@ public class GraphMatcher extends Debugger {
                  * CycleFinder cycles = or(Cycles.all(), Cycles.all());
                  * CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
                  */
-                if (DEBUG) {
-                    System.out.println("Finding cycles");
-                }
+                LOGGER.debug("Finding cycles");
 
                 CycleFinder cycles = Cycles.or(Cycles.all(),
                         Cycles.or(Cycles.relevant(),
                                 Cycles.essential()));
 
                 Aromaticity aromaticity = new Aromaticity(daylight(), cycles);
-                if (DEBUG) {
-                    System.out.println("Done Finding cycles");
-                }
+                LOGGER.debug("Done Finding cycles");
                 /*
                  * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
                  */
@@ -214,20 +202,14 @@ public class GraphMatcher extends Debugger {
                 /*
                  * Report short cycyles
                  */
-                if (DEBUG) {
-                    System.out.println("Finding short cycles");
-                }
+                LOGGER.debug("Finding short cycles");
                 cycles = Cycles.vertexShort();
                 Cycles rings = cycles.find(educt);
-                if (DEBUG) {
-                    System.out.println("Done Finding cycles educt");
-                }
+                LOGGER.debug("Done Finding cycles educt");
 
                 int numberOfCyclesEduct = rings.numberOfCycles();
                 rings = cycles.find(product);
-                if (DEBUG) {
-                    System.out.println("Finding cycles product");
-                }
+                LOGGER.debug("Finding cycles product");
                 int numberOfCyclesProduct = rings.numberOfCycles();
                 if (numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0) {
                     ring = true;
@@ -236,25 +218,20 @@ public class GraphMatcher extends Debugger {
                 if (numberOfCyclesEduct == numberOfCyclesProduct) {
                     ringSizeEqual = true;
                 }
-                if (DEBUG) {
-                    try {
-                        SmilesGenerator smilesGenerator;
-                        System.out.println("SMILES");
-                        smilesGenerator = new SmilesGenerator(SmiFlavor.Stereo
-                                | SmiFlavor.AtomAtomMap);
-                        out.println(educt.getID() + " ED: " + smilesGenerator.create(educt));
-                        out.println(product.getID() + " PD: " + smilesGenerator.create(product));
-                        out.println("numberOfCyclesEduct " + numberOfCyclesEduct);
-                        out.println("numberOfCyclesProduct " + numberOfCyclesProduct);
-                        out.println("ringSizeEqual " + ringSizeEqual);
-                        out.println("Ring " + ring);
-                        out.println("----------------------------------");
-                    } catch (CDKException e) {
-                        if (DEBUG) {
-                            e.printStackTrace();
-                        }
-                        LOGGER.error(SEVERE, null, e);
-                    }
+                try {
+                    SmilesGenerator smilesGenerator;
+                    LOGGER.debug("SMILES");
+                    smilesGenerator = new SmilesGenerator(SmiFlavor.Stereo
+                            | SmiFlavor.AtomAtomMap);
+                    LOGGER.debug(educt.getID() + " ED: " + smilesGenerator.create(educt));
+                    LOGGER.debug(product.getID() + " PD: " + smilesGenerator.create(product));
+                    LOGGER.debug("numberOfCyclesEduct " + numberOfCyclesEduct);
+                    LOGGER.debug("numberOfCyclesProduct " + numberOfCyclesProduct);
+                    LOGGER.debug("ringSizeEqual " + ringSizeEqual);
+                    LOGGER.debug("Ring " + ring);
+                    LOGGER.debug("----------------------------------");
+                } catch (CDKException e) {
+                    LOGGER.error(SEVERE, null, e);
                 }
 
                 MCSThread mcsThread;
@@ -311,7 +288,7 @@ public class GraphMatcher extends Debugger {
              * Choose unique combination to run
              */
             if (listOfJobs.size() > 1000) {
-                System.err.println("holy moly...thats alot of molecules to compare...time for a coffee break!");
+                LOGGER.warn("holy moly...thats alot of molecules to compare...time for a coffee break!");
             }
             if (!listOfJobs.isEmpty()) {
                 for (MCSThread mcsThreadJob : listOfJobs) {
@@ -320,9 +297,7 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
-            if (DEBUG) {
-                System.out.printf("submited %d jobs %n", taskCounter);
-            }
+            LOGGER.debug("submited " + taskCounter + " jobs");
             Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<>());
             for (int count = 0; count < taskCounter; count++) {
                 MCSSolution isomorphism = callablesQueue.take().get();
@@ -344,9 +319,7 @@ public class GraphMatcher extends Debugger {
             while (!executor.isTerminated()) {
             }
 
-            if (DEBUG) {
-                out.println("==Gathering MCS solution from the Thread==");
-            }
+            LOGGER.debug("==Gathering MCS solution from the Thread==");
             threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
                 int queryPosition = mcs.getQueryPosition();
                 int targetPosition = mcs.getTargetPosition();
@@ -361,13 +334,11 @@ public class GraphMatcher extends Debugger {
                     if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {
                         referenceKey = c;
                         MCSSolution replicatedMCS = replicateMappingOnContainers(mh, c, mcs);
-                        if (DEBUG) {
-                            System.out.println("======MCSSolution======");
-                            out.println("MCS " + " I " + queryPosition
-                                    + " J " + targetPosition
-                                    + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
-                                    + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
-                        }
+                        LOGGER.debug("======MCSSolution======");
+                        LOGGER.debug("MCS " + " I " + queryPosition
+                                + " J " + targetPosition
+                                + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
+                                + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
                         mcsSolutions.add(replicatedMCS);
                     }
                 }
@@ -379,9 +350,6 @@ public class GraphMatcher extends Debugger {
             gc();
 
         } catch (Exception ex) {
-            if (DEBUG) {
-                ex.printStackTrace();
-            }
             LOGGER.error(SEVERE, null, ex);
         } finally {
             if (executor != null) {
@@ -407,17 +375,13 @@ public class GraphMatcher extends Debugger {
             int diff1 = q.getAtomCount() - mcs.getQueryContainer().getAtomCount();
             int diff2 = t.getAtomCount() - mcs.getTargetContainer().getAtomCount();
 
-            if (DEBUG) {
-                if (diff1 != 0 && diff2 != 0) {
-
-                    out.println(NEW_LINE + NEW_LINE + " " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
-                    out.println(solution.getColIndex() + ", Diff in ac2 " + diff2);
-                    out.println(NEW_LINE + "ac1 " + q.getAtomCount());
-                    out.println(NEW_LINE + "ac2 " + t.getAtomCount());
-
-                    out.println(NEW_LINE + "mac1 " + mcs.getQueryContainer().getAtomCount());
-                    out.println(NEW_LINE + "mac2 " + mcs.getTargetContainer().getAtomCount());
-                }
+            if (diff1 != 0 && diff2 != 0) {
+                LOGGER.debug(NEW_LINE + NEW_LINE + " " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
+                LOGGER.debug(solution.getColIndex() + ", Diff in ac2 " + diff2);
+                LOGGER.debug(NEW_LINE + "ac1 " + q.getAtomCount());
+                LOGGER.debug(NEW_LINE + "ac2 " + t.getAtomCount());
+                LOGGER.debug(NEW_LINE + "mac1 " + mcs.getQueryContainer().getAtomCount());
+                LOGGER.debug(NEW_LINE + "mac2 " + mcs.getTargetContainer().getAtomCount());
             }
 
             AtomAtomMapping atomAtomMapping = mcs.getAtomAtomMapping();
@@ -433,16 +397,13 @@ public class GraphMatcher extends Debugger {
                     atomAtomMappingNew.put(atomByID1, atomByID2);
                 } else {
                     LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
-                    System.err.println("WARNING: " + "UnExpected NULL ATOM FOUND");
                 }
             });
 
-            if (DEBUG) {
-                System.out.println("------Mapped PAIRS------");
-                System.out.println("Query " + q.getAtomCount());
-                System.out.println("Target " + t.getAtomCount());
-                System.out.println("Mapping Size " + atomAtomMappingNew.getCount());
-            }
+            LOGGER.debug("------Mapped PAIRS------");
+            LOGGER.debug("Query " + q.getAtomCount());
+            LOGGER.debug("Target " + t.getAtomCount());
+            LOGGER.debug("Mapping Size " + atomAtomMappingNew.getCount());
             return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
         } catch (IOException | CDKException ex) {
             LOGGER.error(SEVERE, null, ex);

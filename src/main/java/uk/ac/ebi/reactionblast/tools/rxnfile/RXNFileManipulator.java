@@ -13,7 +13,6 @@ package uk.ac.ebi.reactionblast.tools.rxnfile;
 import java.io.File;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
-import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,7 +92,7 @@ public class RXNFileManipulator extends BasicDebugger {
         String FileName = rxnFile.getName();
         try {
             if (FileName.endsWith(".rxn")) {
-                out.println("Reading the input RXN File");
+                LOGGER.debug("Reading the input RXN File");
                 String RXNFileName = rxnFile.getCanonicalPath();
 
                 RXNFileImporter rxn = new RXNFileImporter();
@@ -112,8 +111,8 @@ public class RXNFileManipulator extends BasicDebugger {
                 IAtomContainerSet _imoledu = rxn.getReactants();
                 IAtomContainerSet _imolpro = rxn.getProducts();
 
-                out.println("Number of Reactant " + _imoledu.getAtomContainerCount());
-                out.println("Number of Product " + _imolpro.getAtomContainerCount());
+                LOGGER.debug("Number of Reactant " + _imoledu.getAtomContainerCount());
+                LOGGER.debug("Number of Product " + _imolpro.getAtomContainerCount());
                 cleanedReaction.setID(ReactionID);
                 _Stoichiometry.clear();
 
@@ -167,13 +166,13 @@ public class RXNFileManipulator extends BasicDebugger {
 
         } catch (IOException ex) {
             LOGGER.debug("Error: Generation of FingerPrint Failed the AtomContainer: ");
-            ex.printStackTrace();
+            LOGGER.error(ex);
         }
 
         FPC.Clear();
         atomContainer.Clear();
 
-        out.println("Reaction is read and initialized");
+        LOGGER.debug("Reaction is read and initialized");
         return cleanedReaction;
 
     }
@@ -204,10 +203,10 @@ public class RXNFileManipulator extends BasicDebugger {
                 String[] fields = p.split(FileName);
 //                System.out.println(fields);
                 if (!FileName.endsWith(".ov.rxn")) {
-                    out.println("Reading the input MACiE rxn (stage reaction) File");
+                    LOGGER.debug("Reading the input MACiE rxn (stage reaction) File");
                     ReactionID = ReactionID + fields[0] + fields[1].replace("stg", ".");
                 } else {
-                    out.println("Reading the input MACiE rxn (overall reaction) File");
+                    LOGGER.debug("Reading the input MACiE rxn (overall reaction) File");
                     ReactionID = fields[0] + fields[1].replace("ov", "");
                 }
 //                System.out.println("****************************");
@@ -270,7 +269,7 @@ public class RXNFileManipulator extends BasicDebugger {
 
         FPC.Clear();
         atomContainer.Clear();
-        out.println("Reaction is read and initialized");
+        LOGGER.debug("Reaction is read and initialized");
         return IR;
     }
 
@@ -288,7 +287,7 @@ public class RXNFileManipulator extends BasicDebugger {
         String FileName = rxnFile.getName();
         try {
             if (FileName.endsWith(".rxn")) {
-                out.println("Reading the input RehA rxn File");
+                LOGGER.debug("Reading the input RehA rxn File");
                 String RXNFileName = rxnFile.getCanonicalPath();
                 RXNFileImporter rxn = new RXNFileImporter();
                 rxn.readFile(RXNFileName);
@@ -365,7 +364,7 @@ public class RXNFileManipulator extends BasicDebugger {
         }
         FPC.Clear();
         atomContainer.Clear();
-        out.println("Reaction is read and initialized");
+        LOGGER.debug("Reaction is read and initialized");
         return IR;
 //
     }

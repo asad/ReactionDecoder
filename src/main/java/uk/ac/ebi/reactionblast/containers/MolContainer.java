@@ -266,7 +266,7 @@ public class MolContainer implements IMolContainer {
                 return key;
             }
         }
-        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
+        //LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return null;
     }
 

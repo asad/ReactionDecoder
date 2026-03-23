@@ -20,6 +20,8 @@ package uk.ac.ebi.reactionblast.signature;
 
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static signature.AbstractVertexSignature.parse;
 import signature.ColoredTree;
 import static uk.ac.ebi.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
@@ -32,6 +34,8 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
  * @author modified by Asad to use rBLAST SMILES
  */
 public class RBlastMoleculeSignature extends BaseMoleculeSignature {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(RBlastMoleculeSignature.class);
 
     private boolean useAromatics = true;
     private boolean useCharge = true;
@@ -203,8 +207,7 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
             return smilesGenerator.createSMILESWithoutCheckForMultipleMolecules(
                     fragment, false, new boolean[fragment.getBondCount()]);
         } catch (CDKException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(e);
             return "";
         }
     }

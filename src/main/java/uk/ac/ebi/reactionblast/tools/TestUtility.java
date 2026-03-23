@@ -285,12 +285,12 @@ public class TestUtility {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
             if (DEBUG) {
-                System.out.println("Read Reaction ");
+                LOGGER.debug("Read Reaction ");
                 for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-                    System.out.println("r " + ac.getTitle() + ":" + reaction.getReactantCoefficient(ac));
+                    LOGGER.debug("r " + ac.getTitle() + ":" + reaction.getReactantCoefficient(ac));
                 }
                 for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-                    System.out.println("p " + ac.getTitle() + ":" + reaction.getProductCoefficient(ac));
+                    LOGGER.debug("p " + ac.getTitle() + ":" + reaction.getProductCoefficient(ac));
                 }
             }
         } catch (Exception ex) {

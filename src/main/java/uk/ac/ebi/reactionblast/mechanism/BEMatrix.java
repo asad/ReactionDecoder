@@ -151,7 +151,7 @@ public class BEMatrix extends EBIMatrix implements Serializable {
          to accomodate unbalanced reactions
          */
         if (orderedAtomArray.size() != atomArray.size()) {
-//            System.LOGGER.debug("The matrix has not been ordered, " + atomArray.size() + " !=" + orderedAtomArray.size());
+//            LOGGER.debug("The matrix has not been ordered, " + atomArray.size() + " !=" + orderedAtomArray.size());
             throw new CDKException("The matrix has not been ordered: " + atomArray.size() + " !=" + orderedAtomArray.size());
         }
         for (IAtom orderedAtom : orderedAtomArray) {

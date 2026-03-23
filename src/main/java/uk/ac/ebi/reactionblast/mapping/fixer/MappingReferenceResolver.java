@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mapping.fixer;
 
 import static java.lang.String.format;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +30,8 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  * Simple class to ensure that the atoms referred to in an atom-atom mapping are
@@ -41,6 +42,8 @@ import org.openscience.cdk.interfaces.IReaction;
  *
  */
 public class MappingReferenceResolver {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MappingReferenceResolver.class);
 
     /**
      * Do an in-place resolve of the mappings.
@@ -108,28 +111,31 @@ public class MappingReferenceResolver {
         IAtomContainerSet reactants = reaction.getReactants();
         IAtomContainerSet products = reaction.getProducts();
         for (IAtomContainer reactant : reactants.atomContainers()) {
-            out.print("[");
+            StringBuilder sb = new StringBuilder("[");
             for (int i = 0; i < reactant.getAtomCount(); i++) {
                 IAtom atom = reactant.getAtom(i);
-                out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
+                sb.append(atom.getSymbol()).append(i).append(".").append(atom.getID()).append(",");
             }
-            out.println("]");
+            sb.append("]");
+            LOGGER.debug(sb.toString());
         }
         for (IAtomContainer product : products.atomContainers()) {
-            out.print("[");
+            StringBuilder sb = new StringBuilder("[");
             for (int i = 0; i < product.getAtomCount(); i++) {
                 IAtom atom = product.getAtom(i);
-                out.print(atom.getSymbol() + i + "." + atom.getID() + ",");
+                sb.append(atom.getSymbol()).append(i).append(".").append(atom.getID()).append(",");
             }
-            out.println("]");
+            sb.append("]");
+            LOGGER.debug(sb.toString());
         }
-        out.print("{");
+        StringBuilder sb = new StringBuilder("{");
         for (IMapping mapping : reaction.mappings()) {
             IAtom a0 = (IAtom) mapping.getChemObject(0);
             IAtom a1 = (IAtom) mapping.getChemObject(1);
-            out.print(format("%s-%s, ", a0.getID(), a1.getID()));
+            sb.append(format("%s-%s, ", a0.getID(), a1.getID()));
         }
-        out.println("}");
+        sb.append("}");
+        LOGGER.debug(sb.toString());
     }
 
     private MappingReferenceResolver() {

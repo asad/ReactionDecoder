@@ -253,7 +253,6 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     @Override
     public double[] getWeightedHashedFingerPrint() {
-        RandomNumber randomNumberGen = new RandomNumber();
         double[] hashedFingerPrint = new double[this.fingerprintSize];
         for (int i = 0; i < hashedFingerPrint.length; i++) {
             hashedFingerPrint[i] = 0.;
@@ -261,7 +260,8 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         Collection<IFeature> features = this.getFeatures();
         features.stream().forEach((feature) -> {
             long hashCode = feature.hashCode();
-            int randomNumber = randomNumberGen.generateMersenneTwisterRandomNumber(this.fingerprintSize, hashCode);
+            java.util.Random rng = new java.util.Random(hashCode);
+            int randomNumber = rng.nextInt(this.fingerprintSize);
             hashedFingerPrint[randomNumber] += feature.getWeight();
         });
         return hashedFingerPrint;

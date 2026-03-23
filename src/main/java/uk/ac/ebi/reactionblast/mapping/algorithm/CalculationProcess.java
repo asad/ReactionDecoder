@@ -74,7 +74,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
         super(reaction);
 
         if (DEBUG) {
-            System.out.println("=====CalculationProcess====");
+            LOGGER.debug("=====CalculationProcess====");
         }
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
@@ -84,7 +84,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
         this.algorithm = algorithm;
         run();
         if (DEBUG) {
-            System.out.println("=====Done CalculationProcess====");
+            LOGGER.debug("=====Done CalculationProcess====");
         }
     }
 
@@ -135,7 +135,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
                     = new GameTheoryMatrix(theory, reaction, removeHydrogen);
 
             if (DEBUG) {
-                System.out.println("=====AGORITHM====" + theory);
+                LOGGER.debug("=====AGORITHM====" + theory);
             }
             IGameTheory gameTheory = make(theory,
                     reaction,
@@ -145,7 +145,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
                     EDSH);
 
             if (DEBUG) {
-                System.out.println("=====DONE AGORITHM====" + theory);
+                LOGGER.debug("=====DONE AGORITHM====" + theory);
             }
             this.reactionBlastMolMapping = gameTheory.getReactionMolMapping();
             EDSH.Clear();

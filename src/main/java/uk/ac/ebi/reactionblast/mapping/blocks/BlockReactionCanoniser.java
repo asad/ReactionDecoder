@@ -18,7 +18,6 @@
  */
 package uk.ac.ebi.reactionblast.mapping.blocks;
 
-import static java.lang.System.out;
 import java.util.ArrayList;
 import static java.util.Collections.sort;
 import java.util.Comparator;
@@ -33,6 +32,8 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.tools.labelling.AtomContainerPrinter;
 import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
 
@@ -42,6 +43,7 @@ import uk.ac.ebi.reactionblast.tools.labelling.ICanonicalReactionLabeller;
  */
 public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
 
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(BlockReactionCanoniser.class);
     private IChemObjectBuilder builder;
 
     /**
@@ -141,7 +143,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             BlockList blockList = mapping.getBlockListForReactant(container);
 
             if (blockList == null) {
-                out.println("blocklist null for " + i
+                LOGGER.debug("blocklist null for " + i
                         + new AtomContainerPrinter().toString(container)
                         + " in " + java.util.Arrays.toString(reactantPermutation));
                 continue;
@@ -181,7 +183,7 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             IAtomContainer container = original.getAtomContainer(pi);
             BlockList blockList = mapping.getBlockListForProduct(container);
             if (blockList == null) {
-                out.println("blocklist null for " + i
+                LOGGER.debug("blocklist null for " + i
                         + new AtomContainerPrinter().toString(container)
                         + " in " + java.util.Arrays.toString(productPermutation));
                 continue;
@@ -315,12 +317,12 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
     private void printReaction(IReaction reaction) {
         for (IAtomContainer atomContainer : reaction.getReactants().atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
-                out.println("PRINTING ATOM " + atom.getID());
+                LOGGER.debug("PRINTING ATOM " + atom.getID());
             }
         }
         for (IAtomContainer atomContainer : reaction.getProducts().atomContainers()) {
             for (IAtom atom : atomContainer.atoms()) {
-                out.println("PRINTING ATOM " + atom.getID());
+                LOGGER.debug("PRINTING ATOM " + atom.getID());
             }
         }
     }
@@ -347,13 +349,13 @@ public class BlockReactionCanoniser implements ICanonicalReactionLabeller {
             IAtom atom = atoms[i];
 
             if (atom == null) {
-                out.println("atom " + i + " is null");
+                LOGGER.debug("atom " + i + " is null");
             }
             int index = container.indexOf(atom);
             indices.add(index);
 
         }
-        out.println("array atoms " + indices);
+        LOGGER.debug("array atoms " + indices);
 
     }
 

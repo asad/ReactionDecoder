@@ -168,7 +168,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
                 LOGGER.error(SEVERE, null, ex);
             }
         }
-        //System.LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
+        //LOGGER.debug("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 

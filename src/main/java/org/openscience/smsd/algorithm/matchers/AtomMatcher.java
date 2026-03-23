@@ -60,6 +60,22 @@ public abstract class AtomMatcher {
     }
 
     /**
+     * Simple symbol-based match for single atom mapping.
+     *
+     * @param atom1 first atom
+     * @param atom2 second atom
+     * @return true if atoms have the same element symbol
+     */
+    public static boolean matchSymbol(IAtom atom1, IAtom atom2) {
+        if (atom1.getAtomicNumber() != null && atom2.getAtomicNumber() != null) {
+            return atom1.getAtomicNumber().equals(atom2.getAtomicNumber());
+        }
+        String s1 = atom1.getSymbol();
+        String s2 = atom2.getSymbol();
+        return s1 != null && s1.equals(s2);
+    }
+
+    /**
      * Atom should match ring size and is atom type or non ring atoms with same
      * atom type
      *
@@ -197,7 +213,7 @@ public abstract class AtomMatcher {
         }
 
         private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
-            if (atom1.isInRing() & atom2.isInRing()) {
+            if (atom1.isInRing() && atom2.isInRing()) {
                 List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
                 List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
                 if (ringsizesQ == null || ringsizesT == null) {
@@ -304,7 +320,7 @@ public abstract class AtomMatcher {
         }
 
         private boolean isRingSizeMatch(IAtom atom1, IAtom atom2) {
-            if (atom1.isInRing() & atom2.isInRing()) {
+            if (atom1.isInRing() && atom2.isInRing()) {
                 List<Integer> ringsizesQ = atom1.getProperty(CDKConstants.RING_SIZES);
                 List<Integer> ringsizesT = atom2.getProperty(CDKConstants.RING_SIZES);
                 if (ringsizesQ == null || ringsizesT == null) {

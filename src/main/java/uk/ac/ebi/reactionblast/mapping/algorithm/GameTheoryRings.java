@@ -50,13 +50,14 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
 //~--- classes ----------------------------------------------------------------
-import static java.lang.System.out;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
 import uk.ac.ebi.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
@@ -75,6 +76,8 @@ final class GameTheoryRings extends BaseGameTheory {
 
     private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x152ec264bc2L;
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(GameTheoryRings.class);
     private final List<String> eductList;
     private final List<String> productList;
     private Holder mh;
@@ -100,7 +103,7 @@ final class GameTheoryRings extends BaseGameTheory {
             throws Exception {
 
         if (DEBUG) {
-            System.out.println("I am Ring");
+            LOGGER.debug("I am Ring");
         }
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
@@ -118,10 +121,10 @@ final class GameTheoryRings extends BaseGameTheory {
         this._dirSuffix = super.getSuffix();
 
         ReactionIsomorphismHandler RIH = new ReactionIsomorphismHandler(mh, eductList, productList);
-//        System.out.println("\n--------------\nprintAtomContainerSize");
+//        LOGGER.debug("\n--------------\nprintAtomContainerSize");
 //        printMatrixAtomContainer(mh, eductList, productList);
         if (RIH.getIsomorphismFlag()) {
-//            System.out.println("ISOMORPHISM");
+//            LOGGER.debug("ISOMORPHISM");
 //            printSimMatrix(mh, eductList, productList);
 //            printCliqueMatrix(mh, eductList, productList);
 //            printStereoMatrix();
@@ -141,7 +144,7 @@ final class GameTheoryRings extends BaseGameTheory {
                 = new RuleBasedMappingHandler(mh, eductList, productList);
         if (ph.isMatchFound()) {
             if (DEBUG) {
-                System.out.println("RuleBasedMappingHandler Match");
+                LOGGER.debug("RuleBasedMappingHandler Match");
             }
             mh = ph.getMatrixHolder();
         }
@@ -151,15 +154,15 @@ final class GameTheoryRings extends BaseGameTheory {
         if (winner.getFlag()) {
 
             if (DEBUG) {
-                System.out.println("**********Updated Mapping**************");
+                LOGGER.debug("**********Updated Mapping**************");
             }
             UpdateMapping();
             if (DEBUG) {
-                System.out.println("**********Updated Matrix**************");
+                LOGGER.debug("**********Updated Matrix**************");
             }
             UpdateMatrix(mh, removeHydrogen);
             if (DEBUG) {
-                System.out.println("**********Generate Mapping**************");
+                LOGGER.debug("**********Generate Mapping**************");
             }
             GenerateMapping();
         }
@@ -167,10 +170,10 @@ final class GameTheoryRings extends BaseGameTheory {
 
     private synchronized void GenerateMapping() throws Exception {
         if (DEBUG) {
-            System.out.println("GenerateMapping");
+            LOGGER.debug("GenerateMapping");
         }
         if (DEBUG) {
-            out.println("**********Orignal Matrix**************");
+            LOGGER.debug("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
             printSimMatrix(mh, eductList, productList);
             printCliqueMatrix(mh, eductList, productList);
@@ -181,7 +184,7 @@ final class GameTheoryRings extends BaseGameTheory {
 
         RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
         if (ruleBasedMappingHandler.isMatchFound()) {
-//            System.out.println("RuleBasedMappingHandler Match");
+//            LOGGER.debug("RuleBasedMappingHandler Match");
             mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
 //            printSimMatrix(mh, eductList, productList);
         }
@@ -194,15 +197,15 @@ final class GameTheoryRings extends BaseGameTheory {
         if (winner.getFlag()) {
 
             if (DEBUG) {
-                System.out.println("**********Updated Mapping**************");
+                LOGGER.debug("**********Updated Mapping**************");
             }
             UpdateMapping();
             if (DEBUG) {
-                System.out.println("**********Updated Matrix**************");
+                LOGGER.debug("**********Updated Matrix**************");
             }
             UpdateMatrix(mh, removeHydrogen);
             if (DEBUG) {
-                System.out.println("**********Generate Mapping**************");
+                LOGGER.debug("**********Generate Mapping**************");
             }
             GenerateMapping();
         }
@@ -235,11 +238,11 @@ final class GameTheoryRings extends BaseGameTheory {
                     AbstractGraphMatching GM = new GraphMatching(RID, ac1, ac2, _dirSuffix, removeHydrogen);
                     boolean mcsMatch = GM.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, A, B);
                     if (DEBUG) {
-                        System.out.println("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
+                        LOGGER.debug("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
                     }
                     if (mcsMatch) {
                         if (DEBUG) {
-                            System.out.println(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
+                            LOGGER.debug(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
                         }
                         delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                         List<MolMapping> rMap = getReactionMolMapping().
@@ -255,7 +258,7 @@ final class GameTheoryRings extends BaseGameTheory {
                     IAtomContainer remainingEduct = GM.getRemainingEduct();
                     IAtomContainer remainingProduct = GM.getRemainingProduct();
                     if (DEBUG) {
-                        System.out.println("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
+                        LOGGER.debug("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
                     }
                     reactionStructureInformationContainer.putEduct(substrateIndex, remainingEduct);
                     reactionStructureInformationContainer.putProduct(productIndex, remainingProduct);

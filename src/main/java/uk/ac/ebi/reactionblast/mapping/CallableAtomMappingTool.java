@@ -26,7 +26,6 @@ import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.gc;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
@@ -128,8 +127,8 @@ public class CallableAtomMappingTool implements Serializable {
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("b) Local Model: ");
             if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction1 = null;
             try {
@@ -147,8 +146,8 @@ public class CallableAtomMappingTool implements Serializable {
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("a) Global Model: ");
             if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction2 = null;
             try {
@@ -158,7 +157,7 @@ public class CallableAtomMappingTool implements Serializable {
                 LOGGER.error(e);
             }
             if (DEBUG) {
-                out.println(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
             }
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen);
             cs.submit(maxThread);
@@ -170,8 +169,8 @@ public class CallableAtomMappingTool implements Serializable {
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("c) Mixture Model: ");
             if (DEBUG) {
-                out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                out.println(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
             }
             IReaction cleanedReaction3 = null;
             try {
@@ -190,8 +189,8 @@ public class CallableAtomMappingTool implements Serializable {
                 LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
                 LOGGER.info("d) Rings Model: ");
                 if (DEBUG) {
-                    out.println(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                    out.println(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
+                    LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                    LOGGER.debug(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
                 }
                 IReaction cleanedReaction4 = null;
                 try {
@@ -220,7 +219,7 @@ public class CallableAtomMappingTool implements Serializable {
             while (!executor.isTerminated()) {
             }
             if (DEBUG) {
-                System.out.println("======DONE CallableAtomMappingTool=======");
+                LOGGER.debug("======DONE CallableAtomMappingTool=======");
             }
             gc();
         } catch (InterruptedException | ExecutionException e) {
@@ -230,7 +229,7 @@ public class CallableAtomMappingTool implements Serializable {
             executor.shutdown();
         }
         if (DEBUG) {
-            System.out.println("!!!!Atom-Atom Mapping Done!!!!");
+            LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
         }
         /*
          * Mapping cache cleared

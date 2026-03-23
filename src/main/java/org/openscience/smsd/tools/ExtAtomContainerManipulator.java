@@ -123,18 +123,15 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
     }
 
     private static void printAtoms(IAtomContainer mol) {
-        System.out.print("Atom: ");
+        StringBuilder sb = new StringBuilder("Atom: ");
         for (IAtom a : mol.atoms()) {
-
-            System.out.print(a.getSymbol());
-            System.out.print("[" + a.getFormalCharge() + "]");
+            sb.append(a.getSymbol());
+            sb.append("[").append(a.getFormalCharge()).append("]");
             if (a.getID() != null) {
-                System.out.print("[" + a.getID() + "]");
+                sb.append("[").append(a.getID()).append("]");
             }
-
         }
-        System.out.println();
-        System.out.println();
+        LOGGER.debug(sb.toString());
     }
 
     /**

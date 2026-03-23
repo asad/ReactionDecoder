@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import java.util.Map;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
@@ -289,7 +288,7 @@ public class MappingUtility extends TestUtility {
         sb.append(NEW_LINE);
         sb.append("//");
         sb.append(NEW_LINE);
-        out.println(sb.toString());
+        LOGGER.debug(sb.toString());
 
         StringBuilder rcSteps = new StringBuilder();
         rcSteps.append("Formed Cleaved");
@@ -311,7 +310,7 @@ public class MappingUtility extends TestUtility {
             rcSteps.append(m.getValue());
         });
         rcSteps.append(NEW_LINE);
-        out.println(rcSteps.toString());
+        LOGGER.debug(rcSteps.toString());
         return s.getBondChangeCalculator();
     }
 

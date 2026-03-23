@@ -90,21 +90,19 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     }
 
     @Override
-    public synchronized void setChemFilters(boolean stereoFilter, boolean fragmentFilter, boolean energyFilter) {
+    public void setChemFilters(boolean stereoFilter, boolean fragmentFilter, boolean energyFilter) {
 
         if (getMappingCount() > 0) {
 
             if (fragmentFilter) {
                 sortResultsByFragments();
                 this.fragmentSizeList = getSortedFragment();
-//                System.out.println("fragmentSizeList " + fragmentSizeList);
             }
 
             if (stereoFilter) {
                 try {
                     sortResultsByStereoAndBondMatch();
                     this.stereoScoreList = getStereoMatches();
-//                    System.out.println("stereoScoreList " + stereoScoreList);
                 } catch (CDKException ex) {
                     LOGGER.error(Level.SEVERE, null, ex);
                 }
@@ -114,7 +112,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                 try {
                     sortResultsByEnergies();
                     this.bondEnergiesList = getSortedEnergy();
-//                    System.out.println("bondEnergiesList " + bondEnergiesList);
                 } catch (CDKException ex) {
                     LOGGER.error(Level.SEVERE, null, ex);
                 }
@@ -123,18 +120,18 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     }
 
     @Override
-    public synchronized Integer getFragmentSize(int Key) {
+    public Integer getFragmentSize(int Key) {
         return (fragmentSizeList != null && !fragmentSizeList.isEmpty())
                 ? fragmentSizeList.get(Key) : null;
     }
 
     @Override
-    public synchronized Integer getStereoScore(int Key) {
+    public Integer getStereoScore(int Key) {
         return (stereoScoreList != null && !stereoScoreList.isEmpty()) ? stereoScoreList.get(Key).intValue() : null;
     }
 
     @Override
-    public synchronized Double getEnergyScore(int Key) {
+    public Double getEnergyScore(int Key) {
         return (bondEnergiesList != null && !bondEnergiesList.isEmpty()) ? bondEnergiesList.get(Key) : null;
     }
 
@@ -142,7 +139,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * {@inheritDoc}
      */
     @Override
-    public synchronized double getTanimotoSimilarity() {
+    public double getTanimotoSimilarity() {
         int decimalPlaces = 4;
         double rAtomCount;
         double pAtomCount;
@@ -171,7 +168,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      *
      */
     @Override
-    public synchronized boolean isStereoMisMatch() {
+    public boolean isStereoMisMatch() {
         boolean flag = false;
         IAtomContainer reactant = getQuery();
         IAtomContainer product = getTarget();
@@ -207,7 +204,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     }
 
     @Override
-    public synchronized int getMappingCount() {
+    public int getMappingCount() {
         return this.getMCSList().isEmpty() ? 0 : this.getMCSList().size();
     }
 
@@ -215,7 +212,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * {@inheritDoc}
      */
     @Override
-    public synchronized double getEuclideanDistance() {
+    public double getEuclideanDistance() {
         int decimalPlaces = 4;
         double sourceAtomCount;
         double targetAtomCount;
@@ -247,7 +244,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @return
      */
     @Override
-    public synchronized List<AtomAtomMapping> getAllAtomMapping() {
+    public List<AtomAtomMapping> getAllAtomMapping() {
         return Collections.unmodifiableList(new ArrayList<>(getMCSList()));
     }
 
@@ -257,7 +254,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @return
      */
     @Override
-    public synchronized AtomAtomMapping getFirstAtomMapping() {
+    public AtomAtomMapping getFirstAtomMapping() {
         return getMCSList().isEmpty() ? new AtomAtomMapping(getQuery(), getTarget())
                 : getMCSList().iterator().next();
     }
@@ -267,18 +264,18 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      *
      * @return true if Query is a subgraph of the Target
      */
-    public synchronized boolean isSubgraph() {
+    public boolean isSubgraph() {
         return this.subgraph;
     }
 
-    public synchronized void clearMaps() {
+    public void clearMaps() {
         this.getMCSList().clear();
     }
 
     /**
      * @return the allBondMCS
      */
-    public synchronized List<Map<IBond, IBond>> getAllBondMaps() {
+    public List<Map<IBond, IBond>> getAllBondMaps() {
         if (!getMCSList().isEmpty()) {
             return makeBondMapsOfAtomMaps(getQuery(), getTarget(), getMCSList());
         }
@@ -288,7 +285,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     /**
      * @param subgraph the subgraph to set
      */
-    public synchronized void setSubgraph(boolean subgraph) {
+    public void setSubgraph(boolean subgraph) {
         this.subgraph = subgraph;
     }
 
@@ -303,7 +300,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @return bond maps between sourceAtomCount and targetAtomCount molecules
      * based on the atoms
      */
-    public synchronized List<Map<IBond, IBond>> makeBondMapsOfAtomMaps(IAtomContainer ac1,
+    public List<Map<IBond, IBond>> makeBondMapsOfAtomMaps(IAtomContainer ac1,
             IAtomContainer ac2, List<AtomAtomMapping> mappings) {
         List<Map<IBond, IBond>> bondMaps = Collections.synchronizedList(new ArrayList<>());
         mappings.stream().forEach((mapping) -> {
@@ -324,7 +321,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
      * @return bond map between sourceAtomCount and targetAtomCount molecules
      * based on the atoms
      */
-    private synchronized Map<IBond, IBond> makeBondMapOfAtomMap(IAtomContainer ac1, IAtomContainer ac2,
+    private Map<IBond, IBond> makeBondMapOfAtomMap(IAtomContainer ac1, IAtomContainer ac2,
             AtomAtomMapping mapping) {
 
         Map<IBond, IBond> bondbondMappingMap = Collections.synchronizedMap(new HashMap<>());
@@ -340,7 +337,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                 }
             });
         });
-//        System.out.println("Mol Map size:" + bondbondMappingMap.size());
         return bondbondMappingMap;
     }
 
@@ -368,7 +364,7 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
                 connected2 = false;
             }
         }
-        return connected1 & connected2;
+        return connected1 && connected2;
     }
 
     int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
@@ -403,13 +399,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         List<String> common = new LinkedList<>(atomUniqueCounter1);
         common.retainAll(atomUniqueCounter2);
 
-//        if (DEBUG) {
-//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-//            System.out.println("atomUniqueCounter1 " + atomUniqueCounter1.size());
-//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-//            System.out.println("atomUniqueCounter2 " + atomUniqueCounter2.size());
-//            System.out.println("Common " + common.size());
-//        }
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
         return common.size();

@@ -21,7 +21,6 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.System.arraycopy;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -102,11 +101,11 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.bestMatchContainer = bestMatchContainer;
         this.hydFPFree = hydFPFree;
         if (DEBUG) {
-            out.println("setFingerprint");
+            LOGGER.debug("setFingerprint");
         }
         setFingerprint();
         if (DEBUG) {
-            out.println("setMolMapping");
+            LOGGER.debug("setMolMapping");
         }
         setMolMapping();
     }
@@ -128,7 +127,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.energyMatrix = new EBIMatrix(row, column);
         this.mappingMolPair = synchronizedList(new ArrayList<>());
         if (DEBUG) {
-            out.println("initialize the Matrix");
+            LOGGER.debug("initialize the Matrix");
         }
         initialize();
     }
@@ -189,7 +188,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     BitSet hydrogenProductFP = hydFPFree.getFingerPrint(productName);
                     float hydrogenSimVal = getTanimotoSimilarity(hydrogenEductFP, hydrogenProductFP);
                     if (DEBUG) {
-                        out.println("FP " + hydrogenSimVal);
+                        LOGGER.debug("FP " + hydrogenSimVal);
                     }
                     fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
                 } catch (Exception ex) {

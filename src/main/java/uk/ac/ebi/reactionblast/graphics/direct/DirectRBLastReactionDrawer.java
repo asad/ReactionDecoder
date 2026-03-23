@@ -30,12 +30,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import org.openscience.cdk.interfaces.IBond;
@@ -55,6 +56,7 @@ import uk.ac.ebi.reactionblast.mapping.helper.RBlastReaction;
 public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
 
     private static final Logger LOG = getLogger(DirectRBLastReactionDrawer.class.getName());
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(DirectRBLastReactionDrawer.class);
 
     private DirectReactionDrawer reactionDrawer;
 
@@ -212,7 +214,7 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
 //                            + " crop " + cropX + " " + cropY + " " 
 //                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
-                out.println("Not cropping to ["
+                LOGGER.debug("Not cropping to ["
                         + cropX + ", " + cropY + "] "
                         + cropW + " x " + cropH + " as "
                         + (cropX + cropW) + " > " + w + " or "

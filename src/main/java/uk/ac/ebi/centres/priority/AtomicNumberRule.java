@@ -17,7 +17,8 @@
  */
 package uk.ac.ebi.centres.priority;
 
-import static java.lang.System.out;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.config.Isotopes;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IPseudoAtom;
@@ -65,10 +66,10 @@ public class AtomicNumberRule<A>
     @Override
     public int compare(Ligand<A> o1, Ligand<A> o2) {
         if (accessor == null || o1.getAtom() == null) {
-            out.println(accessor + " 1 NULL");
+            LOGGER.debug(accessor + " 1 NULL");
         }
         if (accessor == null || o2.getAtom() == null) {
-            out.println(accessor + " 2 NULL");
+            LOGGER.debug(accessor + " 2 NULL");
         }
         IAtom a = (IAtom) o1.getAtom();
         IAtom b = (IAtom) o2.getAtom();
