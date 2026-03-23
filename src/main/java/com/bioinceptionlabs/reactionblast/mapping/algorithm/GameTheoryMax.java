@@ -173,6 +173,23 @@ final class GameTheoryMax extends BaseGameTheory {
             if (winner.getFlag()) {
                 LOGGER.debug("**********Updated Mapping**************");
                 UpdateMapping();
+
+                // Early termination if no remaining mappable pairs
+                boolean hasRemainingPairs = false;
+                for (int i = 0; i < mh.getGraphSimilarityMatrix().getRowDimension(); i++) {
+                    for (int j = 0; j < mh.getGraphSimilarityMatrix().getColumnDimension(); j++) {
+                        if (mh.getGraphSimilarityMatrix().getValue(i, j) > 0) {
+                            hasRemainingPairs = true;
+                            break;
+                        }
+                    }
+                    if (hasRemainingPairs) break;
+                }
+                if (!hasRemainingPairs) {
+                    LOGGER.debug("Early termination: no remaining mappable pairs");
+                    break;
+                }
+
                 LOGGER.debug("**********Updated Matrix**************");
                 UpdateMatrix(mh, removeHydrogen);
                 LOGGER.debug("**********Generate Mapping**************");

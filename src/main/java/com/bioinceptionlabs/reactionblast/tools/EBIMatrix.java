@@ -434,6 +434,19 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     }
 
     /**
+     * Get a single element without bounds checking.
+     * Use this on hot paths where indices are already known to be valid,
+     * to avoid the overhead of bounds checking and logging in {@link #getValue}.
+     *
+     * @param i Row index.
+     * @param j Column index.
+     * @return matrix(i,j)
+     */
+    public double getValueUnsafe(int i, int j) {
+        return matrix[i][j];
+    }
+
+    /**
      * Make a deep duplicate of a matrix
      *
      * @return
@@ -1243,20 +1256,24 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
         if (B.getRowDimension() != columns) {
             throw new IllegalArgumentException("EBIMatrix inner dimensions must agree.");
         }
-        EBIMatrix X = new EBIMatrix(rows, B.getColumnDimension());
+        int bCols = B.getColumnDimension();
+        EBIMatrix X = new EBIMatrix(rows, bCols);
         double[][] C = X.getArray();
-        double[] Bcolj = new double[columns];
-        for (int j = 0; j < B.getColumnDimension(); j++) {
+        double[][] Barray = B.getArray();
+        // Cache-friendly i,k,j loop order: iterate over rows of A, then
+        // for each element A[i][k], scatter-multiply across B's row k.
+        // This accesses both A and B in row-major order, maximizing L1/L2
+        // cache utilization and avoiding the column-copy temporary array.
+        for (int i = 0; i < rows; i++) {
+            double[] Arowi = matrix[i];
+            double[] Crowi = C[i];
             for (int k = 0; k < columns; k++) {
-                Bcolj[k] = B.matrix[k][j];
-            }
-            for (int i = 0; i < rows; i++) {
-                double[] Arowi = matrix[i];
-                double s = 0;
-                for (int k = 0; k < columns; k++) {
-                    s += Arowi[k] * Bcolj[k];
+                double aik = Arowi[k];
+                if (aik == 0.0) continue;
+                double[] Browk = Barray[k];
+                for (int j = 0; j < bCols; j++) {
+                    Crowi[j] += aik * Browk[j];
                 }
-                C[i][j] = s;
             }
         }
         return X;
