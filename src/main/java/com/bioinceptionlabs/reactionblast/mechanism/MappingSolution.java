@@ -31,7 +31,7 @@ import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
  */
 public class MappingSolution implements Serializable {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 1678787866L;
 
     private final IMappingAlgorithm algorithmID;

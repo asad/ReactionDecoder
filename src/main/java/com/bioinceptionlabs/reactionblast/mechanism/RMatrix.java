@@ -46,7 +46,7 @@ import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
  */
 public final class RMatrix extends EBIMatrix implements Serializable {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 7057060562283378684L;
     private static final ILoggingTool LOGGER = createLoggingTool(RMatrix.class);
 

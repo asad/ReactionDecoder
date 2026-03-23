@@ -60,10 +60,10 @@ public class MCSSolution implements Serializable {
     }
 
     /**
-     * @return the stereoScore
+     * @return the stereoScore, or 0 if null
      */
     public Integer getStereoScore() {
-        return stereoScore;
+        return stereoScore != null ? stereoScore : 0;
     }
 
     /**
@@ -74,10 +74,10 @@ public class MCSSolution implements Serializable {
     }
 
     /**
-     * @return the fragmentSize
+     * @return the fragmentSize, or 0 if null
      */
     public Integer getFragmentSize() {
-        return fragmentSize;
+        return fragmentSize != null ? fragmentSize : 0;
     }
 
     /**
@@ -88,10 +88,10 @@ public class MCSSolution implements Serializable {
     }
 
     /**
-     * @return the energy
+     * @return the energy, or 0.0 if null
      */
     public Double getEnergy() {
-        return energy;
+        return energy != null ? energy : 0.0;
     }
 
     /**

@@ -89,7 +89,7 @@ import static com.bioinceptionlabs.reactionblast.tools.ExtReactionManipulatorToo
  */
 public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 98698690880809981L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(BondChangeCalculator.class);

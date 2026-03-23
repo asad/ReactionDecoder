@@ -19,7 +19,6 @@
 package com.bioinceptionlabs.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import static java.lang.System.getProperty;
 
 import org.openscience.cdk.interfaces.IBond;
 
@@ -30,7 +29,7 @@ import org.openscience.cdk.interfaces.IBond;
  */
 public class BondChange implements Serializable {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 9890766688070991L;
 
     /**
@@ -94,7 +93,7 @@ public class BondChange implements Serializable {
 
     private final IBond reactantBond;
     private final IBond productBond;
-    private float bondChangeDelta;
+    private final float bondChangeDelta;
 
     /**
      *
@@ -102,20 +101,16 @@ public class BondChange implements Serializable {
      * @param productBond
      */
     public BondChange(IBond reactantBond, IBond productBond) {
-        this.bondChangeDelta = 0;
         this.reactantBond = reactantBond;
         this.productBond = productBond;
         if (this.reactantBond != null && this.productBond != null) {
-            float change = convertBondOrder(this.productBond) - convertBondOrder(this.reactantBond);
-            if (change != 0) {
-                setBondChangeInformation(change);
-            } else if (change == 0) {
-                setBondChangeInformation(0);
-            }
+            this.bondChangeDelta = convertBondOrder(this.productBond) - convertBondOrder(this.reactantBond);
         } else if (this.reactantBond == null && this.productBond != null) {
-            setBondChangeInformation(convertBondOrder(this.productBond));
+            this.bondChangeDelta = convertBondOrder(this.productBond);
         } else if (this.reactantBond != null && this.productBond == null) {
-            setBondChangeInformation(convertBondOrder(this.reactantBond));
+            this.bondChangeDelta = convertBondOrder(this.reactantBond);
+        } else {
+            this.bondChangeDelta = 0;
         }
     }
 
@@ -138,13 +133,6 @@ public class BondChange implements Serializable {
      */
     public float getBondChangeDelta() {
         return bondChangeDelta;
-    }
-
-    /**
-     * @param bondChangeDelta the bondChangeDelta to set
-     */
-    private void setBondChangeInformation(float bondChangeInformation) {
-        this.bondChangeDelta = bondChangeInformation;
     }
 
     @Override

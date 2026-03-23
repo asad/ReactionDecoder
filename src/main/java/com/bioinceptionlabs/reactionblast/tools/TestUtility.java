@@ -55,7 +55,7 @@ public class TestUtility {
     public static final String MACIE_RXN = "rxn/macie/";
     private final static ILoggingTool LOGGER
             = createLoggingTool(TestUtility.class);
-    private static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     /**
      *

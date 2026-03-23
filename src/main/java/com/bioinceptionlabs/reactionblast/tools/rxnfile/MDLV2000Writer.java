@@ -121,7 +121,7 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
  */
 public class MDLV2000Writer extends DefaultChemObjectWriter {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     public static final String OptForceWriteAs2DCoordinates = "ForceWriteAs2DCoordinates";
     public static final String OptWriteMajorIsotopes = "WriteMajorIsotopes";
     public static final String OptWriteAromaticBondTypes = "WriteAromaticBondTypes";

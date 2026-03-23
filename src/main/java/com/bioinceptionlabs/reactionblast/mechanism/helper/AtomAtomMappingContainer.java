@@ -44,7 +44,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(AtomAtomMappingContainer.class);
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 17879096958755L;
 
     private List<IAtom> reactantAtomArray = new ArrayList<>();

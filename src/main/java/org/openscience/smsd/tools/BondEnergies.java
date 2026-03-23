@@ -212,7 +212,7 @@ public class BondEnergies {
     protected BondEnergies() {
 
         int key = 1;
-        bondEngergies = new TreeMap<Integer, BondEnergy>();
+        bondEngergies = new TreeMap<>();
 
 //      =========Hydrogen Block==============
         key = setHydrogenBlock(key);

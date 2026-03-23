@@ -122,7 +122,7 @@ import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLV2000Writer.SPIN_MULT
  */
 public class MDLV2000Reader extends DefaultChemObjectReader {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.lineSeparator();
     BufferedReader input = null;
     private static ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MDLV2000Reader.class);
 
