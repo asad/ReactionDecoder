@@ -24,41 +24,55 @@ Installation
 
 ```
 use pom.xml and mvn commands to build your project
-1) mvn -DskipTests=true install (skip test)
-2) mvn install (include test)
-3) mvn clean (clean)
-4) mvn package
-5) mvn -P local clean install -DskipTests=true (fast single jar compilation, skip test)
-6) mvn -P local clean install (single jar compilation with test)
+1) mvn clean compile                                  (compile only)
+2) mvn clean test                                     (compile and run tests)
+3) mvn clean install -DskipTests=true                 (install, skip tests)
+4) mvn clean install                                  (install with tests)
+5) mvn -P local clean install -DskipTests=true        (fat jar, skip tests)
+6) mvn -P local clean install                         (fat jar with tests)
 ```
 
 Atom Atom Mapping using Java API
 =================================
 
 ```java
-public static void main(String[] args) throws Exception {
-    final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-    final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.smiles.SmilesParser;
+import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
+import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
+import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
 
-    String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
-    String reactionName = "DielsAlder";
+public class Example {
+    public static void main(String[] args) throws Exception {
+        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
+        final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
 
-    IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
+        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
+        String reactionName = "DielsAlder";
 
-    IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
-    System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
-}
+        IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
 
-public static IReaction performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws Exception {
-    cdkReaction.setID(reactionName);
-    boolean forceMapping = true;
-    boolean generate2D = true;
-    boolean generate3D = false;
-    StandardizeReaction standardizeReaction = new StandardizeReaction();
-    ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, standardizeReaction);
-    MappingSolution s = rmt.getSelectedSolution();
-    IReaction reaction = s.getReaction();
-    return reaction;
+        IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
+        System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
+    }
+
+    public static IReaction performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws Exception {
+        cdkReaction.setID(reactionName);
+        boolean forceMapping = true;
+        boolean generate2D = true;
+        boolean generate3D = false;
+        boolean complexMapping = true;
+        boolean acceptNoChange = false;
+        StandardizeReaction standardizeReaction = new StandardizeReaction();
+        ReactionMechanismTool rmt = new ReactionMechanismTool(
+                cdkReaction, forceMapping, generate2D, generate3D,
+                complexMapping, acceptNoChange, standardizeReaction);
+        MappingSolution s = rmt.getSelectedSolution();
+        return s.getReaction();
+    }
 }
 ```
 
