@@ -217,6 +217,7 @@ final class GameTheoryMax extends BaseGameTheory {
                                 CDKSMILES cdkSmiles = new CDKSMILES(mol, true, false);
                                 map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
                             } catch (CloneNotSupportedException e) {
+                                LOGGER.error("Error in cloning molecule: ", e.getMessage());
                             }
                         });
                     }

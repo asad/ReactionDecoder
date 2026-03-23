@@ -306,7 +306,8 @@ class CaseHandler {
         List<IBond> bond_to_be_removed = new ArrayList<>();
         for (IAtom atom : container.atoms()) {
             if (atom.getSymbol().equals("O") && !atom.isAromatic()) {
-                int number_of_rings = ((Integer) atom.getProperty(RING_CONNECTIONS));
+                Integer ringConns = atom.getProperty(RING_CONNECTIONS);
+                int number_of_rings = ringConns != null ? ringConns : 0;
                 LOGGER.debug("number_of_rings " + number_of_rings);
 
                 List<IBond> bonds = container.getConnectedBondsList(atom);

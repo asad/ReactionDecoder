@@ -352,11 +352,11 @@ public class ReactionMechanismTool implements Serializable {
             boolean generate2D,
             boolean generate3D
     ) throws Exception {
-        if (reactor.getMappingCount() > 500 && reactor.getMappingCount() < 1000) {
+        if (reactor != null && reactor.getMappingCount() > 500 && reactor.getMappingCount() < 1000) {
             LOGGER.warn("wolla...are after something big?...so many atoms to compute bond changes!");
             LOGGER.warn("...Let me try..hold on your horses!");
         }
-        if (reactor.getMappingCount() > 1000) {
+        if (reactor != null && reactor.getMappingCount() > 1000) {
             LOGGER.warn("...wolla...are after something big?...!");
             LOGGER.warn("...This might drive me bit crazy ... have to compute so many atoms for bond changes...!");
             LOGGER.warn("...Let me try..hold on your horses!");
@@ -691,7 +691,7 @@ public class ReactionMechanismTool implements Serializable {
                             total += val * energy;
                         }
                     } else if (key.contains("$")) {
-                        String[] temp = key.split("$");
+                        String[] temp = key.split("\\$");
                         if (skipHydrogen && (temp[0].equals("H") || temp[1].equals("H"))) {
                             continue;
                         }

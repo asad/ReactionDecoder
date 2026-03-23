@@ -99,8 +99,19 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                 if (withoutH && at.getSymbol().equalsIgnoreCase("H")) {
                     continue;
                 }
-                int atomID = (Integer.valueOf(at.getID()));
+                if (at.getID() == null) {
+                    continue;
+                }
+                int atomID;
+                try {
+                    atomID = Integer.valueOf(at.getID());
+                } catch (NumberFormatException e) {
+                    continue;
+                }
                 if (atomID <= 0) {
+                    continue;
+                }
+                if (atomID - 1 >= atVect.length) {
                     continue;
                 }
                 atVect[atomID - 1] = at;
@@ -162,8 +173,19 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
                     continue;
                 }
 
-                int atomID = (Integer.valueOf(at.getID()));
+                if (at.getID() == null) {
+                    continue;
+                }
+                int atomID;
+                try {
+                    atomID = Integer.valueOf(at.getID());
+                } catch (NumberFormatException e) {
+                    continue;
+                }
                 if (atomID <= 0) {
+                    continue;
+                }
+                if (atomID - 1 >= atVect.length) {
                     continue;
                 }
                 atVect[atomID - 1] = at;

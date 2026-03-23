@@ -196,7 +196,9 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!", ex);
 
-                Runtime.getRuntime().exit(1);
+                throw new RuntimeException("Failed to remove matched parts between " + educt.getID() + ": "
+                        + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
+                        + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!", ex);
             }
         }
         return delta;

@@ -733,6 +733,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         hAdder.addImplicitHydrogens(mol);
                         kekulize(mol);
                     } catch (CDKException ex) {
+                        LOGGER.error(SEVERE, "Failed to kekulize reactant molecule", ex);
                     }
                 }
             }
@@ -751,6 +752,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         cdkHAdder.addImplicitHydrogens(mol);
                         kekulize(mol);
                     } catch (CDKException ex) {
+                        LOGGER.error(SEVERE, "Failed to kekulize product molecule", ex);
                     }
                 }
             }

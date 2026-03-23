@@ -177,7 +177,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
         }
 
         try {
@@ -240,7 +240,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
              */
             resetFLAGS(mh);
         } catch (Exception e) {
-            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage().toString());
+            LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
         }
     }
 
@@ -272,13 +272,13 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
 
             MCSSolution atomatomMapping = getMappings(substrateIndex, productIndex, educt, product, mcsSolutions);
 
-            carbonCount = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet().stream().filter((atom)
-                    -> (atom.getSymbol().equalsIgnoreCase("C"))).map((IAtom _item) -> 1.0).reduce(carbonCount, (accumulator, _item)
-                    -> accumulator + 1);
-
             if (atomatomMapping == null) {
                 throw new CDKException("atom-atom mapping is null");
             }
+
+            carbonCount = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet().stream().filter((atom)
+                    -> (atom.getSymbol().equalsIgnoreCase("C"))).map((IAtom _item) -> 1.0).reduce(carbonCount, (accumulator, _item)
+                    -> accumulator + 1);
 
             LOGGER.debug("set matching atoms");
             LOGGER.debug("Q " + educt.getID() + ": " + educt.getAtomCount());

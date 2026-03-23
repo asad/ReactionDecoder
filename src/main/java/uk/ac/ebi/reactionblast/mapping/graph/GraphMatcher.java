@@ -415,7 +415,7 @@ public class GraphMatcher extends Debugger {
             return null;
         }
         for (IAtom a : ac.atoms()) {
-            if (a.getID().equals(atom.getID())) {
+            if (atom.getID().equals(a.getID())) {
                 return a;
             }
         }

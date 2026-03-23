@@ -192,7 +192,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
         for (int key = 0; key < ac.size(); key++) {
             try {
                 IAtomContainer mol = ac.get(key).clone();
-                String eductID = ac.get(key).getID().trim();
+                String eductID = ac.get(key).getID() != null ? ac.get(key).getID().trim() : String.valueOf(key);
                 mol.setID(eductID);
 
                 BitSet FP;
@@ -217,7 +217,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
         for (int key = 0; key < pd.size(); key++) {
             try {
                 IAtomContainer mol = pd.get(key).clone();
-                String productID = pd.get(key).getID().trim();
+                String productID = pd.get(key).getID() != null ? pd.get(key).getID().trim() : String.valueOf(key);
                 mol.setID(productID);
 
                 BitSet fingerPrint;

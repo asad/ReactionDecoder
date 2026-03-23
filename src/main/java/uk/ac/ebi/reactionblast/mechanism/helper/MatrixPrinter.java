@@ -90,8 +90,7 @@ public class MatrixPrinter extends Object {
      * @throws IOException
      */
     public static void writeReactionMatrix(File outputFile, RMatrix rMatrix) throws IOException {
-        FileWriter matrixFile = new FileWriter(outputFile);
-        try (BufferedWriter matrixFileWriter = new BufferedWriter(matrixFile)) {
+        try (BufferedWriter matrixFileWriter = new BufferedWriter(new FileWriter(outputFile))) {
             matrixFileWriter.newLine();
             try {
                 for (int i = 0; i < rMatrix.getRowDimension(); i++) {
@@ -122,7 +121,6 @@ public class MatrixPrinter extends Object {
                     }
                     matrixFileWriter.newLine();
                 }
-                matrixFileWriter.close();
 
             } catch (CDKException ex) {
                 LOGGER.debug("A CDKException has been arisen while printing the RMatrix");
@@ -161,8 +159,7 @@ public class MatrixPrinter extends Object {
      */
     public static void writeBEMatrix(File outputFile, BEMatrix beMatrix) throws IOException {
         List<IAtom> atomArray = beMatrix.getAtoms();
-        FileWriter matrixFile = new FileWriter(outputFile);
-        try (BufferedWriter matrixFileWriter = new BufferedWriter(matrixFile)) {
+        try (BufferedWriter matrixFileWriter = new BufferedWriter(new FileWriter(outputFile))) {
             matrixFileWriter.newLine();
             matrixFileWriter.write(atomArray.size());
             matrixFileWriter.newLine();
@@ -176,7 +173,6 @@ public class MatrixPrinter extends Object {
                 }
                 matrixFileWriter.newLine();
             }
-            matrixFileWriter.close();
         }
     }
 

@@ -78,7 +78,7 @@ public class MappingReferenceResolver {
 //        System.out.println("now has " + reaction.getMappingCount() + " mappings");
         // clear and replace the mappings
         int count = reaction.getMappingCount();
-        for (int i = count; i > 0; i--) {
+        for (int i = count - 1; i >= 0; i--) {
             reaction.removeMapping(i);
         }
 //        System.out.println("now has " + reaction.getMappingCount() + " mappings");
