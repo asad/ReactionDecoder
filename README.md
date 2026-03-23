@@ -41,9 +41,9 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
-import uk.ac.ebi.reactionblast.mechanism.MappingSolution;
-import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
-import uk.ac.ebi.reactionblast.tools.StandardizeReaction;
+import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
+import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
+import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 
 public class Example {
     public static void main(String[] args) throws Exception {
@@ -75,6 +75,34 @@ public class Example {
     }
 }
 ```
+
+
+Migrating from v2.x
+====================
+
+The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in v3.0.0.
+
+**Maven dependency**
+
+```xml
+<!-- Old (v2.x) -->
+<groupId>uk.ac.ebi.rdt</groupId>
+
+<!-- New (v3.0.0) -->
+<groupId>com.bioinceptionlabs.rdt</groupId>
+```
+
+**Import changes**
+
+Replace imports in your code:
+
+| Old (v2.x) | New (v3.0.0) |
+|-------------|--------------|
+| `uk.ac.ebi.aamtool.*` | `com.bioinceptionlabs.aamtool.*` |
+| `uk.ac.ebi.reactionblast.*` | `com.bioinceptionlabs.reactionblast.*` |
+| `uk.ac.ebi.centres.*` | `com.bioinceptionlabs.centres.*` |
+
+A simple find-and-replace of `uk.ac.ebi` with `com.bioinceptionlabs` in your import statements is sufficient. The API itself is unchanged.
 
 
 License

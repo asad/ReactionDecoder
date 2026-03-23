@@ -195,7 +195,7 @@ public class Utility {
                 s.setChemFilters(true, true, true);
                 return s.getFirstAtomMapping().getMappingsByAtoms();
             } catch (CDKException ex) {
-                Logger.getLogger(uk.ac.ebi.reactionblast.mechanism.helper.Utility.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(com.bioinceptionlabs.reactionblast.mechanism.helper.Utility.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
