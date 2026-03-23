@@ -50,12 +50,12 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
 
     EnergyFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        bEnergies = Collections.synchronizedList(new ArrayList<>());
+        bEnergies = new ArrayList<>();
 
     }
 
     @Override
-    public synchronized Double sortResults(
+    public Double sortResults(
             Map<Integer, AtomAtomMapping> allAtomEnergyMCS,
             Map<Integer, Double> energySelectionMap) throws CDKException {
         for (Integer Key : allAtomEnergyMCS.keySet()) {
@@ -75,22 +75,22 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
     }
 
     @Override
-    public synchronized List<Double> getScores() {
+    public List<Double> getScores() {
         return Collections.unmodifiableList(bEnergies);
     }
 
     @Override
-    public synchronized void clearScores() {
+    public void clearScores() {
         bEnergies.clear();
     }
 
     @Override
-    public synchronized void addScore(int counter, Double value) {
+    public void addScore(int counter, Double value) {
         bEnergies.add(counter, value);
     }
 
     @Override
-    public synchronized void fillMap(Map<Integer, Double> energySelectionMap) {
+    public void fillMap(Map<Integer, Double> energySelectionMap) {
         int Index = 0;
         for (Double score : bEnergies) {
             energySelectionMap.put(Index, score);
@@ -98,7 +98,7 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
         }
     }
 
-    private synchronized Double getMappedMoleculeEnergies(AtomAtomMapping mcsAtomSolution) throws CDKException {
+    private Double getMappedMoleculeEnergies(AtomAtomMapping mcsAtomSolution) throws CDKException {
 
 //        System.out.println("\nSort By Energies");
         double totalBondEnergy = -9999.0;
@@ -139,7 +139,7 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
         return totalBondEnergy;
     }
 
-    private synchronized static double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
+    private static double getEnergy(IAtomContainer educt, IAtomContainer product) throws CDKException {
         Double eEnergy = 0.0;
         BondEnergies bondEnergy = BondEnergies.getInstance();
         for (int i = 0; i < educt.getBondCount(); i++) {
@@ -154,7 +154,7 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
         return (eEnergy + pEnergy);
     }
 
-    private synchronized static double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
+    private static double getBondEnergy(IBond bond, BondEnergies bondEnergy) {
         double energy = 0.0;
         if ((bond.getAtom(0).getProperty("Energy").equals(true) && bond.getAtom(1).getProperty("Energy").equals(false))
                 || (bond.getAtom(0).getProperty("Energy").equals(false) && bond.getAtom(1).getProperty("Energy").equals(true))) {

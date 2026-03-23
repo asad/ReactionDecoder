@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@ import java.io.Serializable;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
-import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class CallableAtomMappingTool implements Serializable {
             IStandardizer standardizer,
             boolean removeHydrogen,
             boolean checkComplex) throws Exception {
-        solution = synchronizedMap(new EnumMap<>(IMappingAlgorithm.class));
+        solution = new EnumMap<>(IMappingAlgorithm.class);
         generateAtomAtomMapping(reaction, standardizer, removeHydrogen, checkComplex);
     }
 

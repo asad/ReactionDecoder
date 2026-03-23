@@ -135,7 +135,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         LOGGER.debug("R " + toString());
     }
 
-    private synchronized boolean isAromaticChange(int IndexI, int IndexJ) throws CDKException {
+    private boolean isAromaticChange(int IndexI, int IndexJ) throws CDKException {
 
         IAtom ra1 = getReactantBEMatrix().getAtom(IndexI);
         IAtom pa1 = getProductBEMatrix().getAtom(IndexI);
@@ -162,7 +162,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * index is out of bounds.
      * @throws CDKException
      */
-    public synchronized IAtom getProductAtom(int idx) throws CDKException {
+    public IAtom getProductAtom(int idx) throws CDKException {
         IAtom ret = null;
         if ((idx < getProductBEMatrix().getRowDimension()) && (idx > -1)) {
             ret = getProductBEMatrix().getAtom(idx);
@@ -178,7 +178,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * index is out of bounds.
      * @throws CDKException
      */
-    public synchronized IAtom getReactantAtom(int idx) throws CDKException {
+    public IAtom getReactantAtom(int idx) throws CDKException {
         IAtom ret = null;
         if ((idx < getReactantBEMatrix().getRowDimension()) && (idx > -1)) {
             ret = getReactantBEMatrix().getAtom(idx);
@@ -191,7 +191,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return The ArrayList containing the reactant atoms of the RMatrix
      */
-    public synchronized List<IAtom> getReactantsAtomArray() {
+    public List<IAtom> getReactantsAtomArray() {
         return getReactantBEMatrix().getAtoms();
     }
 
@@ -200,7 +200,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return The ArrayList containing the product atoms of the RMatrix
      */
-    public synchronized List<IAtom> getProductsAtomArray() {
+    public List<IAtom> getProductsAtomArray() {
         return getProductBEMatrix().getAtoms();
     }
 
@@ -211,7 +211,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * @return
      * @throws CDKException
      */
-    public synchronized int getValueByReactantAtoms(String atomID1, String atomID2) throws CDKException {
+    public int getValueByReactantAtoms(String atomID1, String atomID2) throws CDKException {
         int res = 0;
         for (int i = 0; i < getRowDimension() - 1; i++) {
             for (int j = 0; j < getColumnDimension() - 1; j++) {
@@ -231,7 +231,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * @return
      * @throws CDKException
      */
-    public synchronized int getValueByProductAtoms(String atomID1, String atomID2) throws CDKException {
+    public int getValueByProductAtoms(String atomID1, String atomID2) throws CDKException {
         int res = 0;
         for (int i = 0; i < getRowDimension() - 1; i++) {
             for (int j = 0; j < getColumnDimension() - 1; j++) {
@@ -248,7 +248,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return
      */
-    public synchronized int getAbsChanges() {
+    public int getAbsChanges() {
         int acc = 0;
         for (int i = 0; i < getRowDimension(); i++) {
             for (int j = 0; j < getColumnDimension(); j++) {
@@ -262,7 +262,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return
      */
-    protected synchronized int getMappedAtomCount() {
+    protected int getMappedAtomCount() {
         return getMyMapping().getSize();
     }
 
@@ -270,54 +270,54 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      *
      * @return Atom count without Hydrogens
      */
-    protected synchronized int getAtomCountWithoutHydrogens() {
+    protected int getAtomCountWithoutHydrogens() {
         return getMyMapping().getSizeNoHydrogens();
     }
 
     /**
      * @return the reactantBEMatrix
      */
-    public synchronized BEMatrix getReactantBEMatrix() {
+    public BEMatrix getReactantBEMatrix() {
         return reactantBEMatrix;
     }
 
     /**
      * @param reactantBEMatrix the reactantBEMatrix to set
      */
-    public synchronized void setReactantBEMatrix(BEMatrix reactantBEMatrix) {
+    public void setReactantBEMatrix(BEMatrix reactantBEMatrix) {
         this.reactantBEMatrix = reactantBEMatrix;
     }
 
     /**
      * @return the productBEMatrix
      */
-    public synchronized BEMatrix getProductBEMatrix() {
+    public BEMatrix getProductBEMatrix() {
         return productBEMatrix;
     }
 
     /**
      * @param productBEMatrix the productBEMatrix to set
      */
-    public synchronized void setProductBEMatrix(BEMatrix productBEMatrix) {
+    public void setProductBEMatrix(BEMatrix productBEMatrix) {
         this.productBEMatrix = productBEMatrix;
     }
 
     /**
      * @return the myMapping
      */
-    public synchronized AtomAtomMappingContainer getMyMapping() {
+    public AtomAtomMappingContainer getMyMapping() {
         return myMapping;
     }
 
     /**
      * @param myMapping the myMapping to set
      */
-    public synchronized void setMyMapping(AtomAtomMappingContainer myMapping) {
+    public void setMyMapping(AtomAtomMappingContainer myMapping) {
         this.myMapping = myMapping;
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("\t");
         for (int i = 0; i < this.getRowDimension() - 1; i++) {
@@ -414,7 +414,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
     }
 
     @Override
-    public synchronized Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 }

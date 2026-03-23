@@ -116,12 +116,14 @@ public class MappingUtility extends TestUtility {
      * @throws FileNotFoundException
      * @throws CDKException
      */
-    public IAtomContainer readMDLMolecule(String name, String dir) throws FileNotFoundException, CDKException {
+    public IAtomContainer readMDLMolecule(String name, String dir) throws FileNotFoundException, CDKException, IOException {
         String filepath = dir + name + ".mol";
-        MDLV2000Reader reader = new MDLV2000Reader(new FileReader(filepath));
-        IAtomContainer AtomContainer = reader.read(new AtomContainer());
-        AtomContainer.setID(name);
-        return AtomContainer;
+        try (FileReader fileReader = new FileReader(filepath);
+             MDLV2000Reader reader = new MDLV2000Reader(fileReader)) {
+            IAtomContainer AtomContainer = reader.read(new AtomContainer());
+            AtomContainer.setID(name);
+            return AtomContainer;
+        }
     }
 
     /**

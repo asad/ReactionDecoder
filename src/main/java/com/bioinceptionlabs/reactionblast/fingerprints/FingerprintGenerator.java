@@ -68,7 +68,7 @@ public class FingerprintGenerator implements IFingerprintGenerator {
      * @throws CDKException
      */
     @Override
-    public synchronized BitSet getFingerprint(IAtomContainer mol) throws CDKException {
+    public BitSet getFingerprint(IAtomContainer mol) throws CDKException {
         if (!has2DCoordinates(mol)) {
             StructureDiagramGenerator structureDiagramGenerator = new StructureDiagramGenerator();
             structureDiagramGenerator.setMolecule(mol, true);

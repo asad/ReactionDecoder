@@ -21,7 +21,7 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import static java.util.Collections.synchronizedMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
@@ -90,7 +90,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized AtomAtomMappingContainer getMappingContainer() {
+    public AtomAtomMappingContainer getMappingContainer() {
         return mapping;
     }
 
@@ -99,7 +99,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized BEMatrix getEductBEMatrix() {
+    public BEMatrix getEductBEMatrix() {
         return reactantBE;
     }
 
@@ -108,7 +108,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized List<BondChange> getBondChangeList() {
+    public List<BondChange> getBondChangeList() {
         return bondChangeList;
     }
 
@@ -117,7 +117,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized Collection<IAtom> getReactionCenterSet() {
+    public Collection<IAtom> getReactionCenterSet() {
         return reactionCenterList;
     }
 
@@ -126,7 +126,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized List<AtomStereoChangeInformation> getStereoChangeList() {
+    public List<AtomStereoChangeInformation> getStereoChangeList() {
         return stereoChangeList;
     }
 
@@ -135,7 +135,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized BEMatrix getProductBEMatrix() {
+    public BEMatrix getProductBEMatrix() {
         return productBE;
     }
 
@@ -144,8 +144,8 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized Map<IAtom, IAtom> getMappingMap() {
-        return synchronizedMap(mappingMap);
+    public Map<IAtom, IAtom> getMappingMap() {
+        return new HashMap<>(mappingMap);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized RMatrix getRMatrix() {
+    public RMatrix getRMatrix() {
         return reactionMatrix;
     }
 
@@ -162,7 +162,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public synchronized boolean hasRMatrix() {
+    public boolean hasRMatrix() {
         return reactionMatrix != null;
     }
 
@@ -170,7 +170,7 @@ public final class BondChangeAnnotator extends DUModel {
      *
      */
     @Override
-    public synchronized void printBMatrix() {
+    public void printBMatrix() {
         printBEMatrix(reactantBE);
     }
 
@@ -188,7 +188,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @param outputFile
      */
     @Override
-    public synchronized void writeBMatrix(File outputFile) {
+    public void writeBMatrix(File outputFile) {
         try {
             writeBEMatrix(outputFile, reactantBE);
         } catch (IOException ex) {
@@ -200,7 +200,7 @@ public final class BondChangeAnnotator extends DUModel {
      *
      */
     @Override
-    public synchronized void printEMatrix() {
+    public void printEMatrix() {
         printBEMatrix(productBE);
     }
 
@@ -209,7 +209,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @param outputFile
      */
     @Override
-    public synchronized void writeEMatrix(File outputFile) {
+    public void writeEMatrix(File outputFile) {
         try {
             writeBEMatrix(outputFile, productBE);
         } catch (IOException ex) {
@@ -221,7 +221,7 @@ public final class BondChangeAnnotator extends DUModel {
      *
      */
     @Override
-    public synchronized void printRMatrix() {
+    public void printRMatrix() {
         printReactionMatrix(reactionMatrix);
     }
 
@@ -230,7 +230,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @param outputFile
      */
     @Override
-    public synchronized void writeRMatrix(File outputFile) {
+    public void writeRMatrix(File outputFile) {
         try {
             writeReactionMatrix(outputFile, reactionMatrix);
         } catch (IOException ex) {
@@ -243,7 +243,7 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @throws Exception
      */
-    protected synchronized void markBondChanges() throws Exception {
+    protected void markBondChanges() throws Exception {
 
         BEMatrix substrateBEMatrix = reactantBE;
         BEMatrix productBEMatrix = productBE;
@@ -526,7 +526,7 @@ public final class BondChangeAnnotator extends DUModel {
         LOGGER.debug("markBondChanges method END");
     }
 
-    private synchronized void markHydrogenDisplacementBondChanges() {
+    private void markHydrogenDisplacementBondChanges() {
 
         LOGGER.debug("markHydrogenDisplacementBondChanges method START");
         /*
@@ -653,7 +653,7 @@ public final class BondChangeAnnotator extends DUModel {
 
     }
 
-    private synchronized void markUnMappedAtoms() {
+    private void markUnMappedAtoms() {
         LOGGER.debug("markUnMappedAtoms method START");
         for (IAtomContainer acE : reactantSet.atomContainers()) {
             for (IBond affectedBondReactants : acE.bonds()) {
@@ -704,7 +704,7 @@ public final class BondChangeAnnotator extends DUModel {
         LOGGER.debug("markUnMappedAtoms method END");
     }
 
-    private synchronized IBond getBondOfReactantsByRMatrix(IAtom atom1, IAtom atom2) {
+    private IBond getBondOfReactantsByRMatrix(IAtom atom1, IAtom atom2) {
         for (int i = 0; i < reactantSet.getAtomContainerCount(); i++) {
             if (reactantSet.getAtomContainer(i).getBond(atom1, atom2) != null) {
                 return reactantSet.getAtomContainer(i).getBond(atom1, atom2);
@@ -713,7 +713,7 @@ public final class BondChangeAnnotator extends DUModel {
         return null;
     }
 
-    private synchronized IBond getBondOfProductsByRMatrix(IAtom atom1, IAtom atom2) {
+    private IBond getBondOfProductsByRMatrix(IAtom atom1, IAtom atom2) {
         for (int i = 0; i < productSet.getAtomContainerCount(); i++) {
             if (productSet.getAtomContainer(i).getBond(atom1, atom2) != null) {
                 return productSet.getAtomContainer(i).getBond(atom1, atom2);

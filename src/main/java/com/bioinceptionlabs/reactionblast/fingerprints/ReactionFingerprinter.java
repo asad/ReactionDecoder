@@ -175,7 +175,7 @@ public class ReactionFingerprinter implements Serializable {
      *
      * @return
      */
-    public synchronized IPatternFingerprinter getReactionStruturalFingerprint() {
+    public IPatternFingerprinter getReactionStruturalFingerprint() {
         return this.reactionFingerprint;
     }
 }

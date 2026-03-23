@@ -118,7 +118,7 @@ public class ImageGenerator {
      * @param height
      * @return
      */
-    public synchronized static Image getBlankImage(int width, int height) {
+    public static Image getBlankImage(int width, int height) {
         return new BufferedImage(width, height, TYPE_4BYTE_ABGR);
     }
 
@@ -132,7 +132,7 @@ public class ImageGenerator {
      * @param outFile
      * @throws IOException
      */
-    protected static synchronized void makeReactionCenterHighlightedReactionToFile(
+    protected static void makeReactionCenterHighlightedReactionToFile(
             IReaction reaction,
             AbstractDirectReactionLayout layout,
             AbstractAWTReactionLayout awtLayout,
@@ -229,7 +229,7 @@ public class ImageGenerator {
      * @param outFile
      * @throws IOException
      */
-    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
+    protected static void makeLeftToRighHighlightedReactionToFile(
             IReaction reaction,
             AbstractDirectReactionLayout layout,
             AbstractAWTReactionLayout awtLayout,
@@ -284,7 +284,7 @@ public class ImageGenerator {
      * @param outFile
      * @throws IOException
      */
-    protected static synchronized void makeLeftToRighHighlightedReactionToFile(
+    protected static void makeLeftToRighHighlightedReactionToFile(
             IReaction cdkReaction,
             int width, int height,
             boolean shouldCrop,
@@ -354,7 +354,7 @@ public class ImageGenerator {
      * @param outFile
      * @throws IOException
      */
-    protected static synchronized void makeTopToBottomRHighlightedReactionToFile(
+    protected static void makeTopToBottomRHighlightedReactionToFile(
             IReaction cdkReaction,
             int width, int height,
             File outFile) throws IOException {
@@ -400,7 +400,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void LeftToRightReactionLayoutImageSmall(
+    public static void LeftToRightReactionLayoutImageSmall(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
         int width = 600;
         int height = 400;
@@ -415,7 +415,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void LeftToRightReactionCenterImageSmall(
+    public static void LeftToRightReactionCenterImageSmall(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
         int width = 600;
         int height = 400;
@@ -432,7 +432,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void TopToBottomReactionLayoutImageSmall(
+    public static void TopToBottomReactionLayoutImageSmall(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
 
         int height = 400;
@@ -449,7 +449,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void LeftToRightReactionLayoutImage(
+    public static void LeftToRightReactionLayoutImage(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
         int height = 800;
         int width = 1200;
@@ -464,7 +464,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void LeftToRightReactionCenterImage(
+    public static void LeftToRightReactionCenterImage(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
         int height = 800;
         int width = 1200;
@@ -481,7 +481,7 @@ public class ImageGenerator {
      * @param outputDir
      * @throws Exception
      */
-    public synchronized static void TopToBottomReactionLayoutImage(
+    public static void TopToBottomReactionLayoutImage(
             IReaction cdkReaction, String rmrID, String outputDir) throws Exception {
         int height = 800;
         int width = 1200;
@@ -489,7 +489,7 @@ public class ImageGenerator {
         makeTopToBottomRHighlightedReactionToFile(cdkReaction, width, height, outFile);
     }
 
-    private synchronized static File getDir(String outputDir) {
+    private static File getDir(String outputDir) {
         File file = new File(outputDir);
         if (!file.exists()) {
             boolean success = file.mkdirs();
@@ -759,7 +759,7 @@ public class ImageGenerator {
      * @param molID
      * @throws IOException
      */
-    public synchronized void directMoleculeImageNaturalScale(File outputDirName, IAtomContainer molecule, String molID) throws IOException {
+    public void directMoleculeImageNaturalScale(File outputDirName, IAtomContainer molecule, String molID) throws IOException {
 
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
         Params p1 = moleculeDrawer.getParams();
@@ -805,7 +805,7 @@ public class ImageGenerator {
      * @param molID
      * @throws IOException
      */
-    public synchronized void directMoleculeImageZoomedToFit(
+    public void directMoleculeImageZoomedToFit(
             File outputDirName, IAtomContainer molecule, String molID) throws IOException {
         int width = 800;
         int height = 600;
@@ -821,7 +821,7 @@ public class ImageGenerator {
      * @param height
      * @throws IOException
      */
-    public synchronized void directMoleculeImageZoomedToFit(File outputDirName, IAtomContainer molecule, String molID, int width, int height) throws IOException {
+    public void directMoleculeImageZoomedToFit(File outputDirName, IAtomContainer molecule, String molID, int width, int height) throws IOException {
 
         DirectMoleculeDrawer moleculeDrawer = new DirectMoleculeDrawer();
         Params par = moleculeDrawer.getParams();
@@ -856,7 +856,7 @@ public class ImageGenerator {
      * @param rmrID
      * @throws Exception
      */
-    public synchronized void drawTopToBottomReactionLayout(String outputDir, IReaction cdkReaction, String rmrID) throws Exception {
+    public void drawTopToBottomReactionLayout(String outputDir, IReaction cdkReaction, String rmrID) throws Exception {
         drawTopToBottomReactionLayout(new CreateDirectory().createDirectory(outputDir, false), cdkReaction, rmrID);
     }
 
@@ -867,7 +867,7 @@ public class ImageGenerator {
      * @param rmrID
      * @throws Exception
      */
-    public synchronized void drawTopToBottomReactionLayout(File outputDirName, IReaction cdkReaction, String rmrID) throws Exception {
+    public void drawTopToBottomReactionLayout(File outputDirName, IReaction cdkReaction, String rmrID) throws Exception {
         int width = 800;
         int height = 1000;
 
@@ -911,7 +911,7 @@ public class ImageGenerator {
      * @param rmrID
      * @throws Exception
      */
-    public synchronized void drawLeftToRightReactionLayout(String outputDirName, IReaction cdkReaction, String rmrID) throws Exception {
+    public void drawLeftToRightReactionLayout(String outputDirName, IReaction cdkReaction, String rmrID) throws Exception {
         drawLeftToRightReactionLayout(new CreateDirectory().createDirectory(outputDirName, false), cdkReaction, rmrID);
     }
 
@@ -922,7 +922,7 @@ public class ImageGenerator {
      * @param reactionID
      * @throws Exception
      */
-    public synchronized void drawLeftToRightReactionLayout(
+    public void drawLeftToRightReactionLayout(
             File outputDirName, IReaction mappedReaction, String reactionID) throws Exception {
         int width = 2048;
         int height = 600;

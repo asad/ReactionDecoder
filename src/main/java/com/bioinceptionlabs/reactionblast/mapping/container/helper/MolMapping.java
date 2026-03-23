@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,63 +75,63 @@ public class MolMapping extends Object implements Serializable {
     /**
      * @return the keggMapping
      */
-    public synchronized boolean isKeggMapping() {
+    public boolean isKeggMapping() {
         return keggMapping;
     }
 
     /**
      * @param keggMapping the keggMapping to set
      */
-    public synchronized void setKeggMapping(boolean keggMapping) {
+    public void setKeggMapping(boolean keggMapping) {
         this.keggMapping = keggMapping;
     }
 
     /**
      * @return the rBLASTMapping
      */
-    public synchronized boolean isrBLASTMapping() {
+    public boolean isrBLASTMapping() {
         return rBLASTMapping;
     }
 
     /**
      * @param rBLASTMapping the rBLASTMapping to set
      */
-    public synchronized void setReactionMapping(boolean rBLASTMapping) {
+    public void setReactionMapping(boolean rBLASTMapping) {
         this.rBLASTMapping = rBLASTMapping;
     }
 
     /**
      * @return the indexI
      */
-    public synchronized Integer getIndexI() {
+    public Integer getIndexI() {
         return indexI;
     }
 
     /**
      * @return the indexJ
      */
-    public synchronized Integer getIndexJ() {
+    public Integer getIndexJ() {
         return indexJ;
     }
 
     /**
      * @return the matchedMol
      */
-    public synchronized IAtomContainer getMatchedMol() {
+    public IAtomContainer getMatchedMol() {
         return matchedMol;
     }
 
     /**
      * @param matchedMol the matchedMol to set
      */
-    public synchronized void setMatchedMol(IAtomContainer matchedMol) {
+    public void setMatchedMol(IAtomContainer matchedMol) {
         this.matchedMol = matchedMol;
     }
 
     /**
      * @return the matchedSMILES
      */
-    public synchronized String getMatchedSMILES() {
+    public String getMatchedSMILES() {
         return matchedSMILES;
     }
 
@@ -139,7 +139,7 @@ public class MolMapping extends Object implements Serializable {
      * @param matchedSMILES the matchedSMILES to set
      * @param step index for the mapping process
      */
-    public synchronized void setMatchedSMILES(String matchedSMILES, Integer step) {
+    public void setMatchedSMILES(String matchedSMILES, Integer step) {
         this.matchedSMILES = matchedSMILES;
         setIndexStep(step);
     }
@@ -147,7 +147,7 @@ public class MolMapping extends Object implements Serializable {
     /**
      * @return the indexStep
      */
-    public synchronized Integer getIndexStep() {
+    public Integer getIndexStep() {
         return indexStep;
     }
 
@@ -205,7 +205,7 @@ public class MolMapping extends Object implements Serializable {
     /**
      * @param indexStep the indexStep to set
      */
-    private synchronized void setIndexStep(Integer indexStep) {
+    private void setIndexStep(Integer indexStep) {
         this.indexStep = indexStep;
     }
 

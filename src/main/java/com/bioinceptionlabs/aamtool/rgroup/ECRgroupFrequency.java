@@ -84,11 +84,9 @@ public class ECRgroupFrequency {
                         File[] listReactionFiles = ec.listFiles();
                         for (File reactionFile : listReactionFiles) {
                             String reactionName = reactionFile.getName().split("\\.")[0];
-                            MDLRXNV2000Reader mdlrxnV2000Reader;
-                            try {
-                                mdlrxnV2000Reader = new MDLRXNV2000Reader(new FileReader(reactionFile));
+                            try (FileReader fileReader = new FileReader(reactionFile);
+                                 MDLRXNV2000Reader mdlrxnV2000Reader = new MDLRXNV2000Reader(fileReader)) {
                                 Reaction reaction = mdlrxnV2000Reader.read(new Reaction());
-                                mdlrxnV2000Reader.close();
                                 if (reactionMap.containsKey(ecNumber)) {
                                     reactionMap.get(ecNumber).addReaction(reaction, reactionName);
                                 } else {

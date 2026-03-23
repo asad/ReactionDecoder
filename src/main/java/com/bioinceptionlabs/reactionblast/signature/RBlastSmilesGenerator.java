@@ -220,7 +220,7 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    public synchronized String createSMILES(IAtomContainer molecule) {
+    public String createSMILES(IAtomContainer molecule) {
         try {
             return (createSMILES(molecule, false, new boolean[molecule.getBondCount()]));
         } catch (CDKException exception) {
@@ -237,7 +237,7 @@ public class RBlastSmilesGenerator {
      * @throws org.openscience.cdk.exception.CDKException if there is an error
      * during SMILES generation
      */
-    public synchronized String createSMILES(IReaction reaction) throws CDKException {
+    public String createSMILES(IReaction reaction) throws CDKException {
         StringBuilder reactionSMILES = new StringBuilder();
         IAtomContainerSet reactants = reaction.getReactants();
         for (int i = 0; i < reactants.getAtomContainerCount(); i++) {
@@ -297,7 +297,7 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    public synchronized String createChiralSMILES(IAtomContainer molecule, boolean[] doubleBondConfiguration) throws CDKException {
+    public String createChiralSMILES(IAtomContainer molecule, boolean[] doubleBondConfiguration) throws CDKException {
         return (createSMILES(molecule, true, doubleBondConfiguration));
     }
 
@@ -327,7 +327,7 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    public synchronized String createSMILES(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[]) throws CDKException {
+    public String createSMILES(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[]) throws CDKException {
         IAtomContainerSet moleculeSet = partitionIntoMolecules(molecule);
         if (moleculeSet.getAtomContainerCount() > 1) {
             StringBuilder fullSMILES = new StringBuilder();
@@ -373,7 +373,7 @@ public class RBlastSmilesGenerator {
      * org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    public synchronized String createSMILESWithoutCheckForMultipleMolecules(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[]) throws CDKException {
+    public String createSMILESWithoutCheckForMultipleMolecules(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[]) throws CDKException {
 
         if (molecule.getAtomCount() == 0) {
             return "";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,6 @@ import org.openscience.smsd.AtomAtomMapping;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.helper.Debugger;
-import static java.util.Collections.synchronizedCollection;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -72,9 +71,9 @@ public class GraphMatcher extends Debugger {
      * @return
      * @throws InterruptedException
      */
-    public synchronized static Collection<MCSSolution> matcher(Holder mh) throws Exception {
+    public static Collection<MCSSolution> matcher(Holder mh) throws Exception {
         ExecutorService executor = null;
-        Collection<MCSSolution> mcsSolutions = synchronizedCollection(new ArrayList<>());
+        Collection<MCSSolution> mcsSolutions = new ArrayList<>();
 
         LOGGER.debug("Matcher Class for " + mh.getTheory());
         Set<Combination> jobReplicatorList = new TreeSet<>();
@@ -299,7 +298,7 @@ public class GraphMatcher extends Debugger {
             }
 
             LOGGER.debug("submited " + taskCounter + " jobs");
-            Collection<MCSSolution> threadedUniqueMCSSolutions = synchronizedCollection(new ArrayList<>());
+            Collection<MCSSolution> threadedUniqueMCSSolutions = new ArrayList<>();
             for (int count = 0; count < taskCounter; count++) {
                 MCSSolution isomorphism = callablesQueue.take().get();
                 threadedUniqueMCSSolutions.add(isomorphism);

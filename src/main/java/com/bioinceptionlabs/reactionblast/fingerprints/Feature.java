@@ -80,7 +80,7 @@ public class Feature implements IFeature,
      * @return
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
         DecimalFormat df = new DecimalFormat("##.0");
         StringBuilder result = new StringBuilder();
         result.append(pattern).append(":").append(df.format(weight));

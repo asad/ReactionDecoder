@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  *
- * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com> 2007-2020
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com> 2007-2026
  */
 public interface IWalker {
 

@@ -60,7 +60,7 @@ public class StereoCenterAnalyser {
      * @param atomContainer the atom container the atom is in
      * @return true if all conditions for a stereocenter are met
      */
-    public static synchronized boolean hasPotentialStereoCenter(IAtom atom, IAtomContainer atomContainer) {
+    public static boolean hasPotentialStereoCenter(IAtom atom, IAtomContainer atomContainer) {
         List<IAtom> neighbours = atomContainer.getConnectedAtomsList(atom);
         int numberOfNeighbours = neighbours.size();
         boolean hasImplicitHydrogen = false;

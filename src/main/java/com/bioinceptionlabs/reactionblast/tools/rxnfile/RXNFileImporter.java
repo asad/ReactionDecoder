@@ -64,14 +64,10 @@ public class RXNFileImporter {
      */
     public void readFile(String File) throws IOException {
 
-        try {
-
-            InputStream RXNFile = new BufferedInputStream(new FileInputStream(File));
+        try (InputStream RXNFile = new BufferedInputStream(new FileInputStream(File));
+             MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, STRICT)) {
             reaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
-
-            try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(RXNFile, STRICT)) {
-                reaction = reader.read(reaction);
-            }
+            reaction = reader.read(reaction);
         } catch (CDKException cdkerr) {
             LOGGER.error("Error: only RXN V2000 file format is "
                     + "supported by this Software");

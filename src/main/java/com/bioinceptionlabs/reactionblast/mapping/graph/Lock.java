@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@ class Lock {
         lockedCount = 0;
     }
 
-    public synchronized void lock() throws InterruptedException {
+    public void lock() throws InterruptedException {
         Thread callingThread = currentThread();
         while (isIsLocked() && getLockedBy() != callingThread) {
             wait();
@@ -46,7 +46,7 @@ class Lock {
         setLockedBy(callingThread);
     }
 
-    public synchronized void unlock() {
+    public void unlock() {
         if (currentThread() == this.getLockedBy()) {
             setLockedCount(getLockedCount() - 1);
             if (getLockedCount() == 0) {

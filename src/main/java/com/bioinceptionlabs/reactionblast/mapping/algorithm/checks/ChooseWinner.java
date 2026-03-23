@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,6 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
-import static java.util.Collections.synchronizedList;
 
 /**
  *
@@ -116,7 +115,7 @@ public class ChooseWinner extends Selector implements Serializable {
      * @param productMap
      * @param mHolder
      */
-    public synchronized void searchWinners(Map<Integer, IAtomContainer> eductMap, Map<Integer, IAtomContainer> productMap, Holder mHolder) {
+    public void searchWinners(Map<Integer, IAtomContainer> eductMap, Map<Integer, IAtomContainer> productMap, Holder mHolder) {
         initFlagMatrix();
         this.educts = eductMap;
         this.products = productMap;
@@ -125,7 +124,7 @@ public class ChooseWinner extends Selector implements Serializable {
         this.setEnergyMatrix(mHolder.getEnergyMatrix());
         this.setCarbonOverlapMatrix(mHolder.getCarbonOverlapMatrix());
 
-        this.crossMappingTracer = synchronizedList(new ArrayList<>());
+        this.crossMappingTracer = new ArrayList<>();
 
         boolean isMappingFesiable = checkStatusFlag();
         List<Double> scores = new ArrayList<>();
@@ -182,7 +181,7 @@ public class ChooseWinner extends Selector implements Serializable {
      *
      * @return
      */
-    public synchronized boolean getFlag() {
+    public boolean getFlag() {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
                 if (this.flagMatrix[i][j]) {
@@ -198,11 +197,11 @@ public class ChooseWinner extends Selector implements Serializable {
      * @return this.flagMatrix containing the selected cells
      *
      */
-    public synchronized boolean[][] getFlagMatrix() {
+    public boolean[][] getFlagMatrix() {
         return this.flagMatrix;
     }
 
-    private synchronized void initFlagMatrix() {
+    private void initFlagMatrix() {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
                 this.flagMatrix[i][j] = false;
@@ -210,7 +209,7 @@ public class ChooseWinner extends Selector implements Serializable {
         }
     }
 
-    private synchronized void initFlagMatrix(boolean[][] boolMatrix, int rowSize, int colSize) {
+    private void initFlagMatrix(boolean[][] boolMatrix, int rowSize, int colSize) {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
                 boolMatrix[i][j] = false;
@@ -218,7 +217,7 @@ public class ChooseWinner extends Selector implements Serializable {
         }
     }
 
-    private synchronized boolean checkStatusFlag() {
+    private boolean checkStatusFlag() {
         for (int i = 0; i < rowSize; i++) {
             for (int j = 0; j < colSize; j++) {
                 if (similarityMatrix.getValue(i, j) > MIN_VALUE) {
@@ -229,7 +228,7 @@ public class ChooseWinner extends Selector implements Serializable {
         return false;
     }
 
-    private synchronized void setWinOverFlags() {
+    private void setWinOverFlags() {
         educts.keySet().stream().forEach((indexI) -> {
             products.keySet().stream().forEach((indexJ) -> {
                 Cell cell = new Cell();
@@ -247,7 +246,7 @@ public class ChooseWinner extends Selector implements Serializable {
         });
     }
 
-    private synchronized boolean checkTwinMapping(Cell refCell) {
+    private boolean checkTwinMapping(Cell refCell) {
         boolean _statusFlag = false;
         for (Cell cell : crossMappingTracer) {
 
@@ -268,7 +267,7 @@ public class ChooseWinner extends Selector implements Serializable {
         return _statusFlag;
     }
 
-    private synchronized void resolveDeadLocks(List<Double> scores) {
+    private void resolveDeadLocks(List<Double> scores) {
         boolean[][] deadlockFreeFlagMatrix = new boolean[rowSize][colSize];
         initFlagMatrix(deadlockFreeFlagMatrix, rowSize, colSize);
         scores.stream().map((score) -> new DeadLockResolver().resolver(score)).forEach((choosenCell) -> {
@@ -310,7 +309,7 @@ public class ChooseWinner extends Selector implements Serializable {
      */
     class DeadLockResolver {
 
-        private synchronized double getMaxStereo(List<ChooseWinner.Cell> choosenCells) {
+        private double getMaxStereo(List<ChooseWinner.Cell> choosenCells) {
             double max = 0.0;
             for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getStereoMatrix().getValue(cell.indexI, cell.indexJ);
@@ -321,7 +320,7 @@ public class ChooseWinner extends Selector implements Serializable {
             return max;
         }
 
-        private synchronized double getMinEnergy(List<ChooseWinner.Cell> choosenCells) {
+        private double getMinEnergy(List<ChooseWinner.Cell> choosenCells) {
             double min = Double.MAX_VALUE;
             for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getEnergyMatrix().getValue(cell.indexI, cell.indexJ);
@@ -332,7 +331,7 @@ public class ChooseWinner extends Selector implements Serializable {
             return min;
         }
 
-        private synchronized double getMaxCarbonOverlap(List<ChooseWinner.Cell> choosenCells) {
+        private double getMaxCarbonOverlap(List<ChooseWinner.Cell> choosenCells) {
             double max = Double.MIN_VALUE;
             for (ChooseWinner.Cell cell : choosenCells) {
                 double val = getCarbonOverlapMatrix().getValue(cell.indexI, cell.indexJ);
@@ -349,7 +348,7 @@ public class ChooseWinner extends Selector implements Serializable {
          * @param choosenScore
          * @return
          */
-        public synchronized ChooseWinner.Cell resolver(double choosenScore) {
+        public ChooseWinner.Cell resolver(double choosenScore) {
             List<ChooseWinner.Cell> choosenCells = new ArrayList<>();
             for (int i = 0; i < rowSize; i++) {
                 for (int j = 0; j < colSize; j++) {

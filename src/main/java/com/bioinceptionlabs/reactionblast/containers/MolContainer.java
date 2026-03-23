@@ -20,7 +20,6 @@ package com.bioinceptionlabs.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Objects;
@@ -88,7 +87,7 @@ public class MolContainer implements IMolContainer {
      *
      * @return
      */
-    public static synchronized MolContainer getInstance() {
+    public static MolContainer getInstance() {
         if (_instance == null) {
             _instance = new MolContainer();
         }
@@ -98,7 +97,7 @@ public class MolContainer implements IMolContainer {
 
     //~--- constructors -------------------------------------------------------
     private MolContainer() {
-        molContainer = synchronizedSortedMap(new TreeMap<>());
+        molContainer = new TreeMap<>();
     }
 
     //~--- methods ------------------------------------------------------------
@@ -107,9 +106,9 @@ public class MolContainer implements IMolContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         molContainer.clear();
-        molContainer = synchronizedSortedMap(new TreeMap<String, IAtomContainer>());
+        molContainer = new TreeMap<String, IAtomContainer>();
     }
 
     /**
@@ -118,7 +117,7 @@ public class MolContainer implements IMolContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Erase(String key) throws IOException {
+    public void Erase(String key) throws IOException {
         molContainer.remove(key);
     }
 
@@ -128,7 +127,7 @@ public class MolContainer implements IMolContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void put(String key, IAtomContainer Value) throws IOException {
+    public void put(String key, IAtomContainer Value) throws IOException {
         try {
             molContainer.put(key, Value);
         } catch (Exception e) {
@@ -144,7 +143,7 @@ public class MolContainer implements IMolContainer {
      * @return
      */
     @Override
-    public synchronized IAtomContainer getAtomContainer(String key)
+    public IAtomContainer getAtomContainer(String key)
             throws IOException {
         return molContainer.get(key);
     }
@@ -155,7 +154,7 @@ public class MolContainer implements IMolContainer {
      * @return
      */
     @Override
-    public synchronized Map<String, IAtomContainer> getAtomContainerMap() throws IOException {
+    public Map<String, IAtomContainer> getAtomContainerMap() throws IOException {
         return unmodifiableMap(molContainer);
     }
 
@@ -166,7 +165,7 @@ public class MolContainer implements IMolContainer {
      * @return
      */
     @Override
-    public synchronized boolean isKeyPresent(String key) throws IOException {
+    public boolean isKeyPresent(String key) throws IOException {
         return molContainer.containsKey(key);
     }
 
@@ -178,7 +177,7 @@ public class MolContainer implements IMolContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void add(String key, IAtomContainer value)
+    public void add(String key, IAtomContainer value)
             throws IOException {
         molContainer.put(key, value);
     }
@@ -191,7 +190,7 @@ public class MolContainer implements IMolContainer {
      * @return
      * @throws Exception
      */
-    public synchronized boolean isIdentical(IAtomContainer _queryMol,
+    public boolean isIdentical(IAtomContainer _queryMol,
             IAtomContainer _targetMol,
             boolean removeHydrogen) throws Exception {
 
@@ -205,7 +204,7 @@ public class MolContainer implements IMolContainer {
         return isSubgraphIdentical(_queryMol, _targetMol, removeHydrogen);
     }
 
-    private synchronized boolean isSubgraphIdentical(IAtomContainer _mol,
+    private boolean isSubgraphIdentical(IAtomContainer _mol,
             IAtomContainer _rMol,
             boolean removeHydrogen) throws CDKException, IOException {
 //        System.out.println("Graph matching");
@@ -230,7 +229,7 @@ public class MolContainer implements IMolContainer {
      * @throws Exception
      */
     @Override
-    public synchronized boolean compareAtomContainer(String key, IAtomContainer mol) throws Exception {
+    public boolean compareAtomContainer(String key, IAtomContainer mol) throws Exception {
         mol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         try {
             boolean flag = molContainer.containsKey(key);
@@ -245,7 +244,7 @@ public class MolContainer implements IMolContainer {
     }
 
     @Override
-    public synchronized String getMoleculeID(IAtomContainer mol) throws Exception {
+    public String getMoleculeID(IAtomContainer mol) throws Exception {
         IAtomContainer queryMol = removeHydrogensExceptSingleAndPreserveAtomID(mol);
         percieveAtomTypesAndConfigureAtoms(queryMol);
         CDKHydrogenAdder instance = CDKHydrogenAdder.getInstance(queryMol.getBuilder());
@@ -271,7 +270,7 @@ public class MolContainer implements IMolContainer {
     }
 
     @Override
-    public synchronized boolean isValuePresent(IAtomContainer Value) throws IOException {
+    public boolean isValuePresent(IAtomContainer Value) throws IOException {
         return molContainer.containsValue(Value);
     }
 
@@ -279,7 +278,7 @@ public class MolContainer implements IMolContainer {
      *
      * @return
      */
-    public synchronized boolean isEmpty() {
+    public boolean isEmpty() {
         return molContainer.isEmpty();
     }
 

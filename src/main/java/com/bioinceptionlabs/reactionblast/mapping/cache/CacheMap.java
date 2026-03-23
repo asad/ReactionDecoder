@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2026. BioInception Labs Pvt. Ltd.
  */
 package com.bioinceptionlabs.reactionblast.mapping.cache;
 
@@ -70,39 +70,31 @@ public class CacheMap<K, V> implements Cache<K, V> {
     // PUT method
     @Override
     public void put(K key, V value) {
-        synchronized (cacheMap) {
-            cacheMap.put(key, value);
-        }
+        cacheMap.put(key, value);
     }
 
     // GET method
     @SuppressWarnings("unchecked")
     @Override
     public V get(K key) {
-        synchronized (cacheMap) {
-            CrunchifyCacheObject c = (CrunchifyCacheObject) cacheMap.get(key);
+        CrunchifyCacheObject c = (CrunchifyCacheObject) cacheMap.get(key);
 
-            if (c == null) {
-                return null;
-            } else {
-                c.lastAccessed = System.currentTimeMillis();
-                return (V) c.value;
-            }
+        if (c == null) {
+            return null;
+        } else {
+            c.lastAccessed = System.currentTimeMillis();
+            return (V) c.value;
         }
     }
 
     // REMOVE method
     public void remove(String key) {
-        synchronized (cacheMap) {
-            cacheMap.remove(key);
-        }
+        cacheMap.remove(key);
     }
 
     // Get Cache Objects Size()
     public int size() {
-        synchronized (cacheMap) {
-            return cacheMap.size();
-        }
+        return cacheMap.size();
     }
 
     // CLEANUP method
@@ -111,25 +103,21 @@ public class CacheMap<K, V> implements Cache<K, V> {
         long now = System.currentTimeMillis();
         ArrayList<String> deleteKey = null;
 
-        synchronized (cacheMap) {
-            Iterator<?> itr = cacheMap.entrySet().iterator();
+        Iterator<?> itr = cacheMap.entrySet().iterator();
 
-            deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
-            CrunchifyCacheObject c = null;
+        deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
+        CrunchifyCacheObject c = null;
 
-            while (itr.hasNext()) {
-                String key = (String) itr.next();
-                c = (CrunchifyCacheObject) ((Entry<?, ?>) itr).getValue();
-                if (c != null && (now > (timeToLive + c.lastAccessed))) {
-                    deleteKey.add(key);
-                }
+        while (itr.hasNext()) {
+            String key = (String) itr.next();
+            c = (CrunchifyCacheObject) ((Entry<?, ?>) itr).getValue();
+            if (c != null && (now > (timeToLive + c.lastAccessed))) {
+                deleteKey.add(key);
             }
         }
 
         for (String key : deleteKey) {
-            synchronized (cacheMap) {
-                cacheMap.remove(key);
-            }
+            cacheMap.remove(key);
 
             Thread.yield();
         }

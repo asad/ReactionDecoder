@@ -147,7 +147,7 @@ public class Annotator extends Helper {
      * @throws CDKException
      * @throws Exception
      */
-    protected synchronized boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
+    protected boolean writeFiles(String reactionID, ReactionMechanismTool mech) throws IOException, CDKException, Exception {
 
         MappingSolution s = mech.getSelectedSolution();
         if (s == null) {

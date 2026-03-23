@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,8 +32,6 @@ package com.bioinceptionlabs.reactionblast.mapping.algorithm;
 import java.io.IOException;
 import java.util.BitSet;
 import static java.util.Collections.sort;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -101,11 +99,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
         this.reaction = reaction;
         this.reactionID = reaction.getID();
 
-        this.substrateductFPMap = synchronizedSortedMap(new TreeMap<>());
-        this.productFPMap = synchronizedSortedMap(new TreeMap<>());
+        this.substrateductFPMap = new TreeMap<>();
+        this.productFPMap = new TreeMap<>();
         this.fpr = new FingerprintGenerator();
-        this.eductCounter = synchronizedList(new LinkedList<>());
-        this.productCounter = synchronizedList(new LinkedList<>());
+        this.eductCounter = new LinkedList<>();
+        this.productCounter = new LinkedList<>();
         this.structureMapObj = new ReactionContainer();
         this.bestMatchContainer = new BestMatchContainer();
         this.hydFreeFPContainer = new HydrogenFreeFingerPrintContainer();
@@ -120,7 +118,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
     }
     //~--- methods ------------------------------------------------------------
 
-    private synchronized void BuildScoringMatrix() throws Exception {
+    private void BuildScoringMatrix() throws Exception {
         try {
             matrixHolder = new Holder(
                     theory,
@@ -150,7 +148,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         structureMapObj.Clear();
         hydFreeFPContainer.Clear();
     }
@@ -161,7 +159,7 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      * @return reactant molecule and their index (key) in a Map
      */
     @Override
-    public synchronized List<String> getEductCounter() {
+    public List<String> getEductCounter() {
         return unmodifiableList(eductCounter);
     }
 
@@ -170,11 +168,11 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      * @return product molecule and their index (key) in a Map
      */
     @Override
-    public synchronized List<String> getProductCounter() {
+    public List<String> getProductCounter() {
         return unmodifiableList(productCounter);
     }
 
-    private synchronized void StoichiometricCoefficientReplicator_Structure_FingerPrint_MapGenerator() {
+    private void StoichiometricCoefficientReplicator_Structure_FingerPrint_MapGenerator() {
 
         List<IAtomContainer> ac = new LinkedList<>();
         List<IAtomContainer> pd = new LinkedList<>();
@@ -235,16 +233,16 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
      * @return the matrixHolder
      */
     @Override
-    public synchronized Holder getMatrixHolder() {
+    public Holder getMatrixHolder() {
         return matrixHolder;
     }
 
     @Override
-    public synchronized MoleculeMoleculeMapping getReactionMolMapping() {
+    public MoleculeMoleculeMapping getReactionMolMapping() {
         return reactionBlastMolMapping;
     }
 
-    private synchronized void sortAtomContainer(List<IAtomContainer> ac, List<IAtomContainer> pd) {
+    private void sortAtomContainer(List<IAtomContainer> ac, List<IAtomContainer> pd) {
         for (IAtomContainer e : reaction.getReactants().atomContainers()) {
 //            System.out.println("ID: e " + e.getID());
             ac.add(e);
@@ -264,12 +262,12 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
     }
 
     @Override
-    public synchronized int getDelta() {
+    public int getDelta() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public synchronized void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
+    public void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
         this.reactionBlastMolMapping = reactionMolMapping;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ import com.bioinceptionlabs.reactionblast.tools.labelling.SignatureMoleculeLabel
  */
 public class CanonicalNumberingGenerator {
 
-    private static synchronized void resetFlags(IAtomContainer atomContainer) {
+    private static void resetFlags(IAtomContainer atomContainer) {
         for (int f = 0; f < atomContainer.getAtomCount(); f++) {
             atomContainer.getAtom(f).setFlag(VISITED, false);
         }
@@ -50,7 +50,7 @@ public class CanonicalNumberingGenerator {
         }
     }
 
-    private static synchronized <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+    private static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
         List<T> list = new ArrayList<>(c);
         sort(list);
         return list;
@@ -113,7 +113,7 @@ public class CanonicalNumberingGenerator {
 //        }
     }
 
-    private synchronized List<Integer> asList(int[] is) {
+    private List<Integer> asList(int[] is) {
         List<Integer> intList = new ArrayList<>();
         for (int index = 0; index < is.length; index++) {
             intList.add(index, is[index]);
@@ -124,7 +124,7 @@ public class CanonicalNumberingGenerator {
     /**
      * @return the canonicalPermutation
      */
-    public synchronized int[] getCanonicalPermutation() {
+    public int[] getCanonicalPermutation() {
         int[] val = new int[canonicalPermutationList.size()];
         int index = 0;
         for (Integer i : canonicalPermutationList) {
@@ -136,7 +136,7 @@ public class CanonicalNumberingGenerator {
     /**
      * @return the orbitalCanonicalLabelling
      */
-    public synchronized int[] getOrbitalCanonicalLabelling() {
+    public int[] getOrbitalCanonicalLabelling() {
         int[] val = new int[orbitalCanonicalLabellingList.size()];
         int index = 0;
         for (Integer i : orbitalCanonicalLabellingList) {
@@ -152,7 +152,7 @@ public class CanonicalNumberingGenerator {
         int postion;
 
         @Override
-        public synchronized String toString() {
+        public String toString() {
             StringBuilder result = new StringBuilder();
             String NEW_LINE = getProperty("line.separator");
             result.append("Atom: ").append(atom.getSymbol()).append(", Rank: ").append(this.rank);
@@ -170,7 +170,7 @@ public class CanonicalNumberingGenerator {
          * @return
          */
         @Override
-        public synchronized int compare(Label t1, Label t2) {
+        public int compare(Label t1, Label t2) {
             ShortestPaths sp = new ShortestPaths(atomContainer, t1.atom);
             IAtom[] atomsTo = sp.atomsTo(t2.atom);
             if (t1.atom == t2.atom) {

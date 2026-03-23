@@ -250,7 +250,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @return
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append(reactantAtomArray.size()).append(NEW_LINE);
         for (int i = 0; i < reactantAtomArray.size(); i++) {
@@ -276,7 +276,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @param reactantAtom The IAtom for which the product atom is required.
      * @return The product atom mapped to the given reactant atom.
      */
-    public synchronized IAtom getMappedProductAtom(IAtom reactantAtom) {
+    public IAtom getMappedProductAtom(IAtom reactantAtom) {
         IAtom a = null;
         int reactantIdx = -1;
         for (int i = 0; i < reactantAtomArray.size(); i++) {
@@ -296,7 +296,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @param idx The index of the reactant atom which is required.
      * @return The idx-th a reactant atom mapped.
      */
-    public synchronized IAtom getReactantAtom(int idx) {
+    public IAtom getReactantAtom(int idx) {
         IAtom ret = null;
         if ((idx < reactantAtomArray.size()) && (idx > -1)) {
             ret = reactantAtomArray.get(idx);
@@ -309,7 +309,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @param idx
      * @return
      */
-    public synchronized IAtom getProductAtom(int idx) {
+    public IAtom getProductAtom(int idx) {
         IAtom ret = null;
         if ((idx < productAtomArray.size()) && (idx > -1)) {
             ret = productAtomArray.get(idx);
@@ -324,7 +324,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @return the number of mappings which the AtomAtomMappingContainer
      * contains.
      */
-    public synchronized int getSize() {
+    public int getSize() {
         return reactantAtomArray.size();
     }
 
@@ -332,7 +332,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      *
      * @return
      */
-    public synchronized int getSizeNoHydrogens() {
+    public int getSizeNoHydrogens() {
         int count = 0;
         count = reactantAtomArray.stream().filter((a)
                 -> (!a.getSymbol().equals("H"))).map((_item) -> 1)
@@ -346,7 +346,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @param atom
      * @return
      */
-    public synchronized boolean isReactantAtomPresent(IAtom atom) {
+    public boolean isReactantAtomPresent(IAtom atom) {
         return reactantAtomArray.contains(atom) == true;
     }
 
@@ -356,7 +356,7 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
      * @param atom
      * @return
      */
-    public synchronized boolean isProductAtomPresent(IAtom atom) {
+    public boolean isProductAtomPresent(IAtom atom) {
         return productAtomArray.contains(atom) == true;
     }
 }

@@ -99,7 +99,7 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality3DChemaxon
      * @return
      */
-    public synchronized List<StereoChange> compare(
+    public List<StereoChange> compare(
             IReaction reaction,
             Map<IAtom, IStereoAndConformation> chirality2DCDK,
             Map<IAtom, IStereoAndConformation> chirality2DChemaxon,
@@ -146,7 +146,7 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality2DChemaxon
      * @return
      */
-    public synchronized List<StereoChange> compare(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK, Map<IAtom, IStereoAndConformation> chirality2DChemaxon) {
+    public List<StereoChange> compare(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK, Map<IAtom, IStereoAndConformation> chirality2DChemaxon) {
         List<StereoChange> stereoChangeList = new ArrayList<>();
         List<IAtom> queryAtoms = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
@@ -191,7 +191,7 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality2DCDK
      * @return
      */
-    public synchronized List<StereoChange> compare(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK) {
+    public List<StereoChange> compare(IReaction reaction, Map<IAtom, IStereoAndConformation> chirality2DCDK) {
 
         List<StereoChange> stereoChangeList = new ArrayList<>();
         List<IAtom> queryAtoms = new ArrayList<>();
@@ -231,7 +231,7 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param b
      * @return
      */
-    public synchronized boolean isStereogenicChange(IStereoAndConformation a, IStereoAndConformation b) {
+    public boolean isStereogenicChange(IStereoAndConformation a, IStereoAndConformation b) {
         if (a.equals(S) && b.equals(NONE)) {
             return true;
         } else if (a.equals(R) && b.equals(NONE)) {

@@ -140,7 +140,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @param molecule_orignal
      * @return cleaned GraphAtomContainer
      */
-    public synchronized static IAtomContainer checkAndCleanMolecule(IAtomContainer molecule_orignal) {
+    public static IAtomContainer checkAndCleanMolecule(IAtomContainer molecule_orignal) {
         boolean isMarkush = false;
         IAtomContainer molecule = molecule_orignal;
         for (IAtom atom : molecule.atoms()) {

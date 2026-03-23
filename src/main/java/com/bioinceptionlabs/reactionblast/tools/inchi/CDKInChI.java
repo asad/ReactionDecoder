@@ -86,7 +86,7 @@ public class CDKInChI {
         molecule = null;
     }
 
-    private synchronized IAtomContainer convertRGroupsToMetals(IAtomContainer mol) {
+    private IAtomContainer convertRGroupsToMetals(IAtomContainer mol) {
         try {
             IAtomContainer convertedMol = mol.clone();
             for (IAtom atom : convertedMol.atoms()) {
@@ -100,7 +100,7 @@ public class CDKInChI {
         }
     }
 
-    private synchronized boolean isR(IAtom atom) {
+    private boolean isR(IAtom atom) {
         String symbol = atom.getSymbol();
         return symbol.charAt(0) == 'R'
                 && !(symbol.equals("Re")
@@ -115,7 +115,7 @@ public class CDKInChI {
      * @throws org.openscience.cdk.exception.CDKException
      * @return
      */
-    public synchronized String getInChI(IAtomContainer mol) throws CDKException {
+    public String getInChI(IAtomContainer mol) throws CDKException {
         String inchi = "";
         try {
             _genInchi = factory.getInChIGenerator(convertRGroupsToMetals(mol), "");
@@ -134,7 +134,7 @@ public class CDKInChI {
      * @throws org.openscience.cdk.exception.CDKException
      * @return
      */
-    public synchronized String getInChI(IAtomContainer mol, String options) throws CDKException {
+    public String getInChI(IAtomContainer mol, String options) throws CDKException {
         String inchi = "";
         // Generate factory - throws CDKException if native code does not load
         try {
@@ -154,7 +154,7 @@ public class CDKInChI {
      * @throws org.openscience.cdk.exception.CDKException
      * @return
      */
-    public synchronized String getInChI(IAtomContainer mol, List<INCHI_OPTION> options) throws CDKException {
+    public String getInChI(IAtomContainer mol, List<INCHI_OPTION> options) throws CDKException {
         String inchi = "";
 
         // Generate factory - throws CDKException if native code does not load
@@ -168,7 +168,7 @@ public class CDKInChI {
         return inchi;
     }
 
-    private synchronized void structure() throws CDKException {
+    private void structure() throws CDKException {
 
         INCHI_RET ret = _intostruct.getReturnStatus();
 
@@ -181,7 +181,7 @@ public class CDKInChI {
         }
     }
 
-    private synchronized void inchi() throws CDKException {
+    private void inchi() throws CDKException {
 
         INCHI_RET ret = _genInchi.getReturnStatus();
         if (ret == WARNING) {
@@ -198,7 +198,7 @@ public class CDKInChI {
      *
      * @return returns Auxilary information about the CDKInChI
      */
-    public synchronized String getAuxinfo() {
+    public String getAuxinfo() {
         return _genInchi.getAuxInfo();
     }
 }

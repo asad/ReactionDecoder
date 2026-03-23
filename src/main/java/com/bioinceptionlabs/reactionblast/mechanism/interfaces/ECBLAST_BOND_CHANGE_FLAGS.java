@@ -72,7 +72,7 @@ public enum ECBLAST_BOND_CHANGE_FLAGS {
      *
      * @return type of algorithm
      */
-    public synchronized int type() {
+    public int type() {
         return this.type;
     }
 
@@ -81,7 +81,7 @@ public enum ECBLAST_BOND_CHANGE_FLAGS {
      *
      * @return description of the algorithm
      */
-    public synchronized String description() {
+    public String description() {
         return this.description;
     }
 
@@ -92,7 +92,7 @@ public enum ECBLAST_BOND_CHANGE_FLAGS {
      * @param obj
      * @return status
      */
-    public synchronized <status> int compareTo(ECBLAST_BOND_CHANGE_FLAGS obj) {
+    public <status> int compareTo(ECBLAST_BOND_CHANGE_FLAGS obj) {
         return 0;
     }
 }

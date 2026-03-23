@@ -46,7 +46,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     private static final long serialVersionUID = 7057060562283378622L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MolFingerprint.class);
 
-    private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
+    private static MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
         if (boolArray1.length != boolArray2.length) {
             throw new CDKException("EBIFingerprint.or(boolean[], boolean[]): array with different dimensions.");
         }
@@ -59,7 +59,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         return res;
     }
 
-    private static synchronized MolFingerprint and(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
+    private static MolFingerprint and(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
         if (boolArray1.length != boolArray2.length) {
             throw new CDKException("EBIFingerprint.and(boolean[], boolean[]): array with different dimensions.");
         }
@@ -159,13 +159,13 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
         arraycopy(molFingerprint.getBooleanArray(), 0, this.arrayFingerprint, 0, arrayFingerprint.length);
     }
 
-    private synchronized void set(boolean value) {
+    private void set(boolean value) {
         for (int i = 0; i < arrayFingerprint.length; i++) {
             arrayFingerprint[i] = value;
         }
     }
 
-    private synchronized void set(BitSet bitset) {
+    private void set(BitSet bitset) {
         arrayFingerprint = new boolean[bitset.size()];
         for (int i = 0; i < bitset.length(); i++) {
             arrayFingerprint[i] = (bitset.get(i));
@@ -177,7 +177,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      *
      * @return
      */
-    public synchronized BitSet getBitSet() {
+    public BitSet getBitSet() {
         BitSet bts = new BitSet(arrayFingerprint.length);
         for (int i = 0; i < arrayFingerprint.length; i++) {
             bts.set(i, arrayFingerprint[i]);
@@ -191,20 +191,20 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @param molFingerprint
      * @throws CDKException
      */
-    private synchronized void set(int fromIndex, MolFingerprint molFingerprint) throws CDKException {
+    private void set(int fromIndex, MolFingerprint molFingerprint) throws CDKException {
         for (int i = fromIndex; (i < fromIndex + molFingerprint.length()) && (i < arrayFingerprint.length); i++) {
             arrayFingerprint[i] = molFingerprint.getBooleanArray()[i - fromIndex];
         }
     }
 
-    private synchronized void set(int fromIndex, boolean[] fgprt) throws CDKException {
+    private void set(int fromIndex, boolean[] fgprt) throws CDKException {
         for (int i = fromIndex; (i < fromIndex + fgprt.length) && (i < arrayFingerprint.length); i++) {
             arrayFingerprint[i] = fgprt[i - fromIndex];
         }
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         String strFp = "";
         for (int i = 0; i < arrayFingerprint.length; i++) {
             strFp += (arrayFingerprint[i] ? "1" : "0");
@@ -215,7 +215,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     /**
      *
      */
-    public synchronized void println() {
+    public void println() {
         LOGGER.debug(toString());
     }
 
@@ -223,7 +223,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      *
      * @return
      */
-    public synchronized int length() {
+    public int length() {
         return arrayFingerprint.length;
     }
 
@@ -233,7 +233,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      * @throws CDKException
      */
-    public synchronized boolean getBit(int index) throws CDKException {
+    public boolean getBit(int index) throws CDKException {
         if ((index >= arrayFingerprint.length) || (index < 0)) {
             throw new CDKException("EBIFingerprint.getBit(int index) failed for index out of bounds.");
         }
@@ -246,7 +246,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @param value
      * @throws CDKException
      */
-    public synchronized void setBit(int index, boolean value) throws CDKException {
+    public void setBit(int index, boolean value) throws CDKException {
         if ((index >= arrayFingerprint.length) || (index < 0)) {
             throw new CDKException("EBIFingerprint.setBit(int index, boolean value) failed for index out of bounds.");
         }
@@ -257,7 +257,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      *
      * @return
      */
-    public synchronized boolean[] getBooleanArray() {
+    public boolean[] getBooleanArray() {
         boolean[] bs = new boolean[arrayFingerprint.length];
         arraycopy(arrayFingerprint, 0, bs, 0, arrayFingerprint.length);
         return bs;
@@ -268,7 +268,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @param b
      * @throws CDKException
      */
-    public synchronized void append(Byte b) throws CDKException {
+    public void append(Byte b) throws CDKException {
         boolean[] bt = new boolean[8];
         for (int i = 0; i < 8; i++) {
             bt[i] = (b & (1 << (7 - i))) != 0;
@@ -281,7 +281,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @param fp
      * @throws CDKException
      */
-    public synchronized void append(MolFingerprint fp) throws CDKException {
+    public void append(MolFingerprint fp) throws CDKException {
         MolFingerprint newFp = new MolFingerprint(arrayFingerprint.length + fp.length());
         newFp.set(0, arrayFingerprint);
         newFp.set(arrayFingerprint.length, fp);
@@ -294,7 +294,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      * @throws CDKException
      */
-    public synchronized MolFingerprint or(MolFingerprint molFp) throws CDKException {
+    public MolFingerprint or(MolFingerprint molFp) throws CDKException {
         return or(arrayFingerprint, molFp.getBooleanArray());
     }
 
@@ -304,7 +304,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      * @throws CDKException
      */
-    public synchronized MolFingerprint and(MolFingerprint molFp) throws CDKException {
+    public MolFingerprint and(MolFingerprint molFp) throws CDKException {
         return and(arrayFingerprint, molFp.getBooleanArray());
     }
 
@@ -314,7 +314,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      * @throws Exception
      */
-    public synchronized double similarity(MolFingerprint fingerprint) throws Exception {
+    public double similarity(MolFingerprint fingerprint) throws Exception {
         double similarity;
         similarity = getTanimotoSimilarity(fingerprint.getBitSet(), bitsetFingerprint);
         return similarity;
@@ -328,7 +328,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      */
     @Override
-    public synchronized int compareTo(MolFingerprint t) {
+    public int compareTo(MolFingerprint t) {
         return compare(this, t);
     }
 
@@ -339,7 +339,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      * @return
      */
     @Override
-    public synchronized boolean equals(Object object) {
+    public boolean equals(Object object) {
         if (this == object) {
             return true;
         }
@@ -362,7 +362,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
     }
 
     @Override
-    public synchronized int hashCode() {
+    public int hashCode() {
         int hash = 7;
         hash = 19 * hash + Arrays.hashCode(this.arrayFingerprint);
         hash = 19 * hash + (this.bitsetFingerprint != null ? this.bitsetFingerprint.hashCode() : 0);

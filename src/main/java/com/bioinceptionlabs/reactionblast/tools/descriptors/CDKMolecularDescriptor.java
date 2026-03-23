@@ -83,11 +83,11 @@ public class CDKMolecularDescriptor extends MoleculeInitializer implements IMolD
      */
     public CDKMolecularDescriptor(String molFile) throws Exception {
         super();
-        FileInputStream ReadMolecule = new FileInputStream(molFile);
-        MDLV2000Reader MolRead
-                = new MDLV2000Reader(new InputStreamReader(ReadMolecule));
-        MolRead.close();
-        IAtomContainer newMol = MolRead.read(new AtomContainer());
+        IAtomContainer newMol;
+        try (FileInputStream ReadMolecule = new FileInputStream(molFile);
+             MDLV2000Reader MolRead = new MDLV2000Reader(new InputStreamReader(ReadMolecule))) {
+            newMol = MolRead.read(new AtomContainer());
+        }
         this.molecule = checkAndCleanMolecule(newMol);
         initializeMolecule(molecule);
     }

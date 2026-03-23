@@ -96,12 +96,12 @@ public class CDKManager implements DescriptorManager<IAtom> {
         }
 
         @Override
-        public synchronized Descriptor get() {
+        public Descriptor get() {
             return (Descriptor) chemObject.getProperty("descriptor");
         }
 
         @Override
-        public synchronized void set(Descriptor descriptor) {
+        public void set(Descriptor descriptor) {
             chemObject.setProperty("descriptor", descriptor);
         }
     }

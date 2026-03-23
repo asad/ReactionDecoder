@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Collection;
-import static java.util.Collections.synchronizedMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -78,12 +77,12 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws Exception
      */
     public ReactionContainer() throws Exception {
-        eAtomContainerMap = synchronizedMap(new TreeMap<>());
-        pAtomContainerMap = synchronizedMap(new TreeMap<>());
-        eFingerPrintMap = synchronizedMap(new TreeMap<>());
-        pFingerPrintMap = synchronizedMap(new TreeMap<>());
-        eductContainerModificationMap = synchronizedMap(new TreeMap<>());
-        productContainerModificationMap = synchronizedMap(new TreeMap<>());
+        eAtomContainerMap = new TreeMap<>();
+        pAtomContainerMap = new TreeMap<>();
+        eFingerPrintMap = new TreeMap<>();
+        pFingerPrintMap = new TreeMap<>();
+        eductContainerModificationMap = new TreeMap<>();
+        productContainerModificationMap = new TreeMap<>();
         fpr = new FingerprintGenerator();
     }
 
@@ -103,7 +102,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      *
      * @throws java.io.IOException
      */
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         eAtomContainerMap.clear();
         pAtomContainerMap.clear();
         eFingerPrintMap.clear();
@@ -117,7 +116,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @param Key
      * @throws java.io.IOException
      */
-    public synchronized void eraseEduct(int Key) throws IOException {
+    public void eraseEduct(int Key) throws IOException {
         eAtomContainerMap.remove(Key);
         eFingerPrintMap.remove(Key);
         eductContainerModificationMap.remove(Key);
@@ -128,7 +127,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @param Key
      * @throws java.io.IOException
      */
-    public synchronized void eraseProduct(int Key) throws IOException {
+    public void eraseProduct(int Key) throws IOException {
         pAtomContainerMap.remove(Key);
         pFingerPrintMap.remove(Key);
         productContainerModificationMap.remove(Key);
@@ -138,7 +137,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      *
      * @return
      */
-    public synchronized Integer getEductCount() {
+    public Integer getEductCount() {
         return eAtomContainerMap.size();
     }
 
@@ -146,7 +145,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      *
      * @return
      */
-    public synchronized Integer getProductCount() {
+    public Integer getProductCount() {
         return pAtomContainerMap.size();
     }
 
@@ -158,7 +157,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized IAtomContainer getEduct(int value)
+    public IAtomContainer getEduct(int value)
             throws IOException, CDKException {
         return eAtomContainerMap.containsKey(value) ? eAtomContainerMap.get(value) : null;
 
@@ -171,7 +170,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized IAtomContainer getProduct(int value)
+    public IAtomContainer getProduct(int value)
             throws IOException, CDKException {
         return pAtomContainerMap.containsKey(value) ? pAtomContainerMap.get(value) : null;
     }
@@ -181,7 +180,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @return @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized Collection<IAtomContainer> getEducts()
+    public Collection<IAtomContainer> getEducts()
             throws IOException, CDKException {
         return eAtomContainerMap.values();
 
@@ -192,7 +191,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @return @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized Collection<IAtomContainer> getProducts()
+    public Collection<IAtomContainer> getProducts()
             throws IOException, CDKException {
         return pAtomContainerMap.values();
     }
@@ -205,7 +204,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized boolean isEductModified(int value)
+    public boolean isEductModified(int value)
             throws IOException, CDKException {
         return eductContainerModificationMap.containsKey(value)
                 ? eductContainerModificationMap.get(value) : false;
@@ -219,7 +218,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized boolean isProductModified(int value)
+    public boolean isProductModified(int value)
             throws IOException, CDKException {
         return productContainerModificationMap.containsKey(value)
                 ? productContainerModificationMap.get(value) : false;
@@ -233,7 +232,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void putEduct(int index, IAtomContainer educt)
+    public void putEduct(int index, IAtomContainer educt)
             throws IOException, Exception {
         eAtomContainerMap.put(index, educt);
         if (educt.getAtomCount() == 0) {
@@ -251,7 +250,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void putProduct(int index, IAtomContainer product)
+    public void putProduct(int index, IAtomContainer product)
             throws IOException, Exception {
         pAtomContainerMap.put(index, product);
         if (product.getAtomCount() == 0) {
@@ -270,7 +269,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void setEductModified(int index, boolean flag)
+    public void setEductModified(int index, boolean flag)
             throws IOException, Exception {
         eductContainerModificationMap.put(index, flag);
     }
@@ -282,7 +281,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void setProductModified(int index, boolean flag)
+    public void setProductModified(int index, boolean flag)
             throws IOException, Exception {
         productContainerModificationMap.put(index, flag);
     }
@@ -293,7 +292,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void putAllEduct(TreeMap<Integer, IAtomContainer> eudMap)
+    public void putAllEduct(TreeMap<Integer, IAtomContainer> eudMap)
             throws IOException, Exception {
         eAtomContainerMap.putAll(eudMap);
         for (Map.Entry<Integer, IAtomContainer> map : eudMap.entrySet()) {
@@ -308,7 +307,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws Exception
      */
-    public synchronized void putAllProduct(TreeMap<Integer, IAtomContainer> prodMap)
+    public void putAllProduct(TreeMap<Integer, IAtomContainer> prodMap)
             throws IOException, Exception {
         pAtomContainerMap.putAll(prodMap);
         for (Map.Entry<Integer, IAtomContainer> map : prodMap.entrySet()) {
@@ -325,7 +324,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized BitSet getFingerPrintofEduct(int value)
+    public BitSet getFingerPrintofEduct(int value)
             throws IOException, CDKException {
         return eFingerPrintMap.containsKey(value) ? eFingerPrintMap.get(value) : null;
     }
@@ -337,7 +336,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @throws java.io.IOException
      * @throws CDKException
      */
-    public synchronized BitSet getFingerPrintofProduct(int value)
+    public BitSet getFingerPrintofProduct(int value)
             throws IOException, CDKException {
         return pFingerPrintMap.containsKey(value) ? pFingerPrintMap.get(value) : null;
     }
@@ -349,7 +348,7 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @param Edu
      * @throws java.io.IOException
      */
-    private synchronized void setFingerPrintofEduct(int value, BitSet edu)
+    private void setFingerPrintofEduct(int value, BitSet edu)
             throws IOException {
         eFingerPrintMap.put(value, edu);
 
@@ -361,13 +360,13 @@ public class ReactionContainer implements Cloneable, Serializable {
      * @param Prod
      * @throws java.io.IOException
      */
-    private synchronized void setFingerPrintofProduct(int value, BitSet prod) throws IOException {
+    private void setFingerPrintofProduct(int value, BitSet prod) throws IOException {
         pFingerPrintMap.put(value, prod);
 
     }
 
     @Override
-    public synchronized Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import static java.util.Collections.sort;
-import static java.util.Collections.synchronizedMap;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,9 +84,9 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      */
     public CDKReactionBuilder() throws Exception {
         reactionSet = SilentChemObjectBuilder.getInstance().newInstance(IReactionSet.class);
-        stoichiometryMap = synchronizedMap(new HashMap<>());
-        fingerprintMap = synchronizedMap(new HashMap<>());
-        moleculeMap = synchronizedMap(new HashMap<>());
+        stoichiometryMap = new HashMap<>();
+        fingerprintMap = new HashMap<>();
+        moleculeMap = new HashMap<>();
     }
 
     @Override
@@ -102,7 +101,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @param reactionSet
      * @throws java.lang.Exception
      */
-    public synchronized void standardize(IReactionSet reactionSet) throws Exception {
+    public void standardize(IReactionSet reactionSet) throws Exception {
         for (IReaction reaction : reactionSet.reactions()) {
             IReaction standardizedReaction = standardize(reaction);
             reactionSet.addReaction(standardizedReaction);
@@ -115,7 +114,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
      * @return
      * @throws Exception
      */
-    public synchronized IReaction standardize(IReaction reaction) throws Exception {
+    public IReaction standardize(IReaction reaction) throws Exception {
         int old_atom_rank_index_reactant = 1;
         int old_atom_rank_index_product = 1;
         if (DEBUG) {

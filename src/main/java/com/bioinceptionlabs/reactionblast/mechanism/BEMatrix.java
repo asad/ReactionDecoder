@@ -451,7 +451,7 @@ public class BEMatrix extends EBIMatrix implements Serializable {
     }
 
     @Override
-    public synchronized Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone(); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -54,7 +54,7 @@ public class ReactionInfoCollector implements Serializable {
      * @param rorFp
      * @param porFp
      */
-    public synchronized void setStructuralFingerprints(BitSet rorFp, BitSet porFp) {
+    public void setStructuralFingerprints(BitSet rorFp, BitSet porFp) {
         this.rorFp = rorFp;
         this.porFp = porFp;
     }
@@ -65,7 +65,7 @@ public class ReactionInfoCollector implements Serializable {
      * @param ocFp
      * @param stFP
      */
-    public synchronized void setBondChangeFingerprints(IPatternFingerprinter cfFp, IPatternFingerprinter ocFp, IPatternFingerprinter stFP) {
+    public void setBondChangeFingerprints(IPatternFingerprinter cfFp, IPatternFingerprinter ocFp, IPatternFingerprinter stFP) {
         this.cfFp = cfFp;
         this.ocFp = ocFp;
         this.stFP = stFP;
@@ -75,7 +75,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized BitSet getRorFp() {
+    public BitSet getRorFp() {
         return rorFp;
     }
 
@@ -83,7 +83,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized BitSet getPorFp() {
+    public BitSet getPorFp() {
         return porFp;
     }
 
@@ -91,7 +91,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized IPatternFingerprinter getCfFp() {
+    public IPatternFingerprinter getCfFp() {
         return cfFp;
     }
 
@@ -99,7 +99,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized IPatternFingerprinter getOcFp() {
+    public IPatternFingerprinter getOcFp() {
         return ocFp;
     }
 
@@ -107,7 +107,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized IPatternFingerprinter getStFp() {
+    public IPatternFingerprinter getStFp() {
         return stFP;
     }
 
@@ -115,7 +115,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized Direction getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
@@ -123,7 +123,7 @@ public class ReactionInfoCollector implements Serializable {
      *
      * @return
      */
-    public synchronized String getSourceDbID() {
+    public String getSourceDbID() {
         return sourceDbID;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -156,7 +156,7 @@ public class MCSThread implements Callable<MCSSolution> {
     }
 
     @Override
-    public synchronized MCSSolution call() throws Exception {
+    public MCSSolution call() throws Exception {
         boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
 
         AtomMatcher am;

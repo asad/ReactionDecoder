@@ -90,7 +90,7 @@ public class GlobalEntropyCalculator implements Serializable {
      * @return The global entropy of the RMatrix in idx-th position
      * @throws CDKException
      */
-    public synchronized double getGlobalEntropy(int idx) throws CDKException {
+    public double getGlobalEntropy(int idx) throws CDKException {
         RMatrix m = matrixMap.get(idx);
         double lH = 0;
         String key = "";
@@ -120,7 +120,7 @@ public class GlobalEntropyCalculator implements Serializable {
      *
      * @return
      */
-    public synchronized Iterable<Integer> getKeySet() {
+    public Iterable<Integer> getKeySet() {
         return matrixMap.keySet();
     }
 
@@ -131,7 +131,7 @@ public class GlobalEntropyCalculator implements Serializable {
      * @return The index of the RMatrix, -1 if the RMatrix is not found.
      * @throws CDKException
      */
-    public synchronized int getMatrixIndex(RMatrix m) throws CDKException {
+    public int getMatrixIndex(RMatrix m) throws CDKException {
         int index = -1;
         if (!matrixMap.containsValue(m)) {
             throw new CDKException("GlobalEntropyCalculator.getMatrixIndex: The matrix has not been found.");
@@ -149,7 +149,7 @@ public class GlobalEntropyCalculator implements Serializable {
      *
      * @return The number of RMatrices stored in the object.
      */
-    public synchronized int getMatrixCount() {
+    public int getMatrixCount() {
         return matrixMap.size();
     }
 
@@ -160,7 +160,7 @@ public class GlobalEntropyCalculator implements Serializable {
      * @return The RMatrix in idx-th position
      * @throws CDKException
      */
-    public synchronized RMatrix getMatrix(int index) throws CDKException {
+    public RMatrix getMatrix(int index) throws CDKException {
         if (!matrixMap.containsKey(index)) {
             throw new CDKException("The index of the required RMatrix is out of bouns");
         }

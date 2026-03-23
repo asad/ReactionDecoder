@@ -51,7 +51,7 @@ public class PostFilter {
      * @param mappings
      * @return Filtered non-redundant mappings
      */
-    public synchronized static List<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
+    public static List<Map<Integer, Integer>> filter(List<List<Integer>> mappings) {
         List<Map<Integer, Integer>> final_MAPPINGS = new ArrayList<>();
 
         mappings.stream().map(map -> {
@@ -66,7 +66,7 @@ public class PostFilter {
         return final_MAPPINGS;
     }
 
-    private synchronized static boolean hasMap(Map<Integer, Integer> newMap, List<Map<Integer, Integer>> nonRedundantMapping) {
+    private static boolean hasMap(Map<Integer, Integer> newMap, List<Map<Integer, Integer>> nonRedundantMapping) {
         return nonRedundantMapping.stream().anyMatch((storedMap) -> (storedMap.equals(newMap)));
     }
 }

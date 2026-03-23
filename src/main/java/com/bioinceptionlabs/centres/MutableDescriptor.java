@@ -38,7 +38,7 @@ public class MutableDescriptor {
      *
      * @return
      */
-    public synchronized Descriptor get() {
+    public Descriptor get() {
         return descriptor;
     }
 
@@ -46,7 +46,7 @@ public class MutableDescriptor {
      *
      * @param descriptor
      */
-    public synchronized void set(Descriptor descriptor) {
+    public void set(Descriptor descriptor) {
         if (descriptor == null) {
             throw new IllegalArgumentException("Provided descriptor was null");
         }

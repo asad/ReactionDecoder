@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,7 +76,7 @@ public class MappingHandler extends BasicDebugger {
      * @param counter
      * @return
      */
-    protected static synchronized int setMappingFlags(IReaction expLabReaction, IReaction MappedReaction, int counter) {
+    protected static int setMappingFlags(IReaction expLabReaction, IReaction MappedReaction, int counter) {
         IAtomContainerSet expEductSet = expLabReaction.getReactants();
         IAtomContainerSet expProductSet = expLabReaction.getProducts();
 

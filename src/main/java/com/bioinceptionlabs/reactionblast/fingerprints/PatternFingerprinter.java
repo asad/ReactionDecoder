@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import static java.util.Collections.synchronizedSortedSet;
 import static java.util.Collections.unmodifiableCollection;
 import java.util.Comparator;
 import java.util.List;
@@ -108,7 +107,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     public PatternFingerprinter(int fingerprintSize) {
         this.fingerprintSize = fingerprintSize;
-        featureSet = synchronizedSortedSet(new TreeSet<IFeature>());
+        featureSet = new TreeSet<IFeature>();
     }
 
     /**
@@ -139,7 +138,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @throws CDKException
      */
     @Override
-    public synchronized void addBinary(BitSet fingerprint) throws CDKException {
+    public void addBinary(BitSet fingerprint) throws CDKException {
         if (featureSet == null) {
             throw new CDKException("Cannot perform PatternFingerprint.add() as Fingerprint not initialized");
         }
@@ -155,7 +154,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @throws CDKException
      */
     @Override
-    public synchronized void add(IFeature feature) throws CDKException {
+    public void add(IFeature feature) throws CDKException {
         if (featureSet == null) {
             throw new CDKException("Cannot perform PatternFingerprint.add() as Fingerprint not initialized");
         }
@@ -179,7 +178,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @throws CDKException
      */
     @Override
-    public synchronized void add(IPatternFingerprinter fngp) throws CDKException {
+    public void add(IPatternFingerprinter fngp) throws CDKException {
         if (featureSet == null || fngp == null) {
             throw new CDKException("Cannot perform PatternFingerprint.add() as Fingerprint not initialized");
         }
@@ -348,7 +347,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @return
      */
     @Override
-    public synchronized int compare(IPatternFingerprinter o1, IPatternFingerprinter o2) {
+    public int compare(IPatternFingerprinter o1, IPatternFingerprinter o2) {
         Comparator<IPatternFingerprinter> comparator = overallComparator();
         return comparator.compare(o1, o2);
     }
@@ -361,7 +360,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      * @return
      */
     @Override
-    public synchronized int compareTo(IPatternFingerprinter t) {
+    public int compareTo(IPatternFingerprinter t) {
         return compare(this, t);
     }
 

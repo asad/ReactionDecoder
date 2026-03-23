@@ -84,7 +84,7 @@ public class MoleculeInitializer {
      * aromaticity detection, which is usually related to a timeout in the ring
      * finding code.
      */
-    public synchronized static void initializeMolecule(IAtomContainer atomContainer) throws CDKException {
+    public static void initializeMolecule(IAtomContainer atomContainer) throws CDKException {
         if (atomContainer == null) {
             return;
         }
@@ -318,7 +318,7 @@ public class MoleculeInitializer {
      * @return true if the subgraph ac1 has atom chance to be atom subgraph of
      * ac2
      */
-    public synchronized static boolean testIsSubgraphHeuristics(
+    public static boolean testIsSubgraphHeuristics(
             IAtomContainer ac1,
             IAtomContainer ac2,
             AtomMatcher am,

@@ -18,7 +18,6 @@
  */
 package com.bioinceptionlabs.reactionblast.tools;
 
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class ValencyCalculator {
         if (isInitialized) {
             return;
         }
-        valencElectronMap = synchronizedSortedMap(new TreeMap<>());
+        valencElectronMap = new TreeMap<>();
         for (int i = 1; i < getElementCount(); i++) {
             String symbol = getSymbol(i);
             if (getGroup(symbol) != null

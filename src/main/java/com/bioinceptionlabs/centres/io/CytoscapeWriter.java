@@ -127,6 +127,8 @@ public abstract class CytoscapeWriter<A> implements Closeable {
 
     @Override
     public void close() throws IOException {
-        sif.close();
+        if (sif != null) {
+            sif.close();
+        }
     }
 }

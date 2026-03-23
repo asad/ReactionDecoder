@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,7 @@ public class ReactionIsomorphismHandler implements Serializable {
         }
     }
 
-    private synchronized boolean checkSimilarityWithStereo() {
+    private boolean checkSimilarityWithStereo() {
 
         boolean stSimilarity = false;
 
@@ -148,7 +148,7 @@ public class ReactionIsomorphismHandler implements Serializable {
         return stSimilarity;
     }
 
-    private synchronized boolean checkSimilarityWithFingerprint() {
+    private boolean checkSimilarityWithFingerprint() {
         boolean fpFlag = false;
 //        System.out.println("Checking similarity with fp");
         boolean RowT = true;
@@ -197,7 +197,7 @@ public class ReactionIsomorphismHandler implements Serializable {
         return fpFlag;
     }
 
-    private synchronized void setReactionMappingFlags() throws Exception {
+    private void setReactionMappingFlags() throws Exception {
         flagSimilarityMatrix = new boolean[rowSize][colSize];
         flagStereoMatrix = new boolean[rowSize][colSize];
 
@@ -248,21 +248,21 @@ public class ReactionIsomorphismHandler implements Serializable {
      *
      * @return
      */
-    public synchronized boolean getIsomorphismFlag() {
+    public boolean getIsomorphismFlag() {
         return isomorphismFlag;
     }
 
     /**
      * @return the matrixHolder
      */
-    public synchronized Holder getMatrixHolder() {
+    public Holder getMatrixHolder() {
         return matrixHolder;
     }
 
     /**
      * @param matrixHolder the matrixHolder to set
      */
-    public synchronized void setMatrixHolder(Holder matrixHolder) {
+    public void setMatrixHolder(Holder matrixHolder) {
         this.matrixHolder = matrixHolder;
     }
 }

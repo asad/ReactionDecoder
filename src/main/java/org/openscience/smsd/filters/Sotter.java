@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class Sotter {
 
-    public synchronized static Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
+    public static Map<Integer, Double> sortMapByValueInAscendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         Collections.sort(list, (Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() > entry1.getValue() ? 1 : -1)) // Return 0 for eAtom match, -1 for less than and +1 for more then (Aceending Order Sort)
@@ -48,7 +48,7 @@ public class Sotter {
         return result;
     }
 
-    public synchronized static Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
+    public static Map<Integer, Double> sortMapByValueInDescendingOrder(Map<Integer, Double> map) {
         List<Map.Entry<Integer, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         Collections.sort(list, (Map.Entry<Integer, Double> entry, Map.Entry<Integer, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0

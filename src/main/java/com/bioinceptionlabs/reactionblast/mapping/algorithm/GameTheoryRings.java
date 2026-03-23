@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ package com.bioinceptionlabs.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
 //~--- classes ----------------------------------------------------------------
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,6 @@ import com.bioinceptionlabs.reactionblast.mapping.interfaces.AbstractGraphMatchi
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;
 import com.bioinceptionlabs.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
 import com.bioinceptionlabs.reactionblast.tools.labelling.SmilesMoleculeLabeller;
-import static java.util.Collections.synchronizedList;
 
 final class GameTheoryRings extends BaseGameTheory {
 
@@ -110,8 +110,8 @@ final class GameTheoryRings extends BaseGameTheory {
         this.educts = _educts;
         this.products = _products;
         this.RID = reaction.getID();
-        this.eductList = synchronizedList(rpsh.getEductCounter());
-        this.productList = synchronizedList(rpsh.getProductCounter());
+        this.eductList = new ArrayList<>(rpsh.getEductCounter());
+        this.productList = new ArrayList<>(rpsh.getProductCounter());
         this.mh = rpsh.getMatrixHolder();
 
         setReactionMolMapping(rpsh.getReactionMolMapping());

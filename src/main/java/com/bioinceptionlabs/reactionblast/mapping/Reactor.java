@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@ package com.bioinceptionlabs.reactionblast.mapping;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +53,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.sort;
-import static java.util.Collections.synchronizedList;
 
 import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -134,15 +131,15 @@ public class Reactor extends AbstractReactor implements Serializable {
         this.reactionWithUniqueSTOICHIOMETRY = reaction.getBuilder().newInstance(IReaction.class);
         this.balanceFlag = true;
 
-        this.inputRankLabelledAtomsReactant = synchronizedMap(new HashMap<>());
-        this.inputRankLabelledAtomsProduct = synchronizedMap(new HashMap<>());
-        this.rLabelledAtoms = synchronizedMap(new HashMap<>());
-        this.pLabelledAtoms = synchronizedMap(new HashMap<>());
-        this.rBonds = synchronizedList(new ArrayList<>());
-        this.pBonds = synchronizedList(new ArrayList<>());
+        this.inputRankLabelledAtomsReactant = new HashMap<>();
+        this.inputRankLabelledAtomsProduct = new HashMap<>();
+        this.rLabelledAtoms = new HashMap<>();
+        this.pLabelledAtoms = new HashMap<>();
+        this.rBonds = new ArrayList<>();
+        this.pBonds = new ArrayList<>();
 
-        this.educts = synchronizedSortedMap(new TreeMap<>());
-        this.products = synchronizedSortedMap(new TreeMap<>());
+        this.educts = new TreeMap<>();
+        this.products = new TreeMap<>();
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;

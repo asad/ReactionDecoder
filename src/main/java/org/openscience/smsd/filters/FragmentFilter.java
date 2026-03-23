@@ -54,7 +54,7 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
     }
 
     @Override
-    public synchronized Integer sortResults(
+    public Integer sortResults(
             Map<Integer, AtomAtomMapping> allFragmentAtomMCS,
             Map<Integer, Integer> fragmentScoreMap) throws CDKException {
 
@@ -72,22 +72,22 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
     }
 
     @Override
-    public synchronized List<Integer> getScores() {
+    public List<Integer> getScores() {
         return Collections.unmodifiableList(fragmentSize);
     }
 
     @Override
-    public synchronized void clearScores() {
+    public void clearScores() {
         fragmentSize.clear();
     }
 
     @Override
-    public synchronized void addScore(int counter, Integer value) {
+    public void addScore(int counter, Integer value) {
         fragmentSize.add(counter, value);
     }
 
     @Override
-    public synchronized void fillMap(Map<Integer, Integer> fragmentScoreMap) {
+    public void fillMap(Map<Integer, Integer> fragmentScoreMap) {
         int Index = 0;
         for (Integer score : fragmentSize) {
             fragmentScoreMap.put(Index, score);
@@ -95,7 +95,7 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
         }
     }
 
-    private synchronized int getMappedMoleculeFragmentSize(AtomAtomMapping mcsAtomSolution) {
+    private int getMappedMoleculeFragmentSize(AtomAtomMapping mcsAtomSolution) {
 
         IAtomContainer Educt = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());
         IAtomContainer product = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getTarget());
@@ -111,7 +111,7 @@ public final class FragmentFilter extends Sotter implements IChemicalFilter<Inte
         return getFragmentCount(Educt) + getFragmentCount(product);
     }
 
-    private synchronized int getFragmentCount(IAtomContainer molecule) {
+    private int getFragmentCount(IAtomContainer molecule) {
         boolean fragmentFlag = true;
         IAtomContainerSet fragmentMolSet = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainerSet.class);
         int countFrag = 0;

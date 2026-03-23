@@ -63,7 +63,7 @@ public class Suffix {
      * @return
      * @throws IOException
      */
-    public static synchronized Suffix getInstance() throws IOException {
+    public static Suffix getInstance() throws IOException {
         if (ref == null) {
             
             // it's ok, we can call this constructor

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ public abstract class Selector implements Serializable {
      * @throws CDKException
      * @throws CloneNotSupportedException
      */
-    public static synchronized Holder modifyMatrix(Holder orignal)
+    public static Holder modifyMatrix(Holder orignal)
             throws IOException, CDKException, CloneNotSupportedException {
         ReactionContainer reactionStructureInformationContainer = orignal.getReactionContainer();
         Holder localHolder = (Holder) orignal.clone();
@@ -82,7 +82,7 @@ public abstract class Selector implements Serializable {
      * @throws IOException
      * @throws CDKException
      */
-    protected synchronized boolean isMajorSubgraphColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
+    protected boolean isMajorSubgraphColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
 
         double queryColScore = mh.getCliqueMatrix().getValue(IndexI, IndexJ);
         if (queryColScore > 0) {
@@ -108,7 +108,7 @@ public abstract class Selector implements Serializable {
      * @throws IOException
      * @throws CDKException
      */
-    protected synchronized boolean isMajorSubgraphRow(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
+    protected boolean isMajorSubgraphRow(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
         double queryRowScore = mh.getCliqueMatrix().getValue(IndexI, IndexJ);
         if (queryRowScore > 0) {
             for (int row = 0; row < rowSize; row++) {
@@ -133,7 +133,7 @@ public abstract class Selector implements Serializable {
      * @throws IOException
      * @throws CDKException
      */
-    protected synchronized boolean isMinEnergyColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
+    protected boolean isMinEnergyColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
         //        System.out.println("CHECKING ENERGY\nI " + EdMap.get(IndexI) + " J " + PdMap.get(IndexJ));
         double refEnergy = mh.getEnergyMatrix().getValue(IndexI, IndexJ);
         if (mh.getCliqueMatrix().getValue(IndexI, IndexJ) > 0) {
@@ -158,7 +158,7 @@ public abstract class Selector implements Serializable {
      * @throws IOException
      * @throws CDKException
      */
-    protected synchronized boolean isMinEnergyRow(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
+    protected boolean isMinEnergyRow(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
         double refEnergy = mh.getEnergyMatrix().getValue(IndexI, IndexJ);
         if (mh.getCliqueMatrix().getValue(IndexI, IndexJ) > 0) {
             for (int row = 0; row < rowSize; row++) {
@@ -182,7 +182,7 @@ public abstract class Selector implements Serializable {
      * @throws IOException
      * @throws CDKException
      */
-    protected synchronized boolean isMinorSubgraphColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
+    protected boolean isMinorSubgraphColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
         boolean flag = true;
         double queryColScore = mh.getCliqueMatrix().getValue(IndexI, IndexJ);
         if (queryColScore > 0.) {
@@ -205,7 +205,7 @@ public abstract class Selector implements Serializable {
      * @param IndexJ
      * @return
      */
-    protected synchronized boolean isMinorSubgraphRow(Holder mh, int IndexI, int IndexJ) {
+    protected boolean isMinorSubgraphRow(Holder mh, int IndexI, int IndexJ) {
         boolean flag = true;
         double queryRowScore = mh.getCliqueMatrix().getValue(IndexI, IndexJ);
         if (queryRowScore > 0.) {
@@ -228,7 +228,7 @@ public abstract class Selector implements Serializable {
      * @param IndexJ
      * @return
      */
-    protected synchronized boolean isMinorSubgraphColumn(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
+    protected boolean isMinorSubgraphColumn(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
         boolean flag = true;
         double queryColScore = similarityMatrix.getValue(IndexI, IndexJ);
         if (queryColScore > 0.) {
@@ -251,7 +251,7 @@ public abstract class Selector implements Serializable {
      * @param IndexJ
      * @return
      */
-    protected synchronized boolean isMinorSubgraphRow(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
+    protected boolean isMinorSubgraphRow(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
         boolean flag = true;
         double queryRowScore = similarityMatrix.getValue(IndexI, IndexJ);
         if (queryRowScore > 0.) {
@@ -274,7 +274,7 @@ public abstract class Selector implements Serializable {
      * @param IndexJ
      * @return
      */
-    protected synchronized boolean isMajorSubgraphColumn(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
+    protected boolean isMajorSubgraphColumn(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
 
         double queryColumnscore = similarityMatrix.getValue(IndexI, IndexJ);
         if (queryColumnscore > 0) {
@@ -297,7 +297,7 @@ public abstract class Selector implements Serializable {
      * @param IndexJ
      * @return
      */
-    protected synchronized boolean isMajorSubgraphRow(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
+    protected boolean isMajorSubgraphRow(EBIMatrix similarityMatrix, int IndexI, int IndexJ) {
         double queryRowScore = similarityMatrix.getValue(IndexI, IndexJ);
         if (queryRowScore > 0) {
             for (int row = 0; row < rowSize; row++) {

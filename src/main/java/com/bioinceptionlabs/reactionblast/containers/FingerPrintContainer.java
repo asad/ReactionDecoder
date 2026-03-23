@@ -21,7 +21,6 @@ package com.bioinceptionlabs.reactionblast.containers;
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      *
      * @return
      */
-    public static synchronized FingerPrintContainer getInstance() {
+    public static FingerPrintContainer getInstance() {
         if (_instance == null) {
             _instance = new FingerPrintContainer();
         }
@@ -87,7 +86,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
 
     //~--- constructors -------------------------------------------------------
     private FingerPrintContainer() {
-        FingerPrintMap = synchronizedSortedMap(new TreeMap<>());
+        FingerPrintMap = new TreeMap<>();
     }
 
     //~--- methods ------------------------------------------------------------
@@ -96,9 +95,9 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         FingerPrintMap.clear();
-        FingerPrintMap = synchronizedSortedMap(new TreeMap<>());
+        FingerPrintMap = new TreeMap<>();
     }
 
     /**
@@ -107,7 +106,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Erase(String Key) throws IOException {
+    public void Erase(String Key) throws IOException {
         FingerPrintMap.remove(Key);
     }
 
@@ -115,7 +114,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      *
      * @return
      */
-    public synchronized Integer getCount() {
+    public Integer getCount() {
         return FingerPrintMap.size();
     }
 
@@ -126,7 +125,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void put(String Key, BitSet Value) throws IOException {
+    public void put(String Key, BitSet Value) throws IOException {
         try {
             FingerPrintMap.put(Key, Value);
         } catch (Exception e) {
@@ -142,7 +141,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized BitSet getFingerPrint(String Key) throws IOException {
+    public BitSet getFingerPrint(String Key) throws IOException {
         BitSet value = FingerPrintMap.get(Key);
         return value;
     }
@@ -154,7 +153,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized String getMoleculeID(BitSet bitset)
+    public String getMoleculeID(BitSet bitset)
             throws IOException {
         String Key = null;
         for (Map.Entry<String, BitSet> map : FingerPrintMap.entrySet()) {
@@ -178,7 +177,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized Map<String, BitSet> getFingerPrintMap() throws IOException {
+    public Map<String, BitSet> getFingerPrintMap() throws IOException {
         return unmodifiableMap(FingerPrintMap);
     }
 
@@ -189,7 +188,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized boolean isKeyPresent(String Key) throws IOException {
+    public boolean isKeyPresent(String Key) throws IOException {
         return FingerPrintMap.containsKey(Key);
     }
 
@@ -201,7 +200,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void setValue(String Key, BitSet Value)
+    public void setValue(String Key, BitSet Value)
             throws IOException {
 //        System.out.println("KEY " + Key + " val: " + Value.cardinality());
         FingerPrintMap.put(Key, Value);
@@ -212,7 +211,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      *
      * @return
      */
-    public synchronized Set<String> getCompoundIDSet() {
+    public Set<String> getCompoundIDSet() {
         return FingerPrintMap.keySet();
     }
 
@@ -223,7 +222,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized boolean isValuePresent(BitSet value) throws IOException {
+    public boolean isValuePresent(BitSet value) throws IOException {
         for (BitSet bitset : FingerPrintMap.values()) {
             try {
                 if (getTanimotoSimilarity(value, bitset) == 1.0) {
@@ -241,7 +240,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
      * @return
      */
     @Override
-    public synchronized boolean isEmpty() throws IOException {
+    public boolean isEmpty() throws IOException {
         return FingerPrintMap.isEmpty();
     }
 

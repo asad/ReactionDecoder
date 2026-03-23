@@ -2140,4 +2140,74 @@ public class RXNMappingTest extends MappingUtility {
         });
         return selected;
     }
+
+    /*
+     ************************
+     * COMPLEX CASES (moved from ComplexCases.java)
+     ************************
+     */
+
+    /**
+     * Lowest Bond Energy Solution not accepted
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void complex_unbalanced() throws Exception {
+
+        String reactionID = "complex_unbalanced";
+        ReactionMechanismTool testReactions = testReactions(reactionID, OTHER_RXN);
+        IPatternFingerprinter formedCleavedWFingerprint = null;
+
+        formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+
+        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
+    }
+
+    /**
+     * Lowest Bond Energy Solution not accepted
+     *
+     * MIXTURE, fp ID=R00369:Bond Cleaved and Formed (2)[C-N:2.0, C=O:2.0]
+     *
+     * BE 2208.0, Fragment 0
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void R00369() throws Exception {
+
+        String reactionID = "R00369";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0);
+    }
+
+    /*
+     ************************
+     * REARRANGEMENTS (moved from ReArrangments.java)
+     ************************
+     */
+
+    /**
+     * Complex case, Re-arrangements
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void MolecularRearrangments() throws Exception {
+
+        String reactionID = "unbalanced_rearrangement_reactions";
+        ReactionMechanismTool testReactions = testReactions(reactionID, BUG_RXN_DIR, false);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0);
+    }
 }

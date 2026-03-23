@@ -71,14 +71,14 @@ public class BaseFilter {
     /**
      * @return the mol1
      */
-    public synchronized IAtomContainer getQuery() {
+    public IAtomContainer getQuery() {
         return mol1;
     }
 
     /**
      * @return the mol2
      */
-    public synchronized IAtomContainer getTarget() {
+    public IAtomContainer getTarget() {
         return mol2;
     }
 }

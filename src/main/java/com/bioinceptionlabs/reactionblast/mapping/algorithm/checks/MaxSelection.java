@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -77,7 +77,7 @@ public class MaxSelection extends Selector implements IResult {
         }
     }
 
-    private synchronized void PhaseOneMatcher() throws IOException, CDKException {
+    private void PhaseOneMatcher() throws IOException, CDKException {
 
 //        System.out.println("\nPhase 1\n");
         boolean maxValueI;
@@ -148,7 +148,7 @@ public class MaxSelection extends Selector implements IResult {
 
     }
 
-    private synchronized boolean PhaseTwoMatcher() throws IOException, CDKException {
+    private boolean PhaseTwoMatcher() throws IOException, CDKException {
 
 //        System.out.println("**********Substructural Modification Part2: Matrix**************");
         boolean flag = false;
@@ -177,7 +177,7 @@ public class MaxSelection extends Selector implements IResult {
         return flag;
     }
 
-    private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
+    private boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
         return educt.getAtomCount() == mcsSize;
     }
 
@@ -186,7 +186,7 @@ public class MaxSelection extends Selector implements IResult {
      * @return
      */
     @Override
-    public synchronized boolean isSubAndCompleteMatchFlag() {
+    public boolean isSubAndCompleteMatchFlag() {
         return SubAndCompleteFlag;
     }
 
@@ -194,7 +194,7 @@ public class MaxSelection extends Selector implements IResult {
      * @return the updatedHolder
      */
     @Override
-    public synchronized Holder getUpdatedHolder() {
+    public Holder getUpdatedHolder() {
         return updatedHolder;
     }
 }

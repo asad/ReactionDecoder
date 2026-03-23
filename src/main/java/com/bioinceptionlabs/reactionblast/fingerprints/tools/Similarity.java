@@ -85,7 +85,7 @@ public class Similarity {
      * <B>c/(a+b-c)></B>
      * @throws java.lang.Exception
      */
-    public static synchronized float getTanimotoSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
+    public static float getTanimotoSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 
@@ -110,7 +110,7 @@ public class Similarity {
      * <B>c/sqrt(a*b)</B>
      * @throws Exception
      */
-    public static synchronized double getCosineSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
+    public static double getCosineSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 
@@ -137,7 +137,7 @@ public class Similarity {
      * @throws Exception
      *
      */
-    public static synchronized double getDiceSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
+    public static double getDiceSimilarity(BitSet Molecule1, BitSet Molecule2) throws Exception {
         BitSet bitset1 = (BitSet) Molecule1.clone();
         BitSet bitset2 = (BitSet) Molecule2.clone();
 

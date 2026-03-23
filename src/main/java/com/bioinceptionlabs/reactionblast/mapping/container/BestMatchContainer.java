@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package com.bioinceptionlabs.reactionblast.mapping.container;
 //~--- JDK imports ------------------------------------------------------------
 import java.io.IOException;
 import java.io.Serializable;
-import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.Map;
 import static java.util.logging.Level.SEVERE;
@@ -75,11 +74,11 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      *
      */
     public BestMatchContainer() {
-        mcsAtomMap = synchronizedMap(new HashMap<>());
-        fragmentCount = synchronizedMap(new HashMap<>());
-        bondBreakingEnergy = synchronizedMap(new HashMap<>());
-        stereoScore = synchronizedMap(new HashMap<>());
-        similarity = synchronizedMap(new HashMap<>());
+        mcsAtomMap = new HashMap<>();
+        fragmentCount = new HashMap<>();
+        bondBreakingEnergy = new HashMap<>();
+        stereoScore = new HashMap<>();
+        similarity = new HashMap<>();
         // System.out.println("FingerPrint Map Created");
     }
 
@@ -94,7 +93,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         mcsAtomMap.clear();
         fragmentCount.clear();
         bondBreakingEnergy.clear();
@@ -110,7 +109,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Erase(int indexI, int indexJ) throws IOException {
+    public void Erase(int indexI, int indexJ) throws IOException {
         IKey key = new Key(indexI, indexJ);
         mcsAtomMap.remove(key);
         fragmentCount.remove(key);
@@ -129,7 +128,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @throws IOException
      */
     @Override
-    public synchronized AtomAtomMapping getAtomMatch(int indexI, int indexJ)
+    public AtomAtomMapping getAtomMatch(int indexI, int indexJ)
             throws IOException {
         IKey key = new Key(indexI, indexJ);
         if (mcsAtomMap.containsKey(key)) {
@@ -152,7 +151,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @return
      */
     @Override
-    public synchronized double getBondEnergy(int indexI, int indexJ) {
+    public double getBondEnergy(int indexI, int indexJ) {
         IKey key = new Key(indexI, indexJ);
         return bondBreakingEnergy.containsKey(key) ? bondBreakingEnergy.get(key) : 0.;
     }
@@ -165,7 +164,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @return
      */
     @Override
-    public synchronized int getTotalFragmentCount(int indexI, int indexJ) {
+    public int getTotalFragmentCount(int indexI, int indexJ) {
         IKey key = new Key(indexI, indexJ);
         return fragmentCount.containsKey(key) ? fragmentCount.get(key) : 0;
     }
@@ -178,7 +177,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @param value
      */
     @Override
-    public synchronized void setBondEnergy(int indexI, int indexJ, double value) {
+    public void setBondEnergy(int indexI, int indexJ, double value) {
         IKey key = new Key(indexI, indexJ);
         bondBreakingEnergy.put(key, value);
     }
@@ -191,7 +190,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @param value
      */
     @Override
-    public synchronized void setTotalFragmentCount(int indexI, int indexJ, Integer value) {
+    public void setTotalFragmentCount(int indexI, int indexJ, Integer value) {
         IKey key = new Key(indexI, indexJ);
         fragmentCount.put(key, value);
     }
@@ -206,7 +205,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @throws IOException
      */
     @Override
-    public synchronized void putBestMapping(int indexI, int indexJ, AtomAtomMapping matchingAtoms)
+    public void putBestMapping(int indexI, int indexJ, AtomAtomMapping matchingAtoms)
             throws IOException {
         IKey key = new Key(indexI, indexJ);
         mcsAtomMap.put(key, matchingAtoms);
@@ -221,7 +220,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @throws IOException
      */
     @Override
-    public synchronized boolean containsKey(int indexI, int indexJ)
+    public boolean containsKey(int indexI, int indexJ)
             throws IOException {
         IKey key = new Key(indexI, indexJ);
         return mcsAtomMap.containsKey(key);
@@ -235,7 +234,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @param stereoVal
      */
     @Override
-    public synchronized void setStereoScore(int indexI, int indexJ, double stereoVal) {
+    public void setStereoScore(int indexI, int indexJ, double stereoVal) {
         IKey key = new Key(indexI, indexJ);
         stereoScore.put(key, stereoVal);
     }
@@ -248,7 +247,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @return
      */
     @Override
-    public synchronized double getStereoScore(int indexI, int indexJ) {
+    public double getStereoScore(int indexI, int indexJ) {
         IKey key = new Key(indexI, indexJ);
         return stereoScore.containsKey(key) == true ? stereoScore.get(key) : 0.0;
     }
@@ -261,7 +260,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @param _simVal
      */
     @Override
-    public synchronized void setGraphSimilarity(int indexI, int indexJ, double _simVal) {
+    public void setGraphSimilarity(int indexI, int indexJ, double _simVal) {
         IKey key = new Key(indexI, indexJ);
         similarity.put(key, _simVal);
     }
@@ -274,7 +273,7 @@ public class BestMatchContainer extends BestMatch implements Serializable {
      * @return
      */
     @Override
-    public synchronized double getGraphSimilarity(int indexI, int indexJ) {
+    public double getGraphSimilarity(int indexI, int indexJ) {
         IKey key = new Key(indexI, indexJ);
         return similarity.containsKey(key) == true ? similarity.get(key) : 0.0;
     }

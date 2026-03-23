@@ -47,7 +47,7 @@ public class ExtReactionManipulatorTool extends ReactionManipulator {
      * plus flags copied
      * @throws CloneNotSupportedException
      */
-    public static synchronized IReaction deepClone(IReaction reaction) throws CloneNotSupportedException {
+    public static IReaction deepClone(IReaction reaction) throws CloneNotSupportedException {
         IReaction clone = new Reaction();
         // clone the reactants, products and agents
 

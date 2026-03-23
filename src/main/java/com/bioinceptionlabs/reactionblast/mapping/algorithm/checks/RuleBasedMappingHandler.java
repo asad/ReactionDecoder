@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -430,21 +430,21 @@ public final class RuleBasedMappingHandler implements Serializable {
     /**
      * @return the matrixHolder
      */
-    public synchronized Holder getMatrixHolder() {
+    public Holder getMatrixHolder() {
         return matrixHolder;
     }
 
     /**
      * @return the ruleMatched
      */
-    public synchronized boolean isMatchFound() {
+    public boolean isMatchFound() {
         return ruleMatched;
     }
 
     /**
      * @param ruleMatched the ruleMatched to set
      */
-    private synchronized void setRuleMatched(boolean ruleMatched) {
+    private void setRuleMatched(boolean ruleMatched) {
         this.ruleMatched = ruleMatched;
     }
 

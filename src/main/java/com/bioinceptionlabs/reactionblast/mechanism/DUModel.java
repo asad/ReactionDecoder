@@ -20,9 +20,6 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.synchronizedSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -92,11 +89,11 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
 
         this.reactantSet = reaction.getReactants();
         this.productSet = reaction.getProducts();
-        this.bondChangeList = synchronizedList(new ArrayList<>());
-        this.reactionCenterList = synchronizedSet(new LinkedHashSet<>());
-        this.stereoChangeList = synchronizedList(new ArrayList<>());
-        this.conformationChangeList = synchronizedList(new ArrayList<>());
-        this.mappingMap = synchronizedMap(new HashMap<>());
+        this.bondChangeList = new ArrayList<>();
+        this.reactionCenterList = new LinkedHashSet<>();
+        this.stereoChangeList = new ArrayList<>();
+        this.conformationChangeList = new ArrayList<>();
+        this.mappingMap = new HashMap<>();
 
         this.generate3DCoordinates = generate3D;
         this.generate2DCoordinates = generate2D;

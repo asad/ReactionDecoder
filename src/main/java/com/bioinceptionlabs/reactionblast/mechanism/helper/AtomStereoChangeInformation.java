@@ -64,28 +64,28 @@ public class AtomStereoChangeInformation implements Serializable {
     /**
      * @return the reactantAtom
      */
-    public synchronized IAtom getReactantAtom() {
+    public IAtom getReactantAtom() {
         return reactantAtom;
     }
 
     /**
      * @return the productAtom
      */
-    public synchronized IAtom getProductAtom() {
+    public IAtom getProductAtom() {
         return productAtom;
     }
 
     /**
      * @return the stereoChange
      */
-    public synchronized boolean isStereoChange() {
+    public boolean isStereoChange() {
         return stereoChange;
     }
 
     /**
      * @param stereoChange the stereoChange to set
      */
-    private synchronized void setStereoChange(boolean stereoChange) {
+    private void setStereoChange(boolean stereoChange) {
         this.stereoChange = stereoChange;
     }
 

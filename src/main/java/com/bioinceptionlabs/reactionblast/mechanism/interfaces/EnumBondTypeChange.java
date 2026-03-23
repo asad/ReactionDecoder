@@ -77,7 +77,7 @@ public enum EnumBondTypeChange {
      *
      * @return
      */
-    public synchronized int type() {
+    public int type() {
         return this.type;
     }
 
@@ -85,7 +85,7 @@ public enum EnumBondTypeChange {
      *
      * @return
      */
-    public synchronized String description() {
+    public String description() {
         return this.description;
     }
 
@@ -95,7 +95,7 @@ public enum EnumBondTypeChange {
      * @param obj
      * @return
      */
-    public synchronized <status> int compareTo(EnumBondTypeChange obj) {
+    public <status> int compareTo(EnumBondTypeChange obj) {
         return 0;
     }
 }

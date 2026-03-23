@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,8 +49,8 @@
 package com.bioinceptionlabs.reactionblast.mapping.algorithm;
 
 //~--- non-JDK imports --------------------------------------------------------
+import java.util.ArrayList;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedList;
 import java.util.List;
 import java.util.Map;
 
@@ -110,8 +110,8 @@ final class GameTheoryMax extends BaseGameTheory {
         this.educts = _educts;
         this.products = _products;
         this.rid = reaction.getID();
-        this.eductList = synchronizedList(rpsh.getEductCounter());
-        this.productList = synchronizedList(rpsh.getProductCounter());
+        this.eductList = new ArrayList<>(rpsh.getEductCounter());
+        this.productList = new ArrayList<>(rpsh.getProductCounter());
         this.mh = rpsh.getMatrixHolder();
 
         setReactionMolMapping(rpsh.getReactionMolMapping());

@@ -63,11 +63,11 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
 
     StereoFilter(ChemicalFilters chemfilter) {
         this.chemfilter = chemfilter;
-        stereoScore = Collections.synchronizedList(new ArrayList<>());
+        stereoScore = new ArrayList<>();
     }
 
     @Override
-    public synchronized Double sortResults(
+    public Double sortResults(
             Map<Integer, AtomAtomMapping> allStereoAtomMCS,
             Map<Integer, Double> stereoScoreMap) throws CDKException {
 
@@ -81,22 +81,22 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
     }
 
     @Override
-    public synchronized List<Double> getScores() {
+    public List<Double> getScores() {
         return Collections.unmodifiableList(stereoScore);
     }
 
     @Override
-    public synchronized void clearScores() {
+    public void clearScores() {
         stereoScore.clear();
     }
 
     @Override
-    public synchronized void addScore(int counter, Double score) {
+    public void addScore(int counter, Double score) {
         stereoScore.add(counter, score);
     }
 
     @Override
-    public synchronized void fillMap(Map<Integer, Double> stereoScoreMap) {
+    public void fillMap(Map<Integer, Double> stereoScoreMap) {
         int Index = 0;
         for (Double score : stereoScore) {
             stereoScoreMap.put(Index, score);
@@ -104,7 +104,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         }
     }
 
-    private synchronized boolean getStereoBondChargeMatch(Map<Integer, Double> stereoScoreMap,
+    private boolean getStereoBondChargeMatch(Map<Integer, Double> stereoScoreMap,
             Map<Integer, AtomAtomMapping> allStereoAtomMCS) throws CDKException {
 
         boolean stereoMatchFlag = false;
@@ -140,7 +140,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return stereoMatchFlag;
     }
 
-    private synchronized Map<IBond, IBond> makeBondMapsOfAtomMaps(IAtomContainer ac1, IAtomContainer ac2,
+    private Map<IBond, IBond> makeBondMapsOfAtomMaps(IAtomContainer ac1, IAtomContainer ac2,
             AtomAtomMapping mappings) {
 
         Map<IBond, IBond> bondbondMappingMap = new HashMap<>();
@@ -158,7 +158,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return bondbondMappingMap;
     }
 
-    private synchronized double getAtomScore(double scoreGlobal, AtomAtomMapping atomMapMCS, IAtomContainer reactant,
+    private double getAtomScore(double scoreGlobal, AtomAtomMapping atomMapMCS, IAtomContainer reactant,
             IAtomContainer product) {
         double score = scoreGlobal;
         for (Map.Entry<IAtom, IAtom> mappings : atomMapMCS.getMappingsByAtoms().entrySet()) {
@@ -199,7 +199,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return score;
     }
 
-    private synchronized double getBondScore(double scoreGlobal, Map<IBond, IBond> bondMaps) {
+    private double getBondScore(double scoreGlobal, Map<IBond, IBond> bondMaps) {
         double score = scoreGlobal;
         for (Map.Entry<IBond, IBond> matchedBonds : bondMaps.entrySet()) {
 
@@ -211,7 +211,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return score;
     }
 
-    private synchronized double getBondTypeMatches(IBond queryBond, IBond targetBond) {
+    private double getBondTypeMatches(IBond queryBond, IBond targetBond) {
         double score = 0;
 
         if (targetBond instanceof IQueryBond && queryBond instanceof IBond) {
@@ -279,7 +279,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
      * @param bond
      * @return
      */
-    public synchronized static int convertBondStereo(IBond bond) {
+    public static int convertBondStereo(IBond bond) {
         int value;
         switch (bond.getStereo()) {
             case UP:
@@ -315,7 +315,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
      * @param bond
      * @return
      */
-    public synchronized static int convertBondOrder(IBond bond) {
+    public static int convertBondOrder(IBond bond) {
         int value;
         switch (bond.getOrder()) {
             case QUADRUPLE:
@@ -336,7 +336,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return value;
     }
 
-    private synchronized double getRingMatchScore(List<IAtomContainer> list) throws CloneNotSupportedException {
+    private double getRingMatchScore(List<IAtomContainer> list) throws CloneNotSupportedException {
         double lScore = 0;
         IAtomContainer listMap = list.get(0).clone();
         IAtomContainer subGraph = list.get(1).clone();
@@ -349,7 +349,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return lScore;
     }
 
-    private synchronized double getRingMatch(IRingSet rings, IAtomContainer atoms) {
+    private double getRingMatch(IRingSet rings, IAtomContainer atoms) {
         double score = 0.0;
         for (IAtom a : atoms.atoms()) {
             for (IAtomContainer ring : rings.atomContainers()) {
@@ -363,7 +363,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         return score;
     }
 
-    private synchronized List<IAtomContainer> getMappedFragment(IAtomContainer molecule, Collection<IAtom> atomsMCS) throws CloneNotSupportedException {
+    private List<IAtomContainer> getMappedFragment(IAtomContainer molecule, Collection<IAtom> atomsMCS) throws CloneNotSupportedException {
         IAtomContainer subgraphContainer;
 
         if (molecule instanceof IAtomContainer) {

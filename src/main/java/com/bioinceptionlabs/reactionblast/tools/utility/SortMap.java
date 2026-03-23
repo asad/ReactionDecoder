@@ -42,7 +42,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Object, Double> valueInAscendingOrder(Map<Object, Double> map) {
+    public static Map<Object, Double> valueInAscendingOrder(Map<Object, Double> map) {
         List<Map.Entry<Object, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Object, Double> entry, Map.Entry<Object, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() > entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Aceending Order Sort)
@@ -60,7 +60,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Object, Double> valueInDescendingOrder(Map<Object, Double> map) {
+    public static Map<Object, Double> valueInDescendingOrder(Map<Object, Double> map) {
         List<Map.Entry<Object, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Object, Double> entry, Map.Entry<Object, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() < entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Decending Order Sort)
@@ -78,7 +78,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Integer, Integer> intValueInAscendingOrder(Map<Integer, Integer> map) {
+    public static Map<Integer, Integer> intValueInAscendingOrder(Map<Integer, Integer> map) {
         List<Map.Entry<Integer, Integer>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Integer, Integer> entry, Map.Entry<Integer, Integer> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() > entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Aceending Order Sort)
@@ -96,7 +96,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Integer, Integer> intValueInDescendingOrder(Map<Integer, Integer> map) {
+    public static Map<Integer, Integer> intValueInDescendingOrder(Map<Integer, Integer> map) {
         List<Map.Entry<Integer, Integer>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Integer, Integer> entry, Map.Entry<Integer, Integer> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() < entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Decending Order Sort)
@@ -114,7 +114,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Double, Double> doubleValueInAscendingOrder(Map<Double, Double> map) {
+    public static Map<Double, Double> doubleValueInAscendingOrder(Map<Double, Double> map) {
         List<Map.Entry<Double, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Double, Double> entry, Map.Entry<Double, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() > entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Aceending Order Sort)
@@ -132,7 +132,7 @@ public class SortMap {
      * @param map
      * @return
      */
-    public static synchronized Map<Double, Double> doubleValueInDescendingOrder(Map<Double, Double> map) {
+    public static Map<Double, Double> doubleValueInDescendingOrder(Map<Double, Double> map) {
         List<Map.Entry<Double, Double>> list = new LinkedList<>(map.entrySet());
         // Sort the list using an annonymous inner class implementing Comparator for the compare method
         sort(list, (Map.Entry<Double, Double> entry, Map.Entry<Double, Double> entry1) -> (entry.getValue().equals(entry1.getValue()) ? 0 : (entry.getValue() < entry1.getValue() ? 1 : -1)) // Return 0 for bond match, -1 for less than and +1 for more then (Decending Order Sort)

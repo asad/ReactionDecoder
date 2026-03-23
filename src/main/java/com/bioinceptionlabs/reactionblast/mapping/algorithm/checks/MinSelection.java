@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -74,7 +74,7 @@ public class MinSelection extends Selector implements IResult {
         }
     }
 
-    private synchronized void PhaseOneMatcher() throws IOException, CDKException {
+    private void PhaseOneMatcher() throws IOException, CDKException {
         this.flagMatrix = new boolean[rowSize][colSize];
 
         for (int i = 0; i < rowSize; i++) {
@@ -130,7 +130,7 @@ public class MinSelection extends Selector implements IResult {
         }
     }
 
-    private synchronized boolean PhaseTwoMatcher() throws IOException, CDKException {
+    private boolean PhaseTwoMatcher() throws IOException, CDKException {
 
 //        System.out.println("**********Substructural Modification Part1: Matrix**************");
 //        printFLAGMatrix(updatedHolder);
@@ -181,11 +181,11 @@ public class MinSelection extends Selector implements IResult {
      * @return
      */
     @Override
-    public synchronized boolean isSubAndCompleteMatchFlag() {
+    public boolean isSubAndCompleteMatchFlag() {
         return isSubstructure;
     }
 
-    private synchronized boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
+    private boolean isMCSSubgraph(IAtomContainer educt, double mcsSize) throws CDKException {
         return Double.valueOf(educt.getAtomCount()) == mcsSize;
     }
 
@@ -193,7 +193,7 @@ public class MinSelection extends Selector implements IResult {
      * @return the updatedHolder
      */
     @Override
-    public synchronized Holder getUpdatedHolder() {
+    public Holder getUpdatedHolder() {
         return updatedHolder;
     }
 

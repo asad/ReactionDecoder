@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ package com.bioinceptionlabs.reactionblast.mapping.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
-import static java.util.Collections.synchronizedSortedMap;
 import java.util.Map;
 import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
@@ -96,7 +95,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * HydrogenFreeFingerPrintContainer container
      */
     public HydrogenFreeFingerPrintContainer() {
-        fingerPrintMap = synchronizedSortedMap(new TreeMap<>());
+        fingerPrintMap = new TreeMap<>();
     }
 
     @Override
@@ -110,7 +109,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         fingerPrintMap.clear();
     }
 
@@ -120,7 +119,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Erase(String Key) throws IOException {
+    public void Erase(String Key) throws IOException {
         fingerPrintMap.remove(Key);
     }
 
@@ -131,7 +130,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void put(String Key, BitSet Value) throws IOException {
+    public void put(String Key, BitSet Value) throws IOException {
         try {
             fingerPrintMap.put(Key, Value);
         } catch (Exception e) {
@@ -147,7 +146,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @return
      */
     @Override
-    public synchronized BitSet getFingerPrint(String Key) throws IOException {
+    public BitSet getFingerPrint(String Key) throws IOException {
         return fingerPrintMap.get(Key);
     }
 
@@ -158,7 +157,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized String getMoleculeID(BitSet bitset) throws IOException {
+    public String getMoleculeID(BitSet bitset) throws IOException {
         String Key = null;
         for (Map.Entry<String, BitSet> map : fingerPrintMap.entrySet()) {
             String key = map.getKey();
@@ -182,9 +181,9 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @return
      */
     @Override
-    synchronized public Map<String, BitSet> getFingerPrintMap()
+    public Map<String, BitSet> getFingerPrintMap()
             throws IOException {
-        return synchronizedSortedMap(new TreeMap<>(fingerPrintMap));
+        return new TreeMap<>(fingerPrintMap);
     }
 
     /**
@@ -194,7 +193,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @return
      */
     @Override
-    public synchronized boolean isKeyPresent(String Key) throws IOException {
+    public boolean isKeyPresent(String Key) throws IOException {
         return fingerPrintMap.containsKey(Key);
     }
 
@@ -206,7 +205,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void setValue(String Key, BitSet Value) throws IOException {
+    public void setValue(String Key, BitSet Value) throws IOException {
         fingerPrintMap.put(Key, Value);
     }
 
@@ -217,7 +216,7 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @return
      */
     @Override
-    public synchronized boolean isValuePresent(BitSet value) throws IOException {
+    public boolean isValuePresent(BitSet value) throws IOException {
         for (BitSet bitset : fingerPrintMap.values()) {
             try {
                 if (getTanimotoSimilarity(value, bitset) == 1.0) {

@@ -116,7 +116,7 @@ public final class AtomAtomMapping implements Serializable {
         this.query = query;
         this.target = target;
         mapping = new TreeMap<>(new MyQueryIAtomComp());
-        this.mappingIndex = Collections.synchronizedSortedMap(new TreeMap<>());
+        this.mappingIndex = new TreeMap<>();
     }
 
     /**
@@ -124,7 +124,7 @@ public final class AtomAtomMapping implements Serializable {
      * @param atom1
      * @param atom2
      */
-    public synchronized void put(IAtom atom1, IAtom atom2) {
+    public void put(IAtom atom1, IAtom atom2) {
         try {
             atom1.setID(atom1.getID() == null ? getQuery().indexOf(atom1) + "" : atom1.getID());
             atom2.setID(atom2.getID() == null ? getTarget().indexOf(atom2) + "" : atom2.getID());
@@ -141,7 +141,7 @@ public final class AtomAtomMapping implements Serializable {
      * @return string
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
         StringBuilder s = new StringBuilder();
         try {
             IReaction reaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
@@ -206,7 +206,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return true if 'query' is not isomorphic of 'target'
      */
-    public synchronized boolean isEmpty() {
+    public boolean isEmpty() {
         return mapping.isEmpty();
     }
 
@@ -214,7 +214,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * Clear mappings
      */
-    public synchronized void clear() {
+    public void clear() {
         mapping.clear();
         mappingIndex.clear();
     }
@@ -225,7 +225,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return mapping size
      */
-    public synchronized int getCount() {
+    public int getCount() {
         return mapping.isEmpty() ? 0 : mapping.size();
     }
 
@@ -234,7 +234,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return atom-atom mappings
      */
-    public synchronized Map<IAtom, IAtom> getMappingsByAtoms() {
+    public Map<IAtom, IAtom> getMappingsByAtoms() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(mapping));
     }
 
@@ -243,7 +243,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return atom-atom index mappings
      */
-    public synchronized Map<Integer, Integer> getMappingsByIndex() {
+    public Map<Integer, Integer> getMappingsByIndex() {
         return Collections.unmodifiableSortedMap(new TreeMap<>(mappingIndex));
     }
 
@@ -253,7 +253,7 @@ public final class AtomAtomMapping implements Serializable {
      * @param atom
      * @return
      */
-    public synchronized int getQueryIndex(IAtom atom) {
+    public int getQueryIndex(IAtom atom) {
         return getQuery().indexOf(atom);
     }
 
@@ -263,7 +263,7 @@ public final class AtomAtomMapping implements Serializable {
      * @param atom
      * @return
      */
-    public synchronized int getTargetIndex(IAtom atom) {
+    public int getTargetIndex(IAtom atom) {
         return getTarget().indexOf(atom);
     }
 
@@ -272,7 +272,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return the query
      */
-    public synchronized IAtomContainer getQuery() {
+    public IAtomContainer getQuery() {
         return query;
     }
 
@@ -281,7 +281,7 @@ public final class AtomAtomMapping implements Serializable {
      *
      * @return the target
      */
-    public synchronized IAtomContainer getTarget() {
+    public IAtomContainer getTarget() {
         return target;
     }
 
@@ -291,9 +291,9 @@ public final class AtomAtomMapping implements Serializable {
      * @return common mapped fragment in the query molecule
      * @throws CloneNotSupportedException
      */
-    public synchronized IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
+    public IAtomContainer getMapCommonFragmentOnQuery() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = new ArrayList<>();
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -315,9 +315,9 @@ public final class AtomAtomMapping implements Serializable {
      * @return common mapped fragment in the target molecule
      * @throws CloneNotSupportedException
      */
-    public synchronized IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
+    public IAtomContainer getMapCommonFragmentOnTarget() throws CloneNotSupportedException {
         IAtomContainer ac = getTarget().clone();
-        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = new ArrayList<>();
         for (IAtom atom : getTarget().atoms()) {
             if (!mapping.containsValue(atom)) {
                 unmappedAtoms.add(ac.getAtom(getTargetIndex(atom)));
@@ -336,9 +336,9 @@ public final class AtomAtomMapping implements Serializable {
      * @return common mapped fragment in the query molecule
      * @throws CloneNotSupportedException
      */
-    public synchronized IAtomContainer getCommonFragment() throws CloneNotSupportedException {
+    public IAtomContainer getCommonFragment() throws CloneNotSupportedException {
         IAtomContainer ac = getQuery().clone();
-        List<IAtom> unmappedAtoms = Collections.synchronizedList(new ArrayList<>());
+        List<IAtom> unmappedAtoms = new ArrayList<>();
         for (IAtom atom : getQuery().atoms()) {
             if (!mapping.containsKey(atom)) {
                 unmappedAtoms.add(ac.getAtom(getQueryIndex(atom)));
@@ -412,7 +412,7 @@ public final class AtomAtomMapping implements Serializable {
      * @throws CloneNotSupportedException
      * @throws CDKException
      */
-    public synchronized String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
+    public String getCommonFragmentAsSMILES() throws CloneNotSupportedException, CDKException {
         SmilesGenerator smiles = new SmilesGenerator(
                 SmiFlavor.Unique
                 | SmiFlavor.UseAromaticSymbols

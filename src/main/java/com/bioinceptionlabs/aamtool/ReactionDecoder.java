@@ -160,7 +160,7 @@ public class ReactionDecoder extends Annotator {
         super();
     }
 
-    private synchronized void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
+    private void FormatXMLToFile(Document doc, String fileName) throws TransformerConfigurationException, TransformerException {
 
         // write xml to file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -190,7 +190,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private synchronized void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+    private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         File file = new File(fileName + ".txt");
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
             writer.write(doc.toString());
@@ -204,7 +204,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private synchronized void AAMTask(CommandLine aamLine, Options createAAMOptions,
+    private void AAMTask(CommandLine aamLine, Options createAAMOptions,
             boolean complexMappingFlag, boolean accept_no_change)
             throws Exception {
 
@@ -312,7 +312,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private synchronized void CompareTask(CommandLine compareLine,
+    private void CompareTask(CommandLine compareLine,
             Options createCompareOptions, boolean complexMappingFlag,
             boolean accept_no_change)
             throws ParserConfigurationException, Exception {
@@ -472,7 +472,7 @@ public class ReactionDecoder extends Annotator {
         }
     }
 
-    private synchronized void AnnotateTask(CommandLine annotateLine,
+    private void AnnotateTask(CommandLine annotateLine,
             Options createAnnotateOptions, boolean complexMappingFlag,
             boolean accept_no_change)
             throws TransformerException,

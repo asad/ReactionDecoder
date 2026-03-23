@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -67,7 +67,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @return
      * @throws java.lang.Exception
      */
-    public static synchronized KeggReactionFileContainer getInstance() throws Exception {
+    public static KeggReactionFileContainer getInstance() throws Exception {
         if (ref == null) {
 
             // it's ok, we can call this constructor
@@ -90,7 +90,7 @@ public class KeggReactionFileContainer implements Serializable {
     /**
      * Clear the container
      */
-    synchronized public void Clear() {
+    public void Clear() {
         reactionMap.clear();
         ref = null;
     }
@@ -101,7 +101,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param Key {NAME/EQUATION etc}
      * @return True/False
      */
-    public synchronized boolean containsKey(String _recID, String Key) {
+    public boolean containsKey(String _recID, String Key) {
         Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
         return DataMap.containsKey(Key) == true;
     }
@@ -111,7 +111,7 @@ public class KeggReactionFileContainer implements Serializable {
      *
      * @return Reaction Ids in the container
      */
-    public synchronized Set<String> getKeySet() {
+    public Set<String> getKeySet() {
         return reactionMap.keySet();
     }
 
@@ -120,7 +120,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID reaction ID
      * @return Defination of the reaction
      */
-    public synchronized String getDefination(String _recID) {
+    public String getDefination(String _recID) {
         String _data = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -139,7 +139,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID
      * @return entry ID of the reaction
      */
-    public synchronized String getEntry(String _recID) {
+    public String getEntry(String _recID) {
         String _data = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -158,7 +158,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID
      * @return enzymes of this reaction
      */
-    public synchronized List<String> getEnzyme(String _recID) {
+    public List<String> getEnzyme(String _recID) {
         List<String> ecData = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -182,7 +182,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID
      * @return reaction equation
      */
-    public synchronized String getEquation(String _recID) {
+    public String getEquation(String _recID) {
         String _data = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -200,7 +200,7 @@ public class KeggReactionFileContainer implements Serializable {
      *
      * @return
      */
-    synchronized Set<String> getKeys() {
+    Set<String> getKeys() {
         return reactionMap.keySet();
     }
 
@@ -208,7 +208,7 @@ public class KeggReactionFileContainer implements Serializable {
 //     *
 //     * @return
 //     */
-//    synchronized public TreeMap<String, Map<String, ReactionFileData>> getMap() {
+//    public TreeMap<String, Map<String, ReactionFileData>> getMap() {
 //        return reactionMap;
 //    }
     /**
@@ -216,7 +216,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID reaction ID
      * @return Name of the reaction
      */
-    synchronized public String getName(String _recID) {
+    public String getName(String _recID) {
         String _data = null;
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
@@ -233,7 +233,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID
      * @return Pathway Names
      */
-    synchronized public List<String> getPathway(String _recID) {
+    public List<String> getPathway(String _recID) {
         List<String> _data = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -254,7 +254,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID reaction ID
      * @return Reaction crosslink(s)
      */
-    synchronized public List<String> getRemark(String _recID) {
+    public List<String> getRemark(String _recID) {
         List<String> _data = null;
 
         if (reactionMap.containsKey(_recID)) {
@@ -276,7 +276,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param _recID reaction ID
      * @return RPAIR(s)
      */
-    public synchronized String getRpair(String _recID) {
+    public String getRpair(String _recID) {
         String _data = null;
         if (reactionMap.containsKey(_recID)) {
             Map<String, ReactionFileData> DataMap = reactionMap.get(_recID);
@@ -292,7 +292,7 @@ public class KeggReactionFileContainer implements Serializable {
      *
      * @return reaction count in the container
      */
-    public synchronized Integer getCount() {
+    public Integer getCount() {
         return reactionMap.size();
     }
 
@@ -301,7 +301,7 @@ public class KeggReactionFileContainer implements Serializable {
      * @param key
      * @param DataMap
      */
-    public synchronized void put(String key, Map<String, ReactionFileData> DataMap) {
+    public void put(String key, Map<String, ReactionFileData> DataMap) {
         reactionMap.put(key, DataMap);
     }
 }

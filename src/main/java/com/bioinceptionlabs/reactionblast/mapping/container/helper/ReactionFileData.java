@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package com.bioinceptionlabs.reactionblast.mapping.container.helper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableCollection;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class ReactionFileData extends Object implements Serializable {
      *
      */
     public ReactionFileData() {
-        _data = synchronizedList(new ArrayList<>());
+        _data = new ArrayList<>();
     }
 
     /**

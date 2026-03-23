@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020. BioInception Labs Pvt. Ltd.
+ * Copyright (c) 2018-2026. BioInception Labs Pvt. Ltd.
  */
 package com.bioinceptionlabs.reactionblast.mapping.cache;
 
@@ -37,13 +37,13 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
 
     //Now this is thread safe
     @Override
-    public synchronized void put(K key, V value) {
+    public void put(K key, V value) {
         map.put(key, value);
     }
 
     //Now this is thread safe
     @Override
-    public synchronized V get(K key) {
+    public V get(K key) {
         return map.get(key);
     }
 
@@ -54,15 +54,13 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
      * @param key
      * @return
      */
-    public synchronized boolean containsKey(K key) {
+    public boolean containsKey(K key) {
         return map.containsKey(key);
     }
 
     // CLEANUP method
-    public synchronized void cleanup() {
-        synchronized (map) {
-            map.clear();
-        }
+    public void cleanup() {
+        map.clear();
         Thread.yield();
     }
 
@@ -71,7 +69,7 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
      *
      * @return
      */
-    public synchronized int size() {
+    public int size() {
         return map.size();
     }
 
@@ -80,7 +78,7 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
      *
      * @return
      */
-    public synchronized Set<K> keySet() {
+    public Set<K> keySet() {
         return map.keySet();
     }
 }

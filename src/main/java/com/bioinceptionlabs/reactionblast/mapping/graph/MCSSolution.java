@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ public class MCSSolution implements Serializable {
     /**
      * @return the stereoScore
      */
-    public synchronized Integer getStereoScore() {
+    public Integer getStereoScore() {
         return stereoScore;
     }
 
@@ -76,7 +76,7 @@ public class MCSSolution implements Serializable {
     /**
      * @return the fragmentSize
      */
-    public synchronized Integer getFragmentSize() {
+    public Integer getFragmentSize() {
         return fragmentSize;
     }
 
@@ -90,7 +90,7 @@ public class MCSSolution implements Serializable {
     /**
      * @return the energy
      */
-    public synchronized Double getEnergy() {
+    public Double getEnergy() {
         return energy;
     }
 
@@ -104,35 +104,35 @@ public class MCSSolution implements Serializable {
     /**
      * @return the queryContainer
      */
-    public synchronized IAtomContainer getQueryContainer() {
+    public IAtomContainer getQueryContainer() {
         return queryContainer;
     }
 
     /**
      * @return the targetContainer
      */
-    public synchronized IAtomContainer getTargetContainer() {
+    public IAtomContainer getTargetContainer() {
         return targetContainer;
     }
 
     /**
      * @return the atomatomMapping
      */
-    public synchronized AtomAtomMapping getAtomAtomMapping() {
+    public AtomAtomMapping getAtomAtomMapping() {
         return atomatomMapping;
     }
 
     /**
      * @return the targetPosition
      */
-    public synchronized int getTargetPosition() {
+    public int getTargetPosition() {
         return targetPosition;
     }
 
     /**
      * @return the queryPosition
      */
-    public synchronized int getQueryPosition() {
+    public int getQueryPosition() {
         return queryPosition;
     }
 }

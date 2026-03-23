@@ -20,7 +20,6 @@ package com.bioinceptionlabs.reactionblast.containers;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.io.IOException;
-import static java.util.Collections.synchronizedSortedMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -80,7 +79,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      *
      * @return
      */
-    public static synchronized InChIContainer getInstance() {
+    public static InChIContainer getInstance() {
         if (_instance == null) {
             _instance = new InChIContainer();
         }
@@ -89,7 +88,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
 
     //~--- constructors -------------------------------------------------------
     private InChIContainer() {
-        InChIMap = synchronizedSortedMap(new TreeMap<>());
+        InChIMap = new TreeMap<>();
     }
 
     //~--- methods ------------------------------------------------------------
@@ -98,7 +97,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         InChIMap.clear();
         _instance = null;
     }
@@ -127,7 +126,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    synchronized public void put(String Key, String Value) throws IOException {
+    public void put(String Key, String Value) throws IOException {
         try {
             if (Value != null) {
                 InChIMap.put(Key, Value);
@@ -145,7 +144,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    synchronized public String getInChI(String Key)
+    public String getInChI(String Key)
             throws IOException {
         String value = InChIMap.get(Key);
         return value == null ? "" : value;
@@ -158,7 +157,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    public synchronized String getMoleculeID(String Value) throws IOException {
+    public String getMoleculeID(String Value) throws IOException {
         String Key = "Key Not Found";
         for (Map.Entry<String, String> map : InChIMap.entrySet()) {
             if (map.getValue().equals(Value)) {
@@ -174,7 +173,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    public synchronized Map<String, String> getInChIMap() throws IOException {
+    public Map<String, String> getInChIMap() throws IOException {
         return unmodifiableMap(InChIMap);
     }
 
@@ -185,7 +184,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    synchronized public boolean isKeyPresent(String Key) throws IOException {
+    public boolean isKeyPresent(String Key) throws IOException {
         boolean flag = InChIMap.containsKey(Key);
 
         return flag;
@@ -199,7 +198,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @throws java.io.IOException
      */
     @Override
-    synchronized public void setValue(String Key, String Value)
+    public void setValue(String Key, String Value)
             throws IOException {
         InChIMap.put(Key, Value);
     }
@@ -211,7 +210,7 @@ public class InChIContainer implements IInChIContainer, Cloneable {
      * @return
      */
     @Override
-    synchronized public boolean isValuePresent(String Value) throws IOException {
+    public boolean isValuePresent(String Value) throws IOException {
         boolean flag = InChIMap.containsValue(Value);
         return flag;
     }

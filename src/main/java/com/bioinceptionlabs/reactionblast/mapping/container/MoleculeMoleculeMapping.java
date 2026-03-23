@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ package com.bioinceptionlabs.reactionblast.mapping.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      *
      */
     public MoleculeMoleculeMapping() {
-        reactant_product_mapping_map = synchronizedMap(new HashMap<>());
+        reactant_product_mapping_map = new HashMap<>();
     }
 
     @Override
@@ -85,7 +84,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      *
      * @throws java.io.IOException
      */
-    public synchronized void Clear() throws IOException {
+    public void Clear() throws IOException {
         reactant_product_mapping_map.clear();
     }
 
@@ -94,7 +93,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      * @param Key
      * @throws java.io.IOException
      */
-    public synchronized void Erase(String Key) throws IOException {
+    public void Erase(String Key) throws IOException {
         reactant_product_mapping_map.remove(Key);
     }
 
@@ -104,7 +103,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      * @return
      * @throws java.io.IOException
      */
-    public synchronized boolean isPresent(String Key)
+    public boolean isPresent(String Key)
             throws IOException {
         return reactant_product_mapping_map.containsKey(Key);
     }
@@ -116,7 +115,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      * @param Value
      * @throws java.io.IOException
      */
-    public synchronized void setMolMappings(String Key, List<MolMapping> Value) throws
+    public void setMolMappings(String Key, List<MolMapping> Value) throws
             IOException {
         reactant_product_mapping_map.put(Key, Value);
         // Stores Reaction ID and RPAIR ID as Value in ArrayList
@@ -128,7 +127,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      * @return
      * @throws CDKException
      */
-    public synchronized List<MolMapping> getMolMappings(String RID) throws CDKException {
+    public List<MolMapping> getMolMappings(String RID) throws CDKException {
         return reactant_product_mapping_map.containsKey(RID) == true ? reactant_product_mapping_map.get(RID) : null;
     }
 
@@ -136,7 +135,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      *
      * @return Reaction count with RPAIR
      */
-    public synchronized long getCount() {
+    public long getCount() {
         return reactant_product_mapping_map.size();
     }
 
@@ -144,7 +143,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      *
      * @return
      */
-    public synchronized Set<String> getKeySet() {
+    public Set<String> getKeySet() {
         return reactant_product_mapping_map.keySet();
     }
 
@@ -152,7 +151,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      *
      * @return
      */
-    public synchronized Set<Map.Entry<String, List<MolMapping>>> getEntrySet() {
+    public Set<Map.Entry<String, List<MolMapping>>> getEntrySet() {
         return reactant_product_mapping_map.entrySet();
     }
 
@@ -163,7 +162,7 @@ public class MoleculeMoleculeMapping implements Serializable {
      * @param pName
      * @return
      */
-    public synchronized List<MolMapping> getMapping(String reactionID, String rName, String pName) {
+    public List<MolMapping> getMapping(String reactionID, String rName, String pName) {
         List<MolMapping> mMap = reactant_product_mapping_map.get(reactionID);
         List<MolMapping> mappedMap = new ArrayList<>();
         for (MolMapping map : mMap) {

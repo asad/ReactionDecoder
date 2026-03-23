@@ -20,7 +20,6 @@ package com.bioinceptionlabs.reactionblast.containers;
 
 import java.io.Serializable;
 import java.util.Collection;
-import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,7 +45,7 @@ public class ReactionDBContainer implements Serializable {
      * @return
      * @throws java.lang.Exception
      */
-    public static synchronized ReactionDBContainer getInstance()
+    public static ReactionDBContainer getInstance()
             throws Exception {
         if (ref == null) {
 
@@ -63,7 +62,7 @@ public class ReactionDBContainer implements Serializable {
      * @throws Exception
      */
     protected ReactionDBContainer() throws Exception {
-        reactionsFingerprints = synchronizedMap(new HashMap<>());
+        reactionsFingerprints = new HashMap<>();
 
     }
 
@@ -72,7 +71,7 @@ public class ReactionDBContainer implements Serializable {
      * @param Key Reaction ID
      * @return true or false
      */
-    synchronized public boolean containsKey(String Key) {
+    public boolean containsKey(String Key) {
 
         return reactionsFingerprints.containsKey(Key);
     }
@@ -81,7 +80,7 @@ public class ReactionDBContainer implements Serializable {
      *
      * @return
      */
-    synchronized public int size() {
+    public int size() {
         return reactionsFingerprints.size();
     }
 
@@ -89,7 +88,7 @@ public class ReactionDBContainer implements Serializable {
      *
      * @return
      */
-    synchronized public boolean isEmpty() {
+    public boolean isEmpty() {
         return reactionsFingerprints.isEmpty();
     }
 
@@ -98,7 +97,7 @@ public class ReactionDBContainer implements Serializable {
      * @param value
      * @return
      */
-    synchronized public boolean containsValue(ReactionInfoCollector value) {
+    public boolean containsValue(ReactionInfoCollector value) {
         return reactionsFingerprints.containsValue(value);
     }
 
@@ -107,7 +106,7 @@ public class ReactionDBContainer implements Serializable {
      * @param key
      * @return
      */
-    synchronized public ReactionInfoCollector get(String key) {
+    public ReactionInfoCollector get(String key) {
         return reactionsFingerprints.get(key);
     }
 
@@ -117,7 +116,7 @@ public class ReactionDBContainer implements Serializable {
      * @param value
      * @return
      */
-    synchronized public ReactionInfoCollector put(String key, ReactionInfoCollector value) {
+    public ReactionInfoCollector put(String key, ReactionInfoCollector value) {
         return reactionsFingerprints.put(key, value);
     }
 
@@ -126,7 +125,7 @@ public class ReactionDBContainer implements Serializable {
      * @param key
      * @return
      */
-    synchronized public ReactionInfoCollector remove(String key) {
+    public ReactionInfoCollector remove(String key) {
         return reactionsFingerprints.remove(key);
     }
 
@@ -134,14 +133,14 @@ public class ReactionDBContainer implements Serializable {
      *
      * @param m
      */
-    synchronized public void putAll(Map<String, ReactionInfoCollector> m) {
+    public void putAll(Map<String, ReactionInfoCollector> m) {
         reactionsFingerprints.putAll(m);
     }
 
     /**
      *
      */
-    synchronized public void clear() {
+    public void clear() {
         reactionsFingerprints.clear();
         ref = null;
     }
@@ -150,7 +149,7 @@ public class ReactionDBContainer implements Serializable {
      *
      * @return
      */
-    synchronized public Set<String> keySet() {
+    public Set<String> keySet() {
         return reactionsFingerprints.keySet();
     }
 
@@ -158,7 +157,7 @@ public class ReactionDBContainer implements Serializable {
      *
      * @return
      */
-    synchronized public Collection<ReactionInfoCollector> values() {
+    public Collection<ReactionInfoCollector> values() {
         return reactionsFingerprints.values();
     }
 
@@ -166,7 +165,7 @@ public class ReactionDBContainer implements Serializable {
      *
      * @return
      */
-    synchronized public Set<Entry<String, ReactionInfoCollector>> entrySet() {
+    public Set<Entry<String, ReactionInfoCollector>> entrySet() {
         return reactionsFingerprints.entrySet();
     }
 }
