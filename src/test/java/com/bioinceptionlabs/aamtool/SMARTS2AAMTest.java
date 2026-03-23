@@ -817,6 +817,122 @@ public class SMARTS2AAMTest extends MappingUtility {
                 formedCleavedWFingerprint.getFeatureCount() > 0);
     }
 
+    // =========================================================================
+    // CHEMICAL EDGE CASES
+    // =========================================================================
+
+    /**
+     * E/Z Isomerization: cis-2-butene -> trans-2-butene
+     * Tests detection of stereochemical (E/Z) changes around C=C double bond
+     */
+    @Test
+    public void EZIsomerization() throws Exception {
+        // cis-2-butene -> trans-2-butene
+        String reactionSM = "C/C=C\\C>>C/C=C/C";
+        IReaction parseReactionSMILES = parseReactionSMILES(reactionSM);
+        parseReactionSMILES.setID("EZIsomerization");
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSMILES, true);
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getStereoChangesWFingerprint();
+        assertTrue("E/Z isomerization should detect stereo changes",
+                stereoChangesWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Friedel-Crafts Acylation: benzene + acetyl chloride -> acetophenone + HCl
+     * Tests aromatic ring substitution and bond changes on aromatic system
+     */
+    @Test
+    public void FriedelCraftsAcylation() throws Exception {
+        String reactionSM = "c1ccccc1.CC(=O)Cl>>CC(=O)c1ccccc1.Cl";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "FriedelCraftsAcylation");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Friedel-Crafts acylation should have bond changes on aromatic ring",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Aromatic Nitration: benzene + HNO3 -> nitrobenzene + H2O
+     * Tests electrophilic aromatic substitution with charged species
+     */
+    @Test
+    public void AromaticNitration() throws Exception {
+        String reactionSM = "c1ccccc1.[O-][N+](=O)O>>c1ccc([N+](=O)[O-])cc1.O";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "AromaticNitration");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Aromatic nitration should have bond changes",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Ring Opening: Ozonolysis of cyclohexene (simplified)
+     * cyclohexene + ozone -> dialdehyde
+     * Tests ring opening reaction
+     */
+    @Test
+    public void RingOpeningOzonolysis() throws Exception {
+        String reactionSM = "C1CC=CCC1.O=[O+][O-]>>O=CCCCCC=O";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "RingOpeningOzonolysis");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Ring opening ozonolysis should have bond changes",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Charged Species: Quaternary ammonium formation
+     * trimethylamine + methyl iodide -> tetramethylammonium iodide
+     * Tests handling of charged atoms (N+ and I-)
+     */
+    @Test
+    public void QuaternaryAmmoniumFormation() throws Exception {
+        String reactionSM = "CN(C)C.CI>>C[N+](C)(C)C.[I-]";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "QuaternaryAmmonium");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Quaternary ammonium formation should have bond changes (N-C formation, C-I cleavage)",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Identity Reaction with Stereo Annotation
+     * L-alanine -> L-alanine (same stereochemistry, no change)
+     * Tests that identity is correctly detected even with stereo annotations
+     */
+    @Test
+    public void IdentityWithStereo() throws Exception {
+        String reactionSM = "N[C@@H](C)C(=O)O>>N[C@@H](C)C(=O)O";
+        IReaction parseReactionSMILES = parseReactionSMILES(reactionSM);
+        parseReactionSMILES.setID("IdentityWithStereo");
+        ReactionMechanismTool testReactions = getAnnotation(parseReactionSMILES, true);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertEquals("Identity with stereo should have 0 bond changes",
+                0, formedCleavedWFingerprint.getFeatureCount());
+    }
+
     /**
      * @param cdkReaction
      * @param reactionName

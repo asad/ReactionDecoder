@@ -131,7 +131,7 @@ final class GameTheoryMin extends BaseGameTheory {
         }
     }
 
-    private synchronized void GenerateIsoMorphismMapping() throws Exception {
+    private void GenerateIsoMorphismMapping() throws Exception {
 
         winner.searchWinners(educts, products, mh);
 
@@ -146,7 +146,7 @@ final class GameTheoryMin extends BaseGameTheory {
         }
     }
 
-    private synchronized void GenerateMapping(boolean flag) throws Exception {
+    private void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
         int iteration = 0;
         boolean continueMapping = true;
@@ -211,7 +211,7 @@ final class GameTheoryMin extends BaseGameTheory {
         }
     }
 
-    private synchronized void UpdateMapping() throws Exception {
+    private void UpdateMapping() throws Exception {
         boolean[][] FlagMatrix = winner.getFlagMatrix();
 
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
@@ -267,7 +267,7 @@ final class GameTheoryMin extends BaseGameTheory {
      * @return the reactionMolMapping
      */
     @Override
-    public synchronized MoleculeMoleculeMapping getReactionMolMapping() {
+    public MoleculeMoleculeMapping getReactionMolMapping() {
         return reactionMolMapping;
     }
 
@@ -275,7 +275,7 @@ final class GameTheoryMin extends BaseGameTheory {
      * @param reactionMolMapping the reactionMolMapping to set
      */
     @Override
-    public synchronized void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
+    public void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
         this.reactionMolMapping = reactionMolMapping;
     }
 
@@ -283,7 +283,7 @@ final class GameTheoryMin extends BaseGameTheory {
      * @return the delta
      */
     @Override
-    public synchronized int getDelta() {
+    public int getDelta() {
         return delta;
     }
 }

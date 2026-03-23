@@ -186,12 +186,7 @@ public class MappingHandler extends BasicDebugger {
                     for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
                         if (I_Atom.getID().trim().equalsIgnoreCase(eMolecule.getAtom(eAtom).getID().trim())) {
 
-//                            System.out.println("Mapped Atom ID " + I_Atom.getID().trim() + " eMoleculeID " + eMolecule.getAtom(eAtom).getID().trim());
-//                            System.out.println("Mapped Atom Symbol " + I_Atom.getSymbol() + " eMolecule Symbol " + eMolecule.getAtom(eAtom).getSymbol());
-//                            System.out.println("Hi Matched product");
-//                            System.out.println("ID:" + I_Atom.getID().trim());
                             String atomLabel = Integer.toString(counter);
-//                            System.out.println("_atomMappings.get(i).getSymbol().trim() " + I_Atom.getSymbol().trim() + " eMolecule.getAtom(eAtom).getID().trim() " + eMolecule.getAtom(eAtom).getSymbol().trim());
 
                             firstAtom = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                             firstAtom.setID(atomLabel);
@@ -240,11 +235,6 @@ public class MappingHandler extends BasicDebugger {
 
         }
 
-//        System.out.println("expLabReaction in setMapping: ");
-//        printReaction(expLabReaction);
-//        System.out.println("MappedReaction in setMapping: ");
-//        printReaction(MappedReaction);
-//        System.out.println("Mapping Counter " + counter);
         return counter;
     }
 }

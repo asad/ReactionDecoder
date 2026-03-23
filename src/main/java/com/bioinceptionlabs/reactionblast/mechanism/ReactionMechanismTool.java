@@ -344,7 +344,7 @@ public class ReactionMechanismTool implements Serializable {
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
 
-    private synchronized boolean isMappingSolutionAcceptable(Reactor reactor,
+    private boolean isMappingSolutionAcceptable(Reactor reactor,
             IMappingAlgorithm ma,
             IReaction reaction,
             boolean generate2D,
@@ -458,7 +458,7 @@ public class ReactionMechanismTool implements Serializable {
     * if bond changes are lesser than stored bond changes then update the flag or if stereo changes are lesser than
     * stores stereo changes
      */
-    private synchronized boolean isChangeFeasible(MappingSolution ms) {
+    private boolean isChangeFeasible(MappingSolution ms) {
 
         /*
         * This condition is valuble to trace graph isomorphism as only min algorithm checks this change. the idea is to
@@ -621,13 +621,13 @@ public class ReactionMechanismTool implements Serializable {
         return false;
     }
 
-    private synchronized double getTotalBondChange(IPatternFingerprinter fingerprint) throws CDKException {
+    private double getTotalBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
         total = fingerprint.getFeatures().stream().map((key) -> key.getWeight()).filter((val) -> (val > 0.)).map((val) -> val).reduce(total, (accumulator, _item) -> accumulator + _item); //&& !key.contains("H")
         return total;
     }
 
-    private synchronized int getTotalCarbonBondChange(IPatternFingerprinter fingerprint) throws CDKException {
+    private int getTotalCarbonBondChange(IPatternFingerprinter fingerprint) throws CDKException {
         double total = 0;
         total = fingerprint.getFeatures().stream().filter((key) -> (key.getPattern().contains("C-C")
                 || key.getPattern().contains("C=C")
@@ -637,7 +637,7 @@ public class ReactionMechanismTool implements Serializable {
         return (int) total;
     }
 
-    private synchronized int getTotalBondChangeEnergy(IPatternFingerprinter fingerprint, boolean skipHydrogen) {
+    private int getTotalBondChangeEnergy(IPatternFingerprinter fingerprint, boolean skipHydrogen) {
         int total = 0;
         try {
             BondEnergies be = getInstance();

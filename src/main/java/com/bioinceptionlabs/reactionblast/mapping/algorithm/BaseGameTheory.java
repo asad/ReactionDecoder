@@ -85,7 +85,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
      * @param atomContainer
      * @return
      */
-    protected static synchronized boolean isPseudoAtoms(IAtomContainer atomContainer) {
+    protected static boolean isPseudoAtoms(IAtomContainer atomContainer) {
         for (IAtom atoms : atomContainer.atoms()) {
             if (atoms instanceof IPseudoAtom || atoms instanceof PseudoAtom) {
                 return true;
@@ -99,7 +99,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
      * @return @throws IOException
      */
     @Override
-    public synchronized String getSuffix() throws IOException {
+    public String getSuffix() throws IOException {
         Calendar cal = new GregorianCalendar();
         int ms = cal.get(YEAR);
 
@@ -126,7 +126,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
      * @throws InterruptedException
      */
     @Override
-    public synchronized void UpdateMatrix(Holder mh, boolean removeHydrogen) throws InterruptedException {
+    public void UpdateMatrix(Holder mh, boolean removeHydrogen) throws InterruptedException {
         try {
             LOGGER.debug("**********Updated Matrix And Calculate Similarity**************");
             ReactionContainer reactionStructureInformation = mh.getReactionContainer();
@@ -199,7 +199,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
      * @throws Exception
      */
     @Override
-    public synchronized void UpdateMatrix(Collection<MCSSolution> mcsSolutions, Holder mh, boolean removeHydrogen) throws Exception {
+    public void UpdateMatrix(Collection<MCSSolution> mcsSolutions, Holder mh, boolean removeHydrogen) throws Exception {
         try {
             LOGGER.debug("**********Updated Matrix And Calculate Similarity**************");
             ReactionContainer reactionStructureInformation = mh.getReactionContainer();
@@ -244,7 +244,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         }
     }
 
-    private synchronized void refillMatrixWithNewData(
+    private void refillMatrixWithNewData(
             Holder holder,
             int substrateIndex,
             int productIndex,
@@ -332,7 +332,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         }
     }
 
-    private synchronized MCSSolution getMappings(
+    private MCSSolution getMappings(
             int queryPosition,
             int targetPosition,
             IAtomContainer educt,
@@ -528,7 +528,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         }
     }
 
-    synchronized String generateUniqueKey(
+    String generateUniqueKey(
             IAtomContainer compound1,
             IAtomContainer compound2,
             String id1, String id2,
@@ -565,7 +565,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         return key.toString();
     }
 
-    private synchronized int[] getCircularFP(IAtomContainer mol) throws CDKException {
+    private int[] getCircularFP(IAtomContainer mol) throws CDKException {
         CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
         circularFingerprinter.setPerceiveStereo(true);
         IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
@@ -575,7 +575,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
     /*
      * copy old mapping from the cache to new
      */
-    synchronized MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
+    MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
             IAtomContainer compound1, IAtomContainer compound2, MCSSolution oldSolution) {
         AtomAtomMapping atomAtomMapping = oldSolution.getAtomAtomMapping();
         Map<Integer, Integer> mappingsByIndex = atomAtomMapping.getMappingsByIndex();
@@ -592,7 +592,7 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
         return mcsSolution;
     }
 
-    synchronized MCSSolution addMCSSolution(int queryPosition, int targetPosition,
+    MCSSolution addMCSSolution(int queryPosition, int targetPosition,
             String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
 
         isomorphism.setChemFilters(true, true, true);

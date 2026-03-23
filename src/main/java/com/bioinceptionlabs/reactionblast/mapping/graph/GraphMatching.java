@@ -105,7 +105,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      * @return
      */
     @Override
-    public synchronized boolean mcsMatch(Holder holder,
+    public boolean mcsMatch(Holder holder,
             boolean removeHydrogen,
             Integer substrateIndex,
             Integer productIndex,
@@ -143,7 +143,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      * @return
      */
     @Override
-    public synchronized int removeMatchedAtomsAndUpdateAAM(IReaction reaction) {
+    public int removeMatchedAtomsAndUpdateAAM(IReaction reaction) {
         int delta = 0;
 
         LOGGER.debug("Before removing Mol Size E: " + educt.getAtomCount()
@@ -204,7 +204,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
         return delta;
     }
 
-    private synchronized IAtom getAtomByID(IAtomContainer ac, String ID) {
+    private IAtom getAtomByID(IAtomContainer ac, String ID) {
         if (ID == null) {
             return null;
         }
@@ -221,7 +221,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      * @return
      */
     @Override
-    public synchronized IAtomContainer getRemainingEduct() {
+    public IAtomContainer getRemainingEduct() {
         return educt;
     }
 
@@ -230,7 +230,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      * @return
      */
     @Override
-    public synchronized IAtomContainer getRemainingProduct() {
+    public IAtomContainer getRemainingProduct() {
         return product;
     }
 
@@ -238,7 +238,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      *
      * @return
      */
-    protected synchronized Map<IAtom, IAtom> getFirstAtomMapping() {
+    protected Map<IAtom, IAtom> getFirstAtomMapping() {
         return unmodifiableMap(bestAtomMappingList);
     }
 
@@ -246,14 +246,14 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
      * @return the matchedPart
      */
     @Override
-    public synchronized IAtomContainer getMatchedPart() {
+    public IAtomContainer getMatchedPart() {
         return matchedPart;
     }
 
     /**
      * @param aMatchedPart the matchedPart to set
      */
-    private synchronized void setMatchedPart(IAtomContainer aMatchedPart) {
+    private void setMatchedPart(IAtomContainer aMatchedPart) {
         matchedPart = aMatchedPart;
     }
 }

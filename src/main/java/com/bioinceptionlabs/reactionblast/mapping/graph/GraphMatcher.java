@@ -304,15 +304,6 @@ public class GraphMatcher extends Debugger {
                 MCSSolution isomorphism = callablesQueue.take().get();
                 threadedUniqueMCSSolutions.add(isomorphism);
             }
-
-//                List<Future<MCSSolution>> invokeAll = executor.invokeAll(callablesQueue);
-//                for (Iterator<Future<MCSSolution>> it = invokeAll.iterator(); it.hasNext();) {
-//                    Future<MCSSolution> callable = it.next();
-//                    MCSSolution isomorphism = callable.get();
-//                    if (callable.isDone()) {
-//                        mcsSolutions.add(isomorphism);
-//                    }
-//                }
             // This will make the executor accept no new threads
             // and finish all existing threads in the queue
             executor.shutdown();
@@ -323,12 +314,6 @@ public class GraphMatcher extends Debugger {
             threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
                 int queryPosition = mcs.getQueryPosition();
                 int targetPosition = mcs.getTargetPosition();
-//                if (DEBUG) {
-//                    System.out.println("");
-//                    out.println("MCS " + " I " + queryPosition
-//                            + " J " + targetPosition
-//                            + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount());
-//                }
                 Combination referenceKey = null;
                 for (Combination c : jobMap.keySet()) {
                     if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {

@@ -69,16 +69,6 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
     private static final long serialVersionUID = 0x2c36427fd2L;
     //~--- constructors -------------------------------------------------------
     private static final ILoggingTool LOGGER = createLoggingTool(GameTheoryMatrix.class);
-//    private void initializeMappingFLAGS(Holder mh) throws Exception {
-//        ReactionContainer reactionStructureInformation = mh.getReactionContainer();
-    /*Reset all the flags*/
-//        for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
-//            for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
-//                reactionStructureInformation.setEductModified(substrateIndex, true);
-//                reactionStructureInformation.setProductModified(productIndex, true);
-//            }
-//        }
-//    }
     private Holder matrixHolder;
     private MoleculeMoleculeMapping reactionBlastMolMapping;
     private final List<String> eductCounter;

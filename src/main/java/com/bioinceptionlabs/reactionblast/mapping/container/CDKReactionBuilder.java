@@ -137,11 +137,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             reaction.setID(reactionID);
         }
 
-//        System.out.println("****************************");
-//        System.out.println("Processing: " + reactionID);
-//        System.out.println("****************************");
-//        System.out.println("Number of Reactant " + _imoledu.getAtomContainerCount());
-//        System.out.println("Number of Product " + _imolpro.getAtomContainerCount());
         _metabolites.clear();
 
         standardizedReaction.setID(reactionID);
@@ -397,10 +392,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
     }
 
     private void setReactantMolecule(IReaction IR, Collection<IAtomContainer> metabolites) {
-//
-//        System.out.println("-------------------");
-//        System.out.println("Reactants");
-//        System.out.println("-------------------");
 
         Iterator<IAtomContainer> it = metabolites.iterator();
         //System.out.println("Stoic Map Size: " + stoichiometryMap.size());
@@ -420,9 +411,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
     private void setProductMolecule(IReaction IR, Collection<IAtomContainer> metabolites) {
 
-//        System.out.println("-------------------");
-//        System.out.println("Products");
-//        System.out.println("-------------------");
         Iterator<IAtomContainer> it = metabolites.iterator();
         while (it.hasNext()) {
             IAtomContainer mol = it.next();

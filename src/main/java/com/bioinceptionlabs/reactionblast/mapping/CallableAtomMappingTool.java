@@ -71,7 +71,7 @@ public class CallableAtomMappingTool implements Serializable {
      * @param outFileName
      * @throws Exception
      */
-    public static synchronized void writeMappingRXN(Reactor reactor, String outputDirectoryName, String outFileName) throws Exception {
+    public static void writeMappingRXN(Reactor reactor, String outputDirectoryName, String outFileName) throws Exception {
         String reactionID = reactor.getReactionWithAtomAtomMapping().getID();
         IReaction mappedReaction = reactor.getReactionWithAtomAtomMapping();
         if (reactionID == null) {
@@ -105,7 +105,7 @@ public class CallableAtomMappingTool implements Serializable {
         generateAtomAtomMapping(reaction, standardizer, removeHydrogen, checkComplex);
     }
 
-    private synchronized void generateAtomAtomMapping(
+    private void generateAtomAtomMapping(
             IReaction reaction,
             IStandardizer standardizer,
             boolean removeHydrogen,

@@ -137,7 +137,7 @@ final class GameTheoryRings extends BaseGameTheory {
     }
 //~--- methods ------------------------------------------------------------
 
-    private synchronized void GenerateIsoMorphismMapping() throws Exception {
+    private void GenerateIsoMorphismMapping() throws Exception {
 
         RuleBasedMappingHandler ph
                 = new RuleBasedMappingHandler(mh, eductList, productList);
@@ -159,7 +159,7 @@ final class GameTheoryRings extends BaseGameTheory {
         }
     }
 
-    private synchronized void GenerateMapping() throws Exception {
+    private void GenerateMapping() throws Exception {
         int iteration = 0;
         boolean continueMapping = true;
         while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
@@ -200,7 +200,7 @@ final class GameTheoryRings extends BaseGameTheory {
         }
     }
 
-    private synchronized void UpdateMapping() throws Exception {
+    private void UpdateMapping() throws Exception {
         boolean[][] FlagMatrix = winner.getFlagMatrix();
 
         ReactionContainer reactionStructureInformationContainer = mh.getReactionContainer();
@@ -256,7 +256,7 @@ final class GameTheoryRings extends BaseGameTheory {
      * @return the reactionMolMapping
      */
     @Override
-    public synchronized MoleculeMoleculeMapping getReactionMolMapping() {
+    public MoleculeMoleculeMapping getReactionMolMapping() {
         return reactionMolMapping;
     }
 
@@ -264,7 +264,7 @@ final class GameTheoryRings extends BaseGameTheory {
      * @param reactionMolMapping the reactionMolMapping to set
      */
     @Override
-    public synchronized void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
+    public void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping) {
         this.reactionMolMapping = reactionMolMapping;
     }
 
@@ -272,7 +272,7 @@ final class GameTheoryRings extends BaseGameTheory {
      * @return the delta
      */
     @Override
-    public synchronized int getDelta() {
+    public int getDelta() {
         return delta;
     }
 }
