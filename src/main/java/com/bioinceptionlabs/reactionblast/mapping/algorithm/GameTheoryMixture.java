@@ -149,38 +149,45 @@ final class GameTheoryMixture extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
-        if (DEBUG) {
-            printMatrixAtomContainer(mh, eductList, productList);
-            LOGGER.debug("**********Orignal Matrix**************");
-            printSimMatrix(mh, eductList, productList);
-            printCliqueMatrix(mh, eductList, productList);
+        int maxIterations = 100;
+        int iteration = 0;
+        boolean continueMapping = true;
+        while (continueMapping && iteration < maxIterations) {
+            if (DEBUG) {
+                printMatrixAtomContainer(mh, eductList, productList);
+                LOGGER.debug("**********Orignal Matrix**************");
+                printSimMatrix(mh, eductList, productList);
+                printCliqueMatrix(mh, eductList, productList);
 //        printStereoMatrix(mh, eductList, productList);
 //        printFragmentMatrix(mh, eductList, productList);
 //        printEnergyMatrix(mh, eductList, productList);
-        }
-
-        if (!ruleMatchingFlag) {//First map the biggest fragment the call rules
-            RuleBasedMappingHandler ruleBasedMappingHandler
-                    = new RuleBasedMappingHandler(mh, eductList, productList);
-            if (ruleBasedMappingHandler.isMatchFound()) {
-                LOGGER.debug("Rule Based Mapping Handler Match Found");
-                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
             }
-            ruleMatchingFlag = true;
-        }
 
-        winner.searchWinners(educts, products, mh);
-        if (DEBUG) {
-            printFlagMatrix(winner, eductList, productList);
-        }
-        if (winner.getFlag()) {
+            if (!ruleMatchingFlag) {//First map the biggest fragment the call rules
+                RuleBasedMappingHandler ruleBasedMappingHandler
+                        = new RuleBasedMappingHandler(mh, eductList, productList);
+                if (ruleBasedMappingHandler.isMatchFound()) {
+                    LOGGER.debug("Rule Based Mapping Handler Match Found");
+                    mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+                }
+                ruleMatchingFlag = true;
+            }
 
-            LOGGER.debug("**********Updated Mapping**************");
-            UpdateMapping();
-            LOGGER.debug("**********Updated Matrix**************");
-            UpdateMatrix(mh, removeHydrogen);
-            LOGGER.debug("**********Generate Mapping**************");
-            GenerateMapping(ruleMatchingFlag);
+            winner.searchWinners(educts, products, mh);
+            if (DEBUG) {
+                printFlagMatrix(winner, eductList, productList);
+            }
+            if (winner.getFlag()) {
+
+                LOGGER.debug("**********Updated Mapping**************");
+                UpdateMapping();
+                LOGGER.debug("**********Updated Matrix**************");
+                UpdateMatrix(mh, removeHydrogen);
+                LOGGER.debug("**********Generate Mapping**************");
+                iteration++;
+            } else {
+                continueMapping = false;
+            }
         }
     }
 

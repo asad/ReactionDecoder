@@ -159,37 +159,44 @@ final class GameTheoryRings extends BaseGameTheory {
     }
 
     private synchronized void GenerateMapping() throws Exception {
-        LOGGER.debug("GenerateMapping");
-        if (DEBUG) {
-            LOGGER.debug("**********Orignal Matrix**************");
-            printMatrixAtomContainer(mh, eductList, productList);
-            printSimMatrix(mh, eductList, productList);
-            printCliqueMatrix(mh, eductList, productList);
+        int maxIterations = 100;
+        int iteration = 0;
+        boolean continueMapping = true;
+        while (continueMapping && iteration < maxIterations) {
+            LOGGER.debug("GenerateMapping");
+            if (DEBUG) {
+                LOGGER.debug("**********Orignal Matrix**************");
+                printMatrixAtomContainer(mh, eductList, productList);
+                printSimMatrix(mh, eductList, productList);
+                printCliqueMatrix(mh, eductList, productList);
 //            printStereoMatrix(mh, eductList, productList);
 //            printFragmentMatrix(mh, eductList, productList);
 //            printEnergyMatrix(mh, eductList, productList);
-        }
+            }
 
-        RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
-        if (ruleBasedMappingHandler.isMatchFound()) {
+            RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
+            if (ruleBasedMappingHandler.isMatchFound()) {
 //            LOGGER.debug("RuleBasedMappingHandler Match");
-            mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
 //            printSimMatrix(mh, eductList, productList);
-        }
+            }
 
-        winner.searchWinners(educts, products, mh);
+            winner.searchWinners(educts, products, mh);
 
-        if (DEBUG) {
-            printFlagMatrix(winner, eductList, productList);
-        }
-        if (winner.getFlag()) {
+            if (DEBUG) {
+                printFlagMatrix(winner, eductList, productList);
+            }
+            if (winner.getFlag()) {
 
-            LOGGER.debug("**********Updated Mapping**************");
-            UpdateMapping();
-            LOGGER.debug("**********Updated Matrix**************");
-            UpdateMatrix(mh, removeHydrogen);
-            LOGGER.debug("**********Generate Mapping**************");
-            GenerateMapping();
+                LOGGER.debug("**********Updated Mapping**************");
+                UpdateMapping();
+                LOGGER.debug("**********Updated Matrix**************");
+                UpdateMatrix(mh, removeHydrogen);
+                LOGGER.debug("**********Generate Mapping**************");
+                iteration++;
+            } else {
+                continueMapping = false;
+            }
         }
     }
 

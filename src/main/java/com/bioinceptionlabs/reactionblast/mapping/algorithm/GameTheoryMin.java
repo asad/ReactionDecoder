@@ -147,60 +147,67 @@ final class GameTheoryMin extends BaseGameTheory {
 
     private synchronized void GenerateMapping(boolean flag) throws Exception {
         boolean ruleMatchingFlag = flag;
-        this.counter++;
-        if (DEBUG) {
-            LOGGER.debug("**********Orignal Matrix**************");
-            printMatrixAtomContainer(mh, eductList, productList);
-            printSimMatrix(mh, eductList, productList);
-            printCliqueMatrix(mh, eductList, productList);
+        int maxIterations = 100;
+        int iteration = 0;
+        boolean continueMapping = true;
+        while (continueMapping && iteration < maxIterations) {
+            this.counter++;
+            if (DEBUG) {
+                LOGGER.debug("**********Orignal Matrix**************");
+                printMatrixAtomContainer(mh, eductList, productList);
+                printSimMatrix(mh, eductList, productList);
+                printCliqueMatrix(mh, eductList, productList);
 //            printStereoMatrix(mh, eductList, productList);
 //            printFragmentMatrix(mh, eductList, productList);
 //            printEnergyMatrix(mh, eductList, productList);
-        }
-        boolean conditionmet = false;
-        if (!ruleMatchingFlag) {
-            LOGGER.debug("CHECK Rule Based Mapping Handler Match");
-            RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
-            if (ruleBasedMappingHandler.isMatchFound()) {
-                LOGGER.debug("Rule Based Mapping Handler Match Found");
-                mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
-                conditionmet = true;
             }
-            ruleMatchingFlag = true;
-            LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
-        }
-
-        if (!conditionmet && counter <= 5) {
-            LOGGER.debug("call counter " + counter);
-            LOGGER.debug("Subgraph/Exact Match Test");
-            MinSelection select
-                    = new MinSelection(mh, eductList, productList);
-            if (select.isSubAndCompleteMatchFlag()) {
-                LOGGER.debug("Subgraph/Exact Match");
-                mh = select.getUpdatedHolder();
+            boolean conditionmet = false;
+            if (!ruleMatchingFlag) {
+                LOGGER.debug("CHECK Rule Based Mapping Handler Match");
+                RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
+                if (ruleBasedMappingHandler.isMatchFound()) {
+                    LOGGER.debug("Rule Based Mapping Handler Match Found");
+                    mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
+                    conditionmet = true;
+                }
+                ruleMatchingFlag = true;
+                LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
             }
-        }
 
-        if (DEBUG) {
-            LOGGER.debug("**********Modified Matrix**************");
+            if (!conditionmet && counter <= 5) {
+                LOGGER.debug("call counter " + counter);
+                LOGGER.debug("Subgraph/Exact Match Test");
+                MinSelection select
+                        = new MinSelection(mh, eductList, productList);
+                if (select.isSubAndCompleteMatchFlag()) {
+                    LOGGER.debug("Subgraph/Exact Match");
+                    mh = select.getUpdatedHolder();
+                }
+            }
+
+            if (DEBUG) {
+                LOGGER.debug("**********Modified Matrix**************");
 //            printMatrixAtomContainer(mh, eductList, productList);
-            printSimMatrix(mh, eductList, productList);
-            printCliqueMatrix(mh, eductList, productList);
+                printSimMatrix(mh, eductList, productList);
+                printCliqueMatrix(mh, eductList, productList);
 //            printStereoMatrix(mh, eductList, productList);
 //            printFragmentMatrix(mh, eductList, productList);
 //            printEnergyMatrix(mh, eductList, productList);
-        }
-        winner.searchWinners(educts, products, mh);
-        if (DEBUG) {
-            printFlagMatrix(winner, eductList, productList);
-        }
-        if (winner.getFlag()) {
-            LOGGER.debug("**********Updated Mapping**************");
-            UpdateMapping();
-            LOGGER.debug("**********Updated Matrix**************");
-            UpdateMatrix(mh, removeHydrogen);
-            LOGGER.debug("**********Generate Mapping**************");
-            GenerateMapping(ruleMatchingFlag);
+            }
+            winner.searchWinners(educts, products, mh);
+            if (DEBUG) {
+                printFlagMatrix(winner, eductList, productList);
+            }
+            if (winner.getFlag()) {
+                LOGGER.debug("**********Updated Mapping**************");
+                UpdateMapping();
+                LOGGER.debug("**********Updated Matrix**************");
+                UpdateMatrix(mh, removeHydrogen);
+                LOGGER.debug("**********Generate Mapping**************");
+                iteration++;
+            } else {
+                continueMapping = false;
+            }
         }
     }
 

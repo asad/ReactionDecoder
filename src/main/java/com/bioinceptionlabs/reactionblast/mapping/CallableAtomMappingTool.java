@@ -24,7 +24,6 @@ import java.io.FileWriter;
 import java.io.Serializable;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.gc;
 import static java.lang.System.getProperty;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableMap;
@@ -204,7 +203,6 @@ public class CallableAtomMappingTool implements Serializable {
             executor.shutdown();
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             LOGGER.debug("======DONE CallableAtomMappingTool=======");
-            gc();
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             LOGGER.error(e);

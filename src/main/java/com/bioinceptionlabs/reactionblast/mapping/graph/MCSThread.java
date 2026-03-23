@@ -503,15 +503,11 @@ public class MCSThread implements Callable<MCSSolution> {
     private IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
         IAtomContainer a = ac.clone();
         a.setID(ac.getID());
+        a.setProperties(ac.getProperties());
 
         for (int i = 0; i < a.getAtomCount(); i++) {
             a.getAtom(i).setID(ac.getAtom(i).getID());
         }
-
-        ac.setProperties(ac.getProperties());
-        ac.setFlags(ac.getFlags());
-        ac.setID(ac.getID());
-        ac.notifyChanged();
 
         return a;
     }
@@ -625,11 +621,19 @@ public class MCSThread implements Callable<MCSSolution> {
         return key.toString();
     }
 
+    private static final String CACHED_FP = "CACHED_FP";
+
     private int[] getCircularFP(IAtomContainer mol) throws CDKException {
+        int[] cached = mol.getProperty(CACHED_FP);
+        if (cached != null) {
+            return cached;
+        }
         CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
         circularFingerprinter.setPerceiveStereo(true);
         IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
-        return bitFingerprint.getSetbits();
+        int[] fp = bitFingerprint.getSetbits();
+        mol.setProperty(CACHED_FP, fp);
+        return fp;
     }
 
     /*

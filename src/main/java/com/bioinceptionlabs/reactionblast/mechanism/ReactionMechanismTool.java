@@ -20,7 +20,6 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 
 import java.io.Serializable;
 import static java.lang.Integer.MIN_VALUE;
-import static java.lang.System.gc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -266,7 +265,6 @@ public class ReactionMechanismTool implements Serializable {
                             generate3D);
                     LOGGER.debug("is solution: " + algorithm + " selected: " + selected);
                 }
-                gc();
             } catch (Exception e) {
                 LOGGER.error(SEVERE, "Bond change calculation error", e);
                 throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage(), e);

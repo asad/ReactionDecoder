@@ -20,7 +20,6 @@ package com.bioinceptionlabs.reactionblast.mapping.graph;
 
 import java.io.IOException;
 import static java.lang.Runtime.getRuntime;
-import static java.lang.System.gc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -346,7 +345,6 @@ public class GraphMatcher extends Debugger {
                 jobMap.remove(removeKey);
             });
             jobReplicatorList.clear();
-            gc();
 
         } catch (Exception ex) {
             LOGGER.error(SEVERE, null, ex);
