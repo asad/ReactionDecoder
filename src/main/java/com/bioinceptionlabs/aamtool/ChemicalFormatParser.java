@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.String.format;
-import static java.lang.System.exit;
 import static java.lang.System.getProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +59,7 @@ class ChemicalFormatParser {
     protected static IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
         if (!f.isFile()) {
-            LOGGER.warn(WARNING, format("CML file not found! " + f.getName()));
-            exit(1);
+            throw new FileNotFoundException("CML file not found: " + f.getName());
         }
         String[] split = f.getName().split("\\.cml");
         try (FileInputStream fis = new FileInputStream(input);
@@ -92,7 +90,7 @@ class ChemicalFormatParser {
             File filepath = new File(fileName);
             if (!filepath.isFile()) {
                 LOGGER.error(WARNING, format("RXN file not found! %s", filepath.getName()));
-                exit(1);
+                continue;
             }
             LOGGER.info(INFO, "Annotating Reaction {0}", filepath.getName());
             IReaction rxnReactions;
