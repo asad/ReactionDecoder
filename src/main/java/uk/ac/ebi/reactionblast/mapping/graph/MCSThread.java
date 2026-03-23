@@ -24,11 +24,9 @@ import static java.lang.System.getProperty;
 import static java.lang.System.nanoTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static java.util.Collections.sort;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
@@ -347,90 +345,67 @@ public class MCSThread implements Callable<MCSSolution> {
 
     private boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
         LOGGER.debug("check isPossibleSubgraphMatch " + q.getID() + "," + t.getID());
-        Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
-        Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
+        Map<String, Integer> atomCount1 = new HashMap<>();
+        Map<String, Integer> atomCount2 = new HashMap<>();
 
         for (IAtom a : q.atoms()) {
-            if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
-                atomUniqueCounter1.put(a.getSymbol(), 1);
-            } else {
-                int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
-                atomUniqueCounter1.put(a.getSymbol(), counter);
-            }
+            atomCount1.merge(a.getSymbol(), 1, Integer::sum);
         }
 
         for (IAtom b : t.atoms()) {
-            if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
-                atomUniqueCounter2.put(b.getSymbol(), 1);
-            } else {
-                int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
-                atomUniqueCounter2.put(b.getSymbol(), counter);
-            }
+            atomCount2.merge(b.getSymbol(), 1, Integer::sum);
         }
 
-        if (atomUniqueCounter1.size() > atomUniqueCounter2.size()) {
+        if (atomCount1.size() > atomCount2.size()) {
             return false;
         }
 
-        List<String> difference = new LinkedList<>(atomUniqueCounter1.keySet());
-        difference.removeAll(atomUniqueCounter2.keySet());
-
-        LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1);
-        LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1.size());
-        LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2);
-        LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2.size());
-        LOGGER.debug("diff " + difference.size());
-
-        if (difference.isEmpty()) {
-            if (!atomUniqueCounter1.keySet().stream().noneMatch((k)
-                    -> (atomUniqueCounter1.get(k) > atomUniqueCounter2.get(k)))) {
+        // Check all atom types in query exist in target with sufficient count
+        for (Map.Entry<String, Integer> entry : atomCount1.entrySet()) {
+            Integer targetCount = atomCount2.get(entry.getKey());
+            if (targetCount == null || entry.getValue() > targetCount) {
                 return false;
             }
         }
 
-        return difference.isEmpty();
+        return true;
     }
 
     private int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
-
         /*
          a={c,c,c,o,n}
          b={c,c,c,p}
-       
          expectedMaxGraphmatch=3;
          */
-        List<String> atomUniqueCounter1 = new ArrayList<>();
-        List<String> atomUniqueCounter2 = new ArrayList<>();
+        Map<String, Integer> countQ = new HashMap<>();
+        Map<String, Integer> countT = new HashMap<>();
 
         for (IAtom a : q.atoms()) {
             String hyb = a.getHybridization() == UNSET
                     ? a.getSymbol() : a.getAtomTypeName();
-            atomUniqueCounter1.add(hyb);
+            countQ.merge(hyb, 1, Integer::sum);
         }
 
         for (IAtom b : t.atoms()) {
             String hyb = b.getHybridization() == UNSET
                     ? b.getSymbol() : b.getAtomTypeName();
-            atomUniqueCounter2.add(hyb);
+            countT.merge(hyb, 1, Integer::sum);
         }
 
-        sort(atomUniqueCounter1);
-        sort(atomUniqueCounter2);
-
-        if (atomUniqueCounter1.isEmpty()) {
+        if (countQ.isEmpty()) {
             return 0;
         }
-        List<String> common = new LinkedList<>(atomUniqueCounter1);
-        common.retainAll(atomUniqueCounter2);
 
-        LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1);
-        LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1.size());
-        LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2);
-        LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2.size());
-        LOGGER.debug("Common " + common.size());
-        atomUniqueCounter1.clear();
-        atomUniqueCounter2.clear();
-        return common.size();
+        // Multiset intersection: min of counts for each common type
+        int common = 0;
+        for (Map.Entry<String, Integer> entry : countQ.entrySet()) {
+            Integer tCount = countT.get(entry.getKey());
+            if (tCount != null) {
+                common += Math.min(entry.getValue(), tCount);
+            }
+        }
+
+        return common;
     }
 
     MCSSolution mcs() throws CDKException, CloneNotSupportedException {

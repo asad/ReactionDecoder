@@ -102,9 +102,7 @@ final class GameTheoryRings extends BaseGameTheory {
             GameTheoryMatrix rpsh)
             throws Exception {
 
-        if (DEBUG) {
-            LOGGER.debug("I am Ring");
-        }
+        LOGGER.debug("I am Ring");
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -143,9 +141,7 @@ final class GameTheoryRings extends BaseGameTheory {
         RuleBasedMappingHandler ph
                 = new RuleBasedMappingHandler(mh, eductList, productList);
         if (ph.isMatchFound()) {
-            if (DEBUG) {
-                LOGGER.debug("RuleBasedMappingHandler Match");
-            }
+            LOGGER.debug("RuleBasedMappingHandler Match");
             mh = ph.getMatrixHolder();
         }
 
@@ -153,25 +149,17 @@ final class GameTheoryRings extends BaseGameTheory {
 
         if (winner.getFlag()) {
 
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping();
         }
     }
 
     private synchronized void GenerateMapping() throws Exception {
-        if (DEBUG) {
-            LOGGER.debug("GenerateMapping");
-        }
+        LOGGER.debug("GenerateMapping");
         if (DEBUG) {
             LOGGER.debug("**********Orignal Matrix**************");
             printMatrixAtomContainer(mh, eductList, productList);
@@ -196,17 +184,11 @@ final class GameTheoryRings extends BaseGameTheory {
         }
         if (winner.getFlag()) {
 
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping();
         }
     }
@@ -237,13 +219,9 @@ final class GameTheoryRings extends BaseGameTheory {
 
                     AbstractGraphMatching GM = new GraphMatching(RID, ac1, ac2, _dirSuffix, removeHydrogen);
                     boolean mcsMatch = GM.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, A, B);
-                    if (DEBUG) {
-                        LOGGER.debug("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
-                    }
+                    LOGGER.debug("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
                     if (mcsMatch) {
-                        if (DEBUG) {
-                            LOGGER.debug(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
-                        }
+                        LOGGER.debug(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
                         delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                         List<MolMapping> rMap = getReactionMolMapping().
                                 getMapping(RID, this.eductList.get(substrateIndex), this.productList.get(productIndex));
@@ -257,9 +235,7 @@ final class GameTheoryRings extends BaseGameTheory {
                     }
                     IAtomContainer remainingEduct = GM.getRemainingEduct();
                     IAtomContainer remainingProduct = GM.getRemainingProduct();
-                    if (DEBUG) {
-                        LOGGER.debug("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
-                    }
+                    LOGGER.debug("Remaining Mol Size E: " + remainingEduct.getAtomCount() + " , Remaining Mol Size P: " + remainingProduct.getAtomCount());
                     reactionStructureInformationContainer.putEduct(substrateIndex, remainingEduct);
                     reactionStructureInformationContainer.putProduct(productIndex, remainingProduct);
                     reactionStructureInformationContainer.setEductModified(substrateIndex, true);

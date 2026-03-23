@@ -21,7 +21,7 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
 
 import java.io.Serializable;
 import static java.lang.System.getProperty;
-import static java.util.Collections.synchronizedSortedMap;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -45,7 +45,6 @@ import static uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS
  */
 public class CalculationProcess extends CaseHandler implements Serializable {
 
-    private final static boolean DEBUG = false;
     static final String NEW_LINE = getProperty("line.separator");
     private final static ILoggingTool LOGGER
             = createLoggingTool(CalculationProcess.class);
@@ -73,9 +72,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
          */
         super(reaction);
 
-        if (DEBUG) {
-            LOGGER.debug("=====CalculationProcess====");
-        }
+        LOGGER.debug("=====CalculationProcess====");
 //        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
@@ -83,12 +80,10 @@ public class CalculationProcess extends CaseHandler implements Serializable {
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         this.algorithm = algorithm;
         run();
-        if (DEBUG) {
-            LOGGER.debug("=====Done CalculationProcess====");
-        }
+        LOGGER.debug("=====Done CalculationProcess====");
     }
 
-    private synchronized void run() {
+    private void run() {
         switch (algorithm) {
             case MIN:
                 LOGGER.debug("Processing Reaction for Local Minimum: ");
@@ -113,20 +108,20 @@ public class CalculationProcess extends CaseHandler implements Serializable {
      *
      * @return
      */
-    public synchronized IReaction getMappedReaction() {
+    public IReaction getMappedReaction() {
         return reaction;
     }
 
-    private synchronized double calRelation(IReaction reaction, IMappingAlgorithm theory) {
+    private double calRelation(IReaction reaction, IMappingAlgorithm theory) {
         try {
             Map<Integer, IAtomContainer> educts
-                    = synchronizedSortedMap(new TreeMap<>());
+                    = new TreeMap<>();
             for (int i = 0; i < reaction.getReactantCount(); i++) {
                 educts.put(i, reaction.getReactants().getAtomContainer(i));
             }
 
             Map<Integer, IAtomContainer> products
-                    = synchronizedSortedMap(new TreeMap<>());
+                    = new TreeMap<>();
             for (int i = 0; i < reaction.getProductCount(); i++) {
                 products.put(i, reaction.getProducts().getAtomContainer(i));
             }
@@ -134,9 +129,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
             GameTheoryMatrix EDSH
                     = new GameTheoryMatrix(theory, reaction, removeHydrogen);
 
-            if (DEBUG) {
-                LOGGER.debug("=====AGORITHM====" + theory);
-            }
+            LOGGER.debug("=====AGORITHM====" + theory);
             IGameTheory gameTheory = make(theory,
                     reaction,
                     removeHydrogen,
@@ -144,9 +137,7 @@ public class CalculationProcess extends CaseHandler implements Serializable {
                     products,
                     EDSH);
 
-            if (DEBUG) {
-                LOGGER.debug("=====DONE AGORITHM====" + theory);
-            }
+            LOGGER.debug("=====DONE AGORITHM====" + theory);
             this.reactionBlastMolMapping = gameTheory.getReactionMolMapping();
             EDSH.Clear();
 
@@ -160,14 +151,14 @@ public class CalculationProcess extends CaseHandler implements Serializable {
     /**
      * @return the delta
      */
-    public synchronized int getDelta() {
+    public int getDelta() {
         return delta;
     }
 
     /**
      * @return the reactionBlastMolMapping
      */
-    public synchronized MoleculeMoleculeMapping getReactionBlastMolMapping() {
+    public MoleculeMoleculeMapping getReactionBlastMolMapping() {
         return reactionBlastMolMapping;
     }
 }

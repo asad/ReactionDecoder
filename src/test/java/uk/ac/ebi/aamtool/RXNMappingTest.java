@@ -34,6 +34,7 @@ import uk.ac.ebi.reactionblast.mechanism.BondChangeCalculator;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import uk.ac.ebi.reactionblast.fingerprints.interfaces.IFeature;
@@ -1729,28 +1730,23 @@ public class RXNMappingTest extends MappingUtility {
         assertEquals(1, streoChangesWFingerprint.getFeatureCount());
     }
 
-//    /**
-//     * Image generation failed
-//     *
-//     * @throws Exception
-//     */
-//    @Test
-//    public void R08765() throws Exception {
-//
-//        String reactionID = "R08765";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//
-//        /*
-//         * Expected Solution
-//         * MIN, fp ID=R08765:Bond Cleaved and Formed (1)  C%C:2; 
-//         * BE 682.0, Fragment 0
-//         */
-//        assertEquals(1, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    /**
+     * KEGG R08765 - Bond change reaction
+     * Expected: C%C bond changes
+     *
+     * @throws Exception
+     */
+    @Test
+    public void R08765() throws Exception {
+
+        String reactionID = "R08765";
+        ReactionMechanismTool testReactions = testReactions(reactionID, KEGG_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
 //    /**
 //     * RHEA Reaction ID: 10125, Selected Algorithm: MAX Cleaved/Formed
 //     * ID=10125:Bond Cleaved and Formed (4) [C-C:1.0, C-O:2.0, H-O:2.0, O=O:1.0]
@@ -1813,26 +1809,23 @@ public class RXNMappingTest extends MappingUtility {
 //        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
 //    }
 //
-//    /**
-//     * RHEA
-//     *
-//     * Cleaved FingerPrint (Reactant) N(31)-C(34)
-//     *
-//     * Formed FingerPrint (Product) S(8)-C(34)
-//     *
-//     * @throws Exception
-//     */
-//    @Test
-//    public void Rhea10074() throws Exception {
-//
-//        String reactionID = "10074";
-//        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
-//        IPatternFingerprinter formedCleavedWFingerprint = testReactions
-//                .getSelectedSolution()
-//                .getBondChangeCalculator()
-//                .getFormedCleavedWFingerprint();
-//        assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
-//    }
+    /**
+     * RHEA 10074 - SAM-dependent methyltransferase
+     * Cleaved: N-C bond, Formed: S-C bond
+     *
+     * @throws Exception
+     */
+    @Test
+    public void Rhea10074() throws Exception {
+
+        String reactionID = "10074";
+        ReactionMechanismTool testReactions = testReactions(reactionID, RHEA_RXN_DIR);
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue(formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
 //
 //    //10437
 //    @Test

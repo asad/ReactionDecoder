@@ -149,10 +149,8 @@ public class Reactor extends AbstractReactor implements Serializable {
 
         this.substrateAtomCounter = 1;
         this.productAtomCounter = 1;
-        if (DEBUG) {
-            LOGGER.debug("|++++++++++++++++++++++++++++|");
-            LOGGER.debug("|i. Reactor Initialized");
-        }
+        LOGGER.debug("|++++++++++++++++++++++++++++|");
+        LOGGER.debug("|i. Reactor Initialized");
         cleanMapping(reaction);
         if (DEBUG) {
             LOGGER.debug("|++++++++++++++++++++++++++++|");
@@ -162,9 +160,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         copyReferenceReaction(reaction);
         expandReaction();
         checkReactionBalance();
-        if (DEBUG) {
-            LOGGER.debug("|iii. Compute atom-atom Mappings");
-        }
+        LOGGER.debug("|iii. Compute atom-atom Mappings");
         calculateAtomAtomMapping();
         if (DEBUG) {
             printReaction(reactionWithUniqueSTOICHIOMETRY);
@@ -1140,9 +1136,7 @@ public class Reactor extends AbstractReactor implements Serializable {
         try {
             //this helps to avoid concurrent modification error, reason unknown
             String sm = unique().create(cloneMolecule, p);
-            if (DEBUG) {
-                LOGGER.debug("smiles " + sm);
-            }
+            LOGGER.debug("smiles " + sm);
         } catch (CDKException e) {
             LOGGER.error(SEVERE, null, e);
         }
@@ -1193,9 +1187,7 @@ public class Reactor extends AbstractReactor implements Serializable {
      */
     private synchronized void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
-        if (DEBUG) {
-            LOGGER.debug("permuting " + java.util.Arrays.toString(p));
-        }
+        LOGGER.debug("permuting " + java.util.Arrays.toString(p));
         IAtom[] permutedAtoms = new IAtom[n];
 
         for (int i = 0; i < n; i++) {

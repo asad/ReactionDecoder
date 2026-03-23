@@ -33,7 +33,7 @@ import uk.ac.ebi.reactionblast.mapping.helper.Debugger;
 import uk.ac.ebi.reactionblast.mapping.interfaces.BestMatch;
 import uk.ac.ebi.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import uk.ac.ebi.reactionblast.tools.EBIMatrix;
-import static java.util.Collections.synchronizedList;
+
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
@@ -43,7 +43,6 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
  */
 public class Holder extends Debugger implements Cloneable, Serializable {
 
-    private static final boolean DEBUG = false;
     private static final long serialVersionUID = 18989786786L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(Holder.class);
@@ -100,13 +99,9 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.structureInformation = reactionContainer;
         this.bestMatchContainer = bestMatchContainer;
         this.hydFPFree = hydFPFree;
-        if (DEBUG) {
-            LOGGER.debug("setFingerprint");
-        }
+        LOGGER.debug("setFingerprint");
         setFingerprint();
-        if (DEBUG) {
-            LOGGER.debug("setMolMapping");
-        }
+        LOGGER.debug("setMolMapping");
         setMolMapping();
     }
 
@@ -125,45 +120,43 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.carbonOverlapMatrix = new EBIMatrix(row, column);
         this.fpSimMatrixWithoutHydrogen = new EBIMatrix(row, column);
         this.energyMatrix = new EBIMatrix(row, column);
-        this.mappingMolPair = synchronizedList(new ArrayList<>());
-        if (DEBUG) {
-            LOGGER.debug("initialize the Matrix");
-        }
+        this.mappingMolPair = new ArrayList<>();
+        LOGGER.debug("initialize the Matrix");
         initialize();
     }
 
     /**
      * @return the stereoMatrix
      */
-    public synchronized EBIMatrix getStereoMatrix() {
+    public EBIMatrix getStereoMatrix() {
         return stereoMatrix;
     }
 
     /**
      * @return the cliqueMatrix
      */
-    public synchronized EBIMatrix getCliqueMatrix() {
+    public EBIMatrix getCliqueMatrix() {
         return cliqueMatrix;
     }
 
     /**
      * @return the graphSimilarityMatrix
      */
-    public synchronized EBIMatrix getGraphSimilarityMatrix() {
+    public EBIMatrix getGraphSimilarityMatrix() {
         return graphSimilarityMatrix;
     }
 
     /**
      * @return the fragmentMatrix
      */
-    public synchronized EBIMatrix getFragmentMatrix() {
+    public EBIMatrix getFragmentMatrix() {
         return fragmentMatrix;
     }
 
     /**
      * @return the energyMatrix
      */
-    public synchronized EBIMatrix getEnergyMatrix() {
+    public EBIMatrix getEnergyMatrix() {
         return energyMatrix;
     }
 
@@ -187,9 +180,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
                     BitSet hydrogenEductFP = hydFPFree.getFingerPrint(eductName);
                     BitSet hydrogenProductFP = hydFPFree.getFingerPrint(productName);
                     float hydrogenSimVal = getTanimotoSimilarity(hydrogenEductFP, hydrogenProductFP);
-                    if (DEBUG) {
-                        LOGGER.debug("FP " + hydrogenSimVal);
-                    }
+                    LOGGER.debug("FP " + hydrogenSimVal);
                     fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
                 } catch (Exception ex) {
                     LOGGER.error(SEVERE, null, ex);
@@ -216,21 +207,21 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     /**
      * @return the fpSimMatrixWithoutHydrogen
      */
-    public synchronized EBIMatrix getFPSimilarityMatrix() {
+    public EBIMatrix getFPSimilarityMatrix() {
         return fpSimMatrixWithoutHydrogen;
     }
 
     /**
      * @return the structureInformation
      */
-    public synchronized ReactionContainer getReactionContainer() {
+    public ReactionContainer getReactionContainer() {
         return structureInformation;
     }
 
     /**
      * @return the mappingMolPair
      */
-    public synchronized List<MolMapping> getMappingMolPair() {
+    public List<MolMapping> getMappingMolPair() {
         return mappingMolPair;
     }
 
@@ -241,7 +232,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
      * @throws CloneNotSupportedException
      */
     @Override
-    public synchronized Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         Holder mhClone = new Holder(this.row, this.coloumn);
         mhClone.setTheory(this.getTheory());
 
@@ -296,7 +287,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     /**
      * @return the bestMatchContainer
      */
-    public synchronized BestMatch getBestMatchContainer() {
+    public BestMatch getBestMatchContainer() {
         return bestMatchContainer;
     }
 

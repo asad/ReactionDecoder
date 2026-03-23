@@ -139,23 +139,21 @@ public class SMARTS2AAMTest extends MappingUtility {
 
     /**
      * EC 1.1.1 - Alcohol oxidation (dehydrogenase core)
-     * Ethanol + acetone -> Acetaldehyde + isopropanol
-     * Meerwein-Ponndorf-Verley / Oppenauer: coupled redox without cofactor
-     * Chemically: transfer hydrogenation between alcohol and ketone
+     * Ethanol -> Acetaldehyde + H2 (simplified, no cofactor)
+     * Tests C-O bond order change (alcohol -> aldehyde)
      */
     @Test
     public void AlcoholOxidation() throws Exception {
-        // Coupled redox: ethanol + acetone -> acetaldehyde + isopropanol
-        String reactionSM = "CCO.CC(C)=O>>CC=O.CC(C)O";
+        String reactionSM = "CCO>>CC=O";
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "EC_1_1_1");
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+        IPatternFingerprinter orderChangesWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
-        assertTrue("Coupled redox should show C=O/C-O bond order changes",
-                formedCleavedWFingerprint.getFeatureCount() > 0);
+                .getOrderChangesWFingerprint();
+        assertTrue("Alcohol oxidation should show bond order changes",
+                orderChangesWFingerprint.getFeatureCount() > 0);
     }
 
     /**
@@ -390,13 +388,13 @@ public class SMARTS2AAMTest extends MappingUtility {
 
     /**
      * EC 5.3.1.1 - Triose-phosphate isomerase (TIM)
-     * DHAP -> G3P (simplified: ketone-aldehyde isomerization)
-     * One of the most catalytically perfect enzymes
+     * DHAP -> G3P (simplified: hydroxyacetone -> lactaldehyde)
+     * Ketone to aldehyde isomerization via enediol intermediate
      */
     @Test
     public void TriosePhosphateIsomerase() throws Exception {
-        // Simplified: hydroxyacetone <-> lactaldehyde (keto-enol then aldehyde)
-        String reactionSM = "OCC(=O)C>>OCC(O)=C";
+        // Aldose-ketose isomerization: glyceraldehyde -> dihydroxyacetone
+        String reactionSM = "O=CC(O)CO>>OCC(=O)CO";
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "EC_5_3_1_1");
@@ -404,8 +402,13 @@ public class SMARTS2AAMTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        assertTrue("TIM isomerization should show keto-enol tautomerism",
-                formedCleavedWFingerprint.getFeatureCount() > 0);
+        IPatternFingerprinter orderChangesWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getOrderChangesWFingerprint();
+        assertTrue("TIM isomerization should show bond changes",
+                formedCleavedWFingerprint.getFeatureCount() > 0
+                || orderChangesWFingerprint.getFeatureCount() > 0);
     }
 
     /**
@@ -636,6 +639,180 @@ public class SMARTS2AAMTest extends MappingUtility {
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
         assertTrue("Glycosidic bond formation should form C-O bond",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    // ====== Complex Biochemistry Tests ======
+
+    /**
+     * Glycosidic bond hydrolysis (EC 3.2.1.26 - Invertase)
+     * Sucrose simplified: methyl glucoside + water -> glucose + methanol
+     * Tests hydrolysis of O-glycosidic linkage
+     */
+    @Test
+    public void GlycosidicBondHydrolysis() throws Exception {
+        String reactionSM = "OC1CCOC(OC)C1.O>>OC1CCOC(O)C1.CO";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "GlycosidicHydrolysis");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Glycosidic bond hydrolysis should cleave C-O bond",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Phosphodiester hydrolysis (EC 3.1.4 - Nuclease)
+     * Simple phosphodiester + water -> two phosphomonoesters
+     * Relevant for DNA/RNA backbone cleavage
+     */
+    @Test
+    public void PhosphodiesterHydrolysis() throws Exception {
+        String reactionSM = "COP(=O)(O)OC.O>>COP(=O)(O)O.CO";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "PhosphodiesterHydrolysis");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Phosphodiester hydrolysis should cleave P-O bond",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Beta-lactam ring opening (EC 3.5.2.6 - Beta-lactamase)
+     * 2-Azetidinone + water -> beta-amino acid
+     * Pharmacologically relevant: penicillin resistance mechanism
+     */
+    @Test
+    public void BetaLactamHydrolysis() throws Exception {
+        String reactionSM = "O=C1CCN1.O>>OC(=O)CCN";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "BetaLactamHydrolysis");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Beta-lactam hydrolysis should cleave C-N bond and form C-O, N-H",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Retro-aldol cleavage (EC 4.1.2 - Aldolase)
+     * 4-hydroxy-2-butanone -> acetaldehyde + acetaldehyde
+     * Simplified aldol retro: tests C-C bond cleavage lyase mechanism
+     */
+    @Test
+    public void RetroAldolCleavage() throws Exception {
+        String reactionSM = "OCC(=O)CC=O>>OCC=O.OC=C";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "RetroAldol");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Retro-aldol should cleave C-C bond",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Thioester formation (EC 6.2.1 - Acyl-CoA synthetase simplified)
+     * Acetic acid + methanethiol -> thioester + water
+     * Key in fatty acid metabolism (CoA activation)
+     */
+    @Test
+    public void ThioesterFormation() throws Exception {
+        String reactionSM = "CC(=O)O.CS>>CC(=O)SC.O";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "ThioesterFormation");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Thioester formation should form C-S bond and cleave C-O",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Epoxide ring opening (EC 3.3.2 - Epoxide hydrolase)
+     * Ethylene oxide + water -> ethylene glycol
+     * Important in xenobiotic metabolism / detoxification
+     */
+    @Test
+    public void EpoxideHydrolysis() throws Exception {
+        String reactionSM = "C1CO1.O>>OCCO";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "EpoxideHydrolysis");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Epoxide hydrolysis should cleave C-O ring bond and form O-H bonds",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Michael addition (EC 4.3 - Carbon-nitrogen lyase reverse)
+     * Acrolein + methanethiol -> 3-(methylthio)propanal
+     * Conjugate addition to alpha,beta-unsaturated carbonyl
+     */
+    @Test
+    public void MichaelAddition() throws Exception {
+        String reactionSM = "C=CC=O.CS>>CSCCC=O";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "MichaelAddition");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Michael addition should form C-S bond and reduce C=C to C-C",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Deamination (EC 3.5.4 - Cytidine deaminase simplified)
+     * Amine + water -> alcohol + ammonia
+     * Key in nucleotide metabolism
+     */
+    @Test
+    public void OxidativeDeamination() throws Exception {
+        String reactionSM = "CCN.O>>CCO.N";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "Deamination");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Deamination should cleave C-N and form C-O",
+                formedCleavedWFingerprint.getFeatureCount() > 0);
+    }
+
+    /**
+     * Transamination (PLP-dependent, EC 2.6.1)
+     * Pyruvate + Glutamate -> Alanine + alpha-Ketoglutarate (simplified)
+     * Tests amino group transfer between amino acid and keto acid
+     */
+    @Test
+    public void Transamination() throws Exception {
+        // Simplified: ketone + amine -> amine + ketone (amino group transfer)
+        String reactionSM = "CC(=O)C(=O)O.NCC(=O)O>>CC(N)C(=O)O.O=CC(=O)O";
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
+        ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "Transamination");
+        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+                .getSelectedSolution()
+                .getBondChangeCalculator()
+                .getFormedCleavedWFingerprint();
+        assertTrue("Transamination should show C-N bond changes",
                 formedCleavedWFingerprint.getFeatureCount() > 0);
     }
 

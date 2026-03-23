@@ -18,7 +18,6 @@
  */
 package uk.ac.ebi.aamtool.rgroup;
 
-import static uk.ac.ebi.aamtool.rgroup.ECRgroupFrequency.DEBUG;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -203,16 +202,12 @@ class MultiReactionContainer {
         Set<String> common = new HashSet<>(l);
         boolean intersection = common.retainAll(r);
 
-        if (DEBUG) {
-            LOGGER.debug("intersection " + common);
-        }
+        LOGGER.debug("intersection " + common);
 
         Set<String> difference = new TreeSet<>(l);
         difference.addAll(r);
         boolean removeAll = difference.removeAll(common);
-        if (DEBUG) {
-            LOGGER.debug("difference " + difference);
-        }
+        LOGGER.debug("difference " + difference);
         /*
          if no reaction is present then add all the patterns
          */

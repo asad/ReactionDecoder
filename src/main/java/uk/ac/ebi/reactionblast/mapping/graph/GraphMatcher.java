@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 
@@ -61,7 +62,6 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
-    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
 
@@ -315,9 +315,8 @@ public class GraphMatcher extends Debugger {
             // This will make the executor accept no new threads
             // and finish all existing threads in the queue
             executor.shutdown();
-            // Wait until all threads are finish
-            while (!executor.isTerminated()) {
-            }
+            // Wait until all threads are finished
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
             LOGGER.debug("==Gathering MCS solution from the Thread==");
             threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {

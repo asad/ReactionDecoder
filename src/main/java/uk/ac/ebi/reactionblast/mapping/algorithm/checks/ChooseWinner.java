@@ -48,7 +48,6 @@ import static java.util.Collections.synchronizedList;
  */
 public class ChooseWinner extends Selector implements Serializable {
 
-    private final static boolean DEBUG = false;
     private static final long serialVersionUID = 0x296558709L;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(ChooseWinner.class);
@@ -168,17 +167,11 @@ public class ChooseWinner extends Selector implements Serializable {
                 }
             }
         }
-        if (DEBUG) {
-            LOGGER.debug("resolveDeadLocks");
-        }
+        LOGGER.debug("resolveDeadLocks");
         resolveDeadLocks(scores);
-        if (DEBUG) {
-            LOGGER.debug("setWinOverFlags");
-        }
+        LOGGER.debug("setWinOverFlags");
         setWinOverFlags();
-        if (DEBUG) {
-            LOGGER.debug("Done");
-        }
+        LOGGER.debug("Done");
     }
 
     /*
@@ -377,34 +370,20 @@ public class ChooseWinner extends Selector implements Serializable {
             double maxStereo = getMaxStereo(choosenCells);
             double minEnergy = getMinEnergy(choosenCells);
             double maxCarbonOverlap = getMaxCarbonOverlap(choosenCells);
-            if (DEBUG) {
-                LOGGER.debug("maxStereo " + maxStereo);
-            }
-            if (DEBUG) {
-                LOGGER.debug("minEnergy " + minEnergy);
-            }
-            if (DEBUG) {
-                LOGGER.debug("maxCarbon " + maxCarbonOverlap);
-            }
+            LOGGER.debug("maxStereo " + maxStereo);
+            LOGGER.debug("minEnergy " + minEnergy);
+            LOGGER.debug("maxCarbon " + maxCarbonOverlap);
             for (var cell : choosenCells) {
                 double stereoVal = stereoMatrix.getValue(cell.indexI, cell.indexJ);
                 double energyVal = energyMatrix.getValue(cell.indexI, cell.indexJ);
                 double carbonOverlap = carbonOverlapMatrix.getValue(cell.indexI, cell.indexJ);
 
-                if (DEBUG) {
-                    LOGGER.debug("Comparing " + cell.indexI + "," + cell.indexJ);
-                }
+                LOGGER.debug("Comparing " + cell.indexI + "," + cell.indexJ);
 
-                if (DEBUG) {
-                    LOGGER.debug("maxStereo " + maxStereo + ", stereoVal " + stereoVal);
-                }
-                if (DEBUG) {
-                    LOGGER.debug("minEnergy " + minEnergy + ", energyVal " + energyVal);
-                }
+                LOGGER.debug("maxStereo " + maxStereo + ", stereoVal " + stereoVal);
+                LOGGER.debug("minEnergy " + minEnergy + ", energyVal " + energyVal);
 
-                if (DEBUG) {
-                    LOGGER.debug("maxCarbon " + maxCarbonOverlap + ", Carbon " + carbonOverlap);
-                }
+                LOGGER.debug("maxCarbon " + maxCarbonOverlap + ", Carbon " + carbonOverlap);
 
                 if (stereoVal >= maxStereo
                         && energyVal <= minEnergy

@@ -102,9 +102,7 @@ final class GameTheoryMin extends BaseGameTheory {
             Map<Integer, IAtomContainer> _products,
             GameTheoryMatrix rpsh)
             throws Exception {
-        if (DEBUG) {
-            LOGGER.debug("I am MIN MIX");
-        }
+        LOGGER.debug("I am MIN MIX");
         this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
@@ -124,9 +122,7 @@ final class GameTheoryMin extends BaseGameTheory {
         ReactionIsomorphismHandler RIH = new ReactionIsomorphismHandler(mh, eductList, productList);
 
         if (RIH.getIsomorphismFlag()) {
-            if (DEBUG) {
-                LOGGER.debug("ISOMORPHISM");
-            }
+            LOGGER.debug("ISOMORPHISM");
             mh = RIH.getMatrixHolder();
             GenerateIsoMorphismMapping();
         } else {
@@ -140,17 +136,11 @@ final class GameTheoryMin extends BaseGameTheory {
 
         if (winner.getFlag()) {
 
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping(false);
         }
     }
@@ -169,34 +159,24 @@ final class GameTheoryMin extends BaseGameTheory {
         }
         boolean conditionmet = false;
         if (!ruleMatchingFlag) {
-            if (DEBUG) {
-                LOGGER.debug("CHECK Rule Based Mapping Handler Match");
-            }
+            LOGGER.debug("CHECK Rule Based Mapping Handler Match");
             RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
-                if (DEBUG) {
-                    LOGGER.debug("Rule Based Mapping Handler Match Found");
-                }
+                LOGGER.debug("Rule Based Mapping Handler Match Found");
                 mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
                 conditionmet = true;
             }
             ruleMatchingFlag = true;
-            if (DEBUG) {
-                LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
-            }
+            LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
         }
 
         if (!conditionmet && counter <= 5) {
-            if (DEBUG) {
-                LOGGER.debug("call counter " + counter);
-                LOGGER.debug("Subgraph/Exact Match Test");
-            }
+            LOGGER.debug("call counter " + counter);
+            LOGGER.debug("Subgraph/Exact Match Test");
             MinSelection select
                     = new MinSelection(mh, eductList, productList);
             if (select.isSubAndCompleteMatchFlag()) {
-                if (DEBUG) {
-                    LOGGER.debug("Subgraph/Exact Match");
-                }
+                LOGGER.debug("Subgraph/Exact Match");
                 mh = select.getUpdatedHolder();
             }
         }
@@ -215,17 +195,11 @@ final class GameTheoryMin extends BaseGameTheory {
             printFlagMatrix(winner, eductList, productList);
         }
         if (winner.getFlag()) {
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping(ruleMatchingFlag);
         }
     }
@@ -256,13 +230,9 @@ final class GameTheoryMin extends BaseGameTheory {
 
                     AbstractGraphMatching graphMatching = new GraphMatching(reactionName, ac1, ac2, _dirSuffix, removeHydrogen);
                     boolean mcsMatch = graphMatching.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, a_BitSet, b_BitSet);
-                    if (DEBUG) {
-                        LOGGER.debug("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
-                    }
+                    LOGGER.debug("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
                     if (mcsMatch) {
-                        if (DEBUG) {
-                            LOGGER.debug(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
-                        }
+                        LOGGER.debug(eductList.get(substrateIndex) + " <=> " + productList.get(productIndex));
                         delta += graphMatching.removeMatchedAtomsAndUpdateAAM(reaction);
                         List<MolMapping> rMap = getReactionMolMapping().
                                 getMapping(reactionName, this.eductList.get(substrateIndex), this.productList.get(productIndex));

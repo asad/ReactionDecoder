@@ -25,8 +25,6 @@ import java.io.IOException;
 import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Collection;
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableCollection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,7 +91,6 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
 public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
-    private final boolean DEBUG = false;
     private static final long serialVersionUID = 98698690880809981L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(BondChangeCalculator.class);
@@ -149,13 +146,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
         this.reactionMoleculeMoleculePairList = new LinkedHashSet<>();
 
-        this.bondFormedMap = synchronizedMap(new HashMap<>());
-        this.bondCleavedMap = synchronizedMap(new HashMap<>());
-        this.bondOrderRMap = synchronizedMap(new HashMap<>());
-        this.bondOrderPMap = synchronizedMap(new HashMap<>());
-        this.AtomStereoRMap = synchronizedMap(new HashMap<>());
-        this.AtomStereoPMap = synchronizedMap(new HashMap<>());
-        this.reactionCenterFragmentList = synchronizedList(new ArrayList<>());
+        this.bondFormedMap = new HashMap<>();
+        this.bondCleavedMap = new HashMap<>();
+        this.bondOrderRMap = new HashMap<>();
+        this.bondOrderPMap = new HashMap<>();
+        this.AtomStereoRMap = new HashMap<>();
+        this.AtomStereoPMap = new HashMap<>();
+        this.reactionCenterFragmentList = new ArrayList<>();
     }
 
     /**
@@ -163,7 +160,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized BEMatrix getEductBEMatrix() {
+    public BEMatrix getEductBEMatrix() {
         return bondChangeAnnotator.getEductBEMatrix();
     }
 
@@ -172,7 +169,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized BEMatrix getProductBEMatrix() {
+    public BEMatrix getProductBEMatrix() {
         return bondChangeAnnotator.getProductBEMatrix();
     }
 
@@ -181,7 +178,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized RMatrix getRMatrix() {
+    public RMatrix getRMatrix() {
         return bondChangeAnnotator.getRMatrix();
     }
 
@@ -189,7 +186,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      */
     @Override
-    public synchronized void printBMatrix() {
+    public void printBMatrix() {
         bondChangeAnnotator.printBMatrix();
     }
 
@@ -197,7 +194,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      */
     @Override
-    public synchronized void printEMatrix() {
+    public void printEMatrix() {
         bondChangeAnnotator.printEMatrix();
     }
 
@@ -205,7 +202,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      */
     @Override
-    public synchronized void printRMatrix() {
+    public void printRMatrix() {
         bondChangeAnnotator.printRMatrix();
     }
 
@@ -214,7 +211,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @param outputFile
      */
     @Override
-    public synchronized void writeBMatrix(File outputFile) {
+    public void writeBMatrix(File outputFile) {
         bondChangeAnnotator.writeBMatrix(outputFile);
     }
 
@@ -223,7 +220,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @param outputFile
      */
     @Override
-    public synchronized void writeEMatrix(File outputFile) {
+    public void writeEMatrix(File outputFile) {
         bondChangeAnnotator.writeEMatrix(outputFile);
     }
 
@@ -232,7 +229,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @param outputFile
      */
     @Override
-    public synchronized void writeRMatrix(File outputFile) {
+    public void writeRMatrix(File outputFile) {
         bondChangeAnnotator.writeRMatrix(outputFile);
     }
 
@@ -241,7 +238,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized boolean hasRMatrix() {
+    public boolean hasRMatrix() {
         return bondChangeAnnotator.hasRMatrix();
     }
 
@@ -250,8 +247,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized Map<IAtom, IAtom> getMappingMap() {
-        return synchronizedMap(bondChangeAnnotator.getMappingMap());
+    public Map<IAtom, IAtom> getMappingMap() {
+        return bondChangeAnnotator.getMappingMap();
     }
 
     /**
@@ -259,7 +256,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized List<BondChange> getBondChangeList() {
+    public List<BondChange> getBondChangeList() {
         return bondChangeAnnotator.getBondChangeList();
     }
 
@@ -268,12 +265,12 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return @throws CDKException
      */
     @Override
-    public synchronized IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException {
+    public IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException {
         return orderChangesWFingerprint;
     }
 
     @Override
-    public synchronized IPatternFingerprinter getStereoChangesWFingerprint() throws CDKException {
+    public IPatternFingerprinter getStereoChangesWFingerprint() throws CDKException {
         return stereoChangesWFingerprint;
     }
 
@@ -282,7 +279,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return @throws CDKException
      */
     @Override
-    public synchronized IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException {
+    public IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException {
         return formedCleavedWFingerprint;
     }
 
@@ -293,7 +290,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @throws CDKException
      */
     @Override
-    public synchronized IPatternFingerprinter getReactionCenterWFingerprint() throws CDKException {
+    public IPatternFingerprinter getReactionCenterWFingerprint() throws CDKException {
         return reactionCenterWFingerprint;
     }
 
@@ -303,7 +300,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
 
         StringBuilder result = new StringBuilder();
         result.append(NEW_LINE).append(getLicenseHeader());
@@ -478,7 +475,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @throws IOException
      */
     @Override
-    public synchronized void writeBondChanges(File bondChangeInfoFile) throws IOException {
+    public void writeBondChanges(File bondChangeInfoFile) throws IOException {
         FileWriter bcFW = new FileWriter(bondChangeInfoFile + ".txt");
         try (BufferedWriter bfw = new BufferedWriter(bcFW)) {
             bfw.newLine();
@@ -658,32 +655,32 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return atom(s) Formed at reactant side and with reactant ID
      */
     @Override
-    public synchronized Map<IBond, String> getBondFormedProduct() {
-        return synchronizedMap(bondFormedMap);
+    public Map<IBond, String> getBondFormedProduct() {
+        return bondFormedMap;
     }
 
     /**
      * @return atom(s) cleaved at reactant side and with reactant ID
      */
     @Override
-    public synchronized Map<IBond, String> getBondCleavedReactant() {
-        return synchronizedMap(bondCleavedMap);
+    public Map<IBond, String> getBondCleavedReactant() {
+        return bondCleavedMap;
     }
 
     /**
      * @return atom(s) order changed at reactant side and with reactant ID
      */
     @Override
-    public synchronized Map<IBond, String> getBondOrderReactant() {
-        return synchronizedMap(bondOrderRMap);
+    public Map<IBond, String> getBondOrderReactant() {
+        return bondOrderRMap;
     }
 
     /**
      * @return atom(s) order changed at product side and with product ID
      */
     @Override
-    public synchronized Map<IBond, String> getBondOrderProduct() {
-        return synchronizedMap(bondOrderPMap);
+    public Map<IBond, String> getBondOrderProduct() {
+        return bondOrderPMap;
     }
 
     /**
@@ -691,8 +688,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * reactant ID
      */
     @Override
-    public synchronized Map<IAtom, String> getStereoCenterAtomsReactant() {
-        return synchronizedMap(AtomStereoRMap);
+    public Map<IAtom, String> getStereoCenterAtomsReactant() {
+        return AtomStereoRMap;
     }
 
     /**
@@ -700,8 +697,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * product ID
      */
     @Override
-    public synchronized Map<IAtom, String> getStereoCenterAtomsProduct() {
-        return synchronizedMap(AtomStereoPMap);
+    public Map<IAtom, String> getStereoCenterAtomsProduct() {
+        return AtomStereoPMap;
     }
 
     /**
@@ -709,7 +706,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return (removed the unchanged H atoms)
      */
     @Override
-    public synchronized IReaction getReactionWithCompressUnChangedHydrogens() {
+    public IReaction getReactionWithCompressUnChangedHydrogens() {
         IReaction compressedReaction = null;
 
         try {
@@ -804,7 +801,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @param reaction
      */
-    private synchronized void cleanMapping(IReaction reaction) {
+    private void cleanMapping(IReaction reaction) {
 
         int count = reaction.getMappingCount();
         for (int i = count; i > 0; i--) {
@@ -834,7 +831,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @throws Exception
      */
     @Override
-    public synchronized IReaction getReaction() throws Exception {
+    public IReaction getReaction() throws Exception {
         IReaction mappedReactionWithBondChanges = mappedReaction;
         return mappedReactionWithBondChanges;
     }
@@ -844,7 +841,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized Map<IAtom, IAtom> getAtomAtomMappings() {
+    public Map<IAtom, IAtom> getAtomAtomMappings() {
         return bondChangeAnnotator.getMappingMap();
     }
 
@@ -853,7 +850,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public synchronized AtomAtomMappingContainer getMappingContainer() {
+    public AtomAtomMappingContainer getMappingContainer() {
         return bondChangeAnnotator.getMappingContainer();
     }
 
@@ -861,14 +858,14 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return @throws CDKException
      */
-    public synchronized int getTotalBondBreakingEnergy() throws CDKException {
+    public int getTotalBondBreakingEnergy() throws CDKException {
         return this.energySum;
     }
 
     /**
      * @return the energyDelta
      */
-    public synchronized int getEnergyDelta() {
+    public int getEnergyDelta() {
         return abs(energyDelta);
     }
 
@@ -946,21 +943,21 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return the reactionCenterFormedCleavedFingerprint
      */
     public Map<Integer, IPatternFingerprinter> getReactionCenterFormedCleavedFingerprint() {
-        return synchronizedMap(reactionCenterFormedCleavedFingerprint);
+        return reactionCenterFormedCleavedFingerprint;
     }
 
     /**
      * @return the reactionCenterOrderChangeFingerprint
      */
     public Map<Integer, IPatternFingerprinter> getReactionCenterOrderChangeFingerprint() {
-        return synchronizedMap(reactionCenterOrderChangeFingerprint);
+        return reactionCenterOrderChangeFingerprint;
     }
 
     /**
      * @return the reactionCenterStereoChangeFingerprint
      */
     public Map<Integer, IPatternFingerprinter> getReactionCenterStereoChangeFingerprint() {
-        return synchronizedMap(reactionCenterStereoChangeFingerprint);
+        return reactionCenterStereoChangeFingerprint;
     }
 
     /**

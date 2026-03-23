@@ -107,9 +107,7 @@ public class ECRgroupFrequency {
             }
         }
 
-        if (DEBUG) {
-            LOGGER.debug("Number of EC parsed " + reactionMap.size());
-        }
+        LOGGER.debug("Number of EC parsed " + reactionMap.size());
 
         int ec1Counter = 0;
         int ec2Counter = 0;
@@ -153,38 +151,32 @@ public class ECRgroupFrequency {
                     && reactionMap.get(ec).getCommonDifferenceFP().isEmpty()
                     && !reactionMap.get(ec).isRGroup()) {
                 no_common_fragment_in_non_r_group++;
-                if (DEBUG) {
-                    LOGGER.debug("Processing EC: " + ec
-                            + ", R-found: " + reactionMap.get(ec).isRGroup()
-                            + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
-                            + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
-                            + ", reaction count: " + reactionMap.get(ec).getReactionCount());
-                }
+                LOGGER.debug("Processing EC: " + ec
+                        + ", R-found: " + reactionMap.get(ec).isRGroup()
+                        + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
+                        + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
+                        + ", reaction count: " + reactionMap.get(ec).getReactionCount());
             }
             if (reactionMap.get(ec).getCommonCommonFP().isEmpty()
                     && reactionMap.get(ec).getCommonDifferenceFP().isEmpty()
                     && reactionMap.get(ec).isRGroup()) {
                 no_common_fragment_in_r_group++;
-                if (DEBUG) {
 
-                    LOGGER.debug("Processing EC: " + ec
-                            + ", R-found: " + reactionMap.get(ec).isRGroup()
-                            + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
-                            + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
-                            + ", reaction count: " + reactionMap.get(ec).getReactionCount());
-                }
+                LOGGER.debug("Processing EC: " + ec
+                        + ", R-found: " + reactionMap.get(ec).isRGroup()
+                        + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
+                        + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
+                        + ", reaction count: " + reactionMap.get(ec).getReactionCount());
             }
 
             if (reactionMap.get(ec).getCommonCommonFP().isEmpty()
                     && reactionMap.get(ec).getCommonDifferenceFP().isEmpty()) {
                 no_common_fragment_in_either++;
-                if (DEBUG) {
-                    LOGGER.debug("Processing EC: " + ec
-                            + ", R-found: " + reactionMap.get(ec).isRGroup()
-                            + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
-                            + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
-                            + ", reaction count: " + reactionMap.get(ec).getReactionCount());
-                }
+                LOGGER.debug("Processing EC: " + ec
+                        + ", R-found: " + reactionMap.get(ec).isRGroup()
+                        + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP()
+                        + ", difference fragment: " + reactionMap.get(ec).getCommonDifferenceFP()
+                        + ", reaction count: " + reactionMap.get(ec).getReactionCount());
             }
 
             String ec3 = reactionMap.get(ec).getEnzyme1Level() + "." + reactionMap.get(ec).getEnzyme2Level() + "." + reactionMap.get(ec).getEnzyme3Level();

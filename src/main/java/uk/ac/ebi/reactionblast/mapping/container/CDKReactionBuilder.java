@@ -150,9 +150,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
         Double tempStoic;
 
-        if (DEBUG) {
-            LOGGER.debug("standardize reaction module phase 1");
-        }
+        LOGGER.debug("standardize reaction module phase 1");
         for (IAtomContainer mol : reaction.getReactants().atomContainers()) {
             String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
             tempStoic = 1.0;
@@ -176,21 +174,15 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 }
                 a.setProperty("OLD_RANK", old_atom_rank_index_reactant++);
             }
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 1.1.1");
-            }
+            LOGGER.debug("standardize reaction module phase 1.1.1");
             fixDativeBonds(gMol);
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 1.1.2");
-            }
+            LOGGER.debug("standardize reaction module phase 1.1.2");
             percieveAtomTypesAndConfigureAtoms(gMol);
             IAtomContainer molWithH = gMol;
             //= ExtAtomContainerManipulator.addExplicitH(gMol);
             aromatizeMolecule(molWithH);
 
-            if (DEBUG) {
-                LOGGER.debug(id + " standardize reaction module phase 1.2");
-            }
+            LOGGER.debug(id + " standardize reaction module phase 1.2");
 
             if (id == null || id.isEmpty()) {
                 molWithH = setProperty(molWithH);
@@ -223,14 +215,10 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         setReactantMolecule(standardizedReaction, _metabolites);
         _metabolites.clear();
 
-        if (DEBUG) {
-            LOGGER.debug("standardize reaction module phase 2");
-        }
-        if (DEBUG) {
-            LOGGER.debug("");
-            LOGGER.debug("****************************");
-            LOGGER.debug("");
-        }
+        LOGGER.debug("standardize reaction module phase 2");
+        LOGGER.debug("");
+        LOGGER.debug("****************************");
+        LOGGER.debug("");
         for (IAtomContainer mol : reaction.getProducts().atomContainers()) {
             String id = mol.getID() == null || mol.getID().trim().isEmpty() ? null : mol.getID();
             tempStoic = 1.0;
@@ -322,9 +310,7 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             LOGGER.debug("post CreateReactionSMILES " + postCreateReactionSMILES);
         }
 
-        if (DEBUG) {
-            LOGGER.debug("standardize reaction module end");
-        }
+        LOGGER.debug("standardize reaction module end");
         return standardizedReaction;
     }
 
@@ -585,24 +571,18 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             }
         }
 
-        if (DEBUG) {
-            LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
-            LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
-        }
+        LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
+        LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
 
         if (leftHandAtomCount != rightHandAtomCount) {
-            if (DEBUG) {
-                LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
-                        + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-                LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
-            }
+            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
+                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
+            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            if (DEBUG) {
-                LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
-                        + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-                LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
-            }
+            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
+                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
+            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
             return false;
         }
 

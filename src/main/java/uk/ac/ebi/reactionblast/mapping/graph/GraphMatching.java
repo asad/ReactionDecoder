@@ -146,10 +146,8 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
     public synchronized int removeMatchedAtomsAndUpdateAAM(IReaction reaction) {
         int delta = 0;
 
-        if (DEBUG) {
-            LOGGER.debug("Before removing Mol Size E: " + educt.getAtomCount()
-                    + " , Before removing Mol Size P: " + product.getAtomCount());
-        }
+        LOGGER.debug("Before removing Mol Size E: " + educt.getAtomCount()
+                + " , Before removing Mol Size P: " + product.getAtomCount());
         int beforeESize = educt.getAtomCount();
 
         if (bestAtomMappingList != null) {
@@ -157,9 +155,7 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
                 String eID = map.getKey().getID();
                 IAtom eAtom = getAtomByID(educt, eID);
                 String pID = map.getValue().getID();
-                if (DEBUG) {
-                    LOGGER.debug("eID " + eID + ",pID " + pID);
-                }
+                LOGGER.debug("eID " + eID + ",pID " + pID);
                 IAtom pAtom = getAtomByID(product, pID);
 
                 if (eAtom != null && pAtom != null) {
@@ -177,10 +173,8 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
             matchedPart.removeAtom(matchedAtom);
         }
 
-        if (DEBUG) {
-            LOGGER.debug("After removing Mol Size E: " + educt.getAtomCount()
-                    + " , After removing Mol Size P: " + product.getAtomCount());
-        }
+        LOGGER.debug("After removing Mol Size E: " + educt.getAtomCount()
+                + " , After removing Mol Size P: " + product.getAtomCount());
 
         if (beforeESize == educt.getAtomCount()) {
             try {

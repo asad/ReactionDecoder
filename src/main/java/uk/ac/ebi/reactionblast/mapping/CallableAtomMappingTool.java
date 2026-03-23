@@ -59,7 +59,6 @@ import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 public class CallableAtomMappingTool implements Serializable {
 
     static final String NEW_LINE = getProperty("line.separator");
-    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
@@ -126,10 +125,8 @@ public class CallableAtomMappingTool implements Serializable {
              */
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("b) Local Model: ");
-            if (DEBUG) {
-                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                LOGGER.debug(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
-            }
+            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+            LOGGER.debug(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
             IReaction cleanedReaction1 = null;
             try {
                 cleanedReaction1 = standardizer.standardize(reaction);
@@ -145,10 +142,8 @@ public class CallableAtomMappingTool implements Serializable {
              */
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("a) Global Model: ");
-            if (DEBUG) {
-                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                LOGGER.debug(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
-            }
+            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+            LOGGER.debug(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
             IReaction cleanedReaction2 = null;
             try {
                 cleanedReaction2 = standardizer.standardize(reaction);
@@ -156,9 +151,7 @@ public class CallableAtomMappingTool implements Serializable {
                 LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
                 LOGGER.error(e);
             }
-            if (DEBUG) {
-                LOGGER.debug(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
-            }
+            LOGGER.debug(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
             MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen);
             cs.submit(maxThread);
             jobCounter++;
@@ -168,10 +161,8 @@ public class CallableAtomMappingTool implements Serializable {
              */
             LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
             LOGGER.info("c) Mixture Model: ");
-            if (DEBUG) {
-                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                LOGGER.debug(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
-            }
+            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+            LOGGER.debug(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
             IReaction cleanedReaction3 = null;
             try {
                 cleanedReaction3 = standardizer.standardize(reaction);
@@ -188,10 +179,8 @@ public class CallableAtomMappingTool implements Serializable {
                  */
                 LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
                 LOGGER.info("d) Rings Model: ");
-                if (DEBUG) {
-                    LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                    LOGGER.debug(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
-                }
+                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
+                LOGGER.debug(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
                 IReaction cleanedReaction4 = null;
                 try {
                     cleanedReaction4 = standardizer.standardize(reaction);
@@ -218,9 +207,7 @@ public class CallableAtomMappingTool implements Serializable {
              */
             while (!executor.isTerminated()) {
             }
-            if (DEBUG) {
-                LOGGER.debug("======DONE CallableAtomMappingTool=======");
-            }
+            LOGGER.debug("======DONE CallableAtomMappingTool=======");
             gc();
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
@@ -228,9 +215,7 @@ public class CallableAtomMappingTool implements Serializable {
         } finally {
             executor.shutdown();
         }
-        if (DEBUG) {
-            LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
-        }
+        LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
         /*
          * Mapping cache cleared
          */

@@ -97,9 +97,7 @@ final class GameTheoryMixture extends BaseGameTheory {
             Map<Integer, IAtomContainer> _products,
             GameTheoryMatrix rpsh)
             throws Exception {
-        if (DEBUG) {
-            LOGGER.debug("I am MIXTURE");
-        }
+        LOGGER.debug("I am MIXTURE");
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
         this.reaction = reaction;
@@ -165,9 +163,7 @@ final class GameTheoryMixture extends BaseGameTheory {
             RuleBasedMappingHandler ruleBasedMappingHandler
                     = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
-                if (DEBUG) {
-                    LOGGER.debug("Rule Based Mapping Handler Match Found");
-                }
+                LOGGER.debug("Rule Based Mapping Handler Match Found");
                 mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
             }
             ruleMatchingFlag = true;
@@ -179,17 +175,11 @@ final class GameTheoryMixture extends BaseGameTheory {
         }
         if (winner.getFlag()) {
 
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping(ruleMatchingFlag);
         }
     }

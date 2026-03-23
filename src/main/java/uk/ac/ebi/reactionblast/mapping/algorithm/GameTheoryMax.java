@@ -101,9 +101,7 @@ final class GameTheoryMax extends BaseGameTheory {
             Map<Integer, IAtomContainer> _products,
             GameTheoryMatrix rpsh)
             throws Exception {
-        if (DEBUG) {
-            LOGGER.debug("I am MAX");
-        }
+        LOGGER.debug("I am MAX");
         this.counter = 1;
         this.canonLabeler = new SmilesMoleculeLabeller();
         this.removeHydrogen = removeHydrogen;
@@ -137,26 +135,18 @@ final class GameTheoryMax extends BaseGameTheory {
 
         boolean conditionmet = false;
         if (!ruleMatchingFlag) {
-            if (DEBUG) {
-                LOGGER.debug("CHECK Rule Based Mapping Handler Match");
-            }
+            LOGGER.debug("CHECK Rule Based Mapping Handler Match");
             RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
-                if (DEBUG) {
-                    LOGGER.debug("Rule Based Mapping Handler Match Found");
-                }
+                LOGGER.debug("Rule Based Mapping Handler Match Found");
                 mh = Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
                 conditionmet = true;
             }
             ruleMatchingFlag = true;
-            if (DEBUG) {
-                LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
-            }
+            LOGGER.debug("DONE CHECK Rule Based Mapping Handler");
         }
         if (!conditionmet && counter <= 5) {
-            if (DEBUG) {
-                LOGGER.debug("Subgraph/Exact Match Test");
-            }
+            LOGGER.debug("Subgraph/Exact Match Test");
             MaxSelection select = new MaxSelection(mh, eductList, productList);
             if (select.isSubAndCompleteMatchFlag()) {
 //            System.out.println("Subgraph/Exact Match");
@@ -177,17 +167,11 @@ final class GameTheoryMax extends BaseGameTheory {
             printFlagMatrix(winner, eductList, productList);
         }
         if (winner.getFlag()) {
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Mapping**************");
-            }
+            LOGGER.debug("**********Updated Mapping**************");
             UpdateMapping();
-            if (DEBUG) {
-                LOGGER.debug("**********Updated Matrix**************");
-            }
+            LOGGER.debug("**********Updated Matrix**************");
             UpdateMatrix(mh, removeHydrogen);
-            if (DEBUG) {
-                LOGGER.debug("**********Generate Mapping**************");
-            }
+            LOGGER.debug("**********Generate Mapping**************");
             GenerateMapping(ruleMatchingFlag);
         }
     }

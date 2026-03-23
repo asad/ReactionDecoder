@@ -83,9 +83,7 @@ class CaseHandler {
     protected final IReaction reaction;
 
     CaseHandler(IReaction reaction) throws Intractable {
-        if (DEBUG) {
-            LOGGER.debug("=====CaseHandler====");
-        }
+        LOGGER.debug("=====CaseHandler====");
         this.reaction = reaction;
         ringContainerCountR = getRingContainerCount(reaction.getReactants());
         ringContainerCountP = getRingContainerCount(reaction.getProducts());
@@ -148,9 +146,7 @@ class CaseHandler {
                 }
             }
         }
-        if (DEBUG) {
-            LOGGER.debug("=====DONE CaseHandler====");
-        }
+        LOGGER.debug("=====DONE CaseHandler====");
     }
 
     /*
@@ -204,18 +200,14 @@ class CaseHandler {
             String phosphateSMILES = "OP(O)(O)=O";
             SmartsPattern smartsPhosphate;
 
-            if (DEBUG) {
-                LOGGER.debug("String phosphateSMILES = \"OP(O)(O)=O\";");
-            }
+            LOGGER.debug("String phosphateSMILES = \"OP(O)(O)=O\";");
 
             smartsPhosphate = SmartsPattern.create(phosphateSMILES, SilentChemObjectBuilder.getInstance());
             boolean matchesE = smartsPhosphate.matches(educt);
             boolean matchesP = smartsPhosphate.matches(product);
 
-            if (DEBUG) {
-                LOGGER.debug("String smartsPhosphate Q " + matchesE);
-                LOGGER.debug("String smartsPhosphate T " + matchesP);
-            }
+            LOGGER.debug("String smartsPhosphate Q " + matchesE);
+            LOGGER.debug("String smartsPhosphate T " + matchesP);
             if (matchesE && matchesP) {
                 boolean findAndChipBondPhophate1 = findAndChipBondPhophate(educt);
                 boolean findAndChipBondPhophate2 = findAndChipBondPhophate(product);
@@ -310,16 +302,12 @@ class CaseHandler {
      * Example R01557
      */
     private boolean findAndChipBondBetweenRings(IAtomContainer container) {
-        if (DEBUG) {
-            LOGGER.debug("Find and Chip Bond Between Rings");
-        }
+        LOGGER.debug("Find and Chip Bond Between Rings");
         List<IBond> bond_to_be_removed = new ArrayList<>();
         for (IAtom atom : container.atoms()) {
             if (atom.getSymbol().equals("O") && !atom.isAromatic()) {
                 int number_of_rings = ((Integer) atom.getProperty(RING_CONNECTIONS));
-                if (DEBUG) {
-                    LOGGER.debug("number_of_rings " + number_of_rings);
-                }
+                LOGGER.debug("number_of_rings " + number_of_rings);
 
                 List<IBond> bonds = container.getConnectedBondsList(atom);
                 if (DEBUG) {
@@ -357,9 +345,7 @@ class CaseHandler {
         boolean flag = false;
 
         flag = flag | case1(s, t);
-        if (DEBUG) {
-            LOGGER.debug("Case 1: " + flag);
-        }
+        LOGGER.debug("Case 1: " + flag);
         return flag;
     }
 
