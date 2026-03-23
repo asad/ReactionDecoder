@@ -154,8 +154,8 @@ public class GraphMatcher extends Debugger {
                 threadsAvailable = jobMap.size();
             }
             
-            if (threadsAvailable > 4) {
-                threadsAvailable = 4;
+            if (threadsAvailable > 8) {
+                threadsAvailable = 8;
             }
 
             LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
@@ -385,13 +385,24 @@ public class GraphMatcher extends Debugger {
 
             AtomAtomMapping atomAtomMapping = mcs.getAtomAtomMapping();
             AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(q, t);
-            atomAtomMapping.getMappingsByAtoms().keySet().stream().forEach((a) -> {
-                IAtom atomByID1 = getAtomByID(q, a);
-                IAtom b = atomAtomMapping.getMappingsByAtoms().get(a);
-                IAtom atomByID2 = getAtomByID(t, b);
-//                if (DEBUG) {
-//                    out.println("atomByID1 " + atomByID1.getID() + " atomByID2 " + atomByID2.getID());
-//                }
+
+            // Build ID→Atom maps for O(1) lookup instead of O(n) linear scan
+            Map<String, IAtom> qIdMap = new java.util.HashMap<>();
+            for (IAtom a : q.atoms()) {
+                if (a.getID() != null) {
+                    qIdMap.put(a.getID(), a);
+                }
+            }
+            Map<String, IAtom> tIdMap = new java.util.HashMap<>();
+            for (IAtom a : t.atoms()) {
+                if (a.getID() != null) {
+                    tIdMap.put(a.getID(), a);
+                }
+            }
+
+            atomAtomMapping.getMappingsByAtoms().forEach((a, b) -> {
+                IAtom atomByID1 = a.getID() != null ? qIdMap.get(a.getID()) : null;
+                IAtom atomByID2 = b.getID() != null ? tIdMap.get(b.getID()) : null;
                 if (atomByID1 != null && atomByID2 != null) {
                     atomAtomMappingNew.put(atomByID1, atomByID2);
                 } else {
@@ -410,15 +421,4 @@ public class GraphMatcher extends Debugger {
         return null;
     }
 
-    private static IAtom getAtomByID(IAtomContainer ac, IAtom atom) {
-        if (atom.getID() == null) {
-            return null;
-        }
-        for (IAtom a : ac.atoms()) {
-            if (atom.getID().equals(a.getID())) {
-                return a;
-            }
-        }
-        return null;
-    }
 }

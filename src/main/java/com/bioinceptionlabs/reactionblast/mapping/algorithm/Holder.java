@@ -99,10 +99,8 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         this.structureInformation = reactionContainer;
         this.bestMatchContainer = bestMatchContainer;
         this.hydFPFree = hydFPFree;
-        LOGGER.debug("setFingerprint");
-        setFingerprint();
-        LOGGER.debug("setMolMapping");
-        setMolMapping();
+        LOGGER.debug("setFingerprintAndMolMapping");
+        setFingerprintAndMolMapping();
     }
 
     /**
@@ -171,32 +169,40 @@ public class Holder extends Debugger implements Cloneable, Serializable {
         carbonOverlapMatrix.initMatrix(0.0);
     }
 
-    private void setFingerprint() {
-        for (int i = 0; i < eductCounter.size(); i++) {
-            for (int j = 0; j < productCounter.size(); j++) {
-                try {
-                    String eductName = eductCounter.get(i).trim();
-                    String productName = productCounter.get(j).trim();
-                    BitSet hydrogenEductFP = hydFPFree.getFingerPrint(eductName);
-                    BitSet hydrogenProductFP = hydFPFree.getFingerPrint(productName);
-                    float hydrogenSimVal = getTanimotoSimilarity(hydrogenEductFP, hydrogenProductFP);
-                    LOGGER.debug("FP " + hydrogenSimVal);
-                    fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
-                } catch (Exception ex) {
-                    LOGGER.error(SEVERE, null, ex);
-                }
+    private void setFingerprintAndMolMapping() {
+        // Pre-cache trimmed names and fingerprints to avoid redundant lookups
+        int eSize = eductCounter.size();
+        int pSize = productCounter.size();
+        String[] eNames = new String[eSize];
+        BitSet[] eFPs = new BitSet[eSize];
+        for (int i = 0; i < eSize; i++) {
+            eNames[i] = eductCounter.get(i).trim();
+            try {
+                eFPs[i] = hydFPFree.getFingerPrint(eNames[i]);
+            } catch (Exception ex) {
+                LOGGER.error(SEVERE, null, ex);
             }
         }
-    }
-
-    private void setMolMapping() {
-        for (int i = 0; i < eductCounter.size(); i++) {
-            for (int j = 0; j < productCounter.size(); j++) {
+        String[] pNames = new String[pSize];
+        BitSet[] pFPs = new BitSet[pSize];
+        for (int j = 0; j < pSize; j++) {
+            pNames[j] = productCounter.get(j).trim();
+            try {
+                pFPs[j] = hydFPFree.getFingerPrint(pNames[j]);
+            } catch (Exception ex) {
+                LOGGER.error(SEVERE, null, ex);
+            }
+        }
+        // Single combined loop for fingerprint similarity + mol mapping
+        for (int i = 0; i < eSize; i++) {
+            for (int j = 0; j < pSize; j++) {
                 try {
-                    String eductName = eductCounter.get(i).trim();
-                    String productName = productCounter.get(j).trim();
-                    MolMapping m = new MolMapping(eductName, productName, i, j);
-                    getMappingMolPair().add(m);
+                    if (eFPs[i] != null && pFPs[j] != null) {
+                        float hydrogenSimVal = getTanimotoSimilarity(eFPs[i], pFPs[j]);
+                        LOGGER.debug("FP " + hydrogenSimVal);
+                        fpSimMatrixWithoutHydrogen.setValue(i, j, hydrogenSimVal);
+                    }
+                    getMappingMolPair().add(new MolMapping(eNames[i], pNames[j], i, j));
                 } catch (Exception ex) {
                     LOGGER.error(SEVERE, null, ex);
                 }
