@@ -34,6 +34,7 @@ import com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import static java.util.logging.Logger.getLogger;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -1921,10 +1922,7 @@ public class RXNMappingTest extends MappingUtility {
         BondChangeCalculator bcc = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator();
-        int totalChanges = bcc.getFormedCleavedWFingerprint().getFeatureCount()
-                + bcc.getOrderChangesWFingerprint().getFeatureCount()
-                + bcc.getStereoChangesWFingerprint().getFeatureCount();
-        assertTrue(totalChanges >= 0);
+        assertNotNull("R00001 should produce a valid bond change solution", bcc);
     }
 
     /**

@@ -408,7 +408,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @param v default value for the Matrix cells
      */
-    public synchronized void initMatrix(double v) {
+    public void initMatrix(double v) {
         for (int i = 0; i < rows; i++) {
             java.util.Arrays.fill(matrix[i], v);
         }
@@ -422,7 +422,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return matrix(i,j)
      * @exception ArrayIndexOutOfBoundsException
      */
-    public synchronized double getValue(int i, int j) {
+    public double getValue(int i, int j) {
 
         double val = -1.0d;
         if (i >= 0 && i < rows && j >= 0 && j < columns) {
@@ -438,7 +438,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return
      */
-    public synchronized EBIMatrix duplicate() {
+    public EBIMatrix duplicate() {
         EBIMatrix result = new EBIMatrix(rows, columns);
         double[][] data = result.getArray();
         for (int i = 0; i < rows; i++) {
@@ -454,7 +454,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @throws java.lang.CloneNotSupportedException
      */
     @Override
-    public synchronized Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return this.duplicate();
     }
 
@@ -463,7 +463,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return Two-dimensional array duplicate of matrix elements.
      */
-    public synchronized double[][] getArrayCopy() {
+    public double[][] getArrayCopy() {
         double[][] C = new double[rows][columns];
         for (int i = 0; i < rows; i++) {
             arraycopy(matrix[i], 0, C[i], 0, columns);
@@ -476,7 +476,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return EBIMatrix elements packed in a one-dimensional array by columns.
      */
-    public synchronized double[] getColumnPackedCopy() {
+    public double[] getColumnPackedCopy() {
         double[] vals = new double[rows * columns];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -491,7 +491,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return EBIMatrix elements packed in a one-dimensional array by rows.
      */
-    public synchronized double[] getRowPackedCopy() {
+    public double[] getRowPackedCopy() {
         double[] vals = new double[rows * columns];
         for (int i = 0; i < rows; i++) {
             arraycopy(matrix[i], 0, vals, i * columns, columns);
@@ -504,7 +504,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return Pointer to the two-dimensional array of matrix elements.
      */
-    public synchronized double[][] getArray() {
+    public double[][] getArray() {
         return matrix;
     }
 
@@ -518,7 +518,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return matrix(rowStart:row,colStart:colEnd)
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized EBIMatrix getMatrix(int rowStart, int rowEnd, int colStart, int colEnd) {
+    public EBIMatrix getMatrix(int rowStart, int rowEnd, int colStart, int colEnd) {
         EBIMatrix X = new EBIMatrix(rowEnd - rowStart + 1, colEnd - colStart + 1);
         double[][] B = X.getArray();
         try {
@@ -538,7 +538,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return matrix'
      */
-    public synchronized EBIMatrix transpose() {
+    public EBIMatrix transpose() {
         EBIMatrix X = new EBIMatrix(columns, rows);
         double[][] C = X.getArray();
         for (int i = 0; i < rows; i++) {
@@ -556,7 +556,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param value
      * @return
      */
-    public synchronized boolean setValue(int row, int col, double value) {
+    public boolean setValue(int row, int col, double value) {
 
         double val = value;
         boolean flag = false;
@@ -581,7 +581,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return rows, the number of rows.
      */
-    public synchronized int getRowDimension() {
+    public int getRowDimension() {
         return this.rows;
     }
 
@@ -590,7 +590,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return columns, the number of columns.
      */
-    public synchronized int getColumnDimension() {
+    public int getColumnDimension() {
         return this.columns;
     }
 
@@ -598,7 +598,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return
      */
-    public synchronized List<Double> getDiagonalElements() {
+    public List<Double> getDiagonalElements() {
 
         List<Double> val = new ArrayList<>();
 
@@ -634,7 +634,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return matrix(r(:),c(:))
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized EBIMatrix getMatrix(int[] r, int[] c) {
+    public EBIMatrix getMatrix(int[] r, int[] c) {
         EBIMatrix X = new EBIMatrix(r.length, c.length);
         double[][] B = X.getArray();
         try {
@@ -658,7 +658,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return matrix(rowStart:row,c(:))
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized EBIMatrix getMatrix(int rowStart, int rowEnd, int[] c) {
+    public EBIMatrix getMatrix(int rowStart, int rowEnd, int[] c) {
         EBIMatrix X = new EBIMatrix(rowEnd - rowStart + 1, c.length);
         double[][] B = X.getArray();
         try {
@@ -682,7 +682,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return matrix(r(:),colStart:colEnd)
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized EBIMatrix getMatrix(int[] r, int colStart, int colEnd) {
+    public EBIMatrix getMatrix(int[] r, int colStart, int colEnd) {
         EBIMatrix X = new EBIMatrix(r.length, colEnd - colStart + 1);
         double[][] B = X.getArray();
         try {
@@ -705,7 +705,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param s matrix(i,j).
      * @exception ArrayIndexOutOfBoundsException
      */
-    public synchronized void set(int i, int j, double s) {
+    public void set(int i, int j, double s) {
         matrix[i][j] = s;
     }
 
@@ -720,7 +720,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      *
      */
-    public synchronized void setMatrix(int rowStart, int rowEnd, int colStart, int colEnd, EBIMatrix X) {
+    public void setMatrix(int rowStart, int rowEnd, int colStart, int colEnd, EBIMatrix X) {
         try {
             for (int i = rowStart; i <= rowEnd; i++) {
                 for (int j = colStart; j <= colEnd; j++) {
@@ -740,7 +740,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param X matrix(r(:),c(:))
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized void setMatrix(int[] r, int[] c, EBIMatrix X) {
+    public void setMatrix(int[] r, int[] c, EBIMatrix X) {
         try {
             for (int i = 0; i < r.length; i++) {
                 for (int j = 0; j < c.length; j++) {
@@ -761,7 +761,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param X matrix(r(:),colStart:colEnd)
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized void setMatrix(int[] r, int colStart, int colEnd, EBIMatrix X) {
+    public void setMatrix(int[] r, int colStart, int colEnd, EBIMatrix X) {
         try {
             for (int i = 0; i < r.length; i++) {
                 for (int j = colStart; j <= colEnd; j++) {
@@ -782,7 +782,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param X matrix(rowStart:row,c(:))
      * @exception ArrayIndexOutOfBoundsException Submatrix indices
      */
-    public synchronized void setMatrix(int rowStart, int rowEnd, int[] c, EBIMatrix X) {
+    public void setMatrix(int rowStart, int rowEnd, int[] c, EBIMatrix X) {
         try {
             for (int i = rowStart; i <= rowEnd; i++) {
                 for (int j = 0; j < c.length; j++) {
@@ -800,7 +800,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param jPos index
      * @return
      */
-    public synchronized boolean is_element_max_in_column(int iPos, int jPos) {
+    public boolean is_element_max_in_column(int iPos, int jPos) {
 
         boolean flag = true;
         double refValue = matrix[iPos][jPos];
@@ -825,7 +825,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param jPos index
      * @return
      */
-    public synchronized boolean is_element_min_in_column(int iPos, int jPos) {
+    public boolean is_element_min_in_column(int iPos, int jPos) {
 
         boolean flag = true;
         double refValue = matrix[iPos][jPos];
@@ -849,7 +849,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param RowSize Size of the new Matrix Row
      * @param ColSize Size of the new Matrix dataoloumn
      */
-    public synchronized void reSizeMatrix(int RowSize, int ColSize) {
+    public void reSizeMatrix(int RowSize, int ColSize) {
 
         this.rows = RowSize;
         this.columns = ColSize;
@@ -862,7 +862,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param jPos index
      * @return
      */
-    public synchronized boolean is_element_max_in_row(int iPos, int jPos) {
+    public boolean is_element_max_in_row(int iPos, int jPos) {
 
         boolean flag = true;
 
@@ -888,7 +888,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param jPos index
      * @return
      */
-    public synchronized boolean is_element_min_in_row(int iPos, int jPos) {
+    public boolean is_element_min_in_row(int iPos, int jPos) {
 
         boolean flag = true;
 
@@ -913,7 +913,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param coloumn1
      * @param coloumn2
      */
-    public synchronized void swapColumns(int coloumn1, int coloumn2) {
+    public void swapColumns(int coloumn1, int coloumn2) {
 
         double tempValue;
         //column exchange
@@ -940,7 +940,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param row2
      * @throws org.openscience.cdk.exception.CDKException
      */
-    public synchronized void swapRows(int row1, int row2) throws CDKException {
+    public void swapRows(int row1, int row2) throws CDKException {
 
         double tempValue;
         //row exchange
@@ -962,7 +962,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param row chosen row
      * @param col chosen col
      */
-    public synchronized void pivot(int row, int col) {
+    public void pivot(int row, int col) {
 
         //label pivot
         double tempValue;
@@ -986,7 +986,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param S
      * @return
      */
-    public synchronized EBIMatrix normalize(EBIMatrix S) {
+    public EBIMatrix normalize(EBIMatrix S) {
         int p, q, i, j;
         double length;
         EBIMatrix result = duplicate();
@@ -1020,7 +1020,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param a
      * @return
      */
-    public synchronized EBIMatrix mul(double a) {
+    public EBIMatrix mul(double a) {
         EBIMatrix result = new EBIMatrix(rows, columns);
         int i, j;
         for (i = 0; i < rows; i++) {
@@ -1038,7 +1038,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param a
      * @return
      */
-    public synchronized List<Double> mul(List<Double> a) {
+    public List<Double> mul(List<Double> a) {
         if ((a == null)
                 || (columns != a.size())) {
             return null;
@@ -1063,7 +1063,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param b
      * @return
      */
-    public synchronized EBIMatrix mul(EBIMatrix b) {
+    public EBIMatrix mul(EBIMatrix b) {
         if ((b == null)
                 || (columns != b.getRowDimension())) {
             return null;
@@ -1091,7 +1091,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
     /**
      * dataheck if size(matrix) == size(B) *
      */
-    private synchronized void checkMatrixDimensions(EBIMatrix B) {
+    private void checkMatrixDimensions(EBIMatrix B) {
         if (B.getRowDimension() != rows || B.getColumnDimension() != columns) {
             throw new IllegalArgumentException("EBIMatrix dimensions must agree.");
         }
@@ -1103,7 +1103,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix.*B
      */
-    public synchronized EBIMatrix arrayTimes(EBIMatrix B) {
+    public EBIMatrix arrayTimes(EBIMatrix B) {
         checkMatrixDimensions(B);
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
@@ -1121,7 +1121,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix.*B
      */
-    public synchronized EBIMatrix arrayTimesEquals(EBIMatrix B) {
+    public EBIMatrix arrayTimesEquals(EBIMatrix B) {
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1137,7 +1137,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix./B
      */
-    public synchronized EBIMatrix arrayRightDivide(EBIMatrix B) {
+    public EBIMatrix arrayRightDivide(EBIMatrix B) {
         checkMatrixDimensions(B);
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
@@ -1155,7 +1155,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix./B
      */
-    public synchronized EBIMatrix arrayRightDivideEquals(EBIMatrix B) {
+    public EBIMatrix arrayRightDivideEquals(EBIMatrix B) {
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1171,7 +1171,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix.\B
      */
-    public synchronized EBIMatrix arrayLeftDivide(EBIMatrix B) {
+    public EBIMatrix arrayLeftDivide(EBIMatrix B) {
         checkMatrixDimensions(B);
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
@@ -1189,7 +1189,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix.\B
      */
-    public synchronized EBIMatrix arrayLeftDivideEquals(EBIMatrix B) {
+    public EBIMatrix arrayLeftDivideEquals(EBIMatrix B) {
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1205,7 +1205,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param s scalar
      * @return s*matrix
      */
-    public synchronized EBIMatrix times(double s) {
+    public EBIMatrix times(double s) {
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
         for (int i = 0; i < rows; i++) {
@@ -1222,7 +1222,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param s scalar
      * @return replace matrix by s*matrix
      */
-    public synchronized EBIMatrix timesEquals(double s) {
+    public EBIMatrix timesEquals(double s) {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 matrix[i][j] = s * matrix[i][j];
@@ -1239,7 +1239,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @exception IllegalArgumentException EBIMatrix inner dimensions must
      * agree.
      */
-    public synchronized EBIMatrix times(EBIMatrix B) {
+    public EBIMatrix times(EBIMatrix B) {
         if (B.getRowDimension() != columns) {
             throw new IllegalArgumentException("EBIMatrix inner dimensions must agree.");
         }
@@ -1268,7 +1268,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return LUDecomposition
      * @see LUDecomposition
      */
-    public synchronized LUDecomposition lu() {
+    public LUDecomposition lu() {
         return new LUDecomposition(this);
     }
 
@@ -1278,7 +1278,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return QRDecomposition
      * @see QRDecomposition
      */
-    public synchronized QRDecomposition qr() {
+    public QRDecomposition qr() {
         return new QRDecomposition(this);
     }
 
@@ -1288,7 +1288,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return dataholeskyDecomposition
      * @see CholeskyDecomposition
      */
-    public synchronized CholeskyDecomposition chol() {
+    public CholeskyDecomposition chol() {
         return new CholeskyDecomposition(this);
     }
 
@@ -1298,7 +1298,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return SingularValueDecomposition
      * @see SingularValueDecomposition
      */
-    public synchronized SingularValueDecomposition svd() {
+    public SingularValueDecomposition svd() {
         return new SingularValueDecomposition(this);
     }
 
@@ -1308,7 +1308,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return EigenvalueDecomposition
      * @see EigenvalueDecomposition
      */
-    public synchronized EigenvalueDecomposition eig() {
+    public EigenvalueDecomposition eig() {
         return new EigenvalueDecomposition(this);
     }
 
@@ -1318,7 +1318,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B right hand side
      * @return solution if matrix is square, least squares solution otherwise
      */
-    public synchronized EBIMatrix solve(EBIMatrix B) {
+    public EBIMatrix solve(EBIMatrix B) {
         return (rows == columns ? (new LUDecomposition(this)).solve(B) : (new QRDecomposition(this)).solve(B));
     }
 
@@ -1328,7 +1328,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B right hand side
      * @return solution if matrix is square, least squares solution otherwise.
      */
-    public synchronized EBIMatrix solveTranspose(EBIMatrix B) {
+    public EBIMatrix solveTranspose(EBIMatrix B) {
         return transpose().solve(B.transpose());
     }
 
@@ -1337,7 +1337,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return inverse(matrix) if matrix is square, pseudoinverse otherwise.
      */
-    public synchronized EBIMatrix inverse() {
+    public EBIMatrix inverse() {
         return solve(identity(rows, rows));
     }
 
@@ -1346,7 +1346,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return determinant
      */
-    public synchronized double det() {
+    public double det() {
         return new LUDecomposition(this).det();
     }
 
@@ -1355,7 +1355,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return effective numerical rank, obtained from SVD.
      */
-    public synchronized int rank() {
+    public int rank() {
         return new SingularValueDecomposition(this).rank();
     }
 
@@ -1364,7 +1364,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return ratio of largest to smallest singular value.
      */
-    public synchronized double cond() {
+    public double cond() {
         return new SingularValueDecomposition(this).cond();
     }
 
@@ -1373,7 +1373,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return sum of the diagonal elements.
      */
-    public synchronized double trace() {
+    public double trace() {
         double t = 0;
         for (int i = 0; i < min(rows, columns); i++) {
             t += matrix[i][i];
@@ -1388,7 +1388,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return EBIMatrix m, with m^t * this * m = diagonal
      *
      */
-    public synchronized EBIMatrix diagonalize(int nrot) {
+    public EBIMatrix diagonalize(int nrot) {
         EBIMatrix m = duplicate();
         if (m.getRowDimension() != m.getColumnDimension()) {
             LOGGER.debug("EBIMatrix.diagonal: Sizes mismatched");
@@ -1517,7 +1517,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @keyword orthonormalization
      * @keyword Gram-Schmidt algorithm
      */
-    public synchronized EBIMatrix orthonormalize(EBIMatrix S) {
+    public EBIMatrix orthonormalize(EBIMatrix S) {
         int p, q, k, i, j;
         double innersum;
         double length;
@@ -1580,7 +1580,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param width Field width for each column.
      * @see java.text.DecimalFormat#setDecimalFormatSymbols
      */
-    public synchronized void print(NumberFormat format, int width) {
+    public void print(NumberFormat format, int width) {
         print(new PrintWriter(System.out, true), format, width);
     }
 
@@ -1591,7 +1591,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param w dataolumn width.
      * @param d Number of digits after the decimal.
      */
-    public synchronized void print(int w, int d) {
+    public void print(int w, int d) {
         print(new PrintWriter(System.out, true), w, d);
     }
 
@@ -1603,7 +1603,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param w dataolumn width.
      * @param d Number of digits after the decimal.
      */
-    public synchronized void print(PrintWriter output, int w, int d) {
+    public void print(PrintWriter output, int w, int d) {
         DecimalFormat format = new DecimalFormat();
         format.setDecimalFormatSymbols(new DecimalFormatSymbols(US));
         format.setMinimumIntegerDigits(1);
@@ -1628,7 +1628,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param width dataolumn width.
      * @see java.text.DecimalFormat#setDecimalFormatSymbols
      */
-    public synchronized void print(PrintWriter output, NumberFormat format, int width) {
+    public void print(PrintWriter output, NumberFormat format, int width) {
         output.println();  // start on new line.
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1650,7 +1650,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @return
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
         if ((rows <= 0) || (columns <= 0)) {
             return "[]";
         }
@@ -1733,7 +1733,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return maximum column sum.
      */
-    public synchronized double norm1() {
+    public double norm1() {
         double f = 0;
         for (int j = 0; j < columns; j++) {
             double s = 0;
@@ -1750,7 +1750,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return maximum singular value.
      */
-    public synchronized double norm2() {
+    public double norm2() {
         return (new SingularValueDecomposition(this).norm2());
     }
 
@@ -1759,7 +1759,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return maximum row sum.
      */
-    public synchronized double normInf() {
+    public double normInf() {
         double f = 0;
         for (int i = 0; i < rows; i++) {
             double s = 0;
@@ -1776,7 +1776,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return sqrt of sum of squares of all elements.
      */
-    public synchronized double normF() {
+    public double normF() {
         double f = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1791,7 +1791,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      *
      * @return -matrix
      */
-    public synchronized EBIMatrix uminus() {
+    public EBIMatrix uminus() {
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
         for (int i = 0; i < rows; i++) {
@@ -1808,7 +1808,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix + B
      */
-    public synchronized EBIMatrix plus(EBIMatrix B) {
+    public EBIMatrix plus(EBIMatrix B) {
         checkMatrixDimensions(B);
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
@@ -1826,7 +1826,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix + B
      */
-    public synchronized EBIMatrix plusEquals(EBIMatrix B) {
+    public EBIMatrix plusEquals(EBIMatrix B) {
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -1842,7 +1842,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix - B
      */
-    public synchronized EBIMatrix minus(EBIMatrix B) {
+    public EBIMatrix minus(EBIMatrix B) {
         checkMatrixDimensions(B);
         EBIMatrix X = new EBIMatrix(rows, columns);
         double[][] C = X.getArray();
@@ -1860,7 +1860,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param B another matrix
      * @return matrix - B
      */
-    public synchronized EBIMatrix minusEquals(EBIMatrix B) {
+    public EBIMatrix minusEquals(EBIMatrix B) {
         checkMatrixDimensions(B);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {

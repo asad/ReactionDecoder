@@ -17,6 +17,7 @@ import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.interfaces.Algorithm;
 
+// Utility class for manual SMSD testing — not part of automated test suite
 /**
  *
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>

@@ -370,8 +370,8 @@ public class SMARTS2AAMTest extends MappingUtility {
      */
     @Test
     public void AldolCleavage() throws Exception {
-        // Simplified aldol: 4-hydroxy-2-butanone -> acetone + formaldehyde
-        String reactionSM = "CC(=O)CC=O>>CC(=O)C.O=C";
+        // Retro-aldol cleavage: 3-hydroxybutanal -> 2 acetaldehydes
+        String reactionSM = "CC(O)CC=O>>CC=O.CC=O";
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "EC_4_1_2_13");
@@ -423,14 +423,14 @@ public class SMARTS2AAMTest extends MappingUtility {
         IReaction parseReactionSMILES = parseReactionSMILES(reactionSM);
         parseReactionSMILES.setID("EC_5_1_1_1");
         ReactionMechanismTool testReactions = getAnnotation(parseReactionSMILES, true);
-        IPatternFingerprinter formedCleavedWFingerprint = testReactions
+        IPatternFingerprinter stereoChangesWFingerprint = testReactions
                 .getSelectedSolution()
                 .getBondChangeCalculator()
-                .getFormedCleavedWFingerprint();
+                .getStereoChangesWFingerprint();
         // Racemization: stereo center inversion, no net bond changes
         // but stereo changes should be detected
         assertTrue("Racemase should detect stereochemical change",
-                testReactions.getSelectedSolution() != null);
+                stereoChangesWFingerprint.getFeatureCount() > 0);
     }
 
     // =========================================================================
@@ -883,7 +883,7 @@ public class SMARTS2AAMTest extends MappingUtility {
      */
     @Test
     public void RingOpeningOzonolysis() throws Exception {
-        String reactionSM = "C1CC=CCC1.O=[O+][O-]>>O=CCCCCC=O";
+        String reactionSM = "C1CC=CCC1.O=[O+][O-]>>O=CCCCCC=O.O";
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IReaction parseReactionSmiles = smilesParser.parseReactionSmiles(reactionSM);
         ReactionMechanismTool testReactions = performAtomAtomMapping(parseReactionSmiles, "RingOpeningOzonolysis");

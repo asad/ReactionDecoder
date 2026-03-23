@@ -39,6 +39,7 @@ import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
 import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
+// Utility class for checking reaction balance — not part of automated test suite
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>

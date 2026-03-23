@@ -59,7 +59,6 @@ import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
-import static java.util.Collections.synchronizedList;
 
 import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
@@ -153,9 +152,16 @@ public class ReactionMechanismTool implements Serializable {
             boolean checkComplex,
             boolean accept_no_change,
             IStandardizer standardizer) throws CDKException, AssertionError, Exception {
-        this.allSolutions = synchronizedList(new ArrayList<>());
+        if (reaction == null) {
+            throw new IllegalArgumentException("Reaction cannot be null");
+        }
+        this.allSolutions = new ArrayList<>();
         this.selectedMapping = null;
         this.accept_no_change = accept_no_change;//transporter reactions
+
+        if (reaction.getReactantCount() == 0 || reaction.getProductCount() == 0) {
+            LOGGER.warn("Reaction has no reactants or no products: {0}", reaction.getID());
+        }
 
         /*
          * IMP: Set all null hydrogen counts to 0, else CDKToBeam cries out loudly
