@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,8 @@
  *
  * Created on February 3, 2006, 12:06 AM
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 package uk.ac.ebi.reactionblast.mapping.algorithm.checks;
@@ -43,8 +43,8 @@ import static java.util.Collections.synchronizedList;
 
 /**
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  */
 public class ChooseWinner extends Selector implements Serializable {
 

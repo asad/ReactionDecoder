@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,8 +44,8 @@ import static uk.ac.ebi.reactionblast.stereo.IStereoAndConformation.Z;
  * and Rmzinger. Stereo-chemistry and Sequence Rules A Proposal for Modification
  * of Cahn-Ingold-Prelog System. Tetrahedron: Asymmetry Vol 5 (1994) 835-861
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class StereogenicCenterCalculator implements Serializable {
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Syed Asad Rahman <asad at ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  * @author maclean
  *
  */

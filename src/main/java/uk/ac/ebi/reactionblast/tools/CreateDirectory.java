@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,8 @@
  *
  * Created on 13 January 2006, 09:41
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 package uk.ac.ebi.reactionblast.tools;
@@ -38,8 +38,8 @@ import static uk.ac.ebi.reactionblast.tools.utility.Suffix.getInstance;
 //~--- classes ----------------------------------------------------------------
 /**
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  */
 public class CreateDirectory {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,17 +27,22 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import uk.ac.ebi.reactionblast.mapping.Reactor;
 
 /**
  * This class maintain the atom-atom mapping of a reaction between reactants and
  * products
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
 public class AtomAtomMappingContainer extends Object implements Serializable {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(AtomAtomMappingContainer.class);
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final long serialVersionUID = 17879096958755L;
@@ -118,14 +122,16 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
             }
         }
         if (error) {
-            out.print("ERROR in AtomAtomMapping-found hole in the mapping (reactants atomIDs)");
+            StringBuilder sb = new StringBuilder();
+            sb.append("ERROR in AtomAtomMapping-found hole in the mapping (reactants atomIDs)");
             for (int i = 0; i < reactants.getAtomContainerCount(); i++) {
-                out.println("Mol:" + reactants.getAtomContainer(i).getID());
+                sb.append(NEW_LINE).append("Mol:").append(reactants.getAtomContainer(i).getID());
                 for (int j = 0; j < reactants.getAtomContainer(i).getAtomCount(); j++) {
                     IAtom at = reactants.getAtomContainer(i).getAtom(j);
-                    out.println(at.getSymbol() + at.getID());
+                    sb.append(NEW_LINE).append(at.getSymbol()).append(at.getID());
                 }
             }
+            LOGGER.error(sb.toString());
         }
         //end of checking statements
 
@@ -182,15 +188,17 @@ public class AtomAtomMappingContainer extends Object implements Serializable {
             error = true;
         }
         if (error) {
-            out.print("ERROR in AtomAtomMapping-found hole in the mapping (products atomIDs)");
-            out.print("mapped reactants atoms: " + mappedAtomsR + ", mapped products atoms: " + mappedAtomsP);
+            StringBuilder sb = new StringBuilder();
+            sb.append("ERROR in AtomAtomMapping-found hole in the mapping (products atomIDs)");
+            sb.append("mapped reactants atoms: ").append(mappedAtomsR).append(", mapped products atoms: ").append(mappedAtomsP);
             for (int i = 0; i < products.getAtomContainerCount(); i++) {
-                out.println("Mol:" + products.getAtomContainer(i).getID());
+                sb.append(NEW_LINE).append("Mol:").append(products.getAtomContainer(i).getID());
                 for (int j = 0; j < products.getAtomContainer(i).getAtomCount(); j++) {
                     IAtom at = products.getAtomContainer(i).getAtom(j);
-                    out.println(at.getSymbol() + at.getID());
+                    sb.append(NEW_LINE).append(at.getSymbol()).append(at.getID());
                 }
             }
+            LOGGER.error(sb.toString());
         }
         //end of checking statements
     }

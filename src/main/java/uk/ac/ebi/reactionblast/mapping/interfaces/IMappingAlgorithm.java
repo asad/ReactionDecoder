@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,8 @@ package uk.ac.ebi.reactionblast.mapping.interfaces;
  * <OL> <lI>0: MIN Minimization Model, <lI>1: MAX Minimization Model, <lI>2: MAX
  * MIXTURE Model, <lI>3: ASSIMILATION Model <lI>4: MIN MIXTURE Model </OL>
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public enum IMappingAlgorithm {
 

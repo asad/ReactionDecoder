@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,7 @@ import static org.openscience.smsd.tools.Utility.isMatch;
 
 /**
  *
- * @author Syed Asad Rahman <asad at ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 class CaseHandler {
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
+/* Copyright (C) 2009-2020  Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -31,7 +31,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
 /**
- * @author Syed Asad Rahman <asad at ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  * @author maclean
  *
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,13 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.Dimension;
-import static java.lang.System.err;
 import java.util.List;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  *
@@ -33,6 +34,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class GridCanvasGenerator extends AbstractCanvasGenerator implements CanvasGenerator {
 
     private static final Logger LOG = getLogger(GridCanvasGenerator.class.getName());
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GridCanvasGenerator.class);
 
     private int rows;
 
@@ -84,7 +86,7 @@ public class GridCanvasGenerator extends AbstractCanvasGenerator implements Canv
             }
 
             if (rowCounter > rows) {
-                err.println("WARNING : Row limit exceeded");
+                LOGGER.error("WARNING : Row limit exceeded");
             }
         }
         size = new Dimension(cols * cellCanvas.width, rows * cellCanvas.height);

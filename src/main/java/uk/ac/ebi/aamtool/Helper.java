@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,8 +36,8 @@ import uk.ac.ebi.reactionblast.tools.ImageGenerator;
 import uk.ac.ebi.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 class Helper extends ChemicalFormatParser {
 
@@ -54,18 +54,14 @@ class Helper extends ChemicalFormatParser {
         sb.append(NEW_LINE);
         sb.append("Author: Syed Asad Rahman");
         sb.append(NEW_LINE);
-        sb.append("e-mail: asad@ebi.ac.uk|s9asad@gmail.com");
+        sb.append("e-mail: asad.rahman@bioinceptionlabs.com");
         sb.append(NEW_LINE);
-        sb.append("c/o EMBL-European BioInformatics Institute (EBI)");
-        sb.append(NEW_LINE);
-        sb.append("WTGC, CB10 1SD Hinxton");
-        sb.append(NEW_LINE);
-        sb.append("UK");
+        sb.append("BioInception");
         sb.append(NEW_LINE);
         sb.append(NEW_LINE);
         sb.append("Note: The copyright of this software belongs to the author");
         sb.append(NEW_LINE);
-        sb.append("and EMBL-European BioInformatics Institute (EBI).");
+        sb.append("and BioInception.");
         sb.append(NEW_LINE);
         sb.append(NEW_LINE);
 

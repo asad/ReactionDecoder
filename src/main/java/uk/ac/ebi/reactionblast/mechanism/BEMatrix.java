@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ import uk.ac.ebi.reactionblast.tools.ValencyCalculator;
  * This class create the BEMatrix of a set of molecule according to the
  * DU-Theory. (I.Ugi et al., J. Chem. Inf. Comput. Sci. 1994, 34, 3-16)
  *
- * @author Syed Asad Rahman<asad@ebi.ac.uk>
+ * @author Syed Asad Rahman<asad.rahman@bioinceptionlabs.com>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
 public class BEMatrix extends EBIMatrix implements Serializable {

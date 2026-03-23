@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package uk.ac.ebi.aamtool.rgroup;
 
 import static uk.ac.ebi.aamtool.rgroup.ECRgroupFrequency.DEBUG;
-import static java.lang.System.out;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,8 +40,8 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
 import static uk.ac.ebi.reactionblast.mechanism.helper.Utility.getCircularFragment;
 
 /**
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 class MultiReactionContainer {
 
@@ -205,14 +204,14 @@ class MultiReactionContainer {
         boolean intersection = common.retainAll(r);
 
         if (DEBUG) {
-            out.println("intersection " + common);
+            LOGGER.debug("intersection " + common);
         }
 
         Set<String> difference = new TreeSet<>(l);
         difference.addAll(r);
         boolean removeAll = difference.removeAll(common);
         if (DEBUG) {
-            out.println("difference " + difference);
+            LOGGER.debug("difference " + difference);
         }
         /*
          if no reaction is present then add all the patterns

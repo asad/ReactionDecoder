@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,8 @@ package uk.ac.ebi.reactionblast.mapping.algorithm;
  * Created on 13 February 2006, 11:58
  *
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 import java.io.IOException;
@@ -61,8 +61,8 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
 //~--- classes ----------------------------------------------------------------
 /**
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  */
 public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatrix {
 

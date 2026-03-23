@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020  Syed Asad Rahman <asad at ebi.ac.uk>
+ * Copyright (C) 2009-2020  Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -43,7 +43,7 @@ import com.bioinception.smsd.core.ChemOptions;
  * Maintains the same public API as the original Substructure class
  * but uses the new SMSD 3.0.0 engine (VF2++) for substructure detection.
  *
- * @author Syed Asad Rahman <asad at ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public final class Substructure extends BaseMapping {
 

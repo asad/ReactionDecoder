@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -87,8 +87,8 @@ import static uk.ac.ebi.reactionblast.tools.ExtReactionManipulatorTool.deepClone
 /**
  * This class marks the bond changes
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
 
@@ -904,15 +904,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
         result.append(NEW_LINE).append("ecBLAST (Enzymatic Reaction BLAST)");
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("Contact: Syed Asad Rahman,");
-        result.append(NEW_LINE).append("\t EMBL-EBI, Hinxton ");
-        result.append(NEW_LINE).append("\t Cambridge CB10 1SD");
-        result.append(NEW_LINE).append("\t United Kingdom ");
-        result.append(NEW_LINE).append("e-mail: asad@ebi.ac.uk|s9asad@gmail.com, thornton@ebi.ac.uk");
+        result.append(NEW_LINE).append("\t BioInception");
+        result.append(NEW_LINE).append("e-mail: asad.rahman@bioinceptionlabs.com");
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("ecBLAST software can perform atom-atom mapping,");
         result.append(NEW_LINE).append("marks bond changes between reactions, calculate");
         result.append(NEW_LINE).append("similarity between small molecules, reactions");
-        result.append(NEW_LINE).append("using in-house algorithm developed at EMBL-EBI.");
+        result.append(NEW_LINE).append("using in-house algorithm developed at BioInception.");
         result.append(NEW_LINE).append("++++++++++++++++++++++++++++++++++++++++++++++").append(NEW_LINE);
         result.append(NEW_LINE).append("Acknowledgment: Many thanks to Franz Fenninger,");
         result.append(NEW_LINE).append("Gilleain Torrance, Lorenzo Baldacci and Gemma L.");

@@ -11,18 +11,30 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-#MAC files
+# Mac files
 .DS_Store
+
+# IDE files
 /nbproject/private/
+*.iml
+.idea/
+.vscode/
+
+# Editor swap/backup files
+*.swp
+*.swo
+*.bak
+
+# Build output
 /dist/
 /Output/
 /store/
 /temp/
 /build/
+/target/
 /rdt/core/target/
 /rdt/exec/target/
 /rdt/nbproject/
 /rdt/core/Output/
 /rdt/target/
 /rdt/Output/
-/target/

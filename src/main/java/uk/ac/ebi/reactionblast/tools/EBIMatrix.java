@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -622,7 +622,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             }
         } else {
 
-            out.println("Row =/= Columns");
+            LOGGER.debug("Row =/= Columns");
         }
 
         return val;
@@ -1011,7 +1011,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     result.matrix[q][p] /= length;
                 }
             } else {
-                out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
+                LOGGER.debug("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
             }
         }
         return result;
@@ -1508,7 +1508,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                 z[ip] = 0.0;
             }
         }
-        out.println("Too many iterations in routine JACOBI");
+        LOGGER.debug("Too many iterations in routine JACOBI");
         return v;
     }
 
@@ -1567,7 +1567,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
                     result.matrix[q][p] /= length;
                 }
             } else {
-                out.println("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
+                LOGGER.debug("Warning(orthonormalize):" + (p + 1) + ". Vector has length null");
             }
         }
         return result;
@@ -1584,7 +1584,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @see java.text.DecimalFormat#setDecimalFormatSymbols
      */
     public synchronized void print(NumberFormat format, int width) {
-        print(new PrintWriter(out, true), format, width);
+        print(new PrintWriter(System.out, true), format, width);
     }
 
     /**
@@ -1595,7 +1595,7 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
      * @param d Number of digits after the decimal.
      */
     public synchronized void print(int w, int d) {
-        print(new PrintWriter(out, true), w, d);
+        print(new PrintWriter(System.out, true), w, d);
     }
 
     /**

@@ -33,7 +33,7 @@ import org.openscience.cdk.interfaces.IBond.Order;
  *
  *
  *
- * @author Syed Asad Rahman <asad at ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class BondEnergy {
 

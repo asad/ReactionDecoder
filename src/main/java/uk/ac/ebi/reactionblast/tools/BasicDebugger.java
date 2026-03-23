@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,20 +19,24 @@
 package uk.ac.ebi.reactionblast.tools;
 
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 /**
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  */
 public abstract class BasicDebugger {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(BasicDebugger.class);
 
     protected static final String NEW_LINE = getProperty("line.separator");
 
@@ -41,13 +45,15 @@ public abstract class BasicDebugger {
      * @param mappings
      */
     public static void printAtomAtomMapping(Map<IAtom, IAtom> mappings) {
-        out.println();
+        StringBuilder sb = new StringBuilder();
+        sb.append(NEW_LINE);
         mappings.entrySet().stream().map((m) -> {
-            out.println("e:" + m.getKey().getID());
+            sb.append("e:").append(m.getKey().getID()).append(NEW_LINE);
             return m;
         }).forEach((m) -> {
-            out.println("p:" + m.getValue().getID());
+            sb.append("p:").append(m.getValue().getID()).append(NEW_LINE);
         });
+        LOGGER.debug(sb.toString());
     }
 
     /**
@@ -58,40 +64,49 @@ public abstract class BasicDebugger {
         IAtomContainerSet Educt = reaction.getReactants();
         IAtomContainerSet Product = reaction.getProducts();
 
-        out.println("*******************************");
-
-        out.println("Educt Mol Count: " + Educt.getAtomContainerCount());
-
-        out.println("*******************************");
+        StringBuilder sb = new StringBuilder();
+        sb.append("*******************************").append(NEW_LINE);
+        sb.append("Educt Mol Count: ").append(Educt.getAtomContainerCount()).append(NEW_LINE);
+        sb.append("*******************************").append(NEW_LINE);
 
         for (int j = 0; j < Educt.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Educt.getAtomContainer(j);
-            out.println("Mol ID: " + M.getID());
-            out.println("SingleElectron: " + M.getSingleElectronCount());
-            out.println("Stoic: " + reaction.getReactantCoefficient(M));
-            out.println("Split Mol Atom Count: " + M.getAtomCount());
-            printAtoms(M);
+            sb.append("Mol ID: ").append(M.getID()).append(NEW_LINE);
+            sb.append("SingleElectron: ").append(M.getSingleElectronCount()).append(NEW_LINE);
+            sb.append("Stoic: ").append(reaction.getReactantCoefficient(M)).append(NEW_LINE);
+            sb.append("Split Mol Atom Count: ").append(M.getAtomCount()).append(NEW_LINE);
+            appendAtoms(sb, M);
         }
 
-        out.println("*******************************");
-
-        out.println("Product Mol Count: " + Product.getAtomContainerCount());
-
-        out.println("*******************************");
+        sb.append("*******************************").append(NEW_LINE);
+        sb.append("Product Mol Count: ").append(Product.getAtomContainerCount()).append(NEW_LINE);
+        sb.append("*******************************").append(NEW_LINE);
 
         for (int j = 0; j < Product.getAtomContainerCount(); j++) {
 
             IAtomContainer M = Product.getAtomContainer(j);
-            out.println("Mol ID: " + M.getID());
-            out.println("SingleElectron: " + M.getSingleElectronCount());
-            out.println("Stoic: " + reaction.getProductCoefficient(M));
-            out.println("Split Mol Atom Count: " + M.getAtomCount());
-            printAtoms(M);
+            sb.append("Mol ID: ").append(M.getID()).append(NEW_LINE);
+            sb.append("SingleElectron: ").append(M.getSingleElectronCount()).append(NEW_LINE);
+            sb.append("Stoic: ").append(reaction.getProductCoefficient(M)).append(NEW_LINE);
+            sb.append("Split Mol Atom Count: ").append(M.getAtomCount()).append(NEW_LINE);
+            appendAtoms(sb, M);
 
         }
 
-        out.println(NEW_LINE + "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + NEW_LINE + NEW_LINE);
+        sb.append(NEW_LINE).append("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%").append(NEW_LINE).append(NEW_LINE);
+        LOGGER.debug(sb.toString());
+    }
+
+    private static void appendAtoms(StringBuilder sb, IAtomContainer mol) {
+        sb.append("Atom: ");
+        for (IAtom a : mol.atoms()) {
+            sb.append(a.getSymbol());
+            if (a.getID() != null) {
+                sb.append("[").append(a.getID()).append("]");
+            }
+        }
+        sb.append(NEW_LINE).append(NEW_LINE);
     }
 
     /**
@@ -100,17 +115,17 @@ public abstract class BasicDebugger {
      * @param mol
      */
     protected static void printAtoms(IAtomContainer mol) {
-        out.print("Atom: ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Atom: ");
         for (IAtom a : mol.atoms()) {
 
-            out.print(a.getSymbol());
+            sb.append(a.getSymbol());
             if (a.getID() != null) {
-                out.print("[" + a.getID() + "]");
+                sb.append("[").append(a.getID()).append("]");
             }
 
         }
-        out.println();
-        out.println();
+        LOGGER.debug(sb.toString());
     }
 
     /**
@@ -120,14 +135,15 @@ public abstract class BasicDebugger {
      */
     protected static void printMolecule(IAtomContainer molecule) {
 
-        out.println("AtomContainer " + molecule.getID() + ": " + molecule.getAtomCount());
+        StringBuilder sb = new StringBuilder();
+        sb.append("AtomContainer ").append(molecule.getID()).append(": ").append(molecule.getAtomCount()).append(NEW_LINE);
 
         for (int i = 0; i < molecule.getAtomCount(); i++) {
 
-            out.print(molecule.getAtom(i).getSymbol() + " : " + molecule.getAtom(i).getID() + ",  ");
+            sb.append(molecule.getAtom(i).getSymbol()).append(" : ").append(molecule.getAtom(i).getID()).append(",  ");
         }
 
-        out.println();
+        LOGGER.debug(sb.toString());
 
     }
 }

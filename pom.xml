@@ -4,7 +4,7 @@
     <groupId>uk.ac.ebi.rdt</groupId>
     <artifactId>rdt</artifactId>
     <description>Reaction Decoder Tool</description>
-    <version>2.5.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
     <properties>
         <jdk.version>11</jdk.version>
@@ -25,16 +25,6 @@
         <url>https://github.com/asad/ReactionDecoder/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
-    <!-- <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement> -->
   <distributionManagement>
     <repository>
       <id>github</id>
@@ -54,7 +44,7 @@
         <url>https://bioinceptionlabs.com</url>
     </organization>
     <prerequisites>
-        <maven>3.0</maven>
+        <maven>3.8</maven>
     </prerequisites>
 
     <developers>
@@ -123,7 +113,7 @@
         <dependency>
             <groupId>com.bioinceptionlabs</groupId>
             <artifactId>smsd</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
@@ -151,211 +141,39 @@
             <id>local</id>
             <build>
                 <plugins>
-                    <!-- download source code in Eclipse, best practice -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-eclipse-plugin</artifactId>
-                        <version>2.10</version>
-                        <configuration>
-                            <downloadSources>true</downloadSources>
-                            <downloadJavadocs>false</downloadJavadocs>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Set a compiler level -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
+                        <version>3.13.0</version>
                         <configuration>
                             <source>${jdk.version}</source>
                             <target>${jdk.version}</target>
                             <showDeprecation>true</showDeprecation>
                         </configuration>
                     </plugin>
-
-                    <!-- Maven Assembly Plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.7.1</version>
                         <configuration>
-                            <!-- get all project dependencies -->
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <!-- MainClass in mainfest make a executable jar -->
                             <archive>
                                 <manifest>
                                     <mainClass>uk.ac.ebi.aamtool.ReactionDecoder</mainClass>
                                 </manifest>
                             </archive>
-
                         </configuration>
                         <executions>
                             <execution>
                                 <id>make-assembly</id>
-                                <!-- bind to the packaging phase -->
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-        
-        <profile>
-            <id>ossrh</id>
-            <build>
-                <plugins>
-                    <!-- download source code in Eclipse, best practice -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-eclipse-plugin</artifactId>
-                        <version>2.10</version>
-                        <configuration>
-                            <downloadSources>true</downloadSources>
-                            <downloadJavadocs>false</downloadJavadocs>
-                        </configuration>
-                    </plugin>
-                    <!-- Set a compiler level -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
-                        <configuration>
-                            <source>${jdk.version}</source>
-                            <target>${jdk.version}</target>
-                            <showDeprecation>true</showDeprecation>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Maven Assembly Plugin -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>3.3.0</version>
-                        <configuration>
-                            <!-- get all project dependencies -->
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <!-- MainClass in mainfest make a executable jar -->
-                            <archive>
-                                <manifest>
-                                    <mainClass>uk.ac.ebi.aamtool.ReactionDecoder</mainClass>
-                                </manifest>
-                            </archive>
-
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>make-assembly</id>
-                                <!-- bind to the packaging phase -->
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <!-- Build an executable JAR -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addClasspath>true</addClasspath>
-                                    <classpathPrefix>lib/</classpathPrefix>
-                                    <mainClass>uk.ac.ebi.aamtool.ReactionDecoder</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <!--phase>deploy</phase-->
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin> 
-                        <!-- explicitly define maven-deploy-plugin after other to force exec order -->
-                        <artifactId>maven-deploy-plugin</artifactId> 
-                        <executions> 
-                            <execution> 
-                                <id>deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals> 
-                            </execution> 
-                        </executions> 
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <!--phase>deploy</phase-->
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                        <configuration>
-                            <excludes>
-                                <!-- skip test class -->
-                                <exclude>**/MCSTest.java</exclude>
-                                <exclude>**/ComplexCases.java</exclude>
-                                <exclude>**/RXNMappingTest.java</exclude>
-                            </excludes>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -366,7 +184,6 @@
                 <jdk>[1.8,)</jdk>
             </activation>
             <properties>
-                <!--<additionalparam>-Xdoclint:none</additionalparam>-->
                 <doclint>none</doclint>
             </properties>
         </profile>
@@ -377,7 +194,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
@@ -385,7 +202,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
                 <configuration>
                     <excludes>
                         <exclude>**/MCSTest.java</exclude>

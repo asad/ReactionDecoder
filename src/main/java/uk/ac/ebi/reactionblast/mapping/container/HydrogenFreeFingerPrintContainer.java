@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2003-2020 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ import uk.ac.ebi.reactionblast.interfaces.IFingerPrintContainer;
  *
  * @Copyright (C) 2004-2004 The Atom Mapper Tool (AMT) project
  *
- * @Contact: asad@ebi.ac.uk
+ * @Contact: asad.rahman@bioinceptionlabs.com
  *
  * @This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the

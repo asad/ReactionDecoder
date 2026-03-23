@@ -23,7 +23,6 @@
 package uk.ac.ebi.reactionblast.tools.labelling;
 
 import static java.lang.Integer.valueOf;
-import static java.lang.System.out;
 import java.util.ArrayList;
 import static java.util.Collections.sort;
 import java.util.Comparator;
@@ -34,6 +33,8 @@ import java.util.Map;
 
 import org.openscience.cdk.AtomContainerSet;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.ChemObject;
 import org.openscience.cdk.Mapping;
 import org.openscience.cdk.Reaction;
@@ -47,12 +48,14 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAt
 
 /**
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  * @author maclean
  *
  */
 public class AbstractReactionLabeller {
+
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(AbstractReactionLabeller.class);
 
     /**
      * A nasty hack necessary to get around a bug in the CDK
@@ -264,7 +267,7 @@ public class AbstractReactionLabeller {
      */
     public IReaction labelReaction(
             IReaction reaction, ICanonicalMoleculeLabeller labeller) {
-        out.println("labelling " + reaction.getID());
+        LOGGER.debug("labelling " + reaction.getID());
         IReaction canonReaction = new Reaction();
 
         Map<IAtomContainer, int[]> permutationMap = new HashMap<>();

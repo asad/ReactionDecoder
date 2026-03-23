@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +18,14 @@
  */
 package uk.ac.ebi.reactionblast.signature;
 
-import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAtomContainers;
 
 /**
@@ -35,6 +36,9 @@ import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getAllAt
  *
  */
 public class SignatureMatcher {
+
+    private static final ILoggingTool LOGGER
+            = LoggingToolFactory.createLoggingTool(SignatureMatcher.class);
 
     private int minHeight;
 
@@ -135,7 +139,7 @@ public class SignatureMatcher {
             String signatureStringOfHAtI = sigOfHAtI.toCanonicalString();
             for (String querySignatureString : signatureStrings) {
                 if (querySignatureString.equals(signatureStringOfHAtI)) {
-                    out.println("match of height " + height + " at " + atomIndex + " to " + querySignatureString);
+                    LOGGER.debug("match of height " + height + " at " + atomIndex + " to " + querySignatureString);
                     return sigOfHAtI;
                 }
             }

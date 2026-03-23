@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@
 package uk.ac.ebi.reactionblast.graphics.direct.layout;
 
 import java.awt.geom.Rectangle2D;
-import static java.lang.System.err;
 import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import javax.vecmath.Point2d;
@@ -85,7 +84,7 @@ public class SingleMoleculeLayout extends AbstractDirectLayout<IAtomContainer> {
                 if (isConnected(atomContainer)) {
                     sdg.generateCoordinates();
                 } else {
-                    err.println("Disconnected components needs to be layout separately");
+                    LOGGER.error("Disconnected components needs to be layout separately");
                 }
             } catch (CDKException e) {
                 LOGGER.error(e);

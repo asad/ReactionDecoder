@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import static java.lang.System.out;
 import java.util.List;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -33,8 +32,8 @@ import uk.ac.ebi.reactionblast.mechanism.RMatrix;
 
 /**
  *
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class MatrixPrinter extends Object {
 
@@ -49,34 +48,36 @@ public class MatrixPrinter extends Object {
      */
     public static void printReactionMatrix(RMatrix rMatrix) {
         try {
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < rMatrix.getRowDimension(); i++) {
-                out.print("\t\t" + i);
+                sb.append("\t\t").append(i);
             }
-            out.println();
+            sb.append(System.lineSeparator());
             for (int i = 0; i < rMatrix.getRowDimension() - 1; i++) {
-                out.print("\t\t" + rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
-                        + rMatrix.getReactantBEMatrix().getAtom(i).getID());
+                sb.append("\t\t").append(rMatrix.getReactantBEMatrix().getAtom(i).getSymbol())
+                        .append(rMatrix.getReactantBEMatrix().getAtom(i).getID());
             }
-            out.println();
+            sb.append(System.lineSeparator());
             for (int i = 0; i < rMatrix.getRowDimension() - 1; i++) {
-                out.print("\t\t" + rMatrix.getProductBEMatrix().getAtom(i).getSymbol()
-                        + rMatrix.getProductBEMatrix().getAtom(i).getID());
+                sb.append("\t\t").append(rMatrix.getProductBEMatrix().getAtom(i).getSymbol())
+                        .append(rMatrix.getProductBEMatrix().getAtom(i).getID());
             }
-            out.println();
+            sb.append(System.lineSeparator());
             for (int i = 0; i < rMatrix.getRowDimension(); i++) {
                 if (i == rMatrix.getRowDimension() - 1) {
-                    out.print("\t");
+                    sb.append("\t");
                 } else {
-                    out.print(rMatrix.getReactantBEMatrix().getAtom(i).getSymbol()
-                            + rMatrix.getReactantBEMatrix().getAtom(i).getID()
-                            + "\t" + rMatrix.getProductBEMatrix().getAtom(i).getSymbol()
-                            + rMatrix.getProductBEMatrix().getAtom(i).getID());
+                    sb.append(rMatrix.getReactantBEMatrix().getAtom(i).getSymbol())
+                            .append(rMatrix.getReactantBEMatrix().getAtom(i).getID())
+                            .append("\t").append(rMatrix.getProductBEMatrix().getAtom(i).getSymbol())
+                            .append(rMatrix.getProductBEMatrix().getAtom(i).getID());
                 }
                 for (int j = 0; j < rMatrix.getColumnDimension(); j++) {
-                    out.print("\t" + rMatrix.getValue(i, j));
+                    sb.append("\t").append(rMatrix.getValue(i, j));
                 }
-                out.println();
+                sb.append(System.lineSeparator());
             }
+            LOGGER.debug(sb.toString());
         } catch (CDKException ex) {
             LOGGER.debug("A CDKException has been arisen while printing the RMatrix");
         }
@@ -137,17 +138,19 @@ public class MatrixPrinter extends Object {
      */
     public static void printBEMatrix(BEMatrix beMatrix) {
         List<IAtom> atomArray = beMatrix.getAtoms();
-        out.println(atomArray.size());
+        StringBuilder sb = new StringBuilder();
+        sb.append(atomArray.size()).append(System.lineSeparator());
         for (int i = 0; i < atomArray.size(); i++) {
-            out.print(atomArray.get(i).getSymbol() + atomArray.get(i).getID() + "\t");
+            sb.append(atomArray.get(i).getSymbol()).append(atomArray.get(i).getID()).append("\t");
         }
-        out.println();
+        sb.append(System.lineSeparator());
         for (int i = 0; i < beMatrix.getRowDimension(); i++) {
             for (int j = 0; j < beMatrix.getColumnDimension(); j++) {
-                out.print(beMatrix.getValue(i, j) + "\t");
+                sb.append(beMatrix.getValue(i, j)).append("\t");
             }
-            out.println();
+            sb.append(System.lineSeparator());
         }
+        LOGGER.debug(sb.toString());
     }
 
     /**

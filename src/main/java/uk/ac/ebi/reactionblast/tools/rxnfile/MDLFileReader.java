@@ -1,4 +1,4 @@
-/* Copyright (C) 2006-2020  Syed Asad Rahman <asad @ ebi.ac.uk>
+/* Copyright (C) 2006-2020  Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  * Contact: cdk-devel@lists.sourceforge.net
  *
@@ -48,7 +48,7 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAto
  *
  *
  *
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class MDLFileReader {
 

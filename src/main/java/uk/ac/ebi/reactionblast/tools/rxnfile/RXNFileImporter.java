@@ -5,8 +5,8 @@
  *
  *
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 package uk.ac.ebi.reactionblast.tools.rxnfile;
@@ -30,7 +30,7 @@ import static uk.ac.ebi.reactionblast.tools.EBIMolSplitter.splitMolecules;
 
 /**
  * @author Syed Asad Rahman, EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 public class RXNFileImporter {

@@ -4,8 +4,8 @@
  * Created on September 12, 2007, 3:42 AM
  *
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  *
  */
 package uk.ac.ebi.reactionblast.tools.rxnfile;
@@ -47,8 +47,8 @@ import uk.ac.ebi.reactionblast.tools.BasicDebugger;
 
 /**
  *
- * @author Syed Asad Rahman, EMBL-EBI, Cambridge, UK
- * @contact asad@ebi.ac.uk
+ * @author Syed Asad Rahman, BioInception
+ * @contact asad.rahman@bioinceptionlabs.com
  */
 public class RXNFileManipulator extends BasicDebugger {
 

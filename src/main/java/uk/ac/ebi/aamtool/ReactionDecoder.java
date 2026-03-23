@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,8 +58,8 @@ import static uk.ac.ebi.aamtool.Helper.printHelp;
 import uk.ac.ebi.reactionblast.mechanism.ReactionMechanismTool;
 
 /**
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class ReactionDecoder extends Annotator {
 
@@ -150,7 +150,7 @@ public class ReactionDecoder extends Annotator {
         /*
         * Force exit
          */
-        System.exit(1);
+        System.exit(0);
     }
 
     /**

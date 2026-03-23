@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Syed Asad Rahman <asad @ ebi.ac.uk>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,27 +22,29 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.arraycopy;
 import static java.lang.System.getProperty;
-import static java.lang.System.out;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 import static uk.ac.ebi.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import static uk.ac.ebi.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
 
 /**
  *
  * @author lorenzo 2007-2008
- * @contact Syed Asad Rahman, EMBL-EBI, Cambridge, UK.
- * @author Syed Asad Rahman <asad @ ebi.ac.uk>
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class MolFingerprint implements Comparable<MolFingerprint>,
         Comparator<MolFingerprint> {
 
     static final String NEW_LINE = getProperty("line.separator");
     private static final long serialVersionUID = 7057060562283378622L;
+    private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(MolFingerprint.class);
 
     private static synchronized MolFingerprint or(boolean[] boolArray1, boolean[] boolArray2) throws CDKException {
         if (boolArray1.length != boolArray2.length) {
@@ -214,7 +216,7 @@ public class MolFingerprint implements Comparable<MolFingerprint>,
      *
      */
     public synchronized void println() {
-        out.println(toString());
+        LOGGER.debug(toString());
     }
 
     /**
