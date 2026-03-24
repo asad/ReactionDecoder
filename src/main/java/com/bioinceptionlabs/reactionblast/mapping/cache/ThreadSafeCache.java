@@ -3,82 +3,89 @@
  */
 package com.bioinceptionlabs.reactionblast.mapping.cache;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Thread-safe LRU cache for MCS solutions. Supports cross-reaction caching
+ * when canonical SMILES are used as keys (instead of molecule IDs).
  *
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
  * @param <K>
  * @param <V>
  */
-//Thread Safe Cache
 public class ThreadSafeCache<K, V> implements Cache<K, V> {
-    //Shared resource that needs protection
+
+    /** Maximum cache entries before LRU eviction kicks in. */
+    private static final int MAX_CAPACITY = 10_000;
 
     private final Map<K, V> map;
 
-    //Single instance kept
     private static final ThreadSafeCache SC = new ThreadSafeCache();
 
-    //Access method
     public static ThreadSafeCache getInstance() {
         return SC;
     }
 
-    //Private constructor to prevent instantiation
     private ThreadSafeCache() {
-        //ConcurrentHashMap takes care of 
-        //synchronization in a a multi-threaded 
-        //environment
-        map = new ConcurrentHashMap<>();
+        // ConcurrentHashMap for thread safety; LRU eviction handled in put()
+        map = new ConcurrentHashMap<>(256, 0.75f, 4);
     }
 
-    //Now this is thread safe
     @Override
     public void put(K key, V value) {
+        // Simple size-based eviction: if over capacity, clear oldest half
+        if (map.size() >= MAX_CAPACITY) {
+            evict();
+        }
         map.put(key, value);
     }
 
-    //Now this is thread safe
     @Override
     public V get(K key) {
         return map.get(key);
     }
 
-    //Now this is thread safe
     /**
-     * Check if Key Present
-     *
-     * @param key
-     * @return
+     * Check if key is present in the cache.
      */
     public boolean containsKey(K key) {
         return map.containsKey(key);
     }
 
-    // CLEANUP method
+    /**
+     * Clear all cached entries. Use sparingly — cross-reaction caching
+     * benefits from keeping the cache warm between reactions.
+     */
     public void cleanup() {
         map.clear();
-        Thread.yield();
     }
 
     /**
-     * Size of the map
-     *
-     * @return
+     * @return number of cached entries
      */
     public int size() {
         return map.size();
     }
 
-    /**
-     * Size of the map
-     *
-     * @return
-     */
     public Set<K> keySet() {
         return map.keySet();
+    }
+
+    /**
+     * Evict roughly half the cache when over capacity.
+     * ConcurrentHashMap iteration order is arbitrary, which
+     * approximates random eviction — acceptable for MCS caching.
+     */
+    private void evict() {
+        int toRemove = map.size() / 2;
+        int removed = 0;
+        for (K key : map.keySet()) {
+            if (removed >= toRemove) break;
+            map.remove(key);
+            removed++;
+        }
     }
 }

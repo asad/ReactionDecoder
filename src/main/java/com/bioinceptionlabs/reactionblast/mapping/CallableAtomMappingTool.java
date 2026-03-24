@@ -40,7 +40,6 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
 import com.bioinceptionlabs.reactionblast.mapping.cache.ThreadSafeCache;
-import com.bioinceptionlabs.reactionblast.mapping.graph.MCSSolution;
 import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
@@ -109,11 +108,6 @@ public class CallableAtomMappingTool implements Serializable {
             IStandardizer standardizer,
             boolean removeHydrogen,
             boolean checkComplex) {
-        /*
-         * Mapping cache initialized
-         */
-        ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
-
         /*
          * Standardize the reaction ONCE and clone for each algorithm.
          * Previously this was done 4 times independently — major overhead.
@@ -188,9 +182,11 @@ public class CallableAtomMappingTool implements Serializable {
         }
         LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
         /*
-         * Mapping cache cleared
+         * Cache must be cleared between reactions because MCSSolution objects
+         * contain atom references specific to each reaction's molecule clones.
+         * Cross-reaction reuse would cause atom index mismatches.
          */
-        mappingcache.cleanup();
+        ThreadSafeCache.getInstance().cleanup();
     }
 
     /**

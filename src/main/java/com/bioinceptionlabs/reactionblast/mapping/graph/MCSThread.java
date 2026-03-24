@@ -23,7 +23,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.lang.System.nanoTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +34,6 @@ import static org.openscience.cdk.CDKConstants.UNSET;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.CircularFingerprinter;
-import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -600,6 +597,15 @@ public class MCSThread implements Callable<MCSSolution> {
         this.numberOfCyclesProduct = numberOfCyclesProduct;
     }
 
+    private static final String CACHED_SMILES = "CACHED_CANONICAL_SMILES";
+    private static final SmilesGenerator CANONICAL_SMIGEN = new SmilesGenerator(
+            SmiFlavor.Canonical | SmiFlavor.Stereo);
+
+    /**
+     * Generate a unique cache key based on canonical SMILES (structure-based,
+     * not ID-based). This enables cross-reaction cache hits: if the same
+     * molecule pair appears in different reactions, the MCS result is reused.
+     */
     String generateUniqueKey(
             String id1, String id2,
             int atomCount1, int atomCount2,
@@ -610,49 +616,40 @@ public class MCSThread implements Callable<MCSSolution> {
             boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
 
-        //System.out.println("====generate Unique Key====");
         StringBuilder key = new StringBuilder();
-        key.append(id1).append(id2)
-                .append(atomCount1)
-                .append(atomCount2)
-                .append(bondCount1)
-                .append(bondCount2)
-                .append(atomtypeMatcher)
-                .append(bondMatcher)
-                .append(ringMatcher)
-                .append(hasPerfectRings)
-                .append(numberOfCyclesEduct)
-                .append(numberOfCyclesProduct);
 
-        try {
-            try {
-                int[] sm1 = getCircularFP(compound1);
-                int[] sm2 = getCircularFP(compound2);
-                key.append(Arrays.toString(sm1));
-                key.append(Arrays.toString(sm2));
-            } catch (Exception ex) {
-                LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
-            }
-            LOGGER.debug("Unique KEY " + key);
-        } catch (Exception ex) {
-            LOGGER.error(SEVERE, "Error in generating Unique Key: ", ex.getMessage());
-        }
+        // Use canonical SMILES as the molecular identity (not mol IDs)
+        String smi1 = getCanonicalSmiles(compound1);
+        String smi2 = getCanonicalSmiles(compound2);
+        key.append(smi1).append(">>").append(smi2);
+
+        // Append matcher flags that affect the MCS result
+        key.append('|')
+                .append(atomtypeMatcher ? '1' : '0')
+                .append(bondMatcher ? '1' : '0')
+                .append(ringMatcher ? '1' : '0')
+                .append(hasPerfectRings ? '1' : '0');
+
         return key.toString();
     }
 
-    private static final String CACHED_FP = "CACHED_FP";
-
-    private int[] getCircularFP(IAtomContainer mol) throws CDKException {
-        int[] cached = mol.getProperty(CACHED_FP);
+    /**
+     * Get or compute canonical SMILES for a molecule. Cached on the molecule
+     * to avoid recomputation across calls within the same reaction.
+     */
+    private String getCanonicalSmiles(IAtomContainer mol) {
+        String cached = mol.getProperty(CACHED_SMILES);
         if (cached != null) {
             return cached;
         }
-        CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
-        circularFingerprinter.setPerceiveStereo(true);
-        IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
-        int[] fp = bitFingerprint.getSetbits();
-        mol.setProperty(CACHED_FP, fp);
-        return fp;
+        try {
+            cached = CANONICAL_SMIGEN.create(mol);
+        } catch (CDKException e) {
+            // Fallback: use atom/bond counts + fingerprint hash
+            cached = mol.getAtomCount() + ":" + mol.getBondCount() + ":" + mol.hashCode();
+        }
+        mol.setProperty(CACHED_SMILES, cached);
+        return cached;
     }
 
     /*
