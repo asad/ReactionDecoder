@@ -43,8 +43,6 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.SmiFlavor;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -78,8 +76,6 @@ class CaseHandler {
     private final Map<IRingSet, IAtomContainer> ringContainerCountP;
     private final IRingSet sssrEduct;
     private final IRingSet sssrProduct;
-    private final boolean DEBUG = false;
-
     protected final IReaction reaction;
 
     CaseHandler(IReaction reaction) throws Intractable {
@@ -211,12 +207,6 @@ class CaseHandler {
             if (matchesE && matchesP) {
                 boolean findAndChipBondPhophate1 = findAndChipBondPhophate(educt);
                 boolean findAndChipBondPhophate2 = findAndChipBondPhophate(product);
-                if (DEBUG) {
-                    LOGGER.debug("findAndChipBondPhophate1 Q " + findAndChipBondPhophate1);
-                    LOGGER.debug("findAndChipBondPhophate2 T " + findAndChipBondPhophate2);
-                    LOGGER.debug("SM " + new SmilesGenerator(SmiFlavor.Generic).create(educt));
-                    LOGGER.debug("SM " + new SmilesGenerator(SmiFlavor.Generic).create(product));
-                }
                 return findAndChipBondPhophate1 && findAndChipBondPhophate2;
             }
         }
@@ -276,17 +266,8 @@ class CaseHandler {
                     if (neighbourBonds.size() == 2) {
                         neighbourBonds.stream().filter((b) -> (b.getAtom(0).getSymbol().equals("O")
                                 || b.getAtom(0).getSymbol().equals("P"))).filter((b) -> (b.getAtom(1).getSymbol().equals("O")
-                                || b.getAtom(1).getSymbol().equals("P"))).map((b) -> {
+                                || b.getAtom(1).getSymbol().equals("P"))).forEach((b) -> {
                             container.removeBond(b);
-                            return b;
-                        }).filter((b) -> (DEBUG)).map((b) -> {
-                            LOGGER.debug("bondToBeChipped " + b.getAtom(0).getSymbol());
-                            return b;
-                        }).map((b) -> {
-                            LOGGER.debug("bondToBeChipped " + b.getAtom(1).getSymbol());
-                            return b;
-                        }).forEach((_item) -> {
-                            LOGGER.debug("removeBond o-p ");
                         });
                         return true;
                     }
@@ -311,33 +292,14 @@ class CaseHandler {
                 LOGGER.debug("number_of_rings " + number_of_rings);
 
                 List<IBond> bonds = container.getConnectedBondsList(atom);
-                if (DEBUG) {
-                    LOGGER.debug("number_of_bonds " + bonds.size());
-                    bonds.stream().forEach((bond) -> {
-                        LOGGER.debug("BONDS "
-                                + " B0 " + bond.getAtom(0).getSymbol()
-                                + " B1 " + bond.getAtom(1).getSymbol());
-                    });
-                }
-
                 if (bonds.size() == 2 && number_of_rings == 2) {
                     IBond bondToBeChipped = bonds.iterator().next();
                     bond_to_be_removed.add(bondToBeChipped);
                 }
             }
         }
-        bond_to_be_removed.stream().map((bond) -> {
+        bond_to_be_removed.forEach((bond) -> {
             container.removeBond(bond);
-            return bond;
-        }).filter((bond) -> (DEBUG)).forEach((bond) -> {
-            try {
-                LOGGER.debug("CHIPPING BONDS "
-                        + " B0 " + bond.getAtom(0).getSymbol()
-                        + " B1 " + bond.getAtom(1).getSymbol());
-                LOGGER.debug("CHIPPED SM " + new SmilesGenerator(SmiFlavor.Generic).create(container));
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, "Clipping Bonds: ", ex.getMessage());
-            }
         });
         return !bond_to_be_removed.isEmpty();
     }
@@ -358,15 +320,6 @@ class CaseHandler {
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         String moiety = "NC(=O)C1=CN(C=N1)C1OC(COP(O)(O)=O)C(O)C1O";
         IAtomContainer query = smilesParser.parseSmiles(moiety);
-
-        if (DEBUG) {
-            LOGGER.debug("case2 QSM " + new SmilesGenerator(SmiFlavor.Generic).create(s));
-            LOGGER.debug("case2 TSM " + new SmilesGenerator(SmiFlavor.Generic).create(t));
-//            boolean match1 = isMatch(query, s, true);
-//            boolean match2 = isMatch(query, t, true);
-//            System.out.println("Sub 1 " + match1);
-//            System.out.println("Sub 2 " + match2);
-        }
 
         if (isMatch(query, s, false) && isMatch(query, t, false)) {
 

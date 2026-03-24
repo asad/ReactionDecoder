@@ -28,10 +28,8 @@ import java.util.*;
 import static java.util.Collections.sort;
 import java.util.logging.Level;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -351,33 +349,6 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
             });
         });
         return bondbondMappingMap;
-    }
-
-    /*
-     * Check if fragmented container has single atom
-     */
-    boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
-
-        boolean connected1 = true;
-
-        IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-
-            if (a.getAtomCount() == 1) {
-                connected1 = false;
-            }
-        }
-
-        boolean connected2 = true;
-
-        partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
-        for (IAtomContainer a : partitionIntoMolecules.atomContainers()) {
-
-            if (a.getAtomCount() == 1) {
-                connected2 = false;
-            }
-        }
-        return connected1 && connected2;
     }
 
     int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {

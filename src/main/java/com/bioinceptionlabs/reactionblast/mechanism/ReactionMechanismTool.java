@@ -40,7 +40,6 @@ import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAllAtomContainers;
@@ -59,7 +58,6 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 
-import org.openscience.cdk.smiles.SmiFlavor;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 
@@ -71,7 +69,6 @@ import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 public class ReactionMechanismTool implements Serializable {
 
     static final String NEW_LINE = getProperty("line.separator");
-    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(ReactionMechanismTool.class);
     private static final long serialVersionUID = 07342630505L;
@@ -218,15 +215,6 @@ public class ReactionMechanismTool implements Serializable {
             }
         } else {
             try {
-                if (DEBUG) {
-                    SmilesGenerator withAtomClasses = new SmilesGenerator(
-                            //                            SmiFlavor.Unique |
-                            SmiFlavor.UseAromaticSymbols
-                            | SmiFlavor.Stereo
-                            | SmiFlavor.AtomAtomMap);
-                    LOGGER.debug("Input reaction mapped " + withAtomClasses.create(reaction));
-                }
-
                 boolean onlyCoreMappingByMCS = true;
                 CallableAtomMappingTool amt = new CallableAtomMappingTool(reaction, standardizer,
                         onlyCoreMappingByMCS, checkComplex);
@@ -241,15 +229,6 @@ public class ReactionMechanismTool implements Serializable {
                     if (reactor == null) {
                         LOGGER.warn("Reactor is NULL");
                         return;
-                    }
-
-                    if (DEBUG) {
-                        SmilesGenerator withAtomClasses = new SmilesGenerator(
-                                //                                SmiFlavor.Unique
-                                //                                | SmiFlavor.UseAromaticSymbols |
-                                SmiFlavor.Stereo
-                                | SmiFlavor.AtomAtomMap);
-                        LOGGER.debug("reaction mapped " + withAtomClasses.create(reactor.getReactionWithAtomAtomMapping()));
                     }
 
                     int atomCountR = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getReactants());

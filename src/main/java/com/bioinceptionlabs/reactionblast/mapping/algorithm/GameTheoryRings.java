@@ -74,7 +74,6 @@ import com.bioinceptionlabs.reactionblast.tools.labelling.SmilesMoleculeLabeller
 
 final class GameTheoryRings extends BaseGameTheory {
 
-    private final static boolean DEBUG = false;
     private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 0x152ec264bc2L;
     private static final ILoggingTool LOGGER
@@ -164,16 +163,6 @@ final class GameTheoryRings extends BaseGameTheory {
         boolean continueMapping = true;
         while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             LOGGER.debug("GenerateMapping");
-            if (DEBUG) {
-                LOGGER.debug("**********Orignal Matrix**************");
-                printMatrixAtomContainer(mh, eductList, productList);
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//            printStereoMatrix(mh, eductList, productList);
-//            printFragmentMatrix(mh, eductList, productList);
-//            printEnergyMatrix(mh, eductList, productList);
-            }
-
             RuleBasedMappingHandler ruleBasedMappingHandler = new RuleBasedMappingHandler(mh, eductList, productList);
             if (ruleBasedMappingHandler.isMatchFound()) {
 //            LOGGER.debug("RuleBasedMappingHandler Match");
@@ -182,10 +171,6 @@ final class GameTheoryRings extends BaseGameTheory {
             }
 
             winner.searchWinners(educts, products, mh);
-
-            if (DEBUG) {
-                printFlagMatrix(winner, eductList, productList);
-            }
             if (winner.getFlag()) {
 
                 LOGGER.debug("**********Updated Mapping**************");

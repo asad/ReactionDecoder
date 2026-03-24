@@ -23,8 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.util.ArrayList;
-import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,11 +40,6 @@ import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class ECRgroupFrequency {
-
-    /**
-     *
-     */
-    protected final static boolean DEBUG = false;
 
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(ECRgroupFrequency.class);
@@ -71,13 +64,6 @@ public class ECRgroupFrequency {
             File f = new File(dir);
             if (f.isDirectory()) {
                 File[] files = f.listFiles();
-                //
-                if (DEBUG) {
-                    List<File> l = new ArrayList<>();
-                    l.addAll(asList(files));
-                    List<File> subList = l.subList(1, 100);
-                    files = subList.toArray(new File[subList.size()]);
-                }
                 for (File ec : files) {
                     String ecNumber = ec.getName();
                     if (ec.isDirectory()) {
@@ -132,15 +118,6 @@ public class ECRgroupFrequency {
         Set<String> r_group_ec = new TreeSet<>();
 
         for (String ec : reactionMap.keySet()) {
-            if (DEBUG) {
-                if (reactionMap.get(ec).isRGroup()) {
-                    LOGGER.debug("Processing EC: " + ec
-                            + ", R-found: " + reactionMap.get(ec).isRGroup()
-                            + ", common fragment: " + reactionMap.get(ec).getCommonCommonFP().size()
-                            + ", reaction count: " + reactionMap.get(ec).getReactionCount());
-                }
-            }
-
             if (reactionMap.get(ec).isRGroup()) {
                 r_group_ec.add(ec);
             }
@@ -286,21 +263,6 @@ public class ECRgroupFrequency {
         int more_than_one_union_common = 0;
 
         for (String ec : commonCommonMap.keySet()) {
-            if (DEBUG) {
-                if (commonUnionMap.get(ec).isEmpty()) {
-                    LOGGER.debug("EC: " + ec
-                            + ", Common Signature: " + commonCommonMap.get(ec)
-                            + ", Difference Signature " + commonDifferenceMap.get(ec)
-                            + ", Union Common Signature " + commonUnionMap.get(ec));
-                }
-            }
-
-            //if (commonUnionMap.get(ec).isEmpty()) {
-//            LOGGER.debug("EC: " + ec
-//                    + ", Common Signature: " + commonCommonMap.get(ec)
-//                    + ", Difference Signature " + commonDifferenceMap.get(ec)
-//                    + ", Union Common Signature " + commonUnionMap.get(ec));
-            //}
             if (commonCommonMap.get(ec).isEmpty() && commonDifferenceMap.get(ec).isEmpty()) {
                 empty_signature++;
             } else if (!commonCommonMap.get(ec).isEmpty() || !commonDifferenceMap.get(ec).isEmpty()) {

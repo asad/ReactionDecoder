@@ -42,7 +42,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
@@ -64,7 +63,6 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
     private IAtomContainer matchedPart = null;
     private Map<IAtom, IAtom> bestAtomMappingList;
     private int fragmentCount = 0;
-    private final static boolean DEBUG = false;
 
     /**
      * Creates a new instance of GraphMatching
@@ -184,10 +182,6 @@ public class GraphMatching extends AbstractGraphMatching implements Serializable
 
         if (beforeESize == educt.getAtomCount()) {
             try {
-                if (DEBUG) {
-                    LOGGER.debug(educt.getID() + ": SMILES " + SmilesGenerator.generic().create(educt));
-                    LOGGER.debug(product.getID() + ": SMILES " + SmilesGenerator.generic().create(product));
-                }
                 throw new CDKException("Failed to remove matched parts between " + educt.getID() + ": "
                         + educt.getAtomCount() + " , " + product.getID() + " : " + product.getAtomCount()
                         + ", Mapping count: " + bestAtomMappingList.size() + "...atom ids did not matched!");

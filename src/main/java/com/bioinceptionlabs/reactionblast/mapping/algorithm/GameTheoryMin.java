@@ -74,7 +74,6 @@ import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.MinSelection;
 
 final class GameTheoryMin extends BaseGameTheory {
 
-    private final static boolean DEBUG = false;
     private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 1808979786969868698L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMin.class);
@@ -152,15 +151,6 @@ final class GameTheoryMin extends BaseGameTheory {
         boolean continueMapping = true;
         while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             this.counter++;
-            if (DEBUG) {
-                LOGGER.debug("**********Orignal Matrix**************");
-                printMatrixAtomContainer(mh, eductList, productList);
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//            printStereoMatrix(mh, eductList, productList);
-//            printFragmentMatrix(mh, eductList, productList);
-//            printEnergyMatrix(mh, eductList, productList);
-            }
             boolean conditionmet = false;
             if (!ruleMatchingFlag) {
                 LOGGER.debug("CHECK Rule Based Mapping Handler Match");
@@ -185,19 +175,7 @@ final class GameTheoryMin extends BaseGameTheory {
                 }
             }
 
-            if (DEBUG) {
-                LOGGER.debug("**********Modified Matrix**************");
-//            printMatrixAtomContainer(mh, eductList, productList);
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//            printStereoMatrix(mh, eductList, productList);
-//            printFragmentMatrix(mh, eductList, productList);
-//            printEnergyMatrix(mh, eductList, productList);
-            }
             winner.searchWinners(educts, products, mh);
-            if (DEBUG) {
-                printFlagMatrix(winner, eductList, productList);
-            }
             if (winner.getFlag()) {
                 LOGGER.debug("**********Updated Mapping**************");
                 UpdateMapping();

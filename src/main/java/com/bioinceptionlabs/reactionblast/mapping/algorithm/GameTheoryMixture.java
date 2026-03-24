@@ -71,7 +71,6 @@ import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.Selector;
 
 final class GameTheoryMixture extends BaseGameTheory {
 
-    private final static boolean DEBUG = false;
     private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 1808979786969868698L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMixture.class);
@@ -115,9 +114,6 @@ final class GameTheoryMixture extends BaseGameTheory {
         this._dirSuffix = super.getSuffix();
 
         ReactionIsomorphismHandler RIH = new ReactionIsomorphismHandler(mh, eductList, productList);
-//        System.out.println("\n--------------\nprintAtomContainerSize");
-//        printMatrixAtomContainer(mh, eductList, productList);
-
         if (RIH.getIsomorphismFlag()) {
 //            LOGGER.debug("ISOMORPHISM");
 //            printSimMatrix(mh, eductList, productList);
@@ -153,16 +149,6 @@ final class GameTheoryMixture extends BaseGameTheory {
         int iteration = 0;
         boolean continueMapping = true;
         while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
-            if (DEBUG) {
-                printMatrixAtomContainer(mh, eductList, productList);
-                LOGGER.debug("**********Orignal Matrix**************");
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//        printStereoMatrix(mh, eductList, productList);
-//        printFragmentMatrix(mh, eductList, productList);
-//        printEnergyMatrix(mh, eductList, productList);
-            }
-
             if (!ruleMatchingFlag) {//First map the biggest fragment the call rules
                 RuleBasedMappingHandler ruleBasedMappingHandler
                         = new RuleBasedMappingHandler(mh, eductList, productList);
@@ -174,9 +160,6 @@ final class GameTheoryMixture extends BaseGameTheory {
             }
 
             winner.searchWinners(educts, products, mh);
-            if (DEBUG) {
-                printFlagMatrix(winner, eductList, productList);
-            }
             if (winner.getFlag()) {
 
                 LOGGER.debug("**********Updated Mapping**************");

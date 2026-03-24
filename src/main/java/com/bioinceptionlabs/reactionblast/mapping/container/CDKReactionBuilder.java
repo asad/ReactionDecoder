@@ -41,10 +41,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.interfaces.IReactionSet;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
@@ -68,7 +65,6 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
-    private final static boolean DEBUG = false;
     private static final long serialVersionUID = 19869866609698L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(CDKReactionBuilder.class);
@@ -117,15 +113,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
     public IReaction standardize(IReaction reaction) throws Exception {
         int old_atom_rank_index_reactant = 1;
         int old_atom_rank_index_product = 1;
-        if (DEBUG) {
-            SmilesGenerator createReactionSMILES = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap);
-            LOGGER.debug("createReactionSMILES " + createReactionSMILES.create(reaction));
-            LOGGER.debug("standardize reaction module start");
-        }
-
         List<IAtomContainer> _metabolites = new ArrayList<>();
         IReaction standardizedReaction = SilentChemObjectBuilder.getInstance().newInstance(IReaction.class);
 
@@ -150,11 +137,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             tempStoic = 1.0;
             if (reaction.getReactantCoefficient(mol) > 0) {
                 tempStoic = reaction.getReactantCoefficient(mol);
-            }
-
-            if (DEBUG) {
-                LOGGER.debug("q_mol " + unique().create(mol));
-                LOGGER.debug("standardize reaction module phase 1.1");
             }
 
             IAtomContainer gMol = cloneWithIDs(mol);
@@ -184,15 +166,9 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 molWithH.setID(id);
             }
 
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 1.3");
-                LOGGER.debug("After Cleanup " + molWithH.getID());
-                LOGGER.debug(unique().create(mol));
-            }
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-                //System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);
@@ -219,10 +195,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             if (reaction.getProductCoefficient(mol) > 0) {
                 tempStoic = reaction.getProductCoefficient(mol);
             }
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 2.1");
-                LOGGER.debug("t_mol " + unique().create(mol));
-            }
             IAtomContainer gMol = cloneWithIDs(mol);
 
             /*
@@ -234,37 +206,20 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 }
                 a.setProperty("OLD_RANK", old_atom_rank_index_product++);
             }
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 2.1.1");
-                LOGGER.debug("t_mol " + unique().create(gMol));
-            }
             fixDativeBonds(gMol);
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 2.1.2");
-                LOGGER.debug("t_mol " + unique().create(gMol));
-            }
             percieveAtomTypesAndConfigureAtoms(gMol);
             IAtomContainer molWithH = gMol;
             //= ExtAtomContainerManipulator.addExplicitH(gMol);
             aromatizeMolecule(molWithH);
 
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 2.2");
-                LOGGER.debug("t_mol " + unique().create(molWithH));
-            }
             if (id == null) {
                 molWithH = setProperty(molWithH);
             } else {
                 molWithH.setID(id);
             }
-            if (DEBUG) {
-                LOGGER.debug("standardize reaction module phase 2.3");
-                LOGGER.debug("standardize t_mol " + unique().create(molWithH));
-            }
             if (stoichiometryMap.containsKey(molWithH.getID())) {
                 tempStoic += stoichiometryMap.get(molWithH.getID());
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
-                //System.out.println("St Map put: " + molWithH.getID() + ", St: " + tempStoic);
             } else {
                 stoichiometryMap.put(molWithH.getID(), tempStoic);
                 _metabolites.add(molWithH);
@@ -295,15 +250,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         moleculeMap.clear();
         stoichiometryMap.clear();
 
-        if (DEBUG) {
-            SmilesGenerator smiles = new SmilesGenerator(
-                    SmiFlavor.Unique
-                    | SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.AtomAtomMap);
-            String postCreateReactionSMILES = smiles.create(standardizedReaction);
-            LOGGER.debug("post CreateReactionSMILES " + postCreateReactionSMILES);
-        }
-
         LOGGER.debug("standardize reaction module end");
         return standardizedReaction;
     }
@@ -314,10 +260,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
          */
         String molID = molecule.getID() == null
                 || molecule.getID().isEmpty() ? null : molecule.getID();
-        if (DEBUG) {
-            LOGGER.debug("BEFORE");
-            printAtoms(molecule);
-        }
         try {
             try {
                 if (molecule.getAtomCount() > 0) {
@@ -368,10 +310,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             } catch (Exception ex) {
                 LOGGER.error(SEVERE, " Error in setting mol id: ", ex.getMessage());
             }
-            if (DEBUG) {
-                LOGGER.debug("After");
-                printAtoms(molecule);
-            }
             if (molecule.getID() == null) {
                 try {
                     throw new CDKException("Mol ID is NULL");
@@ -383,25 +321,17 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         } catch (Exception ex) {
             LOGGER.error(SEVERE, null, ex);
         }
-        if (DEBUG) {
-            LOGGER.debug("After Cleanup Mol ID is " + molID);
-            printAtoms(molecule);
-        }
         return molecule;
     }
 
     private void setReactantMolecule(IReaction IR, Collection<IAtomContainer> metabolites) {
 
         Iterator<IAtomContainer> it = metabolites.iterator();
-        //System.out.println("Stoic Map Size: " + stoichiometryMap.size());
 
         while (it.hasNext()) {
             IAtomContainer mol = it.next();
-//            System.out.println("Insertion: " + mol.getID() + ", " + stoichiometryMap.get(mol.getID()));
             mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(mol.getID()));
             IR.addReactant(mol, stoichiometryMap.get(mol.getID()));
-            //IR.setReactantCoefficient(mol,wt);
-//            System.out.println("Reaction: " + mol.getID() + ", " + standardizedReaction.getProductCoefficient(mol));
         }
 
         metabolites.clear();
@@ -413,11 +343,8 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
         Iterator<IAtomContainer> it = metabolites.iterator();
         while (it.hasNext()) {
             IAtomContainer mol = it.next();
-//
-//            System.out.println("Insertion: " + mol.getID() + ", " + stoichiometryMap.get(mol.getID()));
             mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(mol.getID()));
             IR.addProduct(mol, stoichiometryMap.get(mol.getID()));
-//         standardizedReaction.setProductCoefficient(mol,stoichiometryMap.get(mol.getID()));
         }
 
         metabolites.clear();
@@ -458,7 +385,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
                 LOGGER.error(SEVERE, null, ex);
             }
         }
-        //System.out.println("Error: Unable to Find AtomContainer ID!!!");
         return Key;
     }
 
@@ -528,14 +454,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             }
             leftHandAtomCount++;
         }
-        if (DEBUG) {
-            try {
-                LOGGER.debug("Q=mol " + generic().create(queryMol));
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
-            }
-        }
-
         int rightHandAtomCount = 0;
 
         for (IAtom b : targetMol.atoms()) {
@@ -550,14 +468,6 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             }
             rightHandAtomCount++;
         }
-        if (DEBUG) {
-            try {
-                LOGGER.debug("T=mol " + generic().create(targetMol));
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
-            }
-        }
-
         LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
         LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
 
@@ -573,20 +483,12 @@ public class CDKReactionBuilder extends BasicDebugger implements Serializable {
             return false;
         }
 
-        if (DEBUG) {
-            LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1);
-            LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2);
-            boolean flag = queryMol.getElectronContainerCount() == targetMol.getElectronContainerCount();
-            LOGGER.debug("is Radical same " + flag);
-        }
-
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())
                 ? queryMol.getElectronContainerCount() == targetMol.getElectronContainerCount()
                 ? isSubgraphIdentical(queryMol, targetMol, removeHydrogen) : false : false;
     }
 
     private boolean isSubgraphIdentical(IAtomContainer qMol, IAtomContainer tMol, boolean removeHydrogen) throws CDKException, IOException, CloneNotSupportedException {
-//        System.out.println("Graph matching");
 
         IAtomContainer mol1 = qMol.clone();
         IAtomContainer mol2 = tMol.clone();

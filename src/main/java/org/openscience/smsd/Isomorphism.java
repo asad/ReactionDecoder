@@ -52,8 +52,6 @@ public final class Isomorphism extends BaseMapping implements Serializable {
             = LoggingToolFactory.createLoggingTool(Isomorphism.class);
     static final long serialVersionUID = 0x24845e5c5ae877L;
     private final Algorithm algorithmType;
-    private double bondSensitiveMcGregorOut = -1;
-    private double bondInSensitiveMcGregor = -1;
 
     /**
      * Initialize query and target molecules and perform MCS search.
@@ -198,23 +196,4 @@ public final class Isomorphism extends BaseMapping implements Serializable {
         return false;
     }
 
-    /** @return the bondSensitiveMcGregorOut */
-    public double getBondSensitiveMcGregorOut() {
-        return bondSensitiveMcGregorOut;
-    }
-
-    /** @param bondSensitiveMcGregorOut the bondSensitiveMcGregorOut to set */
-    public void setBondSenSitiveMcGregorOut(double bondSensitiveMcGregorOut) {
-        this.bondSensitiveMcGregorOut = bondSensitiveMcGregorOut;
-    }
-
-    /** @return the bondInSensitiveMcGregor */
-    public double getBondInSensitiveMcGregor() {
-        return bondInSensitiveMcGregor;
-    }
-
-    /** @param bondInSensitiveMcGregor the bondInSensitiveMcGregor to set */
-    public void setBondInSenSitiveMcGregor(double bondInSensitiveMcGregor) {
-        this.bondInSensitiveMcGregor = bondInSensitiveMcGregor;
-    }
 }

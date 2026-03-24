@@ -47,8 +47,6 @@ import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IPseudoAtom;
-import org.openscience.cdk.smiles.SmiFlavor;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
@@ -74,7 +72,6 @@ import com.bioinceptionlabs.reactionblast.mapping.interfaces.IGameTheory;
  */
 public abstract class BaseGameTheory extends Debugger implements IGameTheory, Serializable {
 
-    private final static boolean DEBUG = false;
     private final static ILoggingTool LOGGER
             = createLoggingTool(BaseGameTheory.class);
     private static final long serialVersionUID = 1698688633678282L;
@@ -360,12 +357,6 @@ public abstract class BaseGameTheory extends Debugger implements IGameTheory, Se
                     }
                     atomMaps.clear();
                     if (mappingPossible) {
-                        if (DEBUG) {
-                            LOGGER.debug("Expected Mapping");
-                            SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols);
-                            LOGGER.debug(educt.getID() + " ED: " + smilesGenerator.create(educt));
-                            LOGGER.debug(product.getID() + " PD: " + smilesGenerator.create(product));
-                        }
                         return quickMapping(educt, product, queryPosition, targetPosition);
                     }
                 }

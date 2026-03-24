@@ -73,7 +73,6 @@ import com.bioinceptionlabs.reactionblast.tools.labelling.SmilesMoleculeLabeller
 
 final class GameTheoryMax extends BaseGameTheory {
 
-    private final static boolean DEBUG = false;
     private static final int MAX_MAPPING_ITERATIONS = 100;
     private static final long serialVersionUID = 1887868678797L;
     private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(GameTheoryMax.class);
@@ -127,16 +126,6 @@ final class GameTheoryMax extends BaseGameTheory {
         while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
             this.counter++;
 
-            if (DEBUG) {
-                LOGGER.debug("**********Orignal Matrix**************");
-                printMatrixAtomContainer(mh, eductList, productList);
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//            printStereoMatrix(mh, eductList, productList);
-//            printFragmentMatrix(mh, eductList, productList);
-//            printEnergyMatrix(mh, eductList, productList);
-            }
-
             boolean conditionmet = false;
             if (!ruleMatchingFlag) {
                 LOGGER.debug("CHECK Rule Based Mapping Handler Match");
@@ -153,23 +142,10 @@ final class GameTheoryMax extends BaseGameTheory {
                 LOGGER.debug("Subgraph/Exact Match Test");
                 MaxSelection select = new MaxSelection(mh, eductList, productList);
                 if (select.isSubAndCompleteMatchFlag()) {
-//            System.out.println("Subgraph/Exact Match");
                     mh = select.getUpdatedHolder();
                 }
             }
-            if (DEBUG) {
-                LOGGER.debug("**********Modified Matrix**************");
-//            printMatrixAtomContainer(mh, eductList, productList);
-                printSimMatrix(mh, eductList, productList);
-                printCliqueMatrix(mh, eductList, productList);
-//            printStereoMatrix(mh, eductList, productList);
-//            printFragmentMatrix(mh, eductList, productList);
-//            printEnergyMatrix(mh, eductList, productList);
-            }
             winner.searchWinners(educts, products, mh);
-            if (DEBUG) {
-                printFlagMatrix(winner, eductList, productList);
-            }
             if (winner.getFlag()) {
                 LOGGER.debug("**********Updated Mapping**************");
                 UpdateMapping();
@@ -239,7 +215,6 @@ final class GameTheoryMax extends BaseGameTheory {
                     ac2.setID(this.productList.get(productIndex));
 
                     AbstractGraphMatching GM = new GraphMatching(rid, ac1, ac2, dirSuffix, removeHydrogen);
-//                    System.out.println("Mol Size E: " + ac1.getAtomCount() + " , Mol Size P: " + ac2.getAtomCount());
                     boolean mcsMatch = GM.mcsMatch(mh, removeHydrogen, substrateIndex, productIndex, A, B);
                     if (mcsMatch) {
                         delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
@@ -262,8 +237,6 @@ final class GameTheoryMax extends BaseGameTheory {
                     IAtomContainer remainingEduct = GM.getRemainingEduct();
                     IAtomContainer remainingProduct = GM.getRemainingProduct();
 
-//                    System.out.println("Rem Mol Size E: " + remainingEduct.getAtomCount() 
-//                            + " , Rem Mol Size P: " + remainingProduct.getAtomCount());
                     reactionStructureInformation.putEduct(substrateIndex, remainingEduct);
                     reactionStructureInformation.putProduct(productIndex, remainingProduct);
                     reactionStructureInformation.setEductModified(substrateIndex, true);

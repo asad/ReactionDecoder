@@ -31,11 +31,8 @@ import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 
 import static org.openscience.cdk.CDKConstants.UNSET;
-import org.openscience.cdk.aromaticity.Aromaticity;
-import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
-import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -51,7 +48,6 @@ import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.helper.MoleculeInitializer;
 import org.openscience.smsd.interfaces.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import com.bioinceptionlabs.reactionblast.mapping.cache.ThreadSafeCache;
@@ -167,7 +163,6 @@ public class MCSThread implements Callable<MCSSolution> {
              * IMP: Do not perform substructure matching for disconnected molecules
              */
             boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
-            // boolean moleculeConnected = true;
             /*
                  Check if MCS matching required or not very IMP step
              */
@@ -206,7 +201,6 @@ public class MCSThread implements Callable<MCSSolution> {
                     substructure = new Substructure(ac1, ac2, am, bm, true);
                 }
                 substructure.setChemFilters(true, true, true);
-//                    System.out.println("Number of Solutions: " + substructure.getAllAtomMapping());
                 if (substructure.isSubgraph()
                         && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                     LOGGER.debug("Found Substructure 1");
@@ -410,7 +404,6 @@ public class MCSThread implements Callable<MCSSolution> {
         }
         Isomorphism isomorphism;
         int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
-        //boolean moleculeConnected = isMoleculeConnected(ac1, ac2);
         boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
 
         LOGGER.debug("Expected matches " + expectedMaxGraphmatch);
@@ -487,7 +480,6 @@ public class MCSThread implements Callable<MCSSolution> {
             mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
         }
 
-        //System.out.println("cache map size " + ThreadSafeCache.getInstance().keySet().size());
         return mcs;
 
     }
