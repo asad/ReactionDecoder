@@ -27,7 +27,6 @@ import static org.openscience.cdk.graph.invariant.InChINumbersTools.getUSmilesNu
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.graphics.direct.DirectReactionDrawer;
 import static com.bioinceptionlabs.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
 
 /**
@@ -40,7 +39,7 @@ import static com.bioinceptionlabs.reactionblast.tools.labelling.AtomContainerAt
 public class InChiMoleculeLabeller implements ICanonicalMoleculeLabeller {
 
     private final static ILoggingTool LOGGER
-            = createLoggingTool(DirectReactionDrawer.class);
+            = createLoggingTool(InChiMoleculeLabeller.class);
 
     /**
      *

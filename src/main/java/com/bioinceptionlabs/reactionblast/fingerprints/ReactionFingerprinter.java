@@ -35,7 +35,6 @@ import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.graphics.direct.DirectReactionDrawer;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
@@ -45,7 +44,7 @@ public class ReactionFingerprinter implements Serializable {
 
     private static final long serialVersionUID = 7867867834118778L;
     private final static ILoggingTool LOGGER
-            = createLoggingTool(DirectReactionDrawer.class);
+            = createLoggingTool(ReactionFingerprinter.class);
 
     /**
      *
