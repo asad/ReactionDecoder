@@ -41,7 +41,6 @@ import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAllAtomContainers;
@@ -270,84 +269,59 @@ public class ReactionMechanismTool implements Serializable {
                             generate2D,
                             generate3D);
                     LOGGER.debug("is solution: " + algorithm + " selected: " + selected);
+
+                    // Early exit: if this solution has minimal bond changes (≤2)
+                    // and zero fragment changes, it's likely optimal — skip remaining algorithms
+                    if (selected && this.selectedMapping != null
+                            && this.selectedMapping.getTotalBondChanges() <= 2
+                            && this.selectedMapping.getTotalFragmentChanges() == 0) {
+                        LOGGER.debug("Early exit: optimal mapping found by " + algorithm);
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.error(SEVERE, "Bond change calculation error", e);
                 throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage(), e);
             }
+            if (this.selectedMapping != null) {
+                LOGGER.info("Selected algorithm: " + this.selectedMapping.getAlgorithmID().description()
+                        + " (bonds=" + this.selectedMapping.getTotalBondChanges()
+                        + ", energy=" + this.selectedMapping.getBondEnergySum()
+                        + ", fragments=" + this.selectedMapping.getTotalFragmentChanges() + ")");
+            }
             LOGGER.debug("=====DONE REACTION MECH TOOL=====");
         }
     }
 
+    /**
+     * Check if a reaction is balanced (same heavy atom counts on both sides).
+     * Hydrogens are excluded since they are often implicit.
+     */
     private boolean isBalanced(IReaction r) {
+        Map<String, Integer> reactantAtoms = countHeavyAtoms(r.getReactants());
+        Map<String, Integer> productAtoms = countHeavyAtoms(r.getProducts());
 
-        Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
-        Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
-
-        int leftHandAtomCount = 0;
-        for (IAtomContainer q : r.getReactants().atomContainers()) {
-            for (IAtom a : q.atoms()) {
-                if (a.getSymbol().equals("H")) {
-                    continue;
-                }
-                if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
-                    atomUniqueCounter1.put(a.getSymbol(), 1);
-                } else {
-                    int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
-                    atomUniqueCounter1.put(a.getSymbol(), counter);
-                }
-                leftHandAtomCount++;
-            }
-            if (DEBUG) {
-                try {
-                    LOGGER.debug("Q=mol " + generic().create(q));
-                } catch (CDKException ex) {
-                    LOGGER.error(SEVERE, null, ex);
-                }
-            }
-        }
-
-        int rightHandAtomCount = 0;
-        for (IAtomContainer t : r.getProducts().atomContainers()) {
-            for (IAtom b : t.atoms()) {
-                if (b.getSymbol().equals("H")) {
-                    continue;
-                }
-                if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
-                    atomUniqueCounter2.put(b.getSymbol(), 1);
-                } else {
-                    int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
-                    atomUniqueCounter2.put(b.getSymbol(), counter);
-                }
-                rightHandAtomCount++;
-            }
-            if (DEBUG) {
-                try {
-                    LOGGER.debug("T=mol " + generic().create(t));
-                } catch (CDKException ex) {
-                    LOGGER.error(SEVERE, null, ex);
-                }
-            }
-        }
-
-        LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
-        LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
-
-        if (leftHandAtomCount != rightHandAtomCount) {
-            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
-                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
-            return false;
-        } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-            LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
-                    + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-            LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+        if (!reactantAtoms.equals(productAtoms)) {
+            LOGGER.warn("Number of atom(s) on the Left side "
+                    + reactantAtoms.values().stream().mapToInt(Integer::intValue).sum()
+                    + " =/= Number of atom(s) on the Right side "
+                    + productAtoms.values().stream().mapToInt(Integer::intValue).sum());
+            LOGGER.warn(reactantAtoms + " =/= " + productAtoms);
             return false;
         }
+        return true;
+    }
 
-        LOGGER.debug("atomUniqueCounter1 " + atomUniqueCounter1);
-        LOGGER.debug("atomUniqueCounter2 " + atomUniqueCounter2);
-        return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
+    private Map<String, Integer> countHeavyAtoms(IAtomContainerSet containers) {
+        Map<String, Integer> counts = new TreeMap<>();
+        for (IAtomContainer mol : containers.atomContainers()) {
+            for (IAtom a : mol.atoms()) {
+                if (!"H".equals(a.getSymbol())) {
+                    counts.merge(a.getSymbol(), 1, Integer::sum);
+                }
+            }
+        }
+        return counts;
     }
 
     private boolean isMappingSolutionAcceptable(Reactor reactor,
@@ -356,14 +330,9 @@ public class ReactionMechanismTool implements Serializable {
             boolean generate2D,
             boolean generate3D
     ) throws Exception {
-        if (reactor != null && reactor.getMappingCount() > 500 && reactor.getMappingCount() < 1000) {
-            LOGGER.warn("wolla...are after something big?...so many atoms to compute bond changes!");
-            LOGGER.warn("...Let me try..hold on your horses!");
-        }
-        if (reactor != null && reactor.getMappingCount() > 1000) {
-            LOGGER.warn("...wolla...are after something big?...!");
-            LOGGER.warn("...This might drive me bit crazy ... have to compute so many atoms for bond changes...!");
-            LOGGER.warn("...Let me try..hold on your horses!");
+        if (reactor != null && reactor.getMappingCount() > 500) {
+            LOGGER.warn("Large mapping: " + reactor.getMappingCount()
+                    + " atoms — bond change computation may be slow");
         }
         boolean chosen = false;
         try {
@@ -460,9 +429,17 @@ public class ReactionMechanismTool implements Serializable {
         return chosen;
     }
 
-    /*
-    * if bond changes are lesser than stored bond changes then update the flag or if stereo changes are lesser than
-    * stores stereo changes
+    /**
+     * Determines if a new mapping solution should replace the current best.
+     *
+     * Chemical rationale (Occam's razor for reaction mapping):
+     * 1. Prefer fewer total bond changes (simplest mechanism)
+     * 2. Among equal bond changes, prefer fewer fragment changes (less molecular rearrangement)
+     * 3. Among equal fragments, prefer lower bond energy change (thermodynamic favorability)
+     * 4. Use stereo changes and carbon bond changes as tiebreakers
+     *
+     * Special cases: transporters (no bond changes), identity reactions,
+     * and reactions with only stereo changes are handled first.
      */
     private boolean isChangeFeasible(MappingSolution ms) {
 
