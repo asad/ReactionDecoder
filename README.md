@@ -88,8 +88,8 @@ The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in 
 <!-- Old (v2.x) -->
 <groupId>uk.ac.ebi.rdt</groupId>
 
-<!-- New (v3.0.0) -->
-<groupId>com.bioinceptionlabs.rdt</groupId>
+<!-- New (v3.1.0+) -->
+<groupId>com.bioinceptionlabs</groupId>
 ```
 
 **Import changes**
