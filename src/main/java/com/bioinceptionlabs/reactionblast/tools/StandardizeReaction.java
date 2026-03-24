@@ -28,7 +28,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
 import com.bioinceptionlabs.reactionblast.mapping.container.CDKReactionBuilder;
 import static com.bioinceptionlabs.reactionblast.mapping.helper.MappingHandler.cleanMapping;
 
@@ -39,7 +38,7 @@ import static com.bioinceptionlabs.reactionblast.mapping.helper.MappingHandler.c
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public class StandardizeReaction implements IStandardizer {
+public class StandardizeReaction {
 
     private static final ILoggingTool LOGGER = createLoggingTool(StandardizeReaction.class);
 
@@ -50,7 +49,6 @@ public class StandardizeReaction implements IStandardizer {
      * @return New Standardized reaction Object
      * @throws Exception if standardization fails
      */
-    @Override
     public IReaction standardize(IReaction reaction) throws Exception {
         String reactionID = reaction.getID();
         cleanMapping(reaction);

@@ -34,7 +34,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.smsd.MoleculeInitializer.initializeMolecule;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

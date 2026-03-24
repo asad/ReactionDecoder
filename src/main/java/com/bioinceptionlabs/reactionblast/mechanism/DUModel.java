@@ -41,7 +41,7 @@ import org.openscience.smsd.MoleculeInitializer;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomAtomMappingContainer;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomStereoChangeInformation;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.BondChange;
-import com.bioinceptionlabs.reactionblast.mechanism.interfaces.IChangeCalculator;
+import com.bioinceptionlabs.reactionblast.mechanism.IChangeCalculator;
 import com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation;
 import com.bioinceptionlabs.reactionblast.stereo.StereoCenteralityTool;
 

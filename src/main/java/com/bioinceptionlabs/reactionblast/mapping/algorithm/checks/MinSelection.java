@@ -32,7 +32,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IResult;
+import com.bioinceptionlabs.reactionblast.mapping.IResult;
 
 /**
  *

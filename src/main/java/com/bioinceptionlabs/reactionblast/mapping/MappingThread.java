@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

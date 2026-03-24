@@ -28,7 +28,6 @@ import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static com.bioinceptionlabs.reactionblast.fingerprints.Similarity.getTanimotoSimilarity;
-import com.bioinceptionlabs.reactionblast.interfaces.IFingerPrintContainer;
 
 //~--- classes ----------------------------------------------------------------
 /**
@@ -60,7 +59,7 @@ import com.bioinceptionlabs.reactionblast.interfaces.IFingerPrintContainer;
  *
  *
  */
-public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, Serializable {
+public class HydrogenFreeFingerPrintContainer implements Serializable {
 
     //define the FINGER_SIZE of the fingerprint
     //NOTE: this should be a multiple of 64 and preferably not 1024 or 2048
@@ -98,7 +97,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
         fingerPrintMap = new TreeMap<>();
     }
 
-    @Override
     public String toString() {
         return "HydrogenFreeFingerPrintContainer{" + "fingerPrintMap=" + fingerPrintMap + '}';
     }
@@ -108,7 +106,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      *
      * @throws java.io.IOException
      */
-    @Override
     public void Clear() throws IOException {
         fingerPrintMap.clear();
     }
@@ -118,7 +115,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @param Key
      * @throws java.io.IOException
      */
-    @Override
     public void Erase(String Key) throws IOException {
         fingerPrintMap.remove(Key);
     }
@@ -129,7 +125,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @param Value
      * @throws java.io.IOException
      */
-    @Override
     public void put(String Key, BitSet Value) throws IOException {
         try {
             fingerPrintMap.put(Key, Value);
@@ -145,7 +140,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      * @return
      */
-    @Override
     public BitSet getFingerPrint(String Key) throws IOException {
         return fingerPrintMap.get(Key);
     }
@@ -156,7 +150,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @return
      * @throws java.io.IOException
      */
-    @Override
     public String getMoleculeID(BitSet bitset) throws IOException {
         String Key = null;
         for (Map.Entry<String, BitSet> map : fingerPrintMap.entrySet()) {
@@ -180,7 +173,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      * @return
      */
-    @Override
     public Map<String, BitSet> getFingerPrintMap()
             throws IOException {
         return new TreeMap<>(fingerPrintMap);
@@ -192,7 +184,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      * @return
      */
-    @Override
     public boolean isKeyPresent(String Key) throws IOException {
         return fingerPrintMap.containsKey(Key);
     }
@@ -204,7 +195,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @param Value
      * @throws java.io.IOException
      */
-    @Override
     public void setValue(String Key, BitSet Value) throws IOException {
         fingerPrintMap.put(Key, Value);
     }
@@ -215,7 +205,6 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
      * @throws java.io.IOException
      * @return
      */
-    @Override
     public boolean isValuePresent(BitSet value) throws IOException {
         for (BitSet bitset : fingerPrintMap.values()) {
             try {
@@ -238,12 +227,10 @@ public class HydrogenFreeFingerPrintContainer implements IFingerPrintContainer, 
         return fingerPrintMap.size();
     }
 
-    @Override
     public boolean isEmpty() throws IOException {
         return fingerPrintMap.isEmpty();
     }
 
-    @Override
     public void write() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

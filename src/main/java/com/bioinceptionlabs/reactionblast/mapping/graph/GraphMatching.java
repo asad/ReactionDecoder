@@ -45,8 +45,8 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.AbstractGraphMatching;
+import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
+import com.bioinceptionlabs.reactionblast.mapping.AbstractGraphMatching;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
 
 /**

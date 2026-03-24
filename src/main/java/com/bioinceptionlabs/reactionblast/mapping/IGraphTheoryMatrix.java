@@ -16,55 +16,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.mapping.interfaces;
+package com.bioinceptionlabs.reactionblast.mapping;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
-import com.bioinceptionlabs.reactionblast.mapping.graph.MCSSolution;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IGameTheory {
+public interface IGraphTheoryMatrix {
 
     /**
-     * @return the delta
+     * clears all the containers in this object
+     *
+     * @throws java.io.IOException
      */
-    public int getDelta();
-
-    /**
-     * @return the reactionMolMapping
-     */
-    public abstract MoleculeMoleculeMapping getReactionMolMapping();
+    void Clear() throws IOException;
 
     /**
      *
-     * @return @throws IOException
+     * @return
      */
-    public String getSuffix() throws IOException;
-
-    /**
-     * @param reactionMolMapping the reactionMolMapping to set
-     */
-    public abstract void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
+    int getDelta();
 
     /**
      *
-     * @param mh
-     * @param removeHydrogen
-     * @throws Exception
+     * @return reactant molecule and their index (key) in a Map
      */
-    public void UpdateMatrix(Holder mh, boolean removeHydrogen) throws Exception;
+    List<String> getEductCounter();
+
+    /**
+     * @return the matrixHolder
+     */
+    Holder getMatrixHolder();
 
     /**
      *
-     * @param mcsSolutions
-     * @param mh
-     * @param removeHydrogen
-     * @throws Exception
+     * @return product molecule and their index (key) in a Map
      */
-    public void UpdateMatrix(Collection<MCSSolution> mcsSolutions, Holder mh, boolean removeHydrogen) throws Exception;
+    List<String> getProductCounter();
+
+    /**
+     *
+     * @return
+     */
+    MoleculeMoleculeMapping getReactionMolMapping();
+
+    /**
+     *
+     * @param reactionMolMapping
+     */
+    void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
 }

@@ -20,7 +20,7 @@ package com.bioinceptionlabs.reactionblast.mapping.container;
 
 import java.io.Serializable;
 
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IKey;
+import com.bioinceptionlabs.reactionblast.mapping.IKey;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

@@ -63,8 +63,8 @@ import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
 import static com.bioinceptionlabs.reactionblast.mapping.graph.GraphMatcher.matcher;
 import com.bioinceptionlabs.reactionblast.mapping.graph.MCSSolution;
 import com.bioinceptionlabs.reactionblast.mapping.helper.Debugger;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IGameTheory;
+import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
+import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

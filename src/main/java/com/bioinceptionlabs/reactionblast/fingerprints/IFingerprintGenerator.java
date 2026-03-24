@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.mapping.interfaces;
+package com.bioinceptionlabs.reactionblast.fingerprints;
 
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
+import java.util.BitSet;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IResult {
-
-    /**
-     * @return the updatedHolder
-     */
-    abstract Holder getUpdatedHolder();
+public interface IFingerprintGenerator {
 
     /**
      *
+     * @param mol
      * @return
+     * @throws CDKException
      */
-    abstract boolean isSubAndCompleteMatchFlag();
+    BitSet getFingerprint(IAtomContainer mol) throws CDKException;
 }

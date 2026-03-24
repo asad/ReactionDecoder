@@ -40,13 +40,13 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
+import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIN;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIXTURE;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.RINGS;
 import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
 
 /**
@@ -98,7 +98,7 @@ public class CallableAtomMappingTool implements Serializable {
      */
     public CallableAtomMappingTool(
             IReaction reaction,
-            IStandardizer standardizer,
+            StandardizeReaction standardizer,
             boolean removeHydrogen,
             boolean checkComplex) throws Exception {
         solution = new EnumMap<>(IMappingAlgorithm.class);
@@ -115,7 +115,7 @@ public class CallableAtomMappingTool implements Serializable {
      */
     private void generateAtomAtomMapping(
             IReaction reaction,
-            IStandardizer standardizer,
+            StandardizeReaction standardizer,
             boolean removeHydrogen,
             boolean checkComplex) {
         /*

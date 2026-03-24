@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.mechanism.interfaces;
+package com.bioinceptionlabs.reactionblast.mechanism;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.MoleculeMoleculePair;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.ReactantProductPair;
 import com.bioinceptionlabs.reactionblast.mechanism.helper.ReactionCenterFragment;

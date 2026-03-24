@@ -46,13 +46,13 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.openscience.smsd.tools.BondEnergies;
 import static org.openscience.smsd.tools.BondEnergies.getInstance;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFeature;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
+import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.mapping.CallableAtomMappingTool;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.USER_DEFINED;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.USER_DEFINED;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
@@ -147,7 +147,7 @@ public class ReactionMechanismTool implements Serializable {
             boolean generate3D,
             boolean checkComplex,
             boolean accept_no_change,
-            IStandardizer standardizer) throws CDKException, AssertionError, Exception {
+            StandardizeReaction standardizer) throws CDKException, AssertionError, Exception {
         if (reaction == null) {
             throw new IllegalArgumentException("Reaction cannot be null");
         }

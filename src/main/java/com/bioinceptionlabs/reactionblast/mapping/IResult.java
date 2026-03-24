@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.interfaces;
+package com.bioinceptionlabs.reactionblast.mapping;
 
-import org.openscience.cdk.interfaces.IReaction;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IStandardizer {
+public interface IResult {
+
+    /**
+     * @return the updatedHolder
+     */
+    abstract Holder getUpdatedHolder();
 
     /**
      *
-     * @param reaction
      * @return
-     * @throws Exception
      */
-    public IReaction standardize(IReaction reaction) throws Exception;
-
+    abstract boolean isSubAndCompleteMatchFlag();
 }

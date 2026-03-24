@@ -51,7 +51,7 @@ import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

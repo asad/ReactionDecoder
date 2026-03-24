@@ -10,7 +10,7 @@ import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
 import static com.bioinceptionlabs.reactionblast.tools.MappingUtility.parseReactionSMILES;

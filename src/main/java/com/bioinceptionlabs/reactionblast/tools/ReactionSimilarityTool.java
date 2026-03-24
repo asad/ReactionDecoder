@@ -26,7 +26,7 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.openscience.cdk.exception.CDKException;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import static com.bioinceptionlabs.reactionblast.tools.EBIDoubleUtility.append;
 
 /**

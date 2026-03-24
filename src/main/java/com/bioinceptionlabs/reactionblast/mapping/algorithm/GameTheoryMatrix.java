@@ -50,9 +50,9 @@ import com.bioinceptionlabs.reactionblast.mapping.container.BestMatchContainer;
 import com.bioinceptionlabs.reactionblast.mapping.container.HydrogenFreeFingerPrintContainer;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IGraphTheoryMatrix;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
+import com.bioinceptionlabs.reactionblast.mapping.IGraphTheoryMatrix;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import com.bioinceptionlabs.reactionblast.tools.AtomContainerSetComparator;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 

@@ -38,8 +38,8 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import static com.bioinceptionlabs.reactionblast.fingerprints.PatternComparators.overallComparator;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFeature;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

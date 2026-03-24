@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 
 /**
  *

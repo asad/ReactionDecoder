@@ -28,7 +28,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
+import com.bioinceptionlabs.reactionblast.fingerprints.IFingerprintGenerator;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

@@ -16,50 +16,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
-package com.bioinceptionlabs.reactionblast.fingerprints.interfaces;
+package com.bioinceptionlabs.reactionblast.mechanism;
 
 /**
+ *
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IFeature extends Comparable<IFeature> {
+public enum EnumSubstrateProduct {
 
     /**
      *
-     * @param obj
-     * @return
      */
-    @Override
-    boolean equals(Object obj);
-
-    /**
-     * @return the pattern
-     */
-    String getPattern();
-
-    /**
-     * @return the position
-     */
-    double getWeight();
-
-    /**
-     * Hash code for Pattern
-     * @return
-     */
-    @Override
-    int hashCode();
-
-    /**
-     * Return weighted fingerprint
-     * @return
-     */
-    @Override
-    String toString();
-
+    REACTANT,
     /**
      *
-     * @param newValue
      */
-    public void setValue(double newValue);
+    PRODUCT;
 }

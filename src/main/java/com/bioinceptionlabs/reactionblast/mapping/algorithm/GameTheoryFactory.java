@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IGameTheory;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 
 /**
  * This class initiates the algorithm

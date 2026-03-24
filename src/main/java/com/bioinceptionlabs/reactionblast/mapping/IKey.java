@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,23 +16,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.fingerprints.interfaces;
+package com.bioinceptionlabs.reactionblast.mapping;
 
-import java.util.BitSet;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtomContainer;
+import java.util.Comparator;
+import com.bioinceptionlabs.reactionblast.mapping.container.Key;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IFingerprintGenerator {
+public interface IKey extends Comparable<Key>, Comparator<Key> {
+
+    @Override
+    int compareTo(Key t);
+
+    @Override
+    boolean equals(Object o);
 
     /**
      *
-     * @param mol
      * @return
-     * @throws CDKException
      */
-    BitSet getFingerprint(IAtomContainer mol) throws CDKException;
+    @Override
+    int hashCode();
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    String toString();
+
+    @Override
+    int compare(Key t, Key t1);
 }

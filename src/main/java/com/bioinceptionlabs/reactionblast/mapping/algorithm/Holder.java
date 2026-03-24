@@ -30,8 +30,8 @@ import com.bioinceptionlabs.reactionblast.mapping.container.HydrogenFreeFingerPr
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.container.MolMapping;
 import com.bioinceptionlabs.reactionblast.mapping.helper.Debugger;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
 
 import org.openscience.cdk.tools.ILoggingTool;

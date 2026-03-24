@@ -45,7 +45,7 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.CalculationProcess;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.helper.AbstractReactor;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.max;

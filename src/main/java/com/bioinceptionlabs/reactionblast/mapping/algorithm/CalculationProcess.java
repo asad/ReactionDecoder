@@ -32,12 +32,12 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static com.bioinceptionlabs.reactionblast.mapping.algorithm.GameTheoryFactory.make;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IGameTheory;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIXTURE;
-import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.RINGS;
+import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
+import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIN;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIXTURE;
+import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.RINGS;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

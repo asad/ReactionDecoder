@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

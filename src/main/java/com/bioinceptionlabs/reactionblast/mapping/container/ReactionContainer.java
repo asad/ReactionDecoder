@@ -29,7 +29,7 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator;
 import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
-import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
+import com.bioinceptionlabs.reactionblast.fingerprints.IFingerprintGenerator;
 
 /**
  *

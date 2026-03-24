@@ -20,7 +20,7 @@ package com.bioinceptionlabs.reactionblast.mechanism.helper;
 
 import java.io.Serializable;
 
-import com.bioinceptionlabs.reactionblast.mechanism.interfaces.EnumSubstrateProduct;
+import com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct;
 
 /**
  *

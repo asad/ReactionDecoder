@@ -30,8 +30,8 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import com.bioinceptionlabs.reactionblast.mapping.container.Key;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.interfaces.IKey;
+import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
+import com.bioinceptionlabs.reactionblast.mapping.IKey;
 
 //~--- classes --------------------------------------
 /**

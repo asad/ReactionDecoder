@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package com.bioinceptionlabs.reactionblast.fingerprints.interfaces;
+package com.bioinceptionlabs.reactionblast.fingerprints;
 
 import java.util.BitSet;
 import java.util.Collection;
