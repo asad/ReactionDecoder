@@ -34,8 +34,6 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
-import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
 import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
 
@@ -46,7 +44,6 @@ import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
  */
 public class UnblancedReactionChecker extends MappingUtility {
 
-    private static final boolean DEBUG = false;
     private static final File DIR = new File(RHEA_RXN_DIR);
     static final String NEW_LINE = getProperty("line.separator");
     private static final Logger LOG = getLogger(UnblancedReactionChecker.class.getName());
@@ -58,7 +55,6 @@ public class UnblancedReactionChecker extends MappingUtility {
         if (DIR.isDirectory()) {
             String[] list = DIR.list();
             for (String f : list) {
-//                System.out.println("F " + f);
                 IReaction rxnReactions;
                 try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(new FileReader(new File(DIR, f)));) {
                     try {
@@ -96,13 +92,6 @@ public class UnblancedReactionChecker extends MappingUtility {
                 }
                 leftHandAtomCount++;
             }
-            if (DEBUG) {
-                try {
-                    out.println("Q=mol " + generic().create(q));
-                } catch (CDKException ex) {
-                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
-                }
-            }
         }
 
         int rightHandAtomCount = 0;
@@ -119,18 +108,6 @@ public class UnblancedReactionChecker extends MappingUtility {
                 }
                 rightHandAtomCount++;
             }
-            if (DEBUG) {
-                try {
-                    out.println("T=mol " + generic().create(t));
-                } catch (CDKException ex) {
-                    getLogger(ReactionMechanismTool.class.getName()).log(SEVERE, null, ex);
-                }
-            }
-        }
-
-        if (DEBUG) {
-            out.println("atomUniqueCounter1 " + leftHandAtomCount);
-            out.println("atomUniqueCounter2 " + rightHandAtomCount);
         }
 
         if (leftHandAtomCount != rightHandAtomCount) {
@@ -171,10 +148,6 @@ public class UnblancedReactionChecker extends MappingUtility {
             return false;
         }
 
-        if (DEBUG) {
-            out.println("atomUniqueCounter1 " + atomUniqueCounter1);
-            out.println("atomUniqueCounter2 " + atomUniqueCounter2);
-        }
         return atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet());
     }
 

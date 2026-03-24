@@ -63,7 +63,6 @@ import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
  */
 public class ReactionDecoder extends Annotator {
 
-    private final static boolean DEBUG = false;
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(ReactionDecoder.class);
 
@@ -182,12 +181,6 @@ public class ReactionDecoder extends Annotator {
         transformer.transform(source, result);
 
         out.println("Output is presented in xml format: " + file.getAbsolutePath());
-
-        if (DEBUG) {
-            // Show output on console during development
-            result = new StreamResult(out);
-            transformer.transform(source, result);
-        }
     }
 
     private void FormatTextToFile(StringBuilder doc, String fileName) throws UnsupportedEncodingException, FileNotFoundException, IOException {
@@ -197,11 +190,6 @@ public class ReactionDecoder extends Annotator {
         }
 
         out.println("Output is presented in text format: " + file.getAbsolutePath());
-
-        if (DEBUG) {
-            // Show output on console during development
-            out.println(doc.toString());
-        }
     }
 
     private void AAMTask(CommandLine aamLine, Options createAAMOptions,

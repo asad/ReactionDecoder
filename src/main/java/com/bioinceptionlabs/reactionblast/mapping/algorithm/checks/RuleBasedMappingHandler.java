@@ -20,8 +20,6 @@ package com.bioinceptionlabs.reactionblast.mapping.algorithm.checks;
 
 import java.io.IOException;
 import java.io.Serializable;
-import static java.lang.System.getProperty;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +32,6 @@ import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import static org.openscience.cdk.smiles.SmilesGenerator.unique;
 import org.openscience.cdk.smiles.SmilesParser;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogens;
@@ -50,9 +47,6 @@ import static org.openscience.smsd.tools.Utility.isMatch;
  */
 public final class RuleBasedMappingHandler implements Serializable {
 
-    static final String NEW_LINE = getProperty("line.separator");
-    private final static boolean DEBUG1 = false;
-    private final static boolean DEBUG2 = false;
     private static final long serialVersionUID = 88765671L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(RuleBasedMappingHandler.class);
@@ -106,9 +100,6 @@ public final class RuleBasedMappingHandler implements Serializable {
             List<String> EdMapOrignal, List<String> PdMapOrignal)
             throws CDKException, IOException {
         setRulesSmiles();
-        if (DEBUG1) {
-            LOGGER.debug("Mapping Rules Checked");
-        }
         this.matrixHolder = matrixHolder;
         this.matchedRowColoumn = new HashMap<>();
         setRuleMatched(false);
@@ -118,9 +109,6 @@ public final class RuleBasedMappingHandler implements Serializable {
         for (int i = 0; i < this.matrixHolder.getReactionContainer().getEductCount(); i++) {
             IAtomContainer ac1 = new AtomContainer(this.matrixHolder.getReactionContainer().getEduct(i));
             ac1 = removeHydrogens(ac1);
-            if (DEBUG1) {
-                LOGGER.debug("Educt " + unique().create(ac1));
-            }
 
             if (ac1.getAtomCount() >= getSmartsPhosphate().getAtomCount()
                     || ac1.getAtomCount() >= getSmartsSulphate().getAtomCount()) {
@@ -131,15 +119,9 @@ public final class RuleBasedMappingHandler implements Serializable {
                 }
             }
         }
-        if (DEBUG1) {
-            LOGGER.debug("smallestMatchedReactant " + smallestMatchedReactant);
-        }
         for (int j = 0; j < this.matrixHolder.getReactionContainer().getProductCount(); j++) {
             IAtomContainer ac2 = new AtomContainer(this.matrixHolder.getReactionContainer().getProduct(j));
             ac2 = removeHydrogens(ac2);
-            if (DEBUG1) {
-                LOGGER.debug("Product " + unique().create(ac2));
-            }
             if (ac2.getAtomCount() >= getSmartsPhosphate().getAtomCount()
                     || ac2.getAtomCount() >= getSmartsSulphate().getAtomCount()) {
                 if (isMatch(getSmartsPhosphate(), ac2, false) || isMatch(getSmartsSulphate(), ac2, false)) {
@@ -149,10 +131,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                 }
             }
         }
-        if (DEBUG1) {
-            LOGGER.debug("smallestMatchedProduct " + smallestMatchedProduct);
-            LOGGER.debug(NEW_LINE + NEW_LINE + "----------------------" + NEW_LINE + NEW_LINE + NEW_LINE);
-        }
 
         boolean phosphate_changed = phosphate_cleaved(this.matrixHolder.getReactionContainer().getEducts(), this.matrixHolder.getReactionContainer().getProducts());
 
@@ -161,28 +139,11 @@ public final class RuleBasedMappingHandler implements Serializable {
                 IAtomContainer educt = this.matrixHolder.getReactionContainer().getEduct(i);
                 IAtomContainer ac1 = new AtomContainer(educt);
                 ac1 = removeHydrogens(ac1);
-                if (DEBUG2) {
-                    LOGGER.debug(NEW_LINE + NEW_LINE + NEW_LINE + "Educt " + unique().create(ac1));
-                    LOGGER.debug("Educt found " + ac1.getAtomCount());
-                }
 
                 for (int j = 0; j < this.matrixHolder.getReactionContainer().getProductCount(); j++) {
                     IAtomContainer product = this.matrixHolder.getReactionContainer().getProduct(j);
                     IAtomContainer ac2 = new AtomContainer(product);
                     ac2 = removeHydrogens(ac2);
-
-                    if (DEBUG2) {
-                        LOGGER.debug("Product " + unique().create(ac2));
-                        LOGGER.debug("Product found " + ac2.getAtomCount());
-                    }
-                    if (DEBUG2) {
-                        LOGGER.debug("Match 1 " + isMatch(getSmartsWater(), ac1, false));
-                        LOGGER.debug("Match 2 " + isMatch(getSmartsPhosphate(), ac2, false));
-                        LOGGER.debug("Query " + ac1.getAtomCount());
-                        LOGGER.debug("Target " + ac2.getAtomCount());
-                        LOGGER.debug("smallest R  " + smallestMatchedReactant);
-                        LOGGER.debug("smallest P  " + smallestMatchedProduct);
-                    }
 
                     if (this.matrixHolder.getCliqueMatrix().getValue(i, j) == 0) {
                         continue;
@@ -196,16 +157,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsPhosphate(), ac2, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac2, false)
                             && ac2.getAtomCount() == smallestMatchedProduct) {
-                        if (DEBUG2) {
-                            LOGGER.debug("Match ");
-                            LOGGER.debug("smallest R phosphate " + smallestMatchedReactant);
-                            LOGGER.debug("smallest P phosphate " + smallestMatchedProduct);
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug(" Rule 1 water and Phosphate");
-                        }
 
                     }
                     /*
@@ -217,16 +170,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsPhosphate(), ac1, false)
                             && !isMatch(getSmartsDoublePhosphate(), ac1, false)
                             && ac1.getAtomCount() == smallestMatchedReactant) {
-                        if (DEBUG2) {
-                            LOGGER.debug("Match ");
-                            LOGGER.debug("smallest R phosphate " + smallestMatchedReactant);
-                            LOGGER.debug("smallest P phosphate " + smallestMatchedProduct);
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug(" Rule 1 phosphate and water");
-                        }
 
                     }
 
@@ -237,16 +182,8 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsWater(), ac1, false)
                             && isMatch(getSmartsSulphate(), ac2, false)
                             && ac2.getAtomCount() == smallestMatchedProduct) {
-                        if (DEBUG2) {
-                            LOGGER.debug("Match ");
-                            LOGGER.debug("smallest R sulphate " + smallestMatchedReactant);
-                            LOGGER.debug("smallest P sulphate " + smallestMatchedProduct);
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug(" Rule 1 water and Sulphate");
-                        }
 
                     } else /*
                         Rule 1_D Sulphate and water
@@ -254,24 +191,13 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsWater(), ac2, false)
                             && isMatch(getSmartsSulphate(), ac1, false)
                             && ac1.getAtomCount() == smallestMatchedReactant) {
-                        if (DEBUG2) {
-                            LOGGER.debug("Match ");
-                            LOGGER.debug("smallest R sulphate " + smallestMatchedReactant);
-                            LOGGER.debug("smallest P sulphate " + smallestMatchedProduct);
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug(" Rule 1 Sulphate and water");
-                        }
 
                     }/*
                         Rule 11 C04666_C04916
                      */ else if (isMatch(getSmartsC04666Rule(), ac1, false) && isMatch(getSmartsC04916Rule(), ac2, false)
                             || (isMatch(getSmartsC04916Rule(), ac1, false) && isMatch(getSmartsC04666Rule(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 11 C04666 with C04916 found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     } /*
@@ -282,9 +208,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsGlutamine(), ac1, false) && isMatch(getSmartsGlutamate(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 2.1 L-Glutamate with L-Glutamine found");
-                        }
                     } /*
                         Rule 2 L_Glutamate and L_Glutamine_clipped
                      */ else if ((ac1.getAtomCount() == 10 && ac2.getAtomCount() == 10
@@ -293,9 +216,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsGlutamineClipped(), ac1, false) && isMatch(getSmartsGlutamateClipped(), ac2, false))) {
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 2.2 L-Glutamate with L-Glutamine found");
-                        }
                     }/*
                         Rule 3 D_Glutamate and TwoOxoglutarate
                      */ else if ((ac2.getAtomCount() == 10 && ac1.getAtomCount() == 10
@@ -305,9 +225,6 @@ public final class RuleBasedMappingHandler implements Serializable {
 
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 3 D-Glutamate with 2-Oxoglutarate found");
-                        }
 
                     }/*
                         Rule 4 water and Acetate (exact match)
@@ -315,9 +232,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && ac2.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac2, false))
                             || (ac2.getAtomCount() == 1 && isMatch(getSmartsWater(), ac2, false)
                             && ac1.getAtomCount() == getSmartsAcetate().getAtomCount() && isMatch(getSmartsAcetate(), ac1, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 4 Water and Acetate found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }/*
@@ -326,9 +240,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsADP(), ac2, false))
                             || (ac1.getAtomCount() == getSmartsADP().getAtomCount() && isMatch(getSmartsADP(), ac1, false)
                             && isMatch(getSmartsATP(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 5 ADP_ATP found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }/*
@@ -337,9 +248,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsAcetyl_CoA(), ac2, false))
                             || (ac1.getAtomCount() == getSmartsAcetyl_CoA().getAtomCount() && isMatch(getSmartsAcetyl_CoA(), ac1, false)
                             && isMatch(getSmartsCoA(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 6 CoA_Acetyl_CoA found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }/*
@@ -348,9 +256,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsC00006(), ac2, false))
                             || (ac1.getAtomCount() == getSmartsC00006().getAtomCount() && isMatch(getSmartsC00006(), ac1, false)
                             && isMatch(getSmartsC00003(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 7 C00003_C00006 found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }/*
@@ -359,9 +264,6 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsC00005(), ac2, false))
                             || (ac1.getAtomCount() == getSmartsC00005().getAtomCount() && isMatch(getSmartsC00005(), ac1, false)
                             && isMatch(getSmartsC00004(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 8 C00004_C00005 found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     } /*
@@ -370,18 +272,12 @@ public final class RuleBasedMappingHandler implements Serializable {
                             && isMatch(getSmartsAlanine(), ac2, false))
                             || (ac1.getAtomCount() == getSmartsAlanine().getAtomCount() && isMatch(getSmartsAlanine(), ac1, false)
                             && isMatch(getSmartsPyruvate(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 9 C00022_C00041 found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }/*
                         Rule 10 N_C
                      */ else if (isMatch(getSmartsNRule(), ac1, false) && isMatch(getSmartsCRule(), ac2, false)
                             || (isMatch(getSmartsCRule(), ac1, false) && isMatch(getSmartsNRule(), ac2, false))) {
-                        if (DEBUG1) {
-                            LOGGER.debug("Rule 10 N with C found");
-                        }
                         setRuleMatched(true);
                         matchedRowColoumn.put(i, j);
                     }

@@ -46,7 +46,6 @@ public class SMARTS2AAMTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        //System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         assertEquals(2, formedCleavedWFingerprint.getFeatureCount());
     }
     

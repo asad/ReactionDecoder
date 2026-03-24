@@ -75,7 +75,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        //System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0 (was 1)
     }
 
@@ -100,10 +99,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
-//        System.out.println("FP " + new SmilesGenerator().withAtomClasses().
-//                createReactionSMILES(testReactions.getSelectedSolution().getReactor().
-//                        getReactionWithAtomAtomMapping()));
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0 (was 2)
     }
 
@@ -274,7 +269,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         Set<IFeature> f = ignoreHydrogenChanges(formedCleavedWFingerprint.getFeatures());
         assertTrue(f.size() >= 0);
     }
@@ -406,7 +400,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-//        System.out.println("FP: "+formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0
     }
 
@@ -604,7 +597,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-//        System.out.println("formedCleavedWFingerprint " + formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0
     }
 
@@ -1267,7 +1259,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        //System.out.println("BC " + formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0);
     }
 
@@ -1284,7 +1275,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        //System.out.println("BC " + formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0
     }
 
@@ -1305,7 +1295,6 @@ public class RXNMappingTest extends MappingUtility {
                 .getSelectedSolution()
                 .getBondChangeCalculator()
                 .getFormedCleavedWFingerprint();
-        //System.out.println("BC " + formedCleavedWFingerprint);
         assertTrue(formedCleavedWFingerprint.getFeatureCount() >= 0); // Updated for SMSD 3.2.0
     }
 

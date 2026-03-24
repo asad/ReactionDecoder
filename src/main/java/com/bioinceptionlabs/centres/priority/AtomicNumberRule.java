@@ -75,8 +75,6 @@ public class AtomicNumberRule<A>
         IAtom b = (IAtom) o2.getAtom();
 
         return getAtomicNumber(a) - getAtomicNumber(b);
-
-//        return accessor.getAtomicNumber(o1.getAtom()) - accessor.getAtomicNumber(o2.getAtom());
     }
 
     public int getAtomicNumber(IAtom o) {
@@ -86,7 +84,6 @@ public class AtomicNumberRule<A>
                 int massNumber = Isotopes.getInstance().getMajorIsotope(o.getAtomicNumber()).getAtomicNumber();
                 return massNumber;
             } catch (Exception e) {
-                //e.printStackTrace();
                 return 6;
             }
         } else if (o instanceof IPseudoAtom) {

@@ -74,26 +74,18 @@ public class MassNumberRule<A>
         IAtom b = (IAtom) o2.getAtom();
 
         return getMassNumber(a) - getMassNumber(b);
-
-//        return accessor.getMassNumber(o1.getAtom()) - accessor.getMassNumber(o2.getAtom());
     }
 
     public int getMassNumber(IAtom o) {
 
         if (o != null && !(o instanceof IPseudoAtom) && o.getMassNumber() == null) {
             try {
-//                    Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-//                    LOGGER.debug("atomicNumber " + atomicNumber);
                 int massNumber = Isotopes.getInstance().getMajorIsotope(o.getAtomicNumber()).getMassNumber();
                 return massNumber;
             } catch (Exception e) {
-                //e.printStackTrace();
                 return 11;
             }
         } else if (o instanceof IPseudoAtom) {
-            //PseudoAtoms
-//                Integer atomicNumber = ac.getAtom(i).getAtomicNumber();
-//                LOGGER.debug("atomicNumber " + atomicNumber);
             return 11;//less than carbon for 'R'
         }
         return 0;

@@ -41,7 +41,7 @@ public class EBIArrayList<E> extends ArrayList<E> {
      * @param L2
      * @return
      */
-    @SuppressWarnings({"unchecked", "unchecked"})
+    @SuppressWarnings("unchecked")
     public static ArrayList append(ArrayList L1, ArrayList L2) {
 
         ArrayList temp1 = new ArrayList(L1);
