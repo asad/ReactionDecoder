@@ -61,8 +61,8 @@ import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprin
 import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import static com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.matcher;
-import com.bioinceptionlabs.reactionblast.mapping.MCSSolution;
-import com.bioinceptionlabs.reactionblast.mapping.Debugger;
+import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.MCSSolution;
+import com.bioinceptionlabs.reactionblast.mapping.Reactor.Debugger;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
 import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
 

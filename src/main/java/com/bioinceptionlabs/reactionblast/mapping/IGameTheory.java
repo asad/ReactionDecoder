@@ -21,8 +21,8 @@ package com.bioinceptionlabs.reactionblast.mapping;
 import java.io.IOException;
 import java.util.Collection;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
-import com.bioinceptionlabs.reactionblast.mapping.MoleculeMoleculeMapping;
-import com.bioinceptionlabs.reactionblast.mapping.MCSSolution;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
+import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.MCSSolution;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

@@ -79,7 +79,7 @@ import com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct;
 import static com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct.PRODUCT;
 import static com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct.REACTANT;
 import com.bioinceptionlabs.reactionblast.mechanism.IChangeCalculator;
-import static com.bioinceptionlabs.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
+import static com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReactionManipulatorTool.deepClone;
 
 /**
  * This class marks the bond changes

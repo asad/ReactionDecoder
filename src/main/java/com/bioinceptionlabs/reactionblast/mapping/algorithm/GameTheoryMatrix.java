@@ -46,14 +46,14 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator;
 import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator.getFingerprinterSize;
-import com.bioinceptionlabs.reactionblast.mapping.BestMatchContainer;
-import com.bioinceptionlabs.reactionblast.mapping.HydrogenFreeFingerPrintContainer;
-import com.bioinceptionlabs.reactionblast.mapping.MoleculeMoleculeMapping;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.BestMatchContainer;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.HydrogenFreeFingerPrintContainer;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
 import com.bioinceptionlabs.reactionblast.mapping.IGraphTheoryMatrix;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
-import com.bioinceptionlabs.reactionblast.tools.AtomContainerSetComparator;
+import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.AtomContainerSetComparator;
 import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 //~--- classes ----------------------------------------------------------------

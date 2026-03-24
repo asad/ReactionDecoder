@@ -35,7 +35,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
-import com.bioinceptionlabs.reactionblast.tools.MDLRXNV2000Reader;
+import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLRXNV2000Reader;
 
 // Utility class for checking reaction balance — not part of automated test suite
 /**

@@ -33,7 +33,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import com.bioinceptionlabs.reactionblast.tools.ImageGenerator;
-import com.bioinceptionlabs.reactionblast.tools.MDLV2000RXNWriter;
+import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLV2000RXNWriter;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

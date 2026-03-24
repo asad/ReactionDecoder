@@ -28,8 +28,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.mapping.CDKReactionBuilder;
-import static com.bioinceptionlabs.reactionblast.mapping.MappingHandler.cleanMapping;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.CDKReactionBuilder;
+import static com.bioinceptionlabs.reactionblast.mapping.Reactor.MappingHandler.cleanMapping;
 
 /**
  * Standardizes reaction objects for atom-atom mapping.
