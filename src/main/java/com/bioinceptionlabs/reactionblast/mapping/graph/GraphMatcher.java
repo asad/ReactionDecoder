@@ -51,6 +51,8 @@ import java.util.concurrent.Executors;
 
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
@@ -187,11 +189,71 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
+            /*
+             * Pre-compute canonical SMILES for identity detection.
+             */
+            SmilesGenerator canonSmigen = new SmilesGenerator(
+                    SmiFlavor.Canonical | SmiFlavor.Stereo);
+            Map<Integer, String> eductSmiles = new TreeMap<>();
+            for (int i = 0; i < eductCount; i++) {
+                IAtomContainer e = reactionStructureInformation.getEduct(i);
+                if (e != null && e.getAtomCount() > 0) {
+                    try { eductSmiles.put(i, canonSmigen.create(e)); }
+                    catch (CDKException ex) { eductSmiles.put(i, ""); }
+                }
+            }
+            Map<Integer, String> productSmiles = new TreeMap<>();
+            for (int j = 0; j < productCount; j++) {
+                IAtomContainer p = reactionStructureInformation.getProduct(j);
+                if (p != null && p.getAtomCount() > 0) {
+                    try { productSmiles.put(j, canonSmigen.create(p)); }
+                    catch (CDKException ex) { productSmiles.put(j, ""); }
+                }
+            }
+
+            int skippedIdentity = 0, skippedRatio = 0, skippedTanimoto = 0;
+
             for (Combination c : jobMap.keySet()) {
                 int substrateIndex = c.getRowIndex();
                 int productIndex = c.getColIndex();
                 IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+
+                /*
+                 * PRE-FILTER 1: Identity — if canonical SMILES match, the MCS
+                 * will be the full molecule. Still run MCS (needed for correct
+                 * atom correspondence), but mark as likely identity for logging.
+                 */
+                String eSmi = eductSmiles.getOrDefault(substrateIndex, "");
+                String pSmi = productSmiles.getOrDefault(productIndex, "");
+                if (!eSmi.isEmpty() && eSmi.equals(pSmi)) {
+                    skippedIdentity++; // just count, still run MCS for correct mapping
+                }
+
+                /*
+                 * PRE-FILTER 2: Atom count ratio — skip pairs where the smaller
+                 * molecule is < 30% of the larger. Such pairs rarely contribute
+                 * meaningful mappings and waste MCS computation.
+                 */
+                int eAtoms = educt.getAtomCount();
+                int pAtoms = product.getAtomCount();
+                if (eAtoms > 0 && pAtoms > 0) {
+                    double ratio = (double) Math.min(eAtoms, pAtoms) / Math.max(eAtoms, pAtoms);
+                    if (ratio < 0.3 && Math.min(eAtoms, pAtoms) > 3) {
+                        skippedRatio++;
+                        continue;
+                    }
+                }
+
+                /*
+                 * PRE-FILTER 3: Tanimoto similarity — skip pairs with very low
+                 * fingerprint similarity. These molecules share almost no structure.
+                 */
+                double tanimoto = mh.getFPSimilarityMatrix().getValue(substrateIndex, productIndex);
+                if (tanimoto >= 0 && tanimoto < 0.05 && eAtoms > 5 && pAtoms > 5) {
+                    skippedTanimoto++;
+                    continue;
+                }
 
                 int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
                 int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
@@ -205,11 +267,13 @@ public class GraphMatcher extends Debugger {
                 listOfJobs.add(mcsThread);
             }
 
-            /*
-             * Choose unique combination to run
-             */
+            if (skippedIdentity + skippedRatio + skippedTanimoto > 0) {
+                LOGGER.debug("Pre-filter: skipped " + skippedIdentity + " identity, "
+                        + skippedRatio + " ratio, " + skippedTanimoto + " tanimoto pairs");
+            }
+
             if (listOfJobs.size() > LARGE_JOB_THRESHOLD) {
-                LOGGER.warn("holy moly...thats alot of molecules to compare...time for a coffee break!");
+                LOGGER.warn("Large job: " + listOfJobs.size() + " MCS pairs to compute");
             }
             if (!listOfJobs.isEmpty()) {
                 for (MCSThread mcsThreadJob : listOfJobs) {

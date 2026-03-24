@@ -103,14 +103,18 @@ public class CallableAtomMappingTool implements Serializable {
         generateAtomAtomMapping(reaction, standardizer, removeHydrogen, checkComplex);
     }
 
+    /**
+     * Run all algorithms in parallel, standardize once.
+     * All 4 algorithms run simultaneously — the scoring in
+     * ReactionMechanismTool picks the best result.
+     */
     private void generateAtomAtomMapping(
             IReaction reaction,
             IStandardizer standardizer,
             boolean removeHydrogen,
             boolean checkComplex) {
         /*
-         * Standardize the reaction ONCE and clone for each algorithm.
-         * Previously this was done 4 times independently — major overhead.
+         * Standardize the reaction ONCE.
          */
         IReaction standardizedReaction = null;
         try {
@@ -124,49 +128,21 @@ public class CallableAtomMappingTool implements Serializable {
             return;
         }
 
-        int numAlgorithms = checkComplex ? 4 : 3;
-        ExecutorService executor = Executors.newFixedThreadPool(numAlgorithms);
-        int jobCounter = 0;
+        IMappingAlgorithm[] algorithms = checkComplex
+                ? new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS}
+                : new IMappingAlgorithm[]{MIN, MAX, MIXTURE};
+
+        ExecutorService executor = Executors.newFixedThreadPool(algorithms.length);
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
-
-            /*
-             * MIN Algorithm
-             */
-            LOGGER.debug("Submitting MIN algorithm");
-            IReaction cleanedReaction1 = cloneReaction(standardizedReaction);
-            cs.submit(new MappingThread("IMappingAlgorithm.MIN", cleanedReaction1, MIN, removeHydrogen));
-            jobCounter++;
-
-            /*
-             * MAX Algorithm
-             */
-            LOGGER.debug("Submitting MAX algorithm");
-            IReaction cleanedReaction2 = cloneReaction(standardizedReaction);
-            cs.submit(new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen));
-            jobCounter++;
-
-            /*
-             * MIXTURE Algorithm
-             */
-            LOGGER.debug("Submitting MIXTURE algorithm");
-            IReaction cleanedReaction3 = cloneReaction(standardizedReaction);
-            cs.submit(new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen));
-            jobCounter++;
-
-            if (checkComplex) {
-                /*
-                 * RINGS Algorithm
-                 */
-                LOGGER.debug("Submitting RINGS algorithm");
-                IReaction cleanedReaction4 = cloneReaction(standardizedReaction);
-                cs.submit(new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen));
+            int jobCounter = 0;
+            for (IMappingAlgorithm algo : algorithms) {
+                LOGGER.debug("Submitting " + algo.description());
+                IReaction clone = cloneReaction(standardizedReaction);
+                cs.submit(new MappingThread("IMappingAlgorithm." + algo.name(),
+                        clone, algo, removeHydrogen));
                 jobCounter++;
             }
-
-            /*
-             * Collect the results — all algorithms run in parallel
-             */
             for (int i = 0; i < jobCounter; i++) {
                 Reactor chosen = cs.take().get();
                 putSolution(chosen.getAlgorithm(), chosen);
@@ -181,11 +157,6 @@ public class CallableAtomMappingTool implements Serializable {
             executor.shutdown();
         }
         LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
-        /*
-         * Cache must be cleared between reactions because MCSSolution objects
-         * contain atom references specific to each reaction's molecule clones.
-         * Cross-reaction reuse would cause atom index mismatches.
-         */
         ThreadSafeCache.getInstance().cleanup();
     }
 

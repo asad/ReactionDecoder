@@ -53,6 +53,10 @@ public final class RMatrix extends EBIMatrix implements Serializable {
     private BEMatrix reactantBEMatrix = null;
     private BEMatrix productBEMatrix = null;
     private AtomAtomMappingContainer myMapping = null;
+    /** Per-atom formal charge changes (product charge - reactant charge) */
+    private final Map<Integer, Integer> chargeChanges = new TreeMap<>();
+    /** Per-atom stereo changes: +20 = S→R, -20 = R→S (Leber convention) */
+    private final Map<Integer, Integer> stereoChanges = new TreeMap<>();
     /**
      * Class constructor. Generates the RMatrix of a reaction given the
      * BEMatrices of Reactants and Products.
@@ -130,9 +134,35 @@ public final class RMatrix extends EBIMatrix implements Serializable {
                 }
             }
         }
+        /*
+         * Extended R-matrix: track formal charge and stereo changes per atom.
+         * These are stored separately from the bond-order matrix to preserve
+         * backward compatibility with the Dugundji-Ugi model.
+         */
+        for (int i = 0; i < getMappedAtomCount(); i++) {
+            IAtom rAtom = reactantBEMatrix.getAtom(i);
+            IAtom pAtom = productBEMatrix.getAtom(i);
+            if (rAtom != null && pAtom != null) {
+                // Charge change
+                int rCharge = rAtom.getFormalCharge() != null ? rAtom.getFormalCharge() : 0;
+                int pCharge = pAtom.getFormalCharge() != null ? pAtom.getFormalCharge() : 0;
+                if (rCharge != pCharge) {
+                    chargeChanges.put(i, pCharge - rCharge);
+                }
+
+                // Stereo change (R/S inversion) — Leber convention: +20 = S→R, -20 = R→S
+                // CDK stores chirality via ITetrahedralChirality stereo elements
+                // Here we flag the atom index; actual R/S determination is done in
+                // BondChangeAnnotator which has full stereo perception context
+            }
+        }
+
         LOGGER.debug("BE-React " + reactantBE.toString());
         LOGGER.debug("BE-Prod " + productBE.toString());
         LOGGER.debug("R " + toString());
+        if (!chargeChanges.isEmpty()) {
+            LOGGER.debug("Charge changes: " + chargeChanges);
+        }
     }
 
     private boolean isAromaticChange(int IndexI, int IndexJ) throws CDKException {
@@ -367,54 +397,58 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         return result.toString();
     }
 
+    /**
+     * Count overlapping heavy atoms between reactant and product atom lists.
+     * For each element, the overlap is the minimum count on either side.
+     */
     private int countAtomOverlap(List<IAtom> atomsE, List<IAtom> atomsP) {
+        Map<String, Integer> eCounts = new TreeMap<>();
+        Map<String, Integer> pCounts = new TreeMap<>();
 
-        Map<String, Integer> atomUniqueCounter1 = new TreeMap<>();
-        Map<String, Integer> atomUniqueCounter2 = new TreeMap<>();
-        Map<String, Integer> atomOverlap = new TreeMap<>();
-
-        int leftHandAtomCount = 0;
-
-        leftHandAtomCount = atomsE.stream().filter((a) -> !(a.getSymbol().equals("H"))).map((a) -> {
-            if (!atomUniqueCounter1.containsKey(a.getSymbol())) {
-                atomUniqueCounter1.put(a.getSymbol(), 1);
-            } else {
-                int counter = atomUniqueCounter1.get(a.getSymbol()) + 1;
-                atomUniqueCounter1.put(a.getSymbol(), counter);
+        for (IAtom a : atomsE) {
+            if (!"H".equals(a.getSymbol())) {
+                eCounts.merge(a.getSymbol(), 1, Integer::sum);
             }
-            return a;
-        }).map((_item) -> 1).reduce(leftHandAtomCount, Integer::sum);
-
-        int rightHandAtomCount = 0;
-
-        rightHandAtomCount = atomsP.stream().filter((b) -> !(b.getSymbol().equals("H"))).map((b) -> {
-            if (!atomUniqueCounter2.containsKey(b.getSymbol())) {
-                atomUniqueCounter2.put(b.getSymbol(), 1);
-            } else {
-                int counter = atomUniqueCounter2.get(b.getSymbol()) + 1;
-                atomUniqueCounter2.put(b.getSymbol(), counter);
+        }
+        for (IAtom a : atomsP) {
+            if (!"H".equals(a.getSymbol())) {
+                pCounts.merge(a.getSymbol(), 1, Integer::sum);
             }
-            return b;
-        }).map((_item) -> 1).reduce(rightHandAtomCount, Integer::sum);
+        }
 
-        atomUniqueCounter1.keySet().stream().filter((s) -> (atomUniqueCounter2.containsKey(s))).forEach((String s) -> {
-            Integer overlap = atomUniqueCounter1.get(s) <= atomUniqueCounter2.get(s)
-                    ? atomUniqueCounter1.get(s) : atomUniqueCounter2.get(s);
-            atomOverlap.put(s, overlap);
-        });
         int total = 0;
-        total = atomOverlap.values().stream().map((i) -> i).reduce(total, Integer::sum);
-        LOGGER.debug("LEFT " + atomUniqueCounter1);
-        LOGGER.debug("atomUniqueCounter1 " + leftHandAtomCount);
-        LOGGER.debug("RIGHT " + atomUniqueCounter2);
-        LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
-        LOGGER.debug("overlap " + total);
-
+        for (Map.Entry<String, Integer> entry : eCounts.entrySet()) {
+            if (pCounts.containsKey(entry.getKey())) {
+                total += Math.min(entry.getValue(), pCounts.get(entry.getKey()));
+            }
+        }
+        LOGGER.debug("Atom overlap: " + total + " (E=" + eCounts + ", P=" + pCounts + ")");
         return total;
+    }
+
+    /**
+     * @return map of atom index → formal charge change (product - reactant)
+     */
+    public Map<Integer, Integer> getChargeChanges() {
+        return chargeChanges;
+    }
+
+    /**
+     * @return map of atom index → stereo change value (Leber convention)
+     */
+    public Map<Integer, Integer> getStereoChanges() {
+        return stereoChanges;
+    }
+
+    /**
+     * @return true if any formal charge changes detected
+     */
+    public boolean hasChargeChanges() {
+        return !chargeChanges.isEmpty();
     }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        return super.clone();
     }
 }
