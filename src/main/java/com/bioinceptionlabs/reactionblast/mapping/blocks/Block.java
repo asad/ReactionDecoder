@@ -72,7 +72,7 @@ public class Block implements Comparable<Block> {
             IAtom partnerAtom = atomMap.get(atom);
             int partnerIndex = partner.atomContainer.indexOf(partnerAtom);
             indexMap.put(atomIndex, partnerIndex);
-        });//        System.out.println("indexMap " + indexMap);
+        });
 
         Map<Integer, Integer> compactMap
                 = getCompactMap(new ArrayList<>(indexMap.keySet()));

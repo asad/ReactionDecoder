@@ -83,7 +83,6 @@ public class BEMatrix extends EBIMatrix implements Serializable {
      * @throws CDKException
      */
     void setMatrixAtoms() throws CDKException {
-        //System.out.println("H " + withoutH);
         initMatrix(0.);
         atomArray.clear();
         for (IAtomContainer container : myMoleculeSet.atomContainers()) {

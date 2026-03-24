@@ -178,7 +178,6 @@ public class MappingUtility extends TestUtility {
     public ReactionMechanismTool testReactions(String reactionID, String directory, boolean accept_no_change) throws FileNotFoundException, Exception {
         IReaction cdkReaction = null;
         try {
-//            System.out.println("Mapping Reaction " + reactionID);
             cdkReaction = readReaction(reactionID, directory, false);
             ExtReactionManipulatorTool.addExplicitH(cdkReaction);
             try {
@@ -191,15 +190,10 @@ public class MappingUtility extends TestUtility {
                     AtomContainerManipulator.percieveAtomTypesAndConfigureUnsetProperties(a);
                 }
 
-//                SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-//                out.println("Input reactions " + sm.create(cdkReaction));
             } catch (Exception e) {
                 LOGGER.error(SEVERE, NEW_LINE, " Sorry- failed to create reaction smiles: ", e.getMessage());
             }
             ReactionMechanismTool annotation = getAnnotation(cdkReaction, accept_no_change);
-//            MappingSolution s = annotation.getSelectedSolution();
-//            SmilesGenerator sm = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-//            System.out.println("Mapped reactions " + sm.create(s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens()));
             return annotation;
         } catch (Exception e) {
             LOGGER.error(SEVERE, NEW_LINE, " Sorry- looks like something failed ", e.getMessage());
@@ -223,12 +217,6 @@ public class MappingUtility extends TestUtility {
             rmt = new ReactionMechanismTool(cdkReaction, true, true, false, true, accept_no_change, new StandardizeReaction());
             MappingSolution s = rmt.getSelectedSolution();
 
-//            out.println("Reaction ID: " + s.getReaction().getID() + ", Selected Algorithm: " + s.getAlgorithmID());
-//            System.out.println("Cleaved/Formed " + s.getBondChangeCalculator().getFormedCleavedWFingerprint().toString());
-//            System.out.println("Order Changed " + s.getBondChangeCalculator().getOrderChangesWFingerprint().toString());
-//            System.out.println("Stereo Changed " + s.getBondChangeCalculator().getStereoChangesWFingerprint().toString());
-//            System.out.println("RC Changed " + s.getBondChangeCalculator().getReactionCenterWFingerprint().toString());
-//            System.out.println("BE " + s.getBondEnergySum() + ", Fragment " + s.getTotalFragmentChanges());
             IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
             /*
@@ -243,19 +231,6 @@ public class MappingUtility extends TestUtility {
         } catch (Exception e) {
             LOGGER.error(SEVERE, " Reaction Mechanism failed ", e.getMessage());
         }
-//        int i = 1;
-//        for (MappingSolution m : rmt.getAllSolutions()) {
-//            out.println("--------------------------------------");
-//            BondChangeCalculator bcc = m.getBondChangeCalculator();
-//            out.println(m.getAlgorithmID() + ", fp " + bcc.getFormedCleavedWFingerprint().toString());
-//            out.println(m.getAlgorithmID() + ", fp " + bcc.getOrderChangesWFingerprint().toString());
-//
-//            out.println("BE " + m.getBondEnergySum() + ", Fragment " + m.getTotalFragmentChanges());
-//            new ImageGenerator().drawLeftToRightReactionLayout("Output", bcc.getReactionWithCompressUnChangedHydrogens(), ("Map_" + m.getReaction().getID() + m.getAlgorithmID()));
-//            i++;
-//            out.println();
-//            out.println("--------------------------------------");
-//        }
         return rmt;
     }
 

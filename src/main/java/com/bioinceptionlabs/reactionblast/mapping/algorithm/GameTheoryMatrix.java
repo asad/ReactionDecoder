@@ -244,11 +244,9 @@ public class GameTheoryMatrix extends BaseGameTheory implements IGraphTheoryMatr
 
     private void sortAtomContainer(List<IAtomContainer> ac, List<IAtomContainer> pd) {
         for (IAtomContainer e : reaction.getReactants().atomContainers()) {
-//            System.out.println("ID: e " + e.getID());
             ac.add(e);
         }
         for (IAtomContainer p : reaction.getProducts().atomContainers()) {
-//            System.out.println("ID: P " + p.getID());
             pd.add(p);
         }
 

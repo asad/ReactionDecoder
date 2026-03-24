@@ -88,7 +88,6 @@ public class LinearAtomContainerSetLayout extends AbstractAWTLayout<IAtomContain
         Point2d curr = new Point2d(0, 0);
         int moleculeCounter = 0;
         for (IAtomContainer molecule : atomContainerSet.atomContainers()) {
-//            System.out.println("curr pos = " + curr.x + " " + curr.y);
             String label = molecule.getID();
             if (label == null || label.isEmpty()) {
                 label = "mol" + valueOf(moleculeCounter);

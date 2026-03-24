@@ -92,7 +92,6 @@ public class Similarity {
         float _bitset1_cardinality = bitset1.cardinality();
         float _bitset2_cardinality = bitset2.cardinality();
 
-//        System.out.println("bitset1: "+ bitset1.size() + " " + " bitset2" + bitset2.size());
         if (bitset1.size() != bitset2.size()) {
             throw new Exception("BitSets must have the same bit length");
         }

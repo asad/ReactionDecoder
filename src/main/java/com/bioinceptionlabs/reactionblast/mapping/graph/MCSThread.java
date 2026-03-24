@@ -295,7 +295,6 @@ public class MCSThread implements Callable<MCSSolution> {
             return mcs;
 
         } catch (CDKException | CloneNotSupportedException ex) {
-//            ex.printStackTrace();
             LOGGER.error(SEVERE, "Error in generating MCS Solution: ", ex.getMessage());
         }
         return null;

@@ -168,7 +168,6 @@ public class KeggReactionFileContainer implements Serializable {
                 ecData = new ArrayList<>();
                 ReactionFileData eData = DataMap.get(enzyme);
                 for (String data : eData.getValues()) {
-//                    System.out.println("RID " + _recID + " EC: " + data);
                     ecData.add(data);
                 }
             }

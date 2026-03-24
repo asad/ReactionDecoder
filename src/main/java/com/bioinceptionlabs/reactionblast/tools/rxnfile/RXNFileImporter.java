@@ -108,15 +108,11 @@ public class RXNFileImporter {
 
         for (int j = 0; j < BigMol.getAtomContainerCount(); j++) {
             IAtomContainer molecules = BigMol.getAtomContainer(j);
-//            System.out.println("Big Mol: " + BigMol.getAtomContainerCount() + " Big Mol Atom Cont:" + molecules.getAtomCount());
             if (!isConnected(molecules)) {
                 IAtomContainerSet splitMol = splitMolecules(molecules);
                 for (int i = 0; i < splitMol.getAtomContainerCount(); i++) {
                     IAtomContainer mol = splitMol.getAtomContainer(i);
-//                System.out.println("Split Mol Atom Count: " + mol.getAtomCount());
                     SplitMoleculeList.addAtomContainer(mol);
-//                printAtoms(mol);
-//                printRadicalAtoms(mol);
                 }
             } else {
                 SplitMoleculeList.addAtomContainer(molecules);

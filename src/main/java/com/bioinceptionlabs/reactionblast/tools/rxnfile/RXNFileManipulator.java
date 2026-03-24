@@ -105,9 +105,6 @@ public class RXNFileManipulator extends BasicDebugger {
 
                 ReactionID += fields[0];
 
-//                System.out.println("****************************");
-//                System.out.println("Processing: " + ReactionID);
-//                System.out.println("****************************");
                 IAtomContainerSet _imoledu = rxn.getReactants();
                 IAtomContainerSet _imolpro = rxn.getProducts();
 
@@ -138,9 +135,6 @@ public class RXNFileManipulator extends BasicDebugger {
 
                 setReactantMolecule(cleanedReaction, _Stoichiometry, _Metabolites);
 
-                //System.out.println();
-                //System.out.println("****************************");
-                //System.out.println();
                 for (int i = 0; i < _imolpro.getAtomContainerCount(); i++) {
                     IAtomContainer mol = _imolpro.getAtomContainer(i);
                     IAtomContainer ac = setProperty(mol);
@@ -194,14 +188,12 @@ public class RXNFileManipulator extends BasicDebugger {
 
                 String RXNFileName = rxnFile.getCanonicalPath();
 //                    molID = null;
-                //System.out.println();
                 RXNFileImporter rxn = new RXNFileImporter();
                 rxn.readFile(RXNFileName);
                 String REGEX = "\\.";
                 String ReactionID = "R";
                 Pattern p = compile(REGEX);
                 String[] fields = p.split(FileName);
-//                System.out.println(fields);
                 if (!FileName.endsWith(".ov.rxn")) {
                     LOGGER.debug("Reading the input MACiE rxn (stage reaction) File");
                     ReactionID = ReactionID + fields[0] + fields[1].replace("stg", ".");
@@ -209,15 +201,8 @@ public class RXNFileManipulator extends BasicDebugger {
                     LOGGER.debug("Reading the input MACiE rxn (overall reaction) File");
                     ReactionID = fields[0] + fields[1].replace("ov", "");
                 }
-//                System.out.println("****************************");
-//                System.out.println("Processing: " + ReactionID);
-//                System.out.println("****************************");
-
                 IAtomContainerSet _imoledu = rxn.getReactants();
                 IAtomContainerSet _imolpro = rxn.getProducts();
-//
-//                System.out.println(_imoledu.getAtomContainerCount());
-//                System.out.println(_imolpro.getAtomContainerCount());
 
                 IR.setID(ReactionID);
 
@@ -237,11 +222,7 @@ public class RXNFileManipulator extends BasicDebugger {
                         _Metabolites.add(mol);
                     }
                 }
-//                System.out.println(_Metabolites.size());
                 setReactantMolecule(IR, _Stoichiometry, _Metabolites);
-//                System.out.println();
-//                System.out.println("****************************");
-//                System.out.println();
                 for (int i = 0; i < _imolpro.getAtomContainerCount(); i++) {
                     IAtomContainer mol = _imolpro.getAtomContainer(i);
                     IAtomContainer ac = setProperty(mol);
@@ -260,8 +241,6 @@ public class RXNFileManipulator extends BasicDebugger {
                 setProductMolecule(IR, _Stoichiometry, _Metabolites);
                 //As per CDK BIDIRECTION 1, Forward 2, Backward 0
                 IR.setDirection(BIDIRECTIONAL);
-                //Print the reaction
-//                printReaction(cleanedReaction);
             } catch (IOException ex) {
                 LOGGER.error(SEVERE, null, ex);
             }
@@ -297,9 +276,6 @@ public class RXNFileManipulator extends BasicDebugger {
                 String[] fields = p.split(FileName);
                 ReactionID += fields[0];
                 int direction = parseInt(fields[1]);
-//                System.out.println("****************************");
-//                System.out.println("Processing: " + ReactionID);
-//                System.out.println("****************************");
 
                 IAtomContainerSet _imoledu = rxn.getReactants();
                 IAtomContainerSet _imolpro = rxn.getProducts();
@@ -322,9 +298,6 @@ public class RXNFileManipulator extends BasicDebugger {
                     }
                 }
                 setReactantMolecule(IR, _Stoichiometry, _Metabolites);
-                //System.out.println();
-                //System.out.println("****************************");
-                //System.out.println();
                 for (int i = 0; i < _imolpro.getAtomContainerCount(); i++) {
                     IAtomContainer mol = _imolpro.getAtomContainer(i);
                     IAtomContainer ac = setProperty(mol);
@@ -366,22 +339,13 @@ public class RXNFileManipulator extends BasicDebugger {
         atomContainer.Clear();
         LOGGER.debug("Reaction is read and initialized");
         return IR;
-//
     }
 
     private void setReactantMolecule(IReaction IR, Map<String, Double> _Stoichiometry, Set<IAtomContainer> _Metabolites) {
-////
-//        System.out.println("-------------------");
-//        System.out.println("Reactants");
-//        System.out.println("-------------------");
 
         Iterator<IAtomContainer> it = _Metabolites.iterator();
-//        System.out.println("Stoic Map Size: " + _Stoichiometry.size());
         while (it.hasNext()) {
             IAtomContainer mol = it.next();
-//            System.out.println("Insertion: " + mol.getID() + ", " + _Stoichiometry.get(mol.getID())
-//                    + ", ac:" + mol.getAtomCount());
-//            mol.setProperty("STOICHIOMETRY", _Stoichiometry.get(mol.getID()));
             IR.addReactant(mol, _Stoichiometry.get(mol.getID()));
         }
 
@@ -391,17 +355,11 @@ public class RXNFileManipulator extends BasicDebugger {
 
     private void setProductMolecule(IReaction IR, Map<String, Double> _Stoichiometry, Set<IAtomContainer> _Metabolites) {
 
-//        System.out.println("-------------------");
-//        System.out.println("Products");
-//        System.out.println("-------------------");
         Iterator<IAtomContainer> it = _Metabolites.iterator();
 
         while (it.hasNext()) {
 
             IAtomContainer mol = it.next();
-//            System.out.println("Insertion: " + mol.getID() + ", " + _Stoichiometry.get(mol.getID())
-//                    + ", ac:" + mol.getAtomCount());
-//            mol.setProperty("STOICHIOMETRY", _Stoichiometry.get(mol.getID()));
             IR.addProduct(mol, _Stoichiometry.get(mol.getID()));
         }
 
@@ -411,8 +369,6 @@ public class RXNFileManipulator extends BasicDebugger {
 
     private IAtomContainer setProperty(IAtomContainer mol) throws Exception {
         String molID = mol.getID();
-//         System.out.println("After Cleanup");
-//        System.out.println(CDKChemaxonIOConveter.getChemAxonMolecule(mol).exportToFormat("mol:V2"));
 
         IAtomContainer molecule = new AtomContainer(mol);
         removeHydrogensExceptSingleAndPreserveAtomID(mol);
@@ -434,34 +390,22 @@ public class RXNFileManipulator extends BasicDebugger {
                     }
                     //Loop for Unique Mol ID Creation
                     if (!fingerprint_Present_Mol.isEmpty()) {
-//                        System.out.println("FP1 " + fingerprint_Present_Mol.cardinality());
                         if (!FPC.isValuePresent(fingerprint_Present_Mol)) {
-//                            System.out.println("FP1 " + fingerprint_Present_Mol.cardinality());
                             if (molID == null) {
                                 int val = ++moleculeCounter + 100000;
                                 String Temp = Integer.toString(val);
                                 molID = Temp.replaceFirst("1", "M");
                                 molecule.setID(molID);
                             }
-//                            System.out.println("FP " + fingerprint_Present_Mol);
-//                            System.out.println("ID " + molID);
                             FPC.setValue(molID, fingerprint_Present_Mol);
                             atomContainer.add(molID, molecule);
 
-//                            System.out.println("\n\n 1: AFTER SET ID " + molID);
-//                            System.out.println("F ID " + FPC.getFingerPrint(molID));
-//                            System.out.println("Mol ID FROM CONT: " + atomContainer.getMoleculeID(molecule));
-//                            System.out.println("Mol  " + molecule.getID());
                         } else if (FPC.isValuePresent(fingerprint_Present_Mol)
                                 && atomContainer.compareAtomContainer(FPC.getMoleculeID(fingerprint_Present_Mol), molecule)) {
                             if (molID == null) {
                                 molID = FPC.getMoleculeID(fingerprint_Present_Mol);
                                 molecule.setID(molID);
                             }
-//                            System.out.println("\n\n 2: AFTER SET ID " + molID);
-//                            System.out.println("F ID " + FPC.getFingerPrint(molID));
-//                            System.out.println("Mol ID FROM CONT: " + atomContainer.getMoleculeID(molecule));
-//                            System.out.println("Mol  " + molecule.getID());
                         } else {
                             if (molID == null) {
                                 int val = ++moleculeCounter + 100000;
@@ -472,10 +416,6 @@ public class RXNFileManipulator extends BasicDebugger {
                             FPC.setValue(molID, fingerprint_Present_Mol);
                             atomContainer.add(molID, molecule);
 
-//                            System.out.println("\n\n 3: AFTER SET ID " + molID);
-//                            System.out.println("F ID " + FPC.getFingerPrint(molID));
-//                            System.out.println("Mol ID FROM CONT: " + atomContainer.getMoleculeID(molecule));
-//                            System.out.println("Mol  " + molecule.getID());
                         }
                     } else {
                         LOGGER.debug("error: Fingerprint can't be generated for this molecule " + SmilesGenerator.generic().create(molecule));
@@ -499,8 +439,6 @@ public class RXNFileManipulator extends BasicDebugger {
         } catch (Exception ex) {
             LOGGER.error(SEVERE, null, ex);
         }
-//        printAtoms(molecule);
-//        System.out.println(molecule.getID());
         return molecule;
     }
 }

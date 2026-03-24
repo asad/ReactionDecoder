@@ -579,8 +579,6 @@ public class ReactionDecoder extends Annotator {
                 | ParserConfigurationException
                 | TransformerException
                 | DOMException e) {
-            //System.out.println("Error " + e.getCause());
-            //e.printStackTrace();
             LOGGER.error(SEVERE, null, e);
         }
     }

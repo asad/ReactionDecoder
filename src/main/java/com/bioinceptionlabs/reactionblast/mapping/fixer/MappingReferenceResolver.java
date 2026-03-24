@@ -75,19 +75,16 @@ public class MappingReferenceResolver {
             resolvedMappings.add(
                     builder.newInstance(IMapping.class, rAtom, pAtom));
         }
-//        System.out.println("now has " + reaction.getMappingCount() + " mappings");
         // clear and replace the mappings
         int count = reaction.getMappingCount();
         for (int i = count - 1; i >= 0; i--) {
             reaction.removeMapping(i);
         }
-//        System.out.println("now has " + reaction.getMappingCount() + " mappings");
         int numberOfMappingsAdded = 0;
         numberOfMappingsAdded = resolvedMappings.stream().map((mapping) -> {
             reaction.addMapping(mapping);
             return mapping;
-        }).map((_item) -> 1).reduce(numberOfMappingsAdded, Integer::sum);//        System.out.println(numberOfMappingsAdded + " mappings added");
-//        printIDs(reaction);
+        }).map((_item) -> 1).reduce(numberOfMappingsAdded, Integer::sum);
     }
 
     /**

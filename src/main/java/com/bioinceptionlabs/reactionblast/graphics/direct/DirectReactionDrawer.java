@@ -299,11 +299,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             int cropY = max(0, (int) dY / 2);
             int cropW = (int) min(finalWidth, w);
             int cropH = (int) min(finalHeight, w);
-//            System.out.println("CROPPING totalBounds " 
-//                    + BoundsPrinter.toString(totalBoundingBox));
-//            System.out.println("zoom " + zoom + " dX " + dX + " dY " + dY 
-//                            + " crop " + cropX + " " + cropY + " " 
-//                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
                 LOGGER.debug("Not cropping " + (cropX + cropW) + " " + w + " "
                         + (cropY + cropH) + " " + h);
@@ -449,7 +444,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
                 = reaction.getReactants().getAtomContainer(index);
         String reactantsID = reaction.getReactants().getID();
         String boundsID = reactionID + "_" + reactantsID + "_" + lastReactant.getID() + ":" + index;
-//        System.out.println("looking up bounds " + boundsID);
         Rectangle2D lastRBound = boundsTree.get(boundsID);
         double xPos;
         double yPos;
@@ -462,7 +456,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         }
         arrowCenter = new Point2d(xPos, yPos);
 
-//        System.out.println("arrow center @ " + arrowCenter);
         if (params.arrowType == FORWARD) {
             arrowDrawer.drawArrow(g, arrowCenter, reactionAxis);
         } else if (params.arrowType == BACKWARD) {
@@ -543,7 +536,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         double boundsY = boundsTree.getRoot().getCenterY();
         double dx = cx - boundsX;
         double dy = cy - boundsY;
-//        System.out.println("shifting (" + boundsX + ", " + boundsY + ") by "+ dx + " " + dy);
         return shift(reaction, boundsTree, dx, dy);
     }
 
@@ -588,9 +580,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             }
         }
 
-//        Rectangle2D rBB = boundsTree.get(reaction.getID());
-//        System.out.println("reaction center " + rBB.getCenterX() + " " + rBB.getCenterY());
-//        System.out.println("arrow center " + reactionLayout.getArrowCenter());
         return boundsTree;
     }
 
@@ -604,18 +593,12 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         for (IAtomContainer atomContainer : reactants.atomContainers()) {
             String fullLabel = rootLabel + "_" + label + "_" + atomContainer.getID() + ":" + counter;
             String subLabel = label + "_" + atomContainer.getID() + ":" + counter;
-//            System.out.println(fullLabel);
-
-//            System.out.println("Atoms From" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
             translate2D(atomContainer, dx, dy);
             Rectangle2D uBounds = unshiftedMolSetTree.get(fullLabel);
             Rectangle2D sBounds = new Rectangle2D.Double(uBounds.getMinX() + dx,
                     uBounds.getMinY() + dy,
                     uBounds.getWidth(),
                     uBounds.getHeight());
-//            System.out.println("From " + BoundsPrinter.toString(uBounds));
-//            System.out.println("To   " + BoundsPrinter.toString(sBounds));
-//            System.out.println("Atoms To" + BoundsPrinter.toString(GeometryTools.getRectangle2D(atomContainer)));
             boundsTree.add(subLabel, sBounds);
             counter++;
         }
@@ -624,9 +607,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
 
     private Axis getAxisOfExpansion(
             int targetWidth, int targetHeight, double zoomedWidth, double zoomedHeight) {
-//        int borderX = params.borderX;
-//        int borderY = params.borderY;
-//        int border2 = borderX * 2;
         double widthRatio = targetWidth / zoomedWidth;
         double heightRatio = targetHeight / zoomedHeight;
         if (widthRatio < heightRatio) {
@@ -799,7 +779,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
             if (i > 0) {
                 IAtomContainer previous = reactants.getAtomContainer(i - 1);
                 String previousLabel = reactionID + "_" + reactants.getID() + "_" + previous.getID() + ":" + (i - 1);
-//                System.out.println("getting " + previousLabel);
                 drawPlus(previous, previousLabel, yAxis, boundsTree, g);
                 moleculeDrawer.drawMolecule(current, g);
             } else {
@@ -823,10 +802,7 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
         if (boundsTree == null) {
             bounds = getRectangle2D(ac);
         } else {
-//            System.out.print("looking up " + acLabel);
             bounds = boundsTree.get(acLabel);
-//            System.out.println(" found " + BoundsPrinter.toString(bounds));
-//            System.out.println(boundsTree);
         }
 
         Rectangle2D textBounds = getTextBounds(g, "+");
@@ -844,7 +820,6 @@ public class DirectReactionDrawer extends AbstractDirectDrawer {
                 posAlongAxis - halfWidth, yAxis - halfHeight, tbW, tbH));
         g.setColor(BLACK);
         g.setFont(new Font("ARIAL", PLAIN, params.plusFontSize));
-//        System.out.println("drawing plus at " + p);
         g.drawString("+", p.x, p.y);
     }
 

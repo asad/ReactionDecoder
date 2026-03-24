@@ -159,7 +159,6 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     }
 
     private void initialize() {
-//        System.out.println("\nInitialize Matrix with Zero\n");
         graphSimilarityMatrix.initMatrix(0.0);
         stereoMatrix.initMatrix(0.0);
         cliqueMatrix.initMatrix(0.0);

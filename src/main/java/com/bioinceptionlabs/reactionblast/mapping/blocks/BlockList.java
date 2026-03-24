@@ -92,15 +92,9 @@ public class BlockList implements Comparable<BlockList> {
             Block block = blocks.get(permutedBlockIndex);
             SubgraphMoleculeSignature subgraphSignature
                     = block.getSubgraphSignature();
-//            System.out.println("sig = " + subgraphSignature.toCanonicalString());
             int[] labels = subgraphSignature.getCanonicalLabels();
             for (int labelIndex = 0; labelIndex < labels.length; labelIndex++) {
                 int x = blockStart + labels[labelIndex];
-//                System.out.println("blockIndex = " + blockIndex
-//                        + " blockStart = " + blockStart
-//                        + " labelIndex = " + labelIndex
-//                        + " labels = " + Arrays.toString(labels)
-//                        + " totalPermutation = " + Arrays.toString(totalPermutation));
                 totalPermutation[totalPermutationIndex] = x;
                 totalPermutationIndex++;
             }

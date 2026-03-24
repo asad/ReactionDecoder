@@ -97,8 +97,6 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
     @Override
     public void reroot(Ligand<A> ligand) {
 
-//        System.out.println("tails: " + arcs.tails);
-//        System.out.println("heads: " + arcs.heads);
         root = ligand;
         ligand.reset();
 
@@ -272,7 +270,6 @@ public abstract class AbstractDigraph<A> implements Digraph<A>,
         private final Map<Ligand<A>, Arc<A>> heads = new HashMap<>();
 
         public void remove(Arc<A> arc) {
-            //System.out.println("\tremoving " + arc.getTail() + ": " + arc + " and " + arc.getHead() + ": " + arc);
             tails.remove(arc.getTail(), arc);
             heads.remove(arc.getHead());
         }

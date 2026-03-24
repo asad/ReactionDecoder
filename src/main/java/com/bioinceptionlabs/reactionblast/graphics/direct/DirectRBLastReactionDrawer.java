@@ -181,7 +181,6 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
         }
 
         if (params.drawLabelPanel) {
-//            System.out.println("drawing labels");
             g.setTransform(originalTransform);
             g.translate((w / 2), (h / 2));
             g.setFont(new Font(params.labelPanelFont, PLAIN, params.labelPanelFontSize));
@@ -208,11 +207,6 @@ public class DirectRBLastReactionDrawer extends AbstractDirectDrawer {
             int cropY = max(0, (int) dY / 2);
             int cropW = (int) min(finalWidth, w);
             int cropH = (int) min(finalHeight, w);
-//            System.out.println("CROPPING totalBounds " 
-//                    + BoundsPrinter.toString(totalBoundingBox));
-//            System.out.println("zoom " + zoom + " dX " + dX + " dY " + dY 
-//                            + " crop " + cropX + " " + cropY + " " 
-//                                       + cropW + " " + cropH);
             if ((cropX + cropW > w) || (cropY + cropH > h)) {
                 LOGGER.debug("Not cropping to ["
                         + cropX + ", " + cropY + "] "

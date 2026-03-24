@@ -392,9 +392,6 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
             pos = suggestedPosition;
         }
 
-        //        System.out.println("Alignment for atom " + atomID + " " + pos
-        //                + " given annotations at "
-        //                + labelManager.getAnnotationPositionsAsString(atom));
         double aW2 = atomSymbolBounds.getWidth() / 2;
         double bW2 = bounds.getWidth() / 2;
         double aH2 = atomSymbolBounds.getHeight() / 2;
@@ -439,7 +436,6 @@ public class AtomLayout extends AbstractAWTLayout<IAtom> {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-            //                System.err.println("position null for ID " + atomID);
         }
 
         g.setFont(atomSymbolFont);

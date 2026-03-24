@@ -60,7 +60,6 @@ public class MinSelection extends Selector implements IResult {
             List<String> EdMapOrignal,
             List<String> PdMapOrignal) throws IOException, CloneNotSupportedException {
 
-//        System.out.println("Check Subgraph MinSelection ");
         this.mHolder = mHolder;
         this.updatedHolder = (Holder) mHolder.clone();
         rowSize = mHolder.getCliqueMatrix().getRowDimension();
@@ -83,8 +82,6 @@ public class MinSelection extends Selector implements IResult {
             }
         }
 
-//        System.out.println("PhaseOneMatcher\n");
-//        printSimMatrix(mHolder);
         for (int i = 0; i < rowSize; i++) {
             IAtomContainer ac1 = this.mHolder.getReactionContainer().getEduct(i);
             for (int j = 0; j < colSize; j++) {
@@ -108,11 +105,9 @@ public class MinSelection extends Selector implements IResult {
                          * be a flase postive match
                          */ else if (eMolSize > 1 && pMolSize > 1 && ac1.getAtomCount() <= ac2.getAtomCount()
                                 && isMCSSubgraph(ac1, mHolder.getCliqueMatrix().getValue(i, j))) {
-//                            System.out.println("Subgraph sim " + simVal);
                             this.flagMatrix[i][j] = true;
                         } else if (eMolSize > 1 && pMolSize > 1 && ac2.getAtomCount() <= ac1.getAtomCount()
                                 && isMCSSubgraph(ac2, mHolder.getCliqueMatrix().getValue(i, j))) {
-//                            System.out.println("Subgraph sim " + simVal);
                             this.flagMatrix[i][j] = true;
                         } else {
                             this.flagMatrix[i][j] = false;
@@ -132,9 +127,6 @@ public class MinSelection extends Selector implements IResult {
 
     private boolean PhaseTwoMatcher() throws IOException, CDKException {
 
-//        System.out.println("**********Substructural Modification Part1: Matrix**************");
-//        printFLAGMatrix(updatedHolder);
-//        printSimMatrix(updatedHolder);
         boolean flag = false;
 
         for (int i = 0; i < rowSize; i++) {
@@ -148,13 +140,9 @@ public class MinSelection extends Selector implements IResult {
                     if (eMolSize > 0 && pMolSize > 0) {
 //                    TO DO ASAD check if one has to choose substructure with lowest energy
                         if (graphSim > 0.) {
-//                            System.out.println("check isMinorSubgraph " + ", " + ac1.getID() + " : " + ac2.getID());
                             boolean isMinorSubgraphColumn = isMinorSubgraphColumn(updatedHolder, i, j);
                             boolean isMinorSubgraphRow = isMinorSubgraphRow(updatedHolder, i, j);
 
-//                            System.out.println("check isMinorSubgraphColumn " + ", "
-//                                    + isMinorSubgraphColumn + " : isMinorSubgraphRow "
-//                                    + isMinorSubgraphRow);
                             if (isMinorSubgraphColumn && isMinorSubgraphRow) {
                                 double updatedGraphSimScore = 1.01 - (this.mHolder.getGraphSimilarityMatrix().getValue(i, j));
                                 double updatedFPSimScore = 1.01 - (this.mHolder.getFPSimilarityMatrix().getValue(i, j));
@@ -170,9 +158,6 @@ public class MinSelection extends Selector implements IResult {
                 }
             }
         }
-//        System.out.println("**********Substructural Modification Part2: Matrix**************");
-//        printFLAGMatrix(updatedHolder);
-//        printSimMatrix(updatedHolder);
         return flag;
     }
 

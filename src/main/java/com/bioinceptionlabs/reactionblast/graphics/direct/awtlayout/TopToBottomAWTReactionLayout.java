@@ -85,7 +85,6 @@ public class TopToBottomAWTReactionLayout extends AbstractAWTReactionLayout {
 
         boundsTree = new BoundsTree(rxnID, productBoundsTree, reactantBoundsTree);
         double arrowCenterY = borderY + rbH + arrowGap + (arrowLength / 2);
-//        System.out.println("setting arrow pos to " + arrowCenterX);
         arrowPos = arrowCenterY;
 
         return boundsTree;

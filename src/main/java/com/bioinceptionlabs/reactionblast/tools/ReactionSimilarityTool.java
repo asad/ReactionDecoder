@@ -68,7 +68,6 @@ public class ReactionSimilarityTool {
             double bondScore = (alpha / (alpha + beta)) * BC;
             score = bondScore + structureScore;
         }
-//        System.out.println("alpha: " + alpha + "\tbeta: " + beta + "\tBondSimilarity: " + BC + "\tStructuralSimilarity: " + SC + "\tScore: " + score);
 
         DecimalFormat df = new DecimalFormat("0.00");
         df.setMaximumFractionDigits(2);
@@ -112,7 +111,6 @@ public class ReactionSimilarityTool {
             double stereoScore = (gamma / (alpha + beta + gamma)) * ST;
             score = bondScore + structureScore + stereoScore;
         }
-//        System.out.println("alpha: " + alpha + "\tbeta: " + beta + "\tBondSimilarity: " + BC + "\tStructuralSimilarity: " + SC + "\tScore: " + score);
 
         DecimalFormat df = new DecimalFormat("0.00");
         df.setMaximumFractionDigits(2);
@@ -164,10 +162,6 @@ public class ReactionSimilarityTool {
             double[] structFeatures1 = StructFP1.getWeightedHashedFingerPrint();
             double[] structFeatures2 = StructFP2.getWeightedHashedFingerPrint();
             double similarityStruct = getSimilarity(structFeatures1, structFeatures2);
-//
-//            System.out.println("Alpha " + alpha + " Beta " + beta
-//                    + " mechanism similarity Score: " + similarityOfBondChanges
-//                    + " structure similarity Score: " + similarityStruct);
 
             score = getSimilarityScore(alpha, beta, similarityOfBondChanges, similarityStruct);
         }
@@ -220,10 +214,6 @@ public class ReactionSimilarityTool {
             double[] structFeatures1 = StructFP1.getWeightedHashedFingerPrint();
             double[] structFeatures2 = StructFP2.getWeightedHashedFingerPrint();
             double similarityStruct = getSimilarity(structFeatures1, structFeatures2);
-//
-//            System.out.println("Alpha " + alpha + " Beta " + beta
-//                    + " mechanism similarity Score: " + similarityOfBondChanges
-//                    + " structure similarity Score: " + similarityStruct);
 
             score = getSimilarityScore(alpha, beta, similarityOfBondChanges, similarityStruct);
         }
@@ -280,10 +270,6 @@ public class ReactionSimilarityTool {
             double[] structFeatures1 = StructFP1.getWeightedHashedFingerPrint();
             double[] structFeatures2 = StructFP2.getWeightedHashedFingerPrint();
             double similarityStruct = getSimilarity(structFeatures1, structFeatures2);
-//
-//            System.out.println("Alpha " + alpha + " Beta " + beta
-//                    + " mechanism similarity Score: " + similarityOfBondChanges
-//                    + " structure similarity Score: " + similarityStruct);
 
             score = getSimilarityScore(alpha, beta, gamma, similarityOfBondChanges, similarityStruct, similarityOfStereoChanges);
         }
@@ -316,7 +302,6 @@ public class ReactionSimilarityTool {
             IPatternFingerprinter BondsCF2, IPatternFingerprinter BondsOC2, IPatternFingerprinter BondsST2)
             throws CDKException, Exception {
 
-//    System.out.println("Calling weighted score");
         double score = 0.0;
 
         int size1 = StructFP1.getFingerprintSize();
@@ -329,8 +314,6 @@ public class ReactionSimilarityTool {
             throw new CDKException("both alpha and beta can't =< be zero");
         } else {
 
-//            double similarityOfBondChanges = new Float(getBondChangeDistance(BondsCF1, BondsCF2, BondsOC1, BondsOC2)).floatValue();
-//
             double[] bondFeatures1 = append(BondsCF1.getWeightedHashedFingerPrint(),
                     BondsOC1.getWeightedHashedFingerPrint(), BondsST1.getWeightedHashedFingerPrint());
             double[] bondFeatures2 = append(BondsCF2.getWeightedHashedFingerPrint(),
@@ -370,8 +353,6 @@ public class ReactionSimilarityTool {
             double[] BondsOC1, double[] BondsST1, double[] StructFP2, double[] BondsCF2,
             double[] BondsOC2, double[] BondsST2) throws CDKException, Exception {
 
-//    public static double getWeightedScore(double alpha, double beta, BitSet reactants1, BitSet reactants2, double[] BondsCF1, double[] BondsCF2, BitSet products1, BitSet products2, double[] BondsOC1, double[] BondsOC2) throws CDKException, Exception {
-//    System.out.println("Calling weighted score");
         boolean score = false;
 
         int size1 = StructFP1.length;
@@ -479,7 +460,6 @@ public class ReactionSimilarityTool {
      */
     public static double getSimilarity(IPatternFingerprinter fp1, IPatternFingerprinter fp2) throws CDKException, Exception {
 
-//        System.out.println("Calling StructuralSimilarity");
         double score = 0.0;
         int size1 = fp1.getFingerprintSize();
         int size2 = fp2.getFingerprintSize();

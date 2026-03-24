@@ -440,9 +440,6 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
             pos = suggestedPosition;
         }
 
-        //        System.out.println("Alignment for atom " + atomID + " " + pos
-        //                + " given annotations at "
-        //                + labelManager.getAnnotationPositionsAsString(atom));
 
         double aW2 = atomSymbolBounds.getWidth() / 2;
         double bW2 = bounds.getWidth() / 2;
@@ -488,7 +485,6 @@ public class DirectAtomDrawer extends AbstractDirectDrawer {
         if (pos != null) {
             labelManager.setUsedPosition(atom, pos);
         } else {
-//            System.err.println("position null for ID " + atomID);
         }
 
         Point2f tp = getTextPoint(g, atomID, pID.x, pID.y);

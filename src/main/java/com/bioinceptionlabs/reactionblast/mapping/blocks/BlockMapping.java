@@ -227,7 +227,6 @@ public class BlockMapping {
         // bucket-sort the original indices of the containers
         List<BlockList> blockListKeys
                 = new ArrayList<>(blockListToOriginalOrderMap.keySet());
-//        System.out.println(blockListKeys);
         sort(blockListKeys);
 
         // construct a permutation of the atom containers

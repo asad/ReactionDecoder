@@ -199,13 +199,7 @@ public class LabelManager {
      */
     public void setUsedPosition(IAtom atom, AnnotationPosition position) {
         // TODO : restore to this line
-//        getAtomAnnotationPositions(atom).set(position.ordinal());
         BitSet pos = getAtomAnnotationPositions(atom);
-//        if (pos == null) {
-//            System.out.println("pos null");
-//        } else if (position == null) {
-//            System.out.println("position null");
-//        }
         pos.set(position.ordinal());
     }
 
@@ -252,7 +246,6 @@ public class LabelManager {
      */
     public AnnotationPosition calculateBondPosition(IAtom atomFrom, IAtom atomTo) {
         AnnotationPosition pos = calculateRelativePosition(atomFrom.getPoint2d(), atomTo.getPoint2d());
-//        System.out.println("Relative position for " + atomFrom.getID() + " and " + atomTo.getID() + " is " + pos);
         return pos;
     }
 

@@ -86,7 +86,6 @@ public class LeftToRightAWTReactionLayout extends AbstractAWTReactionLayout {
 
         boundsTree = new BoundsTree(rxnID, productBoundsTree, reactantBoundsTree);
         double arrowCenterX = borderX + rbW + arrowGap + (arrowLength / 2);
-//        System.out.println("setting arrow pos to " + arrowCenterX);
         arrowPos = arrowCenterX;
 
         return boundsTree;

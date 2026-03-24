@@ -79,7 +79,6 @@ public class BestMatchContainer extends BestMatch implements Serializable {
         bondBreakingEnergy = new HashMap<>();
         stereoScore = new HashMap<>();
         similarity = new HashMap<>();
-        // System.out.println("FingerPrint Map Created");
     }
 
     @Override

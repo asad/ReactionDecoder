@@ -1064,12 +1064,10 @@ public class ImageGenerator {
             IAtomContainer rootContainer = reaction.getBuilder().newInstance(IAtomContainer.class);
             IAtomContainer atomContainer = atomToAtomContainerMap.get(atom);
             rootContainer.addAtom(atom);
-//            System.out.println("root " + atom.getID() + " " + atomContainer.getID());
 
             IAtomContainer neighbourContainer = reaction.getBuilder().newInstance(IAtomContainer.class);
             atomContainer.getConnectedAtomsList(atom).stream().forEach((neighbour) -> {
                 neighbourContainer.addAtom(neighbour);
-//                System.out.println("neighbour " + neighbour.getID());
             });
             Highlighter highlighter = new OutlineHighlighter(moleculeDrawer.getParams());
             highlighter.addHighlights(rootContainer, rootColor);

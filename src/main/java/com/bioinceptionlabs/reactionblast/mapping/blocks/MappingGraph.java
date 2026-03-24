@@ -55,7 +55,6 @@ public class MappingGraph {
      */
     public MappingGraph(IReaction reaction) {
         vertices = createDefinedMappings(reaction);
-//        System.out.println(vertices.size() + " vertices");
         adjacencyTable = makeAdjacencyTable();
     }
 
@@ -92,7 +91,6 @@ public class MappingGraph {
             }
             currentLabel++;
         }
-//        System.out.println(components.size() + " components");
         return components;
     }
 
@@ -149,7 +147,6 @@ public class MappingGraph {
     }
 
     private AtomContainerAtomPair getByID(IAtomContainerSet moleculeSet, String id) {
-//        System.out.println("getting id " + id);
         for (IAtomContainer ac : moleculeSet.atomContainers()) {
             for (IAtom atom : ac.atoms()) {
                 String atomID = atom.getID();
@@ -198,7 +195,6 @@ public class MappingGraph {
                 }
             }
         }
-//        System.out.println(java.util.Arrays.deepToString(adjacencyTable));
         return adjTable;
     }
 

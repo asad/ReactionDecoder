@@ -79,7 +79,6 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
             debugList.add(atom.getSymbol() + atomNumber);
         });
         sort(debugList);
-//        System.out.println("atoms of " + fullContainer.getID() + " " + debugList);
 
         List<Integer> debugList2 = new ArrayList<>();
         for (int i = 0; i < sortedAtoms.length; i++) {
@@ -88,7 +87,6 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
                 debugList2.add(i);
             }
         }
-//        System.out.println("atoms (2) of " + atomContainer.getID() + " " + debugList2);
 
         for (IBond bond : fullContainer.bonds()) {
             IAtom a0 = bond.getAtom(0);
@@ -97,9 +95,7 @@ public class SubgraphMoleculeSignature extends AbstractGraphSignature {
             int a1n = fullContainer.indexOf(a1);
             if (subgraphAtoms.contains(a0) && subgraphAtoms.contains(a1)) {
                 this.atomContainer.addBond(bond);
-//                System.out.println("adding bond " + a0n + " " + a1n);
             } else {
-//                System.out.println("rejecting bond " + a0n + " " + a1n);
             }
         }
 

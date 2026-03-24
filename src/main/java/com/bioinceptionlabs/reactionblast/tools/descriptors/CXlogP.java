@@ -73,7 +73,6 @@ public class CXlogP {
 //        f.conjugateGradientMinimization(moleculeCoords, en);
 //        E_MIN_Mol = f.getAtomContainer();
 ////      long stop = System.currentTimeMillis();
-////      System.out.print(en.energyFunctionOfAMolecule(f.getAtomContainer(),verbose) + "\n");
 ////      write out minimized structure in file min2.sdf
 ////        MDLV2000Writer writer = new MDLV2000Writer(new FileWriter("min2.sdf"));
 ////        writer.write(f.getAtomContainer());

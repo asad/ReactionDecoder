@@ -137,7 +137,6 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
             float y = (float) (lY - halfHeight + ascent);
 
             g.setColor(BLACK);
-//            System.out.println("drawing label " + label + " at " + x + " " + y);
             g.drawString(label, x, y);
         }
     }
@@ -155,7 +154,6 @@ public class ZoomToFitAWTLayout extends AbstractDirectLayout<IAtomContainer> {
         Params params = drawer.getParams();
         double borderX = params.borderX;
         double borderY = params.borderY;
-//        System.out.println("border " + borderX + " " + borderY);
         double rW = tw + (borderX * 2);
         double rH = th + (borderY * 2);
         return min(cw / rW, ch / rH);

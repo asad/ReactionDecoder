@@ -73,7 +73,6 @@ public class CalculationProcess extends CaseHandler implements Serializable {
         super(reaction);
 
         LOGGER.debug("=====CalculationProcess====");
-//        System.out.println("I am CalculationProcess");
         this.removeHydrogen = removeHydrogen;
         LOGGER.debug(NEW_LINE + "|++++++++++++++++++++++++++++|");
         LOGGER.debug("Performing Atom-Atom Mapping ....... " + reaction.getID() + " .......");

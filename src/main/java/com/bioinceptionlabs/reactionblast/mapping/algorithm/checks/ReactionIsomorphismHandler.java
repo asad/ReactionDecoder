@@ -69,16 +69,9 @@ public class ReactionIsomorphismHandler implements Serializable {
 
             setReactionMappingFlags();
 
-//            printSimMatrix();
-//            printCliqueMatrix();
-//            printStereoMatrix();
-//            printFlagMatrixWithoutH();
-//            printFlagMatrixwithH();
-            //System.out.println("*********  **********");
             boolean flag1 = checkSimilarityWithStereo();
             boolean flag2 = checkSimilarityWithFingerprint();
 
-//            System.out.println("stereo based " + flag1 + ", " + " fp based " + flag2);
             if (flag1 && !flag2) {
                 isomorphismFlag = true;
                 this.matrixHolder = this.matrixHolderWithStereoCheck;
@@ -86,11 +79,6 @@ public class ReactionIsomorphismHandler implements Serializable {
                 isomorphismFlag = true;
                 this.matrixHolder = this.matrixHolderWithSimilarityCheck;
             }
-//            printSimMatrix();
-//            printCliqueMatrix();
-//            printFlagMatrixWithoutH();
-//            printFlagMatrixwithH();
-//            System.out.println("*********  **********");
         }
     }
 
@@ -98,7 +86,6 @@ public class ReactionIsomorphismHandler implements Serializable {
 
         boolean stSimilarity = false;
 
-//        System.out.println("Checking isomorphism with Stereo");
         boolean RowT = true;
         boolean ColT = true;
 
@@ -150,7 +137,6 @@ public class ReactionIsomorphismHandler implements Serializable {
 
     private boolean checkSimilarityWithFingerprint() {
         boolean fpFlag = false;
-//        System.out.println("Checking similarity with fp");
         boolean RowT = true;
         boolean ColT = true;
         /*
@@ -235,7 +221,6 @@ public class ReactionIsomorphismHandler implements Serializable {
                             }
                         }
                     } catch (Exception ex) {
-//                        ex.printStackTrace();
                         flagStereoMatrix[i][j] = false;
                     }
                     flagSimilarityMatrix[i][j] = true;

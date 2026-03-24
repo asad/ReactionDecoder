@@ -47,10 +47,7 @@ public class MappingHandler extends BasicDebugger {
             IAtomContainer eMolecule = MappedReaction.getReactants().getAtomContainer(eMol);
             for (int eAtom = 0; eAtom < eMolecule.getAtomCount(); eAtom++) {
 
-//                IAtom atomE = eMolecule.getAtom(eAtom);
-//                System.out.println("Atom: " + atomE.getSymbol());
                 IAtom atomEMap = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
-//                System.out.println("AtomCopy: " + atomEMap.getSymbol());
                 String atomLabel = Integer.toString(-1);
                 atomEMap.setFlag(MAPPED, false);
                 atomEMap.setID(atomLabel);
@@ -80,13 +77,11 @@ public class MappingHandler extends BasicDebugger {
         IAtomContainerSet expEductSet = expLabReaction.getReactants();
         IAtomContainerSet expProductSet = expLabReaction.getProducts();
 
-//        System.out.println("Mapping size " + expLabReaction.getMappingCount());
         for (IMapping map : expLabReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
             IAtom J_Atom = (IAtom) map.getChemObject(1);
 
-//            System.out.println("Mapped Atom ID " + I_Atom.getID().trim() + "  Atom ID " + J_Atom.getID().trim());
             if (I_Atom != null && J_Atom != null) {
 
                 /*
@@ -102,7 +97,6 @@ public class MappingHandler extends BasicDebugger {
                         if (I_Atom.getID().trim().equalsIgnoreCase(eMolecule.getAtom(eAtom).getID().trim())) {
 
                             String atomLabel = Integer.toString(counter);
-//                            System.out.println("_atomMappings.get(i).getSymbol().trim() " + I_Atom.getSymbol().trim() + " eMolecule.getAtom(eAtom).getID().trim() " + eMolecule.getAtom(eAtom).getSymbol().trim());
 
                             firstAtom = MappedReaction.getReactants().getAtomContainer(eMol).getAtom(eAtom);
                             firstAtom.setID(atomLabel);
@@ -127,8 +121,6 @@ public class MappingHandler extends BasicDebugger {
                     for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
 
                         if (J_Atom.getID().trim().equalsIgnoreCase(pMolecule.getAtom(pAtom).getID().trim())) {
-//                            System.out.println("Hi Matched product");
-//                            System.out.println("ID:" + J_Atom.getID().trim());
 
                             String atomLabel = Integer.toString(counter);
 
@@ -164,14 +156,11 @@ public class MappingHandler extends BasicDebugger {
         IAtomContainerSet expEductSet = ReactionWithUniqueSTOICHIOMETRY.getReactants();
         IAtomContainerSet expProductSet = ReactionWithUniqueSTOICHIOMETRY.getProducts();
 
-//        System.out.println("Mapping size " + coreMappedReaction.getMappingCount());
         for (IMapping map : coreMappedReaction.mappings()) {
 
             IAtom I_Atom = (IAtom) map.getChemObject(0);
             IAtom J_Atom = (IAtom) map.getChemObject(1);
-//
-//            System.out.println("Mapped Atom ID " + I_Atom.getID().trim() + "  Atom ID " + J_Atom.getID().trim());
-//            System.out.println("Mapped Atom Symbol " + I_Atom.getSymbol() + "  Atom Symbol " + J_Atom.getSymbol());
+
 
             if (I_Atom != null && J_Atom != null) {
 
@@ -210,12 +199,9 @@ public class MappingHandler extends BasicDebugger {
                     for (int pAtom = 0; pAtom < pMolecule.getAtomCount(); pAtom++) {
 
                         if (J_Atom.getID().trim().equalsIgnoreCase(pMolecule.getAtom(pAtom).getID().trim())) {
-//                            System.out.println("Hi Matched product");
-//                            System.out.println("ID:" + J_Atom.getID().trim());
 
                             String atomLabel = Integer.toString(counter);
-//                            System.out.println("_atomMappings.get(j).getSymbol().trim() " + J_Atom.getSymbol().trim()
-//                                    + " eMolecule.getAtom(pAtom).getID().trim() " + pMolecule.getAtom(pAtom).getSymbol().trim());
+
 
                             secondAtom = MappedReaction.getProducts().getAtomContainer(pMol).getAtom(pAtom);
                             secondAtom.setID(atomLabel);

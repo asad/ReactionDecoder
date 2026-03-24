@@ -620,7 +620,6 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
             paths.add(currentPath);
             closedList.add(currentPath);
 
-//            System.out.println("level " + (level + "/" + max) + " atom " + currentPath.getSymbol());
             // addBinary neighbors to the open list
             neighbours.addAll(atomContainer.getConnectedAtomsList(currentPath));
 
@@ -687,7 +686,6 @@ public abstract class Utility extends MatrixPrinter implements Serializable {
         for (int i = 0; i < 3; i++) {
             String smiles = getCircularSMILES(clone, atom, i, true);
             ReactionCenterFragment reactionCenterFragment = new ReactionCenterFragment(smiles, i, type);
-//            System.out.println(reactionCenterFragment + " smiles " + smiles);
             fragmentsRC.add(reactionCenterFragment);
         }
         String smiles = getCircularSMILES(clone, atom, -1, true);

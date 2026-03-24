@@ -200,7 +200,6 @@ public class SimpleHighlighter extends AbstractHighlightDrawer implements Highli
         } else {
             actualColor = color;
         }
-//        System.out.println(color + " " + color.getAlpha() + " " + actualColor + actualColor.getAlpha());
         g.setColor(actualColor);
         double r = params.highlightRadius;
         double d = r * 2;

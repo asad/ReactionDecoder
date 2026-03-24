@@ -105,8 +105,6 @@ public class MoleculeAligner {
                 }
             }
         }
-//        System.out.println("maxI = " + atomContainer.getAtomNumber(maxI)
-//                         + "maxJ = " + atomContainer.getAtomNumber(maxJ));
         if (maxI != null && maxJ != null) {
             widthVector = new Vector2d(maxI.getPoint2d());
             widthVector.sub(maxJ.getPoint2d());
@@ -171,16 +169,6 @@ public class MoleculeAligner {
             minAngleDiff = backwardDiff;
         }
 
-//        System.out.println(
-//                "Axis from " + String.format("(%2.2f %2.2f)", axisFrom.x, axisFrom.y)
-//                + "Axis to " + axisTo
-//                + " angleForwardFrom "  + toStr(polarAngleForwardFrom)
-//                + " angleBackwardFrom " + toStr(polarAngleBackwardFrom)
-//                + " angleTo "           + toStr(polarAngleTo)
-//                + " forwardDiff "       + toStr(forwardDiff)
-//                + " backwardDiff "      + toStr(backwardDiff)
-//                + " minAngleDiff "      + toStr(minAngleDiff)
-//                );
         return -minAngleDiff;
     }
 

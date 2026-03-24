@@ -57,7 +57,6 @@ public class MaxSelection extends Selector implements IResult {
             List<String> EdMapOrignal,
             List<String> PdMapOrignal) throws IOException, Exception {
 
-//        System.out.println("\n********* INSIDE MaxSelection**********");
         this.mHolder = mHolder;
         this.updatedHolder = (Holder) mHolder.clone();
         rowSize = mHolder.getCliqueMatrix().getRowDimension();
@@ -79,7 +78,6 @@ public class MaxSelection extends Selector implements IResult {
 
     private void PhaseOneMatcher() throws IOException, CDKException {
 
-//        System.out.println("\nPhase 1\n");
         boolean maxValueI;
         boolean maxValueJ;
 
@@ -113,13 +111,11 @@ public class MaxSelection extends Selector implements IResult {
                                     && ac1.getAtomCount() <= ac2.getAtomCount()
                                     && isMCSSubgraph(ac1, mHolder.getCliqueMatrix().getValue(i, j))) {
 //                                    && isSubGraph(ac1, ac2)) {
-//                            System.out.println("sim " + simVal);
                                 this.flagMatrix[i][j] = true;
                             } else if (eMolSize > 1 && pMolSize > 1
                                     && ac2.getAtomCount() <= ac1.getAtomCount()
                                     && isMCSSubgraph(ac2, mHolder.getCliqueMatrix().getValue(i, j))) {
 //                                    && isSubGraph(ac1, ac2)) {
-//                            System.out.println("sim " + simVal);
                                 this.flagMatrix[i][j] = true;
                             } else {
                                 this.flagMatrix[i][j] = false;
@@ -150,7 +146,6 @@ public class MaxSelection extends Selector implements IResult {
 
     private boolean PhaseTwoMatcher() throws IOException, CDKException {
 
-//        System.out.println("**********Substructural Modification Part2: Matrix**************");
         boolean flag = false;
 
         for (int i = 0; i < rowSize; i++) {

@@ -91,7 +91,6 @@ public class AtomContainerAtomPermutor extends Permutor
 
     private static IAtomContainer permuteB(int[] p, IAtomContainer atomContainer) {
         IAtomContainer permutedContainer = null;
-//        System.out.println("permuting " + java.util.Arrays.toString(p));
         try {
             permutedContainer = atomContainer.clone();
             int n = atomContainer.getAtomCount();

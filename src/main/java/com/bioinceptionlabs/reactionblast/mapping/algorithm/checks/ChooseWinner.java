@@ -129,7 +129,6 @@ public class ChooseWinner extends Selector implements Serializable {
         boolean isMappingFesiable = checkStatusFlag();
         List<Double> scores = new ArrayList<>();
 
-//        System.out.println("isMappingFesiable " + isMappingFesiable);
         if (isMappingFesiable) {
             double maximumSimilarity = 0.0;
 
@@ -140,16 +139,10 @@ public class ChooseWinner extends Selector implements Serializable {
                 for (int j = 0; j < colSize; j++) {
 
                     double similarity = similarityMatrix.getValue(i, j);
-                    //System.out.println("similarity "+similarity);
-                    //matrix.
                     if (similarity > MIN_VALUE) {
                         maxValueI = isMajorSubgraphRow(similarityMatrix, i, j);
                         maxValueJ = isMajorSubgraphColumn(similarityMatrix, i, j);
 
-//                        System.out.println("similarity " + similarity);
-//                        System.out.println("i= " + i + ", j=" + j);
-//                        System.out.println(" maxValue I " + maxValueI);
-//                        System.out.println(" maxValue J " + maxValueJ);
                         if (maxValueI && maxValueJ) {
 
                             if (similarity > maximumSimilarity) {
@@ -250,7 +243,6 @@ public class ChooseWinner extends Selector implements Serializable {
         boolean _statusFlag = false;
         for (Cell cell : crossMappingTracer) {
 
-            //System.out.println("Visitor AtomContainer " + moleculeName + " i:" + _value.get(1) + " j:" + j);
             if (cell.eductName.equals(refCell.eductName)
                     && cell.productName.equals(refCell.productName)) {
                 if (cell.indexI == refCell.indexI

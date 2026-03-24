@@ -64,8 +64,6 @@ public abstract class Selector implements Serializable {
             }
         }
 
-//        System.out.println("**********Modified Min Input Matrix**************");
-//        printSimMatrix(localHolder);
         return localHolder;
     }
 
@@ -134,7 +132,6 @@ public abstract class Selector implements Serializable {
      * @throws CDKException
      */
     protected boolean isMinEnergyColumn(Holder mh, int IndexI, int IndexJ) throws IOException, CDKException {
-        //        System.out.println("CHECKING ENERGY\nI " + EdMap.get(IndexI) + " J " + PdMap.get(IndexJ));
         double refEnergy = mh.getEnergyMatrix().getValue(IndexI, IndexJ);
         if (mh.getCliqueMatrix().getValue(IndexI, IndexJ) > 0) {
             for (int col = 0; col < colSize; col++) {
