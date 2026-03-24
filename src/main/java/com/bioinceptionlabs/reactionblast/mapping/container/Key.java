@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.mapping.container.helper;
+package com.bioinceptionlabs.reactionblast.mapping.container;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2018-2026. BioInception Labs Pvt. Ltd.
  */
-package com.bioinceptionlabs.reactionblast.mapping.cache;
+package com.bioinceptionlabs.reactionblast.mapping;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

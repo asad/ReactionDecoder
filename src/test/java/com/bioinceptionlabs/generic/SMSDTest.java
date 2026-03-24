@@ -15,7 +15,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
-import org.openscience.smsd.interfaces.Algorithm;
+import org.openscience.smsd.Algorithm;
 
 // Utility class for manual SMSD testing — not part of automated test suite
 /**

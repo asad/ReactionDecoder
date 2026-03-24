@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.openscience.cdk.exception.CDKException;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;
-import static com.bioinceptionlabs.reactionblast.tools.utility.EBIDoubleUtility.append;
+import static com.bioinceptionlabs.reactionblast.tools.EBIDoubleUtility.append;
 
 /**
  * This tool finds reaction similarity and distance based on our in-house

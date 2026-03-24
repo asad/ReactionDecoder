@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscience.cdk.exception.CDKException;
-import com.bioinceptionlabs.reactionblast.mapping.container.helper.MolMapping;
+import com.bioinceptionlabs.reactionblast.mapping.container.MolMapping;
 
 /**
  * @RCSfile: atomMapperTool.java,v

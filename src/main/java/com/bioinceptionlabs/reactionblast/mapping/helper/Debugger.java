@@ -29,7 +29,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.interfaces.IAtomMapping;
+import org.openscience.smsd.IAtomMapping;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.ChooseWinner;
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;

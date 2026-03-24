@@ -19,7 +19,7 @@
 package com.bioinceptionlabs.reactionblast.mapping.interfaces;
 
 import java.util.Comparator;
-import com.bioinceptionlabs.reactionblast.mapping.container.helper.Key;
+import com.bioinceptionlabs.reactionblast.mapping.container.Key;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

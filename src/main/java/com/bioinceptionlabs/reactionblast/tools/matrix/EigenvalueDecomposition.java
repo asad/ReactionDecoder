@@ -7,7 +7,7 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.System.arraycopy;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
-import static com.bioinceptionlabs.reactionblast.tools.matrix.Maths.hypot;
+import static java.lang.Math.hypot;
 
 /**
  * Eigenvalues and eigenvectors of a real matrix.

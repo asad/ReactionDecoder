@@ -56,7 +56,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import org.openscience.smsd.MoleculeInitializer;
 import com.bioinceptionlabs.reactionblast.fingerprints.Feature;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;

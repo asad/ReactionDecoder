@@ -34,7 +34,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.interfaces.Algorithm;
+import org.openscience.smsd.Algorithm;
 import com.bioinception.smsd.core.SMSD;
 import com.bioinception.smsd.core.ChemOptions;
 

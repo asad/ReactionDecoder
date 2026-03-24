@@ -33,7 +33,7 @@ import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import org.openscience.smsd.MoleculeInitializer;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**

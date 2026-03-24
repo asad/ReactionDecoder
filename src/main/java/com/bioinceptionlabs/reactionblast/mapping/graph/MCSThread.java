@@ -48,9 +48,9 @@ import org.openscience.smsd.Substructure;
 import org.openscience.smsd.algorithm.matchers.AtomBondMatcher;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.interfaces.Algorithm;
+import org.openscience.smsd.Algorithm;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
-import com.bioinceptionlabs.reactionblast.mapping.cache.ThreadSafeCache;
+import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
 import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
 
 /**

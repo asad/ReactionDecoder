@@ -46,7 +46,7 @@ import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import org.openscience.smsd.helper.MoleculeInitializer;
+import org.openscience.smsd.MoleculeInitializer;
 import org.openscience.smsd.tools.ExtAtomContainerManipulator;
 import static org.openscience.smsd.tools.Utility.findSubgraph;
 import static org.openscience.smsd.tools.Utility.isMatch;

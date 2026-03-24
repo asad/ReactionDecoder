@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static com.bioinceptionlabs.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
+import static com.bioinceptionlabs.reactionblast.fingerprints.Similarity.getTanimotoSimilarity;
 import com.bioinceptionlabs.reactionblast.interfaces.IFingerPrintContainer;
 
 //~--- classes ----------------------------------------------------------------

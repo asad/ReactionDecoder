@@ -41,7 +41,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.interfaces.IStandardizer;
-import com.bioinceptionlabs.reactionblast.mapping.cache.ThreadSafeCache;
+import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
 import com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MAX;
 import static com.bioinceptionlabs.reactionblast.mapping.interfaces.IMappingAlgorithm.MIN;

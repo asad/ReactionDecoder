@@ -31,7 +31,7 @@ import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static org.openscience.smsd.helper.MoleculeInitializer.initializeMolecule;
+import static org.openscience.smsd.MoleculeInitializer.initializeMolecule;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IPatternFingerprinter;

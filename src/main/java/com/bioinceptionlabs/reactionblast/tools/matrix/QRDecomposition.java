@@ -3,7 +3,7 @@ package com.bioinceptionlabs.reactionblast.tools.matrix;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
-import static com.bioinceptionlabs.reactionblast.tools.matrix.Maths.hypot;
+import static java.lang.Math.hypot;
 
 /**
  * QR Decomposition.

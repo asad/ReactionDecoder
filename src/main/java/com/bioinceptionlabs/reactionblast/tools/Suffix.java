@@ -24,7 +24,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package com.bioinceptionlabs.reactionblast.tools.utility;
+package com.bioinceptionlabs.reactionblast.tools;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.io.IOException;

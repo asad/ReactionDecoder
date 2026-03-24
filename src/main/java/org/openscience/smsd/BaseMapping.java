@@ -37,7 +37,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import org.openscience.smsd.filters.ChemicalFilters;
-import org.openscience.smsd.interfaces.IAtomMapping;
+import org.openscience.smsd.IAtomMapping;
 
 /**
  *

@@ -64,7 +64,7 @@ import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.RuleBasedMapp
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.Selector;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
-import com.bioinceptionlabs.reactionblast.mapping.container.helper.MolMapping;
+import com.bioinceptionlabs.reactionblast.mapping.container.MolMapping;
 import com.bioinceptionlabs.reactionblast.mapping.graph.GraphMatching;
 import com.bioinceptionlabs.reactionblast.mapping.interfaces.AbstractGraphMatching;
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;

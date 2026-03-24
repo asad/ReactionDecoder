@@ -50,7 +50,7 @@ import org.openscience.smsd.algorithm.matchers.AtomMatcher;
 import org.openscience.smsd.algorithm.matchers.BondMatcher;
 import com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator;
 import com.bioinceptionlabs.reactionblast.fingerprints.interfaces.IFingerprintGenerator;
-import static com.bioinceptionlabs.reactionblast.fingerprints.tools.Similarity.getTanimotoSimilarity;
+import static com.bioinceptionlabs.reactionblast.fingerprints.Similarity.getTanimotoSimilarity;
 import com.bioinceptionlabs.reactionblast.tools.AtomContainerSetComparator;
 import com.bioinceptionlabs.reactionblast.tools.BasicDebugger;
 import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;

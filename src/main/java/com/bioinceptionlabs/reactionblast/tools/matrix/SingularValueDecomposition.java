@@ -8,7 +8,7 @@ import static java.lang.Math.sqrt;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
-import static com.bioinceptionlabs.reactionblast.tools.matrix.Maths.hypot;
+import static java.lang.Math.hypot;
 
 /**
  * Singular Value Decomposition.
