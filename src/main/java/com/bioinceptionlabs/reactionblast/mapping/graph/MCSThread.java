@@ -40,6 +40,7 @@ import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.graph.ConnectivityChecker;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.smiles.SmiFlavor;
@@ -318,11 +319,7 @@ public class MCSThread implements Callable<MCSSolution> {
         if (mol != null && mol.getAtomCount() > 0) {
             IAtomContainer ac;
             ac = ExtAtomContainerManipulator.cloneWithIDs(mol);
-            Aromaticity aromaticity = new Aromaticity(daylight(),
-                    Cycles.or(Cycles.all(),
-                            Cycles.or(Cycles.relevant(),
-                                    Cycles.essential())));
-            aromaticity.apply(ac);
+            // Aromaticity already applied in GraphMatcher — skip redundant computation
             try {
                 ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
                 MoleculeInitializer.initializeMolecule(ac);
@@ -416,6 +413,11 @@ public class MCSThread implements Callable<MCSSolution> {
          */
         IAtomContainer ac1 = duplicate(getCompound1());
         IAtomContainer ac2 = duplicate(getCompound2());
+
+        // Guard: cannot compute MCS on empty molecules
+        if (ac1 == null || ac2 == null || ac1.getAtomCount() == 0 || ac2.getAtomCount() == 0) {
+            return null;
+        }
         Isomorphism isomorphism;
         int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
         //boolean moleculeConnected = isMoleculeConnected(ac1, ac2);
@@ -507,6 +509,23 @@ public class MCSThread implements Callable<MCSSolution> {
 
         for (int i = 0; i < a.getAtomCount(); i++) {
             a.getAtom(i).setID(ac.getAtom(i).getID());
+        }
+
+        // Fix aromatic bond consistency: if a bond is aromatic but its atoms
+        // are not flagged aromatic, downgrade the bond to SINGLE to prevent
+        // "Aromatic bond connects non-aromatic atoms" errors in SMSD
+        for (IBond bond : a.bonds()) {
+            if (bond.isAromatic()) {
+                IAtom begin = bond.getBegin();
+                IAtom end = bond.getEnd();
+                if ((begin != null && !begin.isAromatic())
+                        || (end != null && !end.isAromatic())) {
+                    bond.setIsAromatic(false);
+                    if (bond.getOrder() == null || bond.getOrder() == IBond.Order.UNSET) {
+                        bond.setOrder(IBond.Order.SINGLE);
+                    }
+                }
+            }
         }
 
         return a;

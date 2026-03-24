@@ -40,7 +40,6 @@ import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
@@ -52,7 +51,6 @@ import java.util.concurrent.Executors;
 
 import org.openscience.cdk.aromaticity.Aromaticity;
 import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
-import org.openscience.cdk.smiles.SmiFlavor;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
@@ -60,7 +58,6 @@ import org.openscience.cdk.smiles.SmiFlavor;
  */
 public class GraphMatcher extends Debugger {
 
-    private static final int MAX_MCS_THREADS = 8;
     private static final int LARGE_JOB_THRESHOLD = 1000;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
@@ -145,17 +142,9 @@ public class GraphMatcher extends Debugger {
              * Use Single Thread to computed MCS as muntiple threads lock the calculations!
              */
 //            executor = newSingleThreadExecutor();
-            int threadsAvailable = getRuntime().availableProcessors() - 1;
-            if (threadsAvailable == 0) {
-                threadsAvailable = 1;
-            }
-
+            int threadsAvailable = Math.max(1, getRuntime().availableProcessors() - 1);
             if (threadsAvailable > jobMap.size()) {
                 threadsAvailable = jobMap.size();
-            }
-            
-            if (threadsAvailable > MAX_MCS_THREADS) {
-                threadsAvailable = MAX_MCS_THREADS;
             }
 
             LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
@@ -167,121 +156,53 @@ public class GraphMatcher extends Debugger {
 
             List<MCSThread> listOfJobs = new ArrayList<>();
 
+            /*
+             * Pre-compute aromaticity and cycle counts ONCE per molecule.
+             * Previously this ran for every educt×product pair — O(E*P) redundancy.
+             */
+            CycleFinder allCycles = Cycles.or(Cycles.all(),
+                    Cycles.or(Cycles.relevant(), Cycles.essential()));
+            Aromaticity aromaticity = new Aromaticity(daylight(), allCycles);
+            CycleFinder shortCycles = Cycles.vertexShort();
+
+            Map<Integer, Integer> eductCycleCache = new TreeMap<>();
+            for (int i = 0; i < eductCount; i++) {
+                IAtomContainer educt = reactionStructureInformation.getEduct(i);
+                if (educt != null && educt.getAtomCount() > 0) {
+                    aromaticity.apply(educt);
+                    eductCycleCache.put(i, shortCycles.find(educt).numberOfCycles());
+                } else {
+                    eductCycleCache.put(i, 0);
+                }
+            }
+
+            Map<Integer, Integer> productCycleCache = new TreeMap<>();
+            for (int j = 0; j < productCount; j++) {
+                IAtomContainer product = reactionStructureInformation.getProduct(j);
+                if (product != null && product.getAtomCount() > 0) {
+                    aromaticity.apply(product);
+                    productCycleCache.put(j, shortCycles.find(product).numberOfCycles());
+                } else {
+                    productCycleCache.put(j, 0);
+                }
+            }
+
             for (Combination c : jobMap.keySet()) {
                 int substrateIndex = c.getRowIndex();
                 int productIndex = c.getColIndex();
                 IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
 
-                /*
-                 Ring matcher is set true if both sides have rings else it set to false (IMP for MCS)
-                 */
-                boolean ring = false;
-                boolean ringSizeEqual = false;
+                int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
+                int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
+                boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
 
-                /*
-                 * Report All Cycles
-                 * or 
-                 * CycleFinder cycles = or(Cycles.all(), Cycles.all());
-                 * CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
-                 */
-                LOGGER.debug("Finding cycles");
-
-                CycleFinder cycles = Cycles.or(Cycles.all(),
-                        Cycles.or(Cycles.relevant(),
-                                Cycles.essential()));
-
-                Aromaticity aromaticity = new Aromaticity(daylight(), cycles);
-                LOGGER.debug("Done Finding cycles");
-                /*
-                 * Aromatise molecule for escaping CDKtoBeam Aromatic bond error
-                 */
-                aromaticity.apply(educt);
-                aromaticity.apply(product);
-
-                /*
-                 * Report short cycyles
-                 */
-                LOGGER.debug("Finding short cycles");
-                cycles = Cycles.vertexShort();
-                Cycles rings = cycles.find(educt);
-                LOGGER.debug("Done Finding cycles educt");
-
-                int numberOfCyclesEduct = rings.numberOfCycles();
-                rings = cycles.find(product);
-                LOGGER.debug("Finding cycles product");
-                int numberOfCyclesProduct = rings.numberOfCycles();
-                if (numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0) {
-                    ring = true;
-                }
-
-                if (numberOfCyclesEduct == numberOfCyclesProduct) {
-                    ringSizeEqual = true;
-                }
-                try {
-                    SmilesGenerator smilesGenerator;
-                    LOGGER.debug("SMILES");
-                    smilesGenerator = new SmilesGenerator(SmiFlavor.Stereo
-                            | SmiFlavor.AtomAtomMap);
-                    LOGGER.debug(educt.getID() + " ED: " + smilesGenerator.create(educt));
-                    LOGGER.debug(product.getID() + " PD: " + smilesGenerator.create(product));
-                    LOGGER.debug("numberOfCyclesEduct " + numberOfCyclesEduct);
-                    LOGGER.debug("numberOfCyclesProduct " + numberOfCyclesProduct);
-                    LOGGER.debug("ringSizeEqual " + ringSizeEqual);
-                    LOGGER.debug("Ring " + ring);
-                    LOGGER.debug("----------------------------------");
-                } catch (CDKException e) {
-                    LOGGER.error(SEVERE, null, e);
-                }
-
-                MCSThread mcsThread;
-
-                switch (mh.getTheory()) {
-
-                    case MIN:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
-                        mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductRingCount(numberOfCyclesEduct);
-                        mcsThread.setProductRingCount(numberOfCyclesProduct);
-
-                        break;
-
-                    case MAX:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
-                        mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductRingCount(numberOfCyclesEduct);
-                        mcsThread.setProductRingCount(numberOfCyclesProduct);
-                        break;
-
-                    case MIXTURE:
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
-                        mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductRingCount(numberOfCyclesEduct);
-                        mcsThread.setProductRingCount(numberOfCyclesProduct);
-                        break;
-
-                    case RINGS:
-                        /*
-                         * don't use ring matcher if there are no rings in the molecule
-                         * else mappings with be skewed
-                         * bond=false;
-                         * ring =true;
-                         * atom type=true;
-                         * Ex: R05219
-                         */
-                        mcsThread = new MCSThread(mh.getTheory(), substrateIndex, productIndex, educt, product);
-                        mcsThread.setHasPerfectRings(ringSizeEqual);
-                        mcsThread.setEductRingCount(numberOfCyclesEduct);
-                        mcsThread.setProductRingCount(numberOfCyclesProduct);
-                        break;
-
-                    default:
-                        mcsThread = null;
-                        break;
-                }
-                if (mcsThread != null) {
-                    listOfJobs.add(mcsThread);
-                }
+                MCSThread mcsThread = new MCSThread(mh.getTheory(),
+                        substrateIndex, productIndex, educt, product);
+                mcsThread.setHasPerfectRings(ringSizeEqual);
+                mcsThread.setEductRingCount(numberOfCyclesEduct);
+                mcsThread.setProductRingCount(numberOfCyclesProduct);
+                listOfJobs.add(mcsThread);
             }
 
             /*

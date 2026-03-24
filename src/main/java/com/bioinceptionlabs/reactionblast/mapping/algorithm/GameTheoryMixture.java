@@ -182,6 +182,20 @@ final class GameTheoryMixture extends BaseGameTheory {
                 LOGGER.debug("**********Updated Mapping**************");
                 UpdateMapping();
 
+                // Early termination: check if all atoms are already mapped
+                ReactionContainer rc = mh.getReactionContainer();
+                boolean allMapped = true;
+                for (int i = 0; i < rc.getEductCount() && allMapped; i++) {
+                    if (rc.getEduct(i).getAtomCount() > 0) allMapped = false;
+                }
+                for (int j = 0; j < rc.getProductCount() && allMapped; j++) {
+                    if (rc.getProduct(j).getAtomCount() > 0) allMapped = false;
+                }
+                if (allMapped) {
+                    LOGGER.debug("Early termination: perfect match — all atoms mapped");
+                    break;
+                }
+
                 // Early termination if no remaining mappable pairs
                 boolean hasRemainingPairs = false;
                 for (int i = 0; i < mh.getGraphSimilarityMatrix().getRowDimension(); i++) {

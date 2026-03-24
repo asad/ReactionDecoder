@@ -114,86 +114,64 @@ public class CallableAtomMappingTool implements Serializable {
          */
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
 
-        ExecutorService executor;
-        executor = Executors.newSingleThreadExecutor();
+        /*
+         * Standardize the reaction ONCE and clone for each algorithm.
+         * Previously this was done 4 times independently — major overhead.
+         */
+        IReaction standardizedReaction = null;
+        try {
+            standardizedReaction = standardizer.standardize(reaction);
+        } catch (Exception e) {
+            LOGGER.debug("ERROR: in AtomMappingTool standardization: " + e.getMessage());
+            LOGGER.error(e);
+        }
+        if (standardizedReaction == null) {
+            LOGGER.error("Failed to standardize reaction — cannot proceed with mapping");
+            return;
+        }
+
+        int numAlgorithms = checkComplex ? 4 : 3;
+        ExecutorService executor = Executors.newFixedThreadPool(numAlgorithms);
         int jobCounter = 0;
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
+
             /*
              * MIN Algorithm
              */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("b) Local Model: ");
-            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-            LOGGER.debug(NEW_LINE + "STEP b: Local Model Standardize Reactions" + NEW_LINE);
-            IReaction cleanedReaction1 = null;
-            try {
-                cleanedReaction1 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
-            }
-            MappingThread minThread = new MappingThread("IMappingAlgorithm.MIN", cleanedReaction1, MIN, removeHydrogen);
-            cs.submit(minThread);
+            LOGGER.debug("Submitting MIN algorithm");
+            IReaction cleanedReaction1 = cloneReaction(standardizedReaction);
+            cs.submit(new MappingThread("IMappingAlgorithm.MIN", cleanedReaction1, MIN, removeHydrogen));
             jobCounter++;
+
             /*
              * MAX Algorithm
              */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("a) Global Model: ");
-            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-            LOGGER.debug(NEW_LINE + "STEP 1: Global Model Standardize Reactions" + NEW_LINE);
-            IReaction cleanedReaction2 = null;
-            try {
-                cleanedReaction2 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
-            }
-            LOGGER.debug(NEW_LINE + "STEP a: Calling Mapping Models" + NEW_LINE);
-            MappingThread maxThread = new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen);
-            cs.submit(maxThread);
+            LOGGER.debug("Submitting MAX algorithm");
+            IReaction cleanedReaction2 = cloneReaction(standardizedReaction);
+            cs.submit(new MappingThread("IMappingAlgorithm.MAX", cleanedReaction2, MAX, removeHydrogen));
             jobCounter++;
 
             /*
              * MIXTURE Algorithm
              */
-            LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-            LOGGER.info("c) Mixture Model: ");
-            LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-            LOGGER.debug(NEW_LINE + "STEP c: Mixture Model Standardize Reactions" + NEW_LINE);
-            IReaction cleanedReaction3 = null;
-            try {
-                cleanedReaction3 = standardizer.standardize(reaction);
-            } catch (Exception e) {
-                LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                LOGGER.error(e);
-            }
-            MappingThread maxMixtureThread = new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen);
-            cs.submit(maxMixtureThread);
+            LOGGER.debug("Submitting MIXTURE algorithm");
+            IReaction cleanedReaction3 = cloneReaction(standardizedReaction);
+            cs.submit(new MappingThread("IMappingAlgorithm.MIXTURE", cleanedReaction3, MIXTURE, removeHydrogen));
             jobCounter++;
 
-            if (checkComplex) {/*
-             * RINGS Minimization
+            if (checkComplex) {
+                /*
+                 * RINGS Algorithm
                  */
-                LOGGER.info(NEW_LINE + "|++++++++++++++++++++++++++++|");
-                LOGGER.info("d) Rings Model: ");
-                LOGGER.debug(NEW_LINE + "-----------------------------------" + NEW_LINE);
-                LOGGER.debug(NEW_LINE + "STEP d: Rings Model Standardize Reactions" + NEW_LINE);
-                IReaction cleanedReaction4 = null;
-                try {
-                    cleanedReaction4 = standardizer.standardize(reaction);
-                } catch (Exception e) {
-                    LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
-                    LOGGER.error(e);
-                }
-                MappingThread ringThread = new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen);
-                cs.submit(ringThread);
+                LOGGER.debug("Submitting RINGS algorithm");
+                IReaction cleanedReaction4 = cloneReaction(standardizedReaction);
+                cs.submit(new MappingThread("IMappingAlgorithm.RINGS", cleanedReaction4, RINGS, removeHydrogen));
                 jobCounter++;
             }
 
             /*
-             * Collect the results
+             * Collect the results — all algorithms run in parallel
              */
             for (int i = 0; i < jobCounter; i++) {
                 Reactor chosen = cs.take().get();
@@ -213,7 +191,18 @@ public class CallableAtomMappingTool implements Serializable {
          * Mapping cache cleared
          */
         mappingcache.cleanup();
+    }
 
+    /**
+     * Deep-clone a reaction so each algorithm gets an independent copy.
+     */
+    private IReaction cloneReaction(IReaction reaction) {
+        try {
+            return (IReaction) reaction.clone();
+        } catch (CloneNotSupportedException e) {
+            LOGGER.error("Failed to clone reaction: " + e.getMessage());
+            return reaction;
+        }
     }
 
     /**

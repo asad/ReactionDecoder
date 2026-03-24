@@ -664,15 +664,27 @@ public class ReactionMechanismTool implements Serializable {
                         if (skipHydrogen && (temp[0].equals("H") || temp[1].equals("H"))) {
                             continue;
                         }
-                        int energy = be.getEnergies(temp[0], temp[1], SINGLE);
-                        if (energy > 0) {
+                        if (key.contains("%")) {
                             /*
-                            * Ring energy correction factor example:R01081
+                             * Aromatic bond (~1.5 order): use average of single + double
+                             * bond energies as a chemically sound approximation.
                              */
-                            if (key.contains("%")) {
-                                total += val * (energy - 5.0);
-
+                            int eSingle = be.getEnergies(temp[0], temp[1], SINGLE);
+                            int eDouble = be.getEnergies(temp[0], temp[1], DOUBLE);
+                            int energy;
+                            if (eSingle > 0 && eDouble > 0) {
+                                energy = (eSingle + eDouble) / 2;
+                            } else if (eSingle > 0) {
+                                energy = eSingle;
                             } else {
+                                energy = eDouble > 0 ? eDouble : 0;
+                            }
+                            if (energy > 0) {
+                                total += val * energy;
+                            }
+                        } else {
+                            int energy = be.getEnergies(temp[0], temp[1], SINGLE);
+                            if (energy > 0) {
                                 total += val * energy;
                             }
                         }
