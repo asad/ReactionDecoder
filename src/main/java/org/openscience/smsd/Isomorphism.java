@@ -125,7 +125,7 @@ public final class Isomorphism extends BaseMapping implements Serializable {
                 }
             }
 
-            // Fall back to MCS via SMSD 3.0.0
+            // Fall back to MCS via SMSD 3.4.0
             ChemOptions chemOptions = new ChemOptions();
             SMSD smsd = new SMSD(mol1, mol2, chemOptions);
             Map<Integer, Integer> mcsResult = smsd.findMCS();

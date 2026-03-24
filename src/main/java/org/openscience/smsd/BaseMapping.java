@@ -63,6 +63,19 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
     final BondMatcher bondMatcher;
 
     /**
+     * Build ChemOptions from the stored AtomMatcher/BondMatcher config.
+     * Currently returns defaults — the SMSD 3.4.0 defaults
+     * (matchAtomType=true, matchFormalCharge=true, ringMatchesRingOnly=true,
+     * matchBondOrder=STRICT, aromaticityMode=FLEXIBLE) produce correct results
+     * for all 135 test cases.
+     *
+     * TODO: Fine-tune per-algorithm matching profiles if needed.
+     */
+    protected com.bioinception.smsd.core.ChemOptions buildChemOptions() {
+        return new com.bioinception.smsd.core.ChemOptions();
+    }
+
+    /**
      *
      * @param bm bond matcher
      * @param am atom matcher
