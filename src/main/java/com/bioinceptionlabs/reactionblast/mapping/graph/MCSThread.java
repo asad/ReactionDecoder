@@ -307,18 +307,15 @@ public class MCSThread implements Callable<MCSSolution> {
         return null;
     }
 
+    /**
+     * Clone molecule preserving IDs.
+     * Aromaticity and atom-type perception already done in GraphMatcher
+     * before MCSThread is created — do NOT repeat here (was ~25% of total time).
+     */
     private IAtomContainer getNewContainerWithIDs(IAtomContainer mol)
             throws CDKException, CloneNotSupportedException {
         if (mol != null && mol.getAtomCount() > 0) {
-            IAtomContainer ac;
-            ac = ExtAtomContainerManipulator.cloneWithIDs(mol);
-            // Aromaticity already applied in GraphMatcher — skip redundant computation
-            try {
-                ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac);
-                MoleculeInitializer.initializeMolecule(ac);
-            } catch (Exception ex) {
-                LOGGER.error(Level.SEVERE, "Error in Config. r.mol: ", ex.getMessage());
-            }
+            IAtomContainer ac = ExtAtomContainerManipulator.cloneWithIDs(mol);
 
             for (int i = 0; i < ac.getAtomCount(); i++) {
                 String atomID = mol.getAtom(i).getID() == null
