@@ -22,6 +22,7 @@ package com.bioinceptionlabs.reactionblast.fingerprints;
 import java.util.BitSet;
 import java.util.Collection;
 import org.openscience.cdk.exception.CDKException;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

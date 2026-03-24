@@ -58,9 +58,9 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.
 import static org.openscience.cdk.tools.manipulator.ReactionManipulator.getRelevantAtomContainer;
 import org.openscience.smsd.BondEnergies;
 import static org.openscience.smsd.BondEnergies.getInstance;
-import com.bioinceptionlabs.reactionblast.fingerprints.Feature;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feature;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
 import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;

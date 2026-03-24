@@ -21,9 +21,9 @@ package com.bioinceptionlabs.reactionblast.tools;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import com.bioinceptionlabs.reactionblast.fingerprints.Feature;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feature;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 
 /**

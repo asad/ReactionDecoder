@@ -31,8 +31,8 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.Substructure;
 import org.openscience.smsd.AtomBondMatcher;
-import org.openscience.smsd.AtomMatcher;
-import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
+import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import org.openscience.smsd.MoleculeInitializer;
 import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 

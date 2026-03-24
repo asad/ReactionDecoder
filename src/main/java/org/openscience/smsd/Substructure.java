@@ -32,8 +32,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.AtomMatcher;
-import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
+import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import com.bioinception.smsd.core.SMSD;
 import com.bioinception.smsd.core.ChemOptions;
 

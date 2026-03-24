@@ -34,11 +34,9 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.AtomMatcher;
-import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
+import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import org.openscience.smsd.ChemicalFilters;
-import org.openscience.smsd.IAtomMapping;
-
 /**
  *
  * java1.8+
@@ -49,7 +47,7 @@ import org.openscience.smsd.IAtomMapping;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  *
  */
-public class BaseMapping extends ChemicalFilters implements IAtomMapping {
+public class BaseMapping extends ChemicalFilters implements ChemicalFilters.IAtomMapping {
 
     private boolean subgraph;
     private List<Double> stereoScoreList;
@@ -386,6 +384,43 @@ public class BaseMapping extends ChemicalFilters implements IAtomMapping {
         atomUniqueCounter1.clear();
         atomUniqueCounter2.clear();
         return common.size();
+    }
+
+    // ==================== Inner enum Algorithm ====================
+
+    /**
+     * This class represents various algorithm type supported by SMSD.
+     *
+     * @author Syed Asad Rahman
+     */
+    public static enum Algorithm {
+
+        /** Default SMSD algorithm. */
+        DEFAULT(0, "Default SMSD algorithm"),
+        /** MCS Plus algorithm. */
+        MCSPlus(2, "MCS Plus algorithm"),
+        /** VF-Koch-McGregor Lib based MCS algorithm. */
+        VFLibMCS(3, "VF-Koch-McGregor Lib based MCS algorithm"),
+        /** CDK UIT MCS. */
+        CDKMCS(4, "CDK UIT MCS");
+
+        private final int type;
+        private final String description;
+
+        Algorithm(int aStatus, String desc) {
+            this.type = aStatus;
+            this.description = desc;
+        }
+
+        /** Returns type of algorithm. */
+        public int type() {
+            return this.type;
+        }
+
+        /** Returns short description of the algorithm. */
+        public String description() {
+            return this.description;
+        }
     }
 
 }

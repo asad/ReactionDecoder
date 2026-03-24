@@ -27,8 +27,8 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getTotalFormalCharge;
 import org.openscience.smsd.Substructure;
 import org.openscience.smsd.AtomBondMatcher;
-import org.openscience.smsd.AtomMatcher;
-import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
+import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 
 /**

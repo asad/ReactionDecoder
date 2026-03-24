@@ -44,12 +44,9 @@ import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import com.bioinceptionlabs.reactionblast.tools.CholeskyDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.EigenvalueDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.LUDecomposition;
 import static java.lang.Math.hypot;
-import com.bioinceptionlabs.reactionblast.tools.QRDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.SingularValueDecomposition;
+import static java.lang.Math.pow;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 
 /**
  * Jama = Java EBIMatrix class.
@@ -1885,6 +1882,2194 @@ public class EBIMatrix extends Object implements Cloneable, java.io.Serializable
             }
         }
         return this;
+    }
+
+
+        // ==================== Inner class CholeskyDecomposition ====================
+
+        /**
+     * Cholesky Decomposition.
+     * <P>
+     * For a symmetric, positive definite matrix A, the Cholesky decomposition is an
+     * lower triangular matrix L so that A = L*L'.
+     * <P>
+     * If the matrix is not symmetric or positive definite, the constructor returns
+     * a partial decomposition and sets an internal flag that may be queried by the
+     * isSPD() method.
+     */
+    public static class CholeskyDecomposition implements java.io.Serializable {
+
+        private static final long serialVersionUID = 78619981017L;
+
+        /* ------------------------
+         Class variables
+         * ------------------------ */
+        /**
+         * Array for internal storage of decomposition.
+         *
+         * @serial internal array storage.
+         */
+        private final double[][] L;
+        /**
+         * Row and column dimension (square matrix).
+         *
+         * @serial matrix dimension.
+         */
+        private final int n;
+        /**
+         * Symmetric and positive definite flag.
+         *
+         * @serial is symmetric and positive definite flag.
+         */
+        private boolean isspd;
+
+        /* ------------------------
+         Constructor
+         * ------------------------ */
+        /**
+         * Cholesky algorithm for symmetric and positive definite matrix.
+         *
+         * @param Arg
+         */
+        public CholeskyDecomposition(EBIMatrix Arg) {
+
+            // Initialize.
+            double[][] A = Arg.getArray();
+            n = Arg.getRowDimension();
+            L = new double[n][n];
+            isspd = (Arg.getColumnDimension() == n);
+            // Main loop.
+            for (int j = 0; j < n; j++) {
+                double[] Lrowj = L[j];
+                double d = 0.0;
+                for (int k = 0; k < j; k++) {
+                    double[] Lrowk = L[k];
+                    double s = 0.0;
+                    for (int i = 0; i < k; i++) {
+                        s += Lrowk[i] * Lrowj[i];
+                    }
+                    Lrowj[k] = s = (A[j][k] - s) / L[k][k];
+                    d += s * s;
+                    isspd &= (A[k][j] == A[j][k]);
+                }
+                d = A[j][j] - d;
+                isspd &= (d > 0.0);
+                L[j][j] = sqrt(max(d, 0.0));
+                for (int k = j + 1; k < n; k++) {
+                    L[j][k] = 0.0;
+                }
+            }
+        }
+
+        /* ------------------------
+         Temporary, experimental code.
+         * ------------------------ *\
+
+         \** Right Triangular Cholesky Decomposition.
+         <P>
+         For a symmetric, positive definite matrix A, the Right Cholesky
+         decomposition is an upper triangular matrix R so that A = R'*R.
+         This constructor computes R with the Fortran inspired column oriented
+         algorithm used in LINPACK and MATLAB.  In Java, we suspect a row oriented,
+         lower triangular decomposition is faster.  We have temporarily included
+         this constructor here until timing experiments confirm this suspicion.
+         *\
+
+         \** Array for internal storage of right triangular decomposition. **\
+         private transient double[][] R;
+
+         \** Cholesky algorithm for symmetric and positive definite matrix.
+         @param  A           Square, symmetric matrix.
+         @param  rightflag   Actual value ignored.
+         @return             Structure to access R and isspd flag.
+         *\
+
+         public CholeskyDecomposition (Matrix Arg, int rightflag) {
+         // Initialize.
+         double[][] A = Arg.getArray();
+         n = Arg.getColumnDimension();
+         R = new double[n][n];
+         isspd = (Arg.getColumnDimension() == n);
+         // Main loop.
+         for (int j = 0; j < n; j++) {
+         double d = 0.0;
+         for (int k = 0; k < j; k++) {
+         double s = A[k][j];
+         for (int i = 0; i < k; i++) {
+         s = s - R[i][k]*R[i][j];
+         }
+         R[k][j] = s = s/R[k][k];
+         d = d + s*s;
+         isspd = isspd && (A[k][j] == A[j][k]);
+         }
+         d = A[j][j] - d;
+         isspd = isspd && (d > 0.0);
+         R[j][j] = Math.sqrt(Math.max(d,0.0));
+         for (int k = j+1; k < n; k++) {
+         R[k][j] = 0.0;
+         }
+         }
+         }
+
+         \** Return upper triangular factor.
+         @return     R
+         *\
+
+         public Matrix getR () {
+         return new Matrix(R,n,n);
+         }
+
+         \* ------------------------
+         End of temporary code.
+         * ------------------------ */
+
+     /* ------------------------
+         Public Methods
+         * ------------------------ */
+        /**
+         * Is the matrix symmetric and positive definite?
+         *
+         * @return true if A is symmetric and positive definite.
+         */
+        public boolean isSPD() {
+            return isspd;
+        }
+
+        /**
+         * Return triangular factor.
+         *
+         * @return L
+         */
+        public EBIMatrix getL() {
+            return new EBIMatrix(L, n, n);
+        }
+
+        /**
+         * Solve A*X = B
+         *
+         * @param B A Matrix with as many rows as A and any number of columns.
+         * @return X so that L*L'*X = B
+         * @exception IllegalArgumentException Matrix row dimensions must agree.
+         * @exception RuntimeException Matrix is not symmetric positive definite.
+         */
+        public EBIMatrix solve(EBIMatrix B) {
+            if (B.getRowDimension() != n) {
+                throw new IllegalArgumentException("Matrix row dimensions must agree.");
+            }
+            if (!isspd) {
+                throw new RuntimeException("Matrix is not symmetric positive definite.");
+            }
+
+            // Copy right hand side.
+            double[][] X = B.getArrayCopy();
+            int nx = B.getColumnDimension();
+
+            // Solve L*Y = B;
+            for (int k = 0; k < n; k++) {
+                for (int j = 0; j < nx; j++) {
+                    for (int i = 0; i < k; i++) {
+                        X[k][j] -= X[i][j] * L[k][i];
+                    }
+                    X[k][j] /= L[k][k];
+                }
+            }
+
+            // Solve L'*X = Y;
+            for (int k = n - 1; k >= 0; k--) {
+                for (int j = 0; j < nx; j++) {
+                    for (int i = k + 1; i < n; i++) {
+                        X[k][j] -= X[i][j] * L[i][k];
+                    }
+                    X[k][j] /= L[k][k];
+                }
+            }
+
+            return new EBIMatrix(X, n, nx);
+        }
+    }
+
+        // ==================== Inner class EigenvalueDecomposition ====================
+
+        /**
+     * Eigenvalues and eigenvectors of a real matrix.
+     * <P>
+     * If A is symmetric, then A = V*D*V' where the eigenvalue matrix D is diagonal
+     * and the eigenvector matrix V is orthogonal. I.e. A =
+     * V.times(D.times(V.transpose())) and V.times(V.transpose()) equals the
+     * identity matrix.
+     * <P>
+     * If A is not symmetric, then the eigenvalue matrix D is block diagonal with
+     * the real eigenvalues in 1-by-1 blocks and any complex eigenvalues, lambda +
+     * i*mu, in 2-by-2 blocks, [lambda, mu; -mu, lambda]. The columns of V represent
+     * the eigenvectors in the sense that A*V = V*D, i.e. A.times(V) equals
+     * V.times(D). The matrix V may be badly conditioned, or even singular, so the
+     * validity of the equation A = V*D*inverse(V) depends upon V.cond().
+     *
+     */
+    public static class EigenvalueDecomposition implements java.io.Serializable {
+
+        private static final long serialVersionUID = 17869981017L;
+        /* ------------------------
+         Class variables
+         * ------------------------ */
+        /**
+         * Row and column dimension (square matrix).
+         *
+         * @serial matrix dimension.
+         */
+        private final int n;
+        /**
+         * Symmetry flag.
+         *
+         * @serial internal symmetry flag.
+         */
+        private boolean issymmetric;
+        /**
+         * Arrays for internal storage of eigenvalues.
+         *
+         * @serial internal storage of eigenvalues.
+         */
+        private final double[] d, e;
+        /**
+         * Array for internal storage of eigenvectors.
+         *
+         * @serial internal storage of eigenvectors.
+         */
+        private final double[][] V;
+        /**
+         * Array for internal storage of nonsymmetric Hessenberg form.
+         *
+         * @serial internal storage of nonsymmetric Hessenberg form.
+         */
+        private double[][] H;
+        /**
+         * Working storage for nonsymmetric algorithm.
+         *
+         * @serial working storage for nonsymmetric algorithm.
+         */
+        private double[] ort;
+
+        /* ------------------------
+         Private Methods
+         * ------------------------ */    private transient double cdivr, cdivi;
+
+        /* ------------------------
+        Constructor
+         * ------------------------ */
+        /**
+         * Check for symmetry, then construct the eigenvalue decomposition
+         *
+         * @param Arg
+         */
+        public EigenvalueDecomposition(EBIMatrix Arg) {
+            double[][] A = Arg.getArray();
+            n = Arg.getColumnDimension();
+            V = new double[n][n];
+            d = new double[n];
+            e = new double[n];
+
+            issymmetric = true;
+            for (int j = 0; (j < n) && issymmetric; j++) {
+                for (int i = 0; (i < n) && issymmetric; i++) {
+                    issymmetric = (A[i][j] == A[j][i]);
+                }
+            }
+
+            if (issymmetric) {
+                for (int i = 0; i < n; i++) {
+                    arraycopy(A[i], 0, V[i], 0, n);
+                }
+
+                // Tridiagonalize.
+                tred2();
+
+                // Diagonalize.
+                tql2();
+
+            } else {
+                H = new double[n][n];
+                ort = new double[n];
+
+                for (int j = 0; j < n; j++) {
+                    for (int i = 0; i < n; i++) {
+                        H[i][j] = A[i][j];
+                    }
+                }
+
+                // Reduce to Hessenberg form.
+                orthes();
+
+                // Reduce Hessenberg to real Schur form.
+                hqr2();
+            }
+        }
+
+        /* ------------------------
+        Private Methods
+        * ------------------------ */
+        // Symmetric Householder reduction to tridiagonal form.
+        private void tred2() {
+            arraycopy(V[n - 1], 0, d, 0, n);
+
+            // Householder reduction to tridiagonal form.
+            for (int i = n - 1; i > 0; i--) {
+
+                // Scale to avoid under/overflow.
+                double scale = 0.0;
+                double h = 0.0;
+                for (int k = 0; k < i; k++) {
+                    scale += abs(d[k]);
+                }
+                if (scale == 0.0) {
+                    e[i] = d[i - 1];
+                    for (int j = 0; j < i; j++) {
+                        d[j] = V[i - 1][j];
+                        V[i][j] = 0.0;
+                        V[j][i] = 0.0;
+                    }
+                } else {
+
+                    // Generate Householder vector.
+                    for (int k = 0; k < i; k++) {
+                        d[k] /= scale;
+                        h += d[k] * d[k];
+                    }
+                    double f = d[i - 1];
+                    double g = sqrt(h);
+                    if (f > 0) {
+                        g = -g;
+                    }
+                    e[i] = scale * g;
+                    h -= f * g;
+                    d[i - 1] = f - g;
+                    for (int j = 0; j < i; j++) {
+                        e[j] = 0.0;
+                    }
+
+                    // Apply similarity transformation to remaining columns.
+                    for (int j = 0; j < i; j++) {
+                        f = d[j];
+                        V[j][i] = f;
+                        g = e[j] + V[j][j] * f;
+                        for (int k = j + 1; k <= i - 1; k++) {
+                            g += V[k][j] * d[k];
+                            e[k] += V[k][j] * f;
+                        }
+                        e[j] = g;
+                    }
+                    f = 0.0;
+                    for (int j = 0; j < i; j++) {
+                        e[j] /= h;
+                        f += e[j] * d[j];
+                    }
+                    double hh = f / (h + h);
+                    for (int j = 0; j < i; j++) {
+                        e[j] -= hh * d[j];
+                    }
+                    for (int j = 0; j < i; j++) {
+                        f = d[j];
+                        g = e[j];
+                        for (int k = j; k <= i - 1; k++) {
+                            V[k][j] -= (f * e[k] + g * d[k]);
+                        }
+                        d[j] = V[i - 1][j];
+                        V[i][j] = 0.0;
+                    }
+                }
+                d[i] = h;
+            }
+
+            // Accumulate transformations.
+            for (int i = 0; i < n - 1; i++) {
+                V[n - 1][i] = V[i][i];
+                V[i][i] = 1.0;
+                double h = d[i + 1];
+                if (h != 0.0) {
+                    for (int k = 0; k <= i; k++) {
+                        d[k] = V[k][i + 1] / h;
+                    }
+                    for (int j = 0; j <= i; j++) {
+                        double g = 0.0;
+                        for (int k = 0; k <= i; k++) {
+                            g += V[k][i + 1] * V[k][j];
+                        }
+                        for (int k = 0; k <= i; k++) {
+                            V[k][j] -= g * d[k];
+                        }
+                    }
+                }
+                for (int k = 0; k <= i; k++) {
+                    V[k][i + 1] = 0.0;
+                }
+            }
+            for (int j = 0; j < n; j++) {
+                d[j] = V[n - 1][j];
+                V[n - 1][j] = 0.0;
+            }
+            V[n - 1][n - 1] = 1.0;
+            e[0] = 0.0;
+        }
+
+        // Symmetric tridiagonal QL algorithm.
+        private void tql2() {
+
+            //  This is derived from the Algol procedures tql2, by
+            //  Bowdler, Martin, Reinsch, and Wilkinson, Handbook for
+            //  Auto. Comp., Vol.ii-Linear Algebra, and the corresponding
+            //  Fortran subroutine in EISPACK.
+            for (int i = 1; i < n; i++) {
+                e[i - 1] = e[i];
+            }
+            e[n - 1] = 0.0;
+
+            double f = 0.0;
+            double tst1 = 0.0;
+            double eps = pow(2.0, -52.0);
+            for (int l = 0; l < n; l++) {
+
+                // Find small subdiagonal element
+                tst1 = max(tst1, abs(d[l]) + abs(e[l]));
+                int m = l;
+                while (m < n) {
+                    if (abs(e[m]) <= eps * tst1) {
+                        break;
+                    }
+                    m++;
+                }
+
+                // If m == l, d[l] is an eigenvalue,
+                // otherwise, iterate.
+                if (m > l) {
+                    int iter = 0;
+                    do {
+                        iter += 1;  // (Could check iteration count here.)
+
+                        // Compute implicit shift
+                        double g = d[l];
+                        double p = (d[l + 1] - g) / (2.0 * e[l]);
+                        double r = hypot(p, 1.0);
+                        if (p < 0) {
+                            r = -r;
+                        }
+                        d[l] = e[l] / (p + r);
+                        d[l + 1] = e[l] * (p + r);
+                        double dl1 = d[l + 1];
+                        double h = g - d[l];
+                        for (int i = l + 2; i < n; i++) {
+                            d[i] -= h;
+                        }
+                        f += h;
+
+                        // Implicit QL transformation.
+                        p = d[m];
+                        double c = 1.0;
+                        double c2 = c;
+                        double c3 = c;
+                        double el1 = e[l + 1];
+                        double s = 0.0;
+                        double s2 = 0.0;
+                        for (int i = m - 1; i >= l; i--) {
+                            c3 = c2;
+                            c2 = c;
+                            s2 = s;
+                            g = c * e[i];
+                            h = c * p;
+                            r = hypot(p, e[i]);
+                            e[i + 1] = s * r;
+                            s = e[i] / r;
+                            c = p / r;
+                            p = c * d[i] - s * g;
+                            d[i + 1] = h + s * (c * g + s * d[i]);
+
+                            // Accumulate transformation.
+                            for (int k = 0; k < n; k++) {
+                                h = V[k][i + 1];
+                                V[k][i + 1] = s * V[k][i] + c * h;
+                                V[k][i] = c * V[k][i] - s * h;
+                            }
+                        }
+                        p = -s * s2 * c3 * el1 * e[l] / dl1;
+                        e[l] = s * p;
+                        d[l] = c * p;
+
+                        // Check for convergence.
+                    } while (abs(e[l]) > eps * tst1);
+                }
+                d[l] += f;
+                e[l] = 0.0;
+            }
+
+            // Sort eigenvalues and corresponding vectors.
+            for (int i = 0; i < n - 1; i++) {
+                int k = i;
+                double p = d[i];
+                for (int j = i + 1; j < n; j++) {
+                    if (d[j] < p) {
+                        k = j;
+                        p = d[j];
+                    }
+                }
+                if (k != i) {
+                    d[k] = d[i];
+                    d[i] = p;
+                    for (int j = 0; j < n; j++) {
+                        p = V[j][i];
+                        V[j][i] = V[j][k];
+                        V[j][k] = p;
+                    }
+                }
+            }
+        }
+
+        // Nonsymmetric reduction to Hessenberg form.
+        private void orthes() {
+
+            //  This is derived from the Algol procedures orthes and ortran,
+            //  by Martin and Wilkinson, Handbook for Auto. Comp.,
+            //  Vol.ii-Linear Algebra, and the corresponding
+            //  Fortran subroutines in EISPACK.
+            int low = 0;
+            int high = n - 1;
+
+            for (int m = low + 1; m <= high - 1; m++) {
+
+                // Scale column.
+                double scale = 0.0;
+                for (int i = m; i <= high; i++) {
+                    scale += abs(H[i][m - 1]);
+                }
+                if (scale != 0.0) {
+
+                    // Compute Householder transformation.
+                    double h = 0.0;
+                    for (int i = high; i >= m; i--) {
+                        ort[i] = H[i][m - 1] / scale;
+                        h += ort[i] * ort[i];
+                    }
+                    double g = sqrt(h);
+                    if (ort[m] > 0) {
+                        g = -g;
+                    }
+                    h -= ort[m] * g;
+                    ort[m] -= g;
+
+                    // Apply Householder similarity transformation
+                    // H = (I-u*u'/h)*H*(I-u*u')/h)
+                    for (int j = m; j < n; j++) {
+                        double f = 0.0;
+                        for (int i = high; i >= m; i--) {
+                            f += ort[i] * H[i][j];
+                        }
+                        f /= h;
+                        for (int i = m; i <= high; i++) {
+                            H[i][j] -= f * ort[i];
+                        }
+                    }
+
+                    for (int i = 0; i <= high; i++) {
+                        double f = 0.0;
+                        for (int j = high; j >= m; j--) {
+                            f += ort[j] * H[i][j];
+                        }
+                        f /= h;
+                        for (int j = m; j <= high; j++) {
+                            H[i][j] -= f * ort[j];
+                        }
+                    }
+                    ort[m] = scale * ort[m];
+                    H[m][m - 1] = scale * g;
+                }
+            }
+
+            // Accumulate transformations (Algol's ortran).
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    V[i][j] = (i == j ? 1.0 : 0.0);
+                }
+            }
+
+            for (int m = high - 1; m >= low + 1; m--) {
+                if (H[m][m - 1] != 0.0) {
+                    for (int i = m + 1; i <= high; i++) {
+                        ort[i] = H[i][m - 1];
+                    }
+                    for (int j = m; j <= high; j++) {
+                        double g = 0.0;
+                        for (int i = m; i <= high; i++) {
+                            g += ort[i] * V[i][j];
+                        }
+                        // double division avoids possible underflow
+                        g = (g / ort[m]) / H[m][m - 1];
+                        for (int i = m; i <= high; i++) {
+                            V[i][j] += g * ort[i];
+                        }
+                    }
+                }
+            }
+        }    // Complex scalar division.
+
+        private void cdiv(double xr, double xi, double yr, double yi) {
+            double r, d1;
+            if (abs(yr) > abs(yi)) {
+                r = yi / yr;
+                d1 = yr + r * yi;
+                cdivr = (xr + r * xi) / d1;
+                cdivi = (xi - r * xr) / d1;
+            } else {
+                r = yr / yi;
+                d1 = yi + r * yr;
+                cdivr = (r * xr + xi) / d1;
+                cdivi = (r * xi - xr) / d1;
+            }
+        }
+
+        // Nonsymmetric reduction from Hessenberg to real Schur form.
+        private void hqr2() {
+
+            //  This is derived from the Algol procedure hqr2,
+            //  by Martin and Wilkinson, Handbook for Auto. Comp.,
+            //  Vol.ii-Linear Algebra, and the corresponding
+            //  Fortran subroutine in EISPACK.
+            // Initialize
+            int nn = this.n;
+            int n1 = nn - 1;
+            int low = 0;
+            int high = nn - 1;
+            double eps = pow(2.0, -52.0);
+            double exshift = 0.0;
+            double p = 0.0, q = 0.0, r = 0.0, s = 0.0, z = 0.0, t, w, x, y;
+
+            // Store roots isolated by balanc and compute matrix norm
+            double norm = 0.0;
+            for (int i = 0; i < nn; i++) {
+                if (i < low | i > high) {
+                    d[i] = H[i][i];
+                    e[i] = 0.0;
+                }
+                for (int j = max(i - 1, 0); j < nn; j++) {
+                    norm += abs(H[i][j]);
+                }
+            }
+
+            // Outer loop over eigenvalue index
+            int iter = 0;
+            while (n1 >= low) {
+
+                // Look for single small sub-diagonal element
+                int l = n1;
+                while (l > low) {
+                    s = abs(H[l - 1][l - 1]) + abs(H[l][l]);
+                    if (s == 0.0) {
+                        s = norm;
+                    }
+                    if (abs(H[l][l - 1]) < eps * s) {
+                        break;
+                    }
+                    l--;
+                }
+
+                // Check for convergence
+                // One root found
+                if (l == n1) {
+                    H[n1][n1] += exshift;
+                    d[n1] = H[n1][n1];
+                    e[n1] = 0.0;
+                    n1--;
+                    iter = 0;
+
+                    // Two roots found
+                } else if (l == n1 - 1) {
+                    w = H[n1][n1 - 1] * H[n1 - 1][n1];
+                    p = (H[n1 - 1][n1 - 1] - H[n1][n1]) / 2.0;
+                    q = p * p + w;
+                    z = sqrt(abs(q));
+                    H[n1][n1] += exshift;
+                    H[n1 - 1][n1 - 1] += exshift;
+                    x = H[n1][n1];
+
+                    // Real pair
+                    if (q >= 0) {
+                        if (p >= 0) {
+                            z = p + z;
+                        } else {
+                            z = p - z;
+                        }
+                        d[n1 - 1] = x + z;
+                        d[n1] = d[n1 - 1];
+                        if (z != 0.0) {
+                            d[n1] = x - w / z;
+                        }
+                        e[n1 - 1] = 0.0;
+                        e[n1] = 0.0;
+                        x = H[n1][n1 - 1];
+                        s = abs(x) + abs(z);
+                        p = x / s;
+                        q = z / s;
+                        r = sqrt(p * p + q * q);
+                        p /= r;
+                        q /= r;
+
+                        // Row modification
+                        for (int j = n1 - 1; j < nn; j++) {
+                            z = H[n1 - 1][j];
+                            H[n1 - 1][j] = q * z + p * H[n1][j];
+                            H[n1][j] = q * H[n1][j] - p * z;
+                        }
+
+                        // Column modification
+                        for (int i = 0; i <= n1; i++) {
+                            z = H[i][n1 - 1];
+                            H[i][n1 - 1] = q * z + p * H[i][n1];
+                            H[i][n1] = q * H[i][n1] - p * z;
+                        }
+
+                        // Accumulate transformations
+                        for (int i = low; i <= high; i++) {
+                            z = V[i][n1 - 1];
+                            V[i][n1 - 1] = q * z + p * V[i][n1];
+                            V[i][n1] = q * V[i][n1] - p * z;
+                        }
+
+                        // Complex pair
+                    } else {
+                        d[n1 - 1] = x + p;
+                        d[n1] = x + p;
+                        e[n1 - 1] = z;
+                        e[n1] = -z;
+                    }
+                    n1 -= 2;
+                    iter = 0;
+
+                    // No convergence yet
+                } else {
+
+                    // Form shift
+                    x = H[n1][n1];
+                    y = 0.0;
+                    w = 0.0;
+                    if (l < n1) {
+                        y = H[n1 - 1][n1 - 1];
+                        w = H[n1][n1 - 1] * H[n1 - 1][n1];
+                    }
+
+                    // Wilkinson's original ad hoc shift
+                    if (iter == 10) {
+                        exshift += x;
+                        for (int i = low; i <= n1; i++) {
+                            H[i][i] -= x;
+                        }
+                        s = abs(H[n1][n1 - 1]) + abs(H[n1 - 1][n1 - 2]);
+                        x = y = 0.75 * s;
+                        w = -0.4375 * s * s;
+                    }
+
+                    // MATLAB's new ad hoc shift
+                    if (iter == 30) {
+                        s = (y - x) / 2.0;
+                        s = s * s + w;
+                        if (s > 0) {
+                            s = sqrt(s);
+                            if (y < x) {
+                                s = -s;
+                            }
+                            s = x - w / ((y - x) / 2.0 + s);
+                            for (int i = low; i <= n1; i++) {
+                                H[i][i] -= s;
+                            }
+                            exshift += s;
+                            x = y = w = 0.964;
+                        }
+                    }
+
+                    iter += 1;   // (Could check iteration count here.)
+
+                    // Look for two consecutive small sub-diagonal elements
+                    int m = n1 - 2;
+                    while (m >= l) {
+                        z = H[m][m];
+                        r = x - z;
+                        s = y - z;
+                        p = (r * s - w) / H[m + 1][m] + H[m][m + 1];
+                        q = H[m + 1][m + 1] - z - r - s;
+                        r = H[m + 2][m + 1];
+                        s = abs(p) + abs(q) + abs(r);
+                        p /= s;
+                        q /= s;
+                        r /= s;
+                        if (m == l) {
+                            break;
+                        }
+                        if (abs(H[m][m - 1]) * (abs(q) + abs(r))
+                                < eps * (abs(p) * (abs(H[m - 1][m - 1]) + abs(z)
+                                + abs(H[m + 1][m + 1])))) {
+                            break;
+                        }
+                        m--;
+                    }
+
+                    for (int i = m + 2; i <= n1; i++) {
+                        H[i][i - 2] = 0.0;
+                        if (i > m + 2) {
+                            H[i][i - 3] = 0.0;
+                        }
+                    }
+
+                    // double QR step involving rows l:n1 and columns m:n1
+                    for (int k = m; k <= n1 - 1; k++) {
+                        boolean notlast = (k != n1 - 1);
+                        if (k != m) {
+                            p = H[k][k - 1];
+                            q = H[k + 1][k - 1];
+                            r = (notlast ? H[k + 2][k - 1] : 0.0);
+                            x = abs(p) + abs(q) + abs(r);
+                            if (x != 0.0) {
+                                p /= x;
+                                q /= x;
+                                r /= x;
+                            }
+                        }
+                        if (x == 0.0) {
+                            break;
+                        }
+                        s = sqrt(p * p + q * q + r * r);
+                        if (p < 0) {
+                            s = -s;
+                        }
+                        if (s != 0) {
+                            if (k != m) {
+                                H[k][k - 1] = -s * x;
+                            } else if (l != m) {
+                                H[k][k - 1] = -H[k][k - 1];
+                            }
+                            p += s;
+                            x = p / s;
+                            y = q / s;
+                            z = r / s;
+                            q /= p;
+                            r /= p;
+
+                            // Row modification
+                            for (int j = k; j < nn; j++) {
+                                p = H[k][j] + q * H[k + 1][j];
+                                if (notlast) {
+                                    p += r * H[k + 2][j];
+                                    H[k + 2][j] -= p * z;
+                                }
+                                H[k][j] -= p * x;
+                                H[k + 1][j] -= p * y;
+                            }
+
+                            // Column modification
+                            for (int i = 0; i <= min(n1, k + 3); i++) {
+                                p = x * H[i][k] + y * H[i][k + 1];
+                                if (notlast) {
+                                    p += z * H[i][k + 2];
+                                    H[i][k + 2] -= p * r;
+                                }
+                                H[i][k] -= p;
+                                H[i][k + 1] -= p * q;
+                            }
+
+                            // Accumulate transformations
+                            for (int i = low; i <= high; i++) {
+                                p = x * V[i][k] + y * V[i][k + 1];
+                                if (notlast) {
+                                    p += z * V[i][k + 2];
+                                    V[i][k + 2] -= p * r;
+                                }
+                                V[i][k] -= p;
+                                V[i][k + 1] -= p * q;
+                            }
+                        }  // (s != 0)
+                    }  // k loop
+                }  // check convergence
+            }  // while (n1 >= low)
+
+            // Backsubstitute to find vectors of upper triangular form
+            if (norm == 0.0) {
+                return;
+            }
+
+            for (n1 = nn - 1; n1 >= 0; n1--) {
+                p = d[n1];
+                q = e[n1];
+
+                // Real vector
+                if (q == 0) {
+                    int l = n1;
+                    H[n1][n1] = 1.0;
+                    for (int i = n1 - 1; i >= 0; i--) {
+                        w = H[i][i] - p;
+                        r = 0.0;
+                        for (int j = l; j <= n1; j++) {
+                            r += H[i][j] * H[j][n1];
+                        }
+                        if (e[i] < 0.0) {
+                            z = w;
+                            s = r;
+                        } else {
+                            l = i;
+                            if (e[i] == 0.0) {
+                                if (w != 0.0) {
+                                    H[i][n1] = -r / w;
+                                } else {
+                                    H[i][n1] = -r / (eps * norm);
+                                }
+
+                                // Solve real equations
+                            } else {
+                                x = H[i][i + 1];
+                                y = H[i + 1][i];
+                                q = (d[i] - p) * (d[i] - p) + e[i] * e[i];
+                                t = (x * s - z * r) / q;
+                                H[i][n1] = t;
+                                if (abs(x) > abs(z)) {
+                                    H[i + 1][n1] = (-r - w * t) / x;
+                                } else {
+                                    H[i + 1][n1] = (-s - y * t) / z;
+                                }
+                            }
+
+                            // Overflow control
+                            t = abs(H[i][n1]);
+                            if ((eps * t) * t > 1) {
+                                for (int j = i; j <= n1; j++) {
+                                    H[j][n1] /= t;
+                                }
+                            }
+                        }
+                    }
+
+                    // Complex vector
+                } else if (q < 0) {
+                    int l = n1 - 1;
+
+                    // Last vector component imaginary so matrix is triangular
+                    if (abs(H[n1][n1 - 1]) > abs(H[n1 - 1][n1])) {
+                        H[n1 - 1][n1 - 1] = q / H[n1][n1 - 1];
+                        H[n1 - 1][n1] = -(H[n1][n1] - p) / H[n1][n1 - 1];
+                    } else {
+                        cdiv(0.0, -H[n1 - 1][n1], H[n1 - 1][n1 - 1] - p, q);
+                        H[n1 - 1][n1 - 1] = cdivr;
+                        H[n1 - 1][n1] = cdivi;
+                    }
+                    H[n1][n1 - 1] = 0.0;
+                    H[n1][n1] = 1.0;
+                    for (int i = n1 - 2; i >= 0; i--) {
+                        double ra, sa, vr, vi;
+                        ra = 0.0;
+                        sa = 0.0;
+                        for (int j = l; j <= n1; j++) {
+                            ra += H[i][j] * H[j][n1 - 1];
+                            sa += H[i][j] * H[j][n1];
+                        }
+                        w = H[i][i] - p;
+
+                        if (e[i] < 0.0) {
+                            z = w;
+                            r = ra;
+                            s = sa;
+                        } else {
+                            l = i;
+                            if (e[i] == 0) {
+                                cdiv(-ra, -sa, w, q);
+                                H[i][n1 - 1] = cdivr;
+                                H[i][n1] = cdivi;
+                            } else {
+
+                                // Solve complex equations
+                                x = H[i][i + 1];
+                                y = H[i + 1][i];
+                                vr = (d[i] - p) * (d[i] - p) + e[i] * e[i] - q * q;
+                                vi = (d[i] - p) * 2.0 * q;
+                                if (vr == 0.0 && vi == 0.0) {
+                                    vr = eps * norm * (abs(w) + abs(q)
+                                            + abs(x) + abs(y) + abs(z));
+                                }
+                                cdiv(x * r - z * ra + q * sa, x * s - z * sa - q * ra, vr, vi);
+                                H[i][n1 - 1] = cdivr;
+                                H[i][n1] = cdivi;
+                                if (abs(x) > (abs(z) + abs(q))) {
+                                    H[i + 1][n1 - 1] = (-ra - w * H[i][n1 - 1] + q * H[i][n1]) / x;
+                                    H[i + 1][n1] = (-sa - w * H[i][n1] - q * H[i][n1 - 1]) / x;
+                                } else {
+                                    cdiv(-r - y * H[i][n1 - 1], -s - y * H[i][n1], z, q);
+                                    H[i + 1][n1 - 1] = cdivr;
+                                    H[i + 1][n1] = cdivi;
+                                }
+                            }
+
+                            // Overflow control
+                            t = max(abs(H[i][n1 - 1]), abs(H[i][n1]));
+                            if ((eps * t) * t > 1) {
+                                for (int j = i; j <= n1; j++) {
+                                    H[j][n1 - 1] /= t;
+                                    H[j][n1] /= t;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Vectors of isolated roots
+            for (int i = 0; i < nn; i++) {
+                if (i < low | i > high) {
+                    arraycopy(H[i], i, V[i], i, nn - i);
+                }
+            }
+
+            // Back transformation to get eigenvectors of original matrix
+            for (int j = nn - 1; j >= low; j--) {
+                for (int i = low; i <= high; i++) {
+                    z = 0.0;
+                    for (int k = low; k <= min(j, high); k++) {
+                        z += V[i][k] * H[k][j];
+                    }
+                    V[i][j] = z;
+                }
+            }
+        }
+
+        /* ------------------------
+        Public Methods
+        * ------------------------ */
+        /**
+         * Return the eigenvector matrix
+         *
+         * @return V
+         */
+        public EBIMatrix getV() {
+            return new EBIMatrix(V, n, n);
+        }
+
+        /**
+         * Return the real parts of the eigenvalues
+         *
+         * @return real(diag(D))
+         */
+        public double[] getRealEigenvalues() {
+            return d;
+        }
+
+        /**
+         * Return the imaginary parts of the eigenvalues
+         *
+         * @return imag(diag(D))
+         */
+        public double[] getImagEigenvalues() {
+            return e;
+        }
+
+        /**
+         * Return the block diagonal eigenvalue matrix
+         *
+         * @return D
+         */
+        public EBIMatrix getD() {
+            EBIMatrix X = new EBIMatrix(n, n);
+            double[][] D = X.getArray();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    D[i][j] = 0.0;
+                }
+                D[i][i] = d[i];
+                if (e[i] > 0) {
+                    D[i][i + 1] = e[i];
+                } else if (e[i] < 0) {
+                    D[i][i - 1] = e[i];
+                }
+            }
+            return X;
+        }
+    }
+
+        // ==================== Inner class LUDecomposition ====================
+
+        /**
+     * LU Decomposition.
+     * <P>
+     * For an m-by-n matrix A with m >= n, the LU decomposition is an m-by-n unit
+     * lower triangular matrix L, an n-by-n upper triangular matrix U, and a
+     * permutation vector piv of length m so that A(piv,:) = L*U. If m < n, then L
+     * is m-by-m and U is m-by-n. <P>
+     * The LU decompostion with pivoting always exists, even if the matrix is
+     * singular, so the constructor will never fail. The primary use of the LU
+     * decomposition is in the solution of square systems of simultaneous linear
+     * equations. This will fail if isNonsingular() returns false.
+     */
+    public static class LUDecomposition implements java.io.Serializable {
+
+        private static final long serialVersionUID = 19978681017L;
+
+        /* ------------------------
+         Class variables
+         * ------------------------ */
+        /**
+         * Array for internal storage of decomposition.
+         *
+         * @serial internal array storage.
+         */
+        private final double[][] LU;
+
+        /**
+         * Row and column dimensions, and pivot sign.
+         *
+         * @serial column dimension.
+         * @serial row dimension.
+         * @serial pivot sign.
+         */
+        private final int m, n;
+        private int pivsign;
+
+        /**
+         * Internal storage of pivot vector.
+         *
+         * @serial pivot vector.
+         */
+        private final int[] piv;
+
+        /* ------------------------
+         Constructor
+         * ------------------------ */
+        /**
+         * LU Decomposition
+         *
+         * @param A Rectangular matrix
+         */
+        public LUDecomposition(EBIMatrix A) {
+
+            // Use a "left-looking", dot-product, Crout/Doolittle algorithm.
+            LU = A.getArrayCopy();
+            m = A.getRowDimension();
+            n = A.getColumnDimension();
+            piv = new int[m];
+            for (int i = 0; i < m; i++) {
+                piv[i] = i;
+            }
+            pivsign = 1;
+            double[] LUrowi;
+            double[] LUcolj = new double[m];
+
+            // Outer loop.
+            for (int j = 0; j < n; j++) {
+
+                // Make a duplicate of the j-th column to localize references.
+                for (int i = 0; i < m; i++) {
+                    LUcolj[i] = LU[i][j];
+                }
+
+                // Apply previous transformations.
+                for (int i = 0; i < m; i++) {
+                    LUrowi = LU[i];
+
+                    // Most of the time is spent in the following dot product.
+                    int kmax = min(i, j);
+                    double s = 0.0;
+                    for (int k = 0; k < kmax; k++) {
+                        s += LUrowi[k] * LUcolj[k];
+                    }
+
+                    LUrowi[j] = LUcolj[i] -= s;
+                }
+
+                // Find pivot and exchange if necessary.
+                int p = j;
+                for (int i = j + 1; i < m; i++) {
+                    if (abs(LUcolj[i]) > abs(LUcolj[p])) {
+                        p = i;
+                    }
+                }
+                if (p != j) {
+                    for (int k = 0; k < n; k++) {
+                        double t = LU[p][k];
+                        LU[p][k] = LU[j][k];
+                        LU[j][k] = t;
+                    }
+                    int k = piv[p];
+                    piv[p] = piv[j];
+                    piv[j] = k;
+                    pivsign = -pivsign;
+                }
+
+                // Compute multipliers.
+                if (j < m && LU[j][j] != 0.0) {
+                    for (int i = j + 1; i < m; i++) {
+                        LU[i][j] /= LU[j][j];
+                    }
+                }
+            }
+        }
+
+        /* ------------------------
+         Temporary, experimental code.
+         ------------------------ *\
+
+         \** LU Decomposition, computed by Gaussian elimination.
+         <P>
+         This constructor computes L and U with the "daxpy"-based elimination
+         algorithm used in LINPACK and MATLAB.  In Java, we suspect the dot-product,
+         Crout algorithm will be faster.  We have temporarily included this
+         constructor until timing experiments confirm this suspicion.
+         <P>
+         @param  A             Rectangular matrix
+         @param  linpackflag   Use Gaussian elimination.  Actual value ignored.
+         @return               Structure to access L, U and piv.
+         *\
+
+         public LUDecomposition (Matrix A, int linpackflag) {
+         // Initialize.
+         LU = A.getArrayCopy();
+         m = A.getRowDimension();
+         n = A.getColumnDimension();
+         piv = new int[m];
+         for (int i = 0; i < m; i++) {
+         piv[i] = i;
+         }
+         pivsign = 1;
+         // Main loop.
+         for (int k = 0; k < n; k++) {
+         // Find pivot.
+         int p = k;
+         for (int i = k+1; i < m; i++) {
+         if (Math.abs(LU[i][k]) > Math.abs(LU[p][k])) {
+         p = i;
+         }
+         }
+         // Exchange if necessary.
+         if (p != k) {
+         for (int j = 0; j < n; j++) {
+         double t = LU[p][j]; LU[p][j] = LU[k][j]; LU[k][j] = t;
+         }
+         int t = piv[p]; piv[p] = piv[k]; piv[k] = t;
+         pivsign = -pivsign;
+         }
+         // Compute multipliers and eliminate k-th column.
+         if (LU[k][k] != 0.0) {
+         for (int i = k+1; i < m; i++) {
+         LU[i][k] /= LU[k][k];
+         for (int j = k+1; j < n; j++) {
+         LU[i][j] -= LU[i][k]*LU[k][j];
+         }
+         }
+         }
+         }
+         }
+
+         \* ------------------------
+         End of temporary code.
+         * ------------------------ */
+
+     /* ------------------------
+         Public Methods
+         * ------------------------ */
+        /**
+         * Is the matrix nonsingular?
+         *
+         * @return true if U, and hence A, is nonsingular.
+         */
+        public boolean isNonsingular() {
+            for (int j = 0; j < n; j++) {
+                if (LU[j][j] == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Return lower triangular factor
+         *
+         * @return L
+         */
+        public EBIMatrix getL() {
+            EBIMatrix X = new EBIMatrix(m, n);
+            double[][] L = X.getArray();
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i > j) {
+                        L[i][j] = LU[i][j];
+                    } else if (i == j) {
+                        L[i][j] = 1.0;
+                    } else {
+                        L[i][j] = 0.0;
+                    }
+                }
+            }
+            return X;
+        }
+
+        /**
+         * Return upper triangular factor
+         *
+         * @return U
+         */
+        public EBIMatrix getU() {
+            EBIMatrix X = new EBIMatrix(n, n);
+            double[][] U = X.getArray();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i <= j) {
+                        U[i][j] = LU[i][j];
+                    } else {
+                        U[i][j] = 0.0;
+                    }
+                }
+            }
+            return X;
+        }
+
+        /**
+         * Return pivot permutation vector
+         *
+         * @return piv
+         */
+        public int[] getPivot() {
+            int[] p = new int[m];
+            arraycopy(piv, 0, p, 0, m);
+            return p;
+        }
+
+        /**
+         * Return pivot permutation vector as a one-dimensional double array
+         *
+         * @return (double) piv
+         */
+        public double[] getDoublePivot() {
+            double[] vals = new double[m];
+            for (int i = 0; i < m; i++) {
+                vals[i] = valueOf(piv[i]);
+            }
+            return vals;
+        }
+
+        /**
+         * Determinant
+         *
+         * @return det(A)
+         * @exception IllegalArgumentException Matrix must be square
+         */
+        public double det() {
+            if (m != n) {
+                throw new IllegalArgumentException("Matrix must be square.");
+            }
+            double d = valueOf(pivsign);
+            for (int j = 0; j < n; j++) {
+                d *= LU[j][j];
+            }
+            return d;
+        }
+
+        /**
+         * Solve A*X = B
+         *
+         * @param B A Matrix with as many rows as A and any number of columns.
+         * @return X so that L*U*X = B(piv,:)
+         * @exception IllegalArgumentException Matrix row dimensions must agree.
+         * @exception RuntimeException Matrix is singular.
+         */
+        public EBIMatrix solve(EBIMatrix B) {
+            if (B.getRowDimension() != m) {
+                throw new IllegalArgumentException("Matrix row dimensions must agree.");
+            }
+            if (!this.isNonsingular()) {
+                throw new RuntimeException("Matrix is singular.");
+            }
+
+            // Copy right hand side with pivoting
+            int nx = B.getColumnDimension();
+            EBIMatrix Xmat = B.getMatrix(piv, 0, nx - 1);
+            double[][] X = Xmat.getArray();
+
+            // Solve L*Y = B(piv,:)
+            for (int k = 0; k < n; k++) {
+                for (int i = k + 1; i < n; i++) {
+                    for (int j = 0; j < nx; j++) {
+                        X[i][j] -= X[k][j] * LU[i][k];
+                    }
+                }
+            }
+            // Solve U*X = Y;
+            for (int k = n - 1; k >= 0; k--) {
+                for (int j = 0; j < nx; j++) {
+                    X[k][j] /= LU[k][k];
+                }
+                for (int i = 0; i < k; i++) {
+                    for (int j = 0; j < nx; j++) {
+                        X[i][j] -= X[k][j] * LU[i][k];
+                    }
+                }
+            }
+            return Xmat;
+        }
+    }
+
+        // ==================== Inner class QRDecomposition ====================
+
+        /**
+     * QR Decomposition.
+     * <P>
+     * For an m-by-n matrix A with m >= n, the QR decomposition is an m-by-n
+     * orthogonal matrix Q and an n-by-n upper triangular matrix R so that A = Q*R.
+     * <P>
+     * The QR decompostion always exists, even if the matrix does not have full
+     * rank, so the constructor will never fail. The primary use of the QR
+     * decomposition is in the least squares solution of nonsquare systems of
+     * simultaneous linear equations. This will fail if isFullRank() returns false.
+     */
+    public static class QRDecomposition implements java.io.Serializable {
+
+        private static final long serialVersionUID = 199810878617L;
+        private final static ILoggingTool LOGGER
+                = createLoggingTool(QRDecomposition.class);
+
+        /* ------------------------
+         Class variables
+         * ------------------------ */
+        /**
+         * Array for internal storage of decomposition.
+         *
+         * @serial internal array storage.
+         */
+        private final double[][] QR;
+
+        /**
+         * Row and column dimensions.
+         *
+         * @serial column dimension.
+         * @serial row dimension.
+         */
+        private final int m, n;
+
+        /**
+         * Array for internal storage of diagonal of R.
+         *
+         * @serial diagonal of R.
+         */
+        private final double[] Rdiag;
+
+        /* ------------------------
+         Constructor
+         * ------------------------ */
+        /**
+         * QR Decomposition, computed by Householder reflections.
+         *
+         * @param A Rectangular matrix
+         */
+        public QRDecomposition(EBIMatrix A) {
+            // Initialize.
+            QR = A.getArrayCopy();
+            m = A.getRowDimension();
+            n = A.getColumnDimension();
+            Rdiag = new double[n];
+
+            // Main loop.
+            for (int k = 0; k < n; k++) {
+                // Compute 2-norm of k-th column without under/overflow.
+                double nrm = 0.0;
+                for (int i = k; i < m; i++) {
+                    nrm = hypot(nrm, QR[i][k]);
+                }
+
+                if (nrm != 0.0) {
+                    // Form k-th Householder vector.
+                    if (QR[k][k] < 0) {
+                        nrm = -nrm;
+                    }
+                    for (int i = k; i < m; i++) {
+                        QR[i][k] /= nrm;
+                    }
+                    QR[k][k] += 1.0;
+
+                    // Apply transformation to remaining columns.
+                    for (int j = k + 1; j < n; j++) {
+                        double s = 0.0;
+                        for (int i = k; i < m; i++) {
+                            s += QR[i][k] * QR[i][j];
+                        }
+                        s = -s / QR[k][k];
+                        for (int i = k; i < m; i++) {
+                            QR[i][j] += s * QR[i][k];
+                        }
+                    }
+                }
+                Rdiag[k] = -nrm;
+            }
+        }
+
+        /* ------------------------
+         Public Methods
+         * ------------------------ */
+        /**
+         * Is the matrix full rank?
+         *
+         * @return true if R, and hence A, has full rank.
+         */
+        public boolean isFullRank() {
+            for (int j = 0; j < n; j++) {
+                if (Rdiag[j] == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Return the Householder vectors
+         *
+         * @return Lower trapezoidal matrix whose columns define the reflections
+         */
+        public EBIMatrix getH() {
+            EBIMatrix X = new EBIMatrix(m, n);
+            double[][] H = X.getArray();
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i >= j) {
+                        H[i][j] = QR[i][j];
+                    } else {
+                        H[i][j] = 0.0;
+                    }
+                }
+            }
+            return X;
+        }
+
+        /**
+         * Return the upper triangular factor
+         *
+         * @return R
+         */
+        public EBIMatrix getR() {
+            EBIMatrix X = new EBIMatrix(n, n);
+            double[][] R = X.getArray();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (i < j) {
+                        R[i][j] = QR[i][j];
+                    } else if (i == j) {
+                        R[i][j] = Rdiag[i];
+                    } else {
+                        R[i][j] = 0.0;
+                    }
+                }
+            }
+            return X;
+        }
+
+        /**
+         * Generate and return the (economy-sized) orthogonal factor
+         *
+         * @return Q
+         */
+        public EBIMatrix getQ() {
+            EBIMatrix X = new EBIMatrix(m, n);
+            double[][] Q = X.getArray();
+            for (int k = n - 1; k >= 0; k--) {
+                for (int i = 0; i < m; i++) {
+                    Q[i][k] = 0.0;
+                }
+                Q[k][k] = 1.0;
+                for (int j = k; j < n; j++) {
+                    if (QR[k][k] != 0) {
+                        double s = 0.0;
+                        for (int i = k; i < m; i++) {
+                            s += QR[i][k] * Q[i][j];
+                        }
+                        s = -s / QR[k][k];
+                        for (int i = k; i < m; i++) {
+                            Q[i][j] += s * QR[i][k];
+                        }
+                    }
+                }
+            }
+            return X;
+        }
+
+        /**
+         * Least squares solution of A*X = B
+         *
+         * @param B A EBIMatrix with as many rows as A and any number of columns.
+         * @return X that minimizes the two norm of Q*R*X-B.
+         * @exception IllegalArgumentException EBIMatrix row dimensions must agree.
+         * @exception RuntimeException EBIMatrix is rank deficient.
+         */
+        public EBIMatrix solve(EBIMatrix B) {
+            if (B.getRowDimension() != m) {
+                throw new IllegalArgumentException("Matrix row dimensions must agree.");
+            }
+            if (!this.isFullRank()) {
+                throw new RuntimeException("Matrix is rank deficient.");
+            }
+
+            // Copy right hand side
+            int nx = B.getColumnDimension();
+            double[][] X = B.getArrayCopy();
+
+            // Compute Y = transpose(Q)*B
+            for (int k = 0; k < n; k++) {
+                for (int j = 0; j < nx; j++) {
+                    double s = 0.0;
+                    for (int i = k; i < m; i++) {
+                        s += QR[i][k] * X[i][j];
+                    }
+                    s = -s / QR[k][k];
+                    for (int i = k; i < m; i++) {
+                        X[i][j] += s * QR[i][k];
+                    }
+                }
+            }
+            // Solve R*X = Y;
+            for (int k = n - 1; k >= 0; k--) {
+                for (int j = 0; j < nx; j++) {
+                    X[k][j] /= Rdiag[k];
+                }
+                for (int i = 0; i < k; i++) {
+                    for (int j = 0; j < nx; j++) {
+                        X[i][j] -= X[k][j] * QR[i][k];
+                    }
+                }
+            }
+            return (new EBIMatrix(X, n, nx).getMatrix(0, n - 1, 0, nx - 1));
+        }
+    }
+
+        // ==================== Inner class SingularValueDecomposition ====================
+
+        /**
+     * Singular Value Decomposition.
+     * <P>
+     * For an m-by-n matrix A with m >= n, the singular value decomposition is an
+     * m-by-n orthogonal matrix U, an n-by-n diagonal matrix S, and an n-by-n
+     * orthogonal matrix V so that A = U*S*V'.
+     * <P>
+     * The singular values, sigma[k] = S[k][k], are ordered so that sigma[0] >=
+     * sigma[1] >= ... >= sigma[n-1].
+     * <P>
+     * The singular value decompostion always exists, so the constructor will never
+     * fail. The matrix condition number and the effective numerical rank can be
+     * computed from this decomposition.
+     */
+    public static class SingularValueDecomposition implements java.io.Serializable {
+
+        private static final long serialVersionUID = 19981017786L;
+        private static final ILoggingTool LOGGER
+                = LoggingToolFactory.createLoggingTool(SingularValueDecomposition.class);
+        /* ------------------------
+         Class variables
+         * ------------------------ */
+        /**
+         * Arrays for internal storage of U and V.
+         *
+         * @serial internal storage of U.
+         * @serial internal storage of V.
+         */
+        private double[][] U, V;
+        /**
+         * Array for internal storage of singular values.
+         *
+         * @serial internal storage of singular values.
+         */
+        private double[] s;
+        /**
+         * Row and column dimensions.
+         *
+         * @serial row dimension.
+         * @serial column dimension.
+         */
+        private int m, n;
+
+        /* ------------------------
+         Constructor
+         * ------------------------ */
+        /**
+         * Construct the singular value decomposition
+         *
+         * @param Arg
+         */
+        public SingularValueDecomposition(EBIMatrix Arg) {
+
+            // Derived from LINPACK code.
+            // Initialize.
+            double[][] A = Arg.getArrayCopy();
+            m = Arg.getRowDimension();
+            n = Arg.getColumnDimension();
+
+            /* Apparently the failing cases are only a proper subset of (m<n), 
+             so let's not throw error.  Correct fix to come later?
+             if (m<n) {
+             throw new IllegalArgumentException("Jama SVD only works for m >= n"); }
+             */
+            int nu = min(m, n);
+            s = new double[min(m + 1, n)];
+            U = new double[m][nu];
+            V = new double[n][n];
+            double[] e = new double[n];
+            double[] work = new double[m];
+            boolean wantu = true;
+            boolean wantv = true;
+
+            // Reduce A to bidiagonal form, storing the diagonal elements
+            // in s and the super-diagonal elements in e.
+            int nct = min(m - 1, n);
+            int nrt = max(0, min(n - 2, m));
+            for (int k = 0; k < max(nct, nrt); k++) {
+                if (k < nct) {
+
+                    // Compute the transformation for the k-th column and
+                    // place the k-th diagonal in s[k].
+                    // Compute 2-norm of k-th column without under/overflow.
+                    s[k] = 0.0;
+                    for (int i = k; i < m; i++) {
+                        s[k] = hypot(s[k], A[i][k]);
+                    }
+                    if (s[k] != 0.0) {
+                        if (A[k][k] < 0.0) {
+                            s[k] = -s[k];
+                        }
+                        for (int i = k; i < m; i++) {
+                            A[i][k] /= s[k];
+                        }
+                        A[k][k] += 1.0;
+                    }
+                    s[k] = -s[k];
+                }
+                for (int j = k + 1; j < n; j++) {
+                    if ((k < nct) && (s[k] != 0.0)) {
+
+                        // Apply the transformation.
+                        double t = 0.0;
+                        for (int i = k; i < m; i++) {
+                            t += A[i][k] * A[i][j];
+                        }
+                        t = -t / A[k][k];
+                        for (int i = k; i < m; i++) {
+                            A[i][j] += t * A[i][k];
+                        }
+                    }
+
+                    // Place the k-th row of A into e for the
+                    // subsequent calculation of the row transformation.
+                    e[j] = A[k][j];
+                }
+                if (wantu && (k < nct)) {
+
+                    // Place the transformation in U for subsequent back
+                    // multiplication.
+                    for (int i = k; i < m; i++) {
+                        U[i][k] = A[i][k];
+                    }
+                }
+                if (k < nrt) {
+
+                    // Compute the k-th row transformation and place the
+                    // k-th super-diagonal in e[k].
+                    // Compute 2-norm without under/overflow.
+                    e[k] = 0.0;
+                    for (int i = k + 1; i < n; i++) {
+                        e[k] = hypot(e[k], e[i]);
+                    }
+                    if (e[k] != 0.0) {
+                        if (e[k + 1] < 0.0) {
+                            e[k] = -e[k];
+                        }
+                        for (int i = k + 1; i < n; i++) {
+                            e[i] /= e[k];
+                        }
+                        e[k + 1] += 1.0;
+                    }
+                    e[k] = -e[k];
+                    if ((k + 1 < m) && (e[k] != 0.0)) {
+
+                        // Apply the transformation.
+                        for (int i = k + 1; i < m; i++) {
+                            work[i] = 0.0;
+                        }
+                        for (int j = k + 1; j < n; j++) {
+                            for (int i = k + 1; i < m; i++) {
+                                work[i] += e[j] * A[i][j];
+                            }
+                        }
+                        for (int j = k + 1; j < n; j++) {
+                            double t = -e[j] / e[k + 1];
+                            for (int i = k + 1; i < m; i++) {
+                                A[i][j] += t * work[i];
+                            }
+                        }
+                    }
+                    if (wantv) {
+
+                        // Place the transformation in V for subsequent
+                        // back multiplication.
+                        for (int i = k + 1; i < n; i++) {
+                            V[i][k] = e[i];
+                        }
+                    }
+                }
+            }
+
+            // Set up the final bidiagonal matrix or order p.
+            int p = min(n, m + 1);
+            if (nct < n) {
+                s[nct] = A[nct][nct];
+            }
+            if (m < p) {
+                s[p - 1] = 0.0;
+            }
+            if (nrt + 1 < p) {
+                e[nrt] = A[nrt][p - 1];
+            }
+            e[p - 1] = 0.0;
+
+            // If required, generate U.
+            if (wantu) {
+                for (int j = nct; j < nu; j++) {
+                    for (int i = 0; i < m; i++) {
+                        U[i][j] = 0.0;
+                    }
+                    U[j][j] = 1.0;
+                }
+                for (int k = nct - 1; k >= 0; k--) {
+                    if (s[k] != 0.0) {
+                        for (int j = k + 1; j < nu; j++) {
+                            double t = 0.0;
+                            for (int i = k; i < m; i++) {
+                                t += U[i][k] * U[i][j];
+                            }
+                            t = -t / U[k][k];
+                            for (int i = k; i < m; i++) {
+                                U[i][j] += t * U[i][k];
+                            }
+                        }
+                        for (int i = k; i < m; i++) {
+                            U[i][k] = -U[i][k];
+                        }
+                        U[k][k] = 1.0 + U[k][k];
+                        for (int i = 0; i < k - 1; i++) {
+                            U[i][k] = 0.0;
+                        }
+                    } else {
+                        for (int i = 0; i < m; i++) {
+                            U[i][k] = 0.0;
+                        }
+                        U[k][k] = 1.0;
+                    }
+                }
+            }
+
+            // If required, generate V.
+            if (wantv) {
+                for (int k = n - 1; k >= 0; k--) {
+                    if ((k < nrt) && (e[k] != 0.0)) {
+                        for (int j = k + 1; j < nu; j++) {
+                            double t = 0.0;
+                            for (int i = k + 1; i < n; i++) {
+                                t += V[i][k] * V[i][j];
+                            }
+                            t = -t / V[k + 1][k];
+                            for (int i = k + 1; i < n; i++) {
+                                V[i][j] += t * V[i][k];
+                            }
+                        }
+                    }
+                    for (int i = 0; i < n; i++) {
+                        V[i][k] = 0.0;
+                    }
+                    V[k][k] = 1.0;
+                }
+            }
+
+            // Main iteration loop for the singular values.
+            int pp = p - 1;
+            int iter = 0;
+            double eps = pow(2.0, -52.0);
+            double tiny = pow(2.0, -966.0);
+            while (p > 0) {
+                int k, kase;
+
+                // Here is where a test for too many iterations would go.
+                // This section of the program inspects for
+                // negligible elements in the s and e arrays.  On
+                // completion the variables kase and k are set as follows.
+                // kase = 1     if s(p) and e[k-1] are negligible and k<p
+                // kase = 2     if s(k) is negligible and k<p
+                // kase = 3     if e[k-1] is negligible, k<p, and
+                //              s(k), ..., s(p) are not negligible (qr step).
+                // kase = 4     if e(p-1) is negligible (convergence).
+                for (k = p - 2; k >= -1; k--) {
+                    if (k == -1) {
+                        break;
+                    }
+                    if (abs(e[k])
+                            <= tiny + eps * (abs(s[k]) + abs(s[k + 1]))) {
+                        e[k] = 0.0;
+                        break;
+                    }
+                }
+                if (k == p - 2) {
+                    kase = 4;
+                } else {
+                    int ks;
+                    for (ks = p - 1; ks >= k; ks--) {
+                        if (ks == k) {
+                            break;
+                        }
+                        double t = (ks != p ? abs(e[ks]) : 0.)
+                                + (ks != k + 1 ? abs(e[ks - 1]) : 0.);
+                        if (abs(s[ks]) <= tiny + eps * t) {
+                            s[ks] = 0.0;
+                            break;
+                        }
+                    }
+                    if (ks == k) {
+                        kase = 3;
+                    } else if (ks == p - 1) {
+                        kase = 1;
+                    } else {
+                        kase = 2;
+                        k = ks;
+                    }
+                }
+                k++;
+
+                // Perform the task indicated by kase.
+                switch (kase) {
+
+                    // Deflate negligible s(p).
+                    case 1: {
+                        double f = e[p - 2];
+                        e[p - 2] = 0.0;
+                        for (int j = p - 2; j >= k; j--) {
+                            double t = hypot(s[j], f);
+                            double cs = s[j] / t;
+                            double sn = f / t;
+                            s[j] = t;
+                            if (j != k) {
+                                f = -sn * e[j - 1];
+                                e[j - 1] = cs * e[j - 1];
+                            }
+                            if (wantv) {
+                                for (int i = 0; i < n; i++) {
+                                    t = cs * V[i][j] + sn * V[i][p - 1];
+                                    V[i][p - 1] = -sn * V[i][j] + cs * V[i][p - 1];
+                                    V[i][j] = t;
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                    // Split at negligible s(k).
+                    case 2: {
+                        double f = e[k - 1];
+                        e[k - 1] = 0.0;
+                        for (int j = k; j < p; j++) {
+                            double t = hypot(s[j], f);
+                            double cs = s[j] / t;
+                            double sn = f / t;
+                            s[j] = t;
+                            f = -sn * e[j];
+                            e[j] = cs * e[j];
+                            if (wantu) {
+                                for (int i = 0; i < m; i++) {
+                                    t = cs * U[i][j] + sn * U[i][k - 1];
+                                    U[i][k - 1] = -sn * U[i][j] + cs * U[i][k - 1];
+                                    U[i][j] = t;
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                    // Perform one qr step.
+                    case 3: {
+
+                        // Calculate the shift.
+                        double scale = max(max(max(max(abs(s[p - 1]), abs(s[p - 2])), abs(e[p - 2])),
+                                abs(s[k])), abs(e[k]));
+                        double sp = s[p - 1] / scale;
+                        double spm1 = s[p - 2] / scale;
+                        double epm1 = e[p - 2] / scale;
+                        double sk = s[k] / scale;
+                        double ek = e[k] / scale;
+                        double b = ((spm1 + sp) * (spm1 - sp) + epm1 * epm1) / 2.0;
+                        double c = (sp * epm1) * (sp * epm1);
+                        double shift = 0.0;
+                        if ((b != 0.0) | (c != 0.0)) {
+                            shift = sqrt(b * b + c);
+                            if (b < 0.0) {
+                                shift = -shift;
+                            }
+                            shift = c / (b + shift);
+                        }
+                        double f = (sk + sp) * (sk - sp) + shift;
+                        double g = sk * ek;
+
+                        // Chase zeros.
+                        for (int j = k; j < p - 1; j++) {
+                            double t = hypot(f, g);
+                            double cs = f / t;
+                            double sn = g / t;
+                            if (j != k) {
+                                e[j - 1] = t;
+                            }
+                            f = cs * s[j] + sn * e[j];
+                            e[j] = cs * e[j] - sn * s[j];
+                            g = sn * s[j + 1];
+                            s[j + 1] = cs * s[j + 1];
+                            if (wantv) {
+                                for (int i = 0; i < n; i++) {
+                                    t = cs * V[i][j] + sn * V[i][j + 1];
+                                    V[i][j + 1] = -sn * V[i][j] + cs * V[i][j + 1];
+                                    V[i][j] = t;
+                                }
+                            }
+                            t = hypot(f, g);
+                            cs = f / t;
+                            sn = g / t;
+                            s[j] = t;
+                            f = cs * e[j] + sn * s[j + 1];
+                            s[j + 1] = -sn * e[j] + cs * s[j + 1];
+                            g = sn * e[j + 1];
+                            e[j + 1] = cs * e[j + 1];
+                            if (wantu && (j < m - 1)) {
+                                for (int i = 0; i < m; i++) {
+                                    t = cs * U[i][j] + sn * U[i][j + 1];
+                                    U[i][j + 1] = -sn * U[i][j] + cs * U[i][j + 1];
+                                    U[i][j] = t;
+                                }
+                            }
+                        }
+                        e[p - 2] = f;
+                        iter += 1;
+                    }
+                    break;
+
+                    // Convergence.
+                    case 4: {
+
+                        // Make the singular values positive.
+                        if (s[k] <= 0.0) {
+                            s[k] = (s[k] < 0.0 ? -s[k] : 0.0);
+                            if (wantv) {
+                                for (int i = 0; i <= pp; i++) {
+                                    V[i][k] = -V[i][k];
+                                }
+                            }
+                        }
+
+                        // Order the singular values.
+                        while (k < pp) {
+                            if (s[k] >= s[k + 1]) {
+                                break;
+                            }
+                            double t = s[k];
+                            s[k] = s[k + 1];
+                            s[k + 1] = t;
+                            if (wantv && (k < n - 1)) {
+                                for (int i = 0; i < n; i++) {
+                                    t = V[i][k + 1];
+                                    V[i][k + 1] = V[i][k];
+                                    V[i][k] = t;
+                                }
+                            }
+                            if (wantu && (k < m - 1)) {
+                                for (int i = 0; i < m; i++) {
+                                    t = U[i][k + 1];
+                                    U[i][k + 1] = U[i][k];
+                                    U[i][k] = t;
+                                }
+                            }
+                            k++;
+                        }
+                        iter = 0;
+                        p--;
+                    }
+                    break;
+                }
+            }
+        }
+
+        /* ------------------------
+         Public Methods
+         * ------------------------ */
+        /**
+         * Return the left singular vectors
+         *
+         * @return U
+         */
+        public EBIMatrix getU() {
+            return new EBIMatrix(U, m, min(m + 1, n));
+        }
+
+        /**
+         * Return the right singular vectors
+         *
+         * @return V
+         */
+        public EBIMatrix getV() {
+            return new EBIMatrix(V, n, n);
+        }
+
+        /**
+         * Return the one-dimensional array of singular values
+         *
+         * @return diagonal of S.
+         */
+        public double[] getSingularValues() {
+            return s;
+        }
+
+        /**
+         * Return the diagonal matrix of singular values
+         *
+         * @return S
+         */
+        public EBIMatrix getS() {
+            EBIMatrix X = new EBIMatrix(n, n);
+            double[][] S = X.getArray();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    S[i][j] = 0.0;
+                }
+                S[i][i] = this.s[i];
+            }
+            return X;
+        }
+
+        /**
+         * Two norm
+         *
+         * @return max(S)
+         */
+        public double norm2() {
+            return s[0];
+        }
+
+        /**
+         * Two norm condition number
+         *
+         * @return max(S)/min(S)
+         */
+        public double cond() {
+            return s[0] / s[min(m, n) - 1];
+        }
+
+        /**
+         * Effective numerical matrix rank
+         *
+         * @return Number of nonnegligible singular values.
+         */
+        public int rank() {
+            double eps = pow(2.0, -52.0);
+            double tol = max(m, n) * s[0] * eps;
+            int r = 0;
+            for (int i = 0; i < s.length; i++) {
+                if (s[i] > tol) {
+                    r++;
+                }
+            }
+            return r;
+        }
     }
 
 }

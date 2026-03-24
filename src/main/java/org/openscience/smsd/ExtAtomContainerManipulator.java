@@ -23,11 +23,16 @@ package org.openscience.smsd;
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+import static java.lang.System.getProperty;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -504,6 +509,141 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             if (a.getImplicitHydrogenCount() == null) {
                 a.setImplicitHydrogenCount(0);
             }
+        }
+    }
+
+    // ==================== Inner class Utility ====================
+
+    /**
+     * @author Syed Asad Rahman
+     */
+    public static class Utility {
+
+        private static final ILoggingTool UTIL_LOGGER
+                = LoggingToolFactory.createLoggingTool(Utility.class);
+        static final String NEW_LINE = getProperty("line.separator");
+
+        static int print_matrix(List<Integer> MCGregor_Matrix,
+                int bondnum_A, List<Integer> i_bonds_A, List<String> c_bonds_A,
+                int bondnum_B, List<Integer> i_bonds_B, List<String> c_bonds_B) {
+
+            UTIL_LOGGER.debug("bondnum_A " + bondnum_A);
+            UTIL_LOGGER.debug("bondnum_B " + bondnum_B);
+
+            UTIL_LOGGER.debug("c_bonds_A " + c_bonds_A.size());
+            print_list(c_bonds_A);
+            UTIL_LOGGER.debug("i_bonds_A " + i_bonds_A.size());
+            print_list(i_bonds_A);
+            UTIL_LOGGER.debug("c_bonds_B " + c_bonds_B.size());
+            print_list(c_bonds_B);
+            UTIL_LOGGER.debug("i_bonds_B " + i_bonds_B.size());
+            print_list(i_bonds_B);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("matrix: ").append(NEW_LINE).append("-").append("    ");
+            for (int a = 0; a < bondnum_B; a++) {
+                sb.append(" ").append(c_bonds_B.get((a * 4) + 0)).append(c_bonds_B.get((a * 4) + 1));
+            }
+            sb.append(NEW_LINE).append("     ");
+            for (int a = 0; a < bondnum_B; a++) {
+                sb.append(" ").append(i_bonds_B.get((a * 3) + 0)).append(i_bonds_B.get((a * 3) + 1));
+            }
+            sb.append(NEW_LINE);
+            for (int a = 0; a < bondnum_A; a++) {
+                sb.append(c_bonds_A.get((a * 4) + 0)).append("").append(c_bonds_A.get((a * 4) + 1));
+                sb.append(" ").append(i_bonds_A.get((a * 3) + 0)).append(i_bonds_A.get((a * 3) + 1));
+                for (int b = 0; b < bondnum_B; b++) {
+                    sb.append("   ").append(MCGregor_Matrix.get((a * bondnum_B) + b));
+                }
+                sb.append(NEW_LINE);
+            }
+            UTIL_LOGGER.debug(sb.toString());
+
+            return 0;
+        }
+
+        static void print_list(List list) {
+            StringBuilder sb = new StringBuilder();
+            list.stream().forEach((o) -> {
+                sb.append(o).append(" ");
+            });
+            UTIL_LOGGER.debug(sb.toString());
+        }
+
+        public static List<Integer> getBubbleSort(List<Integer> unSortedVector) {
+            List<Integer> sortedVector = new ArrayList<>(unSortedVector);
+            int j;
+            boolean flag = true;
+            int temp;
+
+            while (flag) {
+                flag = false;
+                for (j = 1; j < sortedVector.size() - 1; j++) {
+                    if (sortedVector.get(j) > sortedVector.get(j + 1)) {
+                        temp = sortedVector.get(j);
+                        sortedVector.set(j, sortedVector.get(j + 1));
+                        sortedVector.set(j + 1, temp);
+                        flag = true;
+                    }
+                }
+            }
+
+            return sortedVector;
+        }
+
+        /**
+         * If either is a subgraph
+         */
+        public static boolean isMatch(IAtomContainer ac1, IAtomContainer ac2, boolean either) throws CDKException {
+
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac1);
+            MoleculeInitializer.initializeMolecule(ac1);
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(ac2);
+            MoleculeInitializer.initializeMolecule(ac2);
+
+            AtomBondMatcher.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, true);
+            AtomBondMatcher.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
+
+            if (ac1.getAtomCount() <= ac2.getAtomCount()) {
+                Substructure pattern = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false);
+                return pattern.isSubgraph();
+            }
+            if (either && ac1.getAtomCount() >= ac2.getAtomCount()) {
+                Substructure pattern = new Substructure(ac2, ac1, atomMatcher, bondMatcher, false);
+                return pattern.isSubgraph();
+            }
+            return false;
+        }
+
+        /**
+         * ac1 is subgraph of ac2
+         */
+        public static Map<IAtom, IAtom> findSubgraph(
+                IAtomContainer source, IAtomContainer target,
+                boolean matchAtomType, boolean matchBonds, boolean shouldMatchRings,
+                boolean matchRingSize) throws CDKException {
+
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(source);
+            MoleculeInitializer.initializeMolecule(source);
+
+            ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(target);
+            MoleculeInitializer.initializeMolecule(target);
+
+            AtomBondMatcher.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(matchAtomType, matchRingSize);
+            AtomBondMatcher.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(matchBonds, shouldMatchRings);
+
+            Substructure s;
+            if (source.getAtomCount() <= target.getAtomCount()) {
+                try {
+                    s = new Substructure(source, target, atomMatcher, bondMatcher, false);
+                    s.setChemFilters(true, true, true);
+                    return s.getFirstAtomMapping().getMappingsByAtoms();
+                } catch (CDKException ex) {
+                    Logger.getLogger(com.bioinceptionlabs.reactionblast.mechanism.Utility.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            return new HashMap<>();
         }
     }
 }

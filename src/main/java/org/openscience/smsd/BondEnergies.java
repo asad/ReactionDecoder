@@ -30,7 +30,6 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Order;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
-import org.openscience.smsd.BondEnergy;
 
 /**
  *
@@ -460,5 +459,69 @@ public class BondEnergies {
         bondEngergies.put(key++, new BondEnergy("Xe", "O", Order.SINGLE, 84));
         bondEngergies.put(key++, new BondEnergy("Xe", "F", Order.SINGLE, 130));
         return key;
+    }
+
+    // ==================== Inner class BondEnergy ====================
+
+    /**
+     * Helper class defining the energy for a bond type.
+     *
+     * @author Syed Asad Rahman
+     */
+    public static class BondEnergy {
+
+        private final String symbol1;
+        private final String symbol2;
+        private final IBond.Order bondOrder;
+        private int energy = -1;
+
+        /**
+         * Creates a new bond energy for the given elements and bond order.
+         *
+         * @param symbol1 element symbol for the first atom
+         * @param symbol2 element symbol for the second atom
+         * @param order bond order
+         * @param energy energy for this bond type
+         */
+        public BondEnergy(String symbol1, String symbol2,
+                IBond.Order order, int energy) {
+            this.symbol1 = symbol1;
+            this.symbol2 = symbol2;
+            this.bondOrder = order;
+            this.energy = energy;
+        }
+
+        /** Returns the element symbol of the first atom. */
+        public String getSymbolFirstAtom() {
+            return symbol1;
+        }
+
+        /** Returns the element symbol of the second atom. */
+        public String getSymbolSecondAtom() {
+            return symbol2;
+        }
+
+        /** Returns the bond order for this bond type energy. */
+        public IBond.Order getBondOrder() {
+            return bondOrder;
+        }
+
+        /** Returns the energy for this bond type. */
+        public int getEnergy() {
+            return energy;
+        }
+
+        public boolean matches(IBond bond) {
+            IAtom atom1 = bond.getAtom(0);
+            IAtom atom2 = bond.getAtom(1);
+
+            if ((atom1.getSymbol().equalsIgnoreCase(symbol1) && atom2.getSymbol().equalsIgnoreCase(symbol2))
+                    || (atom1.getSymbol().equalsIgnoreCase(symbol2) && atom2.getSymbol().equalsIgnoreCase(symbol1))) {
+                if (bond.getOrder().compareTo(bondOrder) == 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

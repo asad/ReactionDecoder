@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import static java.util.logging.Level.SEVERE;
-import static com.bioinceptionlabs.reactionblast.fingerprints.Similarity.getTanimotoSimilarity;
+import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.Similarity.getTanimotoSimilarity;
 import com.bioinceptionlabs.reactionblast.mapping.HydrogenFreeFingerPrintContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.MolMapping;

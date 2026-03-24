@@ -46,7 +46,7 @@ import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
 import org.openscience.smsd.BondEnergies;
 import static org.openscience.smsd.BondEnergies.getInstance;
-import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
+import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.mapping.CallableAtomMappingTool;

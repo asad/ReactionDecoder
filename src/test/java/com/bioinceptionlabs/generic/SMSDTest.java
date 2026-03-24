@@ -15,7 +15,7 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.AtomBondMatcher;
-import org.openscience.smsd.Algorithm;
+import org.openscience.smsd.BaseMapping.Algorithm;
 
 // Utility class for manual SMSD testing — not part of automated test suite
 /**
@@ -32,8 +32,8 @@ public class SMSDTest {
     public static void main(String[] args) throws CloneNotSupportedException, CDKException {
         try {
 
-            org.openscience.smsd.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
-            org.openscience.smsd.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+            AtomBondMatcher.AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, false);
+            AtomBondMatcher.BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
 
             // TODO code application logic here
             SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());

@@ -27,9 +27,9 @@ import java.util.TreeMap;
 
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator;
-import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
-import com.bioinceptionlabs.reactionblast.fingerprints.IFingerprintGenerator;
+import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator;
+import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator.getFingerprinterSize;
+import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.IFingerprintGenerator;
 
 /**
  *

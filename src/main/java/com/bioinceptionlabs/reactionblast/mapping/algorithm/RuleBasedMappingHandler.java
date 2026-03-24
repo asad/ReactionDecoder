@@ -38,7 +38,7 @@ import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogens;
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static org.openscience.smsd.Utility.isMatch;
+import static org.openscience.smsd.ExtAtomContainerManipulator.Utility.isMatch;
 
 /**
  *

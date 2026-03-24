@@ -19,27 +19,26 @@
 package com.bioinceptionlabs.reactionblast.fingerprints;
 
 import java.io.Serializable;
-import static java.lang.String.valueOf;
-import static java.lang.System.getProperty;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
-import static java.util.Collections.unmodifiableCollection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import static java.util.logging.Level.SEVERE;
-
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import static com.bioinceptionlabs.reactionblast.fingerprints.FingerprintGenerator.getFingerprinterSize;
-import static com.bioinceptionlabs.reactionblast.fingerprints.PatternComparators.overallComparator;
-import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
-import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.String.valueOf;
+import static java.lang.System.getProperty;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.logging.Level.SEVERE;
+import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator.getFingerprinterSize;
+
 
 /**
  * @contact Syed Asad Rahman, BioInception.
@@ -348,7 +347,7 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     @Override
     public int compare(IPatternFingerprinter o1, IPatternFingerprinter o2) {
-        Comparator<IPatternFingerprinter> comparator = overallComparator();
+        Comparator<IPatternFingerprinter> comparator = PatternComparators.overallComparator();
         return comparator.compare(o1, o2);
     }
 
@@ -422,5 +421,225 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
         return p;
     }
+
+
+    // === Inner classes/interfaces merged from separate files ===
+
+
+    /**
+     * @contact Syed Asad Rahman, BioInception.
+     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+     */
+    public static interface IFeature extends Comparable<IFeature> {
+
+        /**
+         *
+         * @param obj
+         * @return
+         */
+        @Override
+        boolean equals(Object obj);
+
+        /**
+         * @return the pattern
+         */
+        String getPattern();
+
+        /**
+         * @return the position
+         */
+        double getWeight();
+
+        /**
+         * Hash code for Pattern
+         * @return
+         */
+        @Override
+        int hashCode();
+
+        /**
+         * Return weighted fingerprint
+         * @return
+         */
+        @Override
+        String toString();
+
+        /**
+         *
+         * @param newValue
+         */
+        public void setValue(double newValue);
+    }
+
+
+
+    /**
+     * @contact Syed Asad Rahman, BioInception.
+     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+     */
+    public static class Feature implements IFeature,
+            Comparable<IFeature>,
+            Comparator<IFeature>,
+            Serializable {
+
+        private static final long serialVersionUID = 0xe6c5aecf276L;
+        private final String pattern;
+        private double weight;
+
+        /**
+         *
+         * @param feature
+         * @param weight
+         */
+        public Feature(String feature, double weight) {
+            this.pattern = feature;
+            this.weight = weight;
+        }
+
+        /**
+         *
+         * @param feature
+         */
+        public Feature(String feature) {
+            this(feature, 1.0);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Feature other = (Feature) obj;
+            return !((this.pattern == null) ? (other.pattern != null) : !this.pattern.equals(other.pattern));
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 29 * hash + (this.pattern != null ? this.pattern.hashCode() : 0);
+            return hash;
+        }
+
+        /**
+         * Return weighted fingerprint
+         *
+         * @return
+         */
+        @Override
+        public String toString() {
+            DecimalFormat df = new DecimalFormat("##.0");
+            StringBuilder result = new StringBuilder();
+            result.append(pattern).append(":").append(df.format(weight));
+            return result.toString();
+        }
+
+        /**
+         * @return the pattern
+         */
+        @Override
+        public String getPattern() {
+            return pattern;
+        }
+
+        /**
+         * @return the weight
+         */
+        @Override
+        public double getWeight() {
+            return weight;
+        }
+
+        @Override
+        public int compareTo(IFeature feature) {
+            return this.pattern.compareTo(feature.getPattern());
+        }
+
+        @Override
+        public int compare(IFeature o1, IFeature o2) {
+            return o1.getPattern().compareTo(o2.getPattern());
+        }
+
+        /**
+         *
+         * @param weight
+         */
+        @Override
+        public void setValue(double weight) {
+            this.weight = weight;
+        }
+    }
+
+
+
+    /**
+     * @contact Syed Asad Rahman, BioInception.
+     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+     */
+    public static class PatternComparators {
+
+        private static final ILoggingTool LOGGER
+                = LoggingToolFactory.createLoggingTool(PatternComparators.class);
+
+        public static Comparator<IPatternFingerprinter> overallComparator() {
+            return (IPatternFingerprinter o1, IPatternFingerprinter o2) -> {
+                int len1 = o1.getFeatureCount();
+                int len2 = o2.getFeatureCount();
+                if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
+                    return o1.getFingerprintID().compareTo(o2.getFingerprintID());
+                }
+                int n = min(len1, len2);
+                if (len1 == len2) {
+                    int pos = 0;
+                    while (n-- != 0) {
+                        try {
+                            if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
+                                return o1.getFeature(pos).compareTo(o2.getFeature(pos));
+                            } else if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
+                                double v1 = o1.getWeight(pos);
+                                double v2 = o2.getWeight(pos);
+                                if (v1 != v2) {
+                                    return (int) (max(v1, v2) - min(v1, v2));
+                                }
+                            }
+                        } catch (CDKException ex) {
+                            LOGGER.error(SEVERE, null, ex);
+                        }
+                        pos++;
+                    }
+                }
+                return max(len1, len2) - n;
+            };
+        }
+
+        public static Comparator<IPatternFingerprinter> dataComparator() {
+            return (IPatternFingerprinter o1, IPatternFingerprinter o2) -> {
+                int len1 = o1.getFeatureCount();
+                int len2 = o2.getFeatureCount();
+                if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
+                    return o1.getFingerprintID().compareTo(o2.getFingerprintID());
+                }
+                int n = min(len1, len2);
+                if (len1 == len2) {
+                    int pos = 0;
+                    while (n-- != 0) {
+                        double v1 = o1.getWeight(pos);
+                        double v2 = o2.getWeight(pos);
+                        if (v1 != v2) {
+                            return (int) (max(v1, v2) - min(v1, v2));
+                        }
+                        pos++;
+                    }
+                }
+                return max(len1, len2) - n;
+            };
+        }
+
+        private PatternComparators() {
+        }
+    }
+
 
 }
