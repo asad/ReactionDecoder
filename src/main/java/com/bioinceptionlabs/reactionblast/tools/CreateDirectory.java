@@ -79,7 +79,7 @@ public class CreateDirectory {
                 throw new IOException(msg);
             }
 
-            //System.out.println("Created dir: " + dir.getAbsolutePath());
+
             // path=dir.getAbsolutePath();
         }
     }

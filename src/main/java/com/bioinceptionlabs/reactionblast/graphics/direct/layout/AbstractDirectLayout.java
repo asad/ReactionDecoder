@@ -120,9 +120,9 @@ public abstract class AbstractDirectLayout<T> {
             atom.getPoint2d().y += dy;
         }
 //        bounds.setFrameFromCenter(x, y, bounds.getMinX() + dx, bounds.getMinY() + dy);
-//        System.out.print(ac.getID() + " ADL Before : " + BoundsPrinter.toString(bounds));
+
         bounds.setRect(bounds.getMinX() + dx, bounds.getMinY() + dy, bounds.getWidth(), bounds.getHeight());
-//        System.out.println(" After: " + BoundsPrinter.toString(bounds) + " " + dx + " " + dy);
+
     }
     
     /**

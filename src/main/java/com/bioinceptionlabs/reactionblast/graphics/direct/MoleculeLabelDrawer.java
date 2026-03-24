@@ -60,7 +60,7 @@ public class MoleculeLabelDrawer extends AbstractDirectDrawer {
             double x = bounds.getCenterX();
             double y = bounds.getCenterY();
             Point2f p = super.getTextPoint(g, label, x, y);
-//            System.out.println("drawing string at " + x + " " + y);
+
             g.drawString(label, p.x, p.y);
         }
     }

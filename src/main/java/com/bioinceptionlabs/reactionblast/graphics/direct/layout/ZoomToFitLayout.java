@@ -88,7 +88,7 @@ public class ZoomToFitLayout extends AbstractDirectLayout<IAtomContainer> {
     private double calculateZoom(IAtomContainer ac, double w, double h) {
         double borderX = drawer.getParams().borderX;
         double borderY = drawer.getParams().borderY;
-//        System.out.println("border " + borderX + " " + borderY);
+
         double canvasWidth = w;
         double canvasHeight = h;
         double scaleFactor

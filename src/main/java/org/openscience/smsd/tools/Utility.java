@@ -128,7 +128,7 @@ public class Utility {
                 }
             }
         }
-//        System.out.println("Bubble Sort: " + sortedVector);
+
         return sortedVector;
     }
 

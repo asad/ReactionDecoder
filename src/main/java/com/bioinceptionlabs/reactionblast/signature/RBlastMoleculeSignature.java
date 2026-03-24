@@ -198,9 +198,6 @@ public class RBlastMoleculeSignature extends BaseMoleculeSignature {
         builder.makeFromColoredTree(tree);
         IAtomContainer fragment = builder.getAtomContainer();
         fragment = permute(labeller.getCanonicalPermutation(fragment), fragment);
-//        System.out.println(new AtomContainerPrinter().toString(fragment));
-//        System.out.println(Arrays.toString(labeller.getCanonicalPermutation(fragment)));
-//        return "";
         RBlastSmilesGenerator smilesGenerator
                 = new RBlastSmilesGenerator(false, labeller);
         try {

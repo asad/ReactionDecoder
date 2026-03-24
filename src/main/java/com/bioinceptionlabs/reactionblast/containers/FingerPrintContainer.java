@@ -202,9 +202,7 @@ public class FingerPrintContainer implements IFingerPrintContainer {
     @Override
     public void setValue(String Key, BitSet Value)
             throws IOException {
-//        System.out.println("KEY " + Key + " val: " + Value.cardinality());
         FingerPrintMap.put(Key, Value);
-//        System.out.println("FingerPrintMap " + FingerPrintMap.size() + " val: " + Value.cardinality());
     }
 
     /**

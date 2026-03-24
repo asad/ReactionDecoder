@@ -100,7 +100,7 @@ public final class EnergyFilter extends Sotter implements IChemicalFilter<Double
 
     private Double getMappedMoleculeEnergies(AtomAtomMapping mcsAtomSolution) throws CDKException {
 
-//        System.out.println("\nSort By Energies");
+
         double totalBondEnergy = -9999.0;
 
         IAtomContainer educt = SilentChemObjectBuilder.getInstance().newInstance(IAtomContainer.class, chemfilter.getQuery());

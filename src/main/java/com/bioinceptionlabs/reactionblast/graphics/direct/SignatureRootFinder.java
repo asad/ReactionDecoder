@@ -177,7 +177,7 @@ public class SignatureRootFinder {
 
             }
         }
-//        System.out.println("RS for " + atomContainer.getID() + " = " + rootSystems);
+
 
         // now, join together any root systems that are adjacent
         boolean merging = true;
@@ -193,7 +193,7 @@ public class SignatureRootFinder {
                 if (adjacent(rootSystem, otherRootSystem, atomContainer)) {
                     mergedRootSystems.add(rootSystem.merge(otherRootSystem));
                     hasMerged = true;
-//                    System.out.println("merge " + rootSystem + " and " + otherRootSystem);
+
                 } else {
                     mergedRootSystems.add(otherRootSystem);
                 }
@@ -217,7 +217,7 @@ public class SignatureRootFinder {
             });
         }
 
-//        System.out.println("RS for " + atomContainer.getID() + " = " + rootSystems + " after merging ");
+
         return rootSystems;
     }
 

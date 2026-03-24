@@ -207,7 +207,7 @@ public class MolContainer implements IMolContainer {
     private boolean isSubgraphIdentical(IAtomContainer _mol,
             IAtomContainer _rMol,
             boolean removeHydrogen) throws CDKException, IOException {
-//        System.out.println("Graph matching");
+
 
         IAtomContainer mol1 = _mol;
         IAtomContainer mol2 = _rMol;

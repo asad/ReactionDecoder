@@ -144,7 +144,7 @@ public class ConvexHull implements Iterable<Point2d> {
                 minArea = area;
                 winnerIndex = index;
             }
-//            System.out.println("rect " + rect);
+
         }
         Vector2d edge = edgeVector(hull[hull.length - 1], hull[0]);
         Rectangle rect = getRectangleBrute(edge, hull.length - 1, 0);
@@ -154,7 +154,6 @@ public class ConvexHull implements Iterable<Point2d> {
             minArea = area;
             winnerIndex = hull.length;
         }
-//        System.out.println("winner = " + winnerIndex);
 
         return minRect;
     }
@@ -213,12 +212,7 @@ public class ConvexHull implements Iterable<Point2d> {
                 minArea = area;
                 minRect = rectangle;
             }
-//            System.out.println(
-//                    "rotated angle = " + rotatedAngle
-//                    + " min " + minArea
-//                    + " r = " + rectangle
-//                    + " caliper_a " + caliperA
-//                    + " caliper_b " + caliperB);
+
         }
         return minRect;
     }
@@ -237,11 +231,7 @@ public class ConvexHull implements Iterable<Point2d> {
         double maxAngle = 0;
         Vector2d vN = new Vector2d(vector);
         vN.normalize();
-//        System.out.println("tailIndex " + tailPointIndex 
-//                + " visiting points from " 
-//                + hullIDs[headPointIndex]
-//                + " tailPt" + toString(tailPoint)
-//                + " headPt" + toString(headPoint));
+
         int max = 0;
         while (visited < hull.length) {
             if (index == hull.length) {
@@ -251,7 +241,7 @@ public class ConvexHull implements Iterable<Point2d> {
                 vMax = hull[index];
             } else {
                 double angle = prj(tailPoint, headPoint, hull[index]);
-//                System.out.println(index + " proj " + hullIDs[index] + " " + angle);
+
                 if (angle < minAngle) {
                     min = index;
                     minAngle = angle;
@@ -277,12 +267,12 @@ public class ConvexHull implements Iterable<Point2d> {
         Point2d vMin = hull[min];
         Point2d tailProj = project(tailPoint, headPoint, vMax, true);
         Point2d headProj = project(tailPoint, headPoint, vMin, true);
-//        System.out.println("vMax = " + hullIDs[max] + " vMin = " + hullIDs[min]);
+
         Rectangle r
                 = new Rectangle(thirdPoint, tailProj, headProj, thirdPointDist);
         r.pointY = vMin;
         r.pointZ = vMax;
-//        System.out.println(toString(tailPoint, headPoint, tailProj, headProj, vMin, vMax));
+
         return r;
     }
 
@@ -371,7 +361,7 @@ public class ConvexHull implements Iterable<Point2d> {
                 increasing = false;
             }
         }
-//        System.out.println(toString(tailPoint, headPoint, remainExPoint, tailExPt, projTail, headExPt, projHead)); 
+
 
         return new Rectangle(remainExPoint, projTail, projHead,
                 pointLineDistance(tailPoint, headPoint, remainExPoint));
@@ -412,7 +402,7 @@ public class ConvexHull implements Iterable<Point2d> {
             } else {
                 p = new Point2d(p1.x + (t * dx), p1.y + (t * dy));
             }
-//            if (outSeg) System.out.println("projecting t = " + t + " " + toString(p1, p2, p3, p));
+
             return p;
         }
     }
@@ -632,9 +622,7 @@ public class ConvexHull implements Iterable<Point2d> {
                 cdVecNormalized.normalize();
             }
             Vector2d perp = new Vector2d(cdVecNormalized.y, -cdVecNormalized.x);
-//            System.out.println(
-//                    pointOnAB + " " +  cornerC + " " +  cornerD + " " +  distToCD
-//                    + " " +  cdVec + " " +  perp);
+
             cornerA = new Point2d(cornerD);
             cornerA.scaleAdd(distToCD, perp, cornerA);
             cornerB = new Point2d(cornerC);

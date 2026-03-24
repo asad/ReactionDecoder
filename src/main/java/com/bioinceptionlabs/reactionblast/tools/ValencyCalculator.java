@@ -90,7 +90,7 @@ public class ValencyCalculator {
             } else {
                 valencElectronMap.put(symbol, 99);
             }
-//            System.out.println("Atom " + symbol + " grp: " + PeriodicTable.getGroup(symbol) + " P " + PeriodicTable.getPeriod(symbol));
+
         }
         /* 
          * Metal
@@ -113,7 +113,7 @@ public class ValencyCalculator {
         valencElectronMap.put("A", 1);
         valencElectronMap.put("X", 8);
         valencElectronMap.put("PsH", 1);
-//        System.out.println("valencElectronMap Size " + valencElectronMap.size());
+
         isInitialized = true;
     }
 

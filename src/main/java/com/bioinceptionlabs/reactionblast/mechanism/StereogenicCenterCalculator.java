@@ -167,11 +167,6 @@ public class StereogenicCenterCalculator implements Serializable {
                 IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
                 IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
                 IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
-                //                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
-//                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
-//
-//                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
-//                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
                 if (isStereogenicChange(rAtom2DStereo, pAtom2DStereo)) {
                     StereoChange sc = new StereoChange(rAtom2DStereo, pAtom2DStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
@@ -210,11 +205,6 @@ public class StereogenicCenterCalculator implements Serializable {
             targetAtoms.stream().filter((atomT) -> (atomQ.getID().equals(atomT.getID()) && !atomQ.getSymbol().equalsIgnoreCase("H"))).forEachOrdered((atomT) -> {
                 IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
                 IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
-//                    System.out.println("atomQ " + atomQ.getID() + " S: " + atomQ.getSymbol());
-//                    System.out.println("atomT " + atomT.getID() + " S: " + atomT.getSymbol());
-//
-//                    System.out.println("atomQ " + chirality2DCDK.containsKey(atomQ));
-//                    System.out.println("atomT " + chirality2DCDK.containsKey(atomT));
                 if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
                     StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
                     stereoChangeList.add(sc);

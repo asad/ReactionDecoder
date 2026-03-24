@@ -111,7 +111,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
         for (Integer Key : allStereoAtomMCS.keySet()) {
             try {
                 double score = 0.0;
-                //            System.out.println("\nStart score " + score);
+
                 AtomAtomMapping atomMapMCS = allStereoAtomMCS.get(Key);
                 double atomScore = getAtomScore(score, atomMapMCS, chemfilter.getQuery(), chemfilter.getTarget());
                 Map<IBond, IBond> bondMaps = makeBondMapsOfAtomMaps(chemfilter.getQuery(), chemfilter.getTarget(), atomMapMCS);
@@ -154,7 +154,7 @@ public final class StereoFilter extends Sotter implements IChemicalFilter<Double
                 }
             });
         });
-//        System.out.println("Mol Map size:" + bondbondMappingMap.size());
+
         return bondbondMappingMap;
     }
 

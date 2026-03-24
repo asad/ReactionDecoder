@@ -125,7 +125,7 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
             root.add(bounds);
         }
         if (root != null) {
-//            System.out.println("root " + BoundsPrinter.toString(root) + " added " + BoundsPrinter.toString(bounds) + " " + label);
+
         }
     }
 
@@ -213,10 +213,10 @@ public final class BoundsTree implements Iterable<Rectangle2D> {
      */
     public void shift(double dx, double dy) {
         childMap.keySet().stream().map(key -> childMap.get(key)).forEachOrdered(bounds -> {
-            //            System.out.print(key + " Before : " + BoundsPrinter.toString(bounds));
+
             bounds.setRect(bounds.getMinX() + dx, bounds.getMinY() + dy,
                     bounds.getWidth(), bounds.getHeight());
-//            System.out.println(" After: " + BoundsPrinter.toString(bounds) + " " + dx + " " + dy);
+
         });
     }
 
