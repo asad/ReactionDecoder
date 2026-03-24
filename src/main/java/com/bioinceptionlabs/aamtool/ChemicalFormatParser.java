@@ -43,8 +43,8 @@ import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
-import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLRXNV2000Reader;
+import org.openscience.smsd.ExtAtomContainerManipulator;
+import com.bioinceptionlabs.reactionblast.tools.MDLRXNV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

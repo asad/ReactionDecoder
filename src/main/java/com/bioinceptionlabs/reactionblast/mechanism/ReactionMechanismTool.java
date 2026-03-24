@@ -44,8 +44,8 @@ import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAllAtomContainers;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getAtomCount;
-import org.openscience.smsd.tools.BondEnergies;
-import static org.openscience.smsd.tools.BondEnergies.getInstance;
+import org.openscience.smsd.BondEnergies;
+import static org.openscience.smsd.BondEnergies.getInstance;
 import com.bioinceptionlabs.reactionblast.fingerprints.IFeature;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
@@ -59,7 +59,7 @@ import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import org.openscience.smsd.ExtAtomContainerManipulator;
 
 /**
  *

@@ -30,7 +30,7 @@ import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import org.openscience.smsd.ExtAtomContainerManipulator;
 
 /**
  *

@@ -34,9 +34,9 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtomContainer;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import org.openscience.smsd.algorithm.matchers.AtomMatcher;
-import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.filters.ChemicalFilters;
+import org.openscience.smsd.AtomMatcher;
+import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.ChemicalFilters;
 import org.openscience.smsd.IAtomMapping;
 
 /**

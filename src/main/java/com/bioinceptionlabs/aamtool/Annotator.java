@@ -49,7 +49,7 @@ import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator;
 import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.MoleculeMoleculePair;
+import com.bioinceptionlabs.reactionblast.mechanism.MoleculeMoleculePair;
 import static com.bioinceptionlabs.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 

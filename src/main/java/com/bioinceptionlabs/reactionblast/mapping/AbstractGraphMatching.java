@@ -23,7 +23,7 @@ import java.util.BitSet;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
-import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

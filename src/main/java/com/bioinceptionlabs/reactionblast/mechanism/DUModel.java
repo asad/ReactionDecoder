@@ -38,12 +38,12 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.MoleculeInitializer;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.BondChange;
+import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
+import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
+import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
 import com.bioinceptionlabs.reactionblast.mechanism.IChangeCalculator;
-import com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation;
-import com.bioinceptionlabs.reactionblast.stereo.StereoCenteralityTool;
+import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
+import com.bioinceptionlabs.reactionblast.mechanism.StereoCenteralityTool;
 
 /**
  *

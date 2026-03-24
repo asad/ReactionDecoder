@@ -26,13 +26,13 @@ import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.E;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.EITHER;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.NONE;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.R;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.S;
-import static com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation.Z;
+import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.E;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.EITHER;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.NONE;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.R;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.S;
+import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.Z;
 
 /**
  * This class creates a Stereo matrix for a set of molecules loosely based on a

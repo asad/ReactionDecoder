@@ -72,9 +72,9 @@ import static org.openscience.cdk.ringsearch.RingPartitioner.partitionRings;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static org.openscience.cdk.tools.manipulator.RingSetManipulator.getAllAtomContainers;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import com.bioinceptionlabs.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
+import static org.openscience.smsd.ExtAtomContainerManipulator.aromatizeDayLight;
+import static org.openscience.smsd.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import com.bioinceptionlabs.reactionblast.tools.ICanonicalMoleculeLabeller;
 
 /**
  * Generates SMILES strings {

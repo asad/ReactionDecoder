@@ -24,8 +24,8 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import static signature.AbstractVertexSignature.parse;
 import signature.ColoredTree;
-import static com.bioinceptionlabs.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
-import com.bioinceptionlabs.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
+import static com.bioinceptionlabs.reactionblast.tools.AtomContainerAtomPermutor.permute;
+import com.bioinceptionlabs.reactionblast.tools.ICanonicalMoleculeLabeller;
 
 /**
  * Signature implementation specific to rBLAST.

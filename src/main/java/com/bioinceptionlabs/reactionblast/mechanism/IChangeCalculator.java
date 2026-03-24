@@ -25,9 +25,9 @@ import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 import com.bioinceptionlabs.reactionblast.mechanism.BEMatrix;
 import com.bioinceptionlabs.reactionblast.mechanism.RMatrix;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.BondChange;
+import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
+import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
+import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
 
 /**
  *

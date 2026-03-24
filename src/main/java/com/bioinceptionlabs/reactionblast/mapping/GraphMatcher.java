@@ -1,0 +1,393 @@
+/*
+ * Copyright (C) 2003-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+package com.bioinceptionlabs.reactionblast.mapping;
+
+import java.io.IOException;
+import static java.lang.Runtime.getRuntime;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import static java.util.Collections.unmodifiableCollection;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Level.WARNING;
+
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.tools.ILoggingTool;
+import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
+import org.openscience.smsd.AtomAtomMapping;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
+import com.bioinceptionlabs.reactionblast.mapping.Debugger;
+import java.util.List;
+import java.util.concurrent.Executors;
+
+import org.openscience.cdk.aromaticity.Aromaticity;
+import static org.openscience.cdk.aromaticity.ElectronDonation.daylight;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
+
+/**
+ * @contact Syed Asad Rahman, BioInception.
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+public class GraphMatcher extends Debugger {
+
+    private static final int LARGE_JOB_THRESHOLD = 1000;
+    private final static ILoggingTool LOGGER
+            = createLoggingTool(GraphMatcher.class);
+
+    /**
+     *
+     * @param mh
+     * @return
+     * @throws InterruptedException
+     */
+    public static Collection<MCSSolution> matcher(Holder mh) throws Exception {
+        ExecutorService executor = null;
+        Collection<MCSSolution> mcsSolutions = new ArrayList<>();
+
+        LOGGER.debug("Matcher Class for " + mh.getTheory());
+        Set<Combination> jobReplicatorList = new TreeSet<>();
+        int taskCounter = 0;
+
+        try {
+            ReactionContainer reactionStructureInformation = mh.getReactionContainer();
+            Integer eductCount = reactionStructureInformation.getEductCount();
+            Integer productCount = reactionStructureInformation.getProductCount();
+            for (int substrateIndex = 0; substrateIndex < eductCount; substrateIndex++) {
+                for (int productIndex = 0; productIndex < productCount; productIndex++) {
+                    IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
+                    IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+                    LOGGER.debug("reactionStructureInformation.getEduct(substrateIndex).getAtomCount() " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount());
+                    LOGGER.debug("reactionStructureInformation.getProduct(productIndex).getAtomCount() " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
+                    if ((educt != null && product != null)
+                            && (reactionStructureInformation.getEduct(substrateIndex).getAtomCount() > 0
+                            && reactionStructureInformation.getProduct(productIndex).getAtomCount() > 0)
+                            || mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1) {
+//                        if (reactionStructureInformation.isEductModified(substrateIndex)
+//                                || reactionStructureInformation.isProductModified(productIndex)) {
+
+                        Combination c = new Combination(substrateIndex, productIndex);
+                        jobReplicatorList.add(c);
+//                        }
+                    }
+                }
+            }
+
+            LOGGER.debug("jobReplicatorList " + jobReplicatorList.size());
+
+            if (jobReplicatorList.isEmpty()) {
+                return unmodifiableCollection(mcsSolutions);
+            }
+
+            Map<Combination, Set<Combination>> jobMap = new TreeMap<>();
+
+            for (Combination c : jobReplicatorList) {
+                int substrateIndex = c.getRowIndex();
+                int productIndex = c.getColIndex();
+                IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
+                IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+
+                boolean flag = false;
+                for (Combination k : jobMap.keySet()) {
+                    IAtomContainer eductJob = reactionStructureInformation.getEduct(k.getRowIndex());
+                    IAtomContainer productJob = reactionStructureInformation.getProduct(k.getColIndex());
+
+                    if (eductJob == educt
+                            && productJob == product) {
+                        if (eductJob.getAtomCount() == educt.getAtomCount()
+                                && productJob.getAtomCount() == (product.getAtomCount())) {
+                            jobMap.get(k).add(c);
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!flag) {
+                    Set<Combination> set = new TreeSet<>();
+                    jobMap.put(c, set);
+                }
+            }
+
+            /*
+             * Assign the threads
+             *
+             * Use Single Thread to computed MCS as muntiple threads lock the calculations!
+             */
+//            executor = newSingleThreadExecutor();
+            int threadsAvailable = Math.max(1, getRuntime().availableProcessors() - 1);
+            if (threadsAvailable > jobMap.size()) {
+                threadsAvailable = jobMap.size();
+            }
+
+            LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
+
+//            executor = Executors.newSingleThreadExecutor();
+//            executor = Executors.newCachedThreadPool();
+            executor = Executors.newFixedThreadPool(threadsAvailable);
+            CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
+
+            List<MCSThread> listOfJobs = new ArrayList<>();
+
+            /*
+             * Pre-compute aromaticity and cycle counts ONCE per molecule.
+             * Previously this ran for every educt×product pair — O(E*P) redundancy.
+             */
+            CycleFinder allCycles = Cycles.or(Cycles.all(),
+                    Cycles.or(Cycles.relevant(), Cycles.essential()));
+            Aromaticity aromaticity = new Aromaticity(daylight(), allCycles);
+            CycleFinder shortCycles = Cycles.vertexShort();
+
+            Map<Integer, Integer> eductCycleCache = new TreeMap<>();
+            for (int i = 0; i < eductCount; i++) {
+                IAtomContainer educt = reactionStructureInformation.getEduct(i);
+                if (educt != null && educt.getAtomCount() > 0) {
+                    aromaticity.apply(educt);
+                    eductCycleCache.put(i, shortCycles.find(educt).numberOfCycles());
+                } else {
+                    eductCycleCache.put(i, 0);
+                }
+            }
+
+            Map<Integer, Integer> productCycleCache = new TreeMap<>();
+            for (int j = 0; j < productCount; j++) {
+                IAtomContainer product = reactionStructureInformation.getProduct(j);
+                if (product != null && product.getAtomCount() > 0) {
+                    aromaticity.apply(product);
+                    productCycleCache.put(j, shortCycles.find(product).numberOfCycles());
+                } else {
+                    productCycleCache.put(j, 0);
+                }
+            }
+
+            /*
+             * Pre-compute canonical SMILES for identity detection.
+             */
+            SmilesGenerator canonSmigen = new SmilesGenerator(
+                    SmiFlavor.Canonical | SmiFlavor.Stereo);
+            Map<Integer, String> eductSmiles = new TreeMap<>();
+            for (int i = 0; i < eductCount; i++) {
+                IAtomContainer e = reactionStructureInformation.getEduct(i);
+                if (e != null && e.getAtomCount() > 0) {
+                    try { eductSmiles.put(i, canonSmigen.create(e)); }
+                    catch (CDKException ex) { eductSmiles.put(i, ""); }
+                }
+            }
+            Map<Integer, String> productSmiles = new TreeMap<>();
+            for (int j = 0; j < productCount; j++) {
+                IAtomContainer p = reactionStructureInformation.getProduct(j);
+                if (p != null && p.getAtomCount() > 0) {
+                    try { productSmiles.put(j, canonSmigen.create(p)); }
+                    catch (CDKException ex) { productSmiles.put(j, ""); }
+                }
+            }
+
+            int skippedIdentity = 0, skippedRatio = 0, skippedTanimoto = 0;
+
+            for (Combination c : jobMap.keySet()) {
+                int substrateIndex = c.getRowIndex();
+                int productIndex = c.getColIndex();
+                IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
+                IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+
+                /*
+                 * PRE-FILTER 1: Identity — if canonical SMILES match, the MCS
+                 * will be the full molecule. Still run MCS (needed for correct
+                 * atom correspondence), but mark as likely identity for logging.
+                 */
+                String eSmi = eductSmiles.getOrDefault(substrateIndex, "");
+                String pSmi = productSmiles.getOrDefault(productIndex, "");
+                if (!eSmi.isEmpty() && eSmi.equals(pSmi)) {
+                    skippedIdentity++; // just count, still run MCS for correct mapping
+                }
+
+                /*
+                 * PRE-FILTER 2: Atom count ratio — skip pairs where the smaller
+                 * molecule is < 30% of the larger. Such pairs rarely contribute
+                 * meaningful mappings and waste MCS computation.
+                 */
+                int eAtoms = educt.getAtomCount();
+                int pAtoms = product.getAtomCount();
+                if (eAtoms > 0 && pAtoms > 0) {
+                    double ratio = (double) Math.min(eAtoms, pAtoms) / Math.max(eAtoms, pAtoms);
+                    if (ratio < 0.3 && Math.min(eAtoms, pAtoms) > 3) {
+                        skippedRatio++;
+                        continue;
+                    }
+                }
+
+                /*
+                 * PRE-FILTER 3: Tanimoto similarity — skip pairs with very low
+                 * fingerprint similarity. These molecules share almost no structure.
+                 */
+                double tanimoto = mh.getFPSimilarityMatrix().getValue(substrateIndex, productIndex);
+                if (tanimoto >= 0 && tanimoto < 0.05 && eAtoms > 5 && pAtoms > 5) {
+                    skippedTanimoto++;
+                    continue;
+                }
+
+                int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
+                int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
+                boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
+
+                MCSThread mcsThread = new MCSThread(mh.getTheory(),
+                        substrateIndex, productIndex, educt, product);
+                mcsThread.setHasPerfectRings(ringSizeEqual);
+                mcsThread.setEductRingCount(numberOfCyclesEduct);
+                mcsThread.setProductRingCount(numberOfCyclesProduct);
+                listOfJobs.add(mcsThread);
+            }
+
+            if (skippedIdentity + skippedRatio + skippedTanimoto > 0) {
+                LOGGER.debug("Pre-filter: skipped " + skippedIdentity + " identity, "
+                        + skippedRatio + " ratio, " + skippedTanimoto + " tanimoto pairs");
+            }
+
+            if (listOfJobs.size() > LARGE_JOB_THRESHOLD) {
+                LOGGER.warn("Large job: " + listOfJobs.size() + " MCS pairs to compute");
+            }
+            if (!listOfJobs.isEmpty()) {
+                for (MCSThread mcsThreadJob : listOfJobs) {
+                    callablesQueue.submit(mcsThreadJob);
+                    taskCounter++;
+                }
+            }
+
+            LOGGER.debug("submited " + taskCounter + " jobs");
+            Collection<MCSSolution> threadedUniqueMCSSolutions = new ArrayList<>();
+            for (int count = 0; count < taskCounter; count++) {
+                MCSSolution isomorphism = callablesQueue.take().get();
+                threadedUniqueMCSSolutions.add(isomorphism);
+            }
+            // This will make the executor accept no new threads
+            // and finish all existing threads in the queue
+            executor.shutdown();
+            // Wait until all threads are finished
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+            LOGGER.debug("==Gathering MCS solution from the Thread==");
+            threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
+                int queryPosition = mcs.getQueryPosition();
+                int targetPosition = mcs.getTargetPosition();
+                Combination referenceKey = null;
+                for (Combination c : jobMap.keySet()) {
+                    if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {
+                        referenceKey = c;
+                        MCSSolution replicatedMCS = replicateMappingOnContainers(mh, c, mcs);
+                        LOGGER.debug("======MCSSolution======");
+                        LOGGER.debug("MCS " + " I " + queryPosition
+                                + " J " + targetPosition
+                                + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
+                                + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
+                        mcsSolutions.add(replicatedMCS);
+                    }
+                }
+                return referenceKey;
+            }).filter((removeKey) -> (removeKey != null)).forEach((removeKey) -> {
+                jobMap.remove(removeKey);
+            });
+            jobReplicatorList.clear();
+
+        } catch (Exception ex) {
+            LOGGER.error(SEVERE, null, ex);
+        } finally {
+            if (executor != null) {
+                executor.shutdown();
+            }
+        }
+        return unmodifiableCollection(mcsSolutions);
+    }
+
+    /**
+     *
+     * @param mh
+     * @param solution
+     * @param mcs
+     * @return
+     */
+    static MCSSolution replicateMappingOnContainers(Holder mh, Combination solution, MCSSolution mcs) {
+        try {
+            ReactionContainer reactionStructureInformation = mh.getReactionContainer();
+            IAtomContainer q = reactionStructureInformation.getEduct(solution.getRowIndex());
+            IAtomContainer t = reactionStructureInformation.getProduct(solution.getColIndex());
+
+            int diff1 = q.getAtomCount() - mcs.getQueryContainer().getAtomCount();
+            int diff2 = t.getAtomCount() - mcs.getTargetContainer().getAtomCount();
+
+            if (diff1 != 0 && diff2 != 0) {
+                LOGGER.debug(NEW_LINE + NEW_LINE + " " + solution.getRowIndex() + ", Diff in ac1 " + diff1);
+                LOGGER.debug(solution.getColIndex() + ", Diff in ac2 " + diff2);
+                LOGGER.debug(NEW_LINE + "ac1 " + q.getAtomCount());
+                LOGGER.debug(NEW_LINE + "ac2 " + t.getAtomCount());
+                LOGGER.debug(NEW_LINE + "mac1 " + mcs.getQueryContainer().getAtomCount());
+                LOGGER.debug(NEW_LINE + "mac2 " + mcs.getTargetContainer().getAtomCount());
+            }
+
+            AtomAtomMapping atomAtomMapping = mcs.getAtomAtomMapping();
+            AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(q, t);
+
+            // Build ID→Atom maps for O(1) lookup instead of O(n) linear scan
+            Map<String, IAtom> qIdMap = new java.util.HashMap<>();
+            for (IAtom a : q.atoms()) {
+                if (a.getID() != null) {
+                    qIdMap.put(a.getID(), a);
+                }
+            }
+            Map<String, IAtom> tIdMap = new java.util.HashMap<>();
+            for (IAtom a : t.atoms()) {
+                if (a.getID() != null) {
+                    tIdMap.put(a.getID(), a);
+                }
+            }
+
+            atomAtomMapping.getMappingsByAtoms().forEach((a, b) -> {
+                IAtom atomByID1 = a.getID() != null ? qIdMap.get(a.getID()) : null;
+                IAtom atomByID2 = b.getID() != null ? tIdMap.get(b.getID()) : null;
+                if (atomByID1 != null && atomByID2 != null) {
+                    atomAtomMappingNew.put(atomByID1, atomByID2);
+                } else {
+                    LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
+                }
+            });
+
+            LOGGER.debug("------Mapped PAIRS------");
+            LOGGER.debug("Query " + q.getAtomCount());
+            LOGGER.debug("Target " + t.getAtomCount());
+            LOGGER.debug("Mapping Size " + atomAtomMappingNew.getCount());
+            return new MCSSolution(solution.getRowIndex(), solution.getColIndex(), q, t, atomAtomMappingNew);
+        } catch (IOException | CDKException ex) {
+            LOGGER.error(SEVERE, null, ex);
+        }
+        return null;
+    }
+
+}

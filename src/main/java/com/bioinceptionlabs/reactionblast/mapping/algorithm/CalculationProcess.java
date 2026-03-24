@@ -31,7 +31,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static com.bioinceptionlabs.reactionblast.mapping.algorithm.GameTheoryFactory.make;
-import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
+import com.bioinceptionlabs.reactionblast.mapping.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;

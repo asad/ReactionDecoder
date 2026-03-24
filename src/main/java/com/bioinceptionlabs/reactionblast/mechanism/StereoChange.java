@@ -21,7 +21,7 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 import java.io.Serializable;
 
 import org.openscience.cdk.interfaces.IAtom;
-import com.bioinceptionlabs.reactionblast.stereo.IStereoAndConformation;
+import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
 
 /**
  *

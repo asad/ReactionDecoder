@@ -19,8 +19,8 @@
 package com.bioinceptionlabs.reactionblast.signature;
 
 import org.openscience.cdk.interfaces.IAtomContainer;
-import static com.bioinceptionlabs.reactionblast.tools.labelling.AtomContainerAtomPermutor.permute;
-import com.bioinceptionlabs.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
+import static com.bioinceptionlabs.reactionblast.tools.AtomContainerAtomPermutor.permute;
+import com.bioinceptionlabs.reactionblast.tools.ICanonicalMoleculeLabeller;
 
 /**
  *

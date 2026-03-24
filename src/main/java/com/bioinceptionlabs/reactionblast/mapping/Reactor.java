@@ -43,8 +43,8 @@ import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getTotalFormalCharge;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.CalculationProcess;
-import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
-import com.bioinceptionlabs.reactionblast.mapping.helper.AbstractReactor;
+import com.bioinceptionlabs.reactionblast.mapping.MoleculeMoleculeMapping;
+import com.bioinceptionlabs.reactionblast.mapping.AbstractReactor;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.tools.ExtReactionManipulatorTool.deepClone;
 import static java.lang.Integer.parseInt;
@@ -61,11 +61,11 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getBondArray;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeMolecule;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.cloneWithIDs;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
+import org.openscience.smsd.ExtAtomContainerManipulator;
+import static org.openscience.smsd.ExtAtomContainerManipulator.aromatizeMolecule;
+import static org.openscience.smsd.ExtAtomContainerManipulator.cloneWithIDs;
+import static org.openscience.smsd.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
 
 /**
  *

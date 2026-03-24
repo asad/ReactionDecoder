@@ -33,7 +33,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.AtomAtomMappingContainer;
+import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
 
 /**

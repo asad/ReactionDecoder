@@ -41,14 +41,14 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
+import org.openscience.smsd.ExtAtomContainerManipulator;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator;
 import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import static com.bioinceptionlabs.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
 import static com.bioinceptionlabs.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
-import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLV2000Reader;
+import com.bioinceptionlabs.reactionblast.tools.MDLV2000Reader;
 
 /**
  * @contact Syed Asad Rahman, BioInception.

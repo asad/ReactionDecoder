@@ -44,12 +44,12 @@ import static java.util.logging.Level.SEVERE;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import com.bioinceptionlabs.reactionblast.tools.matrix.CholeskyDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.matrix.EigenvalueDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.matrix.LUDecomposition;
+import com.bioinceptionlabs.reactionblast.tools.CholeskyDecomposition;
+import com.bioinceptionlabs.reactionblast.tools.EigenvalueDecomposition;
+import com.bioinceptionlabs.reactionblast.tools.LUDecomposition;
 import static java.lang.Math.hypot;
-import com.bioinceptionlabs.reactionblast.tools.matrix.QRDecomposition;
-import com.bioinceptionlabs.reactionblast.tools.matrix.SingularValueDecomposition;
+import com.bioinceptionlabs.reactionblast.tools.QRDecomposition;
+import com.bioinceptionlabs.reactionblast.tools.SingularValueDecomposition;
 
 /**
  * Jama = Java EBIMatrix class.

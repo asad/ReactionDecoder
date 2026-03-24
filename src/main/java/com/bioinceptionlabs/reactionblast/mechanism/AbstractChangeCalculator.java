@@ -29,12 +29,12 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.MoleculeMoleculePair;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.ReactantProductPair;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.ReactionCenterFragment;
-import com.bioinceptionlabs.reactionblast.mechanism.helper.Utility;
-import static com.bioinceptionlabs.reactionblast.mechanism.helper.Utility.getCircularFragment;
-import static com.bioinceptionlabs.reactionblast.mechanism.helper.Utility.getSMILES;
+import com.bioinceptionlabs.reactionblast.mechanism.MoleculeMoleculePair;
+import com.bioinceptionlabs.reactionblast.mechanism.ReactantProductPair;
+import com.bioinceptionlabs.reactionblast.mechanism.ReactionCenterFragment;
+import com.bioinceptionlabs.reactionblast.mechanism.Utility;
+import static com.bioinceptionlabs.reactionblast.mechanism.Utility.getCircularFragment;
+import static com.bioinceptionlabs.reactionblast.mechanism.Utility.getSMILES;
 
 /**
  *

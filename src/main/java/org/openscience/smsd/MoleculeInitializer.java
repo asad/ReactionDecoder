@@ -46,12 +46,12 @@ import org.openscience.cdk.isomorphism.matchers.IQueryBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.RingSetManipulator;
-import org.openscience.smsd.algorithm.matchers.AtomMatcher;
-import org.openscience.smsd.algorithm.matchers.BondMatcher;
-import org.openscience.smsd.tools.ExtAtomContainerManipulator;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeCDK;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.aromatizeDayLight;
-import static org.openscience.smsd.tools.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
+import org.openscience.smsd.AtomMatcher;
+import org.openscience.smsd.BondMatcher;
+import org.openscience.smsd.ExtAtomContainerManipulator;
+import static org.openscience.smsd.ExtAtomContainerManipulator.aromatizeCDK;
+import static org.openscience.smsd.ExtAtomContainerManipulator.aromatizeDayLight;
+import static org.openscience.smsd.ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms;
 
 /**
  *

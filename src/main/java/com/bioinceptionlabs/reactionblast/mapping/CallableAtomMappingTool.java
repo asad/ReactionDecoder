@@ -47,7 +47,7 @@ import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIN;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIXTURE;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.RINGS;
-import com.bioinceptionlabs.reactionblast.tools.rxnfile.MDLV2000RXNWriter;
+import com.bioinceptionlabs.reactionblast.tools.MDLV2000RXNWriter;
 
 /**
  *

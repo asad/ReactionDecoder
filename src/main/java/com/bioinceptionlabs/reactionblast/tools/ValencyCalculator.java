@@ -34,7 +34,7 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getElementCount;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getGroup;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getSymbol;
-import static com.bioinceptionlabs.reactionblast.mechanism.helper.BondChange.convertBondOrder;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChange.convertBondOrder;
 
 /**
  * @refer for valency http://en.wikipedia.org/wiki/Periodic_table_(valence)

@@ -56,18 +56,18 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.ChooseWinner;
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.ReactionIsomorphismHandler;
-import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
-import com.bioinceptionlabs.reactionblast.mapping.container.ReactionContainer;
-import com.bioinceptionlabs.reactionblast.mapping.container.MolMapping;
-import com.bioinceptionlabs.reactionblast.mapping.graph.GraphMatching;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.ChooseWinner;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.ReactionIsomorphismHandler;
+import com.bioinceptionlabs.reactionblast.mapping.MoleculeMoleculeMapping;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
+import com.bioinceptionlabs.reactionblast.mapping.MolMapping;
+import com.bioinceptionlabs.reactionblast.mapping.GraphMatching;
 import com.bioinceptionlabs.reactionblast.mapping.AbstractGraphMatching;
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;
-import com.bioinceptionlabs.reactionblast.tools.labelling.ICanonicalMoleculeLabeller;
-import com.bioinceptionlabs.reactionblast.tools.labelling.SmilesMoleculeLabeller;
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.RuleBasedMappingHandler;
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.checks.Selector;
+import com.bioinceptionlabs.reactionblast.tools.ICanonicalMoleculeLabeller;
+import com.bioinceptionlabs.reactionblast.tools.SmilesMoleculeLabeller;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.RuleBasedMappingHandler;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.Selector;
 
 final class GameTheoryMixture extends BaseGameTheory {
 
