@@ -41,7 +41,6 @@ import org.openscience.cdk.interfaces.IReaction;
 import static org.openscience.cdk.interfaces.IReaction.Direction.BIDIRECTIONAL;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.smiles.SmilesGenerator;
-import static org.openscience.cdk.smiles.SmilesGenerator.generic;
 import static org.openscience.cdk.tools.manipulator.AtomContainerSetManipulator.getTotalFormalCharge;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.CalculationProcess;
 import com.bioinceptionlabs.reactionblast.mapping.container.MoleculeMoleculeMapping;
@@ -74,7 +73,6 @@ import static org.openscience.smsd.tools.ExtAtomContainerManipulator.removeHydro
  */
 public class Reactor extends AbstractReactor implements Serializable {
 
-    private static final boolean DEBUG = false;
     private static final long serialVersionUID = 197816786981017L;
     private final static ILoggingTool LOGGER
             = createLoggingTool(Reactor.class);
@@ -146,22 +144,16 @@ public class Reactor extends AbstractReactor implements Serializable {
         LOGGER.debug("|++++++++++++++++++++++++++++|");
         LOGGER.debug("|i. Reactor Initialized");
         cleanMapping(reaction);
-        if (DEBUG) {
-            LOGGER.debug("|++++++++++++++++++++++++++++|");
-            printReaction(reaction);
-            LOGGER.debug("|ii. Create Mapping Objects");
-        }
+        LOGGER.debug("|++++++++++++++++++++++++++++|");
+        printReaction(reaction);
+        LOGGER.debug("|ii. Create Mapping Objects");
         copyReferenceReaction(reaction);
         expandReaction();
         checkReactionBalance();
         LOGGER.debug("|iii. Compute atom-atom Mappings");
         calculateAtomAtomMapping();
-        if (DEBUG) {
-            printReaction(reactionWithUniqueSTOICHIOMETRY);
-            LOGGER.debug("|++++++++++++++++++++++++++++|");
-            LOGGER.debug("|iv. Done|");
-            LOGGER.debug("|++++++++++++++++++++++++++++|" + NEW_LINE + NEW_LINE);
-        }
+        printReaction(reactionWithUniqueSTOICHIOMETRY);
+        LOGGER.debug("|iv. Done|");
     }
 
     @Override
@@ -1099,14 +1091,11 @@ public class Reactor extends AbstractReactor implements Serializable {
     private IAtomContainer prepareMol(IAtomContainer cloneMolecule)
             throws CloneNotSupportedException, CDKException {
 
-        if (DEBUG) {
-            LOGGER.debug("Orignal");
-            printAtoms(cloneMolecule);
-        }
+        LOGGER.debug("Original");
+        printAtoms(cloneMolecule);
         /*
         Use the Canonical labelling from the SMILES
         IMP: Suggested by John May
-        It throws java.util.concurrent.ExecutionException
          */
         int[] p = new int[cloneMolecule.getAtomCount()];
 
@@ -1119,10 +1108,8 @@ public class Reactor extends AbstractReactor implements Serializable {
         }
         permuteWithoutClone(p, cloneMolecule);
 
-        if (DEBUG) {
-            LOGGER.debug("mol after: ");
-            printAtoms(cloneMolecule);
-        }
+        LOGGER.debug("mol after: ");
+        printAtoms(cloneMolecule);
 
         /*
         Generate 2D Diagram without cloning
@@ -1147,13 +1134,8 @@ public class Reactor extends AbstractReactor implements Serializable {
             atom.setID("-1");
         }
 
-        if (DEBUG) {
-            LOGGER.debug("Processed");
-            printAtoms(cloneMolecule);
-            LOGGER.debug("canonicalMolecule: "
-                    + generic().create(cloneMolecule)
-                    + NEW_LINE + NEW_LINE);
-        }
+        LOGGER.debug("Processed");
+        printAtoms(cloneMolecule);
 
         return cloneMolecule;
     }

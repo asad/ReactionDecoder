@@ -56,6 +56,14 @@ public enum ECBLAST_BOND_CHANGE_FLAGS {
      */
     BOND_ORDER_REDUCED(13, "BOND_CHANGE_ORDER_REDUCED"),
     /**
+     * Formal charge transfer between atoms (e.g., protonation/deprotonation)
+     */
+    CHARGE_TRANSFER(14, "CHARGE_TRANSFER"),
+    /**
+     * Radical (unpaired electron) change
+     */
+    RADICAL_CHANGE(15, "RADICAL_CHANGE"),
+    /**
      * BONDCHANGEPSEUDOBOND
      */
     PSEUDO_BOND(99, "PSEUDO_BOND_CHANGE");

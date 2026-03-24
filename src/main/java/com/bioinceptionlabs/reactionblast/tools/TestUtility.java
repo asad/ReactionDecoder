@@ -55,7 +55,6 @@ public class TestUtility {
     public static final String MACIE_RXN = "rxn/macie/";
     private final static ILoggingTool LOGGER
             = createLoggingTool(TestUtility.class);
-    private static final boolean DEBUG = false;
 
     /**
      *
@@ -95,14 +94,12 @@ public class TestUtility {
         try (MDLRXNV2000Reader reader = new MDLRXNV2000Reader(getFileWithUtil(filepath))) {
             reaction = reader.read(new Reaction());
             reaction.setID(name);
-            if (DEBUG) {
-                LOGGER.debug("Read Reaction ");
-                for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-                    LOGGER.debug("r " + ac.getTitle() + ":" + reaction.getReactantCoefficient(ac));
-                }
-                for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-                    LOGGER.debug("p " + ac.getTitle() + ":" + reaction.getProductCoefficient(ac));
-                }
+            LOGGER.debug("Read Reaction ");
+            for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+                LOGGER.debug("r " + ac.getTitle() + ":" + reaction.getReactantCoefficient(ac));
+            }
+            for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
+                LOGGER.debug("p " + ac.getTitle() + ":" + reaction.getProductCoefficient(ac));
             }
         } catch (Exception ex) {
             LOGGER.error(SEVERE, "Unable to parse the RXN file", ex.getMessage());
