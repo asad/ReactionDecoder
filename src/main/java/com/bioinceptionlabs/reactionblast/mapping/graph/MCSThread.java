@@ -309,10 +309,6 @@ public class MCSThread implements Callable<MCSSolution> {
 
     private IAtomContainer getNewContainerWithIDs(IAtomContainer mol)
             throws CDKException, CloneNotSupportedException {
-        /*
-         Generating SMILES speed ups the mapping process by n-FOLDS
-         May be this is CDK inherent bug, which relies on the properties set by the SMILES
-         */
         if (mol != null && mol.getAtomCount() > 0) {
             IAtomContainer ac;
             ac = ExtAtomContainerManipulator.cloneWithIDs(mol);
