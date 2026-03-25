@@ -46,8 +46,9 @@ import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator;
 import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
-import static com.bioinceptionlabs.reactionblast.tools.ImageGenerator.LeftToRightReactionCenterImage;
-import static com.bioinceptionlabs.reactionblast.tools.ImageGenerator.TopToBottomReactionLayoutImage;
+import com.bioinceptionlabs.reactionblast.legacy.ImageGenerator;
+import static com.bioinceptionlabs.reactionblast.legacy.ImageGenerator.LeftToRightReactionCenterImage;
+import static com.bioinceptionlabs.reactionblast.legacy.ImageGenerator.TopToBottomReactionLayoutImage;
 import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLV2000Reader;
 import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReactionManipulatorTool;
 

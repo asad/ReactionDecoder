@@ -32,7 +32,7 @@ import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MolMapping;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor.Debugger;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
-import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
+import com.bioinceptionlabs.reactionblast.legacy.EBIMatrix;
 
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;

@@ -32,7 +32,7 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
-import com.bioinceptionlabs.reactionblast.tools.ImageGenerator;
+import com.bioinceptionlabs.reactionblast.legacy.ImageGenerator;
 import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLV2000RXNWriter;
 
 /**

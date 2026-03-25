@@ -33,7 +33,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
+import com.bioinceptionlabs.reactionblast.legacy.EBIMatrix;
 
 /**
  * This class create the RMatrix of a reaction according to the DU-Theory.

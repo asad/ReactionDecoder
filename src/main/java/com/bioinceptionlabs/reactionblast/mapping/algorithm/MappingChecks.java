@@ -50,7 +50,7 @@ import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.IResult;
-import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
+import com.bioinceptionlabs.reactionblast.legacy.EBIMatrix;
 
 /**
  * Consolidated mapping checks for the algorithm package.
