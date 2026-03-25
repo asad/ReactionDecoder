@@ -1,8 +1,10 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.1.0`
+`Reaction Decoder Tool (RDT) v3.2.0`
 --------------------------------------
+
+**Toolkit-agnostic reaction mapping engine** with CDK adapter. Deterministic, no training data required.
 
 `1. Atom Atom Mapping (AAM) Tool`
 
@@ -32,48 +34,67 @@ use pom.xml and mvn commands to build your project
 6) mvn -P local clean install                         (fat jar with tests)
 ```
 
-Atom Atom Mapping using Java API
-=================================
+Simple Java API (Recommended)
+==============================
+
+```java
+import com.bioinceptionlabs.reactionblast.api.RDT;
+import com.bioinceptionlabs.reactionblast.api.ReactionResult;
+
+public class Example {
+    public static void main(String[] args) {
+        // One-line reaction mapping — no CDK knowledge needed
+        ReactionResult result = RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+
+        System.out.println("Mapped: " + result.getMappedSmiles());
+        System.out.println("Bond changes: " + result.getTotalBondChanges());
+        System.out.println("Formed/cleaved: " + result.getFormedCleavedBonds());
+        System.out.println("Order changes: " + result.getOrderChangedBonds());
+    }
+}
+```
+
+Advanced Java API (CDK)
+========================
+
+For users who need CDK-level control:
 
 ```java
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.smiles.SmiFlavor;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.smiles.SmilesParser;
-import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 
-public class Example {
+public class AdvancedExample {
     public static void main(String[] args) throws Exception {
-        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-        final SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IReaction rxn = sp.parseReactionSmiles("CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O");
+        rxn.setID("DielsAlder");
 
-        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
-        String reactionName = "DielsAlder";
-
-        IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
-
-        IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
-        System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
-    }
-
-    public static IReaction performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws Exception {
-        cdkReaction.setID(reactionName);
-        boolean forceMapping = true;
-        boolean generate2D = true;
-        boolean generate3D = false;
-        boolean complexMapping = true;
-        boolean acceptNoChange = false;
-        StandardizeReaction standardizeReaction = new StandardizeReaction();
         ReactionMechanismTool rmt = new ReactionMechanismTool(
-                cdkReaction, forceMapping, generate2D, generate3D,
-                complexMapping, acceptNoChange, standardizeReaction);
-        MappingSolution s = rmt.getSelectedSolution();
-        return s.getReaction();
+                rxn, true, true, false, true, false, new StandardizeReaction());
+
+        System.out.println("Algorithm: " + rmt.getSelectedSolution().getAlgorithmID());
     }
 }
+```
+
+Toolkit-Agnostic Graph Model API
+==================================
+
+For users who want to swap CDK with RDKit/OpenBabel:
+
+```java
+import com.bioinceptionlabs.reactionblast.model.*;
+import com.bioinceptionlabs.reactionblast.cdk.CDKToolkit;
+
+// Register toolkit once at startup
+ChemToolkit.register(new CDKToolkit());
+
+// Parse and map using toolkit-agnostic types
+ReactionGraph rxn = ChemToolkit.get().parseReactionSmiles("CC>>CC");
+// ... pass to ReactionMechanismTool(rxn, true, true)
 ```
 
 
@@ -88,7 +109,7 @@ The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in 
 <!-- Old (v2.x) -->
 <groupId>uk.ac.ebi.rdt</groupId>
 
-<!-- New (v3.1.0+) -->
+<!-- New (v3.2.0+) -->
 <groupId>com.bioinceptionlabs</groupId>
 ```
 
@@ -137,7 +158,7 @@ Sub-commands
 `AAM using SMILES`
 
   ```
-  java -jar rdt-3.1.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
+  java -jar rdt-3.2.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
 `Perform AAM` for Transporters
@@ -146,14 +167,14 @@ Sub-commands
 `AAM using SMILES` (accept mapping with no bond changes -b)
 
   ```
-  java -jar rdt-3.1.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
+  java -jar rdt-3.2.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
   ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
   ```
-  java -jar rdt-3.1.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
+  java -jar rdt-3.2.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
   ```
 
 
@@ -163,12 +184,12 @@ Sub-commands
 `Compare Reactions using SMILES with precomputed AAM mappings`
 
   ```
-  java -jar rdt-3.1.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+  java -jar rdt-3.2.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
   ```
 
 
 `Compare Reactions using RXN files`
 
   ```
-  java -jar rdt-3.1.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
+  java -jar rdt-3.2.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
   ```
