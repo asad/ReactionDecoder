@@ -18,6 +18,8 @@
  */
 package com.bioinceptionlabs.aamtool;
 
+
+import com.bioinceptionlabs.reactionblast.mechanism.MechanismHelpers;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,7 +51,6 @@ import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator;
 import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
-import com.bioinceptionlabs.reactionblast.mechanism.MoleculeMoleculePair;
 import static com.bioinceptionlabs.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 
@@ -224,11 +225,11 @@ public class Annotator extends Helper {
             index++;
         }
 
-        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
+        Collection<MechanismHelpers.MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
 
         StringBuilder pair1 = new StringBuilder();
         index = 1;
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             pair1.append(index).append(": ").append(m.getSmirks1());
             pair1.append(NEW_LINE);
             index++;
@@ -236,7 +237,7 @@ public class Annotator extends Helper {
 
         StringBuilder pair2 = new StringBuilder();
         index = 1;
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             pair2.append(index).append(": ").append(m.getSmirks2());
             pair2.append(NEW_LINE);
             index++;
@@ -244,7 +245,7 @@ public class Annotator extends Helper {
 
         StringBuilder pair3 = new StringBuilder();
         index = 1;
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             pair3.append(index).append(": ").append(m.getSmirks3());
             pair3.append(NEW_LINE);
             index++;
@@ -365,7 +366,7 @@ public class Annotator extends Helper {
             }
         });
 
-        Collection<MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
+        Collection<MechanismHelpers.MoleculeMoleculePair> reactionTransform = s.getBondChangeCalculator().getReactionCentreTransformationPairs();
 
         //Start of Fingerprint elements
         org.w3c.dom.Element transform = doc.createElement("TRANSFORMATION");
@@ -378,7 +379,7 @@ public class Annotator extends Helper {
 
         int index = 1;
 
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             // RAIR elements
             org.w3c.dom.Element rpairMATCH = doc.createElement("MMP" + index);
             rpairMATCH.appendChild(doc.createTextNode(m.getSmirks1()));
@@ -396,7 +397,7 @@ public class Annotator extends Helper {
         transform.setAttributeNode(attr);
         index = 1;
 
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             // RAIR elements
             org.w3c.dom.Element rpairMATCH = doc.createElement("MMP" + index);
             rpairMATCH.appendChild(doc.createTextNode(m.getSmirks2()));
@@ -414,7 +415,7 @@ public class Annotator extends Helper {
         transform.setAttributeNode(attr);
         index = 1;
 
-        for (MoleculeMoleculePair m : reactionTransform) {
+        for (MechanismHelpers.MoleculeMoleculePair m : reactionTransform) {
             // RAIR elements
             org.w3c.dom.Element rpairMATCH = doc.createElement("MMP" + index);
             rpairMATCH.appendChild(doc.createTextNode(m.getSmirks3()));

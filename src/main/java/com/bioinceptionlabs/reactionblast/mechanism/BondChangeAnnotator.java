@@ -36,21 +36,16 @@ import org.openscience.cdk.interfaces.IBond;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IRingSet;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
-import com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
-import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
-import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.E;
-import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.R;
-import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.S;
-import static com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation.Z;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_FLAGS.ATOM_STEREO_CHANGE_INFORMATION;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.IStereoAndConformation.E;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.IStereoAndConformation.R;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.IStereoAndConformation.S;
+import static com.bioinceptionlabs.reactionblast.mechanism.BondChangeCalculator.IStereoAndConformation.Z;
 import static java.lang.Math.abs;
 import static java.lang.System.getProperty;
 import org.openscience.cdk.PseudoAtom;
@@ -90,7 +85,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public AtomAtomMappingContainer getMappingContainer() {
+    public MechanismHelpers.AtomAtomMappingContainer getMappingContainer() {
         return mapping;
     }
 
@@ -108,7 +103,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public List<BondChange> getBondChangeList() {
+    public List<MechanismHelpers.BondChange> getBondChangeList() {
         return bondChangeList;
     }
 
@@ -126,7 +121,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public List<AtomStereoChangeInformation> getStereoChangeList() {
+    public List<MechanismHelpers.AtomStereoChangeInformation> getStereoChangeList() {
         return stereoChangeList;
     }
 
@@ -179,7 +174,7 @@ public final class BondChangeAnnotator extends DUModel {
      * @return
      */
     @Override
-    public List<AtomStereoChangeInformation> getConformationChangeList() {
+    public List<MechanismHelpers.AtomStereoChangeInformation> getConformationChangeList() {
         return conformationChangeList;
     }
 
@@ -296,8 +291,8 @@ public final class BondChangeAnnotator extends DUModel {
             IAtom atomE = sc.getReactantAtom();
             IAtom atomP = sc.getProductAtom();
 
-            IStereoAndConformation rsb = sc.getReactantAtomStereo();
-            IStereoAndConformation psb = sc.getProductAtomStereo();
+            BondChangeCalculator.IStereoAndConformation rsb = sc.getReactantAtomStereo();
+            BondChangeCalculator.IStereoAndConformation psb = sc.getProductAtomStereo();
 
             if (atomE != null && atomP != null) {
                 if (atomE.getSymbol().equals("P") || atomP.getSymbol().equals("P")) {
@@ -315,11 +310,11 @@ public final class BondChangeAnnotator extends DUModel {
                 if ((rsb.equals(E) && psb.equals(Z))
                         || (rsb.equals(Z) && psb.equals(E))) {
                     // E⇌Z geometric isomerization detected
-                    getConformationChangeList().add(new AtomStereoChangeInformation(atomE, atomP, rsb, psb));
+                    getConformationChangeList().add(new MechanismHelpers.AtomStereoChangeInformation(atomE, atomP, rsb, psb));
                 } else if ((rsb.equals(R) && psb.equals(S))
                         || (rsb.equals(S) && psb.equals(R))) {
                     // R⇌S stereocenter inversion detected
-                    getStereoChangeList().add(new AtomStereoChangeInformation(atomE, atomP, rsb, psb));
+                    getStereoChangeList().add(new MechanismHelpers.AtomStereoChangeInformation(atomE, atomP, rsb, psb));
                 }
             }
         }
@@ -338,7 +333,7 @@ public final class BondChangeAnnotator extends DUModel {
                 if (i != j && reactionMatrix.getValue(i, j) == 0.) {
                     IBond affectedBondReactants = null;
                     IBond affectedBondProducts = null;
-                    ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
+                    BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
                     try {
                         if (i < sizeQ && j < sizeQ) {
                             affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
@@ -375,7 +370,7 @@ public final class BondChangeAnnotator extends DUModel {
                             getReactionCenterSet().add(affectedBondProducts.getAtom(1));
                             affectedBondProducts.setProperty(BOND_CHANGE_INFORMATION, bondChangeInformation);
                         }
-                        getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
+                        getBondChangeList().add(new MechanismHelpers.BondChange(affectedBondReactants, affectedBondProducts));
                     }
                 }
 
@@ -417,7 +412,7 @@ public final class BondChangeAnnotator extends DUModel {
                      */
                     IBond affectedBondReactants;
                     IBond affectedBondProducts;
-                    ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
+                    BondChangeCalculator.ECBLAST_BOND_CHANGE_FLAGS bondChangeInformation;
                     LOGGER.debug("Marking Bond Changes-2");
                     try {
                         affectedBondReactants = getBondOfReactantsByRMatrix(reactionMatrix.getReactantAtom(i), reactionMatrix.getReactantAtom(j));
@@ -506,7 +501,7 @@ public final class BondChangeAnnotator extends DUModel {
                          */
                         LOGGER.debug("Marking Bond Changes-2 STORED ");
 
-                        getBondChangeList().add(new BondChange(affectedBondReactants, affectedBondProducts));
+                        getBondChangeList().add(new MechanismHelpers.BondChange(affectedBondReactants, affectedBondProducts));
                     } catch (CDKException ex) {
                         LOGGER.error(SEVERE, null, ex);
                     }
@@ -597,7 +592,7 @@ public final class BondChangeAnnotator extends DUModel {
                         getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                         getReactionCenterSet().add(affectedBondProducts.getAtom(1));
 
-                        BondChange bondChange = new BondChange(affectedBondReactants, affectedBondProducts);
+                        MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(affectedBondReactants, affectedBondProducts);
                         getBondChangeList().add(bondChange);
                     }
                 } else if (rMol.getConnectedBondsCount(eductAtom) == 0
@@ -618,8 +613,8 @@ public final class BondChangeAnnotator extends DUModel {
                     getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                     getReactionCenterSet().add(affectedBondProducts.getAtom(1));
 
-                    BondChange bondChange = new BondChange(affectedBondReactants, affectedBondProducts);
-//                        BondChange bondChange = new BondChange(null, affectedBondProducts);
+                    MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(affectedBondReactants, affectedBondProducts);
+//                        MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(null, affectedBondProducts);
                     getBondChangeList().add(bondChange);
 
                 } else if (rMol.getConnectedBondsCount(eductAtom) > 0
@@ -642,8 +637,8 @@ public final class BondChangeAnnotator extends DUModel {
                     getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                     getReactionCenterSet().add(affectedBondReactants.getAtom(1));
 
-                    BondChange bondChange = new BondChange(affectedBondReactants, affectedBondProducts);
-//                        BondChange bondChange = new BondChange(affectedBondReactants, null);
+                    MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(affectedBondReactants, affectedBondProducts);
+//                        MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(affectedBondReactants, null);
                     getBondChangeList().add(bondChange);
 
                 }
@@ -674,7 +669,7 @@ public final class BondChangeAnnotator extends DUModel {
                     getReactionCenterSet().add(affectedBondReactants.getAtom(0));
                     getReactionCenterSet().add(affectedBondReactants.getAtom(1));
                     affectedBondReactants.setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
-                    BondChange bondChange = new BondChange(affectedBondReactants, pBond);
+                    MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(affectedBondReactants, pBond);
                     getBondChangeList().add(bondChange);
                 }
             }
@@ -696,7 +691,7 @@ public final class BondChangeAnnotator extends DUModel {
                     getReactionCenterSet().add(affectedBondProducts.getAtom(0));
                     getReactionCenterSet().add(affectedBondProducts.getAtom(1));
                     affectedBondProducts.setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-                    BondChange bondChange = new BondChange(eBond, affectedBondProducts);
+                    MechanismHelpers.BondChange bondChange = new MechanismHelpers.BondChange(eBond, affectedBondProducts);
                     getBondChangeList().add(bondChange);
                 }
             }

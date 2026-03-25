@@ -8,7 +8,7 @@ import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.CalculationProcess;
-import com.bioinceptionlabs.reactionblast.mapping.algorithm.ChooseWinner;
+import com.bioinceptionlabs.reactionblast.mapping.algorithm.MappingChecks;
 import com.bioinceptionlabs.reactionblast.mapping.algorithm.Holder;
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
@@ -1289,7 +1289,7 @@ public class Reactor extends BasicDebugger implements Serializable {
          * @param EdMap
          * @param PdMap
          */
-        protected void printFlagMatrix(ChooseWinner winner, List<String> EdMap, List<String> PdMap) {
+        protected void printFlagMatrix(MappingChecks.ChooseWinner winner, List<String> EdMap, List<String> PdMap) {
 
             StringBuilder sb = new StringBuilder();
             sb.append(NEW_LINE);

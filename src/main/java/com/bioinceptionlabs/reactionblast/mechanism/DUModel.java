@@ -38,11 +38,6 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.MoleculeInitializer;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
-import com.bioinceptionlabs.reactionblast.mechanism.IChangeCalculator;
-import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
 import com.bioinceptionlabs.reactionblast.mechanism.StereoCenteralityTool;
 
 /**
@@ -59,14 +54,14 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
     final IAtomContainerSet reactantSet;
     final IAtomContainerSet productSet;
     final Map<IAtom, IAtom> mappingMap;
-    final List<BondChange> bondChangeList;
+    final List<MechanismHelpers.BondChange> bondChangeList;
     final Set<IAtom> reactionCenterList;
-    final List<AtomStereoChangeInformation> stereoChangeList;
-    final List<AtomStereoChangeInformation> conformationChangeList;
+    final List<MechanismHelpers.AtomStereoChangeInformation> stereoChangeList;
+    final List<MechanismHelpers.AtomStereoChangeInformation> conformationChangeList;
     final List<StereoChange> stereogenicCenters;
     protected final boolean generate3DCoordinates;
     protected final boolean generate2DCoordinates;
-    protected final AtomAtomMappingContainer mapping;
+    protected final MechanismHelpers.AtomAtomMappingContainer mapping;
     protected final BEMatrix reactantBE;
     protected final BEMatrix productBE;
     protected final RMatrix reactionMatrix;
@@ -142,7 +137,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
             LOGGER.debug("=====Product createBEMatrix=====");
             this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
             LOGGER.debug("=====AAM Container=====");
-            this.mapping = new AtomAtomMappingContainer(reaction, withoutHydrogen);
+            this.mapping = new MechanismHelpers.AtomAtomMappingContainer(reaction, withoutHydrogen);
             LOGGER.debug("=====createRMatrix=====");
             this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
         } catch (Exception e) {
@@ -152,7 +147,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
          * Stereo mapping
          */
         LOGGER.debug("Assign Stereo");
-        Map<IAtom, IStereoAndConformation> chiralityCDK2D = new HashMap<>();
+        Map<IAtom, BondChangeCalculator.IStereoAndConformation> chiralityCDK2D = new HashMap<>();
         try {
             chiralityCDK2D = getChirality2D(reaction);
         } catch (CDKException | CloneNotSupportedException ex) {
@@ -198,7 +193,7 @@ abstract class DUModel extends StereoCenteralityTool implements IChangeCalculato
      * @return
      * @throws CDKException
      */
-    private RMatrix createRMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws Exception {
+    private RMatrix createRMatrix(BEMatrix reactantBE, BEMatrix productBE, MechanismHelpers.AtomAtomMappingContainer mapping) throws Exception {
         return new RMatrix(reactantBE, productBE, mapping);
     }
 

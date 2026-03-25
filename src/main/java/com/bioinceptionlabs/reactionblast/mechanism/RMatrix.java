@@ -33,7 +33,6 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
 import com.bioinceptionlabs.reactionblast.tools.EBIMatrix;
 
 /**
@@ -52,7 +51,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
 
     private BEMatrix reactantBEMatrix = null;
     private BEMatrix productBEMatrix = null;
-    private AtomAtomMappingContainer myMapping = null;
+    private MechanismHelpers.AtomAtomMappingContainer myMapping = null;
     /** Per-atom formal charge changes (product charge - reactant charge) */
     private final Map<Integer, Integer> chargeChanges = new TreeMap<>();
     /** Per-atom stereo changes: +20 = S→R, -20 = R→S (Leber convention) */
@@ -66,7 +65,7 @@ public final class RMatrix extends EBIMatrix implements Serializable {
      * @param mapping Atom-Atom mappings between reactant and products atoms
      * @throws CDKException
      */
-    public RMatrix(BEMatrix reactantBE, BEMatrix productBE, AtomAtomMappingContainer mapping) throws Exception {
+    public RMatrix(BEMatrix reactantBE, BEMatrix productBE, MechanismHelpers.AtomAtomMappingContainer mapping) throws Exception {
         super(reactantBE.getRowDimension(), reactantBE.getRowDimension());
         /*
          * Asad Commented this part to check mapping with Hydrogen and partial mapping
@@ -335,14 +334,14 @@ public final class RMatrix extends EBIMatrix implements Serializable {
     /**
      * @return the myMapping
      */
-    public AtomAtomMappingContainer getMyMapping() {
+    public MechanismHelpers.AtomAtomMappingContainer getMyMapping() {
         return myMapping;
     }
 
     /**
      * @param myMapping the myMapping to set
      */
-    public void setMyMapping(AtomAtomMappingContainer myMapping) {
+    public void setMyMapping(MechanismHelpers.AtomAtomMappingContainer myMapping) {
         this.myMapping = myMapping;
     }
 

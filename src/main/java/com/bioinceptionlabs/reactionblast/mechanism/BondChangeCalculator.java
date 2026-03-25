@@ -62,23 +62,7 @@ import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feat
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
-import com.bioinceptionlabs.reactionblast.mechanism.MoleculeMoleculePair;
-import com.bioinceptionlabs.reactionblast.mechanism.ReactionCenterFragment;
-import static com.bioinceptionlabs.reactionblast.mechanism.Utility.getCircularSMILES;
-import com.bioinceptionlabs.reactionblast.mechanism.AbstractChangeCalculator;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND;
-import static com.bioinceptionlabs.reactionblast.mechanism.ECBLAST_FLAGS.BOND_CHANGE_INFORMATION;
-import com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct;
-import static com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct.PRODUCT;
-import static com.bioinceptionlabs.reactionblast.mechanism.EnumSubstrateProduct.REACTANT;
-import com.bioinceptionlabs.reactionblast.mechanism.IChangeCalculator;
+import static com.bioinceptionlabs.reactionblast.mechanism.MechanismHelpers.Utility.getCircularSMILES;
 import static com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReactionManipulatorTool.deepClone;
 
 /**
@@ -87,7 +71,7 @@ import static com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReaction
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public class BondChangeCalculator extends AbstractChangeCalculator implements IChangeCalculator {
+public class BondChangeCalculator extends MechanismHelpers.Utility implements IChangeCalculator {
 
     private static final String NEW_LINE = System.lineSeparator();
     private static final long serialVersionUID = 98698690880809981L;
@@ -107,8 +91,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     private final Map<IBond, String> bondOrderPMap;
     private final Map<IAtom, String> AtomStereoRMap;
     private final Map<IAtom, String> AtomStereoPMap;
-    private final List<ReactionCenterFragment> reactionCenterFragmentList;
-    private final Set<MoleculeMoleculePair> reactionMoleculeMoleculePairList;
+    private final List<MechanismHelpers.ReactionCenterFragment> reactionCenterFragmentList;
+    private final Set<MechanismHelpers.MoleculeMoleculePair> reactionMoleculeMoleculePairList;
     private final IReaction mappedReaction;
     private int energySum;
     private int energyDelta;
@@ -255,7 +239,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public List<BondChange> getBondChangeList() {
+    public List<MechanismHelpers.BondChange> getBondChangeList() {
         return bondChangeAnnotator.getBondChangeList();
     }
 
@@ -263,12 +247,10 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return @throws CDKException
      */
-    @Override
     public IPatternFingerprinter getOrderChangesWFingerprint() throws CDKException {
         return orderChangesWFingerprint;
     }
 
-    @Override
     public IPatternFingerprinter getStereoChangesWFingerprint() throws CDKException {
         return stereoChangesWFingerprint;
     }
@@ -277,7 +259,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return @throws CDKException
      */
-    @Override
     public IPatternFingerprinter getFormedCleavedWFingerprint() throws CDKException {
         return formedCleavedWFingerprint;
     }
@@ -288,7 +269,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      * @throws CDKException
      */
-    @Override
     public IPatternFingerprinter getReactionCenterWFingerprint() throws CDKException {
         return reactionCenterWFingerprint;
     }
@@ -473,7 +453,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @param bondChangeInfoFile
      * @throws IOException
      */
-    @Override
     public void writeBondChanges(File bondChangeInfoFile) throws IOException {
         FileWriter bcFW = new FileWriter(bondChangeInfoFile + ".txt");
         try (BufferedWriter bfw = new BufferedWriter(bcFW)) {
@@ -653,7 +632,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      * @return atom(s) Formed at reactant side and with reactant ID
      */
-    @Override
     public Map<IBond, String> getBondFormedProduct() {
         return bondFormedMap;
     }
@@ -661,7 +639,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      * @return atom(s) cleaved at reactant side and with reactant ID
      */
-    @Override
     public Map<IBond, String> getBondCleavedReactant() {
         return bondCleavedMap;
     }
@@ -669,7 +646,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      * @return atom(s) order changed at reactant side and with reactant ID
      */
-    @Override
     public Map<IBond, String> getBondOrderReactant() {
         return bondOrderRMap;
     }
@@ -677,7 +653,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      * @return atom(s) order changed at product side and with product ID
      */
-    @Override
     public Map<IBond, String> getBondOrderProduct() {
         return bondOrderPMap;
     }
@@ -686,7 +661,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return the atom effect by Stereo changes at reactant side and with
      * reactant ID
      */
-    @Override
     public Map<IAtom, String> getStereoCenterAtomsReactant() {
         return AtomStereoRMap;
     }
@@ -695,7 +669,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return the atom effect by Stereo changes at product side and with
      * product ID
      */
-    @Override
     public Map<IAtom, String> getStereoCenterAtomsProduct() {
         return AtomStereoPMap;
     }
@@ -704,7 +677,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return (removed the unchanged H atoms)
      */
-    @Override
     public IReaction getReactionWithCompressUnChangedHydrogens() {
         IReaction compressedReaction = null;
 
@@ -721,7 +693,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             for (IAtomContainer mol : compressedReaction.getReactants().atomContainers()) {
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
-                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsKey(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
+                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsKey(atom))).filter((atom) -> (atom.getProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
                         mol.removeAtom(atom);
                     });
                     /*
@@ -740,7 +712,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             for (IAtomContainer mol : compressedReaction.getProducts().atomContainers()) {
                 List<IAtom> atoms = getAtoms(mol);
                 if (atoms.size() > 1) {
-                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsValue(atom))).filter((atom) -> (atom.getProperty(BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
+                    atoms.stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("H") && mappings.containsValue(atom))).filter((atom) -> (atom.getProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION) == null)).forEachOrdered((atom) -> {
                         mol.removeAtom(atom);
                     });
                     /*
@@ -831,7 +803,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return (removed the unchanged H atoms)
      * @throws Exception
      */
-    @Override
     public IReaction getReaction() throws Exception {
         IReaction mappedReactionWithBondChanges = mappedReaction;
         return mappedReactionWithBondChanges;
@@ -841,7 +812,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return
      */
-    @Override
     public Map<IAtom, IAtom> getAtomAtomMappings() {
         return bondChangeAnnotator.getMappingMap();
     }
@@ -851,7 +821,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public AtomAtomMappingContainer getMappingContainer() {
+    public MechanismHelpers.AtomAtomMappingContainer getMappingContainer() {
         return bondChangeAnnotator.getMappingContainer();
     }
 
@@ -882,7 +852,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public List<AtomStereoChangeInformation> getStereoChangeList() {
+    public List<MechanismHelpers.AtomStereoChangeInformation> getStereoChangeList() {
         return bondChangeAnnotator.getStereoChangeList();
     }
 
@@ -891,7 +861,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      * @return
      */
     @Override
-    public Iterable<AtomStereoChangeInformation> getConformationChangeList() {
+    public Iterable<MechanismHelpers.AtomStereoChangeInformation> getConformationChangeList() {
         return bondChangeAnnotator.getConformationChangeList();
     }
 
@@ -973,13 +943,11 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
     /**
      * @return the Reaction Center Fragment List
      */
-    @Override
-    public Collection<ReactionCenterFragment> getReactionCenterFragmentList() {
+    public Collection<MechanismHelpers.ReactionCenterFragment> getReactionCenterFragmentList() {
         return unmodifiableCollection(reactionCenterFragmentList);
     }
 
-    @Override
-    public Collection<MoleculeMoleculePair> getReactionCentreTransformationPairs() {
+    public Collection<MechanismHelpers.MoleculeMoleculePair> getReactionCentreTransformationPairs() {
         return unmodifiableCollection(reactionMoleculeMoleculePairList);
     }
 
@@ -987,7 +955,6 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      *
      * @return
      */
-    @Override
     public Map<String, Collection<String>> getMoleculeMoleculeTransformationPairs() {
         Map<String, Collection<String>> uniqueRPAIRS = new TreeMap<>();
         this.getReactionCentreTransformationPairs().stream().map((m) -> {
@@ -1054,7 +1021,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             /*
              * Loop for stereo changes
              */
-            for (AtomStereoChangeInformation atomConformation : bondChangeAnnotator.getConformationChangeList()) {
+            for (MechanismHelpers.AtomStereoChangeInformation atomConformation : bondChangeAnnotator.getConformationChangeList()) {
 
                 /*
                  * Stereo changes are marked only once in the Fingerprint
@@ -1069,7 +1036,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                  * Stereo changes are marked on reactant and product for mappedReaction center identification
                  */
                 if (atomConformation.getReactantAtom() != null) {
-                    atomConformation.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomConformation.getReactantAtom().setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO);
                     AtomStereoRMap.put(atomConformation.getReactantAtom(), getMoleculeID(atomConformation.getReactantAtom(), mappedReaction.getReactants()));
 
                     /*
@@ -1081,14 +1048,14 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     if (moleculeR.getAtomCount() > 1) {
                         if (!atomR1.getSymbol().equals("H")) {
                             LOGGER.debug("Educt CircularFingerprints START");
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, EnumSubstrateProduct.REACTANT));
                             setCircularFingerprints(mappedReaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
                             LOGGER.debug("Educt CircularFingerprints END");
                         }
                     }
                 }
                 if (atomConformation.getProductAtom() != null) {
-                    atomConformation.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomConformation.getProductAtom().setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO);
                     AtomStereoPMap.put(atomConformation.getProductAtom(), getMoleculeID(atomConformation.getProductAtom(), mappedReaction.getProducts()));
 
                     /*
@@ -1100,7 +1067,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     if (moleculeP.getAtomCount() > 1) {
                         if (!atomP1.getSymbol().equals("H")) {
                             LOGGER.debug("Product CircularFingerprints START");
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, EnumSubstrateProduct.PRODUCT));
                             setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
                             LOGGER.debug("Product CircularFingerprints END");
                         }
@@ -1113,7 +1080,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             /*
              * Loop for stereo changes
              */
-            for (AtomStereoChangeInformation atomStereo : bondChangeAnnotator.getStereoChangeList()) {
+            for (MechanismHelpers.AtomStereoChangeInformation atomStereo : bondChangeAnnotator.getStereoChangeList()) {
 
                 /*
                  * Stereo changes are marked only once in the Fingerprint
@@ -1128,7 +1095,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                  * Stereo changes are marked on reactant and product for mappedReaction center identification
                  */
                 if (atomStereo.getReactantAtom() != null) {
-                    atomStereo.getReactantAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomStereo.getReactantAtom().setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO);
                     AtomStereoRMap.put(atomStereo.getReactantAtom(), getMoleculeID(atomStereo.getReactantAtom(), mappedReaction.getReactants()));
 
                     /*
@@ -1140,13 +1107,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     if (moleculeR.getAtomCount() > 1) {
 
                         if (!atomR1.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, REACTANT));
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeR, atomR1, EnumSubstrateProduct.REACTANT));
                             setCircularFingerprints(mappedReaction.getID(), moleculeR, atomR1, reactionCenterStereoChangeFingerprint);
                         }
                     }
                 }
                 if (atomStereo.getProductAtom() != null) {
-                    atomStereo.getProductAtom().setProperty(BOND_CHANGE_INFORMATION, BOND_STEREO);
+                    atomStereo.getProductAtom().setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO);
                     AtomStereoPMap.put(atomStereo.getProductAtom(), getMoleculeID(atomStereo.getProductAtom(), mappedReaction.getProducts()));
 
                     /*
@@ -1158,7 +1125,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                     if (moleculeP.getAtomCount() > 1) {
 
                         if (!atomP1.getSymbol().equals("H")) {
-                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                            reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, EnumSubstrateProduct.PRODUCT));
                             setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterStereoChangeFingerprint);
                         }
                     }
@@ -1173,22 +1140,22 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
             LOGGER.debug("Bond Change List: " + bondChangeAnnotator.getBondChangeList().size());
 
-            for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
+            for (MechanismHelpers.BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
                 IBond bondR = bcinfo.getReactantBond();
                 IBond bondP = bcinfo.getProductBond();
 
                 // Mark Bond Order Changes
                 if (bondR != null && bondP != null
-                        && BOND_ORDER.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION))
-                        && BOND_ORDER.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION))) {
+                        && ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER.equals(bondP.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION))
+                        && ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER.equals(bondR.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION))) {
 
                     bondOrderRMap.put(bondR, getMoleculeID(bondR, mappedReaction.getReactants()));
-                    bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-                    bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+                    bondR.getAtom(0).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+                    bondR.getAtom(1).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
 
                     bondOrderPMap.put(bondP, getMoleculeID(bondP, mappedReaction.getProducts()));
-                    bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
-                    bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_ORDER);
+                    bondP.getAtom(0).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
+                    bondP.getAtom(1).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER);
 
                     reactantAtoms.add(bondR.getAtom(0));
                     reactantAtoms.add(bondR.getAtom(1));
@@ -1209,13 +1176,13 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
 
             for (IAtom atom : reactantAtoms) {
                 IAtomContainer relevantAtomContainer = getRelevantAtomContainer(reactants, atom);
-                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, REACTANT));
+                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, EnumSubstrateProduct.REACTANT));
                 setCircularFingerprints(mappedReaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
             }
 
             for (IAtom atom : productAtoms) {
                 IAtomContainer relevantAtomContainer = getRelevantAtomContainer(products, atom);
-                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, PRODUCT));
+                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, EnumSubstrateProduct.PRODUCT));
                 setCircularFingerprints(mappedReaction.getID(), relevantAtomContainer, atom, reactionCenterOrderChangeFingerprint);
             }
 
@@ -1225,15 +1192,15 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
             /*
              * Loop for formed, cleaved changes
              */
-            for (BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
+            for (MechanismHelpers.BondChange bcinfo : bondChangeAnnotator.getBondChangeList()) {
                 IBond bondR = bcinfo.getReactantBond();
                 IBond bondP = bcinfo.getProductBond();
 
                 LOGGER.debug("Bond formed, cleaved changes 1 ");
 
                 //Mark Formed Bonds in the Product
-                if (bondP != null && (BOND_FORMED.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION))
-                        || PSEUDO_BOND.equals(bondP.getProperties().get(BOND_CHANGE_INFORMATION)))) {
+                if (bondP != null && (ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED.equals(bondP.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION))
+                        || ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND.equals(bondP.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION)))) {
 
                     LOGGER.debug("Bond formed, cleaved changes 1 - 1");
 
@@ -1242,8 +1209,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         this.energySum += be.getEnergies(bondP);
                         pEnergy += be.getEnergies(bondP);
                         bondFormedMap.put(bondP, getMoleculeID(bondP, mappedReaction.getProducts()));
-                        bondP.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
-                        bondP.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_FORMED);
+                        bondP.getAtom(0).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
+                        bondP.getAtom(1).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED);
 
                         LOGGER.debug("Bond formed, cleaved changes 1 - 1 - 1");
 
@@ -1264,11 +1231,11 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                             IAtom atomP2 = bondP.getAtom(1);
                             LOGGER.debug("Bond formed, cleaved changes 1 - 1 - 1 FP");
                             if (!atomP1.getSymbol().equals("H")) {
-                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, PRODUCT));
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP1, EnumSubstrateProduct.PRODUCT));
                                 setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP1, reactionCenterFormedCleavedFingerprint);
                             }
                             if (!atomP2.getSymbol().equals("H")) {
-                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP2, PRODUCT));
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeP, atomP2, EnumSubstrateProduct.PRODUCT));
                                 setCircularFingerprints(mappedReaction.getID(), moleculeP, atomP2, reactionCenterFormedCleavedFingerprint);
                             }
 
@@ -1286,8 +1253,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                 LOGGER.debug("Bond formed, cleaved changes 2");
 
                 //Mark Cleaved Bonds in Reactants
-                if (bondR != null && (BOND_CLEAVED.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION))
-                        || PSEUDO_BOND.equals(bondR.getProperties().get(BOND_CHANGE_INFORMATION)))) {
+                if (bondR != null && (ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED.equals(bondR.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION))
+                        || ECBLAST_BOND_CHANGE_FLAGS.PSEUDO_BOND.equals(bondR.getProperties().get(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION)))) {
 
                     LOGGER.debug("Bond formed, cleaved changes 1 - 2 - 1");
 
@@ -1296,8 +1263,8 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         this.energySum += be.getEnergies(bondR);
                         pEnergy += be.getEnergies(bondR);
                         bondCleavedMap.put(bondR, getMoleculeID(bondR, mappedReaction.getReactants()));
-                        bondR.getAtom(0).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
-                        bondR.getAtom(1).setProperty(BOND_CHANGE_INFORMATION, BOND_CLEAVED);
+                        bondR.getAtom(0).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
+                        bondR.getAtom(1).setProperty(ECBLAST_FLAGS.BOND_CHANGE_INFORMATION, ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED);
 
                         /*
                      * update mappedReaction center product FP
@@ -1312,11 +1279,11 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                             IAtom atomE1 = bondR.getAtom(0);
                             IAtom atomE2 = bondR.getAtom(1);
                             if (!atomE1.getSymbol().equals("H")) {
-                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE1, REACTANT));
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE1, EnumSubstrateProduct.REACTANT));
                                 setCircularFingerprints(mappedReaction.getID(), moleculeE, atomE1, reactionCenterFormedCleavedFingerprint);
                             }
                             if (!atomE2.getSymbol().equals("H")) {
-                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE2, REACTANT));
+                                reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(moleculeE, atomE2, EnumSubstrateProduct.REACTANT));
                                 setCircularFingerprints(mappedReaction.getID(), moleculeE, atomE2, reactionCenterFormedCleavedFingerprint);
                             }
 
@@ -1355,9 +1322,9 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         EnumSubstrateProduct esp = null;
 
                         if (relevantAtomContainer1 != null) {
-                            esp = REACTANT;
+                            esp = EnumSubstrateProduct.REACTANT;
                         } else if (relevantAtomContainer2 != null) {
-                            esp = PRODUCT;
+                            esp = EnumSubstrateProduct.PRODUCT;
                         }
                         if (!atom.getSymbol().equals("H")) {
                             reactionCenterFragmentList.addAll(getCircularReactionPatternFingerprints(relevantAtomContainer, atom, esp));
@@ -1404,7 +1371,7 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
                         reactionCenterWFingerprint.add(new Feature(level.toString(), 1.0));
                     }
                     try {
-                        MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
+                        MechanismHelpers.MoleculeMoleculePair molMolPair = getMolMolPair(sourceAtom, sinkAtom, relevantAtomContainer1, relevantAtomContainer2);
                         this.reactionMoleculeMoleculePairList.add(molMolPair);
                     } catch (Exception ex) {
                         LOGGER.error(SEVERE, null, ex);
@@ -1475,5 +1442,301 @@ public class BondChangeCalculator extends AbstractChangeCalculator implements IC
      */
     public int getTotalFragmentCount() {
         return totalFragmentCount;
+    }
+
+    // ========== ECBLAST_BOND_CHANGE_FLAGS ==========
+
+    public enum ECBLAST_BOND_CHANGE_FLAGS {
+
+        /**
+         * BondChangeAnnotation ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED_OR_CLEAVED
+         */
+        BOND_FORMED_OR_CLEAVED(4, "BOND_CHANGE_FORMED_OR_CLEAVED"),
+        /**
+         * ECBLAST_BOND_CHANGE_FLAGS.BOND_ORDER
+         */
+        BOND_ORDER(8, "BOND_CHANGE_ORDER"),
+        /**
+         * ECBLAST_BOND_CHANGE_FLAGS.BOND_STEREO
+         */
+        BOND_STEREO(9, "BOND_CHANGE_STEREO"),
+        /**
+         * ECBLAST_BOND_CHANGE_FLAGS.BOND_FORMED
+         */
+        BOND_FORMED(10, "BOND_CHANGE_FORMED"),
+        /**
+         * ECBLAST_BOND_CHANGE_FLAGS.BOND_CLEAVED
+         */
+        BOND_CLEAVED(11, "BOND_CHANGE_CLEAVED"),
+        /**
+         * BONDCHANGEORDERGAIN
+         */
+        BOND_ORDER_GAIN(12, "BOND_CHANGE_ORDER_GAIN"),
+        /**
+         * BONDCHANGEORDERREDUCED
+         */
+        BOND_ORDER_REDUCED(13, "BOND_CHANGE_ORDER_REDUCED"),
+        /**
+         * Formal charge transfer between atoms (e.g., protonation/deprotonation)
+         */
+        CHARGE_TRANSFER(14, "ECBLAST_BOND_CHANGE_FLAGS.CHARGE_TRANSFER"),
+        /**
+         * Radical (unpaired electron) change
+         */
+        RADICAL_CHANGE(15, "ECBLAST_BOND_CHANGE_FLAGS.RADICAL_CHANGE"),
+        /**
+         * BONDCHANGEPSEUDOBOND
+         */
+        PSEUDO_BOND(99, "PSEUDO_BOND_CHANGE");
+        private final int type;
+        private final String description;
+
+        ECBLAST_BOND_CHANGE_FLAGS(int aStatus, String desc) {
+            this.type = aStatus;
+            this.description = desc;
+        }
+
+        /**
+         * Returns type of algorithm.
+         *
+         * @return type of algorithm
+         */
+        public int type() {
+            return this.type;
+        }
+
+        /**
+         * Returns short description of the algorithm.
+         *
+         * @return description of the algorithm
+         */
+        public String description() {
+            return this.description;
+        }
+
+        /**
+         * Compares algorithm types.
+         *
+         * @param <status>
+         * @param obj
+         * @return status
+         */
+        public <status> int compareTo(ECBLAST_BOND_CHANGE_FLAGS obj) {
+            return 0;
+        }
+    }
+
+    // ========== ECBLAST_FLAGS ==========
+
+    public enum ECBLAST_FLAGS {
+
+        /**
+         * ECBLAST_FLAGS.BOND_CHANGE_INFORMATION
+         */
+        BOND_CHANGE_INFORMATION(0, "Mark Bond Changes"), /**
+         * MAX Model
+         */
+        ATOM_STEREO_CHANGE_INFORMATION(1, "Mark Stereo Changes");
+        private final int type;
+        private final String description;
+
+        ECBLAST_FLAGS(int aStatus, String desc) {
+            this.type = aStatus;
+            this.description = desc;
+        }
+
+        /**
+         * Returns type of algorithm.
+         *
+         * @return type of algorithm
+         */
+        public int type() {
+            return this.type;
+        }
+
+        /**
+         * Returns short description of the algorithm.
+         *
+         * @return description of the algorithm
+         */
+        public String description() {
+            return this.description;
+        }
+
+        /**
+         * Compares algorithm types.
+         *
+         * @param <status>
+         * @param obj
+         * @return status
+         */
+        public <status> int compareTo(ECBLAST_FLAGS obj) {
+            return 0;
+        }
+    }
+
+    // ========== EnumSubstrateProduct ==========
+
+    public enum EnumSubstrateProduct {
+
+        /**
+         *
+         */
+        REACTANT,
+        /**
+         *
+         */
+        PRODUCT;
+    }
+
+    // ========== IStereoAndConformation ==========
+
+    public enum IStereoAndConformation implements Comparable<IStereoAndConformation> {
+
+        /**
+         * Default
+         */
+        NONE(0, "CHIRALITY NONE"),
+        /**
+         * R.
+         */
+        R(1, "CHIRALITY Rectus"),
+        /**
+         * S.
+         */
+        S(2, "CHIRALITY Sinister"),
+        /**
+         * Either.
+         */
+        EITHER(3, "CHIRALITY R or S"),
+        /**
+         * M
+         */
+        M(4, "CHIRALITY M Configuration"),
+        /**
+         * P
+         */
+        P(5, "CHIRALITY P Configuration"),
+        /*
+         * as in Z-but-2-ene TOGETHER
+         */
+        /**
+         *
+         */
+        Z(6, "TOGETHER atom Configuration"),
+        /*
+         * as in E-but-2-ene OPPOSITE
+         */
+        /**
+         *
+         */
+        E(7, "OPPOSITE atom Configuration");  // 
+        private final int type;
+        private final String description;
+
+        IStereoAndConformation(int aStatus, String desc) {
+            this.type = aStatus;
+            this.description = desc;
+        }
+
+        /**
+         * Returns type of stereo.
+         *
+         * @return type of stereo
+         */
+        public int type() {
+            return this.type;
+        }
+
+        /**
+         * Returns short description of the stereo.
+         *
+         * @return description of the stereo
+         */
+        public String description() {
+            return this.description;
+        }
+    }
+
+    // ========== Inlined from AbstractChangeCalculator ==========
+
+    protected static MechanismHelpers.MoleculeMoleculePair getMolMolPair(
+            IAtom reactantAtom,
+            IAtom productAtom,
+            IAtomContainer atomContainerR,
+            IAtomContainer atomContainerP) throws Exception {
+
+        int atomIndexR = getAtomIndexByID(atomContainerR, reactantAtom);
+
+        String signatureR1 = getSignature(atomContainerR, reactantAtom, 1);
+        String signatureR2 = getSignature(atomContainerR, reactantAtom, 2);
+        String signatureR3 = getSignature(atomContainerR, reactantAtom, 3);
+        String signatureR = getSignature(atomContainerR, reactantAtom, -1);
+
+        IAtomContainer fragR1 = getCircularFragment(atomContainerR, atomIndexR, 1);
+        IAtomContainer fragR2 = getCircularFragment(atomContainerR, atomIndexR, 2);
+        IAtomContainer fragR3 = getCircularFragment(atomContainerR, atomIndexR, 3);
+        IAtomContainer fragR = getCircularFragment(atomContainerR, atomIndexR, -1);
+
+        String signatureP1 = getSignature(atomContainerP, productAtom, 1);
+        String signatureP2 = getSignature(atomContainerP, productAtom, 2);
+        String signatureP3 = getSignature(atomContainerP, productAtom, 3);
+        String signatureP = getSignature(atomContainerP, productAtom, -1);
+
+        int atomIndexP = getAtomIndexByID(atomContainerP, productAtom);
+
+        IAtomContainer fragP1 = getCircularFragment(atomContainerP, atomIndexP, 1);
+        IAtomContainer fragP2 = getCircularFragment(atomContainerP, atomIndexP, 2);
+        IAtomContainer fragP3 = getCircularFragment(atomContainerP, atomIndexP, 3);
+        IAtomContainer fragP = getCircularFragment(atomContainerP, atomIndexP, -1);
+
+        IReaction reaction1 = new org.openscience.cdk.Reaction();
+        reaction1.addReactant(fragR1, 1.0);
+        reaction1.addProduct(fragP1, 1.0);
+
+        IReaction reaction2 = new org.openscience.cdk.Reaction();
+        reaction2.addReactant(fragR2, 1.0);
+        reaction2.addProduct(fragP2, 1.0);
+
+        IReaction reaction3 = new org.openscience.cdk.Reaction();
+        reaction3.addReactant(fragR3, 1.0);
+        reaction3.addProduct(fragP3, 1.0);
+
+        IReaction reaction = new org.openscience.cdk.Reaction();
+        reaction.addReactant(fragR, 1.0);
+        reaction.addProduct(fragP, 1.0);
+
+        String smirks = getSMILES(reaction, false);
+        String moiety = getMoietyAsSMILES(fragR, fragP, false);
+        String smirks1 = getSMILES(reaction1, false);
+        String smirks2 = getSMILES(reaction2, false);
+        String smirks3 = getSMILES(reaction3, false);
+
+        String smartsR = getSMILES(fragR, true);
+        String smartsR1 = getSMILES(fragR1, false);
+        String smartsR2 = getSMILES(fragR2, false);
+        String smartsR3 = getSMILES(fragR3, false);
+
+        String smartsP = getSMILES(fragP, true);
+        String smartsP1 = getSMILES(fragP1, false);
+        String smartsP2 = getSMILES(fragP2, false);
+        String smartsP3 = getSMILES(fragP3, false);
+
+        MechanismHelpers.ReactantProductPair rrpName = new MechanismHelpers.ReactantProductPair(atomContainerR.getID(), atomContainerP.getID());
+        MechanismHelpers.ReactantProductPair rrpSMARTS = new MechanismHelpers.ReactantProductPair(smartsR, smartsP);
+        MechanismHelpers.ReactantProductPair rrpSignature = new MechanismHelpers.ReactantProductPair(signatureR, signatureP);
+
+        MechanismHelpers.MoleculeMoleculePair mmp = new MechanismHelpers.MoleculeMoleculePair(rrpName, rrpSMARTS, rrpSignature, smirks, moiety);
+        mmp.setSignature1(new MechanismHelpers.ReactantProductPair(signatureR1, signatureP1));
+        mmp.setSignature2(new MechanismHelpers.ReactantProductPair(signatureR2, signatureP2));
+        mmp.setSignature3(new MechanismHelpers.ReactantProductPair(signatureR3, signatureP3));
+        mmp.setSmarts1(new MechanismHelpers.ReactantProductPair(smartsR1, smartsP1));
+        mmp.setSmarts2(new MechanismHelpers.ReactantProductPair(smartsR2, smartsP2));
+        mmp.setSmarts3(new MechanismHelpers.ReactantProductPair(smartsR3, smartsP3));
+        mmp.setSmirks1(smirks1);
+        mmp.setSmirks2(smirks2);
+        mmp.setSmirks3(smirks3);
+
+        return mmp;
     }
 }

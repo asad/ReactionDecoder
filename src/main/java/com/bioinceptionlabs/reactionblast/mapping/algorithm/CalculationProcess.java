@@ -30,7 +30,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
-import static com.bioinceptionlabs.reactionblast.mapping.algorithm.GameTheoryFactory.make;
+import static com.bioinceptionlabs.reactionblast.mapping.algorithm.GameTheoryEngine.GameTheoryFactory.make;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
@@ -125,8 +125,8 @@ public class CalculationProcess extends CaseHandler implements Serializable {
                 products.put(i, reaction.getProducts().getAtomContainer(i));
             }
 
-            GameTheoryMatrix EDSH
-                    = new GameTheoryMatrix(theory, reaction, removeHydrogen);
+            GameTheoryEngine.GameTheoryMatrix EDSH
+                    = new GameTheoryEngine.GameTheoryMatrix(theory, reaction, removeHydrogen);
 
             LOGGER.debug("=====AGORITHM====" + theory);
             IGameTheory gameTheory = make(theory,

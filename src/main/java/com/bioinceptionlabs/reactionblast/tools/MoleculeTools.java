@@ -36,7 +36,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
 import org.openscience.smsd.ExtAtomContainerManipulator;
-import static com.bioinceptionlabs.reactionblast.mechanism.BondChange.convertBondOrder;
+import static com.bioinceptionlabs.reactionblast.mechanism.MechanismHelpers.BondChange.convertBondOrder;
 import static java.lang.String.valueOf;
 import static java.lang.System.getProperty;
 import static java.util.Calendar.DATE;

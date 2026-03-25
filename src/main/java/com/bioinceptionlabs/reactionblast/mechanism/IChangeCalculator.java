@@ -23,109 +23,27 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
-import com.bioinceptionlabs.reactionblast.mechanism.BEMatrix;
-import com.bioinceptionlabs.reactionblast.mechanism.RMatrix;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomAtomMappingContainer;
-import com.bioinceptionlabs.reactionblast.mechanism.AtomStereoChangeInformation;
-import com.bioinceptionlabs.reactionblast.mechanism.BondChange;
 
 /**
- *
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public interface IChangeCalculator {
 
-    /**
-     *
-     * @return
-     */
     public BEMatrix getEductBEMatrix();
-
-    /**
-     *
-     * @return
-     */
     public BEMatrix getProductBEMatrix();
-
-    /**
-     *
-     * @return
-     */
     public RMatrix getRMatrix();
-
-    /**
-     *
-     */
     public void printBMatrix();
-
-    /**
-     *
-     */
     public void printEMatrix();
-
-    /**
-     *
-     */
     public void printRMatrix();
-
-    /**
-     *
-     * @param outputFile
-     */
     public void writeBMatrix(File outputFile);
-
-    /**
-     *
-     * @param outputFile
-     */
     public void writeEMatrix(File outputFile);
-
-    /**
-     *
-     * @param outputFile
-     */
     public void writeRMatrix(File outputFile);
-
-    /**
-     *
-     * @return
-     */
     public boolean hasRMatrix();
-
-    /**
-     *
-     * @return
-     */
     public Map<IAtom, IAtom> getMappingMap();
-
-    /**
-     *
-     * @return
-     */
-    public List<BondChange> getBondChangeList();
-
-    /**
-     *
-     * @return
-     */
+    public List<MechanismHelpers.BondChange> getBondChangeList();
     public Collection<IAtom> getReactionCenterSet();
-
-    /**
-     *
-     * @return
-     */
-    public List<AtomStereoChangeInformation> getStereoChangeList();
-
-    /**
-     *
-     * @return
-     */
-    public Iterable<AtomStereoChangeInformation> getConformationChangeList();
-
-    /**
-     *
-     * @return
-     */
-    public AtomAtomMappingContainer getMappingContainer();
+    public List<MechanismHelpers.AtomStereoChangeInformation> getStereoChangeList();
+    public Iterable<MechanismHelpers.AtomStereoChangeInformation> getConformationChangeList();
+    public MechanismHelpers.AtomAtomMappingContainer getMappingContainer();
 }

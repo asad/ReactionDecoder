@@ -30,9 +30,6 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogensExceptSingleAndPreserveAtomID;
-import com.bioinceptionlabs.reactionblast.mechanism.Utility;
-import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
-
 /**
  * Tool for detecting stereochemistry using CDK's built-in stereo perception.
  * Replaces the old centres-based CIP priority analysis with CDK 2.12's
@@ -40,7 +37,7 @@ import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
  *
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public abstract class StereoCenteralityTool extends Utility {
+public abstract class StereoCenteralityTool extends MechanismHelpers.Utility {
 
     private static final ILoggingTool LOGGER
             = createLoggingTool(StereoCenteralityTool.class);
@@ -64,13 +61,13 @@ public abstract class StereoCenteralityTool extends Utility {
      * @throws CDKException
      * @throws CloneNotSupportedException
      */
-    public static Map<IAtom, IStereoAndConformation> getChirality2D(IReaction reaction)
+    public static Map<IAtom, BondChangeCalculator.IStereoAndConformation> getChirality2D(IReaction reaction)
             throws CDKException, CloneNotSupportedException {
-        Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
+        Map<IAtom, BondChangeCalculator.IStereoAndConformation> chiralityMap = new HashMap<>();
 
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH);
+            Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH);
             if (!chirality2D.isEmpty()) {
                 chirality2D.entrySet().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);
@@ -83,7 +80,7 @@ public abstract class StereoCenteralityTool extends Utility {
         }
         for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
             IAtomContainer containerWithoutH = removeHydrogensExceptSingleAndPreserveAtomID(ac);
-            Map<IAtom, IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH);
+            Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2D = getChirality2D(containerWithoutH);
             if (!chirality2D.isEmpty()) {
                 chirality2D.entrySet().forEach((m) -> {
                     IAtom atomByID = getAtomByID(m.getKey().getID(), ac);
@@ -105,12 +102,12 @@ public abstract class StereoCenteralityTool extends Utility {
      * @return map of atoms to their stereo configuration
      */
     @SuppressWarnings("unchecked")
-    public static Map<IAtom, IStereoAndConformation> getChirality2D(IAtomContainer ac) {
-        Map<IAtom, IStereoAndConformation> chiralityMap = new HashMap<>();
+    public static Map<IAtom, BondChangeCalculator.IStereoAndConformation> getChirality2D(IAtomContainer ac) {
+        Map<IAtom, BondChangeCalculator.IStereoAndConformation> chiralityMap = new HashMap<>();
 
         // Default all atoms to NONE
         for (IAtom atom : ac.atoms()) {
-            chiralityMap.put(atom, IStereoAndConformation.NONE);
+            chiralityMap.put(atom, BondChangeCalculator.IStereoAndConformation.NONE);
         }
 
         try {
@@ -121,9 +118,9 @@ public abstract class StereoCenteralityTool extends Utility {
                     IAtom focus = tc.getChiralAtom();
                     ITetrahedralChirality.Stereo stereo = tc.getStereo();
                     if (stereo == ITetrahedralChirality.Stereo.CLOCKWISE) {
-                        chiralityMap.put(focus, IStereoAndConformation.R);
+                        chiralityMap.put(focus, BondChangeCalculator.IStereoAndConformation.R);
                     } else if (stereo == ITetrahedralChirality.Stereo.ANTI_CLOCKWISE) {
-                        chiralityMap.put(focus, IStereoAndConformation.S);
+                        chiralityMap.put(focus, BondChangeCalculator.IStereoAndConformation.S);
                     }
                     if (focus != null) {
                         focus.setProperty("Stereo", chiralityMap.get(focus));
@@ -134,11 +131,11 @@ public abstract class StereoCenteralityTool extends Utility {
                     // Mark both atoms of the double bond
                     IAtom a0 = dbs.getStereoBond().getBegin();
                     IAtom a1 = dbs.getStereoBond().getEnd();
-                    IStereoAndConformation sc;
+                    BondChangeCalculator.IStereoAndConformation sc;
                     if (conf == IDoubleBondStereochemistry.Conformation.OPPOSITE) {
-                        sc = IStereoAndConformation.E;
+                        sc = BondChangeCalculator.IStereoAndConformation.E;
                     } else if (conf == IDoubleBondStereochemistry.Conformation.TOGETHER) {
-                        sc = IStereoAndConformation.Z;
+                        sc = BondChangeCalculator.IStereoAndConformation.Z;
                     } else {
                         continue;
                     }

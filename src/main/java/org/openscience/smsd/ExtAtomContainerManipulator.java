@@ -639,7 +639,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     s.setChemFilters(true, true, true);
                     return s.getFirstAtomMapping().getMappingsByAtoms();
                 } catch (CDKException ex) {
-                    Logger.getLogger(com.bioinceptionlabs.reactionblast.mechanism.Utility.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(com.bioinceptionlabs.reactionblast.mechanism.MechanismHelpers.Utility.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 

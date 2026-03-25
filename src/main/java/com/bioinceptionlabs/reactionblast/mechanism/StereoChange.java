@@ -21,8 +21,6 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 import java.io.Serializable;
 
 import org.openscience.cdk.interfaces.IAtom;
-import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
-
 /**
  *
  * @contact Syed Asad Rahman, BioInception.
@@ -31,8 +29,8 @@ import com.bioinceptionlabs.reactionblast.mechanism.IStereoAndConformation;
 public class StereoChange implements Serializable {
 
     private static final long serialVersionUID = 6778787889667901L;
-    private final IStereoAndConformation rAtomStereo;
-    private final IStereoAndConformation pAtomStereo;
+    private final BondChangeCalculator.IStereoAndConformation rAtomStereo;
+    private final BondChangeCalculator.IStereoAndConformation pAtomStereo;
     private final IAtom rAtom;
     private final IAtom pAtom;
 
@@ -43,8 +41,8 @@ public class StereoChange implements Serializable {
      * @param rAtom
      * @param pAtom
      */
-    public StereoChange(IStereoAndConformation rAtomStereo,
-            IStereoAndConformation pAtomStereo,
+    public StereoChange(BondChangeCalculator.IStereoAndConformation rAtomStereo,
+            BondChangeCalculator.IStereoAndConformation pAtomStereo,
             IAtom rAtom,
             IAtom pAtom) {
         this.rAtomStereo = rAtomStereo;
@@ -62,14 +60,14 @@ public class StereoChange implements Serializable {
     /**
      * @return the rAtomStereo
      */
-    public IStereoAndConformation getReactantAtomStereo() {
+    public BondChangeCalculator.IStereoAndConformation getReactantAtomStereo() {
         return rAtomStereo;
     }
 
     /**
      * @return the pAtomStereo
      */
-    public IStereoAndConformation getProductAtomStereo() {
+    public BondChangeCalculator.IStereoAndConformation getProductAtomStereo() {
         return pAtomStereo;
     }
 
