@@ -140,12 +140,35 @@ Note: The copyright of this software belongs to the author
 and BioInception.
 ```
 
+Performance
+===========
+
+| Metric | Value |
+|--------|-------|
+| Mapping speed | 3.4 reactions/sec (USPTO 50K) |
+| Test suite | 148 tests, 100% pass |
+| Test time | ~90s (6.5x faster than v2.x) |
+| Codebase | 77 files (reduced from 345) |
+| Deterministic | Yes (no ML training needed) |
+
 How to Cite RDT?
 ================
+
+**Primary citation:**
 
 `SA Rahman, G Torrance, L Baldacci, SM Cuesta, F Fenninger, N Gopal, S Choudhary, JW May, GL Holliday, C Steinbeck and JM Thornton: Reaction Decoder Tool (RDT): Extracting Features from Chemical Reactions, Bioinformatics (2016)`
 
 [doi: 10.1093/bioinformatics/btw096](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4920114/)
+
+**EC-BLAST citation:**
+
+`SA Rahman, S Cuesta, N Furnham, GL Holliday and JM Thornton: EC-BLAST: a tool to automatically search and compare enzyme reactions, Nature Methods (2014)`
+
+[doi: 10.1038/nmeth.2803](https://www.nature.com/articles/nmeth.2803)
+
+**Related work:**
+
+`M Leber: Kodierung enzymatischer Reaktionen (Encoding Enzymatic Reactions), Dissertation, University of Cologne (2008)` - R-matrix canonicalization and R-strings for reaction comparison
 
 
 Sub-commands
