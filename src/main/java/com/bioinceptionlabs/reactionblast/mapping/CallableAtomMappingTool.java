@@ -18,12 +18,7 @@
  */
 package com.bioinceptionlabs.reactionblast.mapping;
 
-import java.io.File;
-import static java.io.File.separator;
-import java.io.FileWriter;
 import java.io.Serializable;
-import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
@@ -47,7 +42,6 @@ import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIN;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIXTURE;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.RINGS;
-import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLV2000RXNWriter;
 
 /**
  *
@@ -63,28 +57,6 @@ public class CallableAtomMappingTool implements Serializable {
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
 
-    /**
-     * Creates mapping PDFs for all the processed reaction mappings
-     *
-     * @param reactor
-     * @param outputDirectoryName
-     * @param outFileName
-     * @throws Exception
-     */
-    public static void writeMappingRXN(Reactor reactor, String outputDirectoryName, String outFileName) throws Exception {
-        String reactionID = reactor.getReactionWithAtomAtomMapping().getID();
-        IReaction mappedReaction = reactor.getReactionWithAtomAtomMapping();
-        if (reactionID == null) {
-            reactionID = valueOf(currentTimeMillis());
-            reactor.getReactionWithAtomAtomMapping().setID(reactionID);
-        }
-
-        String outputFile = outputDirectoryName;
-        outputFile += separator + outFileName;
-        try (MDLV2000RXNWriter rxnW = new MDLV2000RXNWriter(new FileWriter(new File(outputFile)))) {
-            rxnW.write(mappedReaction);
-        }
-    }
     private Map<IMappingAlgorithm, Reactor> solution = null;
 
     /**
