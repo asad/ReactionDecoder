@@ -1,0 +1,96 @@
+/*
+ * Copyright (C) 2007-2026 Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+package com.bioinceptionlabs.reactionblast.api;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Immutable result of a reaction mapping. Contains bond changes,
+ * mapped SMILES, and fingerprint features as plain Java types
+ * (no CDK/toolkit dependency).
+ *
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+public final class ReactionResult {
+
+    private final String inputSmiles;
+    private final String mappedSmiles;
+    private final int formedCleavedCount;
+    private final int orderChangeCount;
+    private final int stereoChangeCount;
+    private final List<String> formedCleavedBonds;
+    private final List<String> orderChangedBonds;
+    private final List<String> stereoChangedBonds;
+
+    ReactionResult(String inputSmiles, String mappedSmiles,
+                   int formedCleavedCount, int orderChangeCount, int stereoChangeCount,
+                   List<String> formedCleavedBonds, List<String> orderChangedBonds,
+                   List<String> stereoChangedBonds) {
+        this.inputSmiles = inputSmiles;
+        this.mappedSmiles = mappedSmiles;
+        this.formedCleavedCount = formedCleavedCount;
+        this.orderChangeCount = orderChangeCount;
+        this.stereoChangeCount = stereoChangeCount;
+        this.formedCleavedBonds = Collections.unmodifiableList(formedCleavedBonds);
+        this.orderChangedBonds = Collections.unmodifiableList(orderChangedBonds);
+        this.stereoChangedBonds = Collections.unmodifiableList(stereoChangedBonds);
+    }
+
+    /** Original input SMILES */
+    public String getInputSmiles() { return inputSmiles; }
+
+    /** Mapped reaction SMILES with atom-atom mapping numbers */
+    public String getMappedSmiles() { return mappedSmiles; }
+
+    /** Number of bonds formed or cleaved */
+    public int getFormedCleavedCount() { return formedCleavedCount; }
+
+    /** Number of bond order changes */
+    public int getOrderChangeCount() { return orderChangeCount; }
+
+    /** Number of stereochemistry changes */
+    public int getStereoChangeCount() { return stereoChangeCount; }
+
+    /** Total bond changes (formed/cleaved + order changes) */
+    public int getTotalBondChanges() { return formedCleavedCount + orderChangeCount; }
+
+    /** Whether mapping was successful */
+    public boolean isMapped() { return mappedSmiles != null; }
+
+    /** Bond formation/cleavage patterns, e.g. ["C-O:1", "O-H:-1"] */
+    public List<String> getFormedCleavedBonds() { return formedCleavedBonds; }
+
+    /** Bond order change patterns, e.g. ["C=C:1"] */
+    public List<String> getOrderChangedBonds() { return orderChangedBonds; }
+
+    /** Stereo change patterns */
+    public List<String> getStereoChangedBonds() { return stereoChangedBonds; }
+
+    @Override
+    public String toString() {
+        return "ReactionResult{" +
+                "mapped=" + isMapped() +
+                ", bondChanges=" + getTotalBondChanges() +
+                ", formed/cleaved=" + formedCleavedBonds +
+                ", orderChanges=" + orderChangedBonds +
+                ", stereoChanges=" + stereoChangedBonds +
+                '}';
+    }
+}

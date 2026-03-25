@@ -940,6 +940,33 @@ public class SMARTS2AAMTest extends MappingUtility {
      * @throws AssertionError
      * @throws Exception
      */
+    // ---- Tests for the new RDT public API ----
+
+    @Test
+    public void testRDTApiEsterification() {
+        com.bioinceptionlabs.reactionblast.api.ReactionResult result =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+        assertTrue("RDT.map should return mapped result", result.isMapped());
+        assertTrue("Esterification should have bond changes", result.getTotalBondChanges() > 0);
+        assertTrue("Should have formed/cleaved bonds", result.getFormedCleavedCount() > 0);
+    }
+
+    @Test
+    public void testRDTApiIdentity() {
+        com.bioinceptionlabs.reactionblast.api.ReactionResult result =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC>>CC");
+        assertTrue("RDT.map should return mapped result", result.isMapped());
+        assertEquals("Identity should have 0 bond changes", 0, result.getTotalBondChanges());
+    }
+
+    @Test
+    public void testRDTApiDielsAlder() {
+        com.bioinceptionlabs.reactionblast.api.ReactionResult result =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("C=CC=C.C=C>>C1CC=CCC1");
+        assertTrue("RDT.map should return mapped result", result.isMapped());
+        assertTrue("Diels-Alder should have bond changes", result.getFormedCleavedCount() > 0);
+    }
+
     public ReactionMechanismTool performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws InvalidSmilesException, AssertionError, Exception {
         cdkReaction.setID(reactionName);
         /*
