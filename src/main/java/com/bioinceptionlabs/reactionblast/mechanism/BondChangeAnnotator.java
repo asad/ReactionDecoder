@@ -287,7 +287,7 @@ public final class BondChangeAnnotator extends DUModel {
          */
 
         LOGGER.debug("Marking E/Z or R/S");
-        for (StereoChange sc : stereogenicCenters) {
+        for (DUModel.StereoChange sc : stereogenicCenters) {
             IAtom atomE = sc.getReactantAtom();
             IAtom atomP = sc.getProductAtom();
 

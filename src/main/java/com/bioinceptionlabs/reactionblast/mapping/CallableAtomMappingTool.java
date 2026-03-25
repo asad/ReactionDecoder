@@ -286,4 +286,37 @@ public class CallableAtomMappingTool implements Serializable {
         this.solution.put(choice, reactor);
     }
 
+    /**
+     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+     */
+    static class MappingThread implements java.util.concurrent.Callable<Reactor> {
+
+        private static final ILoggingTool MT_LOGGER = createLoggingTool(MappingThread.class);
+
+        private final IReaction cleanedReaction;
+        private final IMappingAlgorithm algorithm;
+        private final boolean removeHydrogen;
+
+        MappingThread(String message, IReaction cleanedReaction,
+                IMappingAlgorithm algorithm, boolean removeHydrogen) {
+            this.cleanedReaction = cleanedReaction;
+            this.algorithm = algorithm;
+            this.removeHydrogen = removeHydrogen;
+            MT_LOGGER.info("|++++++++++++++++++++++++++++|");
+            MT_LOGGER.info("|Atom Atom Mapping Tool Initialized for " + message);
+        }
+
+        @Override
+        public Reactor call() throws Exception {
+            try {
+                Reactor reactor;
+                reactor = new Reactor(cleanedReaction, removeHydrogen, algorithm);
+                MT_LOGGER.info("|Done " + reactor.getAlgorithm() + " |");
+                return reactor;
+            } catch (Exception ex) {
+                throw ex;
+            }
+        }
+    }
+
 }

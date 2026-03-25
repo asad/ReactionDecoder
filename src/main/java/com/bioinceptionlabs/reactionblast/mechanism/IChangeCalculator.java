@@ -25,25 +25,27 @@ import java.util.Map;
 import org.openscience.cdk.interfaces.IAtom;
 
 /**
+ * Package-private interface for change calculators.
+ *
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
-public interface IChangeCalculator {
+interface IChangeCalculator {
 
-    public BEMatrix getEductBEMatrix();
-    public BEMatrix getProductBEMatrix();
-    public RMatrix getRMatrix();
-    public void printBMatrix();
-    public void printEMatrix();
-    public void printRMatrix();
-    public void writeBMatrix(File outputFile);
-    public void writeEMatrix(File outputFile);
-    public void writeRMatrix(File outputFile);
-    public boolean hasRMatrix();
-    public Map<IAtom, IAtom> getMappingMap();
-    public List<MechanismHelpers.BondChange> getBondChangeList();
-    public Collection<IAtom> getReactionCenterSet();
-    public List<MechanismHelpers.AtomStereoChangeInformation> getStereoChangeList();
-    public Iterable<MechanismHelpers.AtomStereoChangeInformation> getConformationChangeList();
-    public MechanismHelpers.AtomAtomMappingContainer getMappingContainer();
+    BEMatrix getEductBEMatrix();
+    BEMatrix getProductBEMatrix();
+    RMatrix getRMatrix();
+    void printBMatrix();
+    void printEMatrix();
+    void printRMatrix();
+    void writeBMatrix(File outputFile);
+    void writeEMatrix(File outputFile);
+    void writeRMatrix(File outputFile);
+    boolean hasRMatrix();
+    Map<IAtom, IAtom> getMappingMap();
+    List<MechanismHelpers.BondChange> getBondChangeList();
+    Collection<IAtom> getReactionCenterSet();
+    List<MechanismHelpers.AtomStereoChangeInformation> getStereoChangeList();
+    Iterable<MechanismHelpers.AtomStereoChangeInformation> getConformationChangeList();
+    MechanismHelpers.AtomAtomMappingContainer getMappingContainer();
 }

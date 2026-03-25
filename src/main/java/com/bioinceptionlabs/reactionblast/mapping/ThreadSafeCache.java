@@ -16,6 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <K>
  * @param <V>
  */
+/**
+ * Generic Cache Interface.
+ * @param <K>
+ * @param <V>
+ */
+interface Cache<K, V> {
+    void put(K key, V value);
+    V get(K key);
+}
+
 public class ThreadSafeCache<K, V> implements Cache<K, V> {
 
     /** Maximum cache entries before LRU eviction kicks in. */

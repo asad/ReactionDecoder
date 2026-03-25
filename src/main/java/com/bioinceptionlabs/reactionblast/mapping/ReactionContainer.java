@@ -7,7 +7,6 @@ package com.bioinceptionlabs.reactionblast.mapping;
 import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator;
 import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.IFingerprintGenerator;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.IKey;
 import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.AtomContainerSetComparator;
 import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.BasicDebugger;
 import java.io.IOException;
@@ -76,6 +75,27 @@ import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogens;
  * along with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+/**
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+interface IKey extends Comparable<ReactionContainer.Key>, Comparator<ReactionContainer.Key> {
+
+    @Override
+    int compareTo(ReactionContainer.Key t);
+
+    @Override
+    boolean equals(Object o);
+
+    @Override
+    int hashCode();
+
+    @Override
+    String toString();
+
+    @Override
+    int compare(ReactionContainer.Key t, ReactionContainer.Key t1);
+}
+
 public class ReactionContainer implements Cloneable, Serializable {
 
     static final long serialVersionUID = 17278639972837695L;

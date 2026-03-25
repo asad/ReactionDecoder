@@ -79,15 +79,51 @@ import static com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.matcher;
 import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.MCSSolution;
 import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.GraphMatching;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor.Debugger;
-import com.bioinceptionlabs.reactionblast.mapping.AbstractGraphMatching;
+import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.AbstractGraphMatching;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
-import com.bioinceptionlabs.reactionblast.mapping.IGameTheory;
-import com.bioinceptionlabs.reactionblast.mapping.IGraphTheoryMatrix;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;
 import com.bioinceptionlabs.reactionblast.tools.ICanonicalMoleculeLabeller;
 import com.bioinceptionlabs.reactionblast.tools.SmilesMoleculeLabeller;
 import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.AtomContainerSetComparator;
+
+/**
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+interface IGameTheory {
+
+    int getDelta();
+
+    MoleculeMoleculeMapping getReactionMolMapping();
+
+    String getSuffix() throws IOException;
+
+    void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
+
+    void UpdateMatrix(Holder mh, boolean removeHydrogen) throws Exception;
+
+    void UpdateMatrix(Collection<MCSSolution> mcsSolutions, Holder mh, boolean removeHydrogen) throws Exception;
+}
+
+/**
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+interface IGraphTheoryMatrix {
+
+    void Clear() throws IOException;
+
+    int getDelta();
+
+    List<String> getEductCounter();
+
+    Holder getMatrixHolder();
+
+    List<String> getProductCounter();
+
+    MoleculeMoleculeMapping getReactionMolMapping();
+
+    void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
+}
 
 /**
  * Consolidated game-theory engine for atom-atom mapping.

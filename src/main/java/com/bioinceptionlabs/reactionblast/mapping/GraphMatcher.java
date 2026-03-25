@@ -4,7 +4,6 @@
  */
 package com.bioinceptionlabs.reactionblast.mapping;
 
-import com.bioinceptionlabs.reactionblast.mapping.AbstractGraphMatching;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor.Debugger;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
@@ -76,6 +75,28 @@ import static org.openscience.smsd.ExtAtomContainerManipulator.cloneWithIDs;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class GraphMatcher extends Debugger {
+
+    /**
+     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+     */
+    public static abstract class AbstractGraphMatching {
+
+        public static void setMCSUpdationFlags(Holder holder, int substrateIndex, int productIndex) throws Exception {
+            ReactionContainer reactionStructureInformation = holder.getReactionContainer();
+            reactionStructureInformation.setEductModified(substrateIndex, true);
+            reactionStructureInformation.setProductModified(productIndex, true);
+        }
+
+        public abstract IAtomContainer getMatchedPart();
+
+        public abstract IAtomContainer getRemainingEduct();
+
+        public abstract IAtomContainer getRemainingProduct();
+
+        public abstract boolean mcsMatch(Holder holder, boolean removeHydrogen, Integer I, Integer J, BitSet eductFP, BitSet prodFP);
+
+        public abstract int removeMatchedAtomsAndUpdateAAM(IReaction reaction);
+    }
 
     private static final int LARGE_JOB_THRESHOLD = 1000;
     private final static ILoggingTool LOGGER

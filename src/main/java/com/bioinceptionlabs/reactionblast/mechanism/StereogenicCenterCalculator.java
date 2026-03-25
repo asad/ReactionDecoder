@@ -98,12 +98,12 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality3DChemaxon
      * @return
      */
-    public List<StereoChange> compare(
+    public List<DUModel.StereoChange> compare(
             IReaction reaction,
             Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DCDK,
             Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DChemaxon,
             Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality3DChemaxon) {
-        List<StereoChange> stereoChangeList = new ArrayList<>();
+        List<DUModel.StereoChange> stereoChangeList = new ArrayList<>();
         List<IAtom> queryAtoms = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             for (IAtom a : ac.atoms()) {
@@ -126,11 +126,11 @@ public class StereogenicCenterCalculator implements Serializable {
                 BondChangeCalculator.IStereoAndConformation rAtom3DStereo = chirality3DChemaxon.get(atomQ);
                 BondChangeCalculator.IStereoAndConformation pAtom3DStereo = chirality3DChemaxon.get(atomT);
                 if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    DUModel.StereoChange sc = new DUModel.StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
                 }
                 if (isStereogenicChange(rAtom3DStereo, pAtom3DStereo)) {
-                    StereoChange sc = new StereoChange(rAtom3DStereo, pAtom3DStereo, atomQ, atomT);
+                    DUModel.StereoChange sc = new DUModel.StereoChange(rAtom3DStereo, pAtom3DStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
                 }
             });
@@ -145,8 +145,8 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality2DChemaxon
      * @return
      */
-    public List<StereoChange> compare(IReaction reaction, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DCDK, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DChemaxon) {
-        List<StereoChange> stereoChangeList = new ArrayList<>();
+    public List<DUModel.StereoChange> compare(IReaction reaction, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DCDK, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DChemaxon) {
+        List<DUModel.StereoChange> stereoChangeList = new ArrayList<>();
         List<IAtom> queryAtoms = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             for (IAtom a : ac.atoms()) {
@@ -167,11 +167,11 @@ public class StereogenicCenterCalculator implements Serializable {
                 BondChangeCalculator.IStereoAndConformation rAtom2DStereo = chirality2DChemaxon.get(atomQ);
                 BondChangeCalculator.IStereoAndConformation pAtom2DStereo = chirality2DChemaxon.get(atomT);
                 if (isStereogenicChange(rAtom2DStereo, pAtom2DStereo)) {
-                    StereoChange sc = new StereoChange(rAtom2DStereo, pAtom2DStereo, atomQ, atomT);
+                    DUModel.StereoChange sc = new DUModel.StereoChange(rAtom2DStereo, pAtom2DStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
                 }
                 if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    DUModel.StereoChange sc = new DUModel.StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
                 }
             });
@@ -185,9 +185,9 @@ public class StereogenicCenterCalculator implements Serializable {
      * @param chirality2DCDK
      * @return
      */
-    public List<StereoChange> compare(IReaction reaction, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DCDK) {
+    public List<DUModel.StereoChange> compare(IReaction reaction, Map<IAtom, BondChangeCalculator.IStereoAndConformation> chirality2DCDK) {
 
-        List<StereoChange> stereoChangeList = new ArrayList<>();
+        List<DUModel.StereoChange> stereoChangeList = new ArrayList<>();
         List<IAtom> queryAtoms = new ArrayList<>();
         for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
             for (IAtom a : ac.atoms()) {
@@ -205,7 +205,7 @@ public class StereogenicCenterCalculator implements Serializable {
                 BondChangeCalculator.IStereoAndConformation rAtom2DCDKStereo = chirality2DCDK.get(atomQ);
                 BondChangeCalculator.IStereoAndConformation pAtom2DCDKStereo = chirality2DCDK.get(atomT);
                 if (isStereogenicChange(rAtom2DCDKStereo, pAtom2DCDKStereo)) {
-                    StereoChange sc = new StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
+                    DUModel.StereoChange sc = new DUModel.StereoChange(rAtom2DCDKStereo, pAtom2DCDKStereo, atomQ, atomT);
                     stereoChangeList.add(sc);
                 }
             });

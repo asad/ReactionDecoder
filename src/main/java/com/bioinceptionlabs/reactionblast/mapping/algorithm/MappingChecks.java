@@ -49,8 +49,15 @@ import org.openscience.smsd.AtomBondMatcher;
 import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
-import com.bioinceptionlabs.reactionblast.mapping.IResult;
 import com.bioinceptionlabs.reactionblast.legacy.EBIMatrix;
+
+/**
+ * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
+ */
+interface IResult {
+    abstract Holder getUpdatedHolder();
+    abstract boolean isSubAndCompleteMatchFlag();
+}
 
 /**
  * Consolidated mapping checks for the algorithm package.
