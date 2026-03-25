@@ -1077,6 +1077,29 @@ public class SMARTS2AAMTest extends MappingUtility {
     }
 
     @Test
+    public void testCanonicalHashDeterminism() {
+        // Same reaction must produce identical canonical hash
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r1 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r2 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+        assertEquals("Same reaction must have same canonical hash",
+                r1.getCanonicalHash(), r2.getCanonicalHash());
+        assertEquals("Hash should be 64 chars (SHA-256 hex)", 64, r1.getCanonicalHash().length());
+    }
+
+    @Test
+    public void testCanonicalHashDistinct() {
+        // Different reactions must have different hashes
+        com.bioinceptionlabs.reactionblast.api.ReactionResult ester =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+        com.bioinceptionlabs.reactionblast.api.ReactionResult dielsAlder =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("C=CC=C.C=C>>C1CC=CCC1");
+        assertTrue("Different reactions should have different hashes",
+                !ester.getCanonicalHash().equals(dielsAlder.getCanonicalHash()));
+    }
+
+    @Test
     public void testReactionSignatureDeterminism() throws Exception {
         // Test that signature is deterministic — same reaction always gives same signature
         com.bioinceptionlabs.reactionblast.api.ReactionResult r1 =

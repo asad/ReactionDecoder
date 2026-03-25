@@ -43,6 +43,7 @@ public final class ReactionResult {
     private final List<String> reactionCentreFingerprint;
     private final String algorithmUsed;
     private final String reactionSignature;
+    private final String canonicalHash;
 
     ReactionResult(String inputSmiles, String mappedSmiles,
                    int formedCleavedCount, int orderChangeCount, int stereoChangeCount,
@@ -60,6 +61,8 @@ public final class ReactionResult {
         this.reactionCentreFingerprint = Collections.unmodifiableList(reactionCentreFingerprint);
         this.algorithmUsed = algorithmUsed;
         this.reactionSignature = buildReactionSignature();
+        this.canonicalHash = ReactionCanonicalizer.computeCanonicalHash(
+                formedCleavedBonds, orderChangedBonds, stereoChangedBonds, reactionCentreFingerprint);
     }
 
     /** Original input SMILES */
@@ -113,6 +116,17 @@ public final class ReactionResult {
      * @return canonical reaction signature string, or empty string if unmapped
      */
     public String getReactionSignature() { return reactionSignature; }
+
+    /**
+     * Canonical WL graph hash of the ITS (Imaginary Transition State) graph.
+     * SHA-256 based, permutation-invariant, deterministic.
+     * Two reactions with identical hashes have identical bond change patterns.
+     *
+     * Use for database indexing, deduplication, and exact-match search.
+     *
+     * @return 64-character hex hash string
+     */
+    public String getCanonicalHash() { return canonicalHash; }
 
     /**
      * Build the canonical reaction signature from sorted fingerprint patterns.
