@@ -109,8 +109,13 @@ public class CallableAtomMappingTool implements Serializable {
          * Phase 1: Run RINGS first if checkComplex is true (most common case).
          * RINGS handles ring-containing molecules best and covers ~75% of
          * drug-like / organic reactions.
+         *
+         * Skip funnel for large multi-substrate reactions (>5 molecules)
+         * where RINGS alone is unlikely to succeed.
          */
-        if (checkComplex) {
+        int totalMolecules = standardizedReaction.getReactantCount()
+                + standardizedReaction.getProductCount();
+        if (checkComplex && totalMolecules <= 5) {
             try {
                 IReaction clone = cloneReaction(standardizedReaction);
                 ExecutorService exec1 = Executors.newSingleThreadExecutor();
@@ -137,9 +142,11 @@ public class CallableAtomMappingTool implements Serializable {
 
         /*
          * Phase 2: Run remaining algorithms in parallel (only if RINGS wasn't enough).
+         * If funnel was skipped (large reaction), run all 4 algorithms.
          */
-        IMappingAlgorithm[] remaining = checkComplex
-                ? new IMappingAlgorithm[]{MIN, MAX, MIXTURE}
+        boolean ringsAlreadyRun = solution.containsKey(RINGS);
+        IMappingAlgorithm[] remaining = (checkComplex && !ringsAlreadyRun)
+                ? new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS}
                 : new IMappingAlgorithm[]{MIN, MAX, MIXTURE};
 
         ExecutorService executor = Executors.newFixedThreadPool(remaining.length);

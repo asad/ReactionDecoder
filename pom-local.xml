@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.bioinceptionlabs</groupId>
             <artifactId>smsd</artifactId>
-            <version>4.0.1</version>
+            <version>4.2.0</version>
         </dependency>
 
         <dependency>
