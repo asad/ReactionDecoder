@@ -87,25 +87,42 @@ public final class RDT {
         }
     }
 
+    /**
+     * Compare two reactions for similarity based on bond change fingerprints.
+     *
+     * @param smiles1 first reaction SMILES
+     * @param smiles2 second reaction SMILES
+     * @return Tanimoto similarity (0.0 = no overlap, 1.0 = identical changes)
+     */
+    public static double compare(String smiles1, String smiles2) {
+        ReactionResult r1 = map(smiles1);
+        ReactionResult r2 = map(smiles2);
+        return r1.similarity(r2);
+    }
+
     private static ReactionResult extractResult(ReactionMechanismTool rmt, String inputSmiles) {
         MappingSolution solution = rmt.getSelectedSolution();
         if (solution == null) {
             return new ReactionResult(inputSmiles, null, 0, 0, 0,
-                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                    new ArrayList<>(), "NONE");
         }
 
         BondChangeCalculator bcc = solution.getBondChangeCalculator();
         List<String> formedCleaved;
         List<String> orderChanges;
         List<String> stereoChanges;
+        List<String> reactionCentre;
         try {
             formedCleaved = extractFeatures(bcc.getFormedCleavedWFingerprint());
             orderChanges = extractFeatures(bcc.getOrderChangesWFingerprint());
             stereoChanges = extractFeatures(bcc.getStereoChangesWFingerprint());
+            reactionCentre = extractFeatures(bcc.getReactionCenterWFingerprint());
         } catch (Exception e) {
             formedCleaved = new ArrayList<>();
             orderChanges = new ArrayList<>();
             stereoChanges = new ArrayList<>();
+            reactionCentre = new ArrayList<>();
         }
 
         String mappedSmiles = null;
@@ -115,6 +132,9 @@ public final class RDT {
             mappedSmiles = sg.create(bcc.getReaction());
         } catch (Exception ignored) {}
 
+        String algorithm = solution.getAlgorithmID() != null
+                ? solution.getAlgorithmID().name() : "UNKNOWN";
+
         return new ReactionResult(
                 inputSmiles,
                 mappedSmiles,
@@ -123,7 +143,9 @@ public final class RDT {
                 stereoChanges.size(),
                 formedCleaved,
                 orderChanges,
-                stereoChanges);
+                stereoChanges,
+                reactionCentre,
+                algorithm);
     }
 
     private static List<String> extractFeatures(IPatternFingerprinter fp) {

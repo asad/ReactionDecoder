@@ -967,6 +967,43 @@ public class SMARTS2AAMTest extends MappingUtility {
         assertTrue("Diels-Alder should have bond changes", result.getFormedCleavedCount() > 0);
     }
 
+    @Test
+    public void testRDTApiReactionCentre() {
+        com.bioinceptionlabs.reactionblast.api.ReactionResult result =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+        assertTrue("Should have reaction centre fingerprint", result.getReactionCentreFingerprint().size() > 0);
+        assertTrue("Should report algorithm", result.getAlgorithm() != null && !result.getAlgorithm().equals("NONE"));
+    }
+
+    @Test
+    public void testRDTApiSimilarity() {
+        // Identical reaction mapped twice should have similarity = 1.0
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r1 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)OCC.O>>CC(=O)O.OCC");
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r2 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)OCC.O>>CC(=O)O.OCC");
+        double sim = r1.similarity(r2);
+        assertEquals("Identical reaction similarity should be 1.0", 1.0, sim, 0.01);
+    }
+
+    @Test
+    public void testRDTCompare() {
+        // Same reaction compared to itself
+        double sim = com.bioinceptionlabs.reactionblast.api.RDT.compare(
+                "CC(=O)OCC.O>>CC(=O)O.OCC",
+                "CC(=O)OCC.O>>CC(=O)O.OCC");
+        assertEquals("Self-comparison should be 1.0", 1.0, sim, 0.01);
+    }
+
+    @Test
+    public void testRDTCompareDifferent() {
+        // Different reaction types should have lower similarity
+        double sim = com.bioinceptionlabs.reactionblast.api.RDT.compare(
+                "CC(=O)OCC.O>>CC(=O)O.OCC",   // ester hydrolysis
+                "C=CC=C.C=C>>C1CC=CCC1");      // Diels-Alder
+        assertTrue("Different reactions should have similarity < 1.0, got " + sim, sim < 1.0);
+    }
+
     public ReactionMechanismTool performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws InvalidSmilesException, AssertionError, Exception {
         cdkReaction.setID(reactionName);
         /*

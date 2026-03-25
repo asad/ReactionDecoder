@@ -19,7 +19,9 @@
 package com.bioinceptionlabs.reactionblast.api;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Immutable result of a reaction mapping. Contains bond changes,
@@ -38,11 +40,14 @@ public final class ReactionResult {
     private final List<String> formedCleavedBonds;
     private final List<String> orderChangedBonds;
     private final List<String> stereoChangedBonds;
+    private final List<String> reactionCentreFingerprint;
+    private final String algorithmUsed;
 
     ReactionResult(String inputSmiles, String mappedSmiles,
                    int formedCleavedCount, int orderChangeCount, int stereoChangeCount,
                    List<String> formedCleavedBonds, List<String> orderChangedBonds,
-                   List<String> stereoChangedBonds) {
+                   List<String> stereoChangedBonds, List<String> reactionCentreFingerprint,
+                   String algorithmUsed) {
         this.inputSmiles = inputSmiles;
         this.mappedSmiles = mappedSmiles;
         this.formedCleavedCount = formedCleavedCount;
@@ -51,6 +56,8 @@ public final class ReactionResult {
         this.formedCleavedBonds = Collections.unmodifiableList(formedCleavedBonds);
         this.orderChangedBonds = Collections.unmodifiableList(orderChangedBonds);
         this.stereoChangedBonds = Collections.unmodifiableList(stereoChangedBonds);
+        this.reactionCentreFingerprint = Collections.unmodifiableList(reactionCentreFingerprint);
+        this.algorithmUsed = algorithmUsed;
     }
 
     /** Original input SMILES */
@@ -83,14 +90,68 @@ public final class ReactionResult {
     /** Stereo change patterns */
     public List<String> getStereoChangedBonds() { return stereoChangedBonds; }
 
+    /** Reaction centre fingerprint — patterns at the reaction centre */
+    public List<String> getReactionCentreFingerprint() { return reactionCentreFingerprint; }
+
+    /** Algorithm that produced this mapping (RINGS, MIN, MAX, MIXTURE) */
+    public String getAlgorithm() { return algorithmUsed; }
+
+    /**
+     * Compute Tanimoto similarity between this reaction and another
+     * based on bond change fingerprints. Returns 0.0 (no overlap) to 1.0 (identical).
+     *
+     * @param other another ReactionResult to compare against
+     * @return Tanimoto similarity coefficient
+     */
+    public double similarity(ReactionResult other) {
+        if (other == null || !this.isMapped() || !other.isMapped()) return 0.0;
+        return tanimoto(this.getAllFingerprints(), other.getAllFingerprints());
+    }
+
+    /**
+     * Get all fingerprint features as a combined set (for similarity).
+     * Uses pattern names only (strips weight suffix) for robust matching.
+     * E.g., "C-O:1" → "C-O", so reactions with same bond types match.
+     */
+    private Set<String> getAllFingerprints() {
+        Set<String> all = new HashSet<>();
+        addPatterns(all, formedCleavedBonds);
+        addPatterns(all, orderChangedBonds);
+        addPatterns(all, stereoChangedBonds);
+        addPatterns(all, reactionCentreFingerprint);
+        return all;
+    }
+
+    private static void addPatterns(Set<String> set, List<String> features) {
+        for (String f : features) {
+            int colon = f.lastIndexOf(':');
+            set.add(colon > 0 ? f.substring(0, colon) : f);
+        }
+    }
+
+    /**
+     * Tanimoto coefficient: |A ∩ B| / |A ∪ B|
+     */
+    private static double tanimoto(Set<String> a, Set<String> b) {
+        if (a.isEmpty() && b.isEmpty()) return 1.0;
+        if (a.isEmpty() || b.isEmpty()) return 0.0;
+        Set<String> intersection = new HashSet<>(a);
+        intersection.retainAll(b);
+        Set<String> union = new HashSet<>(a);
+        union.addAll(b);
+        return (double) intersection.size() / union.size();
+    }
+
     @Override
     public String toString() {
         return "ReactionResult{" +
                 "mapped=" + isMapped() +
+                ", algorithm=" + algorithmUsed +
                 ", bondChanges=" + getTotalBondChanges() +
                 ", formed/cleaved=" + formedCleavedBonds +
                 ", orderChanges=" + orderChangedBonds +
                 ", stereoChanges=" + stereoChangedBonds +
+                ", reactionCentre=" + reactionCentreFingerprint +
                 '}';
     }
 }
