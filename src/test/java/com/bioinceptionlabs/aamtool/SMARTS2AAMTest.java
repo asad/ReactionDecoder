@@ -996,6 +996,21 @@ public class SMARTS2AAMTest extends MappingUtility {
     }
 
     @Test
+    public void testRDTApiReactionSignature() {
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r1 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)OCC.O>>CC(=O)O.OCC");
+        com.bioinceptionlabs.reactionblast.api.ReactionResult r2 =
+                com.bioinceptionlabs.reactionblast.api.RDT.map("CC(=O)OCC.O>>CC(=O)O.OCC");
+        // Same reaction should produce identical signatures
+        assertTrue("Signature should not be empty", !r1.getReactionSignature().isEmpty());
+        assertEquals("Same reaction should have same signature",
+                r1.getReactionSignature(), r2.getReactionSignature());
+        // Signature should contain FC (formed/cleaved) section
+        assertTrue("Signature should contain FC section",
+                r1.getReactionSignature().startsWith("FC["));
+    }
+
+    @Test
     public void testRDTCompareDifferent() {
         // Different reaction types should have lower similarity
         double sim = com.bioinceptionlabs.reactionblast.api.RDT.compare(

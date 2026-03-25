@@ -42,6 +42,7 @@ public final class ReactionResult {
     private final List<String> stereoChangedBonds;
     private final List<String> reactionCentreFingerprint;
     private final String algorithmUsed;
+    private final String reactionSignature;
 
     ReactionResult(String inputSmiles, String mappedSmiles,
                    int formedCleavedCount, int orderChangeCount, int stereoChangeCount,
@@ -58,6 +59,7 @@ public final class ReactionResult {
         this.stereoChangedBonds = Collections.unmodifiableList(stereoChangedBonds);
         this.reactionCentreFingerprint = Collections.unmodifiableList(reactionCentreFingerprint);
         this.algorithmUsed = algorithmUsed;
+        this.reactionSignature = buildReactionSignature();
     }
 
     /** Original input SMILES */
@@ -95,6 +97,49 @@ public final class ReactionResult {
 
     /** Algorithm that produced this mapping (RINGS, MIN, MAX, MIXTURE) */
     public String getAlgorithm() { return algorithmUsed; }
+
+    /**
+     * Canonical, hierarchical reaction signature (R-string).
+     * Deterministic, invariant, and searchable. Encodes the complete
+     * electron shift pattern as a canonical string.
+     *
+     * Format: FC[patterns]|OC[patterns]|SC[patterns]|RC[patterns]
+     * Where FC=formed/cleaved, OC=order changes, SC=stereo, RC=reaction centre.
+     * Patterns are sorted alphabetically within each level.
+     *
+     * Two reactions with identical signatures have identical bond changes
+     * (same R-matrix in the Dugundji-Ugi model / Leber canonicalization).
+     *
+     * @return canonical reaction signature string, or empty string if unmapped
+     */
+    public String getReactionSignature() { return reactionSignature; }
+
+    /**
+     * Build the canonical reaction signature from sorted fingerprint patterns.
+     * Strips weights, sorts alphabetically, joins with semicolons.
+     */
+    private String buildReactionSignature() {
+        if (!isMapped()) return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append("FC[").append(canonicalPatterns(formedCleavedBonds)).append("]");
+        sb.append("|OC[").append(canonicalPatterns(orderChangedBonds)).append("]");
+        sb.append("|SC[").append(canonicalPatterns(stereoChangedBonds)).append("]");
+        sb.append("|RC[").append(canonicalPatterns(reactionCentreFingerprint)).append("]");
+        return sb.toString();
+    }
+
+    /**
+     * Extract pattern names (strip weights), sort, join with semicolons.
+     */
+    private static String canonicalPatterns(List<String> features) {
+        List<String> patterns = new java.util.ArrayList<>();
+        for (String f : features) {
+            int colon = f.lastIndexOf(':');
+            patterns.add(colon > 0 ? f.substring(0, colon) : f);
+        }
+        Collections.sort(patterns);
+        return String.join(";", patterns);
+    }
 
     /**
      * Compute Tanimoto similarity between this reaction and another
@@ -152,6 +197,7 @@ public final class ReactionResult {
                 ", orderChanges=" + orderChangedBonds +
                 ", stereoChanges=" + stereoChangedBonds +
                 ", reactionCentre=" + reactionCentreFingerprint +
+                ", signature=" + reactionSignature +
                 '}';
     }
 }
