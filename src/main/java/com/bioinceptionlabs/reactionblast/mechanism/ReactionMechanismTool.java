@@ -76,6 +76,50 @@ public class ReactionMechanismTool implements Serializable {
     private Collection<MappingSolution> allSolutions;
     private final boolean accept_no_change;
 
+    // ---- Toolkit-agnostic constructors (ReactionGraph) ----
+
+    /**
+     * Toolkit-agnostic constructor. Pass a ReactionGraph from any toolkit.
+     *
+     * @param reactionGraph toolkit-agnostic reaction graph
+     * @param forcedMapping overwrite any existing mapping
+     * @param generate2D deduce stereo on 2D
+     * @param generate3D deduce stereo on 3D
+     * @param checkComplex check complex mapping like ring systems
+     * @param accept_no_change accept no bond change (transporter reactions)
+     * @param standardizer reaction standardizer
+     * @throws Exception
+     */
+    public ReactionMechanismTool(
+            com.bioinceptionlabs.reactionblast.model.ReactionGraph reactionGraph,
+            boolean forcedMapping,
+            boolean generate2D,
+            boolean generate3D,
+            boolean checkComplex,
+            boolean accept_no_change,
+            StandardizeReaction standardizer) throws Exception {
+        this(com.bioinceptionlabs.reactionblast.cdk.CDKAdapter.toCDK(reactionGraph),
+                forcedMapping, generate2D, generate3D, checkComplex, accept_no_change, standardizer);
+    }
+
+    /**
+     * Toolkit-agnostic constructor with defaults.
+     *
+     * @param reactionGraph toolkit-agnostic reaction graph
+     * @param forcedMapping overwrite any existing mapping
+     * @param checkComplex check complex mapping like ring systems
+     * @throws Exception
+     */
+    public ReactionMechanismTool(
+            com.bioinceptionlabs.reactionblast.model.ReactionGraph reactionGraph,
+            boolean forcedMapping,
+            boolean checkComplex) throws Exception {
+        this(com.bioinceptionlabs.reactionblast.cdk.CDKAdapter.toCDK(reactionGraph),
+                forcedMapping, true, false, checkComplex, false, new StandardizeReaction());
+    }
+
+    // ---- CDK constructors (backward compatible) ----
+
     /**
      *
      * @param reaction
@@ -702,6 +746,24 @@ public class ReactionMechanismTool implements Serializable {
      */
     public Collection<MappingSolution> getAllSolutions() {
         return unmodifiableCollection(this.allSolutions);
+    }
+
+    /**
+     * Get the mapped reaction as a toolkit-agnostic ReactionGraph.
+     *
+     * @return ReactionGraph with atom-atom mapping, or null if no solution
+     */
+    public com.bioinceptionlabs.reactionblast.model.ReactionGraph getMappedReactionGraph() {
+        if (selectedMapping == null || selectedMapping.getReactor() == null) {
+            return null;
+        }
+        try {
+            IReaction mapped = selectedMapping.getReactor().getReactionWithAtomAtomMapping();
+            return mapped != null ? com.bioinceptionlabs.reactionblast.cdk.CDKAdapter.fromCDK(mapped) : null;
+        } catch (Exception e) {
+            LOGGER.error(SEVERE, "Failed to get mapped reaction graph", e);
+            return null;
+        }
     }
 
     private int getNonHydrogenMappingAtomCount(IAtomContainerSet mol) {
