@@ -1,20 +1,12 @@
 /*
  * MoleculeTools - consolidated small utility classes.
- * Merged from: Suffix, EBIDoubleUtility, BasicDebugger, AtomContainerSetComparator, EBIMolSplitter, ExtReactionManipulatorTool, ValencyCalculator
+ * Merged from: BasicDebugger, AtomContainerSetComparator, ExtReactionManipulatorTool, ValencyCalculator
  */
 package com.bioinceptionlabs.reactionblast.tools;
 
-import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
-import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feature;
-import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
-import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +20,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObject;
-import org.openscience.cdk.interfaces.IElectronContainer;
 import org.openscience.cdk.interfaces.IIsotope;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
@@ -37,21 +28,11 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.ReactionManipulator;
 import org.openscience.smsd.ExtAtomContainerManipulator;
 import static com.bioinceptionlabs.reactionblast.mechanism.MechanismHelpers.BondChange.convertBondOrder;
-import static java.lang.String.valueOf;
 import static java.lang.System.getProperty;
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.HOUR;
-import static java.util.Calendar.MILLISECOND;
-import static java.util.Calendar.MINUTE;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Level.WARNING;
 import static org.openscience.cdk.CDKConstants.UNSET;
-import static org.openscience.cdk.CDKConstants.VISITED;
 import static org.openscience.cdk.config.Isotopes.getInstance;
-import static org.openscience.cdk.graph.PathTools.breadthFirstSearch;
-import static org.openscience.cdk.math.RandomNumbersTool.randomInt;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getSingleBondEquivalentSum;
 import static org.openscience.cdk.tools.periodictable.PeriodicTable.getElementCount;
@@ -62,296 +43,6 @@ import static org.openscience.cdk.tools.periodictable.PeriodicTable.getSymbol;
  * Container class for miscellaneous molecule utility operations.
  */
 public final class MoleculeTools {
-
-
-    //~--- classes ----------------------------------------------------------------
-    /**
-     *
-     * @contact Syed Asad Rahman, BioInception
-     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
-     */
-    public static class Suffix {
-
-        private static String suffix = "";
-        private static String timeSuffix = "";
-        private static String randonNumberSuffix = "";
-        private static Suffix ref = null;
-        private static final ILoggingTool LOGGER
-                = LoggingToolFactory.createLoggingTool(Suffix.class);
-
-        //~--- get methods --------------------------------------------------------
-        /**
-         * Creates a new instance of Suffix
-         *
-         * @return
-         * @throws IOException
-         */
-        public static Suffix getInstance() throws IOException {
-            if (ref == null) {
-
-                // it's ok, we can call this constructor
-                ref = new Suffix();
-            }
-
-            return ref;
-        }
-
-        //~--- constructors -------------------------------------------------------
-
-        /**
-         *
-         * @throws IOException
-         */
-
-        protected Suffix() throws IOException {
-            Calendar cal = new GregorianCalendar();
-            int ms = cal.get(YEAR);
-            timeSuffix = valueOf(ms);
-            ms = cal.get(MONTH);
-            timeSuffix = timeSuffix.concat(valueOf(ms));
-            ms = cal.get(DATE);
-            timeSuffix = timeSuffix.concat(valueOf(ms));
-            ms = cal.get(HOUR);
-            timeSuffix = timeSuffix.concat(valueOf(ms));
-            ms = cal.get(MINUTE);
-            timeSuffix = timeSuffix.concat(valueOf(ms));
-            ms = cal.get(MILLISECOND);
-            timeSuffix = timeSuffix.concat(valueOf(ms));
-
-            randonNumberSuffix = valueOf(randomInt(1, 1000));
-            suffix = timeSuffix + randonNumberSuffix;
-        }
-
-        /**
-         *
-         * @return time + randomnumber
-         */
-        public String getSuffix() {
-            return suffix;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getTimeSuffix() {
-            return timeSuffix;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getRandonNumberSuffix() {
-            return randonNumberSuffix;
-        }
-    }
-
-
-
-    /**
-     *
-     * @contact Syed Asad Rahman, BioInception.
-     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
-     */
-    public static class EBIDoubleUtility {
-
-        private static final long serialVersionUID = 7683452581122892189L;
-        private static final ILoggingTool LOGGER
-                = LoggingToolFactory.createLoggingTool(EBIDoubleUtility.class);
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @return fused array val1+val2
-         * @throws CDKException
-         */
-        public static double[] append(double[] val1, double[] val2) throws CDKException {
-
-            double[] feature = null;
-
-            if (val1.length > 0 && val2.length > 0) {
-                feature = new double[val1.length + val2.length];
-
-                int index = 0;
-                for (int i = 0; i < val1.length; i++) {
-                    feature[index++] = val1[i];
-                }
-
-                for (int j = 0; j < val2.length; j++) {
-                    feature[index++] = val2[j];
-                }
-
-            } else {
-                throw new CDKException("Index < 0: ");
-            }
-
-            return feature;
-
-        }
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @return fused array val1+val2
-         * @throws CDKException
-         */
-        public static IPatternFingerprinter Union(IPatternFingerprinter val1, IPatternFingerprinter val2) throws CDKException {
-            PatternFingerprinter patternFingerprinter = new PatternFingerprinter(val1.getFingerprintSize() + val2.getFingerprintSize());
-
-            if (val1.getFingerprintSize() > 0 && val2.getFingerprintSize() > 0) {
-
-                for (int i = 0; i < val1.getFeatureCount(); i++) {
-                    IFeature feature = val1.getFeature(i);
-                    patternFingerprinter.add(new Feature(feature.getPattern(), feature.getWeight()));
-                }
-
-                for (int j = 0; j < val2.getFeatureCount(); j++) {
-                    IFeature feature = val2.getFeature(j);
-                    patternFingerprinter.add(new Feature(feature.getPattern(), feature.getWeight()));
-
-                }
-
-            } else {
-                throw new CDKException("Index < 0: ");
-            }
-            return patternFingerprinter;
-        }
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @param val3
-         * @return fused array val1+val2+val3
-         * @throws CDKException
-         */
-        public static double[] append(double[] val1, double[] val2, double[] val3) throws CDKException {
-
-            double[] feature = null;
-
-            if (val1.length > 0 && val2.length > 0 && val3.length > 0) {
-                feature = new double[val1.length + val2.length + val3.length];
-
-                int index = 0;
-                for (int i = 0; i < val1.length; i++) {
-                    feature[index++] = val1[i];
-                }
-
-                for (int j = 0; j < val2.length; j++) {
-                    feature[index++] = val2[j];
-                }
-
-                for (int k = 0; k < val3.length; k++) {
-                    feature[index++] = val3[k];
-                }
-
-            } else {
-                throw new CDKException("Index < 0: ");
-            }
-
-            return feature;
-
-        }
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @param val3
-         * @return fused array val1+val2+val3
-         * @throws CDKException
-         */
-        public static IPatternFingerprinter Union(IPatternFingerprinter val1, IPatternFingerprinter val2, IPatternFingerprinter val3) throws CDKException {
-
-            PatternFingerprinter patternFingerprinter = new PatternFingerprinter(val1.getFingerprintSize() + val2.getFingerprintSize() + val3.getFingerprintSize());
-
-            if (val1.getFingerprintSize() > 0 && val2.getFingerprintSize() > 0) {
-
-                for (int i = 0; i < val1.getFeatureCount(); i++) {
-                    IFeature feature = val1.getFeature(i);
-                    patternFingerprinter.add(new Feature(feature.getPattern(), feature.getWeight()));
-                }
-
-                for (int j = 0; j < val2.getFeatureCount(); j++) {
-                    IFeature feature = val2.getFeature(j);
-                    patternFingerprinter.add(new Feature(feature.getPattern(), feature.getWeight()));
-                }
-
-                for (int k = 0; k < val3.getFeatureCount(); k++) {
-                    IFeature feature = val3.getFeature(k);
-                    patternFingerprinter.add(new Feature(feature.getPattern(), feature.getWeight()));
-                }
-
-            } else {
-                throw new CDKException("Index < 0: ");
-            }
-            return patternFingerprinter;
-
-        }
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @return is val1 contained in val2
-         * @throws CDKException
-         */
-        public static boolean isSubset(double[] val1, double[] val2) throws CDKException {
-
-            boolean flag = true;
-
-            if (val1.length > 0 && val2.length > 0) {
-
-                for (int i = 0; i < val1.length; i++) {
-                    if (val1[i] > val2[i]) {
-                        flag = false;
-                        break;
-                    }
-                }
-
-            } else {
-                throw new CDKException("Index <0: ");
-            }
-
-            return flag;
-
-        }
-
-        /**
-         *
-         * @param val1
-         * @param val2
-         * @return is val2 contained in val1
-         * @throws CDKException
-         */
-        public static boolean isSuperset(double[] val1, double[] val2) throws CDKException {
-
-            boolean flag = true;
-
-            if (val1.length > 0 && val2.length > 0) {
-
-                for (int i = 0; i < val1.length; i++) {
-                    if (val1[i] < val2[i]) {
-                        flag = false;
-                        break;
-                    }
-                }
-
-            } else {
-                throw new CDKException("Index <0: ");
-            }
-
-            return flag;
-        }
-
-        private EBIDoubleUtility() {
-        }
-    }
-
-
 
     /**
      *
@@ -641,94 +332,6 @@ public final class MoleculeTools {
         }
     }
 
-
-
-    /**
-     *
-     * @contact Syed Asad Rahman, BioInception.
-     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
-     */
-    public static class EBIMolSplitter {
-
-        /**
-         * Check whether a set of atoms in an atomcontainer is connected
-         *
-         * @param atomContainer The GraphAtomContainer to be check for connectedness
-         * @return true if the GraphAtomContainer is connected
-         */
-        public static boolean isConnected(IAtomContainer atomContainer) {
-            boolean flag = false;
-
-            IAtomContainer ac = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-            IAtom atom = null;
-            IAtomContainer molecule = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-            List<IAtom> sphere = new ArrayList<>();
-            for (int f = 0; f < atomContainer.getAtomCount(); f++) {
-                atom = atomContainer.getAtom(f);
-                atom.setFlag(VISITED, false);
-                ac.addAtom(atomContainer.getAtom(f));
-            }
-
-            Iterator<IBond> bonds = atomContainer.bonds().iterator();
-            while (bonds.hasNext()) {
-                IBond bond = bonds.next();
-                bond.setFlag(VISITED, false);
-                ac.addBond(bond);
-            }
-            atom = ac.getAtom(0);
-            sphere.add(atom);
-            atom.setFlag(VISITED, true);
-            breadthFirstSearch(ac, sphere, molecule);
-            if (molecule.getAtomCount() == atomContainer.getAtomCount()) {
-                flag = true;
-            }
-            return flag;
-        }
-
-        /**
-         * Partitions the atoms in an GraphAtomContainer into covalently connected
-         * components.
-         *
-         * @param atomContainer The GraphAtomContainer to be partitioned into
-         * connected components, i.e. molecules
-         * @return A MoleculeSet.
-         *
-         *
-         */
-        public static IAtomContainerSet splitMolecules(IAtomContainer atomContainer) {
-            IAtomContainer ac = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-            IAtom atom;
-            IElectronContainer eContainer;
-            IAtomContainer molecule;
-            IAtomContainerSet molecules = atomContainer.getBuilder().newInstance(IAtomContainerSet.class);
-            List<IAtom> sphere = new ArrayList<>();
-            for (int f = 0; f < atomContainer.getAtomCount(); f++) {
-                atom = atomContainer.getAtom(f);
-                atom.setFlag(VISITED, false);
-                ac.addAtom(atom);
-            }
-            Iterator<IElectronContainer> eContainers = atomContainer.electronContainers().iterator();
-            while (eContainers.hasNext()) {
-                eContainer = eContainers.next();
-                eContainer.setFlag(VISITED, false);
-                ac.addElectronContainer(eContainer);
-            }
-            while (ac.getAtomCount() > 0) {
-                atom = ac.getAtom(0);
-                molecule = atomContainer.getBuilder().newInstance(IAtomContainer.class);
-                sphere.clear();
-                sphere.add(atom);
-                atom.setFlag(VISITED, true);
-                breadthFirstSearch(ac, sphere, molecule);
-                molecules.addAtomContainer(molecule);
-                ac.remove(molecule);
-            }
-            return molecules;
-        }
-
-        private EBIMolSplitter() {
-        }
-    }
 
 
 

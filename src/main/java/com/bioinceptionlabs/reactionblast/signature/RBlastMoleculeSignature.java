@@ -48,7 +48,7 @@ import signature.AbstractGraphBuilder;
 import signature.AbstractGraphSignature;
 import signature.AbstractVertexSignature;
 import signature.ColoredTree;
-import static com.bioinceptionlabs.reactionblast.tools.AtomContainerAtomPermutor.permute;
+import static com.bioinceptionlabs.reactionblast.optional.AtomContainerAtomPermutor.permute;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;

@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature;
-import static com.bioinceptionlabs.reactionblast.tools.ReactionSimilarityTool.getSimilarity;
+import static com.bioinceptionlabs.reactionblast.optional.ReactionSimilarityTool.getSimilarity;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BUG_RXN_DIR;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BRENDA_RXN_DIR;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.KEGG_RXN_DIR;

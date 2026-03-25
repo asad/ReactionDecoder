@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package com.bioinceptionlabs.reactionblast.tools;
+package com.bioinceptionlabs.reactionblast.optional;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.log;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.openscience.cdk.exception.CDKException;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
-import static com.bioinceptionlabs.reactionblast.tools.MoleculeTools.EBIDoubleUtility.append;
+import static java.lang.System.arraycopy;
 
 /**
  * This tool finds reaction similarity and distance based on our in-house
@@ -581,6 +581,27 @@ public class ReactionSimilarityTool {
                 + Pxy.get(3) * SI_1_1;
 
         return MI;
+    }
+
+    private static double[] append(double[] val1, double[] val2) throws CDKException {
+        if (val1.length == 0 || val2.length == 0) {
+            throw new CDKException("Index < 0: ");
+        }
+        double[] feature = new double[val1.length + val2.length];
+        arraycopy(val1, 0, feature, 0, val1.length);
+        arraycopy(val2, 0, feature, val1.length, val2.length);
+        return feature;
+    }
+
+    private static double[] append(double[] val1, double[] val2, double[] val3) throws CDKException {
+        if (val1.length == 0 || val2.length == 0 || val3.length == 0) {
+            throw new CDKException("Index < 0: ");
+        }
+        double[] feature = new double[val1.length + val2.length + val3.length];
+        arraycopy(val1, 0, feature, 0, val1.length);
+        arraycopy(val2, 0, feature, val1.length, val2.length);
+        arraycopy(val3, 0, feature, val1.length + val2.length, val3.length);
+        return feature;
     }
 
     private ReactionSimilarityTool() {

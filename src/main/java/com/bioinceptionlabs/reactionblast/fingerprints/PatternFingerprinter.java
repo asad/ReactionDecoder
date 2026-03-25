@@ -347,8 +347,32 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
      */
     @Override
     public int compare(IPatternFingerprinter o1, IPatternFingerprinter o2) {
-        Comparator<IPatternFingerprinter> comparator = PatternComparators.overallComparator();
-        return comparator.compare(o1, o2);
+        int len1 = o1.getFeatureCount();
+        int len2 = o2.getFeatureCount();
+        if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
+            return o1.getFingerprintID().compareTo(o2.getFingerprintID());
+        }
+        int n = min(len1, len2);
+        if (len1 == len2) {
+            int pos = 0;
+            while (n-- != 0) {
+                try {
+                    if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
+                        return o1.getFeature(pos).compareTo(o2.getFeature(pos));
+                    } else if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
+                        double v1 = o1.getWeight(pos);
+                        double v2 = o2.getWeight(pos);
+                        if (v1 != v2) {
+                            return (int) (max(v1, v2) - min(v1, v2));
+                        }
+                    }
+                } catch (CDKException ex) {
+                    LOGGER.error(SEVERE, null, ex);
+                }
+                pos++;
+            }
+        }
+        return max(len1, len2) - n;
     }
 
     /**
@@ -572,74 +596,6 @@ public class PatternFingerprinter implements Cloneable, IPatternFingerprinter,
         }
     }
 
-
-
-    /**
-     * @contact Syed Asad Rahman, BioInception.
-     * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
-     */
-    public static class PatternComparators {
-
-        private static final ILoggingTool LOGGER
-                = LoggingToolFactory.createLoggingTool(PatternComparators.class);
-
-        public static Comparator<IPatternFingerprinter> overallComparator() {
-            return (IPatternFingerprinter o1, IPatternFingerprinter o2) -> {
-                int len1 = o1.getFeatureCount();
-                int len2 = o2.getFeatureCount();
-                if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
-                    return o1.getFingerprintID().compareTo(o2.getFingerprintID());
-                }
-                int n = min(len1, len2);
-                if (len1 == len2) {
-                    int pos = 0;
-                    while (n-- != 0) {
-                        try {
-                            if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
-                                return o1.getFeature(pos).compareTo(o2.getFeature(pos));
-                            } else if (!o1.getFeature(pos).equals(o2.getFeature(pos))) {
-                                double v1 = o1.getWeight(pos);
-                                double v2 = o2.getWeight(pos);
-                                if (v1 != v2) {
-                                    return (int) (max(v1, v2) - min(v1, v2));
-                                }
-                            }
-                        } catch (CDKException ex) {
-                            LOGGER.error(SEVERE, null, ex);
-                        }
-                        pos++;
-                    }
-                }
-                return max(len1, len2) - n;
-            };
-        }
-
-        public static Comparator<IPatternFingerprinter> dataComparator() {
-            return (IPatternFingerprinter o1, IPatternFingerprinter o2) -> {
-                int len1 = o1.getFeatureCount();
-                int len2 = o2.getFeatureCount();
-                if (!o1.getFingerprintID().equals(o2.getFingerprintID())) {
-                    return o1.getFingerprintID().compareTo(o2.getFingerprintID());
-                }
-                int n = min(len1, len2);
-                if (len1 == len2) {
-                    int pos = 0;
-                    while (n-- != 0) {
-                        double v1 = o1.getWeight(pos);
-                        double v2 = o2.getWeight(pos);
-                        if (v1 != v2) {
-                            return (int) (max(v1, v2) - min(v1, v2));
-                        }
-                        pos++;
-                    }
-                }
-                return max(len1, len2) - n;
-            };
-        }
-
-        private PatternComparators() {
-        }
-    }
 
 
 }
