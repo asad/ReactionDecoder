@@ -51,6 +51,65 @@ public class StandardizeReaction {
     private static final ILoggingTool LOGGER = createLoggingTool(StandardizeReaction.class);
 
     /**
+     * Common solvents, reagents, and catalysts by canonical SMILES.
+     * These molecules never participate in bond-changing reactions —
+     * they facilitate or mediate but their bonds don't change.
+     */
+    private static final Set<String> KNOWN_REAGENT_SMILES = new HashSet<>(Arrays.asList(
+            // Solvents
+            "ClCCl",        // DCM (dichloromethane)
+            "ClC(Cl)Cl",    // chloroform
+            "CC(C)=O",      // acetone
+            "CCCCCC",       // hexane
+            "c1ccncc1",     // pyridine (also base)
+            "CC#N",         // acetonitrile (MeCN)
+            "CS(C)=O",      // DMSO
+            "CN(C)C=O",     // DMF
+            "C1CCOC1",      // THF
+            "CCOCC",        // diethyl ether
+            "C1COCCO1",     // 1,4-dioxane
+            "CO",           // methanol
+            "CCO",          // ethanol
+            "CC(C)O",       // isopropanol
+            "O",            // water
+            "CC(=O)O",      // acetic acid (when used as solvent)
+            "CCOC(C)=O",    // ethyl acetate
+            "c1ccccc1",     // benzene
+            "Cc1ccccc1",    // toluene
+            "c1ccc(cc1)C",  // toluene alternate
+            // Reducing agents
+            "[Na+]",        // sodium cation
+            "[K+]",         // potassium cation
+            "[Li+]",        // lithium cation
+            "[Cs+]",        // cesium cation
+            "[NH4+]",       // ammonium
+            "[Cl-]",        // chloride
+            "[Br-]",        // bromide
+            "[I-]",         // iodide
+            "[OH-]",        // hydroxide
+            // Inorganic bases/acids
+            "[Na]O",        // NaOH
+            "O=S(=O)(O)O",  // sulfuric acid
+            // Drying agents / dessicants
+            "O=S(Cl)Cl",    // thionyl chloride (reagent but bonds don't map)
+            "[Mg+2]",       // magnesium ion
+            "[Ca+2]",       // calcium ion
+            "[Zn]",         // zinc
+            // Borohydride / cyanoborohydride (reducing agents)
+            "[BH4-]",       // borohydride
+            "[BH3-]C#N"     // cyanoborohydride
+    ));
+
+    /**
+     * Metal elements commonly found in catalysts.
+     * Molecules containing these are likely catalysts, not reactants.
+     */
+    private static final Set<String> CATALYST_METALS = new HashSet<>(Arrays.asList(
+            "Pd", "Pt", "Rh", "Ru", "Ir", "Ni", "Cu", "Fe",
+            "Co", "Mn", "Ti", "Zr", "Mo", "W", "Os", "Ag", "Au"
+    ));
+
+    /**
      * Standardize a reaction: clean mappings, validate balance, build containers.
      *
      * @param reaction the input reaction
@@ -132,55 +191,80 @@ public class StandardizeReaction {
             List<IAtomContainer> keptReactants = new ArrayList<>();
             List<IAtomContainer> reagents = new ArrayList<>();
 
+            // Generate canonical SMILES for known-reagent lookup
+            org.openscience.cdk.smiles.SmilesGenerator smiGen =
+                    new org.openscience.cdk.smiles.SmilesGenerator(
+                            org.openscience.cdk.smiles.SmiFlavor.Canonical);
+
             for (IAtomContainer reactant : reaction.getReactants().atomContainers()) {
                 boolean isReagent = false;
-                try {
-                    org.openscience.cdk.fingerprint.IBitFingerprint reactantFP = fp.getBitFingerprint(reactant);
+                String reason = "";
 
-                    // Find max similarity to any product
-                    double maxSim = 0.0;
-                    for (org.openscience.cdk.fingerprint.IBitFingerprint prodFP : productFPs) {
-                        if (prodFP != null) {
-                            double sim = Tanimoto.calculate(reactantFP, prodFP);
-                            maxSim = Math.max(maxSim, sim);
-                        }
+                try {
+                    // Check 1: Known solvent/reagent by canonical SMILES
+                    String canSmiles = smiGen.create(reactant);
+                    if (KNOWN_REAGENT_SMILES.contains(canSmiles)) {
+                        isReagent = true;
+                        reason = "known reagent/solvent: " + canSmiles;
                     }
 
-                    // If no product resembles this reactant, it's likely a reagent
-                    if (maxSim < 0.3 && reactant.getAtomCount() > 0) {
-                        // Double-check: does any atom type in this molecule appear
-                        // exclusively in the reactant (i.e., removed in products)?
-                        // If so, it might still be a real reactant (leaving group)
-                        boolean hasUniqueContribution = false;
-                        Map<String, Integer> reactantAtomCounts = new LinkedHashMap<>();
+                    // Check 2: Contains catalyst metal
+                    if (!isReagent) {
                         for (IAtom atom : reactant.atoms()) {
-                            reactantAtomCounts.merge(atom.getSymbol(), 1, Integer::sum);
-                        }
-                        // Check if this reactant contributes atoms not in products
-                        for (Map.Entry<String, Integer> entry : reactantAtomCounts.entrySet()) {
-                            if (!productAtomCounts.containsKey(entry.getKey())) {
-                                hasUniqueContribution = true;
+                            if (CATALYST_METALS.contains(atom.getSymbol())) {
+                                isReagent = true;
+                                reason = "catalyst metal: " + atom.getSymbol();
                                 break;
                             }
                         }
+                    }
 
-                        // Only filter if: low similarity AND no unique atom contribution
-                        // AND molecule is small (≤ 10 heavy atoms) — large molecules
-                        // are more likely to be real reactants
-                        int heavyAtomCount = 0;
-                        for (IAtom atom : reactant.atoms()) {
-                            if (!"H".equals(atom.getSymbol())) heavyAtomCount++;
+                    // Check 3: Tanimoto fingerprint similarity
+                    if (!isReagent) {
+                        org.openscience.cdk.fingerprint.IBitFingerprint reactantFP =
+                                fp.getBitFingerprint(reactant);
+
+                        double maxSim = 0.0;
+                        for (org.openscience.cdk.fingerprint.IBitFingerprint prodFP : productFPs) {
+                            if (prodFP != null) {
+                                double sim = Tanimoto.calculate(reactantFP, prodFP);
+                                maxSim = Math.max(maxSim, sim);
+                            }
                         }
-                        if (!hasUniqueContribution && heavyAtomCount <= 10) {
-                            isReagent = true;
-                            LOGGER.debug("Filtered reagent/solvent: " + reactant.getID()
-                                    + " (Tanimoto=" + String.format("%.2f", maxSim)
-                                    + ", atoms=" + heavyAtomCount + ")");
+
+                        if (maxSim < 0.4 && reactant.getAtomCount() > 0) {
+                            // Check for unique atom contribution
+                            boolean hasUniqueContribution = false;
+                            Map<String, Integer> reactantAtomCounts = new LinkedHashMap<>();
+                            for (IAtom atom : reactant.atoms()) {
+                                reactantAtomCounts.merge(atom.getSymbol(), 1, Integer::sum);
+                            }
+                            for (Map.Entry<String, Integer> entry : reactantAtomCounts.entrySet()) {
+                                if (!productAtomCounts.containsKey(entry.getKey())) {
+                                    hasUniqueContribution = true;
+                                    break;
+                                }
+                            }
+
+                            int heavyAtomCount = 0;
+                            for (IAtom atom : reactant.atoms()) {
+                                if (!"H".equals(atom.getSymbol())) heavyAtomCount++;
+                            }
+
+                            if (!hasUniqueContribution && heavyAtomCount <= 10) {
+                                isReagent = true;
+                                reason = "low Tanimoto=" + String.format("%.2f", maxSim)
+                                        + ", atoms=" + heavyAtomCount;
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    // If fingerprinting fails, keep the molecule as reactant
-                    LOGGER.debug("Fingerprint failed for " + reactant.getID() + ": " + e.getMessage());
+                    LOGGER.debug("Filter check failed for " + reactant.getID()
+                            + ": " + e.getMessage());
+                }
+
+                if (isReagent) {
+                    LOGGER.debug("Filtered: " + reason);
                 }
 
                 if (isReagent) {
