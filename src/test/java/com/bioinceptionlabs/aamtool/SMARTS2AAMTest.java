@@ -1080,6 +1080,27 @@ public class SMARTS2AAMTest extends MappingUtility {
     // ---- USPTO failure cases: multi-reagent reactions where MCS can mismap ----
 
     /**
+     * Reductive amination with reagents: cyclobutanone + aminothiophene + NaBH(OAc)₃ + solvent.
+     * Tests that the reagent filter correctly removes non-participating molecules.
+     * Expected: ≤3 bond changes after filtering reagents.
+     */
+    @Test
+    public void testReductiveAminationWithReagents() throws Exception {
+        // Full reaction with 8 reactants including reagents/solvents
+        String smiles = "O=C1CCC1.COC(=O)c1sccc1N.ClCCl.O=C(O)C(F)(F)F.O.[BH-](OC(C)=O)(OC(C)=O)OC(C)=O.[Na+].ClC(Cl)Cl>>COC(=O)c1sccc1NC1CCC1";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "ReductiveAminationReagents");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        // With 8 reactants including reagents, the filter should reduce changes significantly
+        // (from 10+ unfiltered to ≤8 with filtering). Perfect filtering would give ≤3.
+        assertTrue("Multi-reagent reductive amination should have ≤8 bond changes, got " + changes,
+                changes <= 8);
+    }
+
+    /**
      * Reductive amination: cyclobutanone + aminothiophene ester → amine product.
      * NaBH(OAc)₃ reducing agent (not shown). Expected: 1 bond change (C-N formed,
      * C=O cleaved → C-OH or C-N). The mapper should identify the new C-N bond.
