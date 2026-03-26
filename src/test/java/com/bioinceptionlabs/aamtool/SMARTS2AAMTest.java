@@ -4,6 +4,7 @@
 package com.bioinceptionlabs.aamtool;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -1074,6 +1075,96 @@ public class SMARTS2AAMTest extends MappingUtility {
         assertTrue("Acetyltransferase should detect bond changes",
                 rmt.getSelectedSolution().getBondChangeCalculator()
                         .getFormedCleavedWFingerprint().getFeatureCount() > 0);
+    }
+
+    // ---- USPTO failure cases: multi-reagent reactions where MCS can mismap ----
+
+    /**
+     * Reductive amination: cyclobutanone + aminothiophene ester → amine product.
+     * NaBH(OAc)₃ reducing agent (not shown). Expected: 1 bond change (C-N formed,
+     * C=O cleaved → C-OH or C-N). The mapper should identify the new C-N bond.
+     */
+    @Test
+    public void testReductiveAmination() throws Exception {
+        String smiles = "O=C1CCC1.COC(=O)c1sccc1N>>COC(=O)c1sccc1NC1CCC1";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "ReductiveAmination");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        assertTrue("Reductive amination should have ≤3 bond changes (C=O→C-N), got " + changes,
+                changes <= 3);
+    }
+
+    /**
+     * O-alkylation: piperazine chloroalkyl + phenol → ether product.
+     * Expected: 1 bond change (C-O formed, C-Cl cleaved).
+     * Challenge: MCS must map piperazine correctly to avoid false positives.
+     */
+    @Test
+    public void testOAlkylation() throws Exception {
+        String smiles = "ClCCCN1CCN(Cc2ccc(Cl)cc2)CC1.Oc1ccc2oc3ccccc3c2c1>>c1ccc2c(c1)c1cc(OCCCN3CCN(Cc4ccc(Cl)cc4)CC3)ccc1o2";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "OAlkylation");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        assertTrue("O-alkylation should have ≤3 bond changes (C-Cl→C-O), got " + changes,
+                changes <= 3);
+    }
+
+    /**
+     * N-alkylation: benzyl chloride + indole → N-benzylindole.
+     * Expected: 1 bond change (C-N formed, C-Cl cleaved).
+     * Challenge: MCS must orient benzyl group correctly.
+     */
+    @Test
+    public void testNAlkylation() throws Exception {
+        String smiles = "N#Cc1ccccc1CCl.c1ccc2[nH]ccc2c1>>N#Cc1ccccc1Cn1ccc2ccccc21";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "NAlkylation");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        assertTrue("N-alkylation should have ≤3 bond changes (C-Cl→C-N), got " + changes,
+                changes <= 3);
+    }
+
+    /**
+     * Reductive amination #2: pyrrolidinone + aminopyridine → aminopyrrolidine.
+     * NaBH₄ reduction (not shown). Expected: ~2 bond changes.
+     */
+    @Test
+    public void testReductiveAmination2() throws Exception {
+        String smiles = "O=C1CCN(Cc2ccccc2)C1.Cc1cc(C)nc(N)c1>>Cc1cc(C)nc(NC2CCN(Cc3ccccc3)C2)c1";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "ReductiveAmination2");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        assertTrue("Reductive amination should have ≤4 bond changes, got " + changes,
+                changes <= 4);
+    }
+
+    /**
+     * Friedel-Crafts acylation: acetic anhydride + indole → 3-acetylindole.
+     * AlCl₃ catalyst (not shown). Expected: 1-2 bond changes.
+     */
+    @Test
+    public void testFriedelCraftsAcylation() throws Exception {
+        String smiles = "CC(=O)OC(C)=O.c1ccc2[nH]ccc2c1>>CC(=O)c1c[nH]c2ccccc12";
+        ReactionMechanismTool rmt = performAtomAtomMapping(
+                new SmilesParser(SilentChemObjectBuilder.getInstance()).parseReactionSmiles(smiles),
+                "FriedelCrafts");
+        assertNotNull("Should produce a mapping", rmt.getSelectedSolution());
+        int changes = rmt.getSelectedSolution().getBondChangeCalculator()
+                .getFormedCleavedWFingerprint().getFeatureCount();
+        assertTrue("Friedel-Crafts should have ≤4 bond changes, got " + changes,
+                changes <= 4);
     }
 
     @Test
