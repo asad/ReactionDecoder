@@ -146,9 +146,11 @@ Performance
 | Metric | Value |
 |--------|-------|
 | Mapping speed | 3.4 reactions/sec (USPTO 50K) |
-| Test suite | 148 tests, 100% pass |
-| Test time | ~90s (6.5x faster than v2.x) |
-| Codebase | 77 files (reduced from 345) |
+| RXN coverage | 598/599 (99.8%) |
+| Test suite | 156 tests, 100% pass |
+| Test time | ~120s (4x faster than v2.x) |
+| Codebase | 68 files (reduced from 345) |
+| Dependencies | SMSD 4.3.0, CDK 2.12 |
 | Deterministic | Yes (no ML training needed) |
 
 How to Cite RDT?
