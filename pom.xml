@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.bioinceptionlabs</groupId>
             <artifactId>smsd</artifactId>
-            <version>4.3.0</version>
+            <version>5.2.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->

@@ -150,7 +150,7 @@ Performance
 | Test suite | 156 tests, 100% pass |
 | Test time | ~120s (4x faster than v2.x) |
 | Codebase | 68 files (reduced from 345) |
-| Dependencies | SMSD 4.3.0, CDK 2.12 |
+| Dependencies | SMSD 5.2.1, CDK 2.12 |
 | Deterministic | Yes (no ML training needed) |
 
 How to Cite RDT?
