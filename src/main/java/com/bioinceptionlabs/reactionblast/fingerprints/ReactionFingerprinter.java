@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.BitSet;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.CircularFingerprinter;
+import com.bioinception.smsd.core.SearchEngine;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
@@ -34,7 +34,6 @@ import static java.lang.Math.sqrt;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Level.SEVERE;
-import static org.openscience.cdk.fingerprint.CircularFingerprinter.CLASS_ECFP4;
 import static org.openscience.cdk.geometry.GeometryUtil.has2DCoordinates;
 import static org.openscience.cdk.graph.ConnectivityChecker.isConnected;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
@@ -212,6 +211,9 @@ public class ReactionFingerprinter implements Serializable {
      */
     public static class FingerprintGenerator implements IFingerprintGenerator {
 
+        private static final int FP_PATH_LENGTH = 7;
+        private static final int FP_SIZE = 1024;
+
         private final static ILoggingTool LOGGER
                 = createLoggingTool(FingerprintGenerator.class);
 
@@ -221,20 +223,13 @@ public class ReactionFingerprinter implements Serializable {
          * @return
          */
         public static int getFingerprinterSize() {
-            return new CircularFingerprinter(CLASS_ECFP4).getSize();
+            return FP_SIZE;
         }
-
-        //define the FINGERPRINT_SIZE of the fingerprint
-        //NOTE: this should be a multiple of 64 and preferably not 1024 or 2048
-        //as for these values we often get the random numbers for one-atom or
-        //two-atom paths the same!
-        final CircularFingerprinter fingerprinter;
 
         /**
          *
          */
         public FingerprintGenerator() {
-            fingerprinter = new CircularFingerprinter(CLASS_ECFP4);
         }
 
         /**
@@ -255,9 +250,26 @@ public class ReactionFingerprinter implements Serializable {
                     LOGGER.debug("Disconnected components needs to be layout separately");
                 }
             }
-            return fingerprinter.getBitFingerprint(mol).asBitSet();
+            long[] fp = SearchEngine.pathFingerprint(mol, FP_PATH_LENGTH, FP_SIZE);
+            return longArrayToBitSet(fp);
         }
 
+    }
+
+    /**
+     * Convert SMSD long[] fingerprint to BitSet
+     */
+    public static BitSet longArrayToBitSet(long[] fp) {
+        BitSet bs = new BitSet(fp.length * 64);
+        for (int i = 0; i < fp.length; i++) {
+            long word = fp[i];
+            for (int bit = 0; bit < 64; bit++) {
+                if ((word & (1L << bit)) != 0) {
+                    bs.set(i * 64 + bit);
+                }
+            }
+        }
+        return bs;
     }
 
 

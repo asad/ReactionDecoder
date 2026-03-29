@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import com.bioinception.smsd.core.SearchEngine;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.Fingerprinter;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -1144,8 +1144,8 @@ public class ReactionContainer implements Cloneable, Serializable {
                         Single Atom fingerprints
                          */
                         if (fingerprint_Present_Mol.isEmpty()) {
-                            Fingerprinter fingerprinter = new Fingerprinter();
-                            fingerprint_Present_Mol = fingerprinter.getBitFingerprint(molecule).asBitSet();
+                            long[] fp = SearchEngine.pathFingerprint(molecule, 7, 1024);
+                            fingerprint_Present_Mol = com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.longArrayToBitSet(fp);
                         }
                         //Loop for Unique Mol ID Creation
                         if (!fingerprint_Present_Mol.isEmpty()) {
