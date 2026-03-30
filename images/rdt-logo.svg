@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ReactionDecoder (RDT) Logo
+  Copyright (c) 2026 BioInception PVT LTD, Cambridge, UK
+  Algorithm Copyright (c) 2009-2026 Syed Asad Rahman
+  Licensed under the Apache License, Version 2.0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d3330"/>
+      <stop offset="100%" style="stop-color:#0f766e"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2dd4bf;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#2dd4bf;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="0" y="0" width="256" height="256" rx="48" fill="url(#bg)"/>
+
+  <!-- Reactant molecule (left) - hexagon with atom nodes -->
+  <g stroke="#4ee8c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Hexagon ring -->
+    <polygon points="68,88 88,76 108,88 108,112 88,124 68,112"/>
+    <!-- Substituent bonds -->
+    <line x1="68" y1="88" x2="52" y2="78"/>
+    <line x1="108" y1="112" x2="124" y2="122"/>
+  </g>
+  <!-- Atom nodes -->
+  <circle cx="68" cy="88" r="5" fill="#4ee8c7"/>
+  <circle cx="88" cy="76" r="5" fill="#4ee8c7"/>
+  <circle cx="108" cy="88" r="5" fill="#4ee8c7"/>
+  <circle cx="108" cy="112" r="5" fill="#4ee8c7"/>
+  <circle cx="88" cy="124" r="5" fill="#4ee8c7"/>
+  <circle cx="68" cy="112" r="5" fill="#4ee8c7"/>
+  <circle cx="52" cy="78" r="4" fill="#f0fdfa" stroke="#4ee8c7" stroke-width="2"/>
+  <circle cx="124" cy="122" r="4" fill="#f0fdfa" stroke="#4ee8c7" stroke-width="2"/>
+
+  <!-- Reaction arrow -->
+  <line x1="100" y1="148" x2="156" y2="148" stroke="url(#glow)" stroke-width="4" stroke-linecap="round"/>
+  <polyline points="148,140 160,148 148,156" fill="none" stroke="#2dd4bf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Product molecule (right) - pentagon with atom nodes -->
+  <g stroke="#4ee8c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7">
+    <polygon points="168,88 188,78 204,92 198,116 174,116"/>
+    <line x1="204" y1="92" x2="220" y2="82"/>
+  </g>
+  <circle cx="168" cy="88" r="5" fill="#4ee8c7" opacity="0.7"/>
+  <circle cx="188" cy="78" r="5" fill="#4ee8c7" opacity="0.7"/>
+  <circle cx="204" cy="92" r="5" fill="#4ee8c7" opacity="0.7"/>
+  <circle cx="198" cy="116" r="5" fill="#4ee8c7" opacity="0.7"/>
+  <circle cx="174" cy="116" r="5" fill="#4ee8c7" opacity="0.7"/>
+  <circle cx="220" cy="82" r="4" fill="#f0fdfa" stroke="#4ee8c7" stroke-width="2" opacity="0.7"/>
+
+  <!-- Atom-atom mapping lines (dashed, golden) -->
+  <line x1="88" y1="76" x2="188" y2="78" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <line x1="108" y1="88" x2="204" y2="92" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <line x1="68" y1="112" x2="174" y2="116" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+  <!-- Mapping number labels -->
+  <circle cx="88" cy="66" r="8" fill="#0d3330" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="88" y="70" font-size="10" fill="#fbbf24" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold">1</text>
+
+  <circle cx="108" cy="78" r="8" fill="#0d3330" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="108" y="82" font-size="10" fill="#fbbf24" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold">2</text>
+
+  <circle cx="68" cy="122" r="8" fill="#0d3330" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="68" y="126" font-size="10" fill="#fbbf24" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold">3</text>
+
+  <!-- RDT text -->
+  <text x="128" y="186" font-size="36" fill="#f0fdfa" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="700" letter-spacing="3">RDT</text>
+
+  <!-- Subtitle -->
+  <text x="128" y="208" font-size="11" fill="#4ee8c7" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="400" letter-spacing="1.5">REACTION DECODER</text>
+
+  <!-- BioInception credit -->
+  <text x="128" y="236" font-size="8" fill="#4ee8c7" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" opacity="0.5">BioInception PVT LTD</text>
+</svg>
