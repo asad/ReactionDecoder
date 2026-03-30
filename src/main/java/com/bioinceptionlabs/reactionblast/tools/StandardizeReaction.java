@@ -28,12 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.openscience.cdk.fingerprint.CircularFingerprinter;
+import com.bioinception.smsd.core.SMSD;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.similarity.Tanimoto;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.CDKReactionBuilder;
@@ -172,14 +171,13 @@ public class StandardizeReaction {
         }
 
         try {
-            CircularFingerprinter fp = new CircularFingerprinter();
             IAtomContainerSet products = reaction.getProducts();
 
-            // Pre-compute product fingerprints
-            List<org.openscience.cdk.fingerprint.IBitFingerprint> productFPs = new ArrayList<>();
+            // Pre-compute product fingerprints using SMSD ECFP4 (radius=2)
+            List<long[]> productFPs = new ArrayList<>();
             for (IAtomContainer prod : products.atomContainers()) {
                 try {
-                    productFPs.add(fp.getBitFingerprint(prod));
+                    productFPs.add(SMSD.circularFingerprintECFP(prod, 2, 1024));
                 } catch (Exception e) {
                     productFPs.add(null);
                 }
@@ -200,10 +198,14 @@ public class StandardizeReaction {
                 boolean isReagent = false;
                 String reason = "";
 
+                // Check if this reactant is needed for atom balance
+                boolean neededForBalance = isNeededForBalance(
+                        reactant, reaction.getReactants(), productAtomCounts);
+
                 try {
                     // Check 1: Known solvent/reagent by canonical SMILES
                     String canSmiles = smiGen.create(reactant);
-                    if (KNOWN_REAGENT_SMILES.contains(canSmiles)) {
+                    if (!neededForBalance && KNOWN_REAGENT_SMILES.contains(canSmiles)) {
                         isReagent = true;
                         reason = "known reagent/solvent: " + canSmiles;
                     }
@@ -220,14 +222,13 @@ public class StandardizeReaction {
                     }
 
                     // Check 3: Tanimoto fingerprint similarity
-                    if (!isReagent) {
-                        org.openscience.cdk.fingerprint.IBitFingerprint reactantFP =
-                                fp.getBitFingerprint(reactant);
+                    if (!isReagent && !neededForBalance) {
+                        long[] reactantFP = SMSD.circularFingerprintECFP(reactant, 2, 1024);
 
                         double maxSim = 0.0;
-                        for (org.openscience.cdk.fingerprint.IBitFingerprint prodFP : productFPs) {
+                        for (long[] prodFP : productFPs) {
                             if (prodFP != null) {
-                                double sim = Tanimoto.calculate(reactantFP, prodFP);
+                                double sim = SMSD.fingerprintTanimoto(reactantFP, prodFP);
                                 maxSim = Math.max(maxSim, sim);
                             }
                         }
@@ -308,6 +309,20 @@ public class StandardizeReaction {
             LOGGER.debug("Reagent filtering failed: " + e.getMessage());
             return reaction; // return unfiltered on error
         }
+    }
+
+    private boolean isNeededForBalance(IAtomContainer candidate,
+            IAtomContainerSet allReactants, Map<String, Integer> productAtomCounts) {
+        Map<String, Integer> remaining = new LinkedHashMap<>(countAtoms(allReactants));
+        for (IAtom atom : candidate.atoms()) {
+            remaining.merge(atom.getSymbol(), -1, Integer::sum);
+        }
+        for (Map.Entry<String, Integer> entry : productAtomCounts.entrySet()) {
+            if (remaining.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Map<String, Integer> countAtoms(IAtomContainerSet molSet) {

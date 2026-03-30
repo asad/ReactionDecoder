@@ -47,8 +47,7 @@ import static java.util.logging.Level.SEVERE;
 
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.CircularFingerprinter;
-import org.openscience.cdk.fingerprint.IBitFingerprint;
+import com.bioinception.smsd.core.SMSD;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -137,6 +136,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     private final static ILoggingTool LOGGER
             = createLoggingTool(GameTheoryEngine.class);
     private static final long serialVersionUID = 1698688633678282L;
+
+    private final transient java.util.IdentityHashMap<IAtomContainer, int[]> circularFPCache
+            = new java.util.IdentityHashMap<>();
 
     // ---- BaseGameTheory methods inlined into outer class ----
 
@@ -500,10 +502,19 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     private int[] getCircularFP(IAtomContainer mol) throws CDKException {
-        CircularFingerprinter circularFingerprinter = new CircularFingerprinter(6, 1024);
-        circularFingerprinter.setPerceiveStereo(true);
-        IBitFingerprint bitFingerprint = circularFingerprinter.getBitFingerprint(mol);
-        return bitFingerprint.getSetbits();
+        int[] cached = circularFPCache.get(mol);
+        if (cached != null) {
+            return cached;
+        }
+        long[] fp = SMSD.circularFingerprintFCFP(mol, 1, 1024);
+        BitSet bs = SMSD.toBitSet(fp);
+        int[] bits = new int[bs.cardinality()];
+        int idx = 0;
+        for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i + 1)) {
+            bits[idx++] = i;
+        }
+        circularFPCache.put(mol, bits);
+        return bits;
     }
 
     MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,
