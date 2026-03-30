@@ -3,7 +3,7 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.5.0`
+`Reaction Decoder Tool (RDT) v3.6.0`
 --------------------------------------
 
 **Toolkit-agnostic reaction mapping engine** with CDK adapter. Deterministic, no training data required.
@@ -111,7 +111,7 @@ The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in 
 <!-- Old (v2.x) -->
 <groupId>uk.ac.ebi.rdt</groupId>
 
-<!-- New (v3.5.0+) -->
+<!-- New (v3.6.0+) -->
 <groupId>com.bioinceptionlabs</groupId>
 ```
 
@@ -185,7 +185,7 @@ Sub-commands
 `AAM using SMILES`
 
   ```
-  java -jar rdt-3.5.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
+  java -jar rdt-3.6.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
 `Perform AAM` for Transporters
@@ -194,14 +194,14 @@ Sub-commands
 `AAM using SMILES` (accept mapping with no bond changes -b)
 
   ```
-  java -jar rdt-3.5.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
+  java -jar rdt-3.6.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
   ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
   ```
-  java -jar rdt-3.5.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
+  java -jar rdt-3.6.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
   ```
 
 
@@ -211,12 +211,12 @@ Sub-commands
 `Compare Reactions using SMILES with precomputed AAM mappings`
 
   ```
-  java -jar rdt-3.5.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+  java -jar rdt-3.6.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
   ```
 
 
 `Compare Reactions using RXN files`
 
   ```
-  java -jar rdt-3.5.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
+  java -jar rdt-3.6.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
   ```
