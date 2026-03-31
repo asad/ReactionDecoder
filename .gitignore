@@ -38,3 +38,6 @@ hs_err_pid*
 /rdt/core/Output/
 /rdt/target/
 /rdt/Output/
+.claude/
+.env
+*.secret

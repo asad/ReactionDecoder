@@ -58,6 +58,11 @@ class ChemicalFormatParser {
 
     protected static IReaction parseCML(String input) throws FileNotFoundException, CDKException {
         File f = new File(input);
+        try {
+            f = f.getCanonicalFile();
+        } catch (IOException e) {
+            throw new FileNotFoundException("Invalid file path: " + input);
+        }
         if (!f.isFile()) {
             throw new FileNotFoundException("CML file not found: " + f.getName());
         }
@@ -87,7 +92,13 @@ class ChemicalFormatParser {
                 continue;
             }
             String fileName = f[0].trim() + ".rxn";
-            File filepath = new File(fileName);
+            File filepath;
+            try {
+                filepath = new File(fileName).getCanonicalFile();
+            } catch (IOException e) {
+                LOGGER.error(WARNING, format("Invalid file path! %s", fileName));
+                continue;
+            }
             if (!filepath.isFile()) {
                 LOGGER.error(WARNING, format("RXN file not found! %s", filepath.getName()));
                 continue;

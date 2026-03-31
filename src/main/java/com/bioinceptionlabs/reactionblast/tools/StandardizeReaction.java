@@ -177,7 +177,7 @@ public class StandardizeReaction {
             List<long[]> productFPs = new ArrayList<>();
             for (IAtomContainer prod : products.atomContainers()) {
                 try {
-                    productFPs.add(SMSD.circularFingerprintECFP(prod, 2, 1024));
+                    productFPs.add(SMSD.circularFingerprintECFP(prod, 2, 256));
                 } catch (Exception e) {
                     productFPs.add(null);
                 }
@@ -223,7 +223,7 @@ public class StandardizeReaction {
 
                     // Check 3: Tanimoto fingerprint similarity
                     if (!isReagent && !neededForBalance) {
-                        long[] reactantFP = SMSD.circularFingerprintECFP(reactant, 2, 1024);
+                        long[] reactantFP = SMSD.circularFingerprintECFP(reactant, 2, 256);
 
                         double maxSim = 0.0;
                         for (long[] prodFP : productFPs) {

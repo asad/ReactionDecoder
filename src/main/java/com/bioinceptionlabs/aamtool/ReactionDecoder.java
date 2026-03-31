@@ -163,6 +163,8 @@ public class ReactionDecoder extends Annotator {
 
         // write xml to file
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(METHOD, "xml");
@@ -258,6 +260,7 @@ public class ReactionDecoder extends Annotator {
 
         if (writeFiles && aamLine.getOptionValue("f").equalsIgnoreCase("XML")) {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             // root element
             org.w3c.dom.Document doc = docBuilder.newDocument();
@@ -275,6 +278,7 @@ public class ReactionDecoder extends Annotator {
         } else if (writeFiles && aamLine.getOptionValue("f").equalsIgnoreCase("BOTH")) {
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             // root element
             org.w3c.dom.Document doc = docBuilder.newDocument();

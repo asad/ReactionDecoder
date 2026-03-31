@@ -172,9 +172,9 @@ public class CallableAtomMappingTool implements Serializable {
             LOGGER.error(e);
         } finally {
             executor.shutdown();
+            LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
+            ThreadSafeCache.getInstance().cleanup();
         }
-        LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
-        ThreadSafeCache.getInstance().cleanup();
     }
 
     /**
