@@ -129,11 +129,11 @@ public final class Substructure extends BaseMapping {
         }
 
         try {
-            ChemOptions chemOptions = new ChemOptions();
+            ChemOptions chemOptions = buildChemOptions();
             SMSD smsd = new SMSD(getQuery(), getTarget(), chemOptions);
 
             if (findAllMatches) {
-                List<Map<Integer, Integer>> results = smsd.findAllSubstructures(100, 30000);
+                List<Map<Integer, Integer>> results = smsd.findAllSubstructures(10, 30000);
                 if (results != null && !results.isEmpty()) {
                     for (Map<Integer, Integer> mapping : results) {
                         AtomAtomMapping aam = convertMapping(getQuery(), getTarget(), mapping);

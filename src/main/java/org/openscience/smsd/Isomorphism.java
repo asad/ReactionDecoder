@@ -104,28 +104,42 @@ public final class Isomorphism extends BaseMapping implements Serializable {
     }
 
     /**
-     * Delegates MCS computation to SMSD 3.0.0.
+     * Delegates MCS computation to SMSD.
+     * First tries a fast substructure check; if that fails, falls back to full MCS.
      */
     private void smsdMCSAlgorithm(IAtomContainer mol1, IAtomContainer mol2) throws CDKException {
         try {
-            // First try substructure check
-            if (mol1.getAtomCount() > 1 && mol2.getAtomCount() > 1) {
-                Substructure sub;
-                if (mol1 instanceof IQueryAtomContainer) {
-                    sub = new Substructure((IQueryAtomContainer) mol1, mol2, atomMatcher, bondMatcher, true);
-                } else {
-                    sub = new Substructure(mol1, mol2, atomMatcher, bondMatcher, true);
-                }
-                if (sub.isSubgraph()) {
+            ChemOptions chemOptions = buildChemOptions();
+            SMSD smsd = new SMSD(mol1, mol2, chemOptions);
+
+            // Fast substructure check before expensive MCS
+            if (smsd.isSubstructure(5000)) {
+                java.util.List<Map<Integer, Integer>> subResults = smsd.findAllSubstructures(1, 5000);
+                if (subResults != null && !subResults.isEmpty()) {
                     clearMaps();
-                    getMCSList().addAll(sub.getAllAtomMapping());
+                    for (Map<Integer, Integer> mapping : subResults) {
+                        AtomAtomMapping aam = new AtomAtomMapping(mol1, mol2);
+                        for (Map.Entry<Integer, Integer> entry : mapping.entrySet()) {
+                            int qIdx = entry.getKey();
+                            int tIdx = entry.getValue();
+                            if (qIdx >= 0 && qIdx < mol1.getAtomCount()
+                                    && tIdx >= 0 && tIdx < mol2.getAtomCount()) {
+                                IAtom qAtom = mol1.getAtom(qIdx);
+                                IAtom tAtom = mol2.getAtom(tIdx);
+                                if (qAtom != null && tAtom != null) {
+                                    aam.put(qAtom, tAtom);
+                                }
+                            }
+                        }
+                        if (!aam.isEmpty()) {
+                            getMCSList().add(aam);
+                        }
+                    }
                     return;
                 }
             }
 
-            // Fall back to MCS via SMSD 3.4.0
-            ChemOptions chemOptions = new ChemOptions();
-            SMSD smsd = new SMSD(mol1, mol2, chemOptions);
+            // Fall back to full MCS
             Map<Integer, Integer> mcsResult = smsd.findMCS();
 
             clearMaps();

@@ -4,7 +4,7 @@
     <groupId>com.bioinceptionlabs</groupId>
     <artifactId>rdt</artifactId>
     <description>Reaction Decoder Tool</description>
-    <version>3.6.0</version>
+    <version>3.6.1</version>
     <packaging>jar</packaging>
     <properties>
         <jdk.version>21</jdk.version>

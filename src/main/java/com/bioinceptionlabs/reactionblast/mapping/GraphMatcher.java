@@ -297,8 +297,18 @@ public class GraphMatcher extends Debugger {
                 int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
                 boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
 
+                // Clone molecules for thread safety — CDK IAtomContainer is mutable and not thread-safe
+                IAtomContainer eductClone;
+                IAtomContainer productClone;
+                try {
+                    eductClone = educt.clone();
+                    productClone = product.clone();
+                } catch (CloneNotSupportedException e) {
+                    eductClone = educt;
+                    productClone = product;
+                }
                 MCSThread mcsThread = new MCSThread(mh.getTheory(),
-                        substrateIndex, productIndex, educt, product);
+                        substrateIndex, productIndex, eductClone, productClone);
                 mcsThread.setHasPerfectRings(ringSizeEqual);
                 mcsThread.setEductRingCount(numberOfCyclesEduct);
                 mcsThread.setProductRingCount(numberOfCyclesProduct);

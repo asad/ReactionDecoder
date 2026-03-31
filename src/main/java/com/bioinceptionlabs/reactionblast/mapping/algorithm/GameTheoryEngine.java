@@ -506,7 +506,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         if (cached != null) {
             return cached;
         }
-        long[] fp = SMSD.circularFingerprintFCFP(mol, 1, 1024);
+        long[] fp = SMSD.circularFingerprintFCFP(mol, 1, 256);
         BitSet bs = SMSD.toBitSet(fp);
         int[] bits = new int[bs.cardinality()];
         int idx = 0;

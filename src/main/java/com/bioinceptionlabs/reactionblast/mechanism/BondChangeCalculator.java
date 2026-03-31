@@ -454,8 +454,7 @@ public class BondChangeCalculator extends MechanismHelpers.Utility implements IC
      * @throws IOException
      */
     public void writeBondChanges(File bondChangeInfoFile) throws IOException {
-        FileWriter bcFW = new FileWriter(bondChangeInfoFile + ".txt");
-        try (BufferedWriter bfw = new BufferedWriter(bcFW)) {
+        try (BufferedWriter bfw = new BufferedWriter(new FileWriter(bondChangeInfoFile + ".txt"))) {
             bfw.newLine();
 
             bfw.write(getLicenseHeader());
