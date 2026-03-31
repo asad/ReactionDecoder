@@ -194,7 +194,7 @@ public class GoldenDatasetBenchmarkTest {
         // equivalentMatch includes exactAtomMatch cases, so true accuracy = equivalent/total
 
         System.out.println();
-        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.6.1) ===");
+        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.7.0) ===");
         System.out.println("Total reactions:        " + total);
         System.out.println();
         System.out.println("--- Core Metrics ---");
@@ -230,7 +230,7 @@ public class GoldenDatasetBenchmarkTest {
         System.out.println("| RXNMapper          | 83.74%      | -         | -         | Unsup.   | No            |");
         System.out.println("| RDTool (published) | 76.18%      | -         | -         | None     | Yes           |");
         System.out.println("| ChemAxon           | 70.45%      | -         | -         | Propr.   | Yes           |");
-        System.out.printf("| RDT v3.6.1         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
+        System.out.printf("| RDT v3.7.0         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
                 pct_d(exactAtomMatch, total), atomAccuracy, pct_d(bondChangeExact, total));
 
         assertTrue("Mapping success rate should be > 70%", success > total * 0.70);
