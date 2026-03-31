@@ -3,10 +3,21 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.6.0`
+`Reaction Decoder Tool (RDT) v3.7.0`
 --------------------------------------
 
 **Toolkit-agnostic reaction mapping engine** with CDK adapter. Deterministic, no training data required.
+
+### Golden Dataset Benchmark (Lin et al. 2022, 1,851 reactions)
+
+| Tool | Exact Match | Atom Accuracy | Training Data | Deterministic |
+|------|-------------|---------------|---------------|---------------|
+| **RDT v3.7.0** | **82.0%** | **96.4%** | **None** | **Yes** |
+| RXNMapper | 83.74% | - | Unsupervised | No |
+| RDTool (published) | 76.18% | - | None | Yes |
+| ChemAxon | 70.45% | - | Proprietary | Yes |
+
+*Reference: Lin A et al. Molecular Informatics 41(4):e2100138, 2022. DOI: [10.1002/minf.202100138](https://doi.org/10.1002/minf.202100138)*
 
 `1. Atom Atom Mapping (AAM) Tool`
 
@@ -149,10 +160,10 @@ Performance
 |--------|-------|
 | Mapping speed | 3.4 reactions/sec (USPTO 50K) |
 | RXN coverage | 598/599 (99.8%) |
-| Test suite | 163 tests, 100% pass |
+| Test suite | 164 tests, 100% pass |
 | Test time | ~120s (4x faster than v2.x) |
 | Codebase | 68 files (reduced from 345) |
-| Dependencies | SMSD 6.3.0, CDK 2.12 (lightweight) |
+| Dependencies | SMSD 6.7.0, CDK 2.12 (lightweight) |
 | Deterministic | Yes (no ML training needed) |
 
 How to Cite RDT?
