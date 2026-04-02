@@ -16,7 +16,7 @@ Current benchmark reporting now separates strict atom numbering from chemically 
 
 | Tool | Mol-Map Exact | Atom-Map Exact | Atom-Map Chemically Equivalent | Bond-Change Exact | Deterministic |
 |------|---------------|----------------|--------------------------------|-------------------|---------------|
-| **RDT v3.8.0** | **75.6%** | **23.2%** | **99.2%** | **99.2%** | **Yes** |
+| **RDT v3.8.0** | **75.6%** | **22.8%** | **99.2%** | **99.2%** | **Yes** |
 | RXNMapper | - | 83.74% | - | - | No |
 | RDTool (published) | - | 76.18% | - | - | Yes |
 | ChemAxon | - | 70.45% | - | - | Yes |
