@@ -290,6 +290,7 @@ public class GraphMatcher extends Debugger {
             }
 
             int skippedIdentity = 0, skippedRatio = 0, skippedTanimoto = 0;
+            List<MCSSolution> directMCSSolutions = new ArrayList<>();
 
             for (Combination c : jobMap.keySet()) {
                 int substrateIndex = c.getRowIndex();
@@ -298,14 +299,30 @@ public class GraphMatcher extends Debugger {
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
 
                 /*
-                 * PRE-FILTER 1: Identity — if canonical SMILES match, the MCS
-                 * will be the full molecule. Still run MCS (needed for correct
-                 * atom correspondence), but mark as likely identity for logging.
+                 * PRE-FILTER 1: Identity — if canonical SMILES match, build the
+                 * atom mapping directly (atom i → atom i). Do NOT run SMSD: identical
+                 * molecules can have multiple valid MCS solutions due to symmetry,
+                 * and SMSD may return a non-identity mapping that causes spurious
+                 * bond changes in the calculator.
                  */
                 String eSmi = eductSmiles.getOrDefault(substrateIndex, "");
                 String pSmi = productSmiles.getOrDefault(productIndex, "");
-                if (!eSmi.isEmpty() && eSmi.equals(pSmi)) {
-                    skippedIdentity++; // just count, still run MCS for correct mapping
+                if (!eSmi.isEmpty() && eSmi.equals(pSmi) && educt.getAtomCount() == product.getAtomCount()) {
+                    try {
+                        IAtomContainer eductClone = cloneWithIDs(educt);
+                        IAtomContainer productClone = cloneWithIDs(product);
+                        AtomAtomMapping identityAAM = new AtomAtomMapping(eductClone, productClone);
+                        for (int ai = 0; ai < eductClone.getAtomCount(); ai++) {
+                            identityAAM.put(eductClone.getAtom(ai), productClone.getAtom(ai));
+                        }
+                        MCSSolution identityMCS = new MCSSolution(substrateIndex, productIndex,
+                                eductClone, productClone, identityAAM);
+                        directMCSSolutions.add(identityMCS);
+                        skippedIdentity++;
+                        continue; // skip MCSThread for this pair
+                    } catch (Exception ex) {
+                        LOGGER.debug("Identity shortcut failed, falling back to MCS: " + ex.getMessage());
+                    }
                 }
 
                 /*
@@ -381,6 +398,8 @@ public class GraphMatcher extends Debugger {
                     LOGGER.error(SEVERE, "MCS worker failed", cause);
                 }
             }
+            // Add directly-constructed identity mappings (bypassed MCSThread)
+            threadedUniqueMCSSolutions.addAll(directMCSSolutions);
             // This will make the executor accept no new threads
             // and finish all existing threads in the queue
             executor.shutdown();
