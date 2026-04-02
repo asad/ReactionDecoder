@@ -1,4 +1,6 @@
-![RDT Logo](images/rdt-logo.svg)
+<p align="center">
+  <img src="images/rdt-logo.svg" alt="RDT Logo" width="320">
+</p>
 
 Introduction
 ============
