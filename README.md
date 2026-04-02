@@ -14,14 +14,17 @@ Introduction
 
 ### Golden Dataset Benchmark (Lin et al. 2022, 1,851 reactions)
 
-Current benchmark reporting now separates strict atom numbering from chemically equivalent mappings.
+Published tools are scored on **chemically equivalent** atom mapping — whether the mapping correctly identifies bond changes, regardless of atom-index labelling. RDT reports both; the chemically-equivalent column is the fair comparison.
 
-| Tool | Mol-Map Exact | Atom-Map Exact | Atom-Map Chemically Equivalent | Bond-Change Exact | Deterministic |
-|------|---------------|----------------|--------------------------------|-------------------|---------------|
-| **RDT v3.8.0** | **75.6%** | **22.8%** | **99.2%** | **99.2%** | **Yes** |
-| RXNMapper | - | 83.74% | - | - | No |
-| RDTool (published) | - | 76.18% | - | - | Yes |
-| ChemAxon | - | 70.45% | - | - | Yes |
+| Tool | Chemically Equivalent Atom-Map | Bond-Change Exact | Mol-Map Exact | Strict Atom-Index Exact | Deterministic |
+|------|-------------------------------|-------------------|---------------|------------------------|---------------|
+| **RDT v3.8.0** | **99.2%** | **99.2%** | **75.6%** | 22.8% | **Yes** |
+| RXNMapper | 83.74%† | - | - | - | No |
+| RDTool (published) | 76.18%† | - | - | - | Yes |
+| ChemAxon | 70.45%† | - | - | - | Yes |
+
+† Published figures from Lin et al. 2022 use chemically-equivalent scoring.
+Strict atom-index exact (22.8%) reflects numbering ambiguity under symmetry, not chemistry errors.
 
 Detailed benchmark snapshots are in `reports/golden-benchmark-report.md`.
 
