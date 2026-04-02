@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="images/rdt-logo.svg" alt="RDT Logo" width="320">
+  <a href="https://github.com/asad/ReactionDecoder">
+    <img src="images/rdt-logo.svg" alt="RDT Logo" width="320">
+  </a>
 </p>
 
 Introduction
