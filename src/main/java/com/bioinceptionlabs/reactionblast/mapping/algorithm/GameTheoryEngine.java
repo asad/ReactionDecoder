@@ -57,10 +57,10 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.Isomorphism;
 import org.openscience.smsd.AtomBondMatcher;
 import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
+import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.MoleculeInitializer;
 import org.openscience.smsd.BaseMapping.Algorithm;
 import org.openscience.smsd.ExtAtomContainerManipulator;
@@ -70,10 +70,12 @@ import com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.Fin
 import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator.getFingerprinterSize;
 import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.BestMatchContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.HydrogenFreeFingerPrintContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MolMapping;
+import com.bioinceptionlabs.reactionblast.mapping.SmsdReactionMappingEngine;
 import static com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.matcher;
 import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.MCSSolution;
 import com.bioinceptionlabs.reactionblast.mapping.GraphMatcher.GraphMatching;
@@ -139,6 +141,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
 
     private final transient java.util.IdentityHashMap<IAtomContainer, int[]> circularFPCache
             = new java.util.IdentityHashMap<>();
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
 
     // ---- BaseGameTheory methods inlined into outer class ----
 
@@ -284,7 +288,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             LOGGER.debug("--Get matches--");
             MCSSolution atomatomMapping = getMappings(substrateIndex, productIndex, educt, product, mcsSolutions);
             if (atomatomMapping == null) {
-                throw new CDKException("atom-atom mapping is null");
+                clearScores(holder, substrateIndex, productIndex);
+                return;
             }
             carbonCount = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet().stream().filter((atom)
                     -> (atom.getSymbol().equalsIgnoreCase("C"))).map((IAtom _item) -> 1.0).reduce(carbonCount, (accumulator, _item)
@@ -326,6 +331,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
         } catch (IOException | CDKException ex) {
             LOGGER.error(SEVERE, null, ex);
+            clearScores(holder, substrateIndex, productIndex);
         }
     }
 
@@ -397,10 +403,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                         educt, product, solution);
                 return mcs;
             } else {
-                Isomorphism isomorphism;
                 AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
                 BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
-                isomorphism = new Isomorphism(educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
+                BaseMapping isomorphism = MAPPING_ENGINE.findMcs(
+                        educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
                 return mcs;
             }
@@ -437,7 +443,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             if (initMcsAtom.containsKey(substrateIndex, productIndex)) {
                 AtomAtomMapping bestAtomAtomMapping = initMcsAtom.getAtomMatch(substrateIndex, productIndex);
                 if (bestAtomAtomMapping == null) {
-                    throw new CDKException("atom-atom mapping is null");
+                    clearScores(holder, substrateIndex, productIndex);
+                    return;
                 }
                 carbonCount = bestAtomAtomMapping.getMappingsByAtoms().keySet().stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("C"))).map((_item) -> 1.0).reduce(carbonCount, (accumulator, _item) -> accumulator + 1);
                 stereoVal = initMcsAtom.getStereoScore(substrateIndex, productIndex);
@@ -470,9 +477,21 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, fpSim);
         } catch (CDKException ex) {
             LOGGER.debug(SEVERE, null, ex);
+            clearScores(holder, substrateIndex, productIndex);
         } catch (IOException ex) {
             LOGGER.error(SEVERE, null, ex);
+            clearScores(holder, substrateIndex, productIndex);
         }
+    }
+
+    private void clearScores(Holder holder, int substrateIndex, int productIndex) {
+        holder.getCliqueMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getGraphSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getStereoMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getCarbonOverlapMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getFragmentMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getEnergyMatrix().setValue(substrateIndex, productIndex, 0.0);
+        holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
     }
 
     String generateUniqueKey(
@@ -533,8 +552,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     MCSSolution addMCSSolution(int queryPosition, int targetPosition,
-            String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
-        isomorphism.setChemFilters(true, true, true);
+            String key, ThreadSafeCache<String, MCSSolution> mappingcache, BaseMapping isomorphism) {
+        MAPPING_ENGINE.applyDefaultFilters(isomorphism);
         MCSSolution mcs = new MCSSolution(queryPosition, targetPosition,
                 isomorphism.getQuery(), isomorphism.getTarget(), isomorphism.getFirstAtomMapping());
         mcs.setEnergy(isomorphism.getEnergyScore(0));

@@ -21,7 +21,9 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feature;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor;
+import com.bioinceptionlabs.reactionblast.mapping.SmsdReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.signature.RBlastMoleculeSignature;
 import com.bioinceptionlabs.reactionblast.tools.CDKSMILES;
 import java.io.BufferedWriter;
@@ -61,7 +63,7 @@ import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import org.openscience.smsd.AtomBondMatcher;
 import org.openscience.smsd.MoleculeInitializer;
-import org.openscience.smsd.Substructure;
+import org.openscience.smsd.BaseMapping;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
@@ -90,6 +92,9 @@ import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogensEx
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public final class MechanismHelpers {
+
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
 
     private MechanismHelpers() { /* utility class */ }
 
@@ -895,10 +900,12 @@ public final class MechanismHelpers {
 
             try {
                 IAtomContainer parseSmiles = sp.parseSmiles(smiles);
-                Substructure sub = new Substructure(parseSmiles, mol, atomMatcher, bondMatcher, false);
+                BaseMapping sub = MAPPING_ENGINE.findSubstructure(
+                        parseSmiles, mol, atomMatcher, bondMatcher, false);
                 return sub.isSubgraph() ? sub.getFirstAtomMapping().getCount() : 0;
             } catch (InvalidSmilesException ex) {
-                Substructure sub = new Substructure(parse(smiles, mol.getBuilder()), mol, false);
+                BaseMapping sub = MAPPING_ENGINE.findSubstructure(
+                        parse(smiles, mol.getBuilder()), mol, false);
                 return sub.isSubgraph() ? sub.getFirstAtomMapping().getCount() : 0;
             }
         }

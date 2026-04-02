@@ -47,6 +47,11 @@ import static com.bioinceptionlabs.reactionblast.mapping.Reactor.MappingHandler.
  */
 public class StandardizeReaction {
 
+    public static final String SOURCE_OCCURRENCE_ID = "sourceOccurrenceId";
+    public static final String SOURCE_ATOM_ID = "sourceAtomId";
+    public static final String PRESERVE_OCCURRENCE_IDENTITY = "preserveOccurrenceIdentity";
+    public static final String STOICHIOMETRY_KEY = "stoichiometryKey";
+
     private static final ILoggingTool LOGGER = createLoggingTool(StandardizeReaction.class);
 
     /**
@@ -117,6 +122,7 @@ public class StandardizeReaction {
      */
     public IReaction standardize(IReaction reaction) throws Exception {
         String reactionID = reaction.getID();
+        annotateSourceIdentity(reaction);
         cleanMapping(reaction);
 
         if (reactionID == null) {
@@ -132,6 +138,58 @@ public class StandardizeReaction {
 
         CDKReactionBuilder rBuilder = new CDKReactionBuilder();
         return rBuilder.standardize(reaction);
+    }
+
+    private void annotateSourceIdentity(IReaction reaction) {
+        annotateSourceIdentity(reaction.getReactants(), "R");
+        annotateSourceIdentity(reaction.getProducts(), "P");
+    }
+
+    private void annotateSourceIdentity(IAtomContainerSet containers, String side) {
+        Map<Integer, String> componentSignatures = new LinkedHashMap<>();
+        Map<String, Integer> signatureCounts = new LinkedHashMap<>();
+        org.openscience.cdk.smiles.SmilesGenerator smilesGenerator
+                = new org.openscience.cdk.smiles.SmilesGenerator(
+                        org.openscience.cdk.smiles.SmiFlavor.Canonical);
+
+        for (int moleculeIndex = 0; moleculeIndex < containers.getAtomContainerCount(); moleculeIndex++) {
+            IAtomContainer molecule = containers.getAtomContainer(moleculeIndex);
+            String signature = componentSignature(molecule, smilesGenerator);
+            componentSignatures.put(moleculeIndex, signature);
+            signatureCounts.merge(signature, 1, Integer::sum);
+        }
+
+        for (int moleculeIndex = 0; moleculeIndex < containers.getAtomContainerCount(); moleculeIndex++) {
+            IAtomContainer molecule = containers.getAtomContainer(moleculeIndex);
+            molecule.setProperty(SOURCE_OCCURRENCE_ID, side + ":" + moleculeIndex);
+            boolean preserveOccurrenceIdentity = hasBenchmarkAtomIds(molecule)
+                    || signatureCounts.getOrDefault(componentSignatures.get(moleculeIndex), 0) > 1;
+            molecule.setProperty(PRESERVE_OCCURRENCE_IDENTITY, preserveOccurrenceIdentity);
+            for (int atomIndex = 0; atomIndex < molecule.getAtomCount(); atomIndex++) {
+                IAtom atom = molecule.getAtom(atomIndex);
+                if (atom.getProperty(SOURCE_ATOM_ID) == null) {
+                    atom.setProperty(SOURCE_ATOM_ID, side + ":" + moleculeIndex + ":" + atomIndex);
+                }
+            }
+        }
+    }
+
+    private String componentSignature(IAtomContainer molecule,
+            org.openscience.cdk.smiles.SmilesGenerator smilesGenerator) {
+        try {
+            return smilesGenerator.create(molecule);
+        } catch (Exception e) {
+            return molecule.getAtomCount() + ":" + molecule.getBondCount();
+        }
+    }
+
+    private boolean hasBenchmarkAtomIds(IAtomContainer molecule) {
+        for (IAtom atom : molecule.atoms()) {
+            if (atom.getProperty("benchmarkAtomId") != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

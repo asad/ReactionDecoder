@@ -35,7 +35,7 @@ import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
 import org.openscience.smsd.AtomBondMatcher;
-import org.openscience.smsd.Substructure;
+import org.openscience.smsd.BaseMapping;
 import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.FingerprintGenerator.getFingerprinterSize;
 import static com.bioinceptionlabs.reactionblast.fingerprints.ReactionFingerprinter.Similarity.getTanimotoSimilarity;
 import static java.util.Collections.sort;
@@ -97,6 +97,9 @@ interface IKey extends Comparable<ReactionContainer.Key>, Comparator<ReactionCon
 }
 
 public class ReactionContainer implements Cloneable, Serializable {
+
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
 
     static final long serialVersionUID = 17278639972837695L;
     /*
@@ -941,6 +944,9 @@ public class ReactionContainer implements Cloneable, Serializable {
     public static class CDKReactionBuilder extends BasicDebugger implements Serializable {
 
         private static final long serialVersionUID = 19869866609698L;
+        private static final String SOURCE_OCCURRENCE_ID = "sourceOccurrenceId";
+        private static final String PRESERVE_OCCURRENCE_IDENTITY = "preserveOccurrenceIdentity";
+        private static final String STOICHIOMETRY_KEY = "stoichiometryKey";
         private final static ILoggingTool LOGGER
                 = createLoggingTool(CDKReactionBuilder.class);
         private final IReactionSet reactionSet;
@@ -1041,11 +1047,13 @@ public class ReactionContainer implements Cloneable, Serializable {
                     molWithH.setID(id);
                 }
 
-                if (stoichiometryMap.containsKey(molWithH.getID())) {
-                    tempStoic += stoichiometryMap.get(molWithH.getID());
-                    stoichiometryMap.put(molWithH.getID(), tempStoic);
+                String stoichiometryKey = getStoichiometryKey(molWithH);
+                molWithH.setProperty(STOICHIOMETRY_KEY, stoichiometryKey);
+                if (stoichiometryMap.containsKey(stoichiometryKey)) {
+                    tempStoic += stoichiometryMap.get(stoichiometryKey);
+                    stoichiometryMap.put(stoichiometryKey, tempStoic);
                 } else {
-                    stoichiometryMap.put(molWithH.getID(), tempStoic);
+                    stoichiometryMap.put(stoichiometryKey, tempStoic);
                     _metabolites.add(molWithH);
                 }
             }
@@ -1092,11 +1100,13 @@ public class ReactionContainer implements Cloneable, Serializable {
                 } else {
                     molWithH.setID(id);
                 }
-                if (stoichiometryMap.containsKey(molWithH.getID())) {
-                    tempStoic += stoichiometryMap.get(molWithH.getID());
-                    stoichiometryMap.put(molWithH.getID(), tempStoic);
+                String stoichiometryKey = getStoichiometryKey(molWithH);
+                molWithH.setProperty(STOICHIOMETRY_KEY, stoichiometryKey);
+                if (stoichiometryMap.containsKey(stoichiometryKey)) {
+                    tempStoic += stoichiometryMap.get(stoichiometryKey);
+                    stoichiometryMap.put(stoichiometryKey, tempStoic);
                 } else {
-                    stoichiometryMap.put(molWithH.getID(), tempStoic);
+                    stoichiometryMap.put(stoichiometryKey, tempStoic);
                     _metabolites.add(molWithH);
                 }
             }
@@ -1199,14 +1209,34 @@ public class ReactionContainer implements Cloneable, Serializable {
             return molecule;
         }
 
+        private String getStoichiometryKey(IAtomContainer molecule) {
+            Object existing = molecule.getProperty(STOICHIOMETRY_KEY);
+            if (existing != null) {
+                return existing.toString();
+            }
+
+            String moleculeId = molecule.getID();
+            boolean preserveOccurrenceIdentity
+                    = Boolean.TRUE.equals(molecule.getProperty(PRESERVE_OCCURRENCE_IDENTITY));
+            if (preserveOccurrenceIdentity) {
+                Object occurrenceId = molecule.getProperty(SOURCE_OCCURRENCE_ID);
+                if (occurrenceId != null) {
+                    return moleculeId + "|" + occurrenceId;
+                }
+            }
+            return moleculeId;
+        }
+
         private void setReactantMolecule(IReaction IR, Collection<IAtomContainer> metabolites) {
 
             Iterator<IAtomContainer> it = metabolites.iterator();
 
             while (it.hasNext()) {
                 IAtomContainer mol = it.next();
-                mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(mol.getID()));
-                IR.addReactant(mol, stoichiometryMap.get(mol.getID()));
+                String stoichiometryKey = getStoichiometryKey(mol);
+                mol.setProperty(STOICHIOMETRY_KEY, stoichiometryKey);
+                mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(stoichiometryKey));
+                IR.addReactant(mol, stoichiometryMap.get(stoichiometryKey));
             }
 
             metabolites.clear();
@@ -1218,8 +1248,10 @@ public class ReactionContainer implements Cloneable, Serializable {
             Iterator<IAtomContainer> it = metabolites.iterator();
             while (it.hasNext()) {
                 IAtomContainer mol = it.next();
-                mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(mol.getID()));
-                IR.addProduct(mol, stoichiometryMap.get(mol.getID()));
+                String stoichiometryKey = getStoichiometryKey(mol);
+                mol.setProperty(STOICHIOMETRY_KEY, stoichiometryKey);
+                mol.setProperty("STOICHIOMETRY", stoichiometryMap.get(stoichiometryKey));
+                IR.addProduct(mol, stoichiometryMap.get(stoichiometryKey));
             }
 
             metabolites.clear();
@@ -1347,14 +1379,14 @@ public class ReactionContainer implements Cloneable, Serializable {
             LOGGER.debug("atomUniqueCounter2 " + rightHandAtomCount);
 
             if (leftHandAtomCount != rightHandAtomCount) {
-                LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
+                LOGGER.debug("Number of atom(s) on the Left side " + leftHandAtomCount
                         + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-                LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+                LOGGER.debug(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
                 return false;
             } else if (!atomUniqueCounter1.keySet().equals(atomUniqueCounter2.keySet())) {
-                LOGGER.warn("Number of atom(s) on the Left side " + leftHandAtomCount
+                LOGGER.debug("Number of atom(s) on the Left side " + leftHandAtomCount
                         + " =/= Number of atom(s) on the Right side " + rightHandAtomCount);
-                LOGGER.warn(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
+                LOGGER.debug(atomUniqueCounter1 + " =/= " + atomUniqueCounter2);
                 return false;
             }
 
@@ -1382,8 +1414,9 @@ public class ReactionContainer implements Cloneable, Serializable {
             AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
             BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
 
-            Substructure mcs = new Substructure(mol1, mol2, atomMatcher, bondMatcher, false);
-            mcs.setChemFilters(true, true, true);
+            BaseMapping mcs = MAPPING_ENGINE.findSubstructure(
+                    mol1, mol2, atomMatcher, bondMatcher, false);
+            MAPPING_ENGINE.applyDefaultFilters(mcs);
             return mcs.isSubgraph() && !mcs.isStereoMisMatch();
         }
     }

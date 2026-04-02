@@ -23,6 +23,8 @@
  */
 package org.openscience.smsd;
 
+import com.bioinception.smsd.core.ChemOptions;
+import com.bioinception.smsd.core.SearchEngine;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -34,8 +36,6 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
-import com.bioinception.smsd.core.SMSD;
-import com.bioinception.smsd.core.ChemOptions;
 
 /**
  * Substructure search adapter that delegates to SMSD 3.0.0.
@@ -50,6 +50,9 @@ public final class Substructure extends BaseMapping {
     private static final ILoggingTool LOGGER
             = LoggingToolFactory.createLoggingTool(Substructure.class);
     private int vfMappingSize = -1;
+    private final int maxMatches;
+    private final long timeoutMs;
+    private SearchEngine.SubstructureResult lastSearchResult;
 
     /**
      * Constructor for VF Substructure Algorithm.
@@ -67,7 +70,32 @@ public final class Substructure extends BaseMapping {
             AtomMatcher am,
             BondMatcher bm,
             boolean findAllSubgraph) throws CDKException {
+        this(query, target, am, bm, findAllSubgraph, findAllSubgraph ? 10 : 1, 30_000L);
+    }
+
+    /**
+     * Constructor for VF Substructure Algorithm with explicit enumeration flags.
+     *
+     * @param query query molecule
+     * @param target target molecule
+     * @param am atom matcher
+     * @param bm bond matcher
+     * @param findAllSubgraph report all subgraphs
+     * @param maxMatches maximum number of mappings to enumerate
+     * @param timeoutMs timeout in milliseconds
+     * @throws CDKException
+     */
+    public Substructure(
+            IAtomContainer query,
+            IAtomContainer target,
+            AtomMatcher am,
+            BondMatcher bm,
+            boolean findAllSubgraph,
+            int maxMatches,
+            long timeoutMs) throws CDKException {
         super(query, target, am, bm);
+        this.maxMatches = Math.max(1, maxMatches);
+        this.timeoutMs = timeoutMs > 0 ? timeoutMs : 30_000L;
         super.setSubgraph(findSubgraphs(findAllSubgraph));
     }
 
@@ -87,7 +115,32 @@ public final class Substructure extends BaseMapping {
             AtomMatcher am,
             BondMatcher bm,
             boolean findAllSubgraphFlag) throws CDKException {
+        this(query, target, am, bm, findAllSubgraphFlag, findAllSubgraphFlag ? 10 : 1, 30_000L);
+    }
+
+    /**
+     * Constructor for IQueryAtomContainer with explicit enumeration flags.
+     *
+     * @param query query container
+     * @param target target molecule
+     * @param am atom matcher
+     * @param bm bond matcher
+     * @param findAllSubgraphFlag report all subgraphs
+     * @param maxMatches maximum number of mappings to enumerate
+     * @param timeoutMs timeout in milliseconds
+     * @throws CDKException
+     */
+    public Substructure(
+            IQueryAtomContainer query,
+            IAtomContainer target,
+            AtomMatcher am,
+            BondMatcher bm,
+            boolean findAllSubgraphFlag,
+            int maxMatches,
+            long timeoutMs) throws CDKException {
         super(query, target, am, bm);
+        this.maxMatches = Math.max(1, maxMatches);
+        this.timeoutMs = timeoutMs > 0 ? timeoutMs : 30_000L;
         super.setSubgraph(findSubgraphs(findAllSubgraphFlag));
     }
 
@@ -103,7 +156,29 @@ public final class Substructure extends BaseMapping {
             IQueryAtomContainer query,
             IAtomContainer target,
             boolean findAllSubgraphFlag) throws CDKException {
+        this(query, target, findAllSubgraphFlag, findAllSubgraphFlag ? 10 : 1, 30_000L);
+    }
+
+    /**
+     * Constructor for IQueryAtomContainer with default matchers and explicit
+     * subgraph enumeration flags.
+     *
+     * @param query query container
+     * @param target target molecule
+     * @param findAllSubgraphFlag report all subgraphs
+     * @param maxMatches maximum number of mappings to enumerate
+     * @param timeoutMs timeout in milliseconds
+     * @throws CDKException
+     */
+    public Substructure(
+            IQueryAtomContainer query,
+            IAtomContainer target,
+            boolean findAllSubgraphFlag,
+            int maxMatches,
+            long timeoutMs) throws CDKException {
         super(query, target, AtomMatcher.forQuery(), BondMatcher.forQuery());
+        this.maxMatches = Math.max(1, maxMatches);
+        this.timeoutMs = timeoutMs > 0 ? timeoutMs : 30_000L;
         super.setSubgraph(findSubgraphs(findAllSubgraphFlag));
     }
 
@@ -129,39 +204,30 @@ public final class Substructure extends BaseMapping {
         }
 
         try {
+            IAtomContainer searchQuery = normalizeForSearch(getQuery());
+            IAtomContainer searchTarget = normalizeForSearch(getTarget());
             ChemOptions chemOptions = buildChemOptions();
-            SMSD smsd = new SMSD(getQuery(), getTarget(), chemOptions);
+            int limit = findAllMatches ? maxMatches : 1;
+            lastSearchResult = SearchEngine.findAllSubstructuresWithStats(
+                    searchQuery, searchTarget, chemOptions, limit, timeoutMs);
 
-            if (findAllMatches) {
-                List<Map<Integer, Integer>> results = smsd.findAllSubstructures(10, 30000);
-                if (results != null && !results.isEmpty()) {
-                    for (Map<Integer, Integer> mapping : results) {
-                        AtomAtomMapping aam = convertMapping(getQuery(), getTarget(), mapping);
-                        if (!aam.isEmpty() && aam.getCount() >= vfMappingSize) {
-                            if (aam.getCount() > vfMappingSize) {
-                                vfMappingSize = aam.getCount();
-                                getMCSList().clear();
-                            }
-                            if (!hasMap(aam, getMCSList())) {
-                                getMCSList().add(aam);
-                            }
+            if (lastSearchResult != null
+                    && lastSearchResult.exists
+                    && lastSearchResult.mappings != null
+                    && !lastSearchResult.mappings.isEmpty()) {
+                for (Map<Integer, Integer> mapping : lastSearchResult.mappings) {
+                    AtomAtomMapping aam = convertMapping(getQuery(), getTarget(), mapping);
+                    if (!aam.isEmpty() && aam.getCount() >= vfMappingSize) {
+                        if (aam.getCount() > vfMappingSize) {
+                            vfMappingSize = aam.getCount();
+                            getMCSList().clear();
                         }
-                    }
-                    return !getMCSList().isEmpty();
-                }
-            } else {
-                boolean isSub = smsd.isSubstructure();
-                if (isSub) {
-                    // Get at least one mapping
-                    List<Map<Integer, Integer>> results = smsd.findAllSubstructures(1, 30000);
-                    if (results != null && !results.isEmpty()) {
-                        AtomAtomMapping aam = convertMapping(getQuery(), getTarget(), results.get(0));
-                        if (!aam.isEmpty()) {
+                        if (!hasMap(aam, getMCSList())) {
                             getMCSList().add(aam);
                         }
                     }
-                    return true;
                 }
+                return !getMCSList().isEmpty();
             }
         } catch (Exception e) {
             LOGGER.error(Level.SEVERE, "Error in SMSD substructure search", e);
@@ -191,6 +257,10 @@ public final class Substructure extends BaseMapping {
 
     private boolean hasMap(AtomAtomMapping map, List<AtomAtomMapping> mapGlobal) {
         return mapGlobal.stream().anyMatch(test -> test.equals(map));
+    }
+
+    public SearchEngine.SubstructureResult getLastSearchResult() {
+        return lastSearchResult;
     }
 
     private boolean singleMapping() {

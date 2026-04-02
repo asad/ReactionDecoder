@@ -22,6 +22,7 @@ import java.io.Serializable;
 import static java.lang.System.getProperty;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
@@ -78,12 +80,13 @@ public class CallableAtomMappingTool implements Serializable {
     }
 
     /**
-     * Funnel architecture: run RINGS first (best for drug-like molecules),
-     * check quality, only run remaining algorithms if RINGS is insufficient.
+     * Funnel architecture: pick the cheapest high-value first algorithm,
+     * check quality, only run remaining algorithms if that first pass is
+     * insufficient. RINGS leads only for ring-containing reactions; otherwise
+     * MIN leads on acyclic reactions.
      *
-     * Quality gate: if RINGS produces a mapping where all non-H atoms are
-     * mapped and the total bond changes are small (≤ 6), accept it immediately.
-     * This skips 3 of 4 algorithms for ~75% of reactions → 2-4x speedup.
+     * Quality gate: if the first pass produces a near-complete mapping, accept
+     * it immediately and skip the rest of the algorithm family.
      */
     private void generateAtomAtomMapping(
             IReaction reaction,
@@ -105,6 +108,23 @@ public class CallableAtomMappingTool implements Serializable {
             return;
         }
 
+        if (isIdentityReaction(standardizedReaction)) {
+            try {
+                Reactor minResult = new MappingThread(
+                        "IMappingAlgorithm.MIN", standardizedReaction, MIN, removeHydrogen).call();
+                putSolution(MIN, minResult);
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.debug("MIN identity phase failed: " + e.getMessage());
+                LOGGER.error(e);
+            } catch (Exception e) {
+                LOGGER.debug("MIN identity phase failed: " + e.getMessage());
+                LOGGER.error(e);
+            } finally {
+                ThreadSafeCache.getInstance().cleanup();
+            }
+            return;
+        }
+
         /*
          * Phase 1: Run RINGS first if checkComplex is true (most common case).
          * RINGS handles ring-containing molecules best and covers ~75% of
@@ -115,27 +135,26 @@ public class CallableAtomMappingTool implements Serializable {
          */
         int totalMolecules = standardizedReaction.getReactantCount()
                 + standardizedReaction.getProductCount();
-        if (checkComplex && totalMolecules <= 5) {
+        boolean hasRings = hasRingSystems(standardizedReaction);
+        IMappingAlgorithm firstPass = (checkComplex && hasRings) ? RINGS : MIN;
+        if (totalMolecules <= 5) {
             try {
-                IReaction clone = cloneReaction(standardizedReaction);
-                ExecutorService exec1 = Executors.newSingleThreadExecutor();
-                try {
-                    Reactor ringsResult = exec1.submit(
-                            new MappingThread("IMappingAlgorithm.RINGS", clone, RINGS, removeHydrogen)
-                    ).get();
-                    putSolution(RINGS, ringsResult);
+                Reactor firstPassResult = new MappingThread(
+                        "IMappingAlgorithm." + firstPass.name(),
+                        standardizedReaction, firstPass, removeHydrogen).call();
+                putSolution(firstPass, firstPassResult);
 
-                    if (isMappingAcceptable(ringsResult)) {
-                        LOGGER.debug("RINGS mapping accepted — skipping MIN/MAX/MIXTURE");
-                        ThreadSafeCache.getInstance().cleanup();
-                        return;
-                    }
-                    LOGGER.debug("RINGS mapping insufficient — running remaining algorithms");
-                } finally {
-                    exec1.shutdown();
+                if (isMappingAcceptable(firstPassResult)) {
+                    LOGGER.debug(firstPass + " mapping accepted — skipping remaining algorithms");
+                    ThreadSafeCache.getInstance().cleanup();
+                    return;
                 }
+                LOGGER.debug(firstPass + " mapping insufficient — running remaining algorithms");
             } catch (InterruptedException | ExecutionException e) {
-                LOGGER.debug("RINGS phase failed: " + e.getMessage());
+                LOGGER.debug(firstPass + " phase failed: " + e.getMessage());
+                LOGGER.error(e);
+            } catch (Exception e) {
+                LOGGER.debug(firstPass + " phase failed: " + e.getMessage());
                 LOGGER.error(e);
             }
         }
@@ -144,10 +163,18 @@ public class CallableAtomMappingTool implements Serializable {
          * Phase 2: Run remaining algorithms in parallel (only if RINGS wasn't enough).
          * If funnel was skipped (large reaction), run all 4 algorithms.
          */
+        boolean minAlreadyRun = solution.containsKey(MIN);
         boolean ringsAlreadyRun = solution.containsKey(RINGS);
-        IMappingAlgorithm[] remaining = (checkComplex && !ringsAlreadyRun)
-                ? new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS}
-                : new IMappingAlgorithm[]{MIN, MAX, MIXTURE};
+        IMappingAlgorithm[] remaining;
+        if (minAlreadyRun && ringsAlreadyRun) {
+            remaining = new IMappingAlgorithm[]{MAX, MIXTURE};
+        } else if (minAlreadyRun) {
+            remaining = new IMappingAlgorithm[]{MAX, MIXTURE, RINGS};
+        } else if (ringsAlreadyRun) {
+            remaining = new IMappingAlgorithm[]{MIN, MAX, MIXTURE};
+        } else {
+            remaining = new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS};
+        }
 
         ExecutorService executor = Executors.newFixedThreadPool(remaining.length);
         try {
@@ -155,9 +182,8 @@ public class CallableAtomMappingTool implements Serializable {
             int jobCounter = 0;
             for (IMappingAlgorithm algo : remaining) {
                 LOGGER.debug("Submitting " + algo.description());
-                IReaction clone = cloneReaction(standardizedReaction);
                 cs.submit(new MappingThread("IMappingAlgorithm." + algo.name(),
-                        clone, algo, removeHydrogen));
+                        standardizedReaction, algo, removeHydrogen));
                 jobCounter++;
             }
             for (int i = 0; i < jobCounter; i++) {
@@ -198,6 +224,11 @@ public class CallableAtomMappingTool implements Serializable {
         try {
             IReaction mapped = reactor.getReactionWithAtomAtomMapping();
             if (mapped == null) {
+                return false;
+            }
+
+            if (!isAtomBalanced(mapped)) {
+                LOGGER.debug("Unbalanced reaction detected — need full pipeline");
                 return false;
             }
 
@@ -242,6 +273,23 @@ public class CallableAtomMappingTool implements Serializable {
         }
     }
 
+    private boolean isAtomBalanced(IReaction reaction) {
+        return countAtoms(reaction.getReactants()).equals(countAtoms(reaction.getProducts()));
+    }
+
+    private Map<String, Integer> countAtoms(org.openscience.cdk.interfaces.IAtomContainerSet molSet) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (IAtomContainer container : molSet.atomContainers()) {
+            for (IAtom atom : container.atoms()) {
+                if ("H".equals(atom.getSymbol())) {
+                    continue;
+                }
+                counts.merge(atom.getSymbol(), 1, Integer::sum);
+            }
+        }
+        return counts;
+    }
+
     /**
      * Check if a reaction is an identity/transporter (reactants ≡ products).
      * Uses canonical SMILES comparison of each reactant-product pair.
@@ -267,15 +315,33 @@ public class CallableAtomMappingTool implements Serializable {
         }
     }
 
-    /**
-     * Deep-clone a reaction so each algorithm gets an independent copy.
-     */
-    private IReaction cloneReaction(IReaction reaction) {
+    private boolean hasRingSystems(IReaction reaction) {
+        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
+            if (hasRingSystems(ac)) {
+                return true;
+            }
+        }
+        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
+            if (hasRingSystems(ac)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasRingSystems(IAtomContainer container) {
+        if (container == null || container.getAtomCount() < 3 || container.getBondCount() < 3) {
+            return false;
+        }
+        for (IAtom atom : container.atoms()) {
+            if (atom.isInRing() || atom.isAromatic()) {
+                return true;
+            }
+        }
         try {
-            return (IReaction) reaction.clone();
-        } catch (CloneNotSupportedException e) {
-            LOGGER.error("Failed to clone reaction: " + e.getMessage());
-            return reaction;
+            return Cycles.sssr(container).numberOfCycles() > 0;
+        } catch (Exception e) {
+            return false;
         }
     }
 

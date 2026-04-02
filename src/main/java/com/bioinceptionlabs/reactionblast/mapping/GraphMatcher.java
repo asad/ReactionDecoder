@@ -4,6 +4,7 @@
  */
 package com.bioinceptionlabs.reactionblast.mapping;
 
+import com.bioinception.smsd.core.SearchEngine;
 import com.bioinceptionlabs.reactionblast.mapping.BestMatch;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor.Debugger;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
@@ -26,6 +27,7 @@ import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -53,8 +55,6 @@ import org.openscience.smsd.AtomBondMatcher;
 import org.openscience.smsd.BaseMapping.Algorithm;
 import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.ExtAtomContainerManipulator;
-import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.Substructure;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -75,6 +75,10 @@ import static org.openscience.smsd.ExtAtomContainerManipulator.cloneWithIDs;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class GraphMatcher extends Debugger {
+
+    private static final int SINGLE_SUBGRAPH_MATCH = 1;
+    private static final long SUBGRAPH_TIMEOUT_MS = 5_000L;
+    private static final long MCS_TIMEOUT_MS = 10_000L;
 
     /**
      * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
@@ -101,6 +105,30 @@ public class GraphMatcher extends Debugger {
     private static final int LARGE_JOB_THRESHOLD = 1000;
     private final static ILoggingTool LOGGER
             = createLoggingTool(GraphMatcher.class);
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
+
+    private static void harmonizeForSmsd(IAtomContainer container) {
+        if (container == null) {
+            return;
+        }
+        for (IBond bond : container.bonds()) {
+            if (bond == null) {
+                continue;
+            }
+            if (bond.getOrder() == null || bond.getOrder() == IBond.Order.UNSET) {
+                bond.setOrder(IBond.Order.SINGLE);
+            }
+            if (bond.isAromatic()) {
+                if (bond.getBegin() != null) {
+                    bond.getBegin().setIsAromatic(true);
+                }
+                if (bond.getEnd() != null) {
+                    bond.getEnd().setIsAromatic(true);
+                }
+            }
+        }
+    }
 
     /**
      *
@@ -209,8 +237,13 @@ public class GraphMatcher extends Debugger {
             for (int i = 0; i < eductCount; i++) {
                 IAtomContainer educt = reactionStructureInformation.getEduct(i);
                 if (educt != null && educt.getAtomCount() > 0) {
-                    aromaticity.apply(educt);
-                    eductCycleCache.put(i, shortCycles.find(educt).numberOfCycles());
+                    harmonizeForSmsd(educt);
+                    try {
+                        aromaticity.apply(educt);
+                        eductCycleCache.put(i, shortCycles.find(educt).numberOfCycles());
+                    } catch (CDKException | RuntimeException ex) {
+                        eductCycleCache.put(i, 0);
+                    }
                 } else {
                     eductCycleCache.put(i, 0);
                 }
@@ -220,8 +253,13 @@ public class GraphMatcher extends Debugger {
             for (int j = 0; j < productCount; j++) {
                 IAtomContainer product = reactionStructureInformation.getProduct(j);
                 if (product != null && product.getAtomCount() > 0) {
-                    aromaticity.apply(product);
-                    productCycleCache.put(j, shortCycles.find(product).numberOfCycles());
+                    harmonizeForSmsd(product);
+                    try {
+                        aromaticity.apply(product);
+                        productCycleCache.put(j, shortCycles.find(product).numberOfCycles());
+                    } catch (CDKException | RuntimeException ex) {
+                        productCycleCache.put(j, 0);
+                    }
                 } else {
                     productCycleCache.put(j, 0);
                 }
@@ -236,16 +274,18 @@ public class GraphMatcher extends Debugger {
             for (int i = 0; i < eductCount; i++) {
                 IAtomContainer e = reactionStructureInformation.getEduct(i);
                 if (e != null && e.getAtomCount() > 0) {
+                    harmonizeForSmsd(e);
                     try { eductSmiles.put(i, canonSmigen.create(e)); }
-                    catch (CDKException ex) { eductSmiles.put(i, ""); }
+                    catch (CDKException | RuntimeException ex) { eductSmiles.put(i, ""); }
                 }
             }
             Map<Integer, String> productSmiles = new TreeMap<>();
             for (int j = 0; j < productCount; j++) {
                 IAtomContainer p = reactionStructureInformation.getProduct(j);
                 if (p != null && p.getAtomCount() > 0) {
+                    harmonizeForSmsd(p);
                     try { productSmiles.put(j, canonSmigen.create(p)); }
-                    catch (CDKException ex) { productSmiles.put(j, ""); }
+                    catch (CDKException | RuntimeException ex) { productSmiles.put(j, ""); }
                 }
             }
 
@@ -333,8 +373,13 @@ public class GraphMatcher extends Debugger {
             LOGGER.debug("submited " + taskCounter + " jobs");
             Collection<MCSSolution> threadedUniqueMCSSolutions = new ArrayList<>();
             for (int count = 0; count < taskCounter; count++) {
-                MCSSolution isomorphism = callablesQueue.take().get();
-                threadedUniqueMCSSolutions.add(isomorphism);
+                try {
+                    MCSSolution isomorphism = callablesQueue.take().get();
+                    threadedUniqueMCSSolutions.add(isomorphism);
+                } catch (ExecutionException ex) {
+                    Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                    LOGGER.error(SEVERE, "MCS worker failed", cause);
+                }
             }
             // This will make the executor accept no new threads
             // and finish all existing threads in the queue
@@ -926,16 +971,11 @@ public class GraphMatcher extends Debugger {
             int overlap = isomorphism.getFirstAtomMapping().isEmpty() ? 0
                     : isomorphism.getFirstAtomMapping().getCount();
 
-            try {
-                LOGGER.debug("Q: " + isomorphism.getQuery().getID()
-                        + " T: " + isomorphism.getTarget().getID()
-                        + " atoms: " + isomorphism.getQuery().getAtomCount()
-                        + " atoms: " + isomorphism.getTarget().getAtomCount()
-                        + " overlaps: " + overlap
-                        + " mcs " + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-            } catch (CloneNotSupportedException | CDKException ex) {
-                LOGGER.error(Level.SEVERE, "Print MCS ", ex.getMessage());
-            }
+            LOGGER.debug("Q: " + isomorphism.getQuery().getID()
+                    + " T: " + isomorphism.getTarget().getID()
+                    + " atoms: " + isomorphism.getQuery().getAtomCount()
+                    + " atoms: " + isomorphism.getTarget().getAtomCount()
+                    + " overlaps: " + overlap);
         }
 
         @Override
@@ -969,27 +1009,29 @@ public class GraphMatcher extends Debugger {
                     IAtomContainer ac2 = duplicate(getCompound2());
 
                     LOGGER.debug("---1.1---");
-                    Substructure substructure;
+                    BaseMapping substructure;
                     am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
                     bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
-                    substructure = new Substructure(ac1, ac2, am, bm, true);
+                    substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2, am, bm, true,
+                            SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
 
                     if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                         am = AtomBondMatcher.atomMatcher(false, ringFlag);
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---1.3---");
-                        substructure = new Substructure(ac1, ac2,
-                                am, bm, true);
+                        substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2,
+                                am, bm, true, SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     } else if (moleculeConnected && !substructure.isSubgraph()) {
                         am = AtomBondMatcher.atomMatcher(false, false);
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---1.2---");
-                        substructure = new Substructure(ac1, ac2, am, bm, true);
+                        substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2, am, bm, true,
+                                SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     }
-                    substructure.setChemFilters(true, true, true);
+                    MAPPING_ENGINE.applyDefaultFilters(substructure);
                     if (substructure.isSubgraph()
                             && substructure.getFirstAtomMapping().getCount() == ac1.getAtomCount()) {
                         LOGGER.debug("Found Substructure 1");
@@ -1015,28 +1057,31 @@ public class GraphMatcher extends Debugger {
 
                     IAtomContainer ac1 = duplicate(getCompound1());
                     IAtomContainer ac2 = duplicate(getCompound2());
-                    Substructure substructure;
+                    BaseMapping substructure;
 
                     LOGGER.debug("---2.1---");
                     am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
                     bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
-                    substructure = new Substructure(ac2, ac1, am, bm, true);
+                    substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
+                            SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
 
                     if (!substructure.isSubgraph() && !theory.equals(IMappingAlgorithm.RINGS)) {
                         am = AtomBondMatcher.atomMatcher(false, ringFlag);
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---2.3---");
-                        substructure = new Substructure(ac2, ac1, am, bm, true);
+                        substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
+                                SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     } else if (moleculeConnected && !substructure.isSubgraph()) {
                         am = AtomBondMatcher.atomMatcher(false, false);
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---2.2---");
-                        substructure = new Substructure(ac2, ac1, am, bm, true);
+                        substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
+                                SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     }
-                    substructure.setChemFilters(true, true, true);
+                    MAPPING_ENGINE.applyDefaultFilters(substructure);
 
                     if (substructure.isSubgraph()
                             && substructure.getFirstAtomMapping().getCount() == ac2.getAtomCount()) {
@@ -1083,8 +1128,8 @@ public class GraphMatcher extends Debugger {
                 LOGGER.debug("\"MCS Time:\" " + time);
                 return mcs;
 
-            } catch (CDKException | CloneNotSupportedException ex) {
-                LOGGER.error(SEVERE, "Error in generating MCS Solution: ", ex.getMessage());
+            } catch (CDKException | CloneNotSupportedException | RuntimeException ex) {
+                LOGGER.error(SEVERE, "Error in generating MCS Solution", ex);
             }
             return null;
         }
@@ -1106,6 +1151,7 @@ public class GraphMatcher extends Debugger {
                 }
                 String containerID = mol.getID() == null ? valueOf(nanoTime()) : mol.getID();
                 ac.setID(containerID);
+                harmonizeForSmsd(ac);
 
                 return ac;
             }
@@ -1190,7 +1236,7 @@ public class GraphMatcher extends Debugger {
             if (ac1 == null || ac2 == null || ac1.getAtomCount() == 0 || ac2.getAtomCount() == 0) {
                 return null;
             }
-            Isomorphism isomorphism;
+                BaseMapping isomorphism;
             int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
             boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
 
@@ -1264,7 +1310,12 @@ public class GraphMatcher extends Debugger {
                         solution);
 
             } else {
-                isomorphism = new Isomorphism(ac1, ac2, Algorithm.VFLibMCS, am, bm);
+                SearchEngine.McsOptions mcsOptions = new SearchEngine.McsOptions();
+                mcsOptions.timeoutMs = MCS_TIMEOUT_MS;
+                mcsOptions.connectedOnly = isMoleculeConnected(ac1, ac2);
+                mcsOptions.disconnectedMCS = !mcsOptions.connectedOnly;
+                mcsOptions.maximizeBonds = bondMatch;
+                isomorphism = MAPPING_ENGINE.findMcs(ac1, ac2, Algorithm.VFLibMCS, am, bm, mcsOptions);
                 mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
             }
 
@@ -1281,22 +1332,7 @@ public class GraphMatcher extends Debugger {
                 a.getAtom(i).setID(ac.getAtom(i).getID());
             }
 
-            // Fix aromatic bond consistency: if a bond is aromatic but its atoms
-            // are not flagged aromatic, downgrade the bond to SINGLE to prevent
-            // "Aromatic bond connects non-aromatic atoms" errors in SMSD
-            for (IBond bond : a.bonds()) {
-                if (bond.isAromatic()) {
-                    IAtom begin = bond.getBegin();
-                    IAtom end = bond.getEnd();
-                    if ((begin != null && !begin.isAromatic())
-                            || (end != null && !end.isAromatic())) {
-                        bond.setIsAromatic(false);
-                        if (bond.getOrder() == null || bond.getOrder() == IBond.Order.UNSET) {
-                            bond.setOrder(IBond.Order.SINGLE);
-                        }
-                    }
-                }
-            }
+            harmonizeForSmsd(a);
 
             return a;
         }
@@ -1417,7 +1453,7 @@ public class GraphMatcher extends Debugger {
             }
             try {
                 cached = CANONICAL_SMIGEN.create(mol);
-            } catch (CDKException e) {
+            } catch (CDKException | RuntimeException e) {
                 // Fallback: use atom/bond counts + fingerprint hash
                 cached = mol.getAtomCount() + ":" + mol.getBondCount() + ":" + mol.hashCode();
             }
@@ -1445,15 +1481,10 @@ public class GraphMatcher extends Debugger {
             return mcsSolution;
         }
 
-        MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, Isomorphism isomorphism) {
+        MCSSolution addMCSSolution(String key, ThreadSafeCache<String, MCSSolution> mappingcache, BaseMapping isomorphism) {
 
-            isomorphism.setChemFilters(true, true, true);
-            try {
-                LOGGER.debug("MCS " + isomorphism.getFirstAtomMapping().getCount() + ", "
-                        + isomorphism.getFirstAtomMapping().getCommonFragmentAsSMILES());
-            } catch (CloneNotSupportedException | CDKException e) {
-                LOGGER.error(SEVERE, "Error in computing MCS ", e.getMessage());
-            }
+            MAPPING_ENGINE.applyDefaultFilters(isomorphism);
+            LOGGER.debug("MCS " + isomorphism.getFirstAtomMapping().getCount());
             /*
              * In case of Complete subgraph, don't use Energy filter
              *
@@ -1469,14 +1500,9 @@ public class GraphMatcher extends Debugger {
             LOGGER.debug("\" Time:\" " + time);
             if (!mappingcache.containsKey(key)) {
                 LOGGER.debug("Key " + key);
-                try {
-                    LOGGER.debug("mcs size " + mcs.getAtomAtomMapping().getCount());
-                    LOGGER.debug("mcs map " + mcs.getAtomAtomMapping().getMappingsByIndex());
-                    LOGGER.debug("mcs " + mcs.getAtomAtomMapping().getCommonFragmentAsSMILES());
-                    LOGGER.debug("\n\n\n ");
-                } catch (CloneNotSupportedException | CDKException ex) {
-                    LOGGER.error(SEVERE, "Unable to create SMILES ", ex.getMessage());
-                }
+                LOGGER.debug("mcs size " + mcs.getAtomAtomMapping().getCount());
+                LOGGER.debug("mcs map " + mcs.getAtomAtomMapping().getMappingsByIndex());
+                LOGGER.debug("\n\n\n ");
                 mappingcache.put(key, mcs);
             }
             return mcs;

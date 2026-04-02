@@ -39,11 +39,12 @@ import org.openscience.cdk.smiles.SmilesParser;
 import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.smsd.AtomAtomMapping;
-import org.openscience.smsd.Isomorphism;
-import org.openscience.smsd.Substructure;
 import org.openscience.smsd.AtomBondMatcher;
+import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.MoleculeInitializer;
 
+import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
+import com.bioinceptionlabs.reactionblast.mapping.SmsdReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.model.AtomNode;
 import com.bioinceptionlabs.reactionblast.model.BondEdge;
 import com.bioinceptionlabs.reactionblast.model.ChemToolkit;
@@ -63,6 +64,9 @@ import com.bioinceptionlabs.reactionblast.model.ReactionGraph;
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public class CDKToolkit implements ChemToolkit {
+
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
 
     private final SmilesParser smilesParser;
     private final SmilesGenerator canonicalSmilesGen;
@@ -159,7 +163,7 @@ public class CDKToolkit implements ChemToolkit {
         try {
             IAtomContainer q = unwrap(query);
             IAtomContainer t = unwrap(target);
-            Substructure sub = new Substructure(q, t,
+            BaseMapping sub = MAPPING_ENGINE.findSubstructure(q, t,
                     AtomBondMatcher.atomMatcher(true, true),
                     AtomBondMatcher.bondMatcher(true, true), true);
             return sub.isSubgraph();
@@ -175,7 +179,7 @@ public class CDKToolkit implements ChemToolkit {
             IAtomContainer ac2 = unwrap(mol2);
             MoleculeInitializer.initializeMolecule(ac1);
             MoleculeInitializer.initializeMolecule(ac2);
-            Isomorphism iso = new Isomorphism(ac1, ac2,
+            BaseMapping iso = MAPPING_ENGINE.findMcs(ac1, ac2,
                     org.openscience.smsd.BaseMapping.Algorithm.VFLibMCS,
                     AtomBondMatcher.atomMatcher(false, false),
                     AtomBondMatcher.bondMatcher(false, false));

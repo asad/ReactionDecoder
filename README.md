@@ -3,19 +3,23 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.7.0`
+`Reaction Decoder Tool (RDT) v3.8.0`
 --------------------------------------
 
 **Toolkit-agnostic reaction mapping engine** with CDK adapter. Deterministic, no training data required.
 
 ### Golden Dataset Benchmark (Lin et al. 2022, 1,851 reactions)
 
-| Tool | Exact Match | Atom Accuracy | Training Data | Deterministic |
-|------|-------------|---------------|---------------|---------------|
-| **RDT v3.7.0** | **82.0%** | **96.4%** | **None** | **Yes** |
-| RXNMapper | 83.74% | - | Unsupervised | No |
-| RDTool (published) | 76.18% | - | None | Yes |
-| ChemAxon | 70.45% | - | Proprietary | Yes |
+Current benchmark reporting now separates strict atom numbering from chemically equivalent mappings.
+
+| Tool | Mol-Map Exact | Atom-Map Exact | Atom-Map Chemically Equivalent | Bond-Change Exact | Deterministic |
+|------|---------------|----------------|--------------------------------|-------------------|---------------|
+| **RDT v3.8.0** | **75.6%** | **23.2%** | **99.2%** | **99.2%** | **Yes** |
+| RXNMapper | - | 83.74% | - | - | No |
+| RDTool (published) | - | 76.18% | - | - | Yes |
+| ChemAxon | - | 70.45% | - | - | Yes |
+
+Detailed benchmark snapshots are in `reports/golden-benchmark-report.md`.
 
 *Reference: Lin A et al. Molecular Informatics 41(4):e2100138, 2022. DOI: [10.1002/minf.202100138](https://doi.org/10.1002/minf.202100138)*
 
@@ -122,7 +126,7 @@ The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in 
 <!-- Old (v2.x) -->
 <groupId>uk.ac.ebi.rdt</groupId>
 
-<!-- New (v3.7.0+) -->
+<!-- New (v3.8.0+) -->
 <groupId>com.bioinceptionlabs</groupId>
 ```
 
@@ -163,7 +167,7 @@ Performance
 | Test suite | 164 tests, 100% pass |
 | Test time | ~120s (4x faster than v2.x) |
 | Codebase | 68 files (reduced from 345) |
-| Dependencies | SMSD 6.7.0, CDK 2.12 (lightweight) |
+| Dependencies | SMSD 6.9.0, CDK 2.12 (lightweight) |
 | Deterministic | Yes (no ML training needed) |
 
 How to Cite RDT?
@@ -196,7 +200,7 @@ Sub-commands
 `AAM using SMILES`
 
   ```
-  java -jar rdt-3.7.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
+  java -jar rdt-3.8.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
   ```
 
 `Perform AAM` for Transporters
@@ -205,14 +209,14 @@ Sub-commands
 `AAM using SMILES` (accept mapping with no bond changes -b)
 
   ```
-  java -jar rdt-3.7.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
+  java -jar rdt-3.8.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
   ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
   ```
-  java -jar rdt-3.7.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
+  java -jar rdt-3.8.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
   ```
 
 
@@ -222,12 +226,12 @@ Sub-commands
 `Compare Reactions using SMILES with precomputed AAM mappings`
 
   ```
-  java -jar rdt-3.7.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+  java -jar rdt-3.8.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
   ```
 
 
 `Compare Reactions using RXN files`
 
   ```
-  java -jar rdt-3.7.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
+  java -jar rdt-3.8.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
   ```

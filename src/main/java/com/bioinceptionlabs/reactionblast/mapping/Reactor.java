@@ -20,10 +20,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -41,7 +43,7 @@ import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.smsd.AtomAtomMapping;
 import org.openscience.smsd.ChemicalFilters.IAtomMapping;
 import org.openscience.smsd.ExtAtomContainerManipulator;
-import org.openscience.smsd.Isomorphism;
+import org.openscience.smsd.BaseMapping;
 import static com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReactionManipulatorTool.deepClone;
 import static java.io.File.separator;
 import static java.lang.Integer.parseInt;
@@ -140,11 +142,11 @@ public class Reactor extends BasicDebugger implements Serializable {
         this.productAtomCounter = 1;
         LOGGER.debug("|++++++++++++++++++++++++++++|");
         LOGGER.debug("|i. Reactor Initialized");
-        MappingHandler.cleanMapping(reaction);
         LOGGER.debug("|++++++++++++++++++++++++++++|");
         printReaction(reaction);
         LOGGER.debug("|ii. Create Mapping Objects");
         copyReferenceReaction(reaction);
+        MappingHandler.cleanMapping(reactionWithSTOICHIOMETRY);
         expandReaction();
         checkReactionBalance();
         LOGGER.debug("|iii. Compute atom-atom Mappings");
@@ -287,7 +289,9 @@ public class Reactor extends BasicDebugger implements Serializable {
             IAtomContainer mol = reactionWithUniqueSTOICHIOMETRY.getReactants().getAtomContainer(i);
             for (int j = 0; j < mol.getBondCount(); j++) {
                 IBond bond = mol.getBond(j);
-                rBonds.add(bond);
+                if (bond != null) {
+                    rBonds.add(bond);
+                }
             }
         }
 
@@ -295,7 +299,9 @@ public class Reactor extends BasicDebugger implements Serializable {
             IAtomContainer mol = reactionWithUniqueSTOICHIOMETRY.getProducts().getAtomContainer(i);
             for (int j = 0; j < mol.getBondCount(); j++) {
                 IBond bond = mol.getBond(j);
-                pBonds.add(bond);
+                if (bond != null) {
+                    pBonds.add(bond);
+                }
             }
         }
 
@@ -964,64 +970,28 @@ public class Reactor extends BasicDebugger implements Serializable {
         }
 
         int counter = 1;
-        for (IAtomContainer mol : rMolSet.atomContainers()) {
-            /*
-            * Assign mappingMap to non H atoms in reactant and product
-             */
-            for (IAtom qAtom : mol.atoms()) {
-                if (mappingMap.containsKey(qAtom) && !qAtom.getSymbol().equalsIgnoreCase("H")) {
-                    String id = valueOf(counter);
-                    qAtom.setID(id);
-                    mappingMap.get(qAtom).setID(id);
-                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
-                    mappingMap.get(qAtom).setProperty(ATOM_ATOM_MAPPING, parseInt(mappingMap.get(qAtom).getID()));
-                    counter++;
-                }
-            }
+        for (IAtom qAtom : collectMappedAtomsByOriginalRank(rMolSet, mappingMap, false)) {
+            assignMappedLabel(qAtom, mappingMap.get(qAtom), counter++);
         }
 
-        for (IAtomContainer mol : rMolSet.atomContainers()) {
-            /*
-            * Assign mappingMap to non H atoms in reactant and product
-             */
-            for (IAtom qAtom : mol.atoms()) {
-                if (mappingMap.containsKey(qAtom) && qAtom.getSymbol().equalsIgnoreCase("H")) {
-                    String id = valueOf(counter);
-                    qAtom.setID(id);
-                    mappingMap.get(qAtom).setID(id);
-                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
-                    mappingMap.get(qAtom).setProperty(ATOM_ATOM_MAPPING, parseInt(mappingMap.get(qAtom).getID()));
-                    counter++;
-                }
-            }
+        for (IAtom qAtom : collectMappedAtomsByOriginalRank(rMolSet, mappingMap, true)) {
+            assignMappedLabel(qAtom, mappingMap.get(qAtom), counter++);
         }
 
-        /*
-        * Assign mappingMap to atoms which are not mapped in the reactant
-         */
-        for (IAtomContainer mol : rMolSet.atomContainers()) {
-            for (IAtom qAtom : mol.atoms()) {
-                if (!mappingMap.containsKey(qAtom)) {
-                    String id = valueOf(counter);
-                    qAtom.setID(id);
-                    qAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(qAtom.getID()));
-                    counter++;
-                }
-            }
+        for (IAtom qAtom : collectUnmappedAtomsByOriginalRank(rMolSet, mappingMap.keySet(), false)) {
+            assignUnmappedLabel(qAtom, counter++);
         }
 
-        /*
-        * Assign mappingMap to atoms which are not mapped in the product
-         */
-        for (IAtomContainer mol : pMolSet.atomContainers()) {
-            for (IAtom tAtom : mol.atoms()) {
-                if (!mappingMap.containsValue(tAtom)) {
-                    String id = valueOf(counter);
-                    tAtom.setID(id);
-                    tAtom.setProperty(ATOM_ATOM_MAPPING, parseInt(tAtom.getID()));
-                    counter++;
-                }
-            }
+        for (IAtom qAtom : collectUnmappedAtomsByOriginalRank(rMolSet, mappingMap.keySet(), true)) {
+            assignUnmappedLabel(qAtom, counter++);
+        }
+
+        for (IAtom tAtom : collectUnmappedAtomsByOriginalRank(pMolSet, new HashSet<>(mappingMap.values()), false)) {
+            assignUnmappedLabel(tAtom, counter++);
+        }
+
+        for (IAtom tAtom : collectUnmappedAtomsByOriginalRank(pMolSet, new HashSet<>(mappingMap.values()), true)) {
+            assignUnmappedLabel(tAtom, counter++);
         }
         /*
         Finally permute molecules based on the atom mapping rank
@@ -1042,6 +1012,112 @@ public class Reactor extends BasicDebugger implements Serializable {
 
         mappingMap.clear();
         return counter;
+    }
+
+    private void assignMappedLabel(IAtom reactantAtom, IAtom productAtom, int counter) {
+        String id = valueOf(counter);
+        reactantAtom.setID(id);
+        reactantAtom.setProperty(ATOM_ATOM_MAPPING, counter);
+        reactantAtom.setMapIdx(counter);
+
+        if (productAtom != null) {
+            productAtom.setID(id);
+            productAtom.setProperty(ATOM_ATOM_MAPPING, counter);
+            productAtom.setMapIdx(counter);
+        }
+    }
+
+    private void assignUnmappedLabel(IAtom atom, int counter) {
+        String id = valueOf(counter);
+        atom.setID(id);
+        atom.setProperty(ATOM_ATOM_MAPPING, counter);
+        atom.setMapIdx(counter);
+    }
+
+    private List<IAtom> collectMappedAtomsByOriginalRank(IAtomContainerSet molSet,
+            Map<IAtom, IAtom> mappingMap, boolean hydrogens) {
+        List<IAtom> atoms = new ArrayList<>();
+        for (IAtomContainer mol : molSet.atomContainers()) {
+            for (IAtom atom : mol.atoms()) {
+                if (mappingMap.containsKey(atom)
+                        && atom.getSymbol().equalsIgnoreCase("H") == hydrogens) {
+                    atoms.add(atom);
+                }
+            }
+        }
+        sortByOriginalRank(atoms);
+        return atoms;
+    }
+
+    private List<IAtom> collectUnmappedAtomsByOriginalRank(IAtomContainerSet molSet,
+            Set<IAtom> mappedAtoms, boolean hydrogens) {
+        List<IAtom> atoms = new ArrayList<>();
+        for (IAtomContainer mol : molSet.atomContainers()) {
+            for (IAtom atom : mol.atoms()) {
+                if (!mappedAtoms.contains(atom)
+                        && atom.getSymbol().equalsIgnoreCase("H") == hydrogens) {
+                    atoms.add(atom);
+                }
+            }
+        }
+        sortByOriginalRank(atoms);
+        return atoms;
+    }
+
+    private void sortByOriginalRank(List<IAtom> atoms) {
+        atoms.sort((left, right) -> {
+            int rankComparison = Integer.compare(getOriginalRank(left), getOriginalRank(right));
+            if (rankComparison != 0) {
+                return rankComparison;
+            }
+
+            int labelComparison = Integer.compare(getStableAtomPosition(left), getStableAtomPosition(right));
+            if (labelComparison != 0) {
+                return labelComparison;
+            }
+            return left.getSymbol().compareTo(right.getSymbol());
+        });
+    }
+
+    private int getOriginalRank(IAtom atom) {
+        Object oldRank = atom.getProperty("OLD_RANK");
+        if (oldRank instanceof Integer) {
+            return (Integer) oldRank;
+        }
+        if (oldRank != null) {
+            try {
+                return parseInt(oldRank.toString());
+            } catch (NumberFormatException ignore) {
+                // Fall through to the stable fallback below.
+            }
+        }
+        return getStableAtomPosition(atom);
+    }
+
+    private int getStableAtomPosition(IAtom atom) {
+        Object label = atom.getProperty("label");
+        if (label instanceof Integer) {
+            return (Integer) label;
+        }
+        if (label != null) {
+            try {
+                return parseInt(label.toString());
+            } catch (NumberFormatException ignore) {
+                // Fall through to the generic fallback below.
+            }
+        }
+        Object index = atom.getProperty("index");
+        if (index instanceof Integer) {
+            return (Integer) index;
+        }
+        if (index != null) {
+            try {
+                return parseInt(index.toString());
+            } catch (NumberFormatException ignore) {
+                return Integer.MAX_VALUE;
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
@@ -1119,7 +1195,9 @@ public class Reactor extends BasicDebugger implements Serializable {
         }
         atomContainer.setAtoms(permutedAtoms);
 
-        IBond[] bonds = getBondArray(atomContainer);
+        IBond[] bonds = java.util.Arrays.stream(getBondArray(atomContainer))
+                .filter(Objects::nonNull)
+                .toArray(IBond[]::new);
         sort(bonds, (IBond o1, IBond o2) -> {
             int u = o1.getAtom(0).getProperty("label");
             int v = o1.getAtom(1).getProperty("label");
@@ -1556,7 +1634,7 @@ public class Reactor extends BasicDebugger implements Serializable {
          * @param target
          * @param smsd
          */
-        protected void generateImage(String outPutFileName, IAtomContainer query, IAtomContainer target, Isomorphism smsd) {
+        protected void generateImage(String outPutFileName, IAtomContainer query, IAtomContainer target, BaseMapping smsd) {
 
             ImageGenerator imageGenerator = new ImageGenerator();
 

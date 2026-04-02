@@ -18,7 +18,6 @@
  */
 package com.bioinceptionlabs.reactionblast.mechanism;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +31,6 @@ import org.openscience.cdk.interfaces.IAtom;
  */
 interface IChangeCalculator {
 
-    BEMatrix getEductBEMatrix();
-    BEMatrix getProductBEMatrix();
-    RMatrix getRMatrix();
-    void printBMatrix();
-    void printEMatrix();
-    void printRMatrix();
-    void writeBMatrix(File outputFile);
-    void writeEMatrix(File outputFile);
-    void writeRMatrix(File outputFile);
-    boolean hasRMatrix();
     Map<IAtom, IAtom> getMappingMap();
     List<MechanismHelpers.BondChange> getBondChangeList();
     Collection<IAtom> getReactionCenterSet();

@@ -44,11 +44,13 @@ import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getTotalFormalCharge;
 import static org.openscience.smsd.ExtAtomContainerManipulator.removeHydrogens;
 import static org.openscience.smsd.ExtAtomContainerManipulator.Utility.isMatch;
-import org.openscience.smsd.Substructure;
+import org.openscience.smsd.BaseMapping;
 import org.openscience.smsd.AtomBondMatcher;
 import org.openscience.smsd.AtomBondMatcher.AtomMatcher;
 import org.openscience.smsd.AtomBondMatcher.BondMatcher;
+import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
+import com.bioinceptionlabs.reactionblast.mapping.SmsdReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.legacy.EBIMatrix;
 
 /**
@@ -67,6 +69,9 @@ interface IResult {
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
 public final class MappingChecks {
+
+    private static final ReactionMappingEngine MAPPING_ENGINE
+            = SmsdReactionMappingEngine.getInstance();
 
     private MappingChecks() { /* utility class */ }
 
@@ -917,9 +922,10 @@ public final class MappingChecks {
                         try {
                             AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(true, true);
                             BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(true, true);
-                            Substructure isomorphism = new Substructure(ac1, ac2, atomMatcher, bondMatcher, false);
+                            BaseMapping isomorphism = MAPPING_ENGINE.findSubstructure(
+                                    ac1, ac2, atomMatcher, bondMatcher, false);
                             if (isomorphism.isSubgraph()) {
-                                isomorphism.setChemFilters(true, true, true);
+                                MAPPING_ENGINE.applyDefaultFilters(isomorphism);
                                 if (isomorphism.getTanimotoSimilarity() == 1.0) {
                                     if (!isomorphism.isStereoMisMatch()) {
                                         flagStereoMatrix[i][j] = true;

@@ -50,6 +50,8 @@ public class GoldenDatasetBenchmarkTest {
 
     private static final String GOLDEN_RDF = "benchmark/golden_dataset.rdf";
     private static final int MAX_REACTIONS = Integer.getInteger("golden.max", 0); // 0 = all
+    private static final int REPORT_MISMATCHES = Integer.getInteger("golden.reportMismatches", 0);
+    private static final String BENCHMARK_ATOM_ID = "benchmarkAtomId";
 
     @Test
     public void benchmarkGoldenDataset() throws Exception {
@@ -69,17 +71,27 @@ public class GoldenDatasetBenchmarkTest {
         // Counters
         int total = 0;
         int success = 0;             // RDT produced a mapping
+        int molMapExact = 0;         // exact reactant-molecule -> product-molecule relations
         int exactAtomMatch = 0;      // all atom mappings match gold standard exactly
-        int equivalentMatch = 0;     // different mapping but equally valid (same bond changes)
+        int chemistryEquivalent = 0; // same bond changes as gold, regardless of numbering
+        int alternateValidMapping = 0; // chemically equivalent but different atom numbering
+        int trueChemistryMiss = 0;   // bond changes differ from gold
+        int ambiguousNoChange = 0;   // no-change reactions where numbering differs but chemistry is identical
         int rdtBetter = 0;           // RDT finds fewer bond changes (more parsimonious)
         int bondChangeMatch = 0;     // at least 1 bond change detected
         int bondChangeExact = 0;     // exact same number of bond changes as gold
+        int bondChangeCountExact = 0; // exact same total number of bond changes
+        int bondChangeTypeExact = 0; // exact same FORM/BREAK/ORDER counts
+        int reactionCenterExact = 0; // exact same reaction-center atom set
         int errors = 0;
         int totalGoldAtoms = 0;
         int correctAtoms = 0;
+        int totalGoldReactionCenterAtoms = 0;
+        int correctReactionCenterAtoms = 0;
         int goldParseFail = 0;
         double totalQualityScore = 0;
         int qualityScored = 0;
+        int mismatchReports = 0;
 
         long startTime = System.currentTimeMillis();
 
@@ -96,15 +108,22 @@ public class GoldenDatasetBenchmarkTest {
                     continue;
                 }
 
+                assignBenchmarkAtomIds(goldRxn);
+                assignBenchmarkAtomIds(rdtRxn);
+
                 // Extract gold atom maps before stripping
-                Map<Integer, Integer> goldMapByNumber = extractMapByNumber(goldRxn);
-                totalGoldAtoms += goldMapByNumber.size();
-                if (goldMapByNumber.isEmpty()) {
+                Map<String, String> goldMapByAtomId = extractMapByBenchmarkId(goldRxn);
+                totalGoldAtoms += goldMapByAtomId.size();
+                if (goldMapByAtomId.isEmpty()) {
                     goldParseFail++;
                 }
 
                 // Extract gold bond changes from the mapped reaction
                 Set<String> goldBondChanges = extractBondChanges(goldRxn);
+                Map<String, Integer> goldBondChangeTypes = extractBondChangeTypeCounts(goldBondChanges);
+                Set<String> goldReactionCenter = extractReactionCenterAtoms(goldBondChanges);
+                Set<String> goldMolMapPairs = extractMolMapPairs(goldMapByAtomId);
+                totalGoldReactionCenterAtoms += goldReactionCenter.size();
 
                 // Strip atom maps for RDT input
                 stripAtomMaps(rdtRxn);
@@ -114,45 +133,80 @@ public class GoldenDatasetBenchmarkTest {
                 ReactionMechanismTool rmt = performAtomAtomMapping(rdtRxn, "GOLDEN_" + (i + 1));
                 MappingSolution solution = rmt.getSelectedSolution();
 
-                if (solution != null && solution.getBondChangeCalculator() != null) {
-                    success++;
+                    if (solution != null && solution.getBondChangeCalculator() != null) {
+                        success++;
 
-                    // --- Metric 1: Atom-level accuracy ---
-                    IReaction mappedRxn = solution.getReaction();
-                    if (mappedRxn != null) {
-                        Map<Integer, Integer> rdtMapByNumber = extractMapByNumber(mappedRxn);
+                        // --- Metric 1: Atom-level accuracy ---
+                        IReaction mappedRxn = solution.getReaction();
                         int matched = 0;
-                        for (Map.Entry<Integer, Integer> goldEntry : goldMapByNumber.entrySet()) {
-                            Integer rdtProduct = rdtMapByNumber.get(goldEntry.getKey());
-                            if (rdtProduct != null && rdtProduct.equals(goldEntry.getValue())) {
-                                matched++;
+                        int goldAtomCount = goldMapByAtomId.size();
+                        boolean exactMapping = false;
+                        if (mappedRxn != null) {
+                            Map<String, String> rdtMapByAtomId = extractMapByBenchmarkId(mappedRxn);
+                            Set<String> rdtMolMapPairs = extractMolMapPairs(rdtMapByAtomId);
+                            for (Map.Entry<String, String> goldEntry : goldMapByAtomId.entrySet()) {
+                                String rdtProduct = rdtMapByAtomId.get(goldEntry.getKey());
+                                if (rdtProduct != null && rdtProduct.equals(goldEntry.getValue())) {
+                                    matched++;
+                                }
+                            }
+                            correctAtoms += matched;
+                            exactMapping = matched == goldMapByAtomId.size() && !goldMapByAtomId.isEmpty();
+                            if (rdtMolMapPairs.equals(goldMolMapPairs) && !goldMolMapPairs.isEmpty()) {
+                                molMapExact++;
+                            }
+                            if (exactMapping) {
+                                exactAtomMatch++;
                             }
                         }
-                        correctAtoms += matched;
-                        if (matched == goldMapByNumber.size() && !goldMapByNumber.isEmpty()) {
-                            exactAtomMatch++;
+
+                        // --- Metric 2: Bond-change analysis ---
+                        Set<String> rdtBondChangesSet = mappedRxn != null
+                                ? extractBondChanges(mappedRxn) : new HashSet<>();
+                        IPatternFingerprinter formedCleaved = solution.getBondChangeCalculator()
+                                .getFormedCleavedWFingerprint();
+                        IPatternFingerprinter orderChanged = solution.getBondChangeCalculator()
+                                .getOrderChangesWFingerprint();
+                    int rdtBondChanges = rdtBondChangesSet.size();
+                    int goldBondChangeCount = goldBondChanges.size();
+                    boolean chemicallyEquivalent = rdtBondChangesSet.equals(goldBondChanges);
+                    Map<String, Integer> rdtBondChangeTypes = extractBondChangeTypeCounts(rdtBondChangesSet);
+                    Set<String> rdtReactionCenter = extractReactionCenterAtoms(rdtBondChangesSet);
+                    int matchedReactionCenterAtoms = 0;
+                    for (String atomId : goldReactionCenter) {
+                        if (rdtReactionCenter.contains(atomId)) {
+                            matchedReactionCenterAtoms++;
                         }
                     }
-
-                    // --- Metric 2: Bond-change analysis ---
-                    IPatternFingerprinter formedCleaved = solution.getBondChangeCalculator()
-                            .getFormedCleavedWFingerprint();
-                    IPatternFingerprinter orderChanged = solution.getBondChangeCalculator()
-                            .getOrderChangesWFingerprint();
-                    int rdtBondChanges = formedCleaved.getFeatureCount() + orderChanged.getFeatureCount();
-                    int goldBondChangeCount = goldBondChanges.size();
-
-                    if (rdtBondChanges > 0) {
-                        bondChangeMatch++;
+                    correctReactionCenterAtoms += matchedReactionCenterAtoms;
+                    if (rdtReactionCenter.equals(goldReactionCenter)) {
+                        reactionCenterExact++;
                     }
+
+                        if (rdtBondChanges > 0) {
+                            bondChangeMatch++;
+                        }
                     if (rdtBondChanges == goldBondChangeCount) {
+                        bondChangeCountExact++;
+                    }
+                    if (rdtBondChangeTypes.equals(goldBondChangeTypes)) {
+                        bondChangeTypeExact++;
+                    }
+                    if (chemicallyEquivalent) {
                         bondChangeExact++;
                     }
 
-                    // --- Metric 3: Equivalent match ---
-                    // If atom maps differ but bond change count is same → equivalent mapping
-                    if (rdtBondChanges == goldBondChangeCount && rdtBondChanges > 0) {
-                        equivalentMatch++;
+                        // --- Metric 3: Smarter mapping classification ---
+                    if (chemicallyEquivalent) {
+                        chemistryEquivalent++;
+                        if (!exactMapping) {
+                            alternateValidMapping++;
+                            if (rdtBondChanges == 0 && goldBondChangeCount == 0) {
+                                ambiguousNoChange++;
+                            }
+                        }
+                    } else {
+                        trueChemistryMiss++;
                     }
 
                     // --- Metric 4: RDT better (more parsimonious) ---
@@ -162,7 +216,7 @@ public class GoldenDatasetBenchmarkTest {
 
                     // --- Metric 5: Quality score ---
                     // Coverage: fraction of gold atoms mapped by RDT
-                    double coverage = goldMapByNumber.isEmpty() ? 1.0
+                    double coverage = goldMapByAtomId.isEmpty() ? 1.0
                             : (double) correctAtoms / totalGoldAtoms; // running, not per-rxn
                     // Parsimony: fewer bond changes = better (ratio gold/rdt, capped at 1)
                     double parsimony = (rdtBondChanges == 0) ? 0
@@ -172,6 +226,27 @@ public class GoldenDatasetBenchmarkTest {
                             ? parsimony : 1.0;
                     totalQualityScore += quality;
                     qualityScored++;
+
+                    if (REPORT_MISMATCHES > 0
+                            && mismatchReports < REPORT_MISMATCHES
+                            && (!exactMapping || !chemicallyEquivalent)) {
+                        mismatchReports++;
+                        System.out.printf(
+                                "  Mismatch %d: GOLDEN_%d algo=%s atoms=%d/%d bondChanges=%d/%d exact=%s chemEq=%s%n",
+                                mismatchReports,
+                                i + 1,
+                                solution.getAlgorithmID(),
+                                matched,
+                                goldAtomCount,
+                                rdtBondChanges,
+                                goldBondChangeCount,
+                                exactMapping,
+                                chemicallyEquivalent);
+                        System.out.println("    direct=" + rdtBondChangesSet);
+                        System.out.println("    gold=" + goldBondChanges);
+                        System.out.println("    formed/cleaved=" + describeFingerprint(formedCleaved));
+                        System.out.println("    order=" + describeFingerprint(orderChanged));
+                    }
                 }
             } catch (Exception e) {
                 errors++;
@@ -180,26 +255,29 @@ public class GoldenDatasetBenchmarkTest {
             if ((i + 1) % 100 == 0) {
                 long elapsed = System.currentTimeMillis() - startTime;
                 double rate = (i + 1) * 1000.0 / elapsed;
-                System.out.printf("  Progress: %d/%d (%.1f rxn/sec, %d errors, %d exact, %d equiv)%n",
-                        i + 1, limit, rate, errors, exactAtomMatch, equivalentMatch);
+                System.out.printf("  Progress: %d/%d (%.1f rxn/sec, %d errors, %d mol-exact, %d atom-exact, %d alt-valid, %d chem-miss)%n",
+                        i + 1, limit, rate, errors, molMapExact, exactAtomMatch,
+                        alternateValidMapping, trueChemistryMiss);
             }
         }
 
         long totalTime = System.currentTimeMillis() - startTime;
         double rxnPerSec = total * 1000.0 / totalTime;
         double atomAccuracy = totalGoldAtoms > 0 ? (100.0 * correctAtoms / totalGoldAtoms) : 0;
+        double reactionCenterAccuracy = totalGoldReactionCenterAtoms > 0
+                ? (100.0 * correctReactionCenterAtoms / totalGoldReactionCenterAtoms) : 0;
         double avgQuality = qualityScored > 0 ? (100.0 * totalQualityScore / qualityScored) : 0;
-        double trueAccuracy = total > 0
-                ? 100.0 * (exactAtomMatch + equivalentMatch - exactAtomMatch) / total : 0;
-        // equivalentMatch includes exactAtomMatch cases, so true accuracy = equivalent/total
+        double chemistryEquivalentPct = pct_d(chemistryEquivalent, total);
 
         System.out.println();
-        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.7.0) ===");
+        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.8.0) ===");
         System.out.println("Total reactions:        " + total);
         System.out.println();
         System.out.println("--- Core Metrics ---");
         System.out.println("Mapping success:        " + success + "/" + total
                 + " (" + pct(success, total) + "%)");
+        System.out.println("Mol-map exact:         " + molMapExact + "/" + total
+                + " (" + pct(molMapExact, total) + "%)");
         System.out.println("Exact atom-map match:   " + exactAtomMatch + "/" + total
                 + " (" + pct(exactAtomMatch, total) + "%)");
         System.out.println("Atom-level accuracy:    " + correctAtoms + "/" + totalGoldAtoms
@@ -210,10 +288,27 @@ public class GoldenDatasetBenchmarkTest {
                 + " (" + pct(bondChangeMatch, total) + "%)");
         System.out.println("Bond-change exact:      " + bondChangeExact + "/" + total
                 + " (" + pct(bondChangeExact, total) + "%)");
+        System.out.println("Bond-change count:      " + bondChangeCountExact + "/" + total
+                + " (" + pct(bondChangeCountExact, total) + "%)");
+        System.out.println("Bond-change type:       " + bondChangeTypeExact + "/" + total
+                + " (" + pct(bondChangeTypeExact, total) + "%)");
+        System.out.println("Reaction-center exact:  " + reactionCenterExact + "/" + total
+                + " (" + pct(reactionCenterExact, total) + "%)");
+        System.out.println("Reaction-center atoms:  " + correctReactionCenterAtoms + "/"
+                + totalGoldReactionCenterAtoms
+                + " (" + String.format("%.1f", reactionCenterAccuracy) + "%)");
+        System.out.println();
+        System.out.println("--- Smarter Match Breakdown ---");
+        System.out.println("Chemically equivalent:  " + chemistryEquivalent + "/" + total
+                + " (" + String.format("%.1f", chemistryEquivalentPct) + "%)");
+        System.out.println("Alternate valid map:    " + alternateValidMapping + "/" + total
+                + " (" + pct(alternateValidMapping, total) + "%)");
+        System.out.println("True chemistry miss:    " + trueChemistryMiss + "/" + total
+                + " (" + pct(trueChemistryMiss, total) + "%)");
+        System.out.println("No-change ambiguous:    " + ambiguousNoChange + "/" + total
+                + " (" + pct(ambiguousNoChange, total) + "%)");
         System.out.println();
         System.out.println("--- Quality Metrics ---");
-        System.out.println("Equivalent match:       " + equivalentMatch + "/" + total
-                + " (" + pct(equivalentMatch, total) + "%)");
         System.out.println("RDT more parsimonious:  " + rdtBetter + "/" + total
                 + " (" + pct(rdtBetter, total) + "%)");
         System.out.println("Avg quality score:      " + String.format("%.1f", avgQuality) + "%");
@@ -230,7 +325,7 @@ public class GoldenDatasetBenchmarkTest {
         System.out.println("| RXNMapper          | 83.74%      | -         | -         | Unsup.   | No            |");
         System.out.println("| RDTool (published) | 76.18%      | -         | -         | None     | Yes           |");
         System.out.println("| ChemAxon           | 70.45%      | -         | -         | Propr.   | Yes           |");
-        System.out.printf("| RDT v3.7.0         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
+        System.out.printf("| RDT v3.8.0         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
                 pct_d(exactAtomMatch, total), atomAccuracy, pct_d(bondChangeExact, total));
 
         assertTrue("Mapping success rate should be > 70%", success > total * 0.70);
@@ -240,15 +335,15 @@ public class GoldenDatasetBenchmarkTest {
 
     private Set<String> extractBondChanges(IReaction rxn) {
         Set<String> changes = new HashSet<>();
-        Map<Integer, Map<Integer, IBond.Order>> reactantBonds = collectBondsByMap(rxn.getReactants());
-        Map<Integer, Map<Integer, IBond.Order>> productBonds = collectBondsByMap(rxn.getProducts());
+        Map<String, Map<String, IBond.Order>> reactantBonds = collectBondsByBenchmarkId(rxn.getReactants());
+        Map<String, Map<String, IBond.Order>> productBonds = collectBondsByBenchmarkId(rxn.getProducts());
 
         // Broken bonds: in reactants but not products
-        for (Map.Entry<Integer, Map<Integer, IBond.Order>> entry : reactantBonds.entrySet()) {
-            int atom1 = entry.getKey();
-            for (Map.Entry<Integer, IBond.Order> bond : entry.getValue().entrySet()) {
-                int atom2 = bond.getKey();
-                if (atom1 < atom2) { // avoid double counting
+        for (Map.Entry<String, Map<String, IBond.Order>> entry : reactantBonds.entrySet()) {
+            String atom1 = entry.getKey();
+            for (Map.Entry<String, IBond.Order> bond : entry.getValue().entrySet()) {
+                String atom2 = bond.getKey();
+                if (atom1.compareTo(atom2) < 0) { // avoid double counting
                     IBond.Order prodOrder = productBonds.getOrDefault(atom1, new HashMap<>()).get(atom2);
                     if (prodOrder == null) {
                         changes.add("BREAK:" + atom1 + "-" + atom2);
@@ -259,11 +354,11 @@ public class GoldenDatasetBenchmarkTest {
             }
         }
         // Formed bonds: in products but not reactants
-        for (Map.Entry<Integer, Map<Integer, IBond.Order>> entry : productBonds.entrySet()) {
-            int atom1 = entry.getKey();
-            for (Map.Entry<Integer, IBond.Order> bond : entry.getValue().entrySet()) {
-                int atom2 = bond.getKey();
-                if (atom1 < atom2) {
+        for (Map.Entry<String, Map<String, IBond.Order>> entry : productBonds.entrySet()) {
+            String atom1 = entry.getKey();
+            for (Map.Entry<String, IBond.Order> bond : entry.getValue().entrySet()) {
+                String atom2 = bond.getKey();
+                if (atom1.compareTo(atom2) < 0) {
                     IBond.Order reactOrder = reactantBonds.getOrDefault(atom1, new HashMap<>()).get(atom2);
                     if (reactOrder == null) {
                         changes.add("FORM:" + atom1 + "-" + atom2);
@@ -274,16 +369,74 @@ public class GoldenDatasetBenchmarkTest {
         return changes;
     }
 
-    private Map<Integer, Map<Integer, IBond.Order>> collectBondsByMap(
+    private Set<String> extractReactionCenterAtoms(Set<String> bondChanges) {
+        Set<String> atoms = new HashSet<>();
+        for (String change : bondChanges) {
+            int colonIndex = change.indexOf(':');
+            if (colonIndex < 0 || colonIndex + 1 >= change.length()) {
+                continue;
+            }
+            String pair = change.substring(colonIndex + 1);
+            String[] atomIds = pair.split("-");
+            for (String atomId : atomIds) {
+                if (!atomId.isEmpty()) {
+                    atoms.add(atomId);
+                }
+            }
+        }
+        return atoms;
+    }
+
+    private Map<String, Integer> extractBondChangeTypeCounts(Set<String> bondChanges) {
+        Map<String, Integer> typeCounts = new HashMap<>();
+        for (String change : bondChanges) {
+            int colonIndex = change.indexOf(':');
+            if (colonIndex <= 0) {
+                continue;
+            }
+            String type = change.substring(0, colonIndex);
+            typeCounts.merge(type, 1, Integer::sum);
+        }
+        return typeCounts;
+    }
+
+    private Set<String> extractMolMapPairs(Map<String, String> atomMapByAtomId) {
+        Set<String> molPairs = new HashSet<>();
+        for (Map.Entry<String, String> entry : atomMapByAtomId.entrySet()) {
+            Integer reactantMol = extractMoleculeIndex(entry.getKey());
+            Integer productMol = extractMoleculeIndex(entry.getValue());
+            if (reactantMol != null && productMol != null) {
+                molPairs.add("R:" + reactantMol + ">P:" + productMol);
+            }
+        }
+        return molPairs;
+    }
+
+    private Integer extractMoleculeIndex(String atomId) {
+        if (atomId == null) {
+            return null;
+        }
+        String[] parts = atomId.split(":");
+        if (parts.length != 3) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private Map<String, Map<String, IBond.Order>> collectBondsByBenchmarkId(
             org.openscience.cdk.interfaces.IAtomContainerSet molSet) {
-        Map<Integer, Map<Integer, IBond.Order>> bonds = new HashMap<>();
+        Map<String, Map<String, IBond.Order>> bonds = new HashMap<>();
         for (IAtomContainer mol : molSet.atomContainers()) {
             for (IBond bond : mol.bonds()) {
-                int map1 = getAtomMapNumber(bond.getBegin());
-                int map2 = getAtomMapNumber(bond.getEnd());
-                if (map1 > 0 && map2 > 0) {
-                    bonds.computeIfAbsent(map1, k -> new HashMap<>()).put(map2, bond.getOrder());
-                    bonds.computeIfAbsent(map2, k -> new HashMap<>()).put(map1, bond.getOrder());
+                String atom1 = getBenchmarkAtomId(bond.getBegin());
+                String atom2 = getBenchmarkAtomId(bond.getEnd());
+                if (atom1 != null && atom2 != null) {
+                    bonds.computeIfAbsent(atom1, k -> new HashMap<>()).put(atom2, bond.getOrder());
+                    bonds.computeIfAbsent(atom2, k -> new HashMap<>()).put(atom1, bond.getOrder());
                 }
             }
         }
@@ -292,28 +445,51 @@ public class GoldenDatasetBenchmarkTest {
 
     // ---- Atom map extraction ----
 
-    private Map<Integer, Integer> extractMapByNumber(IReaction rxn) {
-        Set<Integer> reactantMapNums = new HashSet<>();
+    private Map<String, String> extractMapByBenchmarkId(IReaction rxn) {
+        Map<Integer, String> reactantMapNums = new HashMap<>();
         for (IAtomContainer mol : rxn.getReactants().atomContainers()) {
             for (IAtom atom : mol.atoms()) {
                 int mapNum = getAtomMapNumber(atom);
-                if (mapNum > 0) reactantMapNums.add(mapNum);
+                String atomId = getBenchmarkAtomId(atom);
+                if (mapNum > 0 && atomId != null) {
+                    reactantMapNums.put(mapNum, atomId);
+                }
             }
         }
-        Set<Integer> productMapNums = new HashSet<>();
+        Map<String, String> mapPairs = new HashMap<>();
         for (IAtomContainer mol : rxn.getProducts().atomContainers()) {
             for (IAtom atom : mol.atoms()) {
                 int mapNum = getAtomMapNumber(atom);
-                if (mapNum > 0) productMapNums.add(mapNum);
-            }
-        }
-        Map<Integer, Integer> mapPairs = new HashMap<>();
-        for (int mapNum : reactantMapNums) {
-            if (productMapNums.contains(mapNum)) {
-                mapPairs.put(mapNum, mapNum);
+                String atomId = getBenchmarkAtomId(atom);
+                String reactantId = reactantMapNums.get(mapNum);
+                if (mapNum > 0 && atomId != null && reactantId != null) {
+                    mapPairs.put(reactantId, atomId);
+                }
             }
         }
         return mapPairs;
+    }
+
+    private void assignBenchmarkAtomIds(IReaction rxn) {
+        int molIndex = 0;
+        for (IAtomContainer mol : rxn.getReactants().atomContainers()) {
+            for (int atomIndex = 0; atomIndex < mol.getAtomCount(); atomIndex++) {
+                mol.getAtom(atomIndex).setProperty(BENCHMARK_ATOM_ID, "R:" + molIndex + ":" + atomIndex);
+            }
+            molIndex++;
+        }
+        molIndex = 0;
+        for (IAtomContainer mol : rxn.getProducts().atomContainers()) {
+            for (int atomIndex = 0; atomIndex < mol.getAtomCount(); atomIndex++) {
+                mol.getAtom(atomIndex).setProperty(BENCHMARK_ATOM_ID, "P:" + molIndex + ":" + atomIndex);
+            }
+            molIndex++;
+        }
+    }
+
+    private String getBenchmarkAtomId(IAtom atom) {
+        Object atomId = atom.getProperty(BENCHMARK_ATOM_ID);
+        return atomId != null ? atomId.toString() : null;
     }
 
     private int getAtomMapNumber(IAtom atom) {
@@ -393,6 +569,24 @@ public class GoldenDatasetBenchmarkTest {
 
     private String pct(int num, int den) {
         return den == 0 ? "0.0" : String.format("%.1f", 100.0 * num / den);
+    }
+
+    private int getWeightedFeatureCount(IPatternFingerprinter fingerprint) {
+        int count = 0;
+        for (com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature feature
+                : fingerprint.getFeatures()) {
+            count += (int) Math.round(feature.getWeight());
+        }
+        return count;
+    }
+
+    private String describeFingerprint(IPatternFingerprinter fingerprint) {
+        List<String> features = new ArrayList<>();
+        for (com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFeature feature
+                : fingerprint.getFeatures()) {
+            features.add(feature.getPattern() + "x" + (int) Math.round(feature.getWeight()));
+        }
+        return features.toString();
     }
 
     private double pct_d(int num, int den) {

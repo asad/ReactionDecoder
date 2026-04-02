@@ -38,6 +38,8 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import org.openscience.cdk.graph.CycleFinder;
+import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.MoleculeInitializer;
@@ -158,12 +160,13 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
     final List<MechanismHelpers.AtomStereoChangeInformation> stereoChangeList;
     final List<MechanismHelpers.AtomStereoChangeInformation> conformationChangeList;
     final List<DUModel.StereoChange> stereogenicCenters;
+    protected final boolean withoutHydrogen;
     protected final boolean generate3DCoordinates;
     protected final boolean generate2DCoordinates;
     protected final MechanismHelpers.AtomAtomMappingContainer mapping;
-    protected final BEMatrix reactantBE;
-    protected final BEMatrix productBE;
-    protected final RMatrix reactionMatrix;
+    protected BEMatrix reactantBE;
+    protected BEMatrix productBE;
+    protected RMatrix reactionMatrix;
     protected final IRingSet queryRingSet;
     protected final IRingSet targetRingSet;
 
@@ -188,6 +191,7 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
         this.stereoChangeList = new ArrayList<>();
         this.conformationChangeList = new ArrayList<>();
         this.mappingMap = new HashMap<>();
+        this.withoutHydrogen = withoutHydrogen;
 
         this.generate3DCoordinates = generate3D;
         this.generate2DCoordinates = generate2D;
@@ -200,48 +204,7 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
         LOGGER.debug("setMappingMap");
         setMappingMap(reaction.mappings());
         LOGGER.debug("Done setMappingMap");
-
-        LOGGER.debug("Mark Aromatic Bonds");
-        List<IBond> rBonds = new ArrayList<>();
-        for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
-            /*
-             * Aromatise and mark rings (imp for detecting keukal changes)
-             */
-            LOGGER.debug("MoleculeInitializer");
-            MoleculeInitializer.initializeMolecule(ac);
-            LOGGER.debug("MoleculeInitializer Done");
-            for (IBond bond : ac.bonds()) {
-                rBonds.add(bond);
-            }
-        }
-        List<IBond> pBonds = new ArrayList<>();
-        for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
-            /*
-             Aromatise and mark rings (imp for detecting keukal changes)
-             */
-            LOGGER.debug("MoleculeInitializer");
-            MoleculeInitializer.initializeMolecule(ac);
-            LOGGER.debug("Done");
-            for (IBond bond : ac.bonds()) {
-                pBonds.add(bond);
-            }
-        }
-
-        LOGGER.debug("Done Marking Aromatic Bonds");
-
-        try {
-
-            LOGGER.debug("=====Educt createBEMatrix=====");
-            this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
-            LOGGER.debug("=====Product createBEMatrix=====");
-            this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
-            LOGGER.debug("=====AAM Container=====");
-            this.mapping = new MechanismHelpers.AtomAtomMappingContainer(reaction, withoutHydrogen);
-            LOGGER.debug("=====createRMatrix=====");
-            this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
-        } catch (Exception e) {
-            throw new Exception("WARNING: Unable to compute reaction matrix", e);
-        }
+        this.mapping = new MechanismHelpers.AtomAtomMappingContainer(reaction, withoutHydrogen);
         /*
          * Stereo mapping
          */
@@ -294,6 +257,54 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
      */
     private RMatrix createRMatrix(BEMatrix reactantBE, BEMatrix productBE, MechanismHelpers.AtomAtomMappingContainer mapping) throws Exception {
         return new RMatrix(reactantBE, productBE, mapping);
+    }
+
+    protected synchronized void ensureReactionMatrices() throws Exception {
+        if (reactionMatrix != null) {
+            return;
+        }
+
+        LOGGER.debug("Mark Aromatic Bonds");
+        List<IBond> rBonds = new ArrayList<>();
+        queryRingSet.removeAllAtomContainers();
+        for (IAtomContainer ac : reactantSet.atomContainers()) {
+            LOGGER.debug("MoleculeInitializer");
+            MoleculeInitializer.initializeMolecule(ac);
+            LOGGER.debug("MoleculeInitializer Done");
+            for (IBond bond : ac.bonds()) {
+                rBonds.add(bond);
+            }
+            CycleFinder cf = Cycles.mcb();
+            Cycles cycles = cf.find(ac);
+            queryRingSet.add(cycles.toRingSet());
+        }
+
+        List<IBond> pBonds = new ArrayList<>();
+        targetRingSet.removeAllAtomContainers();
+        for (IAtomContainer ac : productSet.atomContainers()) {
+            LOGGER.debug("MoleculeInitializer");
+            MoleculeInitializer.initializeMolecule(ac);
+            LOGGER.debug("Done");
+            for (IBond bond : ac.bonds()) {
+                pBonds.add(bond);
+            }
+            CycleFinder cf = Cycles.mcb();
+            Cycles cycles = cf.find(ac);
+            targetRingSet.add(cycles.toRingSet());
+        }
+
+        LOGGER.debug("Done Marking Aromatic Bonds");
+
+        try {
+            LOGGER.debug("=====Educt createBEMatrix=====");
+            this.reactantBE = createBEMatrix(reactantSet, rBonds, withoutHydrogen, mappingMap);
+            LOGGER.debug("=====Product createBEMatrix=====");
+            this.productBE = createBEMatrix(productSet, pBonds, withoutHydrogen, mappingMap);
+            LOGGER.debug("=====createRMatrix=====");
+            this.reactionMatrix = createRMatrix(reactantBE, productBE, mapping);
+        } catch (Exception e) {
+            throw new Exception("WARNING: Unable to compute reaction matrix", e);
+        }
     }
 
     @Override

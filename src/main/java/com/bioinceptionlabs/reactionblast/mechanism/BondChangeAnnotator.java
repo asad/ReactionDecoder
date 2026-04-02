@@ -93,8 +93,12 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @return
      */
-    @Override
     public BEMatrix getEductBEMatrix() {
+        try {
+            ensureReactionMatrices();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to initialize reactant bond-energy matrix", ex);
+        }
         return reactantBE;
     }
 
@@ -129,8 +133,12 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @return
      */
-    @Override
     public BEMatrix getProductBEMatrix() {
+        try {
+            ensureReactionMatrices();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to initialize product bond-energy matrix", ex);
+        }
         return productBE;
     }
 
@@ -147,8 +155,12 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @return
      */
-    @Override
     public RMatrix getRMatrix() {
+        try {
+            ensureReactionMatrices();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Unable to initialize reaction matrix", ex);
+        }
         return reactionMatrix;
     }
 
@@ -156,7 +168,6 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @return
      */
-    @Override
     public boolean hasRMatrix() {
         return reactionMatrix != null;
     }
@@ -164,7 +175,6 @@ public final class BondChangeAnnotator extends DUModel {
     /**
      *
      */
-    @Override
     public void printBMatrix() {
         printBEMatrix(reactantBE);
     }
@@ -182,7 +192,6 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @param outputFile
      */
-    @Override
     public void writeBMatrix(File outputFile) {
         try {
             writeBEMatrix(outputFile, reactantBE);
@@ -194,7 +203,6 @@ public final class BondChangeAnnotator extends DUModel {
     /**
      *
      */
-    @Override
     public void printEMatrix() {
         printBEMatrix(productBE);
     }
@@ -203,7 +211,6 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @param outputFile
      */
-    @Override
     public void writeEMatrix(File outputFile) {
         try {
             writeBEMatrix(outputFile, productBE);
@@ -215,7 +222,6 @@ public final class BondChangeAnnotator extends DUModel {
     /**
      *
      */
-    @Override
     public void printRMatrix() {
         printReactionMatrix(reactionMatrix);
     }
@@ -224,7 +230,6 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @param outputFile
      */
-    @Override
     public void writeRMatrix(File outputFile) {
         try {
             writeReactionMatrix(outputFile, reactionMatrix);
@@ -239,49 +244,13 @@ public final class BondChangeAnnotator extends DUModel {
      * @throws Exception
      */
     protected void markBondChanges() throws Exception {
+        ensureReactionMatrices();
 
         BEMatrix substrateBEMatrix = reactantBE;
         BEMatrix productBEMatrix = productBE;
 
         LOGGER.debug("markBondChanges method START");
 
-        /*
-         * Marking CDKConstants.ISINRING FLAGS
-         */
-        LOGGER.debug("Marking Rings");
-        for (IAtomContainer atomContainerQ : reactantSet.atomContainers()) {
-            try {
-                /*
-                 * set Flag(CDKConstants.ISINRING)
-                 */
-                initializeMolecule(atomContainerQ);
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
-            }
-//            IRingSet singleRingsQ = new SSSRFinder(atomContainerQ).findSSSR();
-            //New Method
-            CycleFinder cf = Cycles.mcb();
-            Cycles cycles = cf.find(atomContainerQ); // ignore error - essential cycles do not check tractability
-            IRingSet singleRingsQ = cycles.toRingSet();
-            queryRingSet.add(singleRingsQ);
-        }
-
-        for (IAtomContainer atomContainerT : productSet.atomContainers()) {
-            try {
-                /*
-                 * set Flag(CDKConstants.ISINRING)
-                 */
-                initializeMolecule(atomContainerT);
-            } catch (CDKException ex) {
-                LOGGER.error(SEVERE, null, ex);
-            }
-//            IRingSet singleRingsT = new SSSRFinder(atomContainerT).findSSSR();
-            //New Method
-            CycleFinder cf = Cycles.mcb();
-            Cycles cycles = cf.find(atomContainerT); // ignore error - essential cycles do not check tractability
-            IRingSet singleRingsT = cycles.toRingSet();
-            targetRingSet.add(singleRingsT);
-        }
         /*
          * Mining Stereo Atom Changes E/Z or R/S only
          */

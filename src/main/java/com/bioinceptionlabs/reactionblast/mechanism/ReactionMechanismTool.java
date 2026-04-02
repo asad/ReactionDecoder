@@ -24,9 +24,16 @@ import static java.lang.Integer.MIN_VALUE;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.unmodifiableCollection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import static java.util.logging.Level.SEVERE;
 import static org.openscience.cdk.CDKConstants.ATOM_ATOM_MAPPING;
 import static org.openscience.cdk.CDKConstants.MAPPED;
@@ -38,6 +45,7 @@ import static org.openscience.cdk.interfaces.IBond.Order.DOUBLE;
 import static org.openscience.cdk.interfaces.IBond.Order.QUADRUPLE;
 import static org.openscience.cdk.interfaces.IBond.Order.SINGLE;
 import static org.openscience.cdk.interfaces.IBond.Order.TRIPLE;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -60,6 +68,8 @@ import static java.lang.System.getProperty;
 
 import static org.openscience.cdk.tools.manipulator.AtomContainerManipulator.getAtomArray;
 import org.openscience.smsd.ExtAtomContainerManipulator;
+import org.openscience.cdk.smiles.SmiFlavor;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
  *
@@ -69,6 +79,10 @@ import org.openscience.smsd.ExtAtomContainerManipulator;
 public class ReactionMechanismTool implements Serializable {
 
     static final String NEW_LINE = getProperty("line.separator");
+    private static final String BENCHMARK_ATOM_ID = "benchmarkAtomId";
+    private static final String SOURCE_ATOM_ID = "sourceAtomId";
+    private static final int DEFAULT_FULL_SCORING_CANDIDATES = 3;
+    private static final int MAX_FULL_SCORING_CANDIDATES = 4;
     private final static ILoggingTool LOGGER
             = createLoggingTool(ReactionMechanismTool.class);
     private static final long serialVersionUID = 07342630505L;
@@ -263,44 +277,16 @@ public class ReactionMechanismTool implements Serializable {
                 CallableAtomMappingTool amt = new CallableAtomMappingTool(reaction, standardizer,
                         onlyCoreMappingByMCS, checkComplex);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
+                List<EvaluationCandidate> orderedSolutions = orderSolutionsForEvaluation(solutions);
+                List<EvaluationCandidate> candidates = collectCandidatesForEvaluation(orderedSolutions);
 
                 LOGGER.debug("!!!!Calculating Best Mapping Model!!!!");
-                boolean selected;
-                for (IMappingAlgorithm algorithm : solutions.keySet()) {
-
-                    Reactor reactor = solutions.get(algorithm);
-
-                    if (reactor == null) {
-                        LOGGER.warn("Reactor is NULL");
-                        return;
-                    }
-
-                    int atomCountR = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getReactants());
-                    int atomCountP = getNonHydrogenMappingAtomCount(reactor.getReactionWithAtomAtomMapping().getProducts());
-
-                    if (atomCountR != atomCountP) {
-                        //LOGGER.warn("ERROR in Mapping - Unmapped atoms present in the reaction: "
-                        //        + NEW_LINE + reactor.toString());
-                        LOGGER.warn("Unmapped atoms present in this reaction" + "(" + algorithm + ") algorithm.");
-//                        throw new AssertionError(newline + "Unmapped atoms present in the reaction mapped by AAM "
-//                                + "(" + algorithm + ") algorithm." + newline);
-                    }
-                    LOGGER.debug("===isMappingSolutionAcceptable===");
-                    selected = isMappingSolutionAcceptable(solutions.get(algorithm),
-                            algorithm,
-                            reactor.getReactionWithAtomAtomMapping(),
-                            generate2D,
-                            generate3D);
-                    LOGGER.debug("is solution: " + algorithm + " selected: " + selected);
-
-                    // Early exit: if this solution has minimal bond changes (≤2)
-                    // and zero fragment changes, it's likely optimal — skip remaining algorithms
-                    if (selected && this.selectedMapping != null
-                            && this.selectedMapping.getTotalBondChanges() <= 2
-                            && this.selectedMapping.getTotalFragmentChanges() == 0) {
-                        LOGGER.debug("Early exit: optimal mapping found by " + algorithm);
-                        break;
-                    }
+                for (MappingSolution mappingSolution : computeMappingSolutions(candidates,
+                        generate2D, generate3D)) {
+                    LOGGER.debug("===considerMappingSolution===");
+                    boolean selected = considerMappingSolution(mappingSolution);
+                    LOGGER.debug("is solution: " + mappingSolution.getAlgorithmID()
+                            + " selected: " + selected);
                 }
             } catch (Exception e) {
                 LOGGER.error(SEVERE, "Bond change calculation error", e);
@@ -325,11 +311,11 @@ public class ReactionMechanismTool implements Serializable {
         Map<String, Integer> productAtoms = countHeavyAtoms(r.getProducts());
 
         if (!reactantAtoms.equals(productAtoms)) {
-            LOGGER.warn("Number of atom(s) on the Left side "
+            LOGGER.debug("Number of atom(s) on the Left side "
                     + reactantAtoms.values().stream().mapToInt(Integer::intValue).sum()
                     + " =/= Number of atom(s) on the Right side "
                     + productAtoms.values().stream().mapToInt(Integer::intValue).sum());
-            LOGGER.warn(reactantAtoms + " =/= " + productAtoms);
+            LOGGER.debug(reactantAtoms + " =/= " + productAtoms);
             return false;
         }
         return true;
@@ -622,6 +608,11 @@ public class ReactionMechanismTool implements Serializable {
             LOGGER.info("Condition 15 " + ms.getAlgorithmID().description());
             LOGGER.debug("CASE: Condition 15");
             return true;
+        } else if (hasEquivalentSelectionScore(this.selectedMapping, ms)
+                && hasPreferredCanonicalMapping(ms, this.selectedMapping)) {
+            LOGGER.info("Condition 16 " + ms.getAlgorithmID().description());
+            LOGGER.debug("CASE: Condition 16");
+            return true;
         }
         LOGGER.debug("CASE: FAILED");
         return false;
@@ -766,20 +757,721 @@ public class ReactionMechanismTool implements Serializable {
         }
     }
 
-    private int getNonHydrogenMappingAtomCount(IAtomContainerSet mol) {
-        int count = MIN_VALUE;
+    private List<EvaluationCandidate> orderSolutionsForEvaluation(
+            Map<IMappingAlgorithm, Reactor> solutions) {
+        List<EvaluationCandidate> ordered = snapshotCandidates(solutions);
+        ordered.sort(evaluationCandidateComparator(isIdentityLike(ordered)));
+        return ordered;
+    }
+
+    private List<EvaluationCandidate> collectCandidatesForEvaluation(
+            List<EvaluationCandidate> orderedSolutions) {
+        List<EvaluationCandidate> candidates = new ArrayList<>();
+        Map<String, EvaluationCandidate> uniqueCandidates = new LinkedHashMap<>();
+
+        for (EvaluationCandidate candidate : orderedSolutions) {
+            if (!candidate.coverage.isComplete() || !candidate.coverage.isBalancedMapped()) {
+                LOGGER.debug("Unmapped atoms present in this reaction" + "(" + candidate.algorithm + ") algorithm.");
+            }
+            if (shouldSkipInferiorCoverage(candidate.coverage)) {
+                LOGGER.debug("Skipping " + candidate.algorithm + " scoring due to inferior mapping coverage");
+                continue;
+            }
+
+            String dedupeKey = candidate.coverage.getMappedAtoms()
+                    + ":" + candidate.coverage.getUnmappedAtoms()
+                    + ":" + candidate.signature;
+            if (uniqueCandidates.containsKey(dedupeKey)) {
+                LOGGER.debug("Skipping duplicate mapping candidate from " + candidate.algorithm
+                        + " equivalent to " + uniqueCandidates.get(dedupeKey).algorithm);
+                continue;
+            }
+
+            uniqueCandidates.put(dedupeKey, candidate);
+            candidates.add(candidate);
+        }
+        return limitCandidatesForFullScoring(candidates, isIdentityLike(candidates));
+    }
+
+    private List<EvaluationCandidate> snapshotCandidates(Map<IMappingAlgorithm, Reactor> solutions) {
+        List<EvaluationCandidate> candidates = new ArrayList<>(solutions.size());
+        for (Map.Entry<IMappingAlgorithm, Reactor> entry : solutions.entrySet()) {
+            IMappingAlgorithm algorithm = entry.getKey();
+            Reactor reactor = entry.getValue();
+            if (reactor == null) {
+                LOGGER.warn("Reactor is NULL");
+                continue;
+            }
+            try {
+                IReaction mappedReaction = reactor.getReactionWithAtomAtomMapping();
+                MappingCoverage coverage = summarizeCoverage(mappedReaction);
+                String signature = canonicalMappingSignature(mappedReaction);
+                QuickScore quickScore = estimateQuickScore(mappedReaction, reactor);
+                candidates.add(new EvaluationCandidate(
+                        algorithm, reactor, mappedReaction, coverage, signature, quickScore));
+            } catch (Exception ex) {
+                LOGGER.debug("Skipping " + algorithm + " due to snapshot failure: " + ex.getMessage());
+            }
+        }
+        return candidates;
+    }
+
+    private List<MappingSolution> computeMappingSolutions(List<EvaluationCandidate> candidates,
+            boolean generate2D, boolean generate3D) throws Exception {
+        if (candidates.isEmpty()) {
+            return new ArrayList<>();
+        }
+        if (candidates.size() == 1) {
+            List<MappingSolution> single = new ArrayList<>(1);
+            single.add(computeMappingSolution(candidates.get(0), generate2D, generate3D));
+            return single;
+        }
+
+        int threadCount = Math.min(candidates.size(),
+                Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        try {
+            List<Future<MappingSolution>> futures = new ArrayList<>(candidates.size());
+            for (EvaluationCandidate candidate : candidates) {
+                futures.add(executor.submit(
+                        () -> computeMappingSolution(candidate, generate2D, generate3D)));
+            }
+
+            List<MappingSolution> evaluated = new ArrayList<>(candidates.size());
+            for (Future<MappingSolution> future : futures) {
+                evaluated.add(future.get());
+            }
+            return evaluated;
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private MappingSolution computeMappingSolution(EvaluationCandidate candidate,
+            boolean generate2D, boolean generate3D) throws Exception {
+        Reactor reactor = candidate.reactor;
+        if (reactor == null) {
+            throw new CDKException("Reactor is NULL");
+        }
+
+        if (reactor.getMappingCount() > 500) {
+            LOGGER.warn("Large mapping: " + reactor.getMappingCount()
+                    + " atoms — bond change computation may be slow");
+        }
+
+        BondChangeCalculator bcc = new BondChangeCalculator(candidate.mappedReaction);
+        bcc.computeBondChanges(generate2D, generate3D);
+        int fragmentDeltaChanges = bcc.getTotalFragmentCount() + reactor.getDelta();
+
+        int bondCleavedFormed = (int) getTotalBondChange(bcc.getFormedCleavedWFingerprint());
+        int bondChange = bondCleavedFormed
+                + (int) getTotalBondChange(bcc.getOrderChangesWFingerprint());
+        int stereoChanges = (int) getTotalBondChange(bcc.getStereoChangesWFingerprint());
+        boolean skipHydrogenRealtedBondChanges = true;
+        int bondBreakingEnergy = getTotalBondChangeEnergy(
+                bcc.getFormedCleavedWFingerprint(), skipHydrogenRealtedBondChanges);
+        int totalSmallestFragmentCount = bcc.getTotalSmallestFragmentSize();
+        int totalCarbonBondChanges = getTotalCarbonBondChange(
+                bcc.getFormedCleavedWFingerprint());
+        int localScore = bondChange + fragmentDeltaChanges;
+
+        LOGGER.info("Score: " + fragmentDeltaChanges + " : " + bondChange);
+        LOGGER.info(", Energy Barrier: " + bondBreakingEnergy);
+        LOGGER.info(", Energy Delta: " + bcc.getEnergyDelta());
+
+        bcc.getReaction().setFlag(MAPPED, true);
+
+        return new MappingSolution(
+                bcc,
+                candidate.algorithm,
+                bcc.getReaction(),
+                reactor,
+                bondBreakingEnergy,
+                totalCarbonBondChanges,
+                bondChange,
+                fragmentDeltaChanges,
+                stereoChanges,
+                totalSmallestFragmentCount,
+                localScore,
+                bcc.getEnergyDelta());
+    }
+
+    private Comparator<EvaluationCandidate> evaluationCandidateComparator(boolean identityLike) {
+        return Comparator
+                .<EvaluationCandidate>comparingInt(candidate -> candidate.coverage.isComplete() ? 0 : 1)
+                .thenComparingInt(candidate -> candidate.coverage.isBalancedMapped() ? 0 : 1)
+                .thenComparingInt(candidate -> candidate.quickScore.totalScore())
+                .thenComparingInt(candidate -> candidate.quickScore.bondChangeEstimate)
+                .thenComparingInt(candidate -> candidate.quickScore.orderChangeEstimate)
+                .thenComparingInt(candidate -> candidate.quickScore.fragmentPenalty)
+                .thenComparingInt(candidate -> candidate.quickScore.unmappedBondPenalty)
+                .thenComparingInt(candidate -> candidate.quickScore.carbonBondChangeEstimate)
+                .thenComparingInt(candidate -> -candidate.quickScore.mappedBondCount)
+                .thenComparingInt(candidate -> -candidate.coverage.getMappedAtoms())
+                .thenComparingInt(candidate -> candidate.coverage.getUnmappedAtoms())
+                .thenComparingInt(candidate -> algorithmPriority(candidate.algorithm, identityLike))
+                .thenComparing(candidate -> candidate.signature);
+    }
+
+    private boolean isIdentityLike(List<EvaluationCandidate> candidates) {
+        return candidates.stream()
+                .map(candidate -> candidate.mappedReaction)
+                .filter(mappedReaction -> mappedReaction != null)
+                .findFirst()
+                .map(this::looksLikeIdentityReaction)
+                .orElse(false);
+    }
+
+    private List<EvaluationCandidate> limitCandidatesForFullScoring(
+            List<EvaluationCandidate> candidates,
+            boolean identityLike) {
+        if (candidates.size() <= DEFAULT_FULL_SCORING_CANDIDATES) {
+            return candidates;
+        }
+
+        List<EvaluationCandidate> ranked = new ArrayList<>(candidates);
+        ranked.sort(evaluationCandidateComparator(identityLike));
+
+        int limit = Math.min(DEFAULT_FULL_SCORING_CANDIDATES, ranked.size());
+        if (hasAmbiguousTopTier(ranked)) {
+            limit = Math.min(MAX_FULL_SCORING_CANDIDATES, ranked.size());
+        }
+
+        List<EvaluationCandidate> retained = new ArrayList<>(ranked.subList(0, limit));
+        if (limit < ranked.size()) {
+            QuickScore cutoff = ranked.get(limit - 1).quickScore;
+            for (int index = limit; index < ranked.size() && retained.size() < MAX_FULL_SCORING_CANDIDATES; index++) {
+                EvaluationCandidate candidate = ranked.get(index);
+                if (candidate.quickScore.isNear(cutoff)) {
+                    retained.add(candidate);
+                }
+            }
+        }
+
+        if (retained.size() < candidates.size()) {
+            LOGGER.debug("Reduced full bond-change scoring from "
+                    + candidates.size() + " to " + retained.size() + " candidate(s)");
+        }
+        return retained;
+    }
+
+    private boolean hasAmbiguousTopTier(List<EvaluationCandidate> ranked) {
+        if (ranked.size() < 2) {
+            return false;
+        }
+
+        EvaluationCandidate best = ranked.get(0);
+        EvaluationCandidate challenger = ranked.get(1);
+        return best.coverage.isComplete() == challenger.coverage.isComplete()
+                && best.coverage.isBalancedMapped() == challenger.coverage.isBalancedMapped()
+                && best.quickScore.hasEquivalentCoreScore(challenger.quickScore)
+                && !best.signature.equals(challenger.signature);
+    }
+
+    private QuickScore estimateQuickScore(IReaction reaction, Reactor reactor) {
+        if (reaction == null) {
+            return new QuickScore(Integer.MAX_VALUE, Integer.MAX_VALUE,
+                    Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
+        }
+
+        Map<String, BondDescriptor> reactantBonds = collectMappedBondDescriptors(reaction.getReactants());
+        Map<String, BondDescriptor> productBonds = collectMappedBondDescriptors(reaction.getProducts());
+        Set<String> allBondKeys = new TreeSet<>();
+        allBondKeys.addAll(reactantBonds.keySet());
+        allBondKeys.addAll(productBonds.keySet());
+
+        int bondChangeEstimate = 0;
+        int orderChangeEstimate = 0;
+        int carbonBondChangeEstimate = 0;
+        for (String bondKey : allBondKeys) {
+            BondDescriptor reactantBond = reactantBonds.get(bondKey);
+            BondDescriptor productBond = productBonds.get(bondKey);
+            if (reactantBond == null || productBond == null) {
+                bondChangeEstimate++;
+                if ((reactantBond != null && reactantBond.carbonOnly)
+                        || (productBond != null && productBond.carbonOnly)) {
+                    carbonBondChangeEstimate++;
+                }
+                continue;
+            }
+            if (!reactantBond.sameType(productBond)) {
+                orderChangeEstimate++;
+                if (reactantBond.carbonOnly && productBond.carbonOnly) {
+                    carbonBondChangeEstimate++;
+                }
+            }
+        }
+
+        int fragmentPenalty = reactor != null ? Math.max(0, reactor.getDelta()) : 0;
+        int unmappedBondPenalty = countUnmappedBondPenalty(reaction.getReactants())
+                + countUnmappedBondPenalty(reaction.getProducts());
+        int mappedBondCount = reactantBonds.size() + productBonds.size();
+        return new QuickScore(
+                bondChangeEstimate,
+                orderChangeEstimate,
+                carbonBondChangeEstimate,
+                fragmentPenalty,
+                unmappedBondPenalty,
+                mappedBondCount);
+    }
+
+    private Map<String, BondDescriptor> collectMappedBondDescriptors(IAtomContainerSet containers) {
+        Map<String, BondDescriptor> descriptors = new LinkedHashMap<>();
+        for (IAtomContainer container : containers.atomContainers()) {
+            for (IBond bond : container.bonds()) {
+                if (bond == null) {
+                    continue;
+                }
+                IAtom begin = bond.getBegin();
+                IAtom end = bond.getEnd();
+                if (begin == null || end == null) {
+                    continue;
+                }
+                if ("H".equals(begin.getSymbol()) || "H".equals(end.getSymbol())) {
+                    continue;
+                }
+
+                int beginMap = getAtomMapNumber(begin);
+                int endMap = getAtomMapNumber(end);
+                if (beginMap <= 0 || endMap <= 0) {
+                    continue;
+                }
+
+                String key = beginMap < endMap
+                        ? beginMap + ":" + endMap
+                        : endMap + ":" + beginMap;
+                descriptors.put(key, new BondDescriptor(
+                        toBondOrderValue(bond),
+                        bond.isAromatic(),
+                        "C".equals(begin.getSymbol()) && "C".equals(end.getSymbol())));
+            }
+        }
+        return descriptors;
+    }
+
+    private int countUnmappedBondPenalty(IAtomContainerSet containers) {
+        int penalty = 0;
+        for (IAtomContainer container : containers.atomContainers()) {
+            for (IBond bond : container.bonds()) {
+                if (bond == null) {
+                    continue;
+                }
+                IAtom begin = bond.getBegin();
+                IAtom end = bond.getEnd();
+                if (begin == null || end == null) {
+                    continue;
+                }
+                if ("H".equals(begin.getSymbol()) && "H".equals(end.getSymbol())) {
+                    continue;
+                }
+                if (getAtomMapNumber(begin) <= 0 || getAtomMapNumber(end) <= 0) {
+                    penalty++;
+                }
+            }
+        }
+        return penalty;
+    }
+
+    private int toBondOrderValue(IBond bond) {
+        if (bond == null || bond.getOrder() == null) {
+            return 0;
+        }
+        switch (bond.getOrder()) {
+            case SINGLE:
+                return 1;
+            case DOUBLE:
+                return 2;
+            case TRIPLE:
+                return 3;
+            case QUADRUPLE:
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
+    private boolean considerMappingSolution(MappingSolution mappingSolution) throws Exception {
+        if (mappingSolution == null) {
+            return false;
+        }
+        if (mappingSolution.getAlgorithmID() == null) {
+            throw new CDKException("Model is pointing to NULL");
+        }
+
+        LOGGER.info("MA: " + mappingSolution.getAlgorithmID().description());
+        boolean changeFeasible = isChangeFeasible(mappingSolution);
+        if (changeFeasible) {
+            if (this.selectedMapping != null) {
+                this.selectedMapping.setChosen(false);
+            }
+            mappingSolution.setChosen(true);
+            this.selectedMapping = mappingSolution;
+        }
+        this.allSolutions.add(mappingSolution);
+        return changeFeasible;
+    }
+
+    private int algorithmPriority(IMappingAlgorithm algorithm, boolean identityLike) {
+        if (algorithm == USER_DEFINED) {
+            return -1;
+        }
+        if (identityLike) {
+            switch (algorithm) {
+                case MIN:
+                    return 0;
+                case RINGS:
+                    return 1;
+                case MAX:
+                    return 2;
+                case MIXTURE:
+                    return 3;
+                default:
+                    return 4;
+            }
+        }
+        switch (algorithm) {
+            case RINGS:
+                return 0;
+            case MIN:
+                return 1;
+            case MAX:
+                return 2;
+            case MIXTURE:
+                return 3;
+            default:
+                return 4;
+        }
+    }
+
+    private boolean looksLikeIdentityReaction(IReaction reaction) {
+        if (reaction == null || reaction.getReactantCount() != reaction.getProductCount()) {
+            return false;
+        }
+        try {
+            SmilesGenerator smilesGenerator = new SmilesGenerator(SmiFlavor.Canonical);
+            List<String> reactants = new ArrayList<>();
+            List<String> products = new ArrayList<>();
+            for (IAtomContainer reactant : reaction.getReactants().atomContainers()) {
+                reactants.add(smilesGenerator.create(reactant));
+            }
+            for (IAtomContainer product : reaction.getProducts().atomContainers()) {
+                products.add(smilesGenerator.create(product));
+            }
+            reactants.sort(String::compareTo);
+            products.sort(String::compareTo);
+            return reactants.equals(products);
+        } catch (CDKException e) {
+            return false;
+        }
+    }
+
+    private MappingCoverage summarizeCoverage(IReaction reaction) {
+        if (reaction == null) {
+            return new MappingCoverage(0, 0, 0, 0);
+        }
+        return new MappingCoverage(
+                getTotalNonHydrogenAtomCount(reaction.getReactants()),
+                getTotalNonHydrogenAtomCount(reaction.getProducts()),
+                getMappedNonHydrogenAtomCount(reaction.getReactants()),
+                getMappedNonHydrogenAtomCount(reaction.getProducts()));
+    }
+
+    private boolean shouldSkipInferiorCoverage(MappingCoverage candidateCoverage) {
+        if (selectedMapping == null || selectedMapping.getReaction() == null) {
+            return false;
+        }
+        MappingCoverage selectedCoverage = summarizeCoverage(selectedMapping.getReaction());
+        if (selectedCoverage.isComplete() && selectedCoverage.isBalancedMapped()) {
+            return !candidateCoverage.isComplete()
+                    || !candidateCoverage.isBalancedMapped()
+                    || candidateCoverage.getMappedAtoms() < selectedCoverage.getMappedAtoms();
+        }
+        return false;
+    }
+
+    private boolean hasEquivalentSelectionScore(MappingSolution selected, MappingSolution candidate) {
+        if (selected == null || candidate == null) {
+            return false;
+        }
+
+        MappingCoverage selectedCoverage = summarizeCoverage(selected.getReaction());
+        MappingCoverage candidateCoverage = summarizeCoverage(candidate.getReaction());
+
+        return selected.getTotalBondChanges() == candidate.getTotalBondChanges()
+                && selected.getTotalFragmentChanges() == candidate.getTotalFragmentChanges()
+                && selected.getTotalStereoChanges() == candidate.getTotalStereoChanges()
+                && selected.getSmallestFragmentCount() == candidate.getSmallestFragmentCount()
+                && selected.getTotalCarbonBondChanges() == candidate.getTotalCarbonBondChanges()
+                && selected.getTotalChanges() == candidate.getTotalChanges()
+                && Double.compare(selected.getBondEnergySum(), candidate.getBondEnergySum()) == 0
+                && Double.compare(selected.getEnergyDelta(), candidate.getEnergyDelta()) == 0
+                && selectedCoverage.getMappedAtoms() == candidateCoverage.getMappedAtoms()
+                && selectedCoverage.isComplete() == candidateCoverage.isComplete()
+                && selectedCoverage.isBalancedMapped() == candidateCoverage.isBalancedMapped();
+    }
+
+    private boolean hasPreferredCanonicalMapping(MappingSolution candidate, MappingSolution selected) {
+        String candidateSignature = canonicalMappingSignature(candidate.getReaction());
+        String selectedSignature = canonicalMappingSignature(selected.getReaction());
+        return !candidateSignature.isEmpty()
+                && (selectedSignature.isEmpty() || candidateSignature.compareTo(selectedSignature) < 0);
+    }
+
+    private String canonicalMappingSignature(IReaction reaction) {
+        if (reaction == null) {
+            return "";
+        }
+
+        Map<Integer, String> reactantPositions = new TreeMap<>();
+        Map<Integer, String> productPositions = new TreeMap<>();
+        collectMappedAtomPositions(reaction.getReactants(), "R", reactantPositions);
+        collectMappedAtomPositions(reaction.getProducts(), "P", productPositions);
+
+        StringBuilder signature = new StringBuilder();
+        for (Map.Entry<Integer, String> entry : reactantPositions.entrySet()) {
+            String productPosition = productPositions.get(entry.getKey());
+            if (productPosition == null) {
+                continue;
+            }
+            if (signature.length() > 0) {
+                signature.append('|');
+            }
+            signature.append(entry.getValue()).append('>').append(productPosition);
+        }
+        return signature.toString();
+    }
+
+    private void collectMappedAtomPositions(IAtomContainerSet containers, String side,
+            Map<Integer, String> positions) {
+        int moleculeIndex = 0;
+        for (IAtomContainer molecule : containers.atomContainers()) {
+            for (int atomIndex = 0; atomIndex < molecule.getAtomCount(); atomIndex++) {
+                IAtom atom = molecule.getAtom(atomIndex);
+                int mappingNumber = getAtomMapNumber(atom);
+                if (mappingNumber > 0) {
+                    positions.put(mappingNumber, getStableAtomPosition(atom, side, moleculeIndex, atomIndex));
+                }
+            }
+            moleculeIndex++;
+        }
+    }
+
+    private String getStableAtomPosition(IAtom atom, String side, int moleculeIndex, int atomIndex) {
+        if (atom == null) {
+            return side + ":" + moleculeIndex + ":" + atomIndex;
+        }
+        Object benchmarkAtomId = atom.getProperty(BENCHMARK_ATOM_ID);
+        if (benchmarkAtomId != null) {
+            return benchmarkAtomId.toString();
+        }
+        Object sourceAtomId = atom.getProperty(SOURCE_ATOM_ID);
+        if (sourceAtomId != null) {
+            return sourceAtomId.toString();
+        }
+        return side + ":" + moleculeIndex + ":" + atomIndex;
+    }
+
+    private int getAtomMapNumber(IAtom atom) {
+        if (atom == null) {
+            return 0;
+        }
+        if (atom.getMapIdx() > 0) {
+            return atom.getMapIdx();
+        }
+
+        Object atomAtomMapping = atom.getProperty(ATOM_ATOM_MAPPING);
+        if (atomAtomMapping instanceof Integer && (Integer) atomAtomMapping > 0) {
+            return (Integer) atomAtomMapping;
+        }
+        if (atomAtomMapping != null) {
+            try {
+                int parsed = parseInt(atomAtomMapping.toString());
+                if (parsed > 0) {
+                    return parsed;
+                }
+            } catch (NumberFormatException ignore) {
+                // Fall through to the legacy property.
+            }
+        }
+
+        Object legacyMapNumber = atom.getProperty("molAtomMapNumber");
+        if (legacyMapNumber instanceof Integer && (Integer) legacyMapNumber > 0) {
+            return (Integer) legacyMapNumber;
+        }
+        if (legacyMapNumber != null) {
+            try {
+                int parsed = parseInt(legacyMapNumber.toString());
+                return parsed > 0 ? parsed : 0;
+            } catch (NumberFormatException ignore) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    private int getMappedNonHydrogenAtomCount(IAtomContainerSet mol) {
         List<IAtomContainer> allAtomContainers = getAllAtomContainers(mol);
+        int count = 0;
         for (IAtomContainer ac : allAtomContainers) {
             IAtom[] atomArray = getAtomArray(ac);
             for (IAtom atom : atomArray) {
                 if (atom.getSymbol().equalsIgnoreCase("H")) {
                     continue;
                 }
-                if (atom.getID() != null && parseInt(atom.getID()) > count) {
-                    count = parseInt(atom.getID());
+                Object atomAtomMapping = atom.getProperty(ATOM_ATOM_MAPPING);
+                if (atom.getFlag(MAPPED)) {
+                    count++;
+                } else if (atomAtomMapping instanceof Integer && (Integer) atomAtomMapping > 0) {
+                    count++;
+                } else if (atomAtomMapping != null) {
+                    try {
+                        if (parseInt(atomAtomMapping.toString()) > 0) {
+                            count++;
+                        }
+                    } catch (NumberFormatException ignore) {
+                        // Non-numeric mapping markers do not count toward coverage.
+                    }
                 }
             }
         }
         return count;
+    }
+
+    private int getTotalNonHydrogenAtomCount(IAtomContainerSet mol) {
+        int count = 0;
+        List<IAtomContainer> allAtomContainers = getAllAtomContainers(mol);
+        for (IAtomContainer ac : allAtomContainers) {
+            IAtom[] atomArray = getAtomArray(ac);
+            for (IAtom atom : atomArray) {
+                if (!atom.getSymbol().equalsIgnoreCase("H")) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static final class MappingCoverage {
+
+        private final int reactantAtoms;
+        private final int productAtoms;
+        private final int mappedReactantAtoms;
+        private final int mappedProductAtoms;
+
+        private MappingCoverage(int reactantAtoms, int productAtoms,
+                int mappedReactantAtoms, int mappedProductAtoms) {
+            this.reactantAtoms = reactantAtoms;
+            this.productAtoms = productAtoms;
+            this.mappedReactantAtoms = mappedReactantAtoms;
+            this.mappedProductAtoms = mappedProductAtoms;
+        }
+
+        private boolean isComplete() {
+            return mappedReactantAtoms == reactantAtoms
+                    && mappedProductAtoms == productAtoms;
+        }
+
+        private boolean isBalancedMapped() {
+            return mappedReactantAtoms == mappedProductAtoms;
+        }
+
+        private int getMappedAtoms() {
+            return mappedReactantAtoms + mappedProductAtoms;
+        }
+
+        private int getUnmappedAtoms() {
+            return (reactantAtoms - mappedReactantAtoms)
+                    + (productAtoms - mappedProductAtoms);
+        }
+    }
+
+    private static final class EvaluationCandidate {
+
+        private final IMappingAlgorithm algorithm;
+        private final Reactor reactor;
+        private final IReaction mappedReaction;
+        private final MappingCoverage coverage;
+        private final String signature;
+        private final QuickScore quickScore;
+
+        private EvaluationCandidate(IMappingAlgorithm algorithm, Reactor reactor,
+                IReaction mappedReaction, MappingCoverage coverage,
+                String signature, QuickScore quickScore) {
+            this.algorithm = algorithm;
+            this.reactor = reactor;
+            this.mappedReaction = mappedReaction;
+            this.coverage = coverage;
+            this.signature = signature;
+            this.quickScore = quickScore;
+        }
+    }
+
+    private static final class QuickScore {
+
+        private final int bondChangeEstimate;
+        private final int orderChangeEstimate;
+        private final int carbonBondChangeEstimate;
+        private final int fragmentPenalty;
+        private final int unmappedBondPenalty;
+        private final int mappedBondCount;
+
+        private QuickScore(int bondChangeEstimate, int orderChangeEstimate,
+                int carbonBondChangeEstimate, int fragmentPenalty,
+                int unmappedBondPenalty,
+                int mappedBondCount) {
+            this.bondChangeEstimate = bondChangeEstimate;
+            this.orderChangeEstimate = orderChangeEstimate;
+            this.carbonBondChangeEstimate = carbonBondChangeEstimate;
+            this.fragmentPenalty = fragmentPenalty;
+            this.unmappedBondPenalty = unmappedBondPenalty;
+            this.mappedBondCount = mappedBondCount;
+        }
+
+        private int totalScore() {
+            if (bondChangeEstimate == Integer.MAX_VALUE) {
+                return Integer.MAX_VALUE;
+            }
+            return bondChangeEstimate
+                    + orderChangeEstimate
+                    + carbonBondChangeEstimate
+                    + fragmentPenalty;
+        }
+
+        private boolean isNear(QuickScore other) {
+            if (other == null) {
+                return false;
+            }
+            return Math.abs(totalScore() - other.totalScore()) <= 1
+                    && Math.abs(bondChangeEstimate - other.bondChangeEstimate) <= 1
+                    && Math.abs(orderChangeEstimate - other.orderChangeEstimate) <= 1;
+        }
+
+        private boolean hasEquivalentCoreScore(QuickScore other) {
+            return other != null
+                    && bondChangeEstimate == other.bondChangeEstimate
+                    && orderChangeEstimate == other.orderChangeEstimate
+                    && carbonBondChangeEstimate == other.carbonBondChangeEstimate
+                    && fragmentPenalty == other.fragmentPenalty
+                    && unmappedBondPenalty == other.unmappedBondPenalty;
+        }
+    }
+
+    private static final class BondDescriptor {
+
+        private final int order;
+        private final boolean aromatic;
+        private final boolean carbonOnly;
+
+        private BondDescriptor(int order, boolean aromatic, boolean carbonOnly) {
+            this.order = order;
+            this.aromatic = aromatic;
+            this.carbonOnly = carbonOnly;
+        }
+
+        private boolean sameType(BondDescriptor other) {
+            return other != null
+                    && order == other.order
+                    && aromatic == other.aromatic;
+        }
     }
 }
