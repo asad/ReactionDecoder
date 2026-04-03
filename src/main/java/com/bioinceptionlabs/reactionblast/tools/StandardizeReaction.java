@@ -203,7 +203,7 @@ public class StandardizeReaction {
         Map<String, Integer> productAtoms = countAtoms(reaction.getProducts());
 
         if (!reactantAtoms.equals(productAtoms)) {
-            LOGGER.warn("Reaction " + reaction.getID() + " may be unbalanced: "
+            LOGGER.debug("Reaction " + reaction.getID() + " may be unbalanced: "
                     + "reactants=" + reactantAtoms + " products=" + productAtoms);
         }
     }

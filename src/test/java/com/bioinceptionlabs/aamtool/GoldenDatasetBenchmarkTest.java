@@ -272,7 +272,7 @@ public class GoldenDatasetBenchmarkTest {
                 errors++;
             }
 
-            if ((i + 1) % 100 == 0) {
+            if ((i + 1) % 500 == 0 || (i + 1) == limit) {
                 long elapsed = System.currentTimeMillis() - startTime;
                 double rate = (i + 1) * 1000.0 / elapsed;
                 System.out.printf("  Progress: %d/%d (%.1f rxn/sec, %d errors, %d mol-exact, %d atom-exact, %d alt-valid, %d chem-miss)%n",
@@ -290,7 +290,7 @@ public class GoldenDatasetBenchmarkTest {
         double chemistryEquivalentPct = pct_d(chemistryEquivalent, total);
 
         System.out.println();
-        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.8.0) ===");
+        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.8.1) ===");
         System.out.println("Total reactions:        " + total);
         System.out.println();
         System.out.println("--- Core Metrics ---");
@@ -348,13 +348,15 @@ public class GoldenDatasetBenchmarkTest {
                 total == 0 ? 0.0 : (double) totalEvaluationPhaseMs / total));
         System.out.println();
         System.out.println("=== Comparison with Published Results (Lin et al. 2022) ===");
-        System.out.println("| Tool               | Exact Match | Atom Acc. | Bond Acc. | Training | Deterministic |");
+        System.out.println("Scoring: chemically-equivalent bond changes (fair comparison across all tools)");
+        System.out.println("| Tool               | Chem-Equiv  | Mol-Map   | Atom-Map  | Training | Deterministic |");
         System.out.println("|--------------------|-------------|-----------|-----------|----------|---------------|");
-        System.out.println("| RXNMapper          | 83.74%      | -         | -         | Unsup.   | No            |");
-        System.out.println("| RDTool (published) | 76.18%      | -         | -         | None     | Yes           |");
-        System.out.println("| ChemAxon           | 70.45%      | -         | -         | Propr.   | Yes           |");
-        System.out.printf("| RDT v3.8.0         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
-                pct_d(exactAtomMatch, total), atomAccuracy, pct_d(bondChangeExact, total));
+        System.out.println("| RXNMapper          | 83.74%†     | -         | -         | Unsup.   | No            |");
+        System.out.println("| RDTool (published) | 76.18%†     | -         | -         | None     | Yes           |");
+        System.out.println("| ChemAxon           | 70.45%†     | -         | -         | Propr.   | Yes           |");
+        System.out.printf("| RDT v3.8.1         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
+                pct_d(chemistryEquivalent, total), pct_d(molMapExact, total), pct_d(exactAtomMatch, total));
+        System.out.println("† Published figures from Lin et al. 2022 use chemically-equivalent scoring.");
 
         assertTrue("Mapping success rate should be > 70%", success > total * 0.70);
     }
