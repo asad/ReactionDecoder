@@ -44,6 +44,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import com.bioinception.smsd.core.MolGraph;
 import org.openscience.cdk.smiles.SmiFlavor;
 import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
@@ -266,17 +267,16 @@ public class GraphMatcher extends Debugger {
             }
 
             /*
-             * Pre-compute canonical SMILES for identity detection.
+             * Pre-compute canonical SMILES for identity detection using SMSD
+             * MolGraph (stereo-aware, independent of CDK SmilesGenerator).
              */
-            SmilesGenerator canonSmigen = new SmilesGenerator(
-                    SmiFlavor.Canonical | SmiFlavor.Stereo);
             Map<Integer, String> eductSmiles = new TreeMap<>();
             for (int i = 0; i < eductCount; i++) {
                 IAtomContainer e = reactionStructureInformation.getEduct(i);
                 if (e != null && e.getAtomCount() > 0) {
                     harmonizeForSmsd(e);
-                    try { eductSmiles.put(i, canonSmigen.create(e)); }
-                    catch (CDKException | RuntimeException ex) { eductSmiles.put(i, ""); }
+                    try { eductSmiles.put(i, new MolGraph(e).toCanonicalSmiles()); }
+                    catch (RuntimeException ex) { eductSmiles.put(i, ""); }
                 }
             }
             Map<Integer, String> productSmiles = new TreeMap<>();
@@ -284,8 +284,8 @@ public class GraphMatcher extends Debugger {
                 IAtomContainer p = reactionStructureInformation.getProduct(j);
                 if (p != null && p.getAtomCount() > 0) {
                     harmonizeForSmsd(p);
-                    try { productSmiles.put(j, canonSmigen.create(p)); }
-                    catch (CDKException | RuntimeException ex) { productSmiles.put(j, ""); }
+                    try { productSmiles.put(j, new MolGraph(p).toCanonicalSmiles()); }
+                    catch (RuntimeException ex) { productSmiles.put(j, ""); }
                 }
             }
 
