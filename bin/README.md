@@ -1,102 +1,80 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT)`
------------------------------
+`Reaction Decoder Tool (RDT) v3.8.1`
+--------------------------------------
 
 `1. Atom Atom Mapping (AAM) Tool`
 
-`2. Reaction Annotator (Extract Bond Changes, Identify & Mark Reaction Centres) and `
+`2. Reaction Annotator (Extract Bond Changes, Identify & Mark Reaction Centres)`
 
-`3. Reaction Comparator (Reaction Similarity based on the Bond Changes, Reaction Centres or Substructures)`
+`3. Reaction Comparator (Reaction Similarity based on Bond Changes, Reaction Centres or Substructures)`
 
 Contact
 ============
-Author: Dr. Syed Asad Rahman,
+Author: Dr. Syed Asad Rahman
 e-mail: asad.rahman@bioinceptionlabs.com
+Organisation: BioInception PVT LTD
 
 Installation
 ============
 
-`a)` You could [download the latest RDT] (https://github.com/asad/ReactionDecoder/releases) release version from the github.
+`a)` [Download the latest RDT](https://github.com/asad/ReactionDecoder/releases) release from GitHub.
 
-`b)` Compile the core code using `maven`?:
-
-`POM.xml` commands
+`b)` Compile using `maven`:
 
 ```
-
-use POM.xml and mvn commands to build your project
-1) mvn -DskipTests=true install (skip test)
-2) mvn install (include test)
-3) mvn clean (clean)
-4) mvn package
-5) mvn -P local clean install -DskipTests=true (fast single jar compilation, skip test)
-6) mvn -P local clean install (single jar compilation with test)
-
+use pom.xml and mvn commands to build your project
+1) mvn clean compile                                  (compile only)
+2) mvn clean test                                     (compile and run tests)
+3) mvn clean install -DskipTests=true                 (install, skip tests)
+4) mvn clean install                                  (install with tests)
+5) mvn -P local clean install -DskipTests=true        (fat jar, skip tests)
+6) mvn -P local clean install                         (fat jar with tests)
 ```
 
-Atom Atom Mapping using Java API
-=================================
+Atom Atom Mapping — Simple Java API
+=====================================
 
-View mapped reaction using [CDKDEPICT Tool](http://www.simolecule.com/cdkdepict/depict.html).
+```java
+import com.bioinceptionlabs.reactionblast.api.RDT;
+import com.bioinceptionlabs.reactionblast.api.ReactionResult;
 
+ReactionResult result = RDT.map("CC(=O)O.OCC>>CC(=O)OCC.O");
+System.out.println("Mapped: " + result.getMappedSmiles());
+System.out.println("Bond changes: " + result.getTotalBondChanges());
 ```
 
-public static void main(String[] args) throws CloneNotSupportedException, CDKException, AssertionError, Exception {
-        final SmilesGenerator sg = new SmilesGenerator(SmiFlavor.AtomAtomMap);
-        final SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+Atom Atom Mapping — Advanced CDK API
+======================================
 
-        String reactionSM = "CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O";
-        String reactionName = "Test";
+```java
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.smiles.SmilesParser;
+import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
+import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 
-        IReaction cdkReaction = smilesParser.parseReactionSmiles(reactionSM);
+SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+IReaction rxn = sp.parseReactionSmiles("CC(=O)C=C.CC=CC=C>>CC1CC(CC=C1)C(C)=O");
+rxn.setID("DielsAlder");
 
-        IReaction performAtomAtomMapping = performAtomAtomMapping(cdkReaction, reactionName);
-        System.out.println("AAM sm: " + sg.create(performAtomAtomMapping));
-    }
-
-    /**
-     *
-     * @param cdkReaction
-     * @param reactionName
-     * @return
-     * @throws InvalidSmilesException
-     * @throws AssertionError
-     * @throws Exception
-     */
-    public static IReaction performAtomAtomMapping(IReaction cdkReaction, String reactionName) throws InvalidSmilesException, AssertionError, Exception {
-        cdkReaction.setID(reactionName);
-        /*
-         RMT for the reaction mapping
-         */
-        boolean forceMapping = true;//Overrides any mapping present int the reaction
-        boolean generate2D = true;//2D perception of the stereo centers
-        boolean generate3D = false;//2D perception of the stereo centers
-        StandardizeReaction standardizeReaction = new StandardizeReaction(); //Standardize the reaction
-        ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, forceMapping, generate2D, generate3D, standardizeReaction);
-        MappingSolution s = rmt.getSelectedSolution();//Fetch the AAM Solution
-        IReaction reaction = s.getReaction();//Fetch Mapped Reaction
-        return reaction;
-    }
-
+ReactionMechanismTool rmt = new ReactionMechanismTool(
+        rxn, true, true, false, true, false, new StandardizeReaction());
+System.out.println("Algorithm: " + rmt.getSelectedSolution().getAlgorithmID());
 ```
-
 
 License
 =======
 
-`RDT` is released under the [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html).
+`RDT` is released under the [GNU Lesser General Public License (LGPL) version 3.0](https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
 ```
 Author: Syed Asad Rahman
-e-mail: asad@ebi.ac.uk
-c/o EMBL-European BioInformatics Institute (EBI)
-WTGC, CB10 1SD Hinxton
-UK
+e-mail: asad.rahman@bioinceptionlabs.com
+BioInception PVT LTD
 
-Note: The copyright of this software belongs to the author
-and EMBL-European BioInformatics Institute (EBI).
+Note: The copyright of this software belongs to the author and BioInception PVT LTD.
 ```
 
 How to Cite RDT?
@@ -106,44 +84,42 @@ How to Cite RDT?
 
 [doi: 10.1093/bioinformatics/btw096](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4920114/)
 
-
-Subcommands
-===========
-
+Sub-commands
+============
 
 `Perform AAM`
 -------------
 
 `AAM using SMILES`
-  
-  ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j AAM -f TEXT
-  ```
 
-  ```
-  java -cp dist/*:lib/* aamtool.ReactionDecoder -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j  AAM -f TEXT
-  ```
+```
+java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
+```
+
+`Perform AAM for Transporters` (accept mapping with no bond changes: `-b`)
+
+```
+java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
+```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
-  ```
-  java -jar ReactionDecoder.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -j ANNOTATE -f XML
-  ```
-
+```
+java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
+```
 
 `Compare Reactions`
 --------------------
 
-`Compare Reactions using SMILES with precomputed AAM mappings`
-  
-  ```
-  java -jar ReactionDecoder.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
-  ```
+`Compare using precomputed AAM mappings`
 
+```
+java -jar rdt-3.8.1-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+```
 
-`Compare Reactions using RXN files`
-  
-  ```
-  java -jar ReactionDecoder.jar -Q RXN -q example/ReactionDecoder_mapped.rxn  -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
-  ```
+`Compare using RXN files`
+
+```
+java -jar rdt-3.8.1-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
+```

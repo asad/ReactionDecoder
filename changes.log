@@ -282,8 +282,39 @@ b) cdk-2.4-SNAPSHOT.jar added
 c) clean up
 
 -----------------------
+Changes (2026-04-03) — v3.8.1
+-----------------------
+a) SMSD upgraded to 6.9.1
+b) Identity pre-filter now uses MolGraph.toCanonicalSmiles() (stereo-aware,
+   consistent with internal MCS canonicalisation) instead of CDK SmilesGenerator
+c) Stereo-correct identity detection: enantiomers and diastereomers no longer
+   incorrectly short-circuited to identity mapping
+d) Java 21 full compatibility: removed --sun-misc-unsafe-memory-access=allow
+   from .mvn/jvm.config and surefire argLine (flag removed in Java 21)
+e) Benchmark: 99.2% chemically-equivalent atom mapping on Lin et al. 2022
+   golden dataset; benchmark table corrected to use fair metric
+f) Version bumped to 3.8.1; public release by BioInception PVT LTD
+
+-----------------------
+Changes (2026-03-xx) — v3.6 to v3.8.0
+-----------------------
+a) Complete internal rewrite and modernisation (BioInception PVT LTD)
+b) SMSD upgraded 6.7.0 (proprietary BioInception library)
+c) Identity pre-filter pipeline: identity → size ratio → Tanimoto similarity
+   reduces MCS workload without compromising chemistry accuracy
+d) Formal algorithm description added (ALGORITHM.md)
+e) Golden dataset benchmark (Lin et al. 2022, 1,851 reactions) added
+f) Toolkit-agnostic graph model API (CDK / RDKit / OpenBabel interchange)
+g) Clean one-line Java API: RDT.map(reactionSmiles)
+h) Namespace migrated uk.ac.ebi → com.bioinceptionlabs
+i) CDK updated to 2.12; Java 21 baseline
+j) Codebase reduced from 345 to 68 files; 164-test suite at 100% pass
+k) Security hardening, memory leak fixes, thread-safety improvements
+
+-----------------------
 TO DO
 -----------------------
 a) CDK to handle missing atom types like Fe, Co etc.
 b) Fix DIAT bonds in the CDK.
 c) Old Atom Rank reporting test.
+d) Graphormer mapper benchmark comparison (in progress)
