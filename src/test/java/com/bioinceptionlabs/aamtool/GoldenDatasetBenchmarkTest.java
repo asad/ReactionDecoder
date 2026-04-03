@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
+import com.bioinceptionlabs.reactionblast.mapping.MappingDiagnostics;
+import com.bioinceptionlabs.reactionblast.mapping.MappingKeyUtil;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLRXNV2000Reader;
 import com.bioinceptionlabs.testgroups.Benchmark;
@@ -54,6 +57,8 @@ public class GoldenDatasetBenchmarkTest {
     private static final String GOLDEN_RDF = "benchmark/golden_dataset.rdf";
     private static final int MAX_REACTIONS = Integer.getInteger("golden.max", 0); // 0 = all
     private static final int REPORT_MISMATCHES = Integer.getInteger("golden.reportMismatches", 0);
+    private static final int DUPLICATE_PROFILE_LIMIT = Integer.getInteger("golden.duplicate.max", 25);
+    private static final int DUPLICATE_PROFILE_PRINT = Integer.getInteger("golden.duplicate.print", 10);
     private static final String BENCHMARK_ATOM_ID = "benchmarkAtomId";
 
     @Test
@@ -334,6 +339,160 @@ public class GoldenDatasetBenchmarkTest {
         assertTrue("Mapping success rate should be > 70%", success > total * 0.70);
     }
 
+    @Test
+    public void profileDuplicateStoichiometrySubset() throws Exception {
+        URL rdfUrl = getClass().getClassLoader().getResource(GOLDEN_RDF);
+        if (rdfUrl == null) {
+            System.out.println("SKIP: Golden dataset not found at " + GOLDEN_RDF);
+            return;
+        }
+
+        List<GoldReaction> goldReactions = parseRDF(rdfUrl);
+        List<Integer> selected = new ArrayList<>();
+        for (int i = 0; i < goldReactions.size() && selected.size() < DUPLICATE_PROFILE_LIMIT; i++) {
+            IReaction rxn = parseRXNBlock(goldReactions.get(i).rxnBlock);
+            if (rxn == null) {
+                continue;
+            }
+            assignBenchmarkAtomIds(rxn);
+            IReaction standardized = new StandardizeReaction().standardize(rxn);
+            if (hasDuplicateStructures(standardized)) {
+                selected.add(i);
+            }
+        }
+
+        System.out.println("Loaded " + goldReactions.size() + " reactions from golden dataset");
+        System.out.println("Duplicate-stoichiometry benchmark subset: " + selected.size() + " reactions");
+        assertTrue("Expected at least one duplicate-stoichiometry reaction", !selected.isEmpty());
+
+        long totalCandidatePairs = 0;
+        long totalUniquePairs = 0;
+        long totalScheduledJobs = 0;
+        long totalActualMcsSearches = 0;
+        long totalSubstructureSearches = 0;
+        long totalCacheHits = 0;
+        long totalQuickCalls = 0;
+        long totalQuickCacheHits = 0;
+        long totalQuickSearches = 0;
+        long totalElapsedMs = 0;
+        long totalMatcherInvocations = 0;
+        long firstInvocationMcsSearches = 0;
+        long followUpMcsSearches = 0;
+        long firstInvocationUniquePairs = 0;
+        long followUpUniquePairs = 0;
+
+        int printed = 0;
+        for (int index : selected) {
+            String reactionId = "GOLDEN_DUP_" + (index + 1);
+            IReaction rdtRxn = parseRXNBlock(goldReactions.get(index).rxnBlock);
+            if (rdtRxn == null) {
+                continue;
+            }
+            assignBenchmarkAtomIds(rdtRxn);
+            stripAtomMaps(rdtRxn);
+
+            long start = System.currentTimeMillis();
+            performAtomAtomMapping(rdtRxn, reactionId);
+            long elapsed = System.currentTimeMillis() - start;
+            MappingDiagnostics.ReactionSnapshot snapshot = MappingDiagnostics.snapshot(reactionId);
+
+            long reactionCandidatePairs = 0;
+            long reactionUniquePairs = 0;
+            long reactionScheduledJobs = 0;
+            long reactionActualMcsSearches = 0;
+            long reactionSubstructureSearches = 0;
+            long reactionCacheHits = 0;
+            long reactionQuickCalls = 0;
+            long reactionQuickCacheHits = 0;
+            long reactionQuickSearches = 0;
+            long reactionMatcherInvocations = 0;
+            List<String> algorithms = new ArrayList<>();
+
+            for (MappingDiagnostics.AlgorithmSnapshot algorithmSnapshot : snapshot.algorithms) {
+                algorithms.add(algorithmSnapshot.algorithm);
+                reactionQuickCalls += algorithmSnapshot.quickMappingCalls;
+                reactionQuickCacheHits += algorithmSnapshot.quickMappingCacheHits;
+                reactionQuickSearches += algorithmSnapshot.quickMappingSearches;
+                for (MappingDiagnostics.MatcherInvocationSnapshot invocation : algorithmSnapshot.invocations) {
+                    reactionMatcherInvocations++;
+                    reactionCandidatePairs += invocation.candidatePairs;
+                    reactionUniquePairs += invocation.uniquePairs;
+                    reactionScheduledJobs += invocation.scheduledJobs;
+                    reactionActualMcsSearches += invocation.actualMcsSearches;
+                    reactionSubstructureSearches += invocation.substructureSearches;
+                    reactionCacheHits += invocation.cacheHits;
+                    if (invocation.invocationIndex == 1) {
+                        firstInvocationMcsSearches += invocation.actualMcsSearches;
+                        firstInvocationUniquePairs += invocation.uniquePairs;
+                    } else {
+                        followUpMcsSearches += invocation.actualMcsSearches;
+                        followUpUniquePairs += invocation.uniquePairs;
+                    }
+                }
+            }
+
+            totalCandidatePairs += reactionCandidatePairs;
+            totalUniquePairs += reactionUniquePairs;
+            totalScheduledJobs += reactionScheduledJobs;
+            totalActualMcsSearches += reactionActualMcsSearches;
+            totalSubstructureSearches += reactionSubstructureSearches;
+            totalCacheHits += reactionCacheHits;
+            totalQuickCalls += reactionQuickCalls;
+            totalQuickCacheHits += reactionQuickCacheHits;
+            totalQuickSearches += reactionQuickSearches;
+            totalElapsedMs += elapsed;
+            totalMatcherInvocations += reactionMatcherInvocations;
+
+            if (printed < DUPLICATE_PROFILE_PRINT) {
+                int duplicateMultiplicity = maxDuplicateMultiplicity(parseRXNBlock(goldReactions.get(index).rxnBlock));
+                System.out.printf(
+                        "  %s dup-max=%d algos=%s matcher=%d pairs=%d unique=%d scheduled=%d mcs=%d sub=%d cache=%d quick=%d/%d time=%dms%n",
+                        reactionId,
+                        duplicateMultiplicity,
+                        algorithms,
+                        reactionMatcherInvocations,
+                        reactionCandidatePairs,
+                        reactionUniquePairs,
+                        reactionScheduledJobs,
+                        reactionActualMcsSearches,
+                        reactionSubstructureSearches,
+                        reactionCacheHits,
+                        reactionQuickCacheHits,
+                        reactionQuickCalls,
+                        elapsed);
+                printed++;
+            }
+        }
+
+        double uniqueReductionPct = totalCandidatePairs == 0 ? 0.0
+                : 100.0 * (totalCandidatePairs - totalUniquePairs) / totalCandidatePairs;
+        double followUpMcsPct = totalActualMcsSearches == 0 ? 0.0
+                : 100.0 * followUpMcsSearches / totalActualMcsSearches;
+
+        System.out.println();
+        System.out.println("=== Duplicate Stoichiometry Diagnostics ===");
+        System.out.println("Reactions profiled:      " + selected.size());
+        System.out.println("Total candidate pairs:   " + totalCandidatePairs);
+        System.out.println("Unique structural pairs: " + totalUniquePairs);
+        System.out.println("Pair reduction:          " + String.format("%.1f%%", uniqueReductionPct));
+        System.out.println("Matcher invocations:     " + totalMatcherInvocations);
+        System.out.println("Scheduled MCS jobs:      " + totalScheduledJobs);
+        System.out.println("Actual MCS searches:     " + totalActualMcsSearches);
+        System.out.println("Substructure searches:   " + totalSubstructureSearches);
+        System.out.println("MCS cache hits:          " + totalCacheHits);
+        System.out.println("QuickMapping calls:      " + totalQuickCalls);
+        System.out.println("QuickMapping cache hits: " + totalQuickCacheHits);
+        System.out.println("QuickMapping searches:   " + totalQuickSearches);
+        System.out.println("Elapsed time:            " + totalElapsedMs + " ms");
+        System.out.println("First-pass unique pairs: " + firstInvocationUniquePairs);
+        System.out.println("Follow-up unique pairs:  " + followUpUniquePairs);
+        System.out.println("First-pass MCS calls:    " + firstInvocationMcsSearches);
+        System.out.println("Follow-up MCS calls:     " + followUpMcsSearches);
+        System.out.println("Follow-up MCS share:     " + String.format("%.1f%%", followUpMcsPct));
+        System.out.println("Fragment-stage hotspot:  "
+                + (followUpMcsPct >= 50.0 ? "likely" : "not dominant in this subset"));
+    }
+
     // ---- Bond-change extraction from mapped reaction ----
 
     private Set<String> extractBondChanges(IReaction rxn) {
@@ -568,6 +727,33 @@ public class GoldenDatasetBenchmarkTest {
         rxn.setID(id);
         return new ReactionMechanismTool(rxn, true, true, false, true, true,
                 new StandardizeReaction());
+    }
+
+    private boolean hasDuplicateStructures(IReaction reaction) {
+        return maxDuplicateMultiplicity(reaction) > 1;
+    }
+
+    private int maxDuplicateMultiplicity(IReaction reaction) {
+        if (reaction == null) {
+            return 0;
+        }
+        int max = 1;
+        max = Math.max(max, maxDuplicateMultiplicity(reaction.getReactants()));
+        max = Math.max(max, maxDuplicateMultiplicity(reaction.getProducts()));
+        return max;
+    }
+
+    private int maxDuplicateMultiplicity(org.openscience.cdk.interfaces.IAtomContainerSet containers) {
+        Map<String, Integer> counts = new HashMap<>();
+        int max = 1;
+        for (IAtomContainer container : containers.atomContainers()) {
+            String key = MappingKeyUtil.computeStructureKey(container);
+            int count = counts.merge(key, 1, Integer::sum);
+            if (count > max) {
+                max = count;
+            }
+        }
+        return max;
     }
 
     private String pct(int num, int den) {

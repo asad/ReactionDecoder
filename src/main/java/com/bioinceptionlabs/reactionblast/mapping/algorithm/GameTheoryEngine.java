@@ -71,6 +71,7 @@ import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.BestMatchContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.HydrogenFreeFingerPrintContainer;
+import com.bioinceptionlabs.reactionblast.mapping.MappingDiagnostics;
 import com.bioinceptionlabs.reactionblast.mapping.MappingKeyUtil;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MolMapping;
@@ -282,7 +283,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             IAtomContainer educt = reactionContainer.getEduct(substrateIndex);
             IAtomContainer product = reactionContainer.getProduct(productIndex);
             LOGGER.debug("--Get matches--");
-            MCSSolution atomatomMapping = getMappings(substrateIndex, productIndex, educt, product, mcsSolutions);
+            MCSSolution atomatomMapping = getMappings(
+                    holder.getReactionID(),
+                    holder.getTheory() == null ? "UNKNOWN" : holder.getTheory().name(),
+                    substrateIndex, productIndex, educt, product, mcsSolutions);
             if (atomatomMapping == null) {
                 clearScores(holder, substrateIndex, productIndex);
                 return;
@@ -332,11 +336,12 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     private MCSSolution getMappings(
+            String reactionId, String algorithmName,
             int queryPosition, int targetPosition,
             IAtomContainer educt, IAtomContainer product,
             Collection<MCSSolution> mcsSolutions) throws CDKException {
         if (mcsSolutions.isEmpty()) {
-            return quickMapping(educt, product, queryPosition, targetPosition);
+            return quickMapping(reactionId, algorithmName, educt, product, queryPosition, targetPosition);
         }
         for (MCSSolution solution : mcsSolutions) {
             if (solution.getQueryPosition() == queryPosition
@@ -354,7 +359,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                     }
                     atomMaps.clear();
                     if (mappingPossible) {
-                        return quickMapping(educt, product, queryPosition, targetPosition);
+                        return quickMapping(reactionId, algorithmName, educt, product, queryPosition, targetPosition);
                     }
                 }
                 return solution;
@@ -363,10 +368,12 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         return null;
     }
 
-    private MCSSolution quickMapping(IAtomContainer educt, IAtomContainer product,
+    private MCSSolution quickMapping(String reactionId, String algorithmName,
+            IAtomContainer educt, IAtomContainer product,
             int queryPosition, int targetPosition) {
         ThreadSafeCache<String, MCSSolution> mappingcache = ThreadSafeCache.getInstance();
         LOGGER.debug("====Quick Mapping====");
+        MappingDiagnostics.recordQuickMappingCall(reactionId, algorithmName);
         try {
             ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(educt);
             MoleculeInitializer.initializeMolecule(educt);
@@ -393,6 +400,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                     false, false, false, false,
                     numberOfCyclesEduct, numberOfCyclesProduct);
             if (mappingcache.containsKey(key)) {
+                MappingDiagnostics.recordQuickMappingCacheHit(reactionId, algorithmName);
                 MCSSolution solution = mappingcache.get(key);
                 MCSSolution mcs = copyOldSolutionToNew(
                         queryPosition, targetPosition,
@@ -401,6 +409,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             } else {
                 AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
                 BondMatcher bondMatcher = AtomBondMatcher.bondMatcher(false, false);
+                MappingDiagnostics.recordQuickMappingSearch(reactionId, algorithmName);
                 BaseMapping isomorphism = MAPPING_ENGINE.findMcs(
                         educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
                 MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);

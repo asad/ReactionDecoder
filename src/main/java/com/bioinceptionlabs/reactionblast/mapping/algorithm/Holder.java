@@ -240,6 +240,7 @@ public class Holder extends Debugger implements Cloneable, Serializable {
     public Object clone() throws CloneNotSupportedException {
         Holder mhClone = new Holder(this.row, this.coloumn);
         mhClone.setTheory(this.getTheory());
+        mhClone.reactionID = this.reactionID;
 
         double[][] arrayCopy = this.getGraphSimilarityMatrix().getArrayCopy();
         EBIMatrix matrix = mhClone.getGraphSimilarityMatrix();
@@ -315,5 +316,9 @@ public class Holder extends Debugger implements Cloneable, Serializable {
      */
     public EBIMatrix getCarbonOverlapMatrix() {
         return carbonOverlapMatrix;
+    }
+
+    public String getReactionID() {
+        return reactionID;
     }
 }

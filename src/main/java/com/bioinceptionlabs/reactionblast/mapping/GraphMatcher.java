@@ -205,6 +205,9 @@ public class GraphMatcher extends Debugger {
     public static Collection<MCSSolution> matcher(Holder mh) throws Exception {
         ExecutorService executor = null;
         Collection<MCSSolution> mcsSolutions = new ArrayList<>();
+        long matcherStart = currentTimeMillis();
+        String reactionId = mh.getReactionID();
+        String algorithmName = mh.getTheory() == null ? "UNKNOWN" : mh.getTheory().name();
 
         LOGGER.debug("Matcher Class for " + mh.getTheory());
         Set<Combination> jobReplicatorList = new TreeSet<>();
@@ -350,6 +353,7 @@ public class GraphMatcher extends Debugger {
             executor = Executors.newFixedThreadPool(threadsAvailable);
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
 
+            List<PairJob> jobsToRun = new ArrayList<>();
             List<MCSThread> listOfJobs = new ArrayList<>();
             Map<Combination, PairJob> pairJobsByRepresentative = new HashMap<>();
 
@@ -416,7 +420,30 @@ public class GraphMatcher extends Debugger {
                     continue;
                 }
 
-                // Clone molecules for thread safety — CDK IAtomContainer is mutable and not thread-safe
+                jobsToRun.add(pairJob);
+            }
+
+            if (skippedIdentity + skippedRatio + skippedTanimoto > 0) {
+                LOGGER.debug("Pre-filter: skipped " + skippedIdentity + " identity, "
+                        + skippedRatio + " ratio, " + skippedTanimoto + " tanimoto pairs");
+            }
+
+            int invocationIndex = MappingDiagnostics.recordMatcherInvocation(
+                    reactionId,
+                    algorithmName,
+                    jobReplicatorList.size(),
+                    pairJobs.size(),
+                    skippedIdentity,
+                    skippedRatio,
+                    skippedTanimoto,
+                    jobsToRun.size());
+
+            for (PairJob pairJob : jobsToRun) {
+                Combination representative = pairJob.representative;
+                int substrateIndex = representative.getRowIndex();
+                int productIndex = representative.getColIndex();
+                IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
+                IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
                 IAtomContainer eductClone;
                 IAtomContainer productClone;
                 try {
@@ -427,16 +454,12 @@ public class GraphMatcher extends Debugger {
                     productClone = product;
                 }
                 MCSThread mcsThread = new MCSThread(mh.getTheory(),
-                        substrateIndex, productIndex, eductClone, productClone);
+                        substrateIndex, productIndex, eductClone, productClone,
+                        reactionId, algorithmName, invocationIndex);
                 mcsThread.setHasPerfectRings(pairJob.hasPerfectRings);
                 mcsThread.setEductRingCount(pairJob.numberOfCyclesEduct);
                 mcsThread.setProductRingCount(pairJob.numberOfCyclesProduct);
                 listOfJobs.add(mcsThread);
-            }
-
-            if (skippedIdentity + skippedRatio + skippedTanimoto > 0) {
-                LOGGER.debug("Pre-filter: skipped " + skippedIdentity + " identity, "
-                        + skippedRatio + " ratio, " + skippedTanimoto + " tanimoto pairs");
             }
 
             if (listOfJobs.size() > LARGE_JOB_THRESHOLD) {
@@ -469,6 +492,7 @@ public class GraphMatcher extends Debugger {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
             LOGGER.debug("==Gathering MCS solution from the Thread==");
+            long replayedMappings = 0;
             threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).forEach((MCSSolution mcs) -> {
                 Combination representative = new Combination(
                         mcs.getQueryPosition(),
@@ -490,6 +514,13 @@ public class GraphMatcher extends Debugger {
                     mcsSolutions.add(replicatedMCS);
                 }
             });
+            replayedMappings = mcsSolutions.size();
+            MappingDiagnostics.recordMatcherCompletion(
+                    reactionId,
+                    algorithmName,
+                    invocationIndex,
+                    replayedMappings,
+                    currentTimeMillis() - matcherStart);
             jobReplicatorList.clear();
 
         } catch (Exception ex) {
@@ -989,6 +1020,9 @@ public class GraphMatcher extends Debugger {
          *
          */
         protected final IMappingAlgorithm theory;
+        private final String reactionId;
+        private final String algorithmName;
+        private final int invocationIndex;
 
         /**
          *
@@ -1012,13 +1046,17 @@ public class GraphMatcher extends Debugger {
          * @throws org.openscience.cdk.exception.CDKException
          */
         MCSThread(IMappingAlgorithm theory, int queryPosition, int targetPosition,
-                IAtomContainer educt, IAtomContainer product)
+                IAtomContainer educt, IAtomContainer product,
+                String reactionId, String algorithmName, int invocationIndex)
                 throws CloneNotSupportedException, CDKException {
             this.compound1 = getNewContainerWithIDs(educt);
             this.compound2 = getNewContainerWithIDs(product);
             this.queryPosition = queryPosition;
             this.targetPosition = targetPosition;
             this.theory = theory;
+            this.reactionId = reactionId;
+            this.algorithmName = algorithmName;
+            this.invocationIndex = invocationIndex;
             this.numberOfCyclesEduct = 0;
             this.numberOfCyclesProduct = 0;
         }
@@ -1069,6 +1107,7 @@ public class GraphMatcher extends Debugger {
                     am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
                     bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
+                    MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                     substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2, am, bm, true,
                             SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
 
@@ -1077,6 +1116,7 @@ public class GraphMatcher extends Debugger {
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---1.3---");
+                        MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                         substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2,
                                 am, bm, true, SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     } else if (moleculeConnected && !substructure.isSubgraph()) {
@@ -1084,6 +1124,7 @@ public class GraphMatcher extends Debugger {
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---1.2---");
+                        MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                         substructure = MAPPING_ENGINE.findSubstructure(ac1, ac2, am, bm, true,
                                 SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     }
@@ -1119,6 +1160,7 @@ public class GraphMatcher extends Debugger {
                     am = AtomBondMatcher.atomMatcher(true, isHasPerfectRings());
                     bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
+                    MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                     substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
                             SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
 
@@ -1127,6 +1169,7 @@ public class GraphMatcher extends Debugger {
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---2.3---");
+                        MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                         substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
                                 SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     } else if (moleculeConnected && !substructure.isSubgraph()) {
@@ -1134,6 +1177,7 @@ public class GraphMatcher extends Debugger {
                         bm = AtomBondMatcher.bondMatcher(false, isHasPerfectRings());
 
                         LOGGER.debug("---2.2---");
+                        MappingDiagnostics.recordSubstructureSearch(reactionId, algorithmName, invocationIndex);
                         substructure = MAPPING_ENGINE.findSubstructure(ac2, ac1, am, bm, true,
                                 SINGLE_SUBGRAPH_MATCH, SUBGRAPH_TIMEOUT_MS);
                     }
@@ -1312,6 +1356,7 @@ public class GraphMatcher extends Debugger {
             key = generateUniqueKey(settings);
             if (ThreadSafeCache.getInstance().containsKey(key)) {
                 LOGGER.debug("===={Aladdin} Mapping {Gini}====");
+                MappingDiagnostics.recordMcsCacheHit(reactionId, algorithmName, invocationIndex);
                 MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                 mcs = copyOldSolutionToNew(
                         getQueryPosition(), getTargetPosition(),
@@ -1324,6 +1369,7 @@ public class GraphMatcher extends Debugger {
                 mcsOptions.connectedOnly = isMoleculeConnected(ac1, ac2);
                 mcsOptions.disconnectedMCS = !mcsOptions.connectedOnly;
                 mcsOptions.maximizeBonds = settings.bondMatch;
+                MappingDiagnostics.recordActualMcsSearch(reactionId, algorithmName, invocationIndex);
                 isomorphism = MAPPING_ENGINE.findMcs(ac1, ac2, Algorithm.VFLibMCS, am, bm, mcsOptions);
                 mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
             }

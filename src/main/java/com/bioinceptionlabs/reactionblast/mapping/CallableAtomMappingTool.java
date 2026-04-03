@@ -108,6 +108,8 @@ public class CallableAtomMappingTool implements Serializable {
             return;
         }
 
+        MappingDiagnostics.resetReaction(standardizedReaction.getID());
+
         if (isIdentityReaction(standardizedReaction)) {
             try {
                 Reactor minResult = new MappingThread(

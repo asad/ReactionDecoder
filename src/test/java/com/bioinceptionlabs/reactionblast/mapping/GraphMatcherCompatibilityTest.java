@@ -45,7 +45,8 @@ public class GraphMatcherCompatibilityTest {
         }
 
         GraphMatcher.MCSThread thread = new GraphMatcher.MCSThread(
-                IMappingAlgorithm.MAX, 0, 0, query, target);
+                IMappingAlgorithm.MAX, 0, 0, query, target,
+                "test-reaction", IMappingAlgorithm.MAX.name(), 1);
         GraphMatcher.MCSSolution solution = thread.call();
 
         assertNotNull(solution);
