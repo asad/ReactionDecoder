@@ -100,6 +100,11 @@ public class GoldenDatasetBenchmarkTest {
         double totalQualityScore = 0;
         int qualityScored = 0;
         int mismatchReports = 0;
+        int totalAlgorithmsExecuted = 0;
+        Map<Integer, Integer> algorithmsPerReaction = new HashMap<>();
+        Map<String, Integer> selectedAlgorithms = new HashMap<>();
+        long totalMappingPhaseMs = 0;
+        long totalEvaluationPhaseMs = 0;
 
         long startTime = System.currentTimeMillis();
 
@@ -140,9 +145,16 @@ public class GoldenDatasetBenchmarkTest {
                 // Run RDT mapping
                 ReactionMechanismTool rmt = performAtomAtomMapping(rdtRxn, "GOLDEN_" + (i + 1));
                 MappingSolution solution = rmt.getSelectedSolution();
+                MappingDiagnostics.ReactionSnapshot snapshot = MappingDiagnostics.snapshot("GOLDEN_" + (i + 1));
+                int executedAlgorithms = snapshot.algorithms.size();
+                totalAlgorithmsExecuted += executedAlgorithms;
+                algorithmsPerReaction.merge(executedAlgorithms, 1, Integer::sum);
+                totalMappingPhaseMs += snapshot.mappingPhaseMillis;
+                totalEvaluationPhaseMs += snapshot.evaluationPhaseMillis;
 
                     if (solution != null && solution.getBondChangeCalculator() != null) {
                         success++;
+                        selectedAlgorithms.merge(solution.getAlgorithmID().name(), 1, Integer::sum);
 
                         // --- Metric 1: Atom-level accuracy ---
                         IReaction mappedRxn = solution.getReaction();
@@ -326,6 +338,14 @@ public class GoldenDatasetBenchmarkTest {
         System.out.println("Errors:                 " + errors);
         System.out.println("Speed:                  " + String.format("%.1f", rxnPerSec) + " rxn/sec");
         System.out.println("Total time:             " + (totalTime / 1000) + "s");
+        System.out.println("Avg algorithms/run:     " + String.format("%.2f",
+                total == 0 ? 0.0 : (double) totalAlgorithmsExecuted / total));
+        System.out.println("Algorithms/reaction:    " + formatDistribution(algorithmsPerReaction));
+        System.out.println("Selected algorithms:    " + formatDistribution(selectedAlgorithms));
+        System.out.println("Avg mapping phase:      " + String.format("%.1f ms",
+                total == 0 ? 0.0 : (double) totalMappingPhaseMs / total));
+        System.out.println("Avg evaluation phase:   " + String.format("%.1f ms",
+                total == 0 ? 0.0 : (double) totalEvaluationPhaseMs / total));
         System.out.println();
         System.out.println("=== Comparison with Published Results (Lin et al. 2022) ===");
         System.out.println("| Tool               | Exact Match | Atom Acc. | Bond Acc. | Training | Deterministic |");
@@ -780,6 +800,15 @@ public class GoldenDatasetBenchmarkTest {
 
     private double pct_d(int num, int den) {
         return den == 0 ? 0.0 : 100.0 * num / den;
+    }
+
+    private String formatDistribution(Map<?, Integer> distribution) {
+        List<String> entries = new ArrayList<>();
+        for (Map.Entry<?, Integer> entry : distribution.entrySet()) {
+            entries.add(entry.getKey() + "=" + entry.getValue());
+        }
+        Collections.sort(entries);
+        return entries.toString();
     }
 
     private static class GoldReaction {

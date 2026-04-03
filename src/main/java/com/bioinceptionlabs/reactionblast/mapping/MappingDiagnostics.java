@@ -91,9 +91,19 @@ public final class MappingDiagnostics {
                 .quickMappingSearches.incrementAndGet();
     }
 
+    public static void recordMappingPhase(String reactionId, long elapsedMillis) {
+        reactionStats(reactionId).mappingPhaseMillis.set(elapsedMillis);
+    }
+
+    public static void recordEvaluationPhase(String reactionId, long elapsedMillis) {
+        reactionStats(reactionId).evaluationPhaseMillis.set(elapsedMillis);
+    }
+
     public static ReactionSnapshot snapshot(String reactionId) {
         ReactionStats stats = REACTIONS.get(reactionId);
-        return stats == null ? new ReactionSnapshot(reactionId, Collections.emptyList()) : stats.snapshot(reactionId);
+        return stats == null
+                ? new ReactionSnapshot(reactionId, 0L, 0L, Collections.emptyList())
+                : stats.snapshot(reactionId);
     }
 
     private static ReactionStats reactionStats(String reactionId) {
@@ -105,6 +115,8 @@ public final class MappingDiagnostics {
     private static final class ReactionStats {
 
         private final ConcurrentMap<String, AlgorithmStats> algorithms = new ConcurrentHashMap<>();
+        private final AtomicLong mappingPhaseMillis = new AtomicLong();
+        private final AtomicLong evaluationPhaseMillis = new AtomicLong();
 
         private AlgorithmStats algorithmStats(String algorithm) {
             String key = algorithm == null ? "UNKNOWN" : algorithm;
@@ -117,7 +129,11 @@ public final class MappingDiagnostics {
                 algorithmSnapshots.add(stats.snapshot());
             }
             algorithmSnapshots.sort(Comparator.comparing(snapshot -> snapshot.algorithm));
-            return new ReactionSnapshot(reactionId, algorithmSnapshots);
+            return new ReactionSnapshot(
+                    reactionId,
+                    mappingPhaseMillis.get(),
+                    evaluationPhaseMillis.get(),
+                    algorithmSnapshots);
         }
     }
 
@@ -211,10 +227,17 @@ public final class MappingDiagnostics {
     public static final class ReactionSnapshot {
 
         public final String reactionId;
+        public final long mappingPhaseMillis;
+        public final long evaluationPhaseMillis;
         public final List<AlgorithmSnapshot> algorithms;
 
-        public ReactionSnapshot(String reactionId, List<AlgorithmSnapshot> algorithms) {
+        public ReactionSnapshot(String reactionId,
+                long mappingPhaseMillis,
+                long evaluationPhaseMillis,
+                List<AlgorithmSnapshot> algorithms) {
             this.reactionId = reactionId;
+            this.mappingPhaseMillis = mappingPhaseMillis;
+            this.evaluationPhaseMillis = evaluationPhaseMillis;
             this.algorithms = Collections.unmodifiableList(new ArrayList<>(algorithms));
         }
     }

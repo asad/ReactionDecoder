@@ -20,6 +20,7 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 
 import java.io.Serializable;
 import static java.lang.Integer.MIN_VALUE;
+import static java.lang.System.currentTimeMillis;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,6 +59,7 @@ import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.IFea
 import com.bioinceptionlabs.reactionblast.fingerprints.IPatternFingerprinter;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.mapping.CallableAtomMappingTool;
+import com.bioinceptionlabs.reactionblast.mapping.MappingDiagnostics;
 import com.bioinceptionlabs.reactionblast.mapping.Reactor;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.USER_DEFINED;
@@ -278,6 +280,7 @@ public class ReactionMechanismTool implements Serializable {
                 CallableAtomMappingTool amt = new CallableAtomMappingTool(reaction, standardizer,
                         onlyCoreMappingByMCS, checkComplex);
                 Map<IMappingAlgorithm, Reactor> solutions = amt.getSolutions();
+                long evaluationStart = currentTimeMillis();
                 List<EvaluationCandidate> orderedSolutions = orderSolutionsForEvaluation(solutions);
                 List<EvaluationCandidate> candidates = collectCandidatesForEvaluation(orderedSolutions);
 
@@ -289,6 +292,9 @@ public class ReactionMechanismTool implements Serializable {
                     LOGGER.debug("is solution: " + mappingSolution.getAlgorithmID()
                             + " selected: " + selected);
                 }
+                MappingDiagnostics.recordEvaluationPhase(
+                        reaction.getID(),
+                        currentTimeMillis() - evaluationStart);
             } catch (Exception e) {
                 LOGGER.error(SEVERE, "Bond change calculation error", e);
                 throw new Exception(NEW_LINE + "ERROR: Unable to calculate bond changes: " + e.getMessage(), e);
@@ -927,12 +933,21 @@ public class ReactionMechanismTool implements Serializable {
     private List<EvaluationCandidate> limitCandidatesForFullScoring(
             List<EvaluationCandidate> candidates,
             boolean identityLike) {
-        if (candidates.size() <= DEFAULT_FULL_SCORING_CANDIDATES) {
+        if (candidates.size() <= 1) {
             return candidates;
         }
 
         List<EvaluationCandidate> ranked = new ArrayList<>(candidates);
         ranked.sort(evaluationCandidateComparator(identityLike));
+
+        if (hasDominantTopCandidate(ranked, identityLike)) {
+            LOGGER.debug("Top candidate dominates quick-score ranking; scoring 1 candidate only");
+            return new ArrayList<>(ranked.subList(0, 1));
+        }
+
+        if (candidates.size() <= DEFAULT_FULL_SCORING_CANDIDATES) {
+            return ranked;
+        }
 
         int limit = Math.min(DEFAULT_FULL_SCORING_CANDIDATES, ranked.size());
         if (hasAmbiguousTopTier(ranked)) {
@@ -955,6 +970,23 @@ public class ReactionMechanismTool implements Serializable {
                     + candidates.size() + " to " + retained.size() + " candidate(s)");
         }
         return retained;
+    }
+
+    private boolean hasDominantTopCandidate(List<EvaluationCandidate> ranked, boolean identityLike) {
+        if (identityLike || ranked.size() < 2) {
+            return false;
+        }
+
+        EvaluationCandidate best = ranked.get(0);
+        EvaluationCandidate challenger = ranked.get(1);
+        if (!best.coverage.isComplete() || !best.coverage.isBalancedMapped()) {
+            return false;
+        }
+        if (!challenger.coverage.isComplete() || !challenger.coverage.isBalancedMapped()) {
+            return true;
+        }
+        return !best.quickScore.isNear(challenger.quickScore)
+                && best.quickScore.totalScore() + 2 <= challenger.quickScore.totalScore();
     }
 
     private boolean hasAmbiguousTopTier(List<EvaluationCandidate> ranked) {

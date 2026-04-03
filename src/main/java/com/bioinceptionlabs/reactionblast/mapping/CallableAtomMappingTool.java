@@ -19,6 +19,7 @@
 package com.bioinceptionlabs.reactionblast.mapping;
 
 import java.io.Serializable;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.util.Collections.unmodifiableMap;
 import java.util.EnumMap;
@@ -93,6 +94,7 @@ public class CallableAtomMappingTool implements Serializable {
             StandardizeReaction standardizer,
             boolean removeHydrogen,
             boolean checkComplex) {
+        long mappingStart = currentTimeMillis();
         /*
          * Standardize the reaction ONCE.
          */
@@ -199,6 +201,11 @@ public class CallableAtomMappingTool implements Serializable {
             LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             LOGGER.error(e);
         } finally {
+            if (standardizedReaction != null && standardizedReaction.getID() != null) {
+                MappingDiagnostics.recordMappingPhase(
+                        standardizedReaction.getID(),
+                        currentTimeMillis() - mappingStart);
+            }
             executor.shutdown();
             LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
             ThreadSafeCache.getInstance().cleanup();
