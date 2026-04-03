@@ -78,6 +78,12 @@ public class GraphMatcher extends Debugger {
     private static final int SINGLE_SUBGRAPH_MATCH = 1;
     private static final long SUBGRAPH_TIMEOUT_MS = 5_000L;
     private static final long MCS_TIMEOUT_MS = 10_000L;
+    /** Hard timeout per poll() call waiting for the next completed MCS pair. */
+    private static final long MCS_POLL_TIMEOUT_MS = 15_000L;
+    /** Overall wall-clock budget for the entire matcher() call. */
+    private static final long MATCHER_BUDGET_MS = 60_000L;
+    /** Hard timeout for the executor shutdown after collection. */
+    private static final long MATCHER_SHUTDOWN_TIMEOUT_MS = 2_000L;
 
     /**
      * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
@@ -449,22 +455,45 @@ public class GraphMatcher extends Debugger {
 
             LOGGER.debug("submited " + taskCounter + " jobs");
             Collection<MCSSolution> threadedUniqueMCSSolutions = new ArrayList<>();
+            int collected = 0;
+            long matcherDeadline = currentTimeMillis() + MATCHER_BUDGET_MS;
             for (int count = 0; count < taskCounter; count++) {
                 try {
-                    MCSSolution isomorphism = callablesQueue.take().get();
-                    threadedUniqueMCSSolutions.add(isomorphism);
+                    long remaining = matcherDeadline - currentTimeMillis();
+                    if (remaining <= 0) {
+                        LOGGER.warn("Matcher budget (" + MATCHER_BUDGET_MS
+                                + "ms) exhausted — " + (taskCounter - collected)
+                                + " remaining pairs skipped");
+                        break;
+                    }
+                    long pollMs = Math.min(remaining, MCS_POLL_TIMEOUT_MS);
+                    java.util.concurrent.Future<MCSSolution> future =
+                            callablesQueue.poll(pollMs, TimeUnit.MILLISECONDS);
+                    if (future == null) {
+                        LOGGER.warn("MCS poll timed out after " + pollMs
+                                + "ms — " + (taskCounter - collected)
+                                + " remaining pairs will be skipped");
+                        break;
+                    }
+                    MCSSolution isomorphism = future.get(); // already complete
+                    if (isomorphism != null) {
+                        threadedUniqueMCSSolutions.add(isomorphism);
+                    }
+                    collected++;
                 } catch (ExecutionException ex) {
+                    collected++;
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                     LOGGER.error(SEVERE, "MCS worker failed", cause);
                 }
             }
             // Add directly-constructed identity mappings (bypassed MCSThread)
             threadedUniqueMCSSolutions.addAll(directMCSSolutions);
-            // This will make the executor accept no new threads
-            // and finish all existing threads in the queue
+            // Shut down the local executor; interrupt any stuck threads
             executor.shutdown();
-            // Wait until all threads are finished
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            if (!executor.awaitTermination(MATCHER_SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                LOGGER.warn("MCS executor did not shut down cleanly — forcing shutdown");
+                executor.shutdownNow();
+            }
 
             LOGGER.debug("==Gathering MCS solution from the Thread==");
             long replayedMappings = 0;
@@ -502,7 +531,7 @@ public class GraphMatcher extends Debugger {
             LOGGER.error(SEVERE, null, ex);
         } finally {
             if (executor != null) {
-                executor.shutdown();
+                executor.shutdownNow();
             }
         }
         return unmodifiableCollection(mcsSolutions);

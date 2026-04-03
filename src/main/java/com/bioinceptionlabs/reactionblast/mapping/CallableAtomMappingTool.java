@@ -59,6 +59,8 @@ public class CallableAtomMappingTool implements Serializable {
     private final static ILoggingTool LOGGER
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
+    /** Hard timeout per algorithm worker. Covers all MCS pairs + matrix selection. */
+    private static final long ALGORITHM_TIMEOUT_MS = 120_000L; // 2 minutes
     private static final int MAPPING_PARALLELISM
             = Math.max(2, Math.min(3, Runtime.getRuntime().availableProcessors()));
     private static final ExecutorService MAPPING_EXECUTOR
@@ -146,10 +148,13 @@ public class CallableAtomMappingTool implements Serializable {
         boolean hasRings = hasRingSystems(standardizedReaction);
         IMappingAlgorithm firstPass = (checkComplex && hasRings) ? RINGS : MIN;
         if (totalMolecules <= 5) {
+            java.util.concurrent.Future<Reactor> phase1Future = null;
             try {
-                Reactor firstPassResult = new MappingThread(
+                phase1Future = MAPPING_EXECUTOR.submit(new MappingThread(
                         "IMappingAlgorithm." + firstPass.name(),
-                        standardizedReaction, firstPass, removeHydrogen).call();
+                        standardizedReaction, firstPass, removeHydrogen));
+                Reactor firstPassResult = phase1Future.get(
+                        ALGORITHM_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS);
                 putSolution(firstPass, firstPassResult);
 
                 if (isMappingAcceptable(firstPassResult)) {
@@ -158,6 +163,11 @@ public class CallableAtomMappingTool implements Serializable {
                     return;
                 }
                 LOGGER.debug(firstPass + " mapping insufficient — running remaining algorithms");
+            } catch (java.util.concurrent.TimeoutException e) {
+                LOGGER.warn(firstPass + " phase timed out after " + ALGORITHM_TIMEOUT_MS + "ms");
+                if (phase1Future != null) {
+                    phase1Future.cancel(true);
+                }
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.debug(firstPass + " phase failed: " + e.getMessage());
                 LOGGER.error(e);
@@ -184,30 +194,44 @@ public class CallableAtomMappingTool implements Serializable {
             remaining = new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS};
         }
 
+        java.util.List<java.util.concurrent.Future<Reactor>> submittedFutures = new java.util.ArrayList<>();
         try {
             CompletionService<Reactor> cs = new ExecutorCompletionService<>(MAPPING_EXECUTOR);
             int jobCounter = 0;
             for (IMappingAlgorithm algo : remaining) {
                 LOGGER.debug("Submitting " + algo.description());
-                cs.submit(new MappingThread("IMappingAlgorithm." + algo.name(),
-                        standardizedReaction, algo, removeHydrogen));
+                submittedFutures.add(cs.submit(new MappingThread("IMappingAlgorithm." + algo.name(),
+                        standardizedReaction, algo, removeHydrogen)));
                 jobCounter++;
             }
+            int collected = 0;
             for (int i = 0; i < jobCounter; i++) {
                 try {
-                    Reactor chosen = cs.take().get();
+                    java.util.concurrent.Future<Reactor> future =
+                            cs.poll(ALGORITHM_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    if (future == null) {
+                        LOGGER.warn("Algorithm poll timed out after " + ALGORITHM_TIMEOUT_MS
+                                + "ms — " + (jobCounter - collected) + " remaining algorithms skipped");
+                        break;
+                    }
+                    collected++;
+                    Reactor chosen = future.get(); // already complete
                     putSolution(chosen.getAlgorithm(), chosen);
                 } catch (ExecutionException e) {
-                    // One algorithm worker failed — log and continue collecting the rest.
-                    // The lower MCS layer already handles per-pair failures; this catch
-                    // prevents a single bad algorithm from silently dropping all remaining
-                    // successful results.
+                    collected++;
                     LOGGER.debug("Algorithm worker failed: " + e.getCause());
                     LOGGER.error(e);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     LOGGER.debug("Mapping interrupted during collection: " + e.getMessage());
                     break;
+                }
+            }
+            // Cancel any orphaned workers still running in the shared pool
+            // so they don't starve future mapping requests
+            for (java.util.concurrent.Future<Reactor> f : submittedFutures) {
+                if (!f.isDone()) {
+                    f.cancel(true);
                 }
             }
             LOGGER.debug("======DONE CallableAtomMappingTool=======");

@@ -284,7 +284,14 @@ c) clean up
 -----------------------
 Changes (2026-04-03) — v3.9.0
 -----------------------
-a) Identity shortcut stereo + multiplicity fix: isIdentityReaction() now uses
+a) SMSD upgraded to 6.10.1 with energy filter NPE guard.
+b) Deadlock fix: GraphMatcher and CallableAtomMappingTool now use
+   CompletionService.poll(timeout) instead of take() (which blocks forever),
+   with per-pair budget (15s), overall matcher budget (60s), and algorithm
+   worker timeout (120s). Orphaned futures are cancelled on timeout to free
+   the shared executor pool. Phase 1 inline call moved to executor with
+   timeout to prevent main-thread deadlocks.
+c) Identity shortcut stereo + multiplicity fix: isIdentityReaction() now uses
    SmiFlavor.Canonical|Stereo (E/Z and R/S are distinguished) and a sorted
    List instead of a TreeSet (stoichiometric multiplicity is preserved).
    Previously, F/C=C/F>>F/C=C\F was incorrectly classified as a transporter

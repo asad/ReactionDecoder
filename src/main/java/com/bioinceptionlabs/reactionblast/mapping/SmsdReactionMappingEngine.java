@@ -105,7 +105,17 @@ public final class SmsdReactionMappingEngine implements ReactionMappingEngine {
     @Override
     public void applyDefaultFilters(BaseMapping mapping) {
         if (mapping != null) {
-            mapping.setChemFilters(true, true, true);
+            try {
+                mapping.setChemFilters(true, true, true);
+            } catch (NullPointerException ex) {
+                // SMSD 6.10.1 energy filter can NPE on certain molecule pairs
+                // where bond-energy lookup returns null. Fall back to stereo+fragment only.
+                try {
+                    mapping.setChemFilters(true, true, false);
+                } catch (Exception fallback) {
+                    // last resort — no filters at all
+                }
+            }
         }
     }
 }
