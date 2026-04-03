@@ -450,6 +450,14 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         }
     }
 
+    protected final String canonicalMatchedSmiles(
+            ICanonicalMoleculeLabeller canonLabeler,
+            IAtomContainer matchedPart) throws Exception {
+        IAtomContainer canonical = canonLabeler.getCanonicalMolecule(matchedPart);
+        CDKSMILES cdkSmiles = new CDKSMILES(canonical, true, false);
+        return cdkSmiles.getCanonicalSMILES();
+    }
+
     private void refillMatrixWithOldData(Holder holder, int substrateIndex, int productIndex) {
         LOGGER.debug("**********REFILL MCS And Calculate Similarity**************");
         try {
@@ -722,19 +730,11 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                             delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                             List<MolMapping> rMap = getReactionMolMapping().
                                     getMapping(rid, this.eductList.get(substrateIndex), this.productList.get(productIndex));
-                            rMap.stream().map((map) -> {
+                            String matchedSmiles = canonicalMatchedSmiles(canonLabeler, GM.getMatchedPart());
+                            for (MolMapping map : rMap) {
                                 map.setReactionMapping(true);
-                                return map;
-                            }).forEach((map) -> {
-                                try {
-                                    IAtomContainer mol = GM.getMatchedPart();
-                                    mol = canonLabeler.getCanonicalMolecule(mol);
-                                    CDKSMILES cdkSmiles = new CDKSMILES(mol, true, false);
-                                    map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
-                                } catch (CloneNotSupportedException e) {
-                                    LOGGER.error("Error in cloning molecule: ", e.getMessage());
-                                }
-                            });
+                                map.setMatchedSMILES(matchedSmiles, ++stepIndex);
+                            }
                         }
                         IAtomContainer remainingEduct = GM.getRemainingEduct();
                         IAtomContainer remainingProduct = GM.getRemainingProduct();
@@ -885,12 +885,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                             delta += graphMatching.removeMatchedAtomsAndUpdateAAM(reaction);
                             List<MolMapping> rMap = getReactionMolMapping().
                                     getMapping(reactionName, this.eductList.get(substrateIndex), this.productList.get(productIndex));
+                            String matchedSmiles = canonicalMatchedSmiles(canonLabeler, graphMatching.getMatchedPart());
                             for (MolMapping map : rMap) {
                                 map.setReactionMapping(true);
-                                IAtomContainer mol = graphMatching.getMatchedPart();
-                                mol = canonLabeler.getCanonicalMolecule(mol);
-                                CDKSMILES cdkSmiles = new CDKSMILES(mol, true, false);
-                                map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
+                                map.setMatchedSMILES(matchedSmiles, ++stepIndex);
                             }
                         }
                         IAtomContainer remainingEduct = graphMatching.getRemainingEduct();
@@ -1032,12 +1030,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                             delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                             List<MolMapping> rMap = getReactionMolMapping().
                                     getMapping(RID, this.eductList.get(substrateIndex), this.productList.get(productIndex));
+                            String matchedSmiles = canonicalMatchedSmiles(canonLabeler, GM.getMatchedPart());
                             for (MolMapping map : rMap) {
                                 map.setReactionMapping(true);
-                                IAtomContainer mol = GM.getMatchedPart();
-                                mol = canonLabeler.getCanonicalMolecule(mol);
-                                CDKSMILES cdkSmiles = new CDKSMILES(mol, true, false);
-                                map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
+                                map.setMatchedSMILES(matchedSmiles, ++stepIndex);
                             }
                         }
                         IAtomContainer RemainingEduct = GM.getRemainingEduct();
@@ -1178,12 +1174,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                             delta += GM.removeMatchedAtomsAndUpdateAAM(reaction);
                             List<MolMapping> rMap = getReactionMolMapping().
                                     getMapping(RID, this.eductList.get(substrateIndex), this.productList.get(productIndex));
+                            String matchedSmiles = canonicalMatchedSmiles(canonLabeler, GM.getMatchedPart());
                             for (MolMapping map : rMap) {
                                 map.setReactionMapping(true);
-                                IAtomContainer mol = GM.getMatchedPart();
-                                mol = canonLabeler.getCanonicalMolecule(mol);
-                                CDKSMILES cdkSmiles = new CDKSMILES(mol, true, false);
-                                map.setMatchedSMILES(cdkSmiles.getCanonicalSMILES(), ++stepIndex);
+                                map.setMatchedSMILES(matchedSmiles, ++stepIndex);
                             }
                         }
                         IAtomContainer remainingEduct = GM.getRemainingEduct();
