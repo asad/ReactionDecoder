@@ -1,8 +1,10 @@
 <p align="center">
   <a href="https://github.com/asad/ReactionDecoder">
-    <img src="images/rdt-logo.svg" alt="RDT Logo" width="320">
+    <img src="images/rdt-logo.svg" alt="Reaction Decoder Tool logo" width="360">
   </a>
 </p>
+<p align="center"><strong>Reaction Decoder Tool (RDT)</strong></p>
+<p align="center">Deterministic atom mapping, annotation, and reaction comparison.</p>
 
 Introduction
 ============
