@@ -446,9 +446,10 @@ public class GraphMatcher extends Debugger {
             if (listOfJobs.size() > LARGE_JOB_THRESHOLD) {
                 LOGGER.warn("Large job: " + listOfJobs.size() + " MCS pairs to compute");
             }
+            java.util.List<java.util.concurrent.Future<MCSSolution>> mcsJobFutures = new java.util.ArrayList<>();
             if (!listOfJobs.isEmpty()) {
                 for (MCSThread mcsThreadJob : listOfJobs) {
-                    callablesQueue.submit(mcsThreadJob);
+                    mcsJobFutures.add(callablesQueue.submit(mcsThreadJob));
                     taskCounter++;
                 }
             }
@@ -484,6 +485,30 @@ public class GraphMatcher extends Debugger {
                     collected++;
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                     LOGGER.error(SEVERE, "MCS worker failed", cause);
+                }
+            }
+            // Cancel and log stuck MCS pairs for SMSD debugging
+            for (int ji = 0; ji < mcsJobFutures.size(); ji++) {
+                java.util.concurrent.Future<MCSSolution> f = mcsJobFutures.get(ji);
+                if (!f.isDone()) {
+                    f.cancel(true);
+                    MCSThread stuck = listOfJobs.get(ji);
+                    PairJob stuckJob = jobsToRun.size() > ji ? jobsToRun.get(ji) : null;
+                    String flags = stuckJob != null
+                            ? " atomType=" + stuckJob.settings.atomType
+                              + " bondMatch=" + stuckJob.settings.bondMatch
+                              + " ringMatch=" + stuckJob.settings.ringMatch
+                              + " ringSizeMatch=" + stuckJob.settings.ringSizeMatch
+                            : "";
+                    LOGGER.warn("STUCK MCS pair in " + reactionId + " [" + algorithmName
+                            + "] educt(" + stuck.queryPosition + ")="
+                            + stuck.compound1.getAtomCount() + " atoms"
+                            + " product(" + stuck.targetPosition + ")="
+                            + stuck.compound2.getAtomCount() + " atoms"
+                            + flags
+                            + " eductID=" + stuck.compound1.getID()
+                            + " productID=" + stuck.compound2.getID()
+                            + " — cancelled after timeout");
                 }
             }
             // Add directly-constructed identity mappings (bypassed MCSThread)
