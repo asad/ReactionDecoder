@@ -294,9 +294,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                 clearScores(holder, substrateIndex, productIndex);
                 return;
             }
-            carbonCount = atomatomMapping.getAtomAtomMapping().getMappingsByAtoms().keySet().stream().filter((atom)
-                    -> (atom.getSymbol().equalsIgnoreCase("C"))).map((IAtom _item) -> 1.0).reduce(carbonCount, (accumulator, _item)
-                    -> accumulator + 1);
+            carbonCount = countMappedCarbons(atomatomMapping.getAtomAtomMapping());
             if (atomatomMapping.getStereoScore() != null) {
                 stereoVal = atomatomMapping.getStereoScore();
             }
@@ -370,7 +368,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     private Map<ReactionContainer.Key, MCSSolution> indexSolutions(Collection<MCSSolution> mcsSolutions) {
-        Map<ReactionContainer.Key, MCSSolution> indexedSolutions = new HashMap<>();
+        int initialCapacity = mcsSolutions == null ? 0 : Math.max(16, mcsSolutions.size() * 2);
+        Map<ReactionContainer.Key, MCSSolution> indexedSolutions = new HashMap<>(initialCapacity);
         if (mcsSolutions == null) {
             return indexedSolutions;
         }
@@ -441,10 +440,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     private void resetFLAGS(Holder mh) throws Exception {
         ReactionContainer reactionStructureInformation = mh.getReactionContainer();
         for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
-            for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
-                reactionStructureInformation.setEductModified(substrateIndex, false);
-                reactionStructureInformation.setProductModified(productIndex, false);
-            }
+            reactionStructureInformation.setEductModified(substrateIndex, false);
+        }
+        for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
+            reactionStructureInformation.setProductModified(productIndex, false);
         }
     }
 
@@ -468,7 +467,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                     clearScores(holder, substrateIndex, productIndex);
                     return;
                 }
-                carbonCount = bestAtomAtomMapping.getMappingsByAtoms().keySet().stream().filter((atom) -> (atom.getSymbol().equalsIgnoreCase("C"))).map((_item) -> 1.0).reduce(carbonCount, (accumulator, _item) -> accumulator + 1);
+                carbonCount = countMappedCarbons(bestAtomAtomMapping);
                 stereoVal = initMcsAtom.getStereoScore(substrateIndex, productIndex);
                 fragmentVal = initMcsAtom.getTotalFragmentCount(substrateIndex, productIndex);
                 energyVal = initMcsAtom.getBondEnergy(substrateIndex, productIndex);
@@ -514,6 +513,19 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         holder.getFragmentMatrix().setValue(substrateIndex, productIndex, 0.0);
         holder.getEnergyMatrix().setValue(substrateIndex, productIndex, 0.0);
         holder.getFPSimilarityMatrix().setValue(substrateIndex, productIndex, 0.0);
+    }
+
+    private double countMappedCarbons(AtomAtomMapping mapping) {
+        if (mapping == null) {
+            return 0.0;
+        }
+        double carbonCount = 0.0;
+        for (IAtom atom : mapping.getMappingsByAtoms().keySet()) {
+            if ("C".equalsIgnoreCase(atom.getSymbol())) {
+                carbonCount++;
+            }
+        }
+        return carbonCount;
     }
 
     String generateUniqueKey(

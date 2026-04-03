@@ -54,6 +54,44 @@ public class GraphMatcherCompatibilityTest {
     }
 
     @Test
+    public void mcsThreadShortCircuitsSingleAtomFragments() throws Exception {
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IAtomContainer query = smilesParser.parseSmiles("C");
+        IAtomContainer target = smilesParser.parseSmiles("CC");
+        query.setID("query");
+        target.setID("target");
+        relabelAtoms(query, 1);
+        relabelAtoms(target, 10);
+
+        GraphMatcher.MCSThread thread = new GraphMatcher.MCSThread(
+                IMappingAlgorithm.MAX, 0, 0, query, target,
+                "test-reaction", IMappingAlgorithm.MAX.name(), 1);
+        GraphMatcher.MCSSolution solution = thread.call();
+
+        assertNotNull(solution);
+        assertEquals(1, solution.getAtomAtomMapping().getCount());
+    }
+
+    @Test
+    public void mcsThreadReturnsEmptyWhenFragmentsShareNoAtoms() throws Exception {
+        SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        IAtomContainer query = smilesParser.parseSmiles("N");
+        IAtomContainer target = smilesParser.parseSmiles("O");
+        query.setID("query");
+        target.setID("target");
+        relabelAtoms(query, 1);
+        relabelAtoms(target, 10);
+
+        GraphMatcher.MCSThread thread = new GraphMatcher.MCSThread(
+                IMappingAlgorithm.MAX, 0, 0, query, target,
+                "test-reaction", IMappingAlgorithm.MAX.name(), 1);
+        GraphMatcher.MCSSolution solution = thread.call();
+
+        assertNotNull(solution);
+        assertEquals(0, solution.getAtomAtomMapping().getCount());
+    }
+
+    @Test
     public void structuralPairKeyIgnoresOccurrenceIdsButSeparatesModes() throws Exception {
         SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
         IAtomContainer queryA = smilesParser.parseSmiles("CCO");

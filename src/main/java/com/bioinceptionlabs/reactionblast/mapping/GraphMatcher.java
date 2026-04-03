@@ -210,7 +210,7 @@ public class GraphMatcher extends Debugger {
         String algorithmName = mh.getTheory() == null ? "UNKNOWN" : mh.getTheory().name();
 
         LOGGER.debug("Matcher Class for " + mh.getTheory());
-        Set<Combination> jobReplicatorList = new TreeSet<>();
+        List<Combination> jobReplicatorList = new ArrayList<>();
         int taskCounter = 0;
 
         try {
@@ -253,52 +253,35 @@ public class GraphMatcher extends Debugger {
             Aromaticity aromaticity = new Aromaticity(daylight(), allCycles);
             CycleFinder shortCycles = Cycles.vertexShort();
 
-            Map<Integer, Integer> eductCycleCache = new TreeMap<>();
+            int[] eductCycleCache = new int[eductCount];
+            String[] eductStructureKeys = new String[eductCount];
             for (int i = 0; i < eductCount; i++) {
                 IAtomContainer educt = reactionStructureInformation.getEduct(i);
                 if (educt != null && educt.getAtomCount() > 0) {
                     harmonizeForSmsd(educt);
                     try {
                         aromaticity.apply(educt);
-                        eductCycleCache.put(i, shortCycles.find(educt).numberOfCycles());
+                        eductCycleCache[i] = shortCycles.find(educt).numberOfCycles();
                     } catch (CDKException | RuntimeException ex) {
-                        eductCycleCache.put(i, 0);
+                        eductCycleCache[i] = 0;
                     }
-                } else {
-                    eductCycleCache.put(i, 0);
+                    eductStructureKeys[i] = MappingKeyUtil.computeStructureKey(educt);
                 }
             }
 
-            Map<Integer, Integer> productCycleCache = new TreeMap<>();
+            int[] productCycleCache = new int[productCount];
+            String[] productStructureKeys = new String[productCount];
             for (int j = 0; j < productCount; j++) {
                 IAtomContainer product = reactionStructureInformation.getProduct(j);
                 if (product != null && product.getAtomCount() > 0) {
                     harmonizeForSmsd(product);
                     try {
                         aromaticity.apply(product);
-                        productCycleCache.put(j, shortCycles.find(product).numberOfCycles());
+                        productCycleCache[j] = shortCycles.find(product).numberOfCycles();
                     } catch (CDKException | RuntimeException ex) {
-                        productCycleCache.put(j, 0);
+                        productCycleCache[j] = 0;
                     }
-                } else {
-                    productCycleCache.put(j, 0);
-                }
-            }
-
-            Map<Integer, String> eductStructureKeys = new TreeMap<>();
-            for (int i = 0; i < eductCount; i++) {
-                IAtomContainer e = reactionStructureInformation.getEduct(i);
-                if (e != null && e.getAtomCount() > 0) {
-                    harmonizeForSmsd(e);
-                    eductStructureKeys.put(i, MappingKeyUtil.computeStructureKey(e));
-                }
-            }
-            Map<Integer, String> productStructureKeys = new TreeMap<>();
-            for (int j = 0; j < productCount; j++) {
-                IAtomContainer p = reactionStructureInformation.getProduct(j);
-                if (p != null && p.getAtomCount() > 0) {
-                    harmonizeForSmsd(p);
-                    productStructureKeys.put(j, MappingKeyUtil.computeStructureKey(p));
+                    productStructureKeys[j] = MappingKeyUtil.computeStructureKey(product);
                 }
             }
 
@@ -306,16 +289,16 @@ public class GraphMatcher extends Debugger {
             for (Combination c : jobReplicatorList) {
                 int substrateIndex = c.getRowIndex();
                 int productIndex = c.getColIndex();
-                int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
-                int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
+                int numberOfCyclesEduct = eductCycleCache[substrateIndex];
+                int numberOfCyclesProduct = productCycleCache[productIndex];
                 boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
                 MatcherSettings settings = matcherSettingsFor(
                         mh.getTheory(),
                         numberOfCyclesEduct,
                         numberOfCyclesProduct,
                         ringSizeEqual);
-                String queryStructureKey = eductStructureKeys.getOrDefault(substrateIndex, "");
-                String targetStructureKey = productStructureKeys.getOrDefault(productIndex, "");
+                String queryStructureKey = eductStructureKeys[substrateIndex] == null ? "" : eductStructureKeys[substrateIndex];
+                String targetStructureKey = productStructureKeys[productIndex] == null ? "" : productStructureKeys[productIndex];
                 String pairKey = MappingKeyUtil.buildPairKey(
                         queryStructureKey,
                         targetStructureKey,
@@ -445,17 +428,8 @@ public class GraphMatcher extends Debugger {
                 int productIndex = representative.getColIndex();
                 IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
-                IAtomContainer eductClone;
-                IAtomContainer productClone;
-                try {
-                    eductClone = educt.clone();
-                    productClone = product.clone();
-                } catch (CloneNotSupportedException e) {
-                    eductClone = educt;
-                    productClone = product;
-                }
                 MCSThread mcsThread = new MCSThread(mh.getTheory(),
-                        substrateIndex, productIndex, eductClone, productClone,
+                        substrateIndex, productIndex, educt, product,
                         reactionId, algorithmName, invocationIndex);
                 mcsThread.setHasPerfectRings(pairJob.hasPerfectRings);
                 mcsThread.setEductRingCount(pairJob.numberOfCyclesEduct);
@@ -650,16 +624,13 @@ public class GraphMatcher extends Debugger {
 
         @Override
         public int compareTo(Combination o) {
-            String a = this.row + "_" + this.col;
-            String b = o.row + "_" + o.col;
-            return a.compareTo(b);
+            int rowCompare = Integer.compare(this.row, o.row);
+            return rowCompare != 0 ? rowCompare : Integer.compare(this.col, o.col);
         }
 
         @Override
         public int compare(Combination o1, Combination o2) {
-            String a = o1.row + "_" + o1.col;
-            String b = o2.row + "_" + o2.col;
-            return a.compareTo(b);
+            return o1.compareTo(o2);
         }
     }
 
@@ -763,14 +734,17 @@ public class GraphMatcher extends Debugger {
             LOGGER.debug("Before removing Mol Size E: " + educt.getAtomCount()
                     + " , Before removing Mol Size P: " + product.getAtomCount());
             int beforeESize = educt.getAtomCount();
+            Map<String, IAtom> eductAtomsById = indexAtomsById(educt);
+            Map<String, IAtom> productAtomsById = indexAtomsById(product);
+            Map<String, IAtom> matchedAtomsById = indexAtomsById(matchedPart);
 
             if (bestAtomMappingList != null) {
                 for (Map.Entry<IAtom, IAtom> map : bestAtomMappingList.entrySet()) {
                     String eID = map.getKey().getID();
-                    IAtom eAtom = getAtomByID(educt, eID);
+                    IAtom eAtom = eductAtomsById.get(eID);
                     String pID = map.getValue().getID();
                     LOGGER.debug("eID " + eID + ",pID " + pID);
-                    IAtom pAtom = getAtomByID(product, pID);
+                    IAtom pAtom = productAtomsById.get(pID);
 
                     if (eAtom != null && pAtom != null) {
                         IMapping im = SilentChemObjectBuilder.getInstance().newInstance(IMapping.class, eAtom, pAtom);
@@ -778,18 +752,21 @@ public class GraphMatcher extends Debugger {
                     }
                     if (eAtom != null) {
                         educt.removeAtom(eAtom);
+                        eductAtomsById.remove(eID);
                     }
                     if (pAtom != null) {
                         product.removeAtom(pAtom);
+                        productAtomsById.remove(pID);
                     }
                     delta = fragmentCount;
                 }
             }
 
             for (IAtom atom : educt.atoms()) {
-                IAtom matchedAtom = getAtomByID(matchedPart, atom.getID());
+                IAtom matchedAtom = matchedAtomsById.get(atom.getID());
                 if (matchedAtom != null) {
                     matchedPart.removeAtom(matchedAtom);
+                    matchedAtomsById.remove(atom.getID());
                 }
             }
 
@@ -814,16 +791,17 @@ public class GraphMatcher extends Debugger {
             return delta;
         }
 
-        private IAtom getAtomByID(IAtomContainer ac, String ID) {
-            if (ID == null) {
-                return null;
+        private Map<String, IAtom> indexAtomsById(IAtomContainer container) {
+            Map<String, IAtom> atomsById = new HashMap<>();
+            if (container == null) {
+                return atomsById;
             }
-            for (IAtom atom : ac.atoms()) {
-                if (ID.equalsIgnoreCase(atom.getID())) {
-                    return atom;
+            for (IAtom atom : container.atoms()) {
+                if (atom.getID() != null) {
+                    atomsById.put(atom.getID(), atom);
                 }
             }
-            return null;
+            return atomsById;
         }
 
         /**
@@ -1024,6 +1002,8 @@ public class GraphMatcher extends Debugger {
         private final String reactionId;
         private final String algorithmName;
         private final int invocationIndex;
+        private final Map<String, Integer> compound1SymbolCounts;
+        private final Map<String, Integer> compound2SymbolCounts;
 
         /**
          *
@@ -1060,6 +1040,8 @@ public class GraphMatcher extends Debugger {
             this.invocationIndex = invocationIndex;
             this.numberOfCyclesEduct = 0;
             this.numberOfCyclesProduct = 0;
+            this.compound1SymbolCounts = countAtomsBySymbol(this.compound1);
+            this.compound2SymbolCounts = countAtomsBySymbol(this.compound2);
         }
 
         void printMatch(BaseMapping isomorphism) {
@@ -1076,6 +1058,7 @@ public class GraphMatcher extends Debugger {
         @Override
         public MCSSolution call() throws Exception {
             boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
+            int commonAtomUpperBound = commonAtomUpperBound(compound1SymbolCounts, compound2SymbolCounts);
 
             AtomMatcher am;
             BondMatcher bm;
@@ -1083,6 +1066,15 @@ public class GraphMatcher extends Debugger {
             LOGGER.debug("in mcsthread call ");
 
             try {
+                if (commonAtomUpperBound == 0) {
+                    return emptySolution();
+                }
+
+                MCSSolution singleAtomSolution = singleAtomSolution();
+                if (singleAtomSolution != null) {
+                    return singleAtomSolution;
+                }
+
                 /*
                  * IMP: Do not perform substructure matching for disconnected molecules
                  */
@@ -1090,10 +1082,10 @@ public class GraphMatcher extends Debugger {
                 /*
                      Check if MCS matching required or not very IMP step
                  */
-                boolean possibleVFmatch12 = isPossibleSubgraphMatch(getCompound1(), getCompound2());
+                boolean possibleVFmatch12 = isPossibleSubgraphMatch(compound1SymbolCounts, compound2SymbolCounts);
                 LOGGER.debug("VF Matcher 1->2 " + possibleVFmatch12);
 
-                boolean possibleVFmatch21 = isPossibleSubgraphMatch(getCompound2(), getCompound1());
+                boolean possibleVFmatch21 = isPossibleSubgraphMatch(compound2SymbolCounts, compound1SymbolCounts);
                 LOGGER.debug("VF Matcher 2->1 " + possibleVFmatch21);
 
                 if (moleculeConnected && possibleVFmatch12) {
@@ -1259,26 +1251,15 @@ public class GraphMatcher extends Debugger {
             return mol;
         }
 
-        private boolean isPossibleSubgraphMatch(IAtomContainer q, IAtomContainer t) {
-            LOGGER.debug("check isPossibleSubgraphMatch " + q.getID() + "," + t.getID());
-            Map<String, Integer> atomCount1 = new HashMap<>();
-            Map<String, Integer> atomCount2 = new HashMap<>();
-
-            for (IAtom a : q.atoms()) {
-                atomCount1.merge(a.getSymbol(), 1, Integer::sum);
-            }
-
-            for (IAtom b : t.atoms()) {
-                atomCount2.merge(b.getSymbol(), 1, Integer::sum);
-            }
-
-            if (atomCount1.size() > atomCount2.size()) {
+        private boolean isPossibleSubgraphMatch(Map<String, Integer> queryAtomCounts,
+                Map<String, Integer> targetAtomCounts) {
+            if (queryAtomCounts.size() > targetAtomCounts.size()) {
                 return false;
             }
 
             // Check all atom types in query exist in target with sufficient count
-            for (Map.Entry<String, Integer> entry : atomCount1.entrySet()) {
-                Integer targetCount = atomCount2.get(entry.getKey());
+            for (Map.Entry<String, Integer> entry : queryAtomCounts.entrySet()) {
+                Integer targetCount = targetAtomCounts.get(entry.getKey());
                 if (targetCount == null || entry.getValue() > targetCount) {
                     return false;
                 }
@@ -1287,40 +1268,15 @@ public class GraphMatcher extends Debugger {
             return true;
         }
 
-        private int expectedMaxGraphmatch(IAtomContainer q, IAtomContainer t) {
-            /*
-             a={c,c,c,o,n}
-             b={c,c,c,p}
-             expectedMaxGraphmatch=3;
-             */
-            Map<String, Integer> countQ = new HashMap<>();
-            Map<String, Integer> countT = new HashMap<>();
-
-            for (IAtom a : q.atoms()) {
-                String hyb = a.getHybridization() == UNSET
-                        ? a.getSymbol() : a.getAtomTypeName();
-                countQ.merge(hyb, 1, Integer::sum);
-            }
-
-            for (IAtom b : t.atoms()) {
-                String hyb = b.getHybridization() == UNSET
-                        ? b.getSymbol() : b.getAtomTypeName();
-                countT.merge(hyb, 1, Integer::sum);
-            }
-
-            if (countQ.isEmpty()) {
-                return 0;
-            }
-
-            // Multiset intersection: min of counts for each common type
+        private int commonAtomUpperBound(Map<String, Integer> leftAtomCounts,
+                Map<String, Integer> rightAtomCounts) {
             int common = 0;
-            for (Map.Entry<String, Integer> entry : countQ.entrySet()) {
-                Integer tCount = countT.get(entry.getKey());
-                if (tCount != null) {
-                    common += Math.min(entry.getValue(), tCount);
+            for (Map.Entry<String, Integer> entry : leftAtomCounts.entrySet()) {
+                Integer rightCount = rightAtomCounts.get(entry.getKey());
+                if (rightCount != null) {
+                    common += Math.min(entry.getValue(), rightCount);
                 }
             }
-
             return common;
         }
 
@@ -1338,14 +1294,11 @@ public class GraphMatcher extends Debugger {
                 return null;
             }
                 BaseMapping isomorphism;
-            int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
             MatcherSettings settings = matcherSettingsFor(
                     theory,
                     numberOfCyclesEduct,
                     numberOfCyclesProduct,
                     isHasPerfectRings());
-
-            LOGGER.debug("Expected matches " + expectedMaxGraphmatch);
 
             String key;
             MCSSolution mcs;
@@ -1379,6 +1332,17 @@ public class GraphMatcher extends Debugger {
 
         }
 
+        private Map<String, Integer> countAtomsBySymbol(IAtomContainer container) {
+            Map<String, Integer> counts = new HashMap<>();
+            if (container == null) {
+                return counts;
+            }
+            for (IAtom atom : container.atoms()) {
+                counts.merge(atom.getSymbol(), 1, Integer::sum);
+            }
+            return counts;
+        }
+
         private IAtomContainer duplicate(IAtomContainer ac) throws CloneNotSupportedException {
             IAtomContainer a = ac.clone();
             a.setID(ac.getID());
@@ -1391,6 +1355,59 @@ public class GraphMatcher extends Debugger {
             harmonizeForSmsd(a);
 
             return a;
+        }
+
+        private MCSSolution emptySolution() {
+            return new MCSSolution(
+                    getQueryPosition(),
+                    getTargetPosition(),
+                    getCompound1(),
+                    getCompound2(),
+                    new AtomAtomMapping(getCompound1(), getCompound2()));
+        }
+
+        private MCSSolution singleAtomSolution() {
+            IAtomContainer query = getCompound1();
+            IAtomContainer target = getCompound2();
+            if (query == null || target == null) {
+                return null;
+            }
+            if (Math.min(query.getAtomCount(), target.getAtomCount()) != 1) {
+                return null;
+            }
+            IAtom queryAtom = query.getAtomCount() == 1 ? query.getAtom(0) : null;
+            IAtom targetAtom = target.getAtomCount() == 1 ? target.getAtom(0) : null;
+
+            if (queryAtom != null) {
+                for (IAtom candidate : target.atoms()) {
+                    if (queryAtom.getSymbol().equalsIgnoreCase(candidate.getSymbol())) {
+                        return singleAtomMapping(query, target, queryAtom, candidate);
+                    }
+                }
+                return emptySolution();
+            }
+
+            if (targetAtom != null) {
+                for (IAtom candidate : query.atoms()) {
+                    if (candidate.getSymbol().equalsIgnoreCase(targetAtom.getSymbol())) {
+                        return singleAtomMapping(query, target, candidate, targetAtom);
+                    }
+                }
+                return emptySolution();
+            }
+            return null;
+        }
+
+        private MCSSolution singleAtomMapping(IAtomContainer query, IAtomContainer target,
+                IAtom queryAtom, IAtom targetAtom) {
+            AtomAtomMapping mapping = new AtomAtomMapping(query, target);
+            mapping.put(queryAtom, targetAtom);
+            MCSSolution solution = new MCSSolution(
+                    getQueryPosition(), getTargetPosition(), query, target, mapping);
+            solution.setFragmentSize(1);
+            solution.setStereoScore(0);
+            solution.setEnergy(0.0);
+            return solution;
         }
 
         /**
