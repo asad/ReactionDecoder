@@ -1,0 +1,2 @@
+  Mismatch 140: GOLDEN_178 algo=RINGS atoms=15/18 bondChanges=36/42 exact=false chemEq=false
+  Mismatch 176: GOLDEN_221 algo=RINGS atoms=17/20 bondChanges=56/68 exact=false chemEq=false

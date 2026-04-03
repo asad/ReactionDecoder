@@ -284,7 +284,7 @@ c) clean up
 -----------------------
 Changes (2026-04-03) — v3.9.0
 -----------------------
-a) SMSD upgraded to 6.10.1 with energy filter NPE guard.
+a) SMSD upgraded to 6.10.2 with energy filter NPE guard.
 b) Deadlock fix: GraphMatcher and CallableAtomMappingTool now use
    CompletionService.poll(timeout) instead of take() (which blocks forever),
    with per-pair budget (15s), overall matcher budget (60s), and algorithm
@@ -296,41 +296,61 @@ c) Identity shortcut stereo + multiplicity fix: isIdentityReaction() now uses
    List instead of a TreeSet (stoichiometric multiplicity is preserved).
    Previously, F/C=C/F>>F/C=C\F was incorrectly classified as a transporter
    and routed to MIN; 2CC+CO>>CC+2CO was incorrectly classified as identity.
-b) Fractional stoichiometry handling: Reactor.expandReaction() now uses
+d) Fractional stoichiometry handling: Reactor.expandReaction() now uses
    Math.round() with a tolerance check instead of the while-loop subtraction
    trick. Non-integer coefficients (e.g. 0.5, 1.5) emit a WARN and are
    rounded to the nearest integer; previously they were silently rounded up
    (0.5→1 by ceiling, 1.5→2) with no indication.
-c) CompletionService fault isolation: the parallel algorithm collection loop
+e) CompletionService fault isolation: the parallel algorithm collection loop
    now wraps each cs.take().get() in its own try-catch(ExecutionException).
    A single failing worker no longer aborts collection of all remaining
    successful algorithm results; InterruptedException still stops the loop
    and restores the interrupt flag.
-d) Shared ExecutorService for parallel mapping phase: fixed thread pool
+f) Shared ExecutorService for parallel mapping phase: fixed thread pool
    (min(2, min(3, nCPU))) named "rdt-mapping" daemon threads; eliminates
    per-reaction thread-pool creation overhead in batch processing.
-b) MIXTURE algorithm restored as genuine fallback: participates in phase-2
+g) MIXTURE algorithm restored as genuine fallback: participates in phase-2
    parallel search alongside MIN/MAX/RINGS; deduplicated by mapping signature
    so it only contributes when MinSelection suppresses a valid pairing.
-c) Stoichiometric coefficient loss fixed in reagent filter: filtered reaction
+h) Stoichiometric coefficient loss fixed in reagent filter: filtered reaction
    now passes Double coefficient from original IReaction to addReactant/addProduct
    instead of silently defaulting to 1.0.
-d) API bond-change count corrected: RDT.java now sums integer weights encoded
+i) API bond-change count corrected: RDT.java now sums integer weights encoded
    in "PATTERN:N" feature strings (weightSum helper) rather than counting
    unique pattern types; fixes under-reporting for multi-bond reactions.
-e) Weight-aware Tanimoto similarity: ReactionResult.getAllFingerprints() retains
+j) Weight-aware Tanimoto similarity: ReactionResult.getAllFingerprints() retains
    full "PATTERN:N" strings so stoichiometric differences (C-O:2 vs C-O:1)
    are correctly treated as distinct in similarity calculations.
-f) MappingDiagnostics memory leak fixed: REACTIONS.get() replaced by
+k) MappingDiagnostics memory leak fixed: REACTIONS.get() replaced by
    REACTIONS.remove() in snapshot(); static ConcurrentHashMap entries are now
    released immediately after being consumed, preventing unbounded growth in
    batch runs.
-g) CI publish trigger fixed: GitHub Packages deploy now triggers only on
+l) Memory architecture redesign: ThreadSafeCache now uses SoftReference values
+   so the JVM can reclaim cached MCSSolution objects under heap pressure.
+   Capacity reduced from 10,000 to 500 entries with GC-aware eviction.
+m) Removed ThreadSafeCache.cleanup() calls from CallableAtomMappingTool that
+   were clearing the shared cache while MCS worker threads still accessed it
+   (concurrent read/delete race condition causing spurious recomputation).
+n) InterruptedException propagation fix: GameTheoryEngine.UpdateMatrix() and
+   all four GenerateMapping() loops now check Thread.interrupted() and throw
+   InterruptedException instead of silently swallowing cancel signals.
+   Previously, future.cancel(true) from algorithm timeouts was ignored,
+   causing cancelled workers to run indefinitely on the shared executor.
+o) GameTheoryMatrix.Clear() now releases all 7 data structures (was only
+   clearing 2 of 7), preventing per-reaction memory accumulation.
+p) Local MCS executor threads are now daemon, preventing JVM hang on stuck
+   MCS pairs.
+q) Surefire heap increased to 4g for benchmark dataset.
+r) SMSD citations added to ALGORITHM.md and README.md (Rahman 2025, 2009).
+s) SMSD Pro MCS algorithm pseudocode added as Appendix A in ALGORITHM.md.
+t) CI publish trigger fixed: GitHub Packages deploy now triggers only on
    version tags (refs/tags/v*), not on every master push (was returning
    HTTP 409 Conflict on repeated same-version deploys).
-h) Benchmark progress reporting reduced from every 100 to every 500 reactions
+u) Benchmark progress reporting reduced from every 100 to every 500 reactions
    to keep CI logs clean.
-i) Version bumped to 3.9.0; public release by BioInception PVT LTD.
+v) Golden dataset benchmark report added: 1,851 reactions, 86.4% chemistry-
+   equivalent accuracy (100% on balanced reactions), charts, images, LaTeX.
+w) Version bumped to 3.9.0; public release by BioInception PVT LTD.
 
 -----------------------
 Changes (2026-04-03) — v3.8.1

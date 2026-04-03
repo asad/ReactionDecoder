@@ -1,0 +1,10 @@
+  Mismatch 114: GOLDEN_1080 algo=RINGS atoms=12/15 bondChanges=31/35 exact=false chemEq=false
+  Mismatch 119: GOLDEN_1088 algo=RINGS atoms=15/16 bondChanges=38/39 exact=false chemEq=false
+  Mismatch 123: GOLDEN_1094 algo=RINGS atoms=12/13 bondChanges=26/30 exact=false chemEq=false
+  Mismatch 148: GOLDEN_1126 algo=RINGS atoms=13/17 bondChanges=34/36 exact=false chemEq=false
+  Mismatch 154: GOLDEN_1134 algo=RINGS atoms=29/35 bondChanges=75/77 exact=false chemEq=false
+  Mismatch 177: GOLDEN_1173 algo=MAX atoms=19/21 bondChanges=42/48 exact=false chemEq=false
+  Mismatch 263: GOLDEN_1313 algo=RINGS atoms=15/19 bondChanges=36/40 exact=false chemEq=false
+  Mismatch 325: GOLDEN_1386 algo=RINGS atoms=18/21 bondChanges=41/55 exact=false chemEq=false
+  Mismatch 326: GOLDEN_1387 algo=MIN atoms=28/39 bondChanges=110/125 exact=false chemEq=false
+  Mismatch 327: GOLDEN_1388 algo=MAX atoms=21/24 bondChanges=75/84 exact=false chemEq=false

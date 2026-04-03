@@ -1,0 +1,3 @@
+  Mismatch 189: GOLDEN_692 algo=RINGS atoms=10/21 bondChanges=40/44 exact=false chemEq=false
+  Mismatch 190: GOLDEN_693 algo=RINGS atoms=0/23 bondChanges=23/46 exact=false chemEq=false
+  Mismatch 372: GOLDEN_905 algo=RINGS atoms=8/24 bondChanges=37/50 exact=false chemEq=false

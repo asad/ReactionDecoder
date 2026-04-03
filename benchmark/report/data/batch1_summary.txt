@@ -1,0 +1,36 @@
+[INFO] Building ReactionDecoderTool 3.9.0
+=== Golden Dataset Benchmark Results (RDT v3.9.0) ===
+Total reactions:        463
+Mapping success:        463/463 (100.0%)
+Mol-map exact:         382/463 (82.5%)
+Exact atom-map match:   98/463 (21.2%)
+Atom-level accuracy:    7465/10036 (74.4%)
+Bond-change found:      463/463 (100.0%)
+Bond-change exact:      461/463 (99.6%)
+Bond-change count:      461/463 (99.6%)
+Bond-change type:       461/463 (99.6%)
+Reaction-center exact:  461/463 (99.6%)
+Reaction-center atoms:  19855/19877 (99.9%)
+Chemically equivalent:  461/463 (99.6%)
+Alternate valid map:    363/463 (78.4%)
+True chemistry miss:    2/463 (0.4%)
+No-change ambiguous:    0/463 (0.0%)
+--- Quality Metrics ---
+RDT more parsimonious:  2/463 (0.4%)
+Gold parse failures:    0
+Errors:                 0
+Speed:                  1.6 rxn/sec
+Total time:             291s
+Avg algorithms/run:     1.58
+Algorithms/reaction:    [1=374, 4=89]
+Selected algorithms:    [MAX=13, MIN=36, RINGS=414]
+Avg mapping phase:      283.3 ms
+Avg evaluation phase:   12.4 ms
+=== Comparison with Published Results (Lin et al. 2022) ===
+Scoring: chemically-equivalent bond changes (fair comparison across all tools)
+| Tool               | Chem-Equiv  | Mol-Map   | Atom-Map  | Training | Deterministic |
+| RDTool (published) | 76.18%†     | -         | -         | None     | Yes           |
+| RDT v3.9.0         | 99.6%      | 82.5%    | 21.2%    | None     | Yes           |
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 292.5 s -- in com.bioinceptionlabs.aamtool.GoldenDatasetBenchmarkTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Total time:  04:58 min

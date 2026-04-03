@@ -39,7 +39,6 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.tools.ILoggingTool;
 import static org.openscience.cdk.tools.LoggingToolFactory.createLoggingTool;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
-import com.bioinceptionlabs.reactionblast.mapping.ThreadSafeCache;
 import com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MAX;
 import static com.bioinceptionlabs.reactionblast.mapping.IMappingAlgorithm.MIN;
@@ -129,8 +128,6 @@ public class CallableAtomMappingTool implements Serializable {
             } catch (Exception e) {
                 LOGGER.debug("MIN identity phase failed: " + e.getMessage());
                 LOGGER.error(e);
-            } finally {
-                ThreadSafeCache.getInstance().cleanup();
             }
             return;
         }
@@ -159,7 +156,6 @@ public class CallableAtomMappingTool implements Serializable {
 
                 if (isMappingAcceptable(firstPassResult)) {
                     LOGGER.debug(firstPass + " mapping accepted — skipping remaining algorithms");
-                    ThreadSafeCache.getInstance().cleanup();
                     return;
                 }
                 LOGGER.debug(firstPass + " mapping insufficient — running remaining algorithms");
@@ -245,7 +241,6 @@ public class CallableAtomMappingTool implements Serializable {
                         currentTimeMillis() - mappingStart);
             }
             LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
-            ThreadSafeCache.getInstance().cleanup();
         }
     }
 

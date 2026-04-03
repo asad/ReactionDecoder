@@ -180,7 +180,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             try {
                 mcsSolutions = matcher(mh);
             } catch (InterruptedException e) {
-                LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
+                Thread.currentThread().interrupt();
+                throw e;
             }
             Map<ReactionContainer.Key, MCSSolution> indexedSolutions = indexSolutions(mcsSolutions);
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
@@ -222,6 +223,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                     }
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
         } catch (Exception e) {
             LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
         }
@@ -663,6 +667,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             int iteration = 0;
             boolean continueMapping = true;
             while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException("MAX mapping interrupted at iteration " + iteration);
+                }
                 this.counter++;
                 boolean conditionmet = false;
                 if (!ruleMatchingFlag) {
@@ -818,6 +825,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             int iteration = 0;
             boolean continueMapping = true;
             while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException("MIN mapping interrupted at iteration " + iteration);
+                }
                 this.counter++;
                 boolean conditionmet = false;
                 if (!ruleMatchingFlag) {
@@ -971,6 +981,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             int iteration = 0;
             boolean continueMapping = true;
             while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException("RINGS mapping interrupted at iteration " + iteration);
+                }
                 if (!ruleMatchingFlag) {
                     MappingChecks.RuleBasedMappingHandler ruleBasedMappingHandler
                             = new MappingChecks.RuleBasedMappingHandler(mh, eductList, productList);
@@ -1119,6 +1132,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             int iteration = 0;
             boolean continueMapping = true;
             while (continueMapping && iteration < MAX_MAPPING_ITERATIONS) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException("MIXTURE mapping interrupted at iteration " + iteration);
+                }
                 MappingChecks.RuleBasedMappingHandler ruleBasedMappingHandler = new MappingChecks.RuleBasedMappingHandler(mh, eductList, productList);
                 if (ruleBasedMappingHandler.isMatchFound()) {
                     mh = MappingChecks.Selector.modifyMatrix(ruleBasedMappingHandler.getMatrixHolder());
@@ -1257,6 +1273,13 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         public void Clear() throws IOException {
             structureMapObj.Clear();
             hydFreeFPContainer.Clear();
+            bestMatchContainer.Clear();
+            substrateductFPMap.clear();
+            productFPMap.clear();
+            eductCounter.clear();
+            productCounter.clear();
+            matrixHolder = null;
+            reactionBlastMolMapping = null;
         }
 
         @Override

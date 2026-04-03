@@ -178,7 +178,7 @@
         <dependency>
             <groupId>com.bioinceptionlabs</groupId>
             <artifactId>smsd</artifactId>
-            <version>6.10.1</version>
+            <version>6.10.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
@@ -288,7 +288,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.5</version>
                 <configuration>
-                    <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+                    <argLine>-Xmx4g --enable-native-access=ALL-UNNAMED</argLine>
                     <groups>${surefire.groups}</groups>
                     <excludedGroups>${surefire.excludedGroups}</excludedGroups>
                     <systemPropertyVariables>

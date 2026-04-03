@@ -340,7 +340,12 @@ public class GraphMatcher extends Debugger {
                     + ", unique structural pairs " + pairJobs.size());
             LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
 
-            executor = Executors.newFixedThreadPool(threadsAvailable);
+            final int mcsThreads = threadsAvailable;
+            executor = Executors.newFixedThreadPool(mcsThreads, r -> {
+                Thread t = new Thread(r, "rdt-mcs");
+                t.setDaemon(true);
+                return t;
+            });
             CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
 
             List<PairJob> jobsToRun = new ArrayList<>();
@@ -485,6 +490,10 @@ public class GraphMatcher extends Debugger {
                     collected++;
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                     LOGGER.error(SEVERE, "MCS worker failed", cause);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    LOGGER.debug("MCS collection interrupted — aborting remaining pairs");
+                    break;
                 }
             }
             // Cancel and log stuck MCS pairs for SMSD debugging
@@ -552,6 +561,9 @@ public class GraphMatcher extends Debugger {
                     currentTimeMillis() - matcherStart);
             jobReplicatorList.clear();
 
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            LOGGER.debug("matcher() interrupted — returning partial results");
         } catch (Exception ex) {
             LOGGER.error(SEVERE, null, ex);
         } finally {

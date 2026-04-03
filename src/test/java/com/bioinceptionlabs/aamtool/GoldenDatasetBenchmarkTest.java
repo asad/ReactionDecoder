@@ -56,6 +56,7 @@ public class GoldenDatasetBenchmarkTest {
 
     private static final String GOLDEN_RDF = "benchmark/golden_dataset.rdf";
     private static final int MAX_REACTIONS = Integer.getInteger("golden.max", 0); // 0 = all
+    private static final int SKIP_REACTIONS = Integer.getInteger("golden.skip", 0);
     private static final int REPORT_MISMATCHES = Integer.getInteger("golden.reportMismatches", 0);
     private static final int DUPLICATE_PROFILE_LIMIT = Integer.getInteger("golden.duplicate.max", 25);
     private static final int DUPLICATE_PROFILE_PRINT = Integer.getInteger("golden.duplicate.print", 10);
@@ -73,7 +74,8 @@ public class GoldenDatasetBenchmarkTest {
         List<GoldReaction> goldReactions = parseRDF(rdfUrl);
         System.out.println("Loaded " + goldReactions.size() + " reactions from golden dataset");
 
-        int limit = MAX_REACTIONS > 0 ? Math.min(MAX_REACTIONS, goldReactions.size())
+        int start = Math.min(SKIP_REACTIONS, goldReactions.size());
+        int limit = MAX_REACTIONS > 0 ? Math.min(start + MAX_REACTIONS, goldReactions.size())
                 : goldReactions.size();
 
         // Counters
@@ -108,7 +110,7 @@ public class GoldenDatasetBenchmarkTest {
 
         long startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < limit; i++) {
+        for (int i = start; i < limit; i++) {
             GoldReaction gold = goldReactions.get(i);
             total++;
 

@@ -3,23 +3,26 @@
  */
 package com.bioinceptionlabs.reactionblast.mapping;
 
-import java.util.LinkedHashMap;
+import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Thread-safe LRU cache for MCS solutions. Supports cross-reaction caching
- * when canonical SMILES are used as keys (instead of molecule IDs).
+ * Thread-safe cache for MCS solutions backed by {@link SoftReference} values.
+ * <p>
+ * Under normal heap pressure the cache behaves like a regular map — entries
+ * remain reachable and provide O(1) MCS reuse across reactions with identical
+ * molecule pairs.  When the JVM is low on memory the GC is free to reclaim
+ * any soft-referenced value; a subsequent {@link #get} for that key simply
+ * returns {@code null} and the caller falls through to a fresh MCS computation.
+ * <p>
+ * A hard capacity limit ({@link #MAX_CAPACITY}) prevents unbounded growth of
+ * the key set itself; when reached, approximately half the entries are evicted.
  *
  * @author Syed Asad Rahman <asad.rahman at bioinceptionlabs.com>
- * @param <K>
- * @param <V>
- */
-/**
- * Generic Cache Interface.
- * @param <K>
- * @param <V>
+ * @param <K> key type (typically a canonical SMILES pair key)
+ * @param <V> value type (typically {@code MCSSolution})
  */
 interface Cache<K, V> {
     void put(K key, V value);
@@ -28,76 +31,102 @@ interface Cache<K, V> {
 
 public class ThreadSafeCache<K, V> implements Cache<K, V> {
 
-    /** Maximum cache entries before LRU eviction kicks in. */
-    private static final int MAX_CAPACITY = 10_000;
+    /** Maximum number of key entries before random eviction kicks in. */
+    private static final int MAX_CAPACITY = 500;
 
-    private final Map<K, V> map;
+    private final ConcurrentHashMap<K, SoftReference<V>> map;
 
+    @SuppressWarnings("rawtypes")
     private static final ThreadSafeCache SC = new ThreadSafeCache();
 
-    public static ThreadSafeCache getInstance() {
+    @SuppressWarnings("unchecked")
+    public static <K, V> ThreadSafeCache<K, V> getInstance() {
         return SC;
     }
 
     private ThreadSafeCache() {
-        // ConcurrentHashMap for thread safety; LRU eviction handled in put()
         map = new ConcurrentHashMap<>(256, 0.75f, 4);
     }
 
     @Override
     public void put(K key, V value) {
-        // Simple size-based eviction: if over capacity, clear oldest half
         if (map.size() >= MAX_CAPACITY) {
             evict();
         }
-        map.put(key, value);
+        map.put(key, new SoftReference<>(value));
     }
 
     @Override
     public V get(K key) {
-        return map.get(key);
+        SoftReference<V> ref = map.get(key);
+        if (ref == null) {
+            return null;
+        }
+        V value = ref.get();
+        if (value == null) {
+            // Referent was GC'd — remove the stale key
+            map.remove(key);
+        }
+        return value;
     }
 
     /**
-     * Check if key is present in the cache.
+     * Check if key is present and its referent is still alive.
      */
     public boolean containsKey(K key) {
-        return map.containsKey(key);
+        SoftReference<V> ref = map.get(key);
+        if (ref == null) {
+            return false;
+        }
+        if (ref.get() == null) {
+            map.remove(key);
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Insert the value only if the key is absent.
+     * Insert the value only if the key is absent (or its referent was GC'd).
      *
-     * @return the existing value if present, otherwise the inserted value
+     * @return the existing live value if present, otherwise the newly inserted value
      */
     public V putIfAbsent(K key, V value) {
-        if (map.size() >= MAX_CAPACITY) {
-            evict();
+        while (true) {
+            SoftReference<V> existingRef = map.get(key);
+            if (existingRef != null) {
+                V existing = existingRef.get();
+                if (existing != null) {
+                    return existing;
+                }
+                // Stale reference — remove and retry
+                map.remove(key, existingRef);
+            }
+            if (map.size() >= MAX_CAPACITY) {
+                evict();
+            }
+            SoftReference<V> newRef = new SoftReference<>(value);
+            SoftReference<V> prev = map.putIfAbsent(key, newRef);
+            if (prev == null) {
+                return value;
+            }
+            V prevValue = prev.get();
+            if (prevValue != null) {
+                return prevValue;
+            }
+            // Another thread inserted a stale reference — retry
+            map.remove(key, prev);
         }
-        if (map instanceof ConcurrentHashMap<?, ?> concurrentMap) {
-            @SuppressWarnings("unchecked")
-            ConcurrentHashMap<K, V> typedMap = (ConcurrentHashMap<K, V>) concurrentMap;
-            V existing = typedMap.putIfAbsent(key, value);
-            return existing != null ? existing : value;
-        }
-        V existing = map.get(key);
-        if (existing == null) {
-            map.put(key, value);
-            return value;
-        }
-        return existing;
     }
 
     /**
-     * Clear all cached entries. Use sparingly — cross-reaction caching
-     * benefits from keeping the cache warm between reactions.
+     * Clear all cached entries.
      */
     public void cleanup() {
         map.clear();
     }
 
     /**
-     * @return number of cached entries
+     * @return approximate number of key entries (some may have GC'd referents)
      */
     public int size() {
         return map.size();
@@ -108,17 +137,21 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
     }
 
     /**
-     * Evict roughly half the cache when over capacity.
-     * ConcurrentHashMap iteration order is arbitrary, which
-     * approximates random eviction — acceptable for MCS caching.
+     * Evict roughly half the entries when over capacity.
+     * Also purges any keys whose soft references have been cleared by GC.
      */
     private void evict() {
-        int toRemove = map.size() / 2;
-        int removed = 0;
-        for (K key : map.keySet()) {
-            if (removed >= toRemove) break;
-            map.remove(key);
-            removed++;
+        // First pass: remove stale (GC'd) entries
+        map.entrySet().removeIf(e -> e.getValue().get() == null);
+        // If still over capacity, remove half
+        if (map.size() >= MAX_CAPACITY) {
+            int toRemove = map.size() / 2;
+            int removed = 0;
+            for (K key : map.keySet()) {
+                if (removed >= toRemove) break;
+                map.remove(key);
+                removed++;
+            }
         }
     }
 }
