@@ -343,10 +343,12 @@ public class StandardizeReaction {
             filtered.setID(reaction.getID());
             filtered.setDirection(reaction.getDirection());
             for (IAtomContainer r : keptReactants) {
-                filtered.addReactant(r);
+                Double coeff = reaction.getReactantCoefficient(r);
+                filtered.addReactant(r, coeff != null ? coeff : 1.0);
             }
             for (IAtomContainer p : products.atomContainers()) {
-                filtered.addProduct(p);
+                Double coeff = reaction.getProductCoefficient(p);
+                filtered.addProduct(p, coeff != null ? coeff : 1.0);
             }
             for (IAtomContainer agent : reagents) {
                 filtered.addAgent(agent);

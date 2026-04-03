@@ -138,9 +138,9 @@ public final class RDT {
         return new ReactionResult(
                 inputSmiles,
                 mappedSmiles,
-                formedCleaved.size(),
-                orderChanges.size(),
-                stereoChanges.size(),
+                weightSum(formedCleaved),
+                weightSum(orderChanges),
+                weightSum(stereoChanges),
                 formedCleaved,
                 orderChanges,
                 stereoChanges,
@@ -156,5 +156,20 @@ public final class RDT {
             }
         }
         return features;
+    }
+
+    /** Sum the integer weights encoded in "PATTERN:N" feature strings. */
+    private static int weightSum(List<String> features) {
+        int total = 0;
+        for (String f : features) {
+            int colon = f.lastIndexOf(':');
+            if (colon > 0) {
+                try { total += Integer.parseInt(f.substring(colon + 1)); }
+                catch (NumberFormatException e) { total += 1; }
+            } else {
+                total += 1;
+            }
+        }
+        return total;
     }
 }

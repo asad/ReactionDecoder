@@ -169,23 +169,17 @@ public final class ReactionResult {
 
     /**
      * Get all fingerprint features as a combined set (for similarity).
-     * Uses pattern names only (strips weight suffix) for robust matching.
-     * E.g., "C-O:1" → "C-O", so reactions with same bond types match.
+     * Keeps the full "PATTERN:WEIGHT" strings so that "C-O:2" and "C-O:1"
+     * are treated as distinct, giving accurate Tanimoto scores for reactions
+     * that differ only in stoichiometry.
      */
     private Set<String> getAllFingerprints() {
         Set<String> all = new HashSet<>();
-        addPatterns(all, formedCleavedBonds);
-        addPatterns(all, orderChangedBonds);
-        addPatterns(all, stereoChangedBonds);
-        addPatterns(all, reactionCentreFingerprint);
+        all.addAll(formedCleavedBonds);
+        all.addAll(orderChangedBonds);
+        all.addAll(stereoChangedBonds);
+        all.addAll(reactionCentreFingerprint);
         return all;
-    }
-
-    private static void addPatterns(Set<String> set, List<String> features) {
-        for (String f : features) {
-            int colon = f.lastIndexOf(':');
-            set.add(colon > 0 ? f.substring(0, colon) : f);
-        }
     }
 
     /**

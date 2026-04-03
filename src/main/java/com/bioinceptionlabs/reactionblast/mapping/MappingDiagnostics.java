@@ -100,7 +100,7 @@ public final class MappingDiagnostics {
     }
 
     public static ReactionSnapshot snapshot(String reactionId) {
-        ReactionStats stats = REACTIONS.get(reactionId);
+        ReactionStats stats = REACTIONS.remove(reactionId);
         return stats == null
                 ? new ReactionSnapshot(reactionId, 0L, 0L, Collections.emptyList())
                 : stats.snapshot(reactionId);
