@@ -175,13 +175,13 @@ public class CallableAtomMappingTool implements Serializable {
         boolean ringsAlreadyRun = solution.containsKey(RINGS);
         IMappingAlgorithm[] remaining;
         if (minAlreadyRun && ringsAlreadyRun) {
-            remaining = new IMappingAlgorithm[]{MAX};
+            remaining = new IMappingAlgorithm[]{MAX, MIXTURE};
         } else if (minAlreadyRun) {
-            remaining = new IMappingAlgorithm[]{MAX, RINGS};
+            remaining = new IMappingAlgorithm[]{MAX, MIXTURE, RINGS};
         } else if (ringsAlreadyRun) {
-            remaining = new IMappingAlgorithm[]{MIN, MAX};
+            remaining = new IMappingAlgorithm[]{MIN, MAX, MIXTURE};
         } else {
-            remaining = new IMappingAlgorithm[]{MIN, MAX, RINGS};
+            remaining = new IMappingAlgorithm[]{MIN, MAX, MIXTURE, RINGS};
         }
 
         try {
