@@ -1,0 +1,38 @@
+name: Benchmarks
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  golden-benchmark:
+    name: Golden Dataset Benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Run benchmark suite
+      run: mvn -B -ntp -P benchmarks -Dtest=GoldenDatasetBenchmarkTest test --file pom.xml
+
+    - name: Upload benchmark reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchmark-reports
+        path: |
+          target/surefire-reports
+          reports
