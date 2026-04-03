@@ -194,11 +194,24 @@ public class CallableAtomMappingTool implements Serializable {
                 jobCounter++;
             }
             for (int i = 0; i < jobCounter; i++) {
-                Reactor chosen = cs.take().get();
-                putSolution(chosen.getAlgorithm(), chosen);
+                try {
+                    Reactor chosen = cs.take().get();
+                    putSolution(chosen.getAlgorithm(), chosen);
+                } catch (ExecutionException e) {
+                    // One algorithm worker failed — log and continue collecting the rest.
+                    // The lower MCS layer already handles per-pair failures; this catch
+                    // prevents a single bad algorithm from silently dropping all remaining
+                    // successful results.
+                    LOGGER.debug("Algorithm worker failed: " + e.getCause());
+                    LOGGER.error(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOGGER.debug("Mapping interrupted during collection: " + e.getMessage());
+                    break;
+                }
             }
             LOGGER.debug("======DONE CallableAtomMappingTool=======");
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
             LOGGER.error(e);
         } finally {
@@ -301,7 +314,14 @@ public class CallableAtomMappingTool implements Serializable {
 
     /**
      * Check if a reaction is an identity/transporter (reactants ≡ products).
-     * Uses canonical SMILES comparison of each reactant-product pair.
+     *
+     * Two criteria must both hold:
+     * 1. Same molecule count on each side.
+     * 2. The sorted list of stereo-canonical SMILES is identical — uses
+     *    SmiFlavor.Stereo so that E/Z and R/S isomers are distinguished.
+     *    A List (not a Set) is used so that stoichiometric multiplicity is
+     *    preserved: "2 CC + CO → CC + 2 CO" is NOT identity even though the
+     *    same SMILES strings appear on both sides.
      */
     private boolean isIdentityReaction(IReaction reaction) {
         if (reaction.getReactantCount() != reaction.getProductCount()) {
@@ -309,15 +329,17 @@ public class CallableAtomMappingTool implements Serializable {
         }
         try {
             org.openscience.cdk.smiles.SmilesGenerator sg = new org.openscience.cdk.smiles.SmilesGenerator(
-                    org.openscience.cdk.smiles.SmiFlavor.Canonical);
-            java.util.Set<String> reactantSmiles = new java.util.TreeSet<>();
-            java.util.Set<String> productSmiles = new java.util.TreeSet<>();
+                    org.openscience.cdk.smiles.SmiFlavor.Canonical | org.openscience.cdk.smiles.SmiFlavor.Stereo);
+            java.util.List<String> reactantSmiles = new java.util.ArrayList<>();
+            java.util.List<String> productSmiles = new java.util.ArrayList<>();
             for (IAtomContainer ac : reaction.getReactants().atomContainers()) {
                 reactantSmiles.add(sg.create(ac));
             }
             for (IAtomContainer ac : reaction.getProducts().atomContainers()) {
                 productSmiles.add(sg.create(ac));
             }
+            java.util.Collections.sort(reactantSmiles);
+            java.util.Collections.sort(productSmiles);
             return reactantSmiles.equals(productSmiles);
         } catch (Exception e) {
             return false;

@@ -1,7 +1,7 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.8.1`
+`Reaction Decoder Tool (RDT) v3.9.0`
 --------------------------------------
 
 `1. Atom Atom Mapping (AAM) Tool`
@@ -93,20 +93,20 @@ Sub-commands
 `AAM using SMILES`
 
 ```
-java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
+java -jar rdt-3.9.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j AAM -f TEXT
 ```
 
 `Perform AAM for Transporters` (accept mapping with no bond changes: `-b`)
 
 ```
-java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
+java -jar rdt-3.9.0-jar-with-dependencies.jar -Q SMI -q "O=C(O)C(N)CC(=O)N.O=C(O)C(N)CS>>C(N)(CC(=O)N)C(=O)O.O=C(O)C(N)CS" -b -g -c -j AAM -f TEXT
 ```
 
 `Annotate Reaction using SMILES`
 ---------------------------------
 
 ```
-java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
+java -jar rdt-3.9.0-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O.O[H]>>[H]OC(=O)CC(C)O.CC(O)CC(O)=O" -g -c -j ANNOTATE -f XML
 ```
 
 `Compare Reactions`
@@ -115,11 +115,11 @@ java -jar rdt-3.8.1-jar-with-dependencies.jar -Q SMI -q "CC(O)CC(=O)OC(C)CC(O)=O
 `Compare using precomputed AAM mappings`
 
 ```
-java -jar rdt-3.8.1-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
+java -jar rdt-3.9.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH -u
 ```
 
 `Compare using RXN files`
 
 ```
-java -jar rdt-3.8.1-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
+java -jar rdt-3.9.0-jar-with-dependencies.jar -Q RXN -q example/ReactionDecoder_mapped.rxn -T RXN -t example/ReactionDecoder_mapped.rxn -j COMPARE -f BOTH
 ```

@@ -290,7 +290,7 @@ public class GoldenDatasetBenchmarkTest {
         double chemistryEquivalentPct = pct_d(chemistryEquivalent, total);
 
         System.out.println();
-        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.8.1) ===");
+        System.out.println("=== Golden Dataset Benchmark Results (RDT v3.9.0) ===");
         System.out.println("Total reactions:        " + total);
         System.out.println();
         System.out.println("--- Core Metrics ---");
@@ -354,7 +354,7 @@ public class GoldenDatasetBenchmarkTest {
         System.out.println("| RXNMapper          | 83.74%†     | -         | -         | Unsup.   | No            |");
         System.out.println("| RDTool (published) | 76.18%†     | -         | -         | None     | Yes           |");
         System.out.println("| ChemAxon           | 70.45%†     | -         | -         | Propr.   | Yes           |");
-        System.out.printf("| RDT v3.8.1         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
+        System.out.printf("| RDT v3.9.0         | %.1f%%      | %.1f%%    | %.1f%%    | None     | Yes           |%n",
                 pct_d(chemistryEquivalent, total), pct_d(molMapExact, total), pct_d(exactAtomMatch, total));
         System.out.println("† Published figures from Lin et al. 2022 use chemically-equivalent scoring.");
 

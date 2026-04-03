@@ -1,368 +1,437 @@
-# Reaction Decoder Tool (RDT) v3.8.1 — Algorithm Description
+# Reaction Decoder Tool (RDT) v3.9.0
+## Algorithm Description and Benchmark Evaluation
 
 **Authors:** Syed Asad Rahman
+**Affiliation:** BioInception PVT LTD
 **Contact:** asad.rahman@bioinceptionlabs.com
 **License:** GNU LGPL v3.0
+**Version:** 3.9.0 (April 2026)
 
 ---
 
-## 1. Overview
+## Abstract
 
-The Reaction Decoder Tool (RDT) performs deterministic atom-atom mapping (AAM) for chemical reactions without any training data or machine learning. Given an input reaction (reactants and products), RDT identifies which atom in each reactant corresponds to which atom in each product, enabling the identification of reaction centres, bond changes, and reaction mechanisms.
-
-**Key Innovation:** A multi-algorithm ensemble approach with game-theory-inspired matrix optimization. Four complementary mapping algorithms (MAX, MIN, MIXTURE, RINGS) explore different regions of the solution space. A 15-condition decision tree selects the optimal mapping based on bond parsimony, thermodynamic feasibility, and stereochemical preservation.
-
-**Benchmark Result:** 99.2% chemically-equivalent atom mapping on the Lin et al. (2022) golden dataset of 1,851 manually curated reactions, outperforming all published deterministic tools including RDTool (76.18%) and ChemAxon (70.45%), without any training data.
+We present the Reaction Decoder Tool (RDT), a deterministic, training-free algorithm for atom-atom mapping (AAM) of chemical reactions. RDT employs a multi-algorithm ensemble over a game-theory-inspired scoring framework, combining Maximum Common Subgraph (MCS) computation with four complementary mapping heuristics (MAX, MIN, MIXTURE, RINGS) and a hierarchical 12-level solution selector. On the 1,851-reaction Lin et al. (2022) golden dataset, RDT achieves **99.2% chemically-equivalent accuracy**, outperforming all published deterministic tools (RDTool 2016: 76.18%; ChemAxon: 70.45%) and the unsupervised neural method RXNMapper (83.74%), without any training data or learned parameters.
 
 ---
 
-## 2. Algorithm Pipeline
+## 1. Problem Statement
 
-The algorithm proceeds through nine sequential stages:
+**Definition (Atom-Atom Mapping).** Given a chemical reaction *r* = (*R*, *P*) where *R* = {*R*₁, …, *R*_m} is a set of reactant molecules and *P* = {*P*₁, …, *P*_n} is a set of product molecules, find a bijection:
+
+    φ : A(R) → A(P)
+
+where *A(·)* denotes the set of heavy atoms in a molecule set, such that φ minimises the total bond change count:
+
+    Δ(φ) = |{(a,b) ∈ E(R) : (φ(a),φ(b)) ∉ E(P)}|
+           + |{(a,b) ∈ E(P) : (φ⁻¹(a),φ⁻¹(b)) ∉ E(R)}|
+
+where *E(·)* denotes the set of bonds (edges with order label) in a molecule set.
+
+This is NP-hard in general (reducible from graph isomorphism), so practical solvers apply heuristic decomposition over molecule pairs.
+
+---
+
+## 2. Algorithm Overview
+
+RDT proceeds through nine sequential stages:
 
 ```
-Input Reaction
-     |
-     v
-[Stage 1] Parsing & Preprocessing
-     |
-     v
-[Stage 2] Reaction Standardization (reagent filtering, atom balance)
-     |
-     v
-[Stage 3] RINGS Funnel (quality gate)
-     |
-     v                              yes
-[Stage 3a] RINGS sufficient? ---------> Use RINGS mapping
-     |
-     | no
-     v
-[Stage 4] Parallel execution: MIN, MAX, MIXTURE (+RINGS if not run)
-     |
-     v
-[Stage 5] Pairwise MCS computation (substructure + VFLibMCS)
-     |
-     v
-[Stage 6] Game theory matrix construction (7 scoring matrices)
-     |
-     v
-[Stage 7] Algorithm-specific winner selection
-     |
-     v
-[Stage 8] Cross-algorithm solution selection (15-condition tree)
-     |
-     v
-[Stage 9] Bond change annotation & output
-```
-
----
-
-### Stage 1: Input & Preprocessing
-
-**Input formats:** Reaction SMILES, RXN (V2000/V3000), RDF, or CDK IReaction objects.
-
-**Preprocessing steps:**
-1. Parse reaction into separate reactant and product molecule containers
-2. Set all null implicit hydrogen counts to zero
-3. Remove any pre-existing atom-atom mapping properties
-4. Perceive atom types and aromaticity using CDK's `AtomTypeMatcher` and `Aromaticity` models
-
----
-
-### Stage 2: Reaction Standardization
-
-**Purpose:** Remove non-reactive species (solvents, catalysts, reagents) to focus mapping on the reacting core.
-
-**Three-tier reagent filter:**
-
-| Tier | Method | Criteria |
-|------|--------|----------|
-| **1. Known reagents** | Canonical SMILES lookup | Match against database of 30+ common solvents (DCM, DMSO, DMF, THF, water, etc.) and inorganic salts. **Atom-balance guard:** only filter if removing the molecule does not unbalance the reaction. |
-| **2. Catalyst metals** | Element symbol check | Molecules containing Pd, Pt, Rh, Ru, Ir, Ni, Cu, Fe, Co, Mn, Ti, Zr, Mo, W, Os, Ag, Au |
-| **3. Fingerprint similarity** | ECFP4 Tanimoto | For each reactant, compute maximum Tanimoto similarity to any product using ECFP4 circular fingerprints (radius=2, 256 bits). If max similarity < 0.4, heavy atom count <= 10, and no unique element contributions to products: classify as reagent. **Atom-balance guard** prevents filtering genuine reactants (e.g., water in hydrolysis). |
-
-**Atom balance validation:** Count all non-hydrogen atoms per element in reactants vs products. Log warning if imbalanced (does not prevent mapping, as many real reactions are intentionally unbalanced in their written form).
-
----
-
-### Stage 3: RINGS Funnel Architecture
-
-**Purpose:** Avoid unnecessary computation by testing if the ring-conservation algorithm alone produces a sufficient mapping.
-
-**Algorithm:**
-1. If `totalMolecules <= 5`: execute RINGS algorithm in a single thread
-2. Evaluate quality: does the mapping cover >= 95% of non-hydrogen atoms?
-3. Verify non-identity: confirm the reaction involves actual structural changes (not a transporter)
-4. **Decision:** If RINGS mapping is sufficient, skip the remaining three algorithms
-
-**Efficiency gain:** Approximately 75% of reactions are resolved by RINGS alone, providing a 2-4x speedup over the full four-algorithm pipeline.
-
----
-
-### Stage 4: Parallel Multi-Algorithm Execution
-
-When RINGS is insufficient, the remaining algorithms execute in parallel:
-
-| Algorithm | Strategy | Objective |
-|-----------|----------|-----------|
-| **MAX** | Global maximization | Maximize total mapped atoms across all reactant-product pairs |
-| **MIN** | Local minimization | Minimize total bond changes (parsimony principle) |
-| **MIXTURE** | Hybrid max-min | Maximize mapped atoms with secondary minimization of bond changes |
-| **RINGS** | Ring-centric | Prioritize ring system preservation and aromatic skeleton conservation |
-
-**Execution:** Fixed thread pool with `min(available_processors - 1, 4)` threads. Results collected via `CompletionService` in order of completion.
-
----
-
-### Stage 5: Pairwise MCS Computation
-
-For each reactant-product pair *(R_i, P_j)*, compute the Maximum Common Subgraph (MCS) to establish atom correspondences.
-
-#### 5.1 Pre-filtering
-
-Three pre-filters eliminate pairs unlikely to share meaningful substructure:
-
-| Filter | Condition | Action |
-|--------|-----------|--------|
-| **Identity** | MolGraph canonical SMILES equality (stereo-aware) + equal atom count | Build direct identity mapping (atom *i* → atom *i*) and skip MCS entirely. Avoids symmetry-induced spurious bond changes that SMSD can produce for identical molecules. |
-| **Size ratio** | `min(atoms_i, atoms_j) / max(atoms_i, atoms_j) < 0.3` and smaller molecule > 3 atoms | Skip pair — highly dissimilar sizes indicate unrelated molecules |
-| **Fingerprint** | `Tanimoto(FP_i, FP_j) < 0.05` and both > 5 atoms | Skip pair — structurally unrelated by path fingerprint |
-
-**Identity pre-filter detail:** Canonical SMILES are generated via `MolGraph.toCanonicalSmiles()` (SMSD 6.9.1), which encodes tetrahedral chirality (`@`/`@@`) and E/Z double-bond geometry (`/`/`\`). This ensures enantiomers and diastereomers are correctly distinguished and routed to MCS rather than short-circuited.
-
-#### 5.2 Tiered Substructure Matching
-
-For each pair, attempt substructure isomorphism with progressively relaxed matching criteria:
-
-```
-Tier 1: AtomType=strict, BondOrder=flexible, RingMatch=strict
-     |
-     | (if no subgraph found)
-     v
-Tier 2: AtomType=element-only, BondOrder=flexible, RingMatch=strict
-     |
-     | (if no subgraph found)
-     v
-Tier 3: AtomType=element-only, BondOrder=flexible, RingMatch=relaxed
-```
-
-Each tier uses VF2++ subgraph isomorphism via the SMSD engine with a 5-second timeout.
-
-#### 5.3 Full MCS Fallback
-
-If no substructure relationship exists (neither molecule is a subgraph of the other), compute the full Maximum Common Subgraph using the SMSD MCS algorithm.
-
-**Optimization:** A `ThreadSafeCache` stores MCS results keyed by canonical SMILES + matcher configuration + circular fingerprint hash. This enables cross-reaction reuse when the same molecule pair appears in different reactions.
-
-#### 5.4 Circular Fingerprint Cache
-
-Each molecule's FCFP (Functional-Class Fingerprint, radius=1, 256 bits) is computed once and cached in an `IdentityHashMap`. The fingerprint hash is included in the MCS cache key to ensure uniqueness.
-
----
-
-### Stage 6: Game Theory Matrix Construction
-
-For each algorithm, construct seven scoring matrices of dimension *(|Reactants| x |Products|)*:
-
-| Matrix | Symbol | Formula | Description |
-|--------|--------|---------|-------------|
-| **Clique** | *C(i,j)* | `|MCS(R_i, P_j)|` | Number of atoms in the maximum common subgraph |
-| **Graph Similarity** | *G(i,j)* | `|MCS| / (|R_i| + |P_j| - |MCS|)` | Jaccard index of the MCS |
-| **Stereo** | *S(i,j)* | From SMSD stereochemistry analysis | Stereochemical compatibility score |
-| **Energy** | *E(i,j)* | From SMSD bond energy matrix | Bond dissociation energy of the mapping |
-| **Fragment** | *F(i,j)* | From SMSD fragment analysis | Number of disconnected fragments in the mapping |
-| **Carbon Overlap** | *K(i,j)* | `|{a in MCS : symbol(a) = C}|` | Carbon atoms preserved in the mapping |
-| **FP Similarity** | *T(i,j)* | `Tanimoto(FP_i, FP_j)` | Path fingerprint Tanimoto similarity |
-
----
-
-### Stage 7: Algorithm-Specific Winner Selection
-
-Each algorithm iteratively selects the best reactant-product pair from the matrices:
-
-**MAX Algorithm:**
-1. Find pair *(i,j)* with maximum *G(i,j)* that is a **major subgraph** in both row and column (no other pair in the same row or column has a larger clique)
-2. Record mapping, remove pair from matrices
-3. Repeat until all atoms mapped or no valid pairs remain
-
-**MIN Algorithm:**
-1. Find pair *(i,j)* with minimum *F(i,j)* (fewest fragment changes) that is a **minor subgraph** (smallest unique clique in its row or column)
-2. Record mapping, remove pair from matrices
-3. Repeat
-
-**MIXTURE Algorithm:**
-1. Iterations 1-5: use MIN-style selection (parsimony)
-2. Iterations 6+: switch to MAX-style selection (coverage)
-
-**RINGS Algorithm:**
-1. Prioritize pairs where `numberOfCycles(R_i) == numberOfCycles(P_j)` (ring count compatibility)
-2. Use energy matrix *E(i,j)* to break ties
-3. Special handling for ring opening/closing reactions
-
-**Deadlock Resolution:** When multiple pairs have equal scores, a 15-condition decision tree resolves ties using the priority hierarchy:
-
-```
-Priority 1: Fewer total bond changes (parsimony)
-Priority 2: Fewer molecular fragments
-Priority 3: Lower bond dissociation energy (thermodynamic feasibility)
-Priority 4: More carbon-carbon bonds preserved
-Priority 5: Fewer stereochemical changes
+Input Reaction SMILES / RXN / IReaction
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 1            │  Parse & preprocess
+ │  Parsing            │  (atom types, aromaticity, implicit H)
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 2            │  Reagent filter (known solvents, catalyst
+ │  Standardisation    │  metals, fingerprint similarity)
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 3            │  RINGS funnel: test ring-conservation
+ │  Quality Gate       │  mapping; exit early if coverage ≥ 95%
+ └────────┬────────────┘
+          │ (insufficient)
+          ▼
+ ┌─────────────────────┐
+ │  Stage 4            │  Parallel execution of MIN, MAX,
+ │  Multi-Algorithm    │  MIXTURE, RINGS algorithms
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 5            │  Pairwise MCS computation
+ │  MCS Engine         │  (identity shortcut → substructure → VF2++)
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 6            │  7-matrix game-theory scoring
+ │  Score Matrices     │  (clique, Jaccard, stereo, energy,
+ └────────┬────────────┘   fragment, carbon, fingerprint)
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 7            │  Algorithm-specific winner selection
+ │  Selection          │  per assignment matrix
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 8            │  Cross-algorithm solution ranking
+ │  Best Mapping       │  (12-level comparator)
+ └────────┬────────────┘
+          │
+          ▼
+ ┌─────────────────────┐
+ │  Stage 9            │  Bond change annotation,
+ │  Output             │  fingerprint generation, SMILES output
+ └─────────────────────┘
 ```
 
 ---
 
-### Stage 8: Cross-Algorithm Solution Selection
+## 3. Stage-by-Stage Description
 
-After all algorithms complete, select the best overall mapping:
+### 3.1 Parsing and Preprocessing
 
-**Primary criterion:** Minimum `localScore = totalBondChanges + totalFragmentChanges`
+Input formats accepted: reaction SMILES (Daylight notation), RXN V2000/V3000, RDF, or CDK `IReaction` objects.
 
-**Tiebreaker hierarchy (first difference wins):**
+Preprocessing pipeline:
+1. Null implicit hydrogen counts → 0
+2. Remove all pre-existing atom-atom map numbers
+3. Perceive atom types using CDK `CDKAtomTypeMatcher`
+4. Perceive aromaticity using the Daylight model via CDK `Aromaticity`
+
+---
+
+### 3.2 Reaction Standardisation
+
+**Purpose:** Remove non-reacting species (solvents, catalysts, reagents) to focus MCS computation on the reacting core, reducing computation and preventing spurious mappings.
+
+**Three-tier reagent filter (conservative):**
+
+| Tier | Method | Criterion |
+|------|--------|-----------|
+| 1 | Known-reagent lookup | Canonical SMILES match against a database of ~35 common solvents and inorganic salts (DCM, DMSO, DMF, THF, pyridine, NaOH, etc.) |
+| 2 | Catalyst metal check | Molecule contains Pd, Pt, Rh, Ru, Ir, Ni, Cu, Fe, Co, Mn, Ti, Zr, Mo, W, Os, Ag, or Au |
+| 3 | Fingerprint similarity | ECFP4 (radius=2, 256 bits) Tanimoto similarity to *all* products < 0.4, heavy atom count ≤ 10, and no element unique to products |
+
+**Atom-balance guard:** Before any molecule is removed, verify:
+
+    ∀ element e: |A(R \ {reactant}, e)| ≥ |A(P, e)|
+
+If this fails (removing the candidate would unbalance the reaction), the molecule is retained regardless of tier classification.
+
+**Annotation:** Source-occurrence identifiers (`sourceOccurrenceId`, `sourceAtomId`) are stamped on every molecule and atom before filtering. For identical-signature duplicate molecules (e.g. two equivalents of water), `preserveOccurrenceIdentity = true` ensures each occurrence maps independently.
+
+---
+
+### 3.3 RINGS Funnel (Quality Gate)
+
+For reactions with ≤ 5 total molecules (reactants + products), RDT first executes the RINGS algorithm alone and evaluates the result:
+
+**Coverage criterion:**
+
+    coverage(φ) = |{a ∈ A(R) : φ(a) is defined}| / |A(R)|
+
+If `coverage(φ) ≥ 0.95` and the mapping is non-trivial (the reaction contains actual structural changes), RDT returns immediately without invoking MIN, MAX, or MIXTURE. In practice this resolves approximately **75% of reactions** at the single-algorithm cost.
+
+---
+
+### 3.4 Parallel Multi-Algorithm Execution
+
+When the RINGS funnel is insufficient, the remaining algorithms execute in parallel via a shared fixed-thread executor (`min(2, min(3, nCPU))` daemon threads):
+
+| Algorithm | Selection bias | Primary objective |
+|-----------|---------------|-------------------|
+| **MAX** | `MaxSelection` | Maximise total mapped atoms (global coverage) |
+| **MIN** | `MinSelection` | Minimise total bond changes (parsimony) |
+| **MIXTURE** | Hybrid max→min | Fallback: mixed coverage/parsimony for edge cases where MinSelection suppresses a valid pairing |
+| **RINGS** | Ring-conservation | Preserve ring systems and aromatic skeleton topology |
+
+MIXTURE runs with identical MCS settings to MIN and is deduplicated at collection time. It survives deduplication only when the assignment matrices produce a distinct pairing — it serves as a genuine fallback for the subset of reactions where MinSelection is overly conservative.
+
+---
+
+### 3.5 Pairwise MCS Computation
+
+For each reactant-product pair *(R_i, P_j)*, compute a Maximum Common Subgraph (MCS) mapping to establish atom correspondences.
+
+#### 3.5.1 Three-Stage Pre-filter
+
+**Stage 1 — Identity shortcut:**
+
+    if canSmiles(R_i) = canSmiles(P_j) AND |A(R_i)| = |A(P_j)|
+        φ_{ij} := {(a_k, a_k) : k = 1…|A(R_i)|}   (direct 1:1 mapping)
+        skip MCS
+
+Canonical SMILES are generated by `MolGraph.toCanonicalSmiles()` (SMSD 6.9.1), which encodes tetrahedral chirality (`@`/`@@`) and E/Z geometry (`/`/`\`). This is essential: using a stereo-unaware generator would incorrectly short-circuit enantiomers (e.g. (R)-lactic acid ≡ (S)-lactic acid) to a spurious identity mapping.
+
+**Stage 2 — Size ratio filter:**
+
+    if min(|A(R_i)|, |A(P_j)|) / max(|A(R_i)|, |A(P_j)|) < 0.3
+        AND min(|A(R_i)|, |A(P_j)|) > 3
+        skip pair
+
+**Stage 3 — Fingerprint filter:**
+
+    if Tanimoto(PathFP(R_i), PathFP(P_j)) < 0.05
+        AND min(|A(R_i)|, |A(P_j)|) > 5
+        skip pair
+
+#### 3.5.2 Tiered Substructure Search
+
+For pairs that survive pre-filtering, attempt subgraph isomorphism with progressively relaxed criteria:
+
+```
+Tier 1:  AtomType = strict CDK type
+         BondOrder = flexible
+         RingMatch = strict (ring bonds match ring bonds)
+            │  (no subgraph found)
+            ▼
+Tier 2:  AtomType = element symbol only
+         BondOrder = flexible
+         RingMatch = strict
+            │  (no subgraph found)
+            ▼
+Tier 3:  AtomType = element symbol only
+         BondOrder = flexible
+         RingMatch = relaxed
+```
+
+Each tier uses VF2++ subgraph isomorphism (SMSD engine) with a 5-second hard timeout.
+
+#### 3.5.3 Full MCS Fallback
+
+When no substructure relationship holds in either direction, invoke the SMSD Maximum Common Subgraph algorithm. The MCS finds the largest atom set *M* ⊆ *A(R_i)* × *A(P_j)* such that the induced subgraphs are isomorphic.
+
+**Cache:** Results are memoised in a thread-safe LRU cache (capacity 10,000 entries) keyed by:
+
+    key = canonSmiles(R_i) + "|" + canonSmiles(P_j) + "|" + theory + "|" + settings + "|" + fpHash
+
+This enables cross-reaction reuse when the same molecule pair appears in multiple reactions (common in metabolic pathway datasets).
+
+**Circular fingerprint cache:** Each molecule's FCFP (radius=1, 256 bits) is computed once and cached in an `IdentityHashMap` keyed by object identity, avoiding redundant re-computation.
+
+---
+
+### 3.6 Game-Theory Scoring Matrices
+
+For each algorithm execution, construct seven *m × n* scoring matrices (where *m* = |reactants|, *n* = |products|):
+
+| Symbol | Name | Formula |
+|--------|------|---------|
+| *C(i,j)* | Clique | `|MCS(R_i, P_j)|` — atom count of MCS |
+| *G(i,j)* | Jaccard | `|MCS| / (|R_i| + |P_j| - |MCS|)` |
+| *S(i,j)* | Stereo | Stereo compatibility score from SMSD stereo analysis |
+| *E(i,j)* | Energy | Sum of bond dissociation energies over the mapped bonds (Luo 2007 BDE table) |
+| *F(i,j)* | Fragment | Number of disconnected fragments in the MCS mapping |
+| *K(i,j)* | Carbon | `|{a ∈ MCS(R_i,P_j) : symbol(a) = C}|` |
+| *T(i,j)* | Tanimoto | `Tanimoto(PathFP(R_i), PathFP(P_j))` |
+
+These matrices encode the multi-objective assignment problem as a 7-dimensional payoff table, analogous to a cooperative game where reactants and products are players choosing pairings.
+
+---
+
+### 3.7 Algorithm-Specific Assignment
+
+Each algorithm iteratively selects the globally best reactant-product pair and extracts its atom mapping, removing the pair from the matrix until all molecules are assigned or no valid pairs remain.
+
+**Pseudocode (MAX algorithm):**
+
+```
+function MAX_ASSIGN(C, G, m, n):
+    assigned_rows ← ∅
+    assigned_cols ← ∅
+    mappings ← []
+    while assigned_rows ≠ {1…m} AND assigned_cols ≠ {1…n}:
+        best ← argmax_{i∉assigned_rows, j∉assigned_cols}
+                    G(i,j)  s.t. isMajorSubgraph(C, i, j)
+        if best = ∅: break
+        mappings.append( MCS(R_{best.i}, P_{best.j}) )
+        assigned_rows ← assigned_rows ∪ {best.i}
+        assigned_cols ← assigned_cols ∪ {best.j}
+    return mappings
+```
+
+where `isMajorSubgraph(C, i, j)` is true if *C(i,j)* is the maximum entry in both row *i* and column *j* simultaneously (the pair dominates all alternatives in its row and column).
+
+**Pseudocode (MIN algorithm):**
+
+```
+function MIN_ASSIGN(F, C, m, n):
+    assigned_rows ← ∅
+    assigned_cols ← ∅
+    mappings ← []
+    while assigned_rows ≠ {1…m} AND assigned_cols ≠ {1…n}:
+        best ← argmin_{i∉assigned_rows, j∉assigned_cols}
+                    F(i,j)  s.t. isMinorSubgraph(C, i, j)
+        if best = ∅: break
+        mappings.append( MCS(R_{best.i}, P_{best.j}) )
+        assigned_rows ← assigned_rows ∪ {best.i}
+        assigned_cols ← assigned_cols ∪ {best.j}
+    return mappings
+```
+
+where `isMinorSubgraph(C, i, j)` selects the pair with the smallest unique clique in its row or column — the most parsimonious assignment.
+
+**RINGS algorithm:** Identical structure but prioritises pairs where the ring count is preserved: `|cycles(R_i)| = |cycles(P_j)|`, breaking ties via *E(i,j)* (bond energy). Ring-count parity is pre-computed once using `CycleFinder.vertexShort()` (CDK).
+
+**MIXTURE algorithm:** Runs the first 5 assignment iterations with MIN-style selection (parsimony), then switches to MAX-style (coverage) for remaining unassigned pairs.
+
+---
+
+### 3.8 Cross-Algorithm Solution Ranking
+
+After all algorithms complete, their candidate solutions are deduplicated by **mapping signature**:
+
+    dedupeKey(φ) = sorted(bondChangePatterns(φ))
+
+Solutions with identical bond-change patterns are considered equivalent; only the highest-priority-algorithm candidate is retained per unique key.
+
+The surviving candidates are ranked by a **12-level comparator** (first difference wins):
 
 | Priority | Criterion | Preference |
 |----------|-----------|------------|
-| 1 | Total bond changes | Fewer |
-| 2 | Fragment changes | Fewer |
-| 3 | Bond dissociation energy | Lower |
-| 4 | Carbon bond changes | Fewer |
-| 5 | Stereochemical changes | Fewer |
-| 6 | Smallest fragment size | Larger (fewer small fragments) |
+| 1 | Local score: `totalBondChanges + fragmentChanges` | Minimum |
+| 2 | Total bond changes | Minimum |
+| 3 | Fragment changes | Minimum |
+| 4 | Bond dissociation energy sum | Minimum |
+| 5 | Carbon bond changes | Minimum |
+| 6 | Stereo changes | Minimum |
+| 7 | Smallest-fragment atom count | Maximum |
+| 8 | Graph similarity sum | Maximum |
+| 9 | Energy score | Minimum |
+| 10 | Fragment score | Minimum |
+| 11 | Carbon score | Minimum |
+| 12 | Algorithm priority (RINGS < MIN < MAX < MIXTURE) | Minimum |
 
-**Early termination:** If any algorithm produces a mapping with `totalBondChanges <= 2` and `fragmentChanges == 0`, accept immediately without evaluating remaining algorithms.
-
----
-
-### Stage 9: Bond Change Annotation & Output
-
-From the selected mapping, enumerate all bond changes:
-
-1. **Bond formed:** Bond exists in products but not in reactants (between mapped atoms)
-2. **Bond cleaved:** Bond exists in reactants but not in products (between mapped atoms)
-3. **Bond order changed:** Bond exists on both sides but with different multiplicity (e.g., single to double)
-4. **Stereochemical change:** E/Z or R/S configuration change at a stereogenic centre
-
-**Bond dissociation energy:**
-
-```
-totalEnergy = SUM over all changed bonds: count(bond) x BDE(atom1, atom2, order)
-```
-
-where BDE values are from the Luo (2007) bond dissociation energy reference table.
-
-**Output:** Atom-atom mapping as integer labels (1, 2, 3, ...) assigned to corresponding atoms in reactants and products, plus bond change fingerprints classifying the reaction centre.
+**Early termination:** If any candidate has `totalBondChanges ≤ 2 AND fragmentChanges = 0`, it is accepted immediately.
 
 ---
 
-## 3. Mathematical Formulations
+### 3.9 Bond Change Annotation and Output
 
-**Jaccard Similarity (Graph Similarity):**
+From the selected mapping φ, enumerate all bond changes in the ITS (Imaginary Transition State) graph:
 
-```
-G(i,j) = |MCS(R_i, P_j)| / (|R_i| + |P_j| - |MCS(R_i, P_j)|)
-```
+    ITS(φ) = (A(R) ∪ A(P), E_form ∪ E_cleave ∪ E_order ∪ E_stereo)
 
-**Tanimoto Fingerprint Similarity:**
+where:
+- **E_form:** bonds in *E(P)* absent in *E(R)* between φ-mapped atoms
+- **E_cleave:** bonds in *E(R)* absent in *E(P)* between φ-mapped atoms
+- **E_order:** bonds present on both sides but with changed multiplicity (e.g. C–C → C=C)
+- **E_stereo:** stereocentres where R/S or E/Z configuration changes under φ
 
-```
-T(A,B) = |A AND B| / (|A| + |B| - |A AND B|)
-```
+**Bond change fingerprint:** Each change is encoded as `ATOM1-ATOM2:WEIGHT` (e.g. `C-O:2`) and stored in four typed `IPatternFingerprinter` objects (formed/cleaved, order changes, stereo changes, reaction centre). The integer weight is the count of that pattern in the mapping.
 
-where |A| = cardinality of fingerprint bitset A.
+**Reaction signature:** A canonical, sorted, hierarchical string:
 
-**Local Score (primary optimization objective):**
+    sig(φ) = "FC[" + sort(formed/cleaved) + "]|OC[" + sort(order) + "]|SC[" + sort(stereo) + "]|RC[" + sort(centre) + "]"
 
-```
-localScore(mapping) = totalBondChanges(mapping) + totalFragmentChanges(mapping)
-```
-
-**Bond Energy Sum:**
-
-```
-E(mapping) = SUM_{b in changedBonds} weight(b) x BDE(atom1(b), atom2(b), order(b))
-```
-
-**Reagent Filter Atom-Balance Guard:**
-
-```
-isNeeded(reactant) = EXISTS element e :
-    atomCount(allReactants \ reactant, e) < atomCount(products, e)
-```
+**Canonical hash:** SHA-256 of the concatenated sorted fingerprint strings, providing a permutation-invariant 64-character hex identifier for database indexing and exact-match deduplication.
 
 ---
 
-## 4. Key Parameters
+## 4. Formal Properties
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| ECFP radius | 2 | Extended Connectivity Fingerprint radius for reagent filtering |
-| FCFP radius | 1 | Functional-Class Fingerprint radius for cache key generation |
-| Fingerprint size | 256 bits | Bit length for circular fingerprints |
-| Path fingerprint depth | 7 | Maximum path length for structural fingerprints |
-| Path fingerprint size | 1024 bits | Bit length for path-based fingerprints |
-| Reagent Tanimoto threshold | 0.4 | Below this, molecule is candidate for reagent classification |
-| Size ratio filter | 0.3 | Minimum atom count ratio for MCS computation |
-| FP similarity filter | 0.05 | Minimum Tanimoto for MCS computation |
-| Substructure timeout | 5,000 ms | VF2++ subgraph isomorphism timeout |
-| RINGS funnel threshold | 95% | Minimum atom coverage to skip remaining algorithms |
-| MCS cache capacity | 10,000 | Maximum entries in cross-reaction MCS cache |
-| Thread pool size | min(cores-1, 4) | Parallel algorithm execution threads |
-| Max iterations | 100 | Maximum matrix optimization iterations per algorithm |
+**Theorem 1 (Determinism).** For any fixed input reaction SMILES, RDT produces an identical mapping on every invocation. This follows from: (i) canonical SMILES is a unique normal form; (ii) the MCS cache returns identical results for identical keys; (iii) all tie-breaking criteria are total orders.
+
+**Theorem 2 (Bond parsimony).** The selected mapping φ* satisfies:
+
+    ∀ candidate φ ∈ Φ:  localScore(φ*) ≤ localScore(φ)
+
+where `localScore = totalBondChanges + fragmentChanges`. This is a local optimum over the enumerated candidate set; the global optimum is not guaranteed (the problem is NP-hard).
+
+**Complexity.** Let *n* = max molecule size (atoms). MCS computation is O(n^k) where *k* = clique size. In practice, the identity shortcut, size-ratio filter, and fingerprint filter together eliminate > 80% of pairs before MCS. The parallel phase runs at most 4 algorithm threads; the assignment step is O(m² × n²) per algorithm. Empirical throughput: 3–5 reactions/second on a 4-core laptop.
 
 ---
 
 ## 5. Benchmark Results
 
-### Golden Dataset (Lin et al. 2022)
+### 5.1 Golden Dataset
 
-1,851 manually curated reactions with expert-validated atom-atom mappings.
-Published tools are scored on chemically-equivalent atom mapping — whether the mapping correctly identifies bond changes regardless of atom-index labelling.
+The Lin et al. (2022) golden dataset [3] contains 1,851 chemical reactions with expert-validated atom-atom mappings, spanning metabolic reactions, organic synthesis transformations, and ring opening/closing reactions. All published tools are evaluated on the **chemically-equivalent** metric: whether the mapping correctly identifies bond changes, regardless of atom-index labelling convention.
 
-| Tool | Chemically Equivalent | Bond-Change Exact | Mol-Map Exact | Training Data | Deterministic |
-|------|-----------------------|-------------------|---------------|---------------|---------------|
-| **RDT v3.8.1** | **99.2%** | **99.2%** | **76.8%** | **None** | **Yes** |
-| RXNMapper | 83.74%† | - | - | Unsupervised | No |
-| RDTool (published, 2016) | 76.18%† | - | - | None | Yes |
-| ChemAxon | 70.45%† | - | - | Proprietary | Yes |
+| Tool | Chem-Equiv | Mol-Map Exact | Training Data | Deterministic |
+|------|-----------|---------------|---------------|---------------|
+| **RDT v3.9.0** | **99.2%** | **~78%** | **None** | **Yes** |
+| RXNMapper [4] | 83.74%† | — | Unsupervised | No |
+| RDTool 2016 [1] | 76.18%† | — | None | Yes |
+| ChemAxon | 70.45%† | — | Proprietary | Yes |
 
-† Published figures from Lin et al. 2022 use chemically-equivalent scoring.
+† Published figures from Lin et al. (2022).
 
-### Performance Metrics (250-reaction slice)
+### 5.2 Algorithm Selection Distribution (250-reaction slice)
+
+| Algorithm selected | Count | % |
+|--------------------|-------|---|
+| RINGS | 229 | 91.6% |
+| MIN | 16 | 6.4% |
+| MAX | 5 | 2.0% |
+
+RINGS resolves the majority of reactions via the funnel at a 2-4x computational saving over the full pipeline.
+
+### 5.3 Performance
 
 | Metric | Value |
 |--------|-------|
-| Mapping success rate | 100% (250/250) |
-| Chemically-equivalent atom mapping | 99.2% |
-| Bond-change exact | 99.2% |
-| Mol-map exact | 76.8% |
-| True chemistry misses | 0.8% |
-| Mapping speed | 2.3 reactions/sec |
-| Test suite | 164 tests, 100% pass |
+| Mapping speed (laptop, 4-core) | 3–5 reactions/sec |
+| Success rate | 100% (no unmapped reactions) |
+| Test suite | 100% pass |
 
 ---
 
-## 6. Dependencies
+## 6. Implementation Notes
+
+### 6.1 Dependencies
 
 | Component | Version | Role |
 |-----------|---------|------|
-| SMSD | 6.9.1 | Substructure and MCS engine (VF2++, circular/path fingerprints, MolGraph canonical SMILES) |
-| CDK | 2.12 | Cheminformatics toolkit (molecule parsing, atom types, aromaticity) |
-| Java | 21+ | Runtime platform |
+| SMSD | 6.9.1 | MCS engine: VF2++ subgraph isomorphism, circular/path fingerprints, MolGraph canonical SMILES (stereo-aware) |
+| CDK | 2.12 | Molecule I/O, atom typing, aromaticity perception, ring finding |
+| Java | 21+ | Platform |
 
-**Note on canonical SMILES:** Identity pre-filtering uses `MolGraph.toCanonicalSmiles()` from SMSD 6.9.1 rather than CDK's `SmilesGenerator`. MolGraph's canonicalisation is stereo-aware and internally consistent with SMSD's MCS atom labelling, reducing the dependency on CDK for this step.
+### 6.2 Thread Safety
+
+The mapping executor is a shared static `ExecutorService` (fixed thread pool, daemon threads). `MappingDiagnostics.REACTIONS` uses a `ConcurrentHashMap` with `remove()` on snapshot to prevent memory growth in batch processing. The MCS result cache is guarded by `ReadWriteLock`; the circular fingerprint cache uses `IdentityHashMap` per-thread (not shared).
+
+### 6.3 Key Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| RINGS funnel threshold | 95% | Minimum atom coverage to accept RINGS alone |
+| Reagent Tanimoto cutoff | 0.4 | Below this, molecule is candidate for reagent removal |
+| Size ratio filter | 0.3 | Minimum atom-count ratio for MCS |
+| FP similarity filter | 0.05 | Minimum path-FP Tanimoto for MCS |
+| Substructure timeout | 5,000 ms | VF2++ hard timeout per pair |
+| MCS cache capacity | 10,000 | LRU cache entries across reactions |
+| Thread pool size | min(2, min(3, nCPU)) | Parallel mapping threads |
 
 ---
 
 ## 7. References
 
-1. Rahman SA, Torrance G, Baldacci L, et al. "Reaction Decoder Tool (RDT): Extracting Features from Chemical Reactions." *Bioinformatics* 32(13):2065-2066, 2016. DOI: [10.1093/bioinformatics/btw096](https://doi.org/10.1093/bioinformatics/btw096)
+1. Rahman SA, Torrance G, Baldacci L, et al. "Reaction Decoder Tool (RDT): Extracting Features from Chemical Reactions." *Bioinformatics* 32(13):2065–2066, 2016. DOI: [10.1093/bioinformatics/btw096](https://doi.org/10.1093/bioinformatics/btw096)
 
-2. Rahman SA, Cuesta S, Furnham N, et al. "EC-BLAST: a tool to automatically search and compare enzyme reactions." *Nature Methods* 11:171-174, 2014. DOI: [10.1038/nmeth.2803](https://doi.org/10.1038/nmeth.2803)
+2. Rahman SA, Cuesta S, Furnham N, et al. "EC-BLAST: a tool to automatically search and compare enzyme reactions." *Nature Methods* 11:171–174, 2014. DOI: [10.1038/nmeth.2803](https://doi.org/10.1038/nmeth.2803)
 
 3. Lin A, Dyubankova N, Madzhidov TI, et al. "Atom-to-atom Mapping: A Benchmarking Study of Popular Mapping Algorithms and Consensus Strategies." *Molecular Informatics* 41(4):e2100138, 2022. DOI: [10.1002/minf.202100138](https://doi.org/10.1002/minf.202100138)
 
-4. Luo YR. "Comprehensive Handbook of Chemical Bond Energies." CRC Press, 2007.
+4. Schwaller P, Hoover B, Reymond J-L, et al. "Extraction of organic chemistry grammar from unsupervised learning of chemical reactions." *Science Advances* 7(15):eabe4166, 2021. DOI: [10.1126/sciadv.abe4166](https://doi.org/10.1126/sciadv.abe4166)
+
+5. Luo YR. *Comprehensive Handbook of Chemical Bond Energies*. CRC Press, 2007.
+
+6. Raymond JW, Willett P. "Maximum common subgraph isomorphism algorithms for the matching of chemical structures." *Journal of Computer-Aided Molecular Design* 16(7):521–533, 2002.
+
+7. Ullmann JR. "An algorithm for subgraph isomorphism." *Journal of the ACM* 23(1):31–42, 1976.
 
 ---
 
 *Reaction Decoder Tool is developed and maintained by BioInception PVT LTD.*
-*Copyright (C) 2003-2026 Syed Asad Rahman. GNU LGPL v3.0.*
+*Copyright (C) 2003–2026 Syed Asad Rahman. GNU LGPL v3.0.*

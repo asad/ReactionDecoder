@@ -206,13 +206,32 @@ public class Reactor extends BasicDebugger implements Serializable {
         }
     }
 
+    /**
+     * Convert a stoichiometric coefficient to an integer copy count.
+     * Non-integer values (e.g. 0.5, 1.5) are rounded to the nearest integer
+     * and a warning is logged — the algorithm requires whole-molecule copies.
+     * Null or non-positive values default to 1.
+     */
+    private int stoichiometryToCopies(double stoichiometry, String moleculeId) {
+        if (stoichiometry <= 0.0) {
+            return 1;
+        }
+        long rounded = Math.round(stoichiometry);
+        if (Math.abs(stoichiometry - rounded) > 0.01) {
+            LOGGER.warn("Non-integer stoichiometry " + stoichiometry + " for molecule "
+                    + moleculeId + "; rounded to " + rounded
+                    + ". RDT requires whole-molecule stoichiometry for atom mapping.");
+        }
+        return (int) Math.max(1L, rounded);
+    }
+
     private void expandReaction() throws CloneNotSupportedException {
 
         for (int i = 0; i < reactionWithSTOICHIOMETRY.getReactantCount(); i++) {
             IAtomContainer _react = reactionWithSTOICHIOMETRY.getReactants().getAtomContainer(i);
-            Double stoichiometry = reactionWithSTOICHIOMETRY.getReactantCoefficient(_react);
-            while (stoichiometry > 0.0) {
-                stoichiometry -= 1;
+            double stoichiometry = reactionWithSTOICHIOMETRY.getReactantCoefficient(_react);
+            int copies = stoichiometryToCopies(stoichiometry, _react.getID());
+            for (int k = 0; k < copies; k++) {
                 IAtomContainer _reactDup = cloneWithIDs(_react);
                 _reactDup.setID(_react.getID());
                 _reactDup.setProperty("STOICHIOMETRY", 1.0);
@@ -223,9 +242,9 @@ public class Reactor extends BasicDebugger implements Serializable {
         for (int j = 0; j < reactionWithSTOICHIOMETRY.getProductCount(); j++) {
 
             IAtomContainer _prod = reactionWithSTOICHIOMETRY.getProducts().getAtomContainer(j);
-            Double stoichiometry = reactionWithSTOICHIOMETRY.getProductCoefficient(_prod);
-            while (stoichiometry > 0.0) {
-                stoichiometry -= 1;
+            double stoichiometry = reactionWithSTOICHIOMETRY.getProductCoefficient(_prod);
+            int copies = stoichiometryToCopies(stoichiometry, _prod.getID());
+            for (int k = 0; k < copies; k++) {
                 IAtomContainer prodDup = cloneWithIDs(_prod);
                 prodDup.setID(_prod.getID());
                 prodDup.setProperty("STOICHIOMETRY", 1.0);
