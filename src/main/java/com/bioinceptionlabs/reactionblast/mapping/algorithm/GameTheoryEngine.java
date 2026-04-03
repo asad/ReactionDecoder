@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Calendar;
 import static java.util.Calendar.DATE;
@@ -47,7 +46,6 @@ import static java.util.logging.Level.SEVERE;
 
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
-import com.bioinception.smsd.core.SMSD;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -73,6 +71,7 @@ import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionMappingEngine;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.BestMatchContainer;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.HydrogenFreeFingerPrintContainer;
+import com.bioinceptionlabs.reactionblast.mapping.MappingKeyUtil;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MoleculeMoleculeMapping;
 import com.bioinceptionlabs.reactionblast.mapping.ReactionContainer.MolMapping;
 import com.bioinceptionlabs.reactionblast.mapping.SmsdReactionMappingEngine;
@@ -138,9 +137,6 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     private final static ILoggingTool LOGGER
             = createLoggingTool(GameTheoryEngine.class);
     private static final long serialVersionUID = 1698688633678282L;
-
-    private final transient java.util.IdentityHashMap<IAtomContainer, int[]> circularFPCache
-            = new java.util.IdentityHashMap<>();
     private static final ReactionMappingEngine MAPPING_ENGINE
             = SmsdReactionMappingEngine.getInstance();
 
@@ -502,38 +498,14 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             boolean atomtypeMatcher, boolean bondMatcher,
             boolean ringMatcher, boolean hasPerfectRings,
             int numberOfCyclesEduct, int numberOfCyclesProduct) {
-        StringBuilder key = new StringBuilder();
-        key.append(id1).append(id2)
-                .append(atomCount1).append(atomCount2)
-                .append(bondCount1).append(bondCount2)
-                .append(atomtypeMatcher).append(bondMatcher)
-                .append(ringMatcher).append(hasPerfectRings)
-                .append(numberOfCyclesEduct).append(numberOfCyclesProduct);
-        try {
-            int[] sm1 = getCircularFP(compound1);
-            int[] sm2 = getCircularFP(compound2);
-            key.append(Arrays.toString(sm1));
-            key.append(Arrays.toString(sm2));
-        } catch (CDKException ex) {
-            LOGGER.error(Level.SEVERE, "Error in Generating Circular FP: ", ex);
-        }
-        return key.toString();
-    }
-
-    private int[] getCircularFP(IAtomContainer mol) throws CDKException {
-        int[] cached = circularFPCache.get(mol);
-        if (cached != null) {
-            return cached;
-        }
-        long[] fp = SMSD.circularFingerprintFCFP(mol, 1, 256);
-        BitSet bs = SMSD.toBitSet(fp);
-        int[] bits = new int[bs.cardinality()];
-        int idx = 0;
-        for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i + 1)) {
-            bits[idx++] = i;
-        }
-        circularFPCache.put(mol, bits);
-        return bits;
+        return MappingKeyUtil.buildPairKey(
+                compound1,
+                compound2,
+                "QUICK",
+                atomtypeMatcher,
+                bondMatcher,
+                ringMatcher,
+                hasPerfectRings);
     }
 
     MCSSolution copyOldSolutionToNew(int queryPosition, int targetPosition,

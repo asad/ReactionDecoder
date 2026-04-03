@@ -19,6 +19,7 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +45,6 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IMapping;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import com.bioinception.smsd.core.MolGraph;
-import org.openscience.cdk.smiles.SmiFlavor;
-import org.openscience.cdk.smiles.SmilesGenerator;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.smsd.AtomAtomMapping;
@@ -108,6 +106,73 @@ public class GraphMatcher extends Debugger {
             = createLoggingTool(GraphMatcher.class);
     private static final ReactionMappingEngine MAPPING_ENGINE
             = SmsdReactionMappingEngine.getInstance();
+
+    static MatcherSettings matcherSettingsFor(IMappingAlgorithm theory,
+            int numberOfCyclesEduct, int numberOfCyclesProduct,
+            boolean hasPerfectRings) {
+        boolean ringFlag = numberOfCyclesEduct > 0 && numberOfCyclesProduct > 0;
+        switch (theory) {
+            case RINGS:
+                return new MatcherSettings(false, false, ringFlag, hasPerfectRings);
+            case MAX:
+                return new MatcherSettings(false, true, hasPerfectRings, false);
+            case MIN:
+            case MIXTURE:
+            default:
+                return new MatcherSettings(false, false, hasPerfectRings, false);
+        }
+    }
+
+    static final class MatcherSettings implements Serializable {
+
+        private static final long serialVersionUID = 0x2f0f0bbce57fL;
+        private final boolean atomType;
+        private final boolean bondMatch;
+        private final boolean ringMatch;
+        private final boolean ringSizeMatch;
+
+        MatcherSettings(boolean atomType, boolean bondMatch,
+                boolean ringMatch, boolean ringSizeMatch) {
+            this.atomType = atomType;
+            this.bondMatch = bondMatch;
+            this.ringMatch = ringMatch;
+            this.ringSizeMatch = ringSizeMatch;
+        }
+    }
+
+    private static final class PairJob {
+
+        private final Combination representative;
+        private final List<Combination> occurrences;
+        private final MatcherSettings settings;
+        private final boolean hasPerfectRings;
+        private final int numberOfCyclesEduct;
+        private final int numberOfCyclesProduct;
+        private final String queryStructureKey;
+        private final String targetStructureKey;
+
+        PairJob(Combination representative,
+                MatcherSettings settings,
+                boolean hasPerfectRings,
+                int numberOfCyclesEduct,
+                int numberOfCyclesProduct,
+                String queryStructureKey,
+                String targetStructureKey) {
+            this.representative = representative;
+            this.occurrences = new ArrayList<>();
+            this.occurrences.add(representative);
+            this.settings = settings;
+            this.hasPerfectRings = hasPerfectRings;
+            this.numberOfCyclesEduct = numberOfCyclesEduct;
+            this.numberOfCyclesProduct = numberOfCyclesProduct;
+            this.queryStructureKey = queryStructureKey;
+            this.targetStructureKey = targetStructureKey;
+        }
+
+        void addOccurrence(Combination occurrence) {
+            occurrences.add(occurrence);
+        }
+    }
 
     private static void harmonizeForSmsd(IAtomContainer container) {
         if (container == null) {
@@ -175,56 +240,6 @@ public class GraphMatcher extends Debugger {
                 return unmodifiableCollection(mcsSolutions);
             }
 
-            Map<Combination, Set<Combination>> jobMap = new TreeMap<>();
-
-            for (Combination c : jobReplicatorList) {
-                int substrateIndex = c.getRowIndex();
-                int productIndex = c.getColIndex();
-                IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
-                IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
-
-                boolean flag = false;
-                for (Combination k : jobMap.keySet()) {
-                    IAtomContainer eductJob = reactionStructureInformation.getEduct(k.getRowIndex());
-                    IAtomContainer productJob = reactionStructureInformation.getProduct(k.getColIndex());
-
-                    if (eductJob == educt
-                            && productJob == product) {
-                        if (eductJob.getAtomCount() == educt.getAtomCount()
-                                && productJob.getAtomCount() == (product.getAtomCount())) {
-                            jobMap.get(k).add(c);
-                            flag = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!flag) {
-                    Set<Combination> set = new TreeSet<>();
-                    jobMap.put(c, set);
-                }
-            }
-
-            /*
-             * Assign the threads
-             *
-             * Use Single Thread to computed MCS as muntiple threads lock the calculations!
-             */
-//            executor = newSingleThreadExecutor();
-            int threadsAvailable = Math.max(1, getRuntime().availableProcessors() - 1);
-            if (threadsAvailable > jobMap.size()) {
-                threadsAvailable = jobMap.size();
-            }
-
-            LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
-
-//            executor = Executors.newSingleThreadExecutor();
-//            executor = Executors.newCachedThreadPool();
-            executor = Executors.newFixedThreadPool(threadsAvailable);
-            CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
-
-            List<MCSThread> listOfJobs = new ArrayList<>();
-
             /*
              * Pre-compute aromaticity and cycle counts ONCE per molecule.
              * Previously this ran for every educt×product pair — O(E*P) redundancy.
@@ -266,48 +281,99 @@ public class GraphMatcher extends Debugger {
                 }
             }
 
-            /*
-             * Pre-compute canonical SMILES for identity detection using SMSD
-             * MolGraph (stereo-aware, independent of CDK SmilesGenerator).
-             */
-            Map<Integer, String> eductSmiles = new TreeMap<>();
+            Map<Integer, String> eductStructureKeys = new TreeMap<>();
             for (int i = 0; i < eductCount; i++) {
                 IAtomContainer e = reactionStructureInformation.getEduct(i);
                 if (e != null && e.getAtomCount() > 0) {
                     harmonizeForSmsd(e);
-                    try { eductSmiles.put(i, new MolGraph(e).toCanonicalSmiles()); }
-                    catch (RuntimeException ex) { eductSmiles.put(i, ""); }
+                    eductStructureKeys.put(i, MappingKeyUtil.computeStructureKey(e));
                 }
             }
-            Map<Integer, String> productSmiles = new TreeMap<>();
+            Map<Integer, String> productStructureKeys = new TreeMap<>();
             for (int j = 0; j < productCount; j++) {
                 IAtomContainer p = reactionStructureInformation.getProduct(j);
                 if (p != null && p.getAtomCount() > 0) {
                     harmonizeForSmsd(p);
-                    try { productSmiles.put(j, new MolGraph(p).toCanonicalSmiles()); }
-                    catch (RuntimeException ex) { productSmiles.put(j, ""); }
+                    productStructureKeys.put(j, MappingKeyUtil.computeStructureKey(p));
                 }
             }
+
+            Map<String, PairJob> pairJobs = new LinkedHashMap<>();
+            for (Combination c : jobReplicatorList) {
+                int substrateIndex = c.getRowIndex();
+                int productIndex = c.getColIndex();
+                int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
+                int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
+                boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
+                MatcherSettings settings = matcherSettingsFor(
+                        mh.getTheory(),
+                        numberOfCyclesEduct,
+                        numberOfCyclesProduct,
+                        ringSizeEqual);
+                String queryStructureKey = eductStructureKeys.getOrDefault(substrateIndex, "");
+                String targetStructureKey = productStructureKeys.getOrDefault(productIndex, "");
+                String pairKey = MappingKeyUtil.buildPairKey(
+                        queryStructureKey,
+                        targetStructureKey,
+                        mh.getTheory().name(),
+                        settings.atomType,
+                        settings.bondMatch,
+                        settings.ringMatch,
+                        settings.ringSizeMatch);
+                PairJob pairJob = pairJobs.get(pairKey);
+                if (pairJob == null) {
+                    pairJobs.put(pairKey, new PairJob(
+                            c,
+                            settings,
+                            ringSizeEqual,
+                            numberOfCyclesEduct,
+                            numberOfCyclesProduct,
+                            queryStructureKey,
+                            targetStructureKey));
+                } else {
+                    pairJob.addOccurrence(c);
+                }
+            }
+
+            /*
+             * Assign the threads
+             *
+             * Use Single Thread to computed MCS as muntiple threads lock the calculations!
+             */
+            int threadsAvailable = Math.max(1, getRuntime().availableProcessors() - 1);
+            threadsAvailable = Math.max(1, Math.min(threadsAvailable, pairJobs.size()));
+
+            LOGGER.debug("Candidate pairs " + jobReplicatorList.size()
+                    + ", unique structural pairs " + pairJobs.size());
+            LOGGER.debug(threadsAvailable + " threads requested for MCS in " + mh.getTheory());
+
+            executor = Executors.newFixedThreadPool(threadsAvailable);
+            CompletionService<MCSSolution> callablesQueue = new ExecutorCompletionService<>(executor);
+
+            List<MCSThread> listOfJobs = new ArrayList<>();
+            Map<Combination, PairJob> pairJobsByRepresentative = new HashMap<>();
 
             int skippedIdentity = 0, skippedRatio = 0, skippedTanimoto = 0;
             List<MCSSolution> directMCSSolutions = new ArrayList<>();
 
-            for (Combination c : jobMap.keySet()) {
-                int substrateIndex = c.getRowIndex();
-                int productIndex = c.getColIndex();
+            for (PairJob pairJob : pairJobs.values()) {
+                Combination representative = pairJob.representative;
+                int substrateIndex = representative.getRowIndex();
+                int productIndex = representative.getColIndex();
                 IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                 IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
+                pairJobsByRepresentative.put(representative, pairJob);
 
                 /*
-                 * PRE-FILTER 1: Identity — if canonical SMILES match, build the
+                 * PRE-FILTER 1: Identity — if structural keys match, build the
                  * atom mapping directly (atom i → atom i). Do NOT run SMSD: identical
                  * molecules can have multiple valid MCS solutions due to symmetry,
                  * and SMSD may return a non-identity mapping that causes spurious
                  * bond changes in the calculator.
                  */
-                String eSmi = eductSmiles.getOrDefault(substrateIndex, "");
-                String pSmi = productSmiles.getOrDefault(productIndex, "");
-                if (!eSmi.isEmpty() && eSmi.equals(pSmi) && educt.getAtomCount() == product.getAtomCount()) {
+                if (!pairJob.queryStructureKey.isEmpty()
+                        && pairJob.queryStructureKey.equals(pairJob.targetStructureKey)
+                        && educt.getAtomCount() == product.getAtomCount()) {
                     try {
                         IAtomContainer eductClone = cloneWithIDs(educt);
                         IAtomContainer productClone = cloneWithIDs(product);
@@ -319,7 +385,7 @@ public class GraphMatcher extends Debugger {
                                 eductClone, productClone, identityAAM);
                         directMCSSolutions.add(identityMCS);
                         skippedIdentity++;
-                        continue; // skip MCSThread for this pair
+                        continue;
                     } catch (Exception ex) {
                         LOGGER.debug("Identity shortcut failed, falling back to MCS: " + ex.getMessage());
                     }
@@ -350,10 +416,6 @@ public class GraphMatcher extends Debugger {
                     continue;
                 }
 
-                int numberOfCyclesEduct = eductCycleCache.getOrDefault(substrateIndex, 0);
-                int numberOfCyclesProduct = productCycleCache.getOrDefault(productIndex, 0);
-                boolean ringSizeEqual = (numberOfCyclesEduct == numberOfCyclesProduct);
-
                 // Clone molecules for thread safety — CDK IAtomContainer is mutable and not thread-safe
                 IAtomContainer eductClone;
                 IAtomContainer productClone;
@@ -366,9 +428,9 @@ public class GraphMatcher extends Debugger {
                 }
                 MCSThread mcsThread = new MCSThread(mh.getTheory(),
                         substrateIndex, productIndex, eductClone, productClone);
-                mcsThread.setHasPerfectRings(ringSizeEqual);
-                mcsThread.setEductRingCount(numberOfCyclesEduct);
-                mcsThread.setProductRingCount(numberOfCyclesProduct);
+                mcsThread.setHasPerfectRings(pairJob.hasPerfectRings);
+                mcsThread.setEductRingCount(pairJob.numberOfCyclesEduct);
+                mcsThread.setProductRingCount(pairJob.numberOfCyclesProduct);
                 listOfJobs.add(mcsThread);
             }
 
@@ -407,25 +469,26 @@ public class GraphMatcher extends Debugger {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
             LOGGER.debug("==Gathering MCS solution from the Thread==");
-            threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).map((MCSSolution mcs) -> {
-                int queryPosition = mcs.getQueryPosition();
-                int targetPosition = mcs.getTargetPosition();
-                Combination referenceKey = null;
-                for (Combination c : jobMap.keySet()) {
-                    if (c.getRowIndex() == queryPosition && c.getColIndex() == targetPosition) {
-                        referenceKey = c;
-                        MCSSolution replicatedMCS = replicateMappingOnContainers(mh, c, mcs);
-                        LOGGER.debug("======MCSSolution======");
-                        LOGGER.debug("MCS " + " I " + queryPosition
-                                + " J " + targetPosition
-                                + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
-                                + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
-                        mcsSolutions.add(replicatedMCS);
-                    }
+            threadedUniqueMCSSolutions.stream().filter((mcs) -> !(mcs == null)).forEach((MCSSolution mcs) -> {
+                Combination representative = new Combination(
+                        mcs.getQueryPosition(),
+                        mcs.getTargetPosition());
+                PairJob pairJob = pairJobsByRepresentative.get(representative);
+                if (pairJob == null) {
+                    return;
                 }
-                return referenceKey;
-            }).filter((removeKey) -> (removeKey != null)).forEach((removeKey) -> {
-                jobMap.remove(removeKey);
+                for (Combination occurrence : pairJob.occurrences) {
+                    MCSSolution replicatedMCS = replicateMappingOnContainers(mh, occurrence, mcs);
+                    if (replicatedMCS == null) {
+                        continue;
+                    }
+                    LOGGER.debug("======MCSSolution======");
+                    LOGGER.debug("MCS " + " I " + occurrence.getRowIndex()
+                            + " J " + occurrence.getColIndex()
+                            + " Number of Atom Mapped " + mcs.getAtomAtomMapping().getCount()
+                            + " Number of Atom Mapped replicatedMCS " + replicatedMCS.getAtomAtomMapping().getCount());
+                    mcsSolutions.add(replicatedMCS);
+                }
             });
             jobReplicatorList.clear();
 
@@ -467,27 +530,12 @@ public class GraphMatcher extends Debugger {
             AtomAtomMapping atomAtomMapping = mcs.getAtomAtomMapping();
             AtomAtomMapping atomAtomMappingNew = new AtomAtomMapping(q, t);
 
-            // Build ID→Atom maps for O(1) lookup instead of O(n) linear scan
-            Map<String, IAtom> qIdMap = new java.util.HashMap<>();
-            for (IAtom a : q.atoms()) {
-                if (a.getID() != null) {
-                    qIdMap.put(a.getID(), a);
-                }
-            }
-            Map<String, IAtom> tIdMap = new java.util.HashMap<>();
-            for (IAtom a : t.atoms()) {
-                if (a.getID() != null) {
-                    tIdMap.put(a.getID(), a);
-                }
-            }
-
-            atomAtomMapping.getMappingsByAtoms().forEach((a, b) -> {
-                IAtom atomByID1 = a.getID() != null ? qIdMap.get(a.getID()) : null;
-                IAtom atomByID2 = b.getID() != null ? tIdMap.get(b.getID()) : null;
-                if (atomByID1 != null && atomByID2 != null) {
-                    atomAtomMappingNew.put(atomByID1, atomByID2);
+            atomAtomMapping.getMappingsByIndex().forEach((queryIndex, targetIndex) -> {
+                if (queryIndex >= 0 && queryIndex < q.getAtomCount()
+                        && targetIndex >= 0 && targetIndex < t.getAtomCount()) {
+                    atomAtomMappingNew.put(q.getAtom(queryIndex), t.getAtom(targetIndex));
                 } else {
-                    LOGGER.error(WARNING, "UnExpected NULL ATOM FOUND");
+                    LOGGER.error(WARNING, "Unexpected atom index while replaying cached mapping");
                 }
             });
 
@@ -915,8 +963,6 @@ public class GraphMatcher extends Debugger {
         private static final ILoggingTool LOGGER
                 = LoggingToolFactory.createLoggingTool(MCSThread.class);
 
-        private final SmilesGenerator smiles;
-
         static final String NEW_LINE = getProperty("line.separator");
 
         /**
@@ -968,15 +1014,6 @@ public class GraphMatcher extends Debugger {
         MCSThread(IMappingAlgorithm theory, int queryPosition, int targetPosition,
                 IAtomContainer educt, IAtomContainer product)
                 throws CloneNotSupportedException, CDKException {
-            /*
-             * create SMILES
-             */
-            smiles = new SmilesGenerator(
-                    //SmiFlavor.Unique|
-                    SmiFlavor.UseAromaticSymbols
-                    | SmiFlavor.Stereo
-                    | SmiFlavor.AtomAtomMap);
-
             this.compound1 = getNewContainerWithIDs(educt);
             this.compound2 = getNewContainerWithIDs(product);
             this.queryPosition = queryPosition;
@@ -1257,7 +1294,11 @@ public class GraphMatcher extends Debugger {
             }
                 BaseMapping isomorphism;
             int expectedMaxGraphmatch = expectedMaxGraphmatch(ac1, ac2);
-            boolean ringFlag = this.numberOfCyclesEduct > 0 && this.numberOfCyclesProduct > 0;
+            MatcherSettings settings = matcherSettingsFor(
+                    theory,
+                    numberOfCyclesEduct,
+                    numberOfCyclesProduct,
+                    isHasPerfectRings());
 
             LOGGER.debug("Expected matches " + expectedMaxGraphmatch);
 
@@ -1265,61 +1306,10 @@ public class GraphMatcher extends Debugger {
             MCSSolution mcs;
             AtomMatcher am;
             BondMatcher bm;
-            boolean atomType;
-            boolean bondMatch;
-            boolean ringMatch;
-            boolean ringSizeMatch;
+            am = AtomBondMatcher.atomMatcher(settings.atomType, settings.ringSizeMatch);
+            bm = AtomBondMatcher.bondMatcher(settings.bondMatch, settings.ringMatch);
 
-            switch (theory) {
-                case RINGS:
-
-                    atomType = false;
-                    bondMatch = false;
-                    ringMatch = ringFlag;
-                    ringSizeMatch = isHasPerfectRings();
-
-                    break;
-
-                case MIN:
-
-                    atomType = false;
-                    bondMatch = false;
-                    ringMatch = isHasPerfectRings();
-                    ringSizeMatch = false;
-
-                    break;
-
-                case MAX:
-
-                    atomType = false;
-                    bondMatch = true;
-                    ringMatch = isHasPerfectRings();
-                    ringSizeMatch = false;
-
-                    break;
-                default:
-
-                    atomType = false;
-                    bondMatch = false;
-                    ringMatch = isHasPerfectRings();
-                    ringSizeMatch = false;
-
-                    break;
-            }
-
-            am = AtomBondMatcher.atomMatcher(atomType, ringSizeMatch);
-            bm = AtomBondMatcher.bondMatcher(bondMatch, ringMatch);
-
-            key = generateUniqueKey(getCompound1().getID(), getCompound2().getID(),
-                    compound1.getAtomCount(), compound2.getAtomCount(),
-                    compound1.getBondCount(), compound2.getBondCount(),
-                    atomType,
-                    bondMatch,
-                    ringMatch,
-                    ringSizeMatch,
-                    numberOfCyclesEduct,
-                    numberOfCyclesProduct
-            );
+            key = generateUniqueKey(settings);
             if (ThreadSafeCache.getInstance().containsKey(key)) {
                 LOGGER.debug("===={Aladdin} Mapping {Gini}====");
                 MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
@@ -1333,7 +1323,7 @@ public class GraphMatcher extends Debugger {
                 mcsOptions.timeoutMs = MCS_TIMEOUT_MS;
                 mcsOptions.connectedOnly = isMoleculeConnected(ac1, ac2);
                 mcsOptions.disconnectedMCS = !mcsOptions.connectedOnly;
-                mcsOptions.maximizeBonds = bondMatch;
+                mcsOptions.maximizeBonds = settings.bondMatch;
                 isomorphism = MAPPING_ENGINE.findMcs(ac1, ac2, Algorithm.VFLibMCS, am, bm, mcsOptions);
                 mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
             }
@@ -1425,59 +1415,15 @@ public class GraphMatcher extends Debugger {
             this.numberOfCyclesProduct = numberOfCyclesProduct;
         }
 
-        private static final String CACHED_SMILES = "CACHED_CANONICAL_SMILES";
-        private static final SmilesGenerator CANONICAL_SMIGEN = new SmilesGenerator(
-                SmiFlavor.Canonical | SmiFlavor.Stereo);
-
-        /**
-         * Generate a unique cache key based on canonical SMILES (structure-based,
-         * not ID-based). This enables cross-reaction cache hits: if the same
-         * molecule pair appears in different reactions, the MCS result is reused.
-         */
-        String generateUniqueKey(
-                String id1, String id2,
-                int atomCount1, int atomCount2,
-                int bondCount1, int bondCount2,
-                boolean atomtypeMatcher,
-                boolean bondMatcher,
-                boolean ringMatcher,
-                boolean hasPerfectRings,
-                int numberOfCyclesEduct, int numberOfCyclesProduct) {
-
-            StringBuilder key = new StringBuilder();
-
-            // Use canonical SMILES as the molecular identity (not mol IDs)
-            String smi1 = getCanonicalSmiles(compound1);
-            String smi2 = getCanonicalSmiles(compound2);
-            key.append(smi1).append(">>").append(smi2);
-
-            // Append matcher flags that affect the MCS result
-            key.append('|')
-                    .append(atomtypeMatcher ? '1' : '0')
-                    .append(bondMatcher ? '1' : '0')
-                    .append(ringMatcher ? '1' : '0')
-                    .append(hasPerfectRings ? '1' : '0');
-
-            return key.toString();
-        }
-
-        /**
-         * Get or compute canonical SMILES for a molecule. Cached on the molecule
-         * to avoid recomputation across calls within the same reaction.
-         */
-        private String getCanonicalSmiles(IAtomContainer mol) {
-            String cached = mol.getProperty(CACHED_SMILES);
-            if (cached != null) {
-                return cached;
-            }
-            try {
-                cached = CANONICAL_SMIGEN.create(mol);
-            } catch (CDKException | RuntimeException e) {
-                // Fallback: use atom/bond counts + fingerprint hash
-                cached = mol.getAtomCount() + ":" + mol.getBondCount() + ":" + mol.hashCode();
-            }
-            mol.setProperty(CACHED_SMILES, cached);
-            return cached;
+        String generateUniqueKey(MatcherSettings settings) {
+            return MappingKeyUtil.buildPairKey(
+                    compound1,
+                    compound2,
+                    theory.name(),
+                    settings.atomType,
+                    settings.bondMatch,
+                    settings.ringMatch,
+                    settings.ringSizeMatch);
         }
 
         /*
