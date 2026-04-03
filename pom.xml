@@ -220,7 +220,11 @@
                         <configuration>
                             <source>${jdk.version}</source>
                             <target>${jdk.version}</target>
-                            <showDeprecation>true</showDeprecation>
+                            <showDeprecation>false</showDeprecation>
+                            <compilerArgs>
+                                <arg>-Xlint:-deprecation</arg>
+                                <arg>-Xlint:-unchecked</arg>
+                            </compilerArgs>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -268,7 +272,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
                 <configuration>
-                    <showDeprecation>true</showDeprecation>
+                    <showDeprecation>false</showDeprecation>
+                    <compilerArgs>
+                        <arg>-Xlint:-deprecation</arg>
+                        <arg>-Xlint:-unchecked</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
