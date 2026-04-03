@@ -1004,6 +1004,7 @@ public class GraphMatcher extends Debugger {
         private final int invocationIndex;
         private final Map<String, Integer> compound1SymbolCounts;
         private final Map<String, Integer> compound2SymbolCounts;
+        private final boolean moleculesConnected;
 
         /**
          *
@@ -1042,6 +1043,7 @@ public class GraphMatcher extends Debugger {
             this.numberOfCyclesProduct = 0;
             this.compound1SymbolCounts = countAtomsBySymbol(this.compound1);
             this.compound2SymbolCounts = countAtomsBySymbol(this.compound2);
+            this.moleculesConnected = isConnected(this.compound1) && isConnected(this.compound2);
         }
 
         void printMatch(BaseMapping isomorphism) {
@@ -1078,7 +1080,7 @@ public class GraphMatcher extends Debugger {
                 /*
                  * IMP: Do not perform substructure matching for disconnected molecules
                  */
-                boolean moleculeConnected = isMoleculeConnected(getCompound1(), getCompound2());
+                boolean moleculeConnected = moleculesConnected;
                 /*
                      Check if MCS matching required or not very IMP step
                  */
@@ -1308,24 +1310,25 @@ public class GraphMatcher extends Debugger {
             bm = AtomBondMatcher.bondMatcher(settings.bondMatch, settings.ringMatch);
 
             key = generateUniqueKey(settings);
-            if (ThreadSafeCache.getInstance().containsKey(key)) {
+            ThreadSafeCache<String, MCSSolution> mappingCache = ThreadSafeCache.getInstance();
+            MCSSolution cachedSolution = mappingCache.get(key);
+            if (cachedSolution != null) {
                 LOGGER.debug("===={Aladdin} Mapping {Gini}====");
                 MappingDiagnostics.recordMcsCacheHit(reactionId, algorithmName, invocationIndex);
-                MCSSolution solution = (MCSSolution) ThreadSafeCache.getInstance().get(key);
                 mcs = copyOldSolutionToNew(
                         getQueryPosition(), getTargetPosition(),
                         getCompound1(), getCompound2(),
-                        solution);
+                        cachedSolution);
 
             } else {
                 SearchEngine.McsOptions mcsOptions = new SearchEngine.McsOptions();
                 mcsOptions.timeoutMs = MCS_TIMEOUT_MS;
-                mcsOptions.connectedOnly = isMoleculeConnected(ac1, ac2);
+                mcsOptions.connectedOnly = moleculesConnected;
                 mcsOptions.disconnectedMCS = !mcsOptions.connectedOnly;
                 mcsOptions.maximizeBonds = settings.bondMatch;
                 MappingDiagnostics.recordActualMcsSearch(reactionId, algorithmName, invocationIndex);
                 isomorphism = MAPPING_ENGINE.findMcs(ac1, ac2, Algorithm.VFLibMCS, am, bm, mcsOptions);
-                mcs = addMCSSolution(key, ThreadSafeCache.getInstance(), isomorphism);
+                mcs = addMCSSolution(key, mappingCache, isomorphism);
             }
 
             return mcs;
@@ -1452,23 +1455,10 @@ public class GraphMatcher extends Debugger {
         /*
          * Check if fragmented container has single atom
          */
-        private boolean isMoleculeConnected(IAtomContainer compound1, IAtomContainer compound2) {
-            LOGGER.debug("isMoleculeConnected");
-            boolean connected1 = true;
-
-            IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound1);
-            if (partitionIntoMolecules.getAtomContainerCount() > 1) {
-                connected1 = false;
-            }
-
-            boolean connected2 = true;
-
-            partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound2);
-            if (partitionIntoMolecules.getAtomContainerCount() > 1) {
-                connected2 = false;
-            }
-
-            return connected1 && connected2;
+        private boolean isConnected(IAtomContainer compound) {
+            LOGGER.debug("isConnected");
+            IAtomContainerSet partitionIntoMolecules = ConnectivityChecker.partitionIntoMolecules(compound);
+            return partitionIntoMolecules.getAtomContainerCount() <= 1;
         }
 
         void setEductRingCount(int numberOfCyclesEduct) {
@@ -1527,14 +1517,18 @@ public class GraphMatcher extends Debugger {
             long time = stopTime - startTime;
             printMatch(isomorphism);
             LOGGER.debug("\" Time:\" " + time);
-            if (!mappingcache.containsKey(key)) {
+            MCSSolution cached = mappingcache.putIfAbsent(key, mcs);
+            if (cached == mcs) {
                 LOGGER.debug("Key " + key);
                 LOGGER.debug("mcs size " + mcs.getAtomAtomMapping().getCount());
                 LOGGER.debug("mcs map " + mcs.getAtomAtomMapping().getMappingsByIndex());
                 LOGGER.debug("\n\n\n ");
-                mappingcache.put(key, mcs);
+                return mcs;
             }
-            return mcs;
+            return copyOldSolutionToNew(
+                    getQueryPosition(), getTargetPosition(),
+                    getCompound1(), getCompound2(),
+                    cached);
         }
     }
 

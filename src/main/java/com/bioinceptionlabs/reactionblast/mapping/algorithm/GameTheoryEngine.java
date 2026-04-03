@@ -415,12 +415,12 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                     educt.getBondCount(), product.getBondCount(),
                     false, false, false, false,
                     numberOfCyclesEduct, numberOfCyclesProduct);
-            if (mappingcache.containsKey(key)) {
+            MCSSolution cached = mappingcache.get(key);
+            if (cached != null) {
                 MappingDiagnostics.recordQuickMappingCacheHit(reactionId, algorithmName);
-                MCSSolution solution = mappingcache.get(key);
                 MCSSolution mcs = copyOldSolutionToNew(
                         queryPosition, targetPosition,
-                        educt, product, solution);
+                        educt, product, cached);
                 return mcs;
             } else {
                 AtomMatcher atomMatcher = AtomBondMatcher.atomMatcher(false, false);
@@ -428,7 +428,10 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                 MappingDiagnostics.recordQuickMappingSearch(reactionId, algorithmName);
                 BaseMapping isomorphism = MAPPING_ENGINE.findMcs(
                         educt, product, Algorithm.DEFAULT, atomMatcher, bondMatcher);
-                MCSSolution mcs = addMCSSolution(queryPosition, targetPosition, key, mappingcache, isomorphism);
+                MCSSolution mcs = addMCSSolution(
+                        queryPosition, targetPosition,
+                        educt, product,
+                        key, mappingcache, isomorphism);
                 return mcs;
             }
         } catch (CDKException ex) {
@@ -562,6 +565,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     MCSSolution addMCSSolution(int queryPosition, int targetPosition,
+            IAtomContainer educt, IAtomContainer product,
             String key, ThreadSafeCache<String, MCSSolution> mappingcache, BaseMapping isomorphism) {
         MAPPING_ENGINE.applyDefaultFilters(isomorphism);
         MCSSolution mcs = new MCSSolution(queryPosition, targetPosition,
@@ -569,10 +573,11 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         mcs.setEnergy(isomorphism.getEnergyScore(0));
         mcs.setFragmentSize(isomorphism.getFragmentSize(0));
         mcs.setStereoScore(isomorphism.getStereoScore(0));
-        if (!mappingcache.containsKey(key)) {
-            mappingcache.put(key, mcs);
+        MCSSolution cached = mappingcache.putIfAbsent(key, mcs);
+        if (cached == mcs) {
+            return mcs;
         }
-        return mcs;
+        return copyOldSolutionToNew(queryPosition, targetPosition, educt, product, cached);
     }
 
     // ========== Inner class: GameTheoryFactory ==========

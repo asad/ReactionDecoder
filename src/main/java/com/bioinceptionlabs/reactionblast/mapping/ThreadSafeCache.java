@@ -66,6 +66,29 @@ public class ThreadSafeCache<K, V> implements Cache<K, V> {
     }
 
     /**
+     * Insert the value only if the key is absent.
+     *
+     * @return the existing value if present, otherwise the inserted value
+     */
+    public V putIfAbsent(K key, V value) {
+        if (map.size() >= MAX_CAPACITY) {
+            evict();
+        }
+        if (map instanceof ConcurrentHashMap<?, ?> concurrentMap) {
+            @SuppressWarnings("unchecked")
+            ConcurrentHashMap<K, V> typedMap = (ConcurrentHashMap<K, V>) concurrentMap;
+            V existing = typedMap.putIfAbsent(key, value);
+            return existing != null ? existing : value;
+        }
+        V existing = map.get(key);
+        if (existing == null) {
+            map.put(key, value);
+            return value;
+        }
+        return existing;
+    }
+
+    /**
      * Clear all cached entries. Use sparingly — cross-reaction caching
      * benefits from keeping the cache warm between reactions.
      */
