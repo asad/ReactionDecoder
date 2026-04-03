@@ -35,6 +35,7 @@ import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -181,6 +182,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             } catch (InterruptedException e) {
                 LOGGER.error("Error in matching molecules, check Graph Matcher module! ", e.getMessage());
             }
+            Map<ReactionContainer.Key, MCSSolution> indexedSolutions = indexSolutions(mcsSolutions);
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
                 for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
                     try {
@@ -202,7 +204,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                                 || mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1) {
                             if (reactionStructureInformation.isEductModified(substrateIndex)
                                     || reactionStructureInformation.isProductModified(productIndex)) {
-                                refillMatrixWithNewData(mh, substrateIndex, productIndex, mcsSolutions);
+                                refillMatrixWithNewData(mh, substrateIndex, productIndex, indexedSolutions);
                             } else {
                                 refillMatrixWithOldData(mh, substrateIndex, productIndex);
                             }
@@ -235,6 +237,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         try {
             LOGGER.debug("**********Updated Matrix And Calculate Similarity**************");
             ReactionContainer reactionStructureInformation = mh.getReactionContainer();
+            Map<ReactionContainer.Key, MCSSolution> indexedSolutions = indexSolutions(mcsSolutions);
             for (int substrateIndex = 0; substrateIndex < reactionStructureInformation.getEductCount(); substrateIndex++) {
                 for (int productIndex = 0; productIndex < reactionStructureInformation.getProductCount(); productIndex++) {
                     IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
@@ -245,7 +248,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
                             || mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1) {
                         if (reactionStructureInformation.isEductModified(substrateIndex)
                                 || reactionStructureInformation.isProductModified(productIndex)) {
-                            refillMatrixWithNewData(mh, substrateIndex, productIndex, mcsSolutions);
+                            refillMatrixWithNewData(mh, substrateIndex, productIndex, indexedSolutions);
                         } else {
                             refillMatrixWithOldData(mh, substrateIndex, productIndex);
                         }
@@ -268,7 +271,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
 
     private void refillMatrixWithNewData(
             Holder holder, int substrateIndex, int productIndex,
-            Collection<MCSSolution> mcsSolutions) {
+            Map<ReactionContainer.Key, MCSSolution> solutionIndex) {
         LOGGER.debug("**********Generate NEW MCS And Calculate Similarity**************");
         try {
             ReactionContainer reactionContainer = holder.getReactionContainer();
@@ -286,7 +289,7 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             MCSSolution atomatomMapping = getMappings(
                     holder.getReactionID(),
                     holder.getTheory() == null ? "UNKNOWN" : holder.getTheory().name(),
-                    substrateIndex, productIndex, educt, product, mcsSolutions);
+                    substrateIndex, productIndex, educt, product, solutionIndex);
             if (atomatomMapping == null) {
                 clearScores(holder, substrateIndex, productIndex);
                 return;
@@ -339,33 +342,47 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
             String reactionId, String algorithmName,
             int queryPosition, int targetPosition,
             IAtomContainer educt, IAtomContainer product,
-            Collection<MCSSolution> mcsSolutions) throws CDKException {
-        if (mcsSolutions.isEmpty()) {
+            Map<ReactionContainer.Key, MCSSolution> solutionIndex) throws CDKException {
+        if (solutionIndex == null || solutionIndex.isEmpty()) {
             return quickMapping(reactionId, algorithmName, educt, product, queryPosition, targetPosition);
         }
-        for (MCSSolution solution : mcsSolutions) {
-            if (solution.getQueryPosition() == queryPosition
-                    && solution.getTargetPosition() == targetPosition) {
-                if (solution.getAtomAtomMapping().isEmpty()) {
-                    Set<String> atomMaps = new HashSet<>();
-                    for (IAtom a : educt.atoms()) {
-                        atomMaps.add(a.getSymbol());
-                    }
-                    boolean mappingPossible = false;
-                    for (IAtom a : product.atoms()) {
-                        if (atomMaps.contains(a.getSymbol())) {
-                            mappingPossible = true;
-                        }
-                    }
-                    atomMaps.clear();
-                    if (mappingPossible) {
-                        return quickMapping(reactionId, algorithmName, educt, product, queryPosition, targetPosition);
-                    }
+        MCSSolution solution = solutionIndex.get(new ReactionContainer.Key(queryPosition, targetPosition));
+        if (solution == null) {
+            return null;
+        }
+        if (solution.getAtomAtomMapping().isEmpty()) {
+            Set<String> atomMaps = new HashSet<>();
+            for (IAtom a : educt.atoms()) {
+                atomMaps.add(a.getSymbol());
+            }
+            boolean mappingPossible = false;
+            for (IAtom a : product.atoms()) {
+                if (atomMaps.contains(a.getSymbol())) {
+                    mappingPossible = true;
                 }
-                return solution;
+            }
+            atomMaps.clear();
+            if (mappingPossible) {
+                return quickMapping(reactionId, algorithmName, educt, product, queryPosition, targetPosition);
             }
         }
-        return null;
+        return solution;
+    }
+
+    private Map<ReactionContainer.Key, MCSSolution> indexSolutions(Collection<MCSSolution> mcsSolutions) {
+        Map<ReactionContainer.Key, MCSSolution> indexedSolutions = new HashMap<>();
+        if (mcsSolutions == null) {
+            return indexedSolutions;
+        }
+        for (MCSSolution solution : mcsSolutions) {
+            if (solution == null) {
+                continue;
+            }
+            indexedSolutions.put(
+                    new ReactionContainer.Key(solution.getQueryPosition(), solution.getTargetPosition()),
+                    solution);
+        }
+        return indexedSolutions;
     }
 
     private MCSSolution quickMapping(String reactionId, String algorithmName,

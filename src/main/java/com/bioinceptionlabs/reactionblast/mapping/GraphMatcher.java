@@ -221,18 +221,19 @@ public class GraphMatcher extends Debugger {
                 for (int productIndex = 0; productIndex < productCount; productIndex++) {
                     IAtomContainer educt = reactionStructureInformation.getEduct(substrateIndex);
                     IAtomContainer product = reactionStructureInformation.getProduct(productIndex);
-                    LOGGER.debug("reactionStructureInformation.getEduct(substrateIndex).getAtomCount() " + reactionStructureInformation.getEduct(substrateIndex).getAtomCount());
-                    LOGGER.debug("reactionStructureInformation.getProduct(productIndex).getAtomCount() " + reactionStructureInformation.getProduct(productIndex).getAtomCount());
-                    if ((educt != null && product != null)
-                            && (reactionStructureInformation.getEduct(substrateIndex).getAtomCount() > 0
-                            && reactionStructureInformation.getProduct(productIndex).getAtomCount() > 0)
-                            || mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1) {
-//                        if (reactionStructureInformation.isEductModified(substrateIndex)
-//                                || reactionStructureInformation.isProductModified(productIndex)) {
-
+                    boolean hasAtoms = educt != null && product != null
+                            && educt.getAtomCount() > 0
+                            && product.getAtomCount() > 0;
+                    boolean forceInitial = mh.getGraphSimilarityMatrix().getValue(substrateIndex, productIndex) == -1;
+                    boolean needsRefresh = forceInitial
+                            || reactionStructureInformation.isEductModified(substrateIndex)
+                            || reactionStructureInformation.isProductModified(productIndex);
+                    LOGGER.debug("educt atoms " + (educt == null ? 0 : educt.getAtomCount())
+                            + ", product atoms " + (product == null ? 0 : product.getAtomCount())
+                            + ", needsRefresh " + needsRefresh);
+                    if ((hasAtoms || forceInitial) && needsRefresh) {
                         Combination c = new Combination(substrateIndex, productIndex);
                         jobReplicatorList.add(c);
-//                        }
                     }
                 }
             }
