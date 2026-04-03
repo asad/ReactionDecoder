@@ -33,7 +33,10 @@ count orphaned-reactant internal bonds as BREAK events. RDT correctly omits thes
 (verified: 0 genuine mapping errors). On balanced reactions: **100% accuracy**.
 The 23.1% atom-index rate reflects symmetry-equivalent numbering, not chemistry errors.
 
-Detailed analysis: [`benchmark/report/golden-benchmark-report.md`](benchmark/report/golden-benchmark-report.md).
+Detailed analysis: [`benchmark/report/golden-benchmark-report.md`](benchmark/report/golden-benchmark-report.md)
+| [PDF report](benchmark/report/golden-benchmark-report.pdf)
+| [Charts](benchmark/report/charts/)
+| [Reaction images](benchmark/report/images/)
 
 *Reference: Lin A et al. Molecular Informatics 41(4):e2100138, 2022. DOI: [10.1002/minf.202100138](https://doi.org/10.1002/minf.202100138)*
 
