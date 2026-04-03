@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadFactory;
 
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtom;
@@ -59,6 +59,10 @@ public class CallableAtomMappingTool implements Serializable {
     private final static ILoggingTool LOGGER
             = createLoggingTool(CallableAtomMappingTool.class);
     private static final long serialVersionUID = 0x29e2adb1716b13eL;
+    private static final int MAPPING_PARALLELISM
+            = Math.max(2, Math.min(3, Runtime.getRuntime().availableProcessors()));
+    private static final ExecutorService MAPPING_EXECUTOR
+            = Executors.newFixedThreadPool(MAPPING_PARALLELISM, new MappingThreadFactory());
 
     private Map<IMappingAlgorithm, Reactor> solution = null;
 
@@ -180,9 +184,8 @@ public class CallableAtomMappingTool implements Serializable {
             remaining = new IMappingAlgorithm[]{MIN, MAX, RINGS};
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(remaining.length);
         try {
-            CompletionService<Reactor> cs = new ExecutorCompletionService<>(executor);
+            CompletionService<Reactor> cs = new ExecutorCompletionService<>(MAPPING_EXECUTOR);
             int jobCounter = 0;
             for (IMappingAlgorithm algo : remaining) {
                 LOGGER.debug("Submitting " + algo.description());
@@ -194,8 +197,6 @@ public class CallableAtomMappingTool implements Serializable {
                 Reactor chosen = cs.take().get();
                 putSolution(chosen.getAlgorithm(), chosen);
             }
-            executor.shutdown();
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             LOGGER.debug("======DONE CallableAtomMappingTool=======");
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.debug("ERROR: in AtomMappingTool: " + e.getMessage());
@@ -206,7 +207,6 @@ public class CallableAtomMappingTool implements Serializable {
                         standardizedReaction.getID(),
                         currentTimeMillis() - mappingStart);
             }
-            executor.shutdown();
             LOGGER.debug("!!!!Atom-Atom Mapping Done!!!!");
             ThreadSafeCache.getInstance().cleanup();
         }
@@ -398,6 +398,16 @@ public class CallableAtomMappingTool implements Serializable {
             } catch (Exception ex) {
                 throw ex;
             }
+        }
+    }
+
+    private static final class MappingThreadFactory implements ThreadFactory {
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            Thread thread = new Thread(runnable, "rdt-mapping");
+            thread.setDaemon(true);
+            return thread;
         }
     }
 
