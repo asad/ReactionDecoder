@@ -115,7 +115,7 @@ class Helper extends ChemicalFormatParser {
     protected static void printHelp(final OutputStream out, final Options options) {
         final String commandLineSyntax = "java -jar ReactionDecoder.jar";
         try (PrintWriter writer = new PrintWriter(out)) {
-            final HelpFormatter formatter = new HelpFormatter();
+            final HelpFormatter formatter = HelpFormatter.builder().get();
             displayBlankLines(2, out);
             formatter.printHelp(writer, 80, commandLineSyntax, "HELP",
                     options, 5, 3, "End of Helper Help", true);
@@ -129,7 +129,7 @@ class Helper extends ChemicalFormatParser {
             final int spacesBeforeOptionDescription, final boolean displayUsage, final OutputStream out) {
         final String commandLineSyntax = "java -jar ReactionDecoder.jar";
         try (PrintWriter writer = new PrintWriter(out)) {
-            final HelpFormatter helpFormatter = new HelpFormatter();
+            final HelpFormatter helpFormatter = HelpFormatter.builder().get();
             optionsMap.keySet().stream().map((headerString) -> {
                 helpFormatter.printHelp(
                         writer,

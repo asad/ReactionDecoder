@@ -564,9 +564,9 @@ public final class MechanismHelpers {
          */
         public static String getBondOrderSign(IBond bond) {
             String bondSymbol = "";
-            if (bond.getFlag(ISAROMATIC)) {
+            if (bond.isAromatic()) {
                 bondSymbol += "@";
-            } else if (bond.getFlag(ISINRING)) {
+            } else if (bond.isInRing()) {
                 bondSymbol += "%";
             } else if (bond.getOrder() == SINGLE) {
                 bondSymbol += "-";
@@ -727,12 +727,13 @@ public final class MechanismHelpers {
          */
         private static void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
             int n = atomContainer.getAtomCount();
+            int[] permutation = normalizePermutation(p, n);
             IAtom[] permutedAtoms = new IAtom[n];
 
             for (int i = 0; i < n; i++) {
                 IAtom atom = atomContainer.getAtom(i);
-                permutedAtoms[p[i]] = atom;
-                atom.setProperty("label", p[i]);
+                permutedAtoms[permutation[i]] = atom;
+                atom.setProperty("label", permutation[i]);
             }
             atomContainer.setAtoms(permutedAtoms);
 
@@ -759,6 +760,29 @@ public final class MechanismHelpers {
                 throw new InternalError();
             });
             atomContainer.setBonds(bonds);
+        }
+
+        private static int[] normalizePermutation(int[] permutation, int size) {
+            if (permutation == null || permutation.length != size) {
+                return identityPermutation(size);
+            }
+
+            boolean[] seen = new boolean[size];
+            for (int value : permutation) {
+                if (value < 0 || value >= size || seen[value]) {
+                    return identityPermutation(size);
+                }
+                seen[value] = true;
+            }
+            return permutation;
+        }
+
+        private static int[] identityPermutation(int size) {
+            int[] identity = new int[size];
+            for (int i = 0; i < size; i++) {
+                identity[i] = i;
+            }
+            return identity;
         }
 
         /**
@@ -1361,6 +1385,7 @@ public final class MechanismHelpers {
          * @param bond
          * @return
          */
+        @SuppressWarnings("deprecation")
         public static int convertBondStereo(IBond bond) {
             int value;
             switch (bond.getStereo()) {

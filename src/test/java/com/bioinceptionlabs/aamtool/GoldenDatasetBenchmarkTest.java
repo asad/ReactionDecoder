@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -26,6 +27,7 @@ import com.bioinceptionlabs.reactionblast.mechanism.MappingSolution;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
 import com.bioinceptionlabs.reactionblast.tools.ChemicalFileIO.MDLRXNV2000Reader;
+import com.bioinceptionlabs.testgroups.Benchmark;
 
 import static org.junit.Assert.assertTrue;
 
@@ -46,6 +48,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Syed Asad Rahman
  */
+@Category(Benchmark.class)
 public class GoldenDatasetBenchmarkTest {
 
     private static final String GOLDEN_RDF = "benchmark/golden_dataset.rdf";

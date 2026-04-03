@@ -78,7 +78,7 @@ public class CDKToolkit implements ChemToolkit {
         this.canonicalSmilesGen = new SmilesGenerator(SmiFlavor.Canonical);
         this.mappedSmilesGen = new SmilesGenerator(
                 SmiFlavor.Stereo | SmiFlavor.AtomAtomMap);
-        this.aromaticity = new Aromaticity(ElectronDonation.daylight(),
+        this.aromaticity = new Aromaticity(ElectronDonation.piBonds(),
                 Cycles.or(Cycles.all(), Cycles.or(Cycles.relevant(), Cycles.essential())));
     }
 

@@ -1630,6 +1630,7 @@ public final class ChemicalFileIO {
          *
          * @param container Molecule that is written to an OutputStream
          */
+        @SuppressWarnings("deprecation")
         public void writeMolecule(IAtomContainer container) throws Exception {
 
             /*
@@ -2931,7 +2932,7 @@ public final class ChemicalFileIO {
 
                     bonds[i] = readBondFast(line, molecule.getBuilder(), atoms, explicitValence, linecount);
                     hasQueryBonds = hasQueryBonds
-                            || (bonds[i].getOrder() == IBond.Order.UNSET && !bonds[i].getFlag(CDKConstants.ISAROMATIC));
+                            || (bonds[i].getOrder() == IBond.Order.UNSET && !bonds[i].isAromatic());
                 }
 
                 if (!hasQueryBonds) {
@@ -3179,6 +3180,7 @@ public final class ChemicalFileIO {
          * @param lineNum the line number - for printing error messages
          * @return a new atom instance
          */
+        @SuppressWarnings("deprecation")
         IAtom readAtomFast(String line, IChemObjectBuilder builder, Map<IAtom, Integer> parities, int lineNum) throws CDKException, IOException {
 
             // The line may be truncated and it's checked in reverse at the specified
@@ -3281,6 +3283,7 @@ public final class ChemicalFileIO {
          * @throws CDKException thrown if the input was malformed or didn't make
          * sense
          */
+        @SuppressWarnings("deprecation")
         IBond readBondFast(String line, IChemObjectBuilder builder, IAtom[] atoms, int[] explicitValence, int lineNum)
                 throws CDKException {
 
@@ -3329,10 +3332,10 @@ public final class ChemicalFileIO {
                     break;
                 case 4: // aromatic
                     bond.setOrder(IBond.Order.UNSET);
-                    bond.setFlag(CDKConstants.ISAROMATIC, true);
+                    bond.setIsAromatic(true);
                     bond.setFlag(CDKConstants.SINGLE_OR_DOUBLE, true);
-                    atoms[u].setFlag(CDKConstants.ISAROMATIC, true);
-                    atoms[v].setFlag(CDKConstants.ISAROMATIC, true);
+                    atoms[u].setIsAromatic(true);
+                    atoms[v].setIsAromatic(true);
                     break;
                 case 5: // single or double
                     bond = new QueryBond(bond.getBegin(), bond.getEnd(), Expr.Type.SINGLE_OR_DOUBLE);
@@ -3804,6 +3807,7 @@ public final class ChemicalFileIO {
          * @return bond stereo
          * @throws CDKException the stereo value was invalid (strict mode).
          */
+        @SuppressWarnings("deprecation")
         private IBond.Stereo toStereo(final int stereo, final int type) throws CDKException {
             switch (stereo) {
                 case 0:
@@ -4179,6 +4183,7 @@ public final class ChemicalFileIO {
          * @throws CDKException a CDK error occurred
          * @throws IOException the isotopes file could not be read
          */
+        @SuppressWarnings("deprecation")
         private IAtom readAtomSlow(String line, IChemObjectBuilder builder, int linecount) throws CDKException, IOException {
             IAtom atom;
             Matcher trailingSpaceMatcher = TRAILING_SPACE.matcher(line);
@@ -4352,6 +4357,7 @@ public final class ChemicalFileIO {
          * @return a new bond
          * @throws CDKException the bond line could not be parsed
          */
+        @SuppressWarnings("deprecation")
         private IBond readBondSlow(String line, IChemObjectBuilder builder, IAtom[] atoms, int[] explicitValence,
                 int linecount) throws CDKException {
             int atom1 = Integer.parseInt(line.substring(0, 3).trim());
@@ -4416,10 +4422,9 @@ public final class ChemicalFileIO {
                 }
                 // mark both atoms and the bond as aromatic and raise the SINGLE_OR_DOUBLE-flag
                 newBond.setFlag(CDKConstants.SINGLE_OR_DOUBLE, true);
-                newBond.setFlag(CDKConstants.ISAROMATIC, true);
                 newBond.setIsAromatic(true);
-                a1.setFlag(CDKConstants.ISAROMATIC, true);
-                a2.setFlag(CDKConstants.ISAROMATIC, true);
+                a1.setIsAromatic(true);
+                a2.setIsAromatic(true);
                 explicitValence[atom1 - 1] = explicitValence[atom2 - 1] = Integer.MIN_VALUE;
             } else {
                 newBond = new QueryBond(builder);

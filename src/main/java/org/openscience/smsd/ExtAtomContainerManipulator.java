@@ -223,13 +223,13 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
             // determine largest ring that each atom is atom part of
             for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
 
-                mol.getAtom(i).setFlag(CDKConstants.ISAROMATIC, false);
+                mol.getAtom(i).setIsAromatic(false);
 
                 jloop:
                 for (int j = 0; j <= ringSet.getAtomContainerCount() - 1; j++) {
                     //LOGGER.debug(i+"\t"+j);
                     IRing ring = (IRing) ringSet.getAtomContainer(j);
-                    if (!ring.getFlag(CDKConstants.ISAROMATIC)) {
+                    if (!isAromaticRing(ring)) {
                         continue jloop;
                     }
 
@@ -237,7 +237,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
 
                     //LOGGER.debug("haveatom="+haveatom);
                     if (haveatom && ring.getAtomCount() == 6) {
-                        mol.getAtom(i).setFlag(CDKConstants.ISAROMATIC, true);
+                        mol.getAtom(i).setIsAromatic(true);
                     }
                 }
             }
@@ -449,7 +449,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @throws CDKException
      */
     public static void aromatizeDayLight(IAtomContainer molecule) throws CDKException {
-        ElectronDonation model = ElectronDonation.daylight();
+        ElectronDonation model = ElectronDonation.piBonds();
         CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.relevant());
         Aromaticity aromaticity = new Aromaticity(model, cycles);
         try {
@@ -467,7 +467,7 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
      * @throws CDKException
      */
     public static void aromatizeCDK(IAtomContainer molecule) throws CDKException {
-        ElectronDonation model = ElectronDonation.cdk();
+        ElectronDonation model = ElectronDonation.cdkAllowingExocyclic();
         CycleFinder cycles = Cycles.cdkAromaticSet();
         Aromaticity aromaticity = new Aromaticity(model, cycles);
         ExtAtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
@@ -478,6 +478,15 @@ public class ExtAtomContainerManipulator extends AtomContainerManipulator implem
                     "Aromaticity detection failed due to presence of unset "
                     + "atom hybridisation", molecule.getID());
         }
+    }
+
+    private static boolean isAromaticRing(IRing ring) {
+        for (IBond bond : ring.bonds()) {
+            if (!bond.isAromatic()) {
+                return false;
+            }
+        }
+        return ring.getBondCount() > 0;
     }
 
     /**

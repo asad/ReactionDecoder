@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -16,10 +17,12 @@ import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
 import static com.bioinceptionlabs.reactionblast.tools.MappingUtility.parseReactionSMILES;
 import com.bioinceptionlabs.reactionblast.tools.StandardizeReaction;
+import com.bioinceptionlabs.testgroups.FullRegression;
 
 /**
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
+@Category(FullRegression.class)
 public class SMARTS2AAMTest extends MappingUtility {
     
     @Test

@@ -176,8 +176,6 @@ public class MoleculeInitializer {
                 if (allRings != null && allRings.contains(atom)) { // it's in a ring
                     atom.setIsInRing(true);
                     atom.setIsAromatic(true);
-                    atom.setFlag(CDKConstants.ISINRING, true);
-                    atom.setFlag(CDKConstants.ISALIPHATIC, false);
                     // lets find which ring sets it is a part of
                     List<Integer> ringsizes = new ArrayList<>();
                     IRingSet currentRings = allRings.getRings(atom);
@@ -196,8 +194,6 @@ public class MoleculeInitializer {
                 } else {
                     atom.setIsInRing(false);
                     atom.setIsAromatic(false);
-                    atom.setFlag(CDKConstants.ISINRING, false);
-                    atom.setFlag(CDKConstants.ISALIPHATIC, true);
                     atom.setProperty(SMALLEST_RING_SIZE, 0);
                 }
 
@@ -226,9 +222,6 @@ public class MoleculeInitializer {
 
             for (IBond bond : atomContainer.bonds()) {
                 if (allRings != null && allRings.getRings(bond).getAtomContainerCount() > 0) {
-                    bond.setFlag(CDKConstants.ISINRING, true);
-                    bond.setFlag(CDKConstants.ISALIPHATIC, false);
-
                     bond.setIsInRing(true);
                     bond.setIsAromatic(true);
                 } else {
@@ -244,7 +237,7 @@ public class MoleculeInitializer {
                 IAtom any;
                 for (IAtom connectedAtom : connectedAtoms) {
                     any = connectedAtom;
-                    if (any.getFlag(CDKConstants.ISINRING)) {
+                    if (any.isInRing()) {
                         counter++;
                     }
                 }
@@ -344,7 +337,7 @@ public class MoleculeInitializer {
                 if (bond instanceof IQueryBond) {
                     continue;
                 }
-                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+                if (bond.isAromatic()) {
                     ac1AromaticBondCount++;
                 } else if (bond.getOrder() == IBond.Order.SINGLE) {
                     ac1SingleBondCount++;
@@ -356,7 +349,7 @@ public class MoleculeInitializer {
             }
             for (int indexI = 0; indexI < ac2.getBondCount(); indexI++) {
                 bond = ac2.getBond(indexI);
-                if (bond.getFlag(CDKConstants.ISAROMATIC)) {
+                if (bond.isAromatic()) {
                     ac2AromaticBondCount++;
                 } else if (bond.getOrder() == IBond.Order.SINGLE) {
                     ac2SingleBondCount++;

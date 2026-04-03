@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openscience.cdk.interfaces.IReaction;
 import com.bioinceptionlabs.reactionblast.mechanism.ReactionMechanismTool;
 import com.bioinceptionlabs.reactionblast.tools.MappingUtility;
+import com.bioinceptionlabs.testgroups.FullRegression;
 
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.*;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +31,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
+@Category(FullRegression.class)
 public class AllRXNTest extends MappingUtility {
 
     /**

@@ -118,6 +118,7 @@ public class Annotator extends Helper {
      * @return
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     protected static ReactionMechanismTool getReactionMechanismTool(IReaction cdkReaction,
             boolean reMap, boolean complexMappingFlag, boolean accept_no_change) throws Exception {
         ReactionMechanismTool rmt;

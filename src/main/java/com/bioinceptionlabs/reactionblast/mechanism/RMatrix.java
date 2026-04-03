@@ -174,8 +174,8 @@ public final class RMatrix extends EBIMatrix implements Serializable {
         IBond rb = getReactantBEMatrix().getAtomContainer(ra1).getBond(ra1, ra2);
         IBond pb = getProductBEMatrix().getAtomContainer(pa1).getBond(pa1, pa2);
         if (rb != null && pb != null) {
-            if ((rb.getFlag(ISINRING) && pb.getFlag(ISINRING))
-                    && (rb.getFlag(ISAROMATIC) && pb.getFlag(ISAROMATIC))) {
+            if ((rb.isInRing() && pb.isInRing())
+                    && (rb.isAromatic() && pb.isAromatic())) {
                 return true;
             }
         }

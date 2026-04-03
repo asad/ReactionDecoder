@@ -59,6 +59,7 @@ import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ExtReactionManipul
 public class MappingUtility extends TestUtility {
 
     static final String NEW_LINE = getProperty("line.separator");
+    private static final String GENERATE_TEST_IMAGES_PROPERTY = "rdt.generate.test.images";
     private final static ILoggingTool LOGGER
             = createLoggingTool(MappingUtility.class);
 
@@ -218,17 +219,22 @@ public class MappingUtility extends TestUtility {
         try {
             rmt = new ReactionMechanismTool(cdkReaction, true, true, false, true, accept_no_change, new StandardizeReaction());
             MappingSolution s = rmt.getSelectedSolution();
+            if (s == null) {
+                return rmt;
+            }
 
             IReaction reactionWithCompressUnChangedHydrogens = s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens();
 
             /*
-             * Code for Image generation
+             * Image generation is disabled for regression runs unless explicitly requested.
              */
-            try {
-                LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
-                TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
-            } catch (Exception e) {
-                LOGGER.error(SEVERE, " Failed to generate image: ", e.getMessage());
+            if (shouldGenerateTestImages()) {
+                try {
+                    LeftToRightReactionCenterImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID() + "RC"), "Output");
+                    TopToBottomReactionLayoutImage(reactionWithCompressUnChangedHydrogens, (s.getReaction().getID() + s.getAlgorithmID()), "Output");
+                } catch (Exception e) {
+                    LOGGER.error(SEVERE, " Failed to generate image: ", e.getMessage());
+                }
             }
         } catch (Exception e) {
             LOGGER.error(SEVERE, " Reaction Mechanism failed ", e.getMessage());
@@ -248,7 +254,12 @@ public class MappingUtility extends TestUtility {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();
-        new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        if (s == null) {
+            return null;
+        }
+        if (shouldGenerateTestImages()) {
+            new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("++++++++++++++++++++++++++++++++++++++++++");
@@ -305,8 +316,17 @@ public class MappingUtility extends TestUtility {
         IReaction cdkReaction = readReaction(reactionID, directory, false);
         ReactionMechanismTool rmt = new ReactionMechanismTool(cdkReaction, true, true, true, false);
         MappingSolution s = rmt.getSelectedSolution();
-        new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        if (s == null) {
+            return null;
+        }
+        if (shouldGenerateTestImages()) {
+            new ImageGenerator().drawLeftToRightReactionLayout("Output", s.getBondChangeCalculator().getReactionWithCompressUnChangedHydrogens(), (reactionID + s.getAlgorithmID()));
+        }
         return s.getBondChangeCalculator();
+    }
+
+    private static boolean shouldGenerateTestImages() {
+        return Boolean.getBoolean(GENERATE_TEST_IMAGES_PROPERTY);
     }
 
     /**

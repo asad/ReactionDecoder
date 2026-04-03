@@ -199,6 +199,7 @@ public class ReactionMechanismTool implements Serializable {
      * @throws AssertionError
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     public ReactionMechanismTool(IReaction reaction,
             boolean forcedMapping,
             boolean generate2D,
@@ -847,6 +848,7 @@ public class ReactionMechanismTool implements Serializable {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private MappingSolution computeMappingSolution(EvaluationCandidate candidate,
             boolean generate2D, boolean generate3D) throws Exception {
         Reactor reactor = candidate.reactor;
@@ -1309,6 +1311,7 @@ public class ReactionMechanismTool implements Serializable {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     private int getMappedNonHydrogenAtomCount(IAtomContainerSet mol) {
         List<IAtomContainer> allAtomContainers = getAllAtomContainers(mol);
         int count = 0;

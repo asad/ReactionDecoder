@@ -589,6 +589,7 @@ public class BondChangeCalculator extends MechanismHelpers.Utility implements IC
      *
      * @return (removed the unchanged H atoms)
      */
+    @SuppressWarnings("deprecation")
     public IReaction getReactionWithCompressUnChangedHydrogens() {
         IReaction compressedReaction = null;
 
@@ -665,7 +666,7 @@ public class BondChangeCalculator extends MechanismHelpers.Utility implements IC
     }
 
     private static void KekulizeReaction(IReaction r) throws CDKException {
-        ElectronDonation model = ElectronDonation.daylight();
+        ElectronDonation model = ElectronDonation.piBonds();
 //        CycleFinder cycles = Cycles.or(Cycles.all(), Cycles.all(6));
 //        Aromaticity aromaticity = new Aromaticity(model, cycles);
 
@@ -686,6 +687,7 @@ public class BondChangeCalculator extends MechanismHelpers.Utility implements IC
      *
      * @param reaction
      */
+    @SuppressWarnings("deprecation")
     private void cleanMapping(IReaction reaction) {
 
         int count = reaction.getMappingCount();

@@ -830,10 +830,10 @@ public class ChemicalFilters {
                 int productBondType = convertBondOrder(targetBond);
                 int rStereo = convertBondStereo(queryBond);
                 int pStereo = convertBondStereo(targetBond);
-                if ((queryBond.getFlag(CDKConstants.ISAROMATIC) == targetBond.getFlag(CDKConstants.ISAROMATIC))
+                if ((queryBond.isAromatic() == targetBond.isAromatic())
                         && (reactantBondType == productBondType)) {
                     score += 8;
-                } else if (queryBond.getFlag(CDKConstants.ISAROMATIC) && targetBond.getFlag(CDKConstants.ISAROMATIC)) {
+                } else if (queryBond.isAromatic() && targetBond.isAromatic()) {
                     score += 4;
                 }
 
@@ -857,6 +857,7 @@ public class ChemicalFilters {
         /**
          * Get stereo value as integer
          */
+        @SuppressWarnings("deprecation")
         public static int convertBondStereo(IBond bond) {
             int value;
             switch (bond.getStereo()) {

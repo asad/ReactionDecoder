@@ -50,13 +50,19 @@ Installation
 
 ```
 use pom.xml and mvn commands to build your project
-1) mvn clean compile                                  (compile only)
-2) mvn clean test                                     (compile and run tests)
-3) mvn clean install -DskipTests=true                 (install, skip tests)
-4) mvn clean install                                  (install with tests)
-5) mvn -P local clean install -DskipTests=true        (fat jar, skip tests)
-6) mvn -P local clean install                         (fat jar with tests)
+1) mvn clean compile                                  (compile only, no tests)
+2) mvn clean test                                     (fast regression suite only)
+3) mvn -P full-tests clean test                       (extended regression suites)
+4) mvn -P benchmarks clean test                       (benchmark suites only)
+5) mvn clean install -DskipTests=true                 (install, skip tests)
+6) mvn -P local clean install -DskipTests=true        (fat jar, skip tests)
+7) mvn -P local,full-tests clean install              (fat jar with extended tests)
 ```
+
+Default test runs are intentionally lightweight. They skip the exhaustive
+dataset sweeps and benchmark suites. Test image generation is also disabled by
+default; re-enable it with `-Drdt.generate.test.images=true` if you need PNG
+artifacts during test runs.
 
 Simple Java API (Recommended)
 ==============================

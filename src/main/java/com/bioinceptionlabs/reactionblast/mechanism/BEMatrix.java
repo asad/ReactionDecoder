@@ -46,6 +46,7 @@ import com.bioinceptionlabs.reactionblast.tools.MoleculeTools.ValencyCalculator;
  * @author Syed Asad Rahman<asad.rahman@bioinceptionlabs.com>
  * @author Lorenzo Baldacci {lorenzo@ebi.ac.uk|lbaldacc@csr.unibo.it}
  */
+@SuppressWarnings("deprecation")
 public class BEMatrix extends EBIMatrix implements Serializable {
 
     private static final long serialVersionUID = -1420740601548197863L;

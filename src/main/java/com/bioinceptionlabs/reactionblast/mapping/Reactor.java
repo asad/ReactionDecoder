@@ -353,6 +353,7 @@ public class Reactor extends BasicDebugger implements Serializable {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void calculateAtomAtomMapping() throws IOException, Exception {
 
         try {
@@ -790,6 +791,7 @@ public class Reactor extends BasicDebugger implements Serializable {
      * @param molSet
      * @return
      */
+    @SuppressWarnings("deprecation")
     private List<IAtom> collectUnMappedSingleHAtoms(IAtomContainerSet molSet) {
 
         List<IAtom> list = new ArrayList<>();
@@ -836,6 +838,7 @@ public class Reactor extends BasicDebugger implements Serializable {
      * @param counter
      * @return updated Counter
      */
+    @SuppressWarnings("deprecation")
     private int markUnMappedHAtoms(IReaction mappedReaction, int counter) {
 
         int localCounter = counter;
@@ -1185,13 +1188,14 @@ public class Reactor extends BasicDebugger implements Serializable {
      */
     private void permuteWithoutClone(int[] p, IAtomContainer atomContainer) {
         int n = atomContainer.getAtomCount();
+        int[] permutation = normalizePermutation(p, n);
         LOGGER.debug("permuting " + java.util.Arrays.toString(p));
         IAtom[] permutedAtoms = new IAtom[n];
 
         for (int i = 0; i < n; i++) {
             IAtom atom = atomContainer.getAtom(i);
-            permutedAtoms[p[i]] = atom;
-            atom.setProperty("label", p[i]);
+            permutedAtoms[permutation[i]] = atom;
+            atom.setProperty("label", permutation[i]);
         }
         atomContainer.setAtoms(permutedAtoms);
 
@@ -1220,6 +1224,29 @@ public class Reactor extends BasicDebugger implements Serializable {
             throw new InternalError();
         });
         atomContainer.setBonds(bonds);
+    }
+
+    private int[] normalizePermutation(int[] permutation, int size) {
+        if (permutation == null || permutation.length != size) {
+            return identityPermutation(size);
+        }
+
+        boolean[] seen = new boolean[size];
+        for (int value : permutation) {
+            if (value < 0 || value >= size || seen[value]) {
+                return identityPermutation(size);
+            }
+            seen[value] = true;
+        }
+        return permutation;
+    }
+
+    private int[] identityPermutation(int size) {
+        int[] identity = new int[size];
+        for (int i = 0; i < size; i++) {
+            identity[i] = i;
+        }
+        return identity;
     }
 
     /**
@@ -1705,6 +1732,7 @@ public class Reactor extends BasicDebugger implements Serializable {
          *
          * @param MappedReaction
          */
+        @SuppressWarnings("deprecation")
         public static void cleanMapping(IReaction MappedReaction) {
             int count = MappedReaction.getMappingCount();
             for (int i = count - 1; i >= 0; i--) {
@@ -1741,6 +1769,7 @@ public class Reactor extends BasicDebugger implements Serializable {
          * @param counter
          * @return
          */
+        @SuppressWarnings("deprecation")
         protected static int setMappingFlags(IReaction expLabReaction, IReaction MappedReaction, int counter) {
             IAtomContainerSet expEductSet = expLabReaction.getReactants();
             IAtomContainerSet expProductSet = expLabReaction.getProducts();
@@ -1820,6 +1849,7 @@ public class Reactor extends BasicDebugger implements Serializable {
          * @param counter
          * @return
          */
+        @SuppressWarnings("deprecation")
         protected static int setMappingFlags(IReaction MappedReaction, IReaction ReactionWithUniqueSTOICHIOMETRY, IReaction coreMappedReaction, int counter) {
             IAtomContainerSet expEductSet = ReactionWithUniqueSTOICHIOMETRY.getReactants();
             IAtomContainerSet expProductSet = ReactionWithUniqueSTOICHIOMETRY.getProducts();

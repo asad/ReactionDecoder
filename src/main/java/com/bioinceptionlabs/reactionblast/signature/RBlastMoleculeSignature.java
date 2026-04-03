@@ -450,9 +450,9 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
             IAtom atomA = atomContainer.getAtom(atomIndexA);
             IAtom atomB = atomContainer.getAtom(atomIndexB);
             IBond bond = atomContainer.getBond(atomA, atomB);
-            if (useAromatics && bond.getFlag(ISAROMATIC)) {
+            if (useAromatics && bond.isAromatic()) {
                 return "@";
-            } else if (useAromatics && bond.getFlag(ISINRING)) {
+            } else if (useAromatics && bond.isInRing()) {
                 return "%";
             }
             if (!isBondSensitive) {
@@ -621,7 +621,7 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
             for (int i = 0; i < array.length; i++) {
                 array[i] = true;
             }
-            if (isStartOfDoubleBond(container, atom0, from, array) && isEndOfDoubleBond(container, atom1, atom0, array) && !bond.getFlag(ISAROMATIC)) {
+            if (isStartOfDoubleBond(container, atom0, from, array) && isEndOfDoubleBond(container, atom1, atom0, array) && !bond.isAromatic()) {
                 return (true);
             } else {
                 return (false);
@@ -1795,7 +1795,7 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
          */
         private void parseBond(StringBuffer line, IAtom a1, IAtom a2, IAtomContainer atomContainer, boolean useAromaticity) {
             //LOGGER.debug("in parseBond()");
-            if (useAromaticity && a1.getFlag(ISAROMATIC) && a2.getFlag(ISAROMATIC)) {
+            if (useAromaticity && a1.isAromatic() && a2.isAromatic()) {
                 return;
             }
             if (atomContainer.getBond(a1, a2) == null) {
@@ -1864,7 +1864,7 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
                 buffer.append('[');
             }
             buffer.append(mass);
-            if ((useAromaticity && a.getFlag(ISAROMATIC))) {
+            if (useAromaticity && a.isAromatic()) {
                 // we put in a special check for N.planar3 cases such
                 // as for indole and pyrrole, which require an explicit
                 // H on the nitrogen. However this only makes sense when
@@ -1958,8 +1958,8 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
                 IBond b = container.getBond(a2, a);
                 IBond.Order type = b.getOrder();
                 if (!(useAromaticity
-                        && a.getFlag(ISAROMATIC)
-                        && a2.getFlag(ISAROMATIC))) {
+                        && a.isAromatic()
+                        && a2.isAromatic())) {
                     if (type == DOUBLE) {
                         buffer.append("=");
                     } else if (type == TRIPLE) {
@@ -2203,17 +2203,17 @@ public class RBlastMoleculeSignature extends AbstractGraphSignature {
                 container.addBond(vertexIndex1, vertexIndex2, SINGLE);
                 if (useAromatics) {
                     IBond bond = container.getBond(container.getBondCount() - 1);
-                    bond.getAtom(0).setFlag(ISAROMATIC, true);
-                    bond.getAtom(1).setFlag(ISAROMATIC, true);
-                    bond.setFlag(ISAROMATIC, true);
+                    bond.getAtom(0).setIsAromatic(true);
+                    bond.getAtom(1).setIsAromatic(true);
+                    bond.setIsAromatic(true);
                 }
             } else if (edgeLabel.equals("%")) {
                 container.addBond(vertexIndex1, vertexIndex2, SINGLE);
                 if (useAromatics) {
                     IBond bond = container.getBond(container.getBondCount() - 1);
-                    bond.getAtom(0).setFlag(ISINRING, true);
-                    bond.getAtom(1).setFlag(ISINRING, true);
-                    bond.setFlag(ISINRING, true);
+                    bond.getAtom(0).setIsInRing(true);
+                    bond.getAtom(1).setIsInRing(true);
+                    bond.setIsInRing(true);
                 }
             }
         }
@@ -2345,4 +2345,3 @@ class RBlastMoleculeSignatureLabellingAdaptor
         return molSig.getCanonicalLabels();
     }
 }
-

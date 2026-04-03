@@ -312,14 +312,14 @@ public class CalculationProcess implements Serializable {
                         && bond.getAtom(1).getSymbol().equalsIgnoreCase("C"))
                         || (bond.getAtom(0).getSymbol().equalsIgnoreCase("C")
                         && bond.getAtom(1).getSymbol().equalsIgnoreCase("O"))) {
-                    if (!bond.getAtom(0).getFlag(ISAROMATIC)
-                            && !bond.getAtom(1).getFlag(ISAROMATIC)) {
+                    if (!bond.getAtom(0).isAromatic()
+                            && !bond.getAtom(1).isAromatic()) {
                         if (referenceContainer.contains(bond)) {
                             IAtom atom = bond.getAtom(0).getSymbol().equalsIgnoreCase("C") ? bond.getAtom(0) : bond.getAtom(1);
                             List<IBond> neighbourhoodBonds = referenceContainer.getConnectedBondsList(atom);
                             flag = false;
                             for (IBond neighbourhoodBond : neighbourhoodBonds) {
-                                if (neighbourhoodBond.contains(atom) && !neighbourhoodBond.getFlag(ISINRING)) {
+                                if (neighbourhoodBond.contains(atom) && !neighbourhoodBond.isInRing()) {
                                     if ((neighbourhoodBond.getAtom(0).getSymbol().equalsIgnoreCase("O")
                                             && neighbourhoodBond.getAtom(1).getSymbol().equalsIgnoreCase("C"))
                                             || (neighbourhoodBond.getAtom(0).getSymbol().equalsIgnoreCase("C")

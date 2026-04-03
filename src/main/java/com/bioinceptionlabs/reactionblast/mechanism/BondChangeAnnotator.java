@@ -243,6 +243,7 @@ public final class BondChangeAnnotator extends DUModel {
      *
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     protected void markBondChanges() throws Exception {
         ensureReactionMatrices();
 
@@ -694,13 +695,13 @@ public final class BondChangeAnnotator extends DUModel {
      */
     public int isKekuleEffect(IBond affectedBondReactants, IBond affectedBondProducts) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
-            if (affectedBondReactants.getFlag(ISINRING)
-                    == affectedBondProducts.getFlag(ISINRING)) {
+            if (affectedBondReactants.isInRing()
+                    == affectedBondProducts.isInRing()) {
 
-                if ((!affectedBondReactants.getFlag(ISAROMATIC)
-                        && affectedBondProducts.getFlag(ISAROMATIC))
-                        || (affectedBondReactants.getFlag(ISAROMATIC)
-                        && !affectedBondProducts.getFlag(ISAROMATIC))) {
+                if ((!affectedBondReactants.isAromatic()
+                        && affectedBondProducts.isAromatic())
+                        || (affectedBondReactants.isAromatic()
+                        && !affectedBondProducts.isAromatic())) {
                     IRingSet smallestRingSetR = getSmallestRingSet(affectedBondReactants, queryRingSet);
                     IRingSet smallestRingSetP = getSmallestRingSet(affectedBondProducts, targetRingSet);
 
@@ -747,13 +748,13 @@ public final class BondChangeAnnotator extends DUModel {
      */
     public int isAlternateKekuleChange(IBond affectedBondReactants, IBond affectedBondProducts) {
         if (affectedBondReactants != null && affectedBondProducts != null) {
-            if (affectedBondReactants.getFlag(ISINRING)
-                    == affectedBondProducts.getFlag(ISINRING)) {
+            if (affectedBondReactants.isInRing()
+                    == affectedBondProducts.isInRing()) {
 
-                if ((!affectedBondReactants.getFlag(ISAROMATIC)
-                        && affectedBondProducts.getFlag(ISAROMATIC))
-                        || (affectedBondReactants.getFlag(ISAROMATIC)
-                        && !affectedBondProducts.getFlag(ISAROMATIC))) {
+                if ((!affectedBondReactants.isAromatic()
+                        && affectedBondProducts.isAromatic())
+                        || (affectedBondReactants.isAromatic()
+                        && !affectedBondProducts.isAromatic())) {
                     IRingSet smallestRingSetR = getSmallestRingSet(affectedBondReactants, queryRingSet);
                     IRingSet smallestRingSetP = getSmallestRingSet(affectedBondProducts, targetRingSet);
                     int countR = getNeighbourBondOrderCountFromRing(affectedBondReactants, smallestRingSetR);

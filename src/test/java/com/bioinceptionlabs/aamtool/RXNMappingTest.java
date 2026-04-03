@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.smiles.SmilesParser;
 import com.bioinceptionlabs.reactionblast.fingerprints.PatternFingerprinter.Feature;
@@ -43,11 +44,13 @@ import static com.bioinceptionlabs.reactionblast.optional.ReactionSimilarityTool
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BUG_RXN_DIR;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.BRENDA_RXN_DIR;
 import static com.bioinceptionlabs.reactionblast.tools.TestUtility.KEGG_RXN_DIR;
+import com.bioinceptionlabs.testgroups.FullRegression;
 
 /**
  * @contact Syed Asad Rahman, BioInception.
  * @author Syed Asad Rahman <asad.rahman@bioinceptionlabs.com>
  */
+@Category(FullRegression.class)
 public class RXNMappingTest extends MappingUtility {
 
     private static final Logger LOG = getLogger(RXNMappingTest.class.getName());
