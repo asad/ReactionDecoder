@@ -204,6 +204,18 @@ public class Reactor extends BasicDebugger implements Serializable {
         } catch (CloneNotSupportedException | CDKException e) {
             LOGGER.error(SEVERE, "Error in Reactor class", e.getMessage());
         }
+        // Preserve agents (e.g. filtered reagents) for downstream consumers
+        try {
+            if (referenceReaction.getAgents() != null) {
+                for (IAtomContainer agent : referenceReaction.getAgents().atomContainers()) {
+                    IAtomContainer cloneAgent = cloneWithIDs(agent);
+                    cloneAgent.setID(agent.getID());
+                    reactionWithSTOICHIOMETRY.addAgent(cloneAgent);
+                }
+            }
+        } catch (CloneNotSupportedException e) {
+            LOGGER.error(SEVERE, "Error cloning agents", e.getMessage());
+        }
     }
 
     /**
@@ -260,6 +272,13 @@ public class Reactor extends BasicDebugger implements Serializable {
         reactionWithUniqueSTOICHIOMETRY.setDirection(reactionWithSTOICHIOMETRY.getDirection() == null
                 ? BIDIRECTIONAL
                 : reactionWithSTOICHIOMETRY.getDirection());
+
+        // Carry agents through to the expanded reaction
+        if (reactionWithSTOICHIOMETRY.getAgents() != null) {
+            for (IAtomContainer agent : reactionWithSTOICHIOMETRY.getAgents().atomContainers()) {
+                reactionWithUniqueSTOICHIOMETRY.addAgent(agent);
+            }
+        }
 
         LabelAtoms();
         BondCollection();
@@ -1103,14 +1122,13 @@ public class Reactor extends BasicDebugger implements Serializable {
 
     private int getOriginalRank(IAtom atom) {
         Object oldRank = atom.getProperty("OLD_RANK");
-        if (oldRank instanceof Integer) {
-            return (Integer) oldRank;
+        if (oldRank instanceof Integer value) {
+            return value;
         }
         if (oldRank != null) {
             try {
                 return parseInt(oldRank.toString());
-            } catch (NumberFormatException ignore) {
-                // Fall through to the stable fallback below.
+            } catch (NumberFormatException _) {
             }
         }
         return getStableAtomPosition(atom);
@@ -1118,24 +1136,23 @@ public class Reactor extends BasicDebugger implements Serializable {
 
     private int getStableAtomPosition(IAtom atom) {
         Object label = atom.getProperty("label");
-        if (label instanceof Integer) {
-            return (Integer) label;
+        if (label instanceof Integer value) {
+            return value;
         }
         if (label != null) {
             try {
                 return parseInt(label.toString());
-            } catch (NumberFormatException ignore) {
-                // Fall through to the generic fallback below.
+            } catch (NumberFormatException _) {
             }
         }
         Object index = atom.getProperty("index");
-        if (index instanceof Integer) {
-            return (Integer) index;
+        if (index instanceof Integer value) {
+            return value;
         }
         if (index != null) {
             try {
                 return parseInt(index.toString());
-            } catch (NumberFormatException ignore) {
+            } catch (NumberFormatException _) {
                 return Integer.MAX_VALUE;
             }
         }

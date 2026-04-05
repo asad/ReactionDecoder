@@ -35,14 +35,14 @@
     linkcolor=linkblue,
     citecolor=linkblue,
     urlcolor=rdtblue,
-    pdftitle={RDT v3.9.0 Golden Dataset Benchmark Report},
+    pdftitle={RDT v4.0.0 Golden Dataset Benchmark Report},
     pdfauthor={Syed Asad Rahman},
 }
 
 % --- Headers ---
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{RDT v3.9.0 Benchmark Report}}
+\fancyhead[L]{\small\textit{RDT v4.0.0 Benchmark Report}}
 \fancyhead[R]{\small\textit{BioInception Labs}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -65,8 +65,8 @@
 \vspace*{3cm}
 
 {\Huge\bfseries\color{linkblue} Golden Dataset Benchmark Report}\\[0.8cm]
-{\LARGE Reaction Decoder Tool (RDT) v3.9.0}\\[0.4cm]
-{\large SMSD 6.10.2 $\cdot$ CDK 2.12}\\[2cm]
+{\LARGE Reaction Decoder Tool (RDT) v4.0.0}\\[0.4cm]
+{\large SMSD 6.11.1 $\cdot$ CDK 2.12}\\[2cm]
 
 {\large
 \textbf{Syed Asad Rahman}\\[0.3cm]
@@ -81,7 +81,7 @@ BioInception PVT LTD\\[0.1cm]
 \begin{minipage}{0.85\textwidth}
 \centering
 \textit{%
-Benchmark evaluation of RDT v3.9.0 on the Lin et al.\ (2022) golden dataset
+Benchmark evaluation of RDT v4.0.0 on the Lin et al.\ (2022) golden dataset
 of 1,851 manually curated atom-atom mappings. RDT achieves 100\% mapping success,
 86.4\% raw chemistry-equivalent accuracy (exceeding all published tools), and
 \textbf{zero genuine mapping errors}---all 252 apparent mismatches are attributable
@@ -104,7 +104,7 @@ to unbalanced reactions in the dataset.
 % ===================================================================
 \section{Executive Summary}
 
-RDT v3.9.0 maps all 1,851 reactions in the Lin et al.\ golden dataset with
+RDT v4.0.0 maps all 1,851 reactions in the Lin et al.\ golden dataset with
 \textbf{100\% mapping success} and \textbf{zero errors}. Every apparent
 ``chemistry mismatch'' (252 reactions, 13.6\%) is attributable to
 \textbf{unbalanced reactions}---reactions where the dataset omits one or more
@@ -250,7 +250,7 @@ When unbalanced-reaction artifacts are excluded, RDT achieves 100\% on balanced 
 \textbf{Deterministic} & \textbf{Training} \\
 \midrule
 \rowcolor{rdtgreen!8}
-\textbf{RDT v3.9.0}  & \textbf{86.4\%} & \textbf{82.3\%} & Yes & None \\
+\textbf{RDT v4.0.0}  & \textbf{86.4\%} & \textbf{82.3\%} & Yes & None \\
 RXNMapper$^\dagger$    & 83.74\% & --- & No  & Unsupervised \\
 RDTool (pub.)$^\dagger$& 76.18\% & --- & Yes & None \\
 ChemAxon$^\dagger$     & 70.45\% & --- & Yes & Proprietary \\
@@ -268,7 +268,7 @@ published tools in raw chemistry-equivalent accuracy without requiring training 
 \centering
 \includegraphics[width=0.85\textwidth]{comparison_published.png}
 \caption{Horizontal bar chart comparing chemically-equivalent accuracy.
-RDT v3.9.0 (raw) already exceeds all published tools; on balanced reactions it
+RDT v4.0.0 (raw) already exceeds all published tools; on balanced reactions it
 reaches 100\%.}
 \label{fig:comparison}
 \end{figure}
@@ -463,7 +463,7 @@ RINGS dominates because most reactions involve ring-system transformations.}
 \section{Conclusions}
 
 \begin{enumerate}[leftmargin=2em]
-\item \textbf{RDT v3.9.0 achieves 100\% correct chemistry} on all balanced
+\item \textbf{RDT v4.0.0 achieves 100\% correct chemistry} on all balanced
       reactions in the golden dataset.
 \item The 252 apparent mismatches are \textbf{dataset artifacts} from unbalanced
       reactions, not mapping errors.

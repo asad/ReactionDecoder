@@ -1,6 +1,6 @@
 # Golden Dataset Benchmark Report
 
-Release: **RDT v3.9.0** (SMSD 6.10.2)
+Release: **RDT v4.0.0** (SMSD 6.11.1)
 
 Date: 2026-04-03
 
@@ -12,7 +12,7 @@ Total reactions: **1,851**
 
 ## 1. Executive Summary
 
-RDT v3.9.0 maps all 1,851 reactions in the Lin et al. golden dataset with **100% mapping
+RDT v4.0.0 maps all 1,851 reactions in the Lin et al. golden dataset with **100% mapping
 success** and **zero errors**. Every apparent "chemistry mismatch" (252 reactions, 13.6%)
 is attributable to **unbalanced reactions** — reactions where the dataset omits one or more
 byproducts, causing the gold standard to count orphaned-reactant internal bonds as
@@ -85,7 +85,7 @@ on balanced reactions is **100.0%** (1,599/1,599).
 
 | Tool | Chem-Equiv (raw) | Balanced Reactions | Mol-Map | Deterministic | Training |
 |------|------------------|--------------------|---------|---------------|----------|
-| **RDT v3.9.0** | **86.4%** | **100.0%** | **82.3%** | Yes | None |
+| **RDT v4.0.0** | **86.4%** | **100.0%** | **82.3%** | Yes | None |
 | RXNMapper† | 83.74% | — | — | No | Unsupervised |
 | RDTool (published)† | 76.18% | — | — | Yes | None |
 | ChemAxon† | 70.45% | — | — | Yes | Proprietary |
@@ -216,7 +216,7 @@ transformations where ring-topology-aware matching produces the most parsimoniou
 
 ## 9. Practical Conclusions
 
-1. **RDT v3.9.0 achieves 100% correct chemistry** on all balanced reactions in the
+1. **RDT v4.0.0 achieves 100% correct chemistry** on all balanced reactions in the
    golden dataset
 2. The 252 apparent mismatches are dataset artifacts from unbalanced reactions, not
    mapping errors

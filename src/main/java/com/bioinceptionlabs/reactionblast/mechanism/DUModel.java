@@ -21,7 +21,6 @@ package com.bioinceptionlabs.reactionblast.mechanism;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -109,35 +108,36 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
         }
         try {
             for (IStereoElement<?, ?> element : ac.stereoElements()) {
-                if (element instanceof ITetrahedralChirality) {
-                    ITetrahedralChirality tc = (ITetrahedralChirality) element;
-                    IAtom focus = tc.getChiralAtom();
-                    ITetrahedralChirality.Stereo stereo = tc.getStereo();
-                    if (stereo == ITetrahedralChirality.Stereo.CLOCKWISE) {
-                        chiralityMap.put(focus, BondChangeCalculator.IStereoAndConformation.R);
-                    } else if (stereo == ITetrahedralChirality.Stereo.ANTI_CLOCKWISE) {
-                        chiralityMap.put(focus, BondChangeCalculator.IStereoAndConformation.S);
+                switch (element) {
+                    case ITetrahedralChirality tc -> {
+                        IAtom focus = tc.getChiralAtom();
+                        var sc = switch (tc.getStereo()) {
+                            case CLOCKWISE -> BondChangeCalculator.IStereoAndConformation.R;
+                            case ANTI_CLOCKWISE -> BondChangeCalculator.IStereoAndConformation.S;
+                            default -> null;
+                        };
+                        if (sc != null) {
+                            chiralityMap.put(focus, sc);
+                        }
+                        if (focus != null) {
+                            focus.setProperty("Stereo", chiralityMap.get(focus));
+                        }
                     }
-                    if (focus != null) {
-                        focus.setProperty("Stereo", chiralityMap.get(focus));
+                    case IDoubleBondStereochemistry dbs -> {
+                        var sc = switch (dbs.getStereo()) {
+                            case OPPOSITE -> BondChangeCalculator.IStereoAndConformation.E;
+                            case TOGETHER -> BondChangeCalculator.IStereoAndConformation.Z;
+                            default -> (BondChangeCalculator.IStereoAndConformation) null;
+                        };
+                        if (sc == null) continue;
+                        IAtom a0 = dbs.getStereoBond().getBegin();
+                        IAtom a1 = dbs.getStereoBond().getEnd();
+                        chiralityMap.put(a0, sc);
+                        chiralityMap.put(a1, sc);
+                        if (a0 != null) a0.setProperty("Stereo", sc);
+                        if (a1 != null) a1.setProperty("Stereo", sc);
                     }
-                } else if (element instanceof IDoubleBondStereochemistry) {
-                    IDoubleBondStereochemistry dbs = (IDoubleBondStereochemistry) element;
-                    IDoubleBondStereochemistry.Conformation conf = dbs.getStereo();
-                    IAtom a0 = dbs.getStereoBond().getBegin();
-                    IAtom a1 = dbs.getStereoBond().getEnd();
-                    BondChangeCalculator.IStereoAndConformation sc;
-                    if (conf == IDoubleBondStereochemistry.Conformation.OPPOSITE) {
-                        sc = BondChangeCalculator.IStereoAndConformation.E;
-                    } else if (conf == IDoubleBondStereochemistry.Conformation.TOGETHER) {
-                        sc = BondChangeCalculator.IStereoAndConformation.Z;
-                    } else {
-                        continue;
-                    }
-                    chiralityMap.put(a0, sc);
-                    chiralityMap.put(a1, sc);
-                    if (a0 != null) a0.setProperty("Stereo", sc);
-                    if (a1 != null) a1.setProperty("Stereo", sc);
+                    default -> { }
                 }
             }
         } catch (Exception e) {
@@ -232,12 +232,11 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
      * @param mappings to be set
      */
     private void setMappingMap(Iterable<IMapping> mappings) {
-        Iterator<IMapping> mappingIterator = mappings.iterator();
-        while (mappingIterator.hasNext()) {
-            IMapping mappingObject = mappingIterator.next();
-            IAtom atomEduct = (IAtom) mappingObject.getChemObject(0);
-            IAtom atomProduct = (IAtom) mappingObject.getChemObject(1);
-            mappingMap.put(atomEduct, atomProduct);
+        for (IMapping mapping : mappings) {
+            if (mapping.getChemObject(0) instanceof IAtom educt
+                    && mapping.getChemObject(1) instanceof IAtom product) {
+                mappingMap.put(educt, product);
+            }
         }
     }
 
@@ -321,44 +320,22 @@ abstract class DUModel extends MechanismHelpers.Utility implements IChangeCalcul
     /**
      * Stereo change data holder (merged from StereoChange.java).
      */
-    static class StereoChange implements Serializable {
+    record StereoChange(
+            BondChangeCalculator.IStereoAndConformation rAtomStereo,
+            BondChangeCalculator.IStereoAndConformation pAtomStereo,
+            IAtom rAtom,
+            IAtom pAtom) implements Serializable {
 
-        private static final long serialVersionUID = 6778787889667901L;
-        private final BondChangeCalculator.IStereoAndConformation rAtomStereo;
-        private final BondChangeCalculator.IStereoAndConformation pAtomStereo;
-        private final IAtom rAtom;
-        private final IAtom pAtom;
-
-        StereoChange(BondChangeCalculator.IStereoAndConformation rAtomStereo,
-                BondChangeCalculator.IStereoAndConformation pAtomStereo,
-                IAtom rAtom,
-                IAtom pAtom) {
-            this.rAtomStereo = rAtomStereo;
-            this.pAtomStereo = pAtomStereo;
-            this.rAtom = rAtom;
-            this.pAtom = pAtom;
-        }
+        public BondChangeCalculator.IStereoAndConformation getReactantAtomStereo() { return rAtomStereo; }
+        public BondChangeCalculator.IStereoAndConformation getProductAtomStereo() { return pAtomStereo; }
+        public IAtom getReactantAtom() { return rAtom; }
+        public IAtom getProductAtom() { return pAtom; }
 
         @Override
         public String toString() {
-            return "StereoChange{" + "rAtomStereo=" + rAtomStereo + ", pAtomStereo=" + pAtomStereo + ", rAtom="
-                    + rAtom.getSymbol() + rAtom.getID() + ", pAtom=" + pAtom.getSymbol() + pAtom.getID() + '}';
-        }
-
-        public BondChangeCalculator.IStereoAndConformation getReactantAtomStereo() {
-            return rAtomStereo;
-        }
-
-        public BondChangeCalculator.IStereoAndConformation getProductAtomStereo() {
-            return pAtomStereo;
-        }
-
-        public IAtom getReactantAtom() {
-            return rAtom;
-        }
-
-        public IAtom getProductAtom() {
-            return pAtom;
+            return "StereoChange{rAtomStereo=" + rAtomStereo + ", pAtomStereo=" + pAtomStereo
+                    + ", rAtom=" + rAtom.getSymbol() + rAtom.getID()
+                    + ", pAtom=" + pAtom.getSymbol() + pAtom.getID() + '}';
         }
     }
 }

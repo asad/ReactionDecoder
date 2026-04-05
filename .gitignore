@@ -41,3 +41,10 @@ hs_err_pid*
 .claude/
 .env
 *.secret
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

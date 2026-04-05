@@ -1123,6 +1123,13 @@ public class ReactionContainer implements Cloneable, Serializable {
             //As per IntEnz 0 for undefined direction, 1 for LR, 2 for RL and 3 for bidirectional
             //As per CDK BIDIRECTION 1, Forward 2, Backward 0
 
+            // Preserve agents (e.g. filtered reagents from StandardizeReaction)
+            if (reaction.getAgents() != null) {
+                for (IAtomContainer agent : reaction.getAgents().atomContainers()) {
+                    standardizedReaction.addAgent(agent);
+                }
+            }
+
             reactionSet.addReaction(standardizedReaction);
 
             //BIDIRECTION 1, Forward 2, Backward 0

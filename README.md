@@ -9,7 +9,7 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.9.0`
+`Reaction Decoder Tool (RDT) v4.0.0`
 --------------------------------------
 
 **Toolkit-agnostic reaction mapping engine** with CDK adapter. Deterministic, no training data required.
@@ -20,7 +20,7 @@ All 1,851 reactions mapped with **100% success rate** and **zero errors**.
 
 | Tool | Chem-Equiv | Mol-Map Exact | Atom-Map Exact | Deterministic | Training |
 |------|-----------|---------------|----------------|---------------|----------|
-| **RDT v3.9.0** | **86.4%** | **82.3%** | 23.1% | **Yes** | None |
+| **RDT v4.0.0** | **86.4%** | **82.3%** | 23.1% | **Yes** | None |
 | RXNMapper† | 83.74% | — | — | No | Unsupervised |
 | RDTool (published)† | 76.18% | — | — | Yes | None |
 | ChemAxon† | 70.45% | — | — | Yes | Proprietary |
@@ -149,7 +149,7 @@ The package namespace has changed from `uk.ac.ebi` to `com.bioinceptionlabs` in 
 <!-- Old (v2.x) -->
 <groupId>uk.ac.ebi.rdt</groupId>
 
-<!-- New (v3.9.0+) -->
+<!-- New (v4.0.0+) -->
 <groupId>com.bioinceptionlabs</groupId>
 ```
 

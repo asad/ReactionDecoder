@@ -152,7 +152,7 @@ public class USPTO50KBenchmarkTest {
 
         // Report
         System.out.println();
-        System.out.println("=== USPTO 50K Benchmark Results (RDT v3.8.0) ===");
+        System.out.println("=== USPTO 50K Benchmark Results (RDT v4.0.0) ===");
         System.out.println("Sample size:          " + total);
         System.out.println("Mapping success:      " + success + "/" + total
                 + " (" + pct(success, total) + "%)");
@@ -171,7 +171,7 @@ public class USPTO50KBenchmarkTest {
         System.out.println("| RXNMapper          | 98.1%     | Unsupervised   | No            |");
         System.out.println("| GraphormerMapper   | 82.7%     | Unsupervised   | No            |");
         System.out.println("| LocalMapper        | 98.5%     | 2% labeled     | No            |");
-        System.out.printf("| RDT v3.8.0 (auto)  | %s%%    | None           | Yes           |%n",
+        System.out.printf("| RDT v4.0.0 (auto)  | %s%%    | None           | Yes           |%n",
                 pct(success, total));
         System.out.println("| SynTemp (ensemble) | 99.5%     | 3 tools comb.  | No            |");
 

@@ -1314,8 +1314,8 @@ public class ReactionMechanismTool implements Serializable {
         }
 
         Object atomAtomMapping = atom.getProperty(ATOM_ATOM_MAPPING);
-        if (atomAtomMapping instanceof Integer && (Integer) atomAtomMapping > 0) {
-            return (Integer) atomAtomMapping;
+        if (atomAtomMapping instanceof Integer value && value > 0) {
+            return value;
         }
         if (atomAtomMapping != null) {
             try {
@@ -1323,14 +1323,13 @@ public class ReactionMechanismTool implements Serializable {
                 if (parsed > 0) {
                     return parsed;
                 }
-            } catch (NumberFormatException ignore) {
-                // Fall through to the legacy property.
+            } catch (NumberFormatException _) {
             }
         }
 
         Object legacyMapNumber = atom.getProperty("molAtomMapNumber");
-        if (legacyMapNumber instanceof Integer && (Integer) legacyMapNumber > 0) {
-            return (Integer) legacyMapNumber;
+        if (legacyMapNumber instanceof Integer value && value > 0) {
+            return value;
         }
         if (legacyMapNumber != null) {
             try {
@@ -1356,7 +1355,7 @@ public class ReactionMechanismTool implements Serializable {
                 Object atomAtomMapping = atom.getProperty(ATOM_ATOM_MAPPING);
                 if (atom.getFlag(MAPPED)) {
                     count++;
-                } else if (atomAtomMapping instanceof Integer && (Integer) atomAtomMapping > 0) {
+                } else if (atomAtomMapping instanceof Integer value && value > 0) {
                     count++;
                 } else if (atomAtomMapping != null) {
                     try {

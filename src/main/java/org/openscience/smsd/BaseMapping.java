@@ -537,8 +537,8 @@ public class BaseMapping extends ChemicalFilters implements ChemicalFilters.IAto
     }
 
     private Integer integerProperty(Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
+        if (value instanceof Integer intVal) {
+            return intVal;
         }
         if (value != null) {
             return tryParseInt(value.toString());

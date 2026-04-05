@@ -82,7 +82,7 @@ public class SMSDCompatibilityFlagsTest {
         assertTrue(substructure.isSubgraph());
         assertEquals(2, substructure.getAllAtomMapping().size());
         assertNotNull(substructure.getLastSearchResult());
-        assertTrue(substructure.getLastSearchResult().exists);
+        assertTrue(substructure.getLastSearchResult().exists());
     }
 
     @Test

@@ -212,10 +212,10 @@ public final class Substructure extends BaseMapping {
                     searchQuery, searchTarget, chemOptions, limit, timeoutMs);
 
             if (lastSearchResult != null
-                    && lastSearchResult.exists
-                    && lastSearchResult.mappings != null
-                    && !lastSearchResult.mappings.isEmpty()) {
-                for (Map<Integer, Integer> mapping : lastSearchResult.mappings) {
+                    && lastSearchResult.exists()
+                    && lastSearchResult.mappings() != null
+                    && !lastSearchResult.mappings().isEmpty()) {
+                for (Map<Integer, Integer> mapping : lastSearchResult.mappings()) {
                     AtomAtomMapping aam = convertMapping(getQuery(), getTarget(), mapping);
                     if (!aam.isEmpty() && aam.getCount() >= vfMappingSize) {
                         if (aam.getCount() > vfMappingSize) {

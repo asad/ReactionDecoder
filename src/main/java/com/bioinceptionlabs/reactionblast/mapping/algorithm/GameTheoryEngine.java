@@ -23,18 +23,10 @@ import java.io.Serializable;
 import static java.lang.String.valueOf;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Calendar;
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.HOUR;
-import static java.util.Calendar.MILLISECOND;
-import static java.util.Calendar.MINUTE;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
 import java.util.Collection;
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -45,7 +37,6 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import static java.util.logging.Level.SEVERE;
 
-import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
@@ -98,7 +89,7 @@ interface IGameTheory {
 
     MoleculeMoleculeMapping getReactionMolMapping();
 
-    String getSuffix() throws IOException;
+    String getSuffix();
 
     void setReactionMolMapping(MoleculeMoleculeMapping reactionMolMapping);
 
@@ -145,8 +136,8 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     // ---- BaseGameTheory methods inlined into outer class ----
 
     protected static boolean isPseudoAtoms(IAtomContainer atomContainer) {
-        for (IAtom atoms : atomContainer.atoms()) {
-            if (atoms instanceof IPseudoAtom || atoms instanceof PseudoAtom) {
+        for (IAtom atom : atomContainer.atoms()) {
+            if (atom instanceof IPseudoAtom) {
                 return true;
             }
         }
@@ -154,21 +145,9 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
     }
 
     @Override
-    public String getSuffix() throws IOException {
-        Calendar cal = new GregorianCalendar();
-        int ms = cal.get(YEAR);
-        String suffix = valueOf(ms);
-        ms = cal.get(MONTH);
-        suffix = suffix.concat(valueOf(ms));
-        ms = cal.get(DATE);
-        suffix = suffix.concat(valueOf(ms));
-        ms = cal.get(HOUR);
-        suffix = suffix.concat(valueOf(ms));
-        ms = cal.get(MINUTE);
-        suffix = suffix.concat(valueOf(ms));
-        ms = cal.get(MILLISECOND);
-        suffix = suffix.concat(valueOf(ms));
-        return suffix;
+    public String getSuffix() {
+        return java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
     }
 
     @Override
@@ -601,18 +580,13 @@ public abstract class GameTheoryEngine extends Debugger implements IGameTheory, 
         public static IGameTheory make(IMappingAlgorithm theory, IReaction reaction, boolean removeHydrogen,
                 Map<Integer, IAtomContainer> educts, Map<Integer, IAtomContainer> products,
                 GameTheoryMatrix rpsh) throws Exception {
-            switch (theory) {
-                case MIXTURE:
-                    return new GameTheoryMixture(reaction, removeHydrogen, educts, products, rpsh);
-                case MIN:
-                    return new GameTheoryMin(reaction, removeHydrogen, educts, products, rpsh);
-                case MAX:
-                    return new GameTheoryMax(reaction, removeHydrogen, educts, products, rpsh);
-                case RINGS:
-                    return new GameTheoryRings(reaction, removeHydrogen, educts, products, rpsh);
-                default:
-                    return null;
-            }
+            return switch (theory) {
+                case MIXTURE -> new GameTheoryMixture(reaction, removeHydrogen, educts, products, rpsh);
+                case MIN -> new GameTheoryMin(reaction, removeHydrogen, educts, products, rpsh);
+                case MAX -> new GameTheoryMax(reaction, removeHydrogen, educts, products, rpsh);
+                case RINGS -> new GameTheoryRings(reaction, removeHydrogen, educts, products, rpsh);
+                default -> null;
+            };
         }
 
         private GameTheoryFactory() {

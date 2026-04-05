@@ -1,7 +1,7 @@
 Introduction
 ============
 
-`Reaction Decoder Tool (RDT) v3.9.0`
+`Reaction Decoder Tool (RDT) v4.0.0`
 --------------------------------------
 
 `1. Atom Atom Mapping (AAM) Tool`
